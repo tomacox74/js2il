@@ -2709,6 +2709,75 @@
 			.class nested public auto ansi beforefieldinit Scope_read
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 15 (0xf)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ldarg.0
+						IL_0007: ldc.i4.1
+						IL_0008: ldc.i4.0
+						IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+						IL_000e: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.1
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 35 (0x23)
+						.maxstack 8
+
+						IL_0000: ldarg.1
+						IL_0001: ldtoken Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis
+						IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+						IL_000b: ldc.i4.1
+						IL_000c: newarr [System.Runtime]System.Object
+						IL_0011: ldnull
+						IL_0012: ldarg.0
+						IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+						IL_0018: castclass Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis
+						IL_001d: call instance object Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis::read()
+						IL_0022: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
+
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
@@ -2725,7 +2794,7 @@
 
 			} // end of class Scope_read
 
-			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_895C327D_ReadsOwnThis
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
 				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 			{
 				// Fields
@@ -2745,9 +2814,9 @@
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 					IL_0006: ldarg.0
 					IL_0007: ldarg.1
-					IL_0008: stfld object[] Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassConstructor_895C327D_ReadsOwnThis::_transitionalScopes
+					IL_0008: stfld object[] Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject::_transitionalScopes
 					IL_000d: ret
-				} // end of method FunctionObject_ClassConstructor_895C327D_ReadsOwnThis::.ctor
+				} // end of method FunctionObject::.ctor
 
 				.method public hidebysig specialname virtual 
 					instance bool get_IsConstructor () cil managed 
@@ -2758,7 +2827,7 @@
 
 					IL_0000: ldc.i4.1
 					IL_0001: ret
-				} // end of method FunctionObject_ClassConstructor_895C327D_ReadsOwnThis::get_IsConstructor
+				} // end of method FunctionObject::get_IsConstructor
 
 				.method public hidebysig specialname virtual 
 					instance bool get_RequiresInvocationContext () cil managed 
@@ -2769,76 +2838,9 @@
 
 					IL_0000: ldc.i4.0
 					IL_0001: ret
-				} // end of method FunctionObject_ClassConstructor_895C327D_ReadsOwnThis::get_RequiresInvocationContext
+				} // end of method FunctionObject::get_RequiresInvocationContext
 
-			} // end of class FunctionObject_ClassConstructor_895C327D_ReadsOwnThis
-
-			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read
-				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 15 (0xf)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-					IL_0006: ldarg.0
-					IL_0007: ldc.i4.1
-					IL_0008: ldc.i4.0
-					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-					IL_000e: ret
-				} // end of method FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read::.ctor
-
-				.method public hidebysig specialname virtual 
-					instance bool get_IsConstructor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 2 (0x2)
-					.maxstack 8
-
-					IL_0000: ldc.i4.0
-					IL_0001: ret
-				} // end of method FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read::get_IsConstructor
-
-				.method public hidebysig specialname virtual 
-					instance bool get_RequiresInvocationContext () cil managed 
-				{
-					// Header size: 1
-					// Code size: 2 (0x2)
-					.maxstack 8
-
-					IL_0000: ldc.i4.1
-					IL_0001: ret
-				} // end of method FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read::get_RequiresInvocationContext
-
-				.method family hidebysig virtual 
-					instance object CallCore (
-						object thisArgument,
-						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 35 (0x23)
-					.maxstack 8
-
-					IL_0000: ldarg.1
-					IL_0001: ldtoken Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis
-					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-					IL_000b: ldc.i4.1
-					IL_000c: newarr [System.Runtime]System.Object
-					IL_0011: ldnull
-					IL_0012: ldarg.0
-					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-					IL_0018: castclass Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis
-					IL_001d: call instance object Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis::read()
-					IL_0022: ret
-				} // end of method FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read::CallCore
-
-			} // end of class FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read
+			} // end of class FunctionObject
 
 
 			// Methods
@@ -3021,7 +3023,7 @@
 				[2] class [System.Runtime]System.Type,
 				[3] object,
 				[4] object[],
-				[5] class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassConstructor_895C327D_ReadsOwnThis,
+				[5] class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject,
 				[6] string
 			)
 
@@ -3040,27 +3042,27 @@
 			IL_002c: stloc.s 4
 			IL_002e: ldloc.3
 			IL_002f: ldstr "read"
-			IL_0034: newobj instance void Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read::.ctor()
+			IL_0034: newobj instance void Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/Scope_read/FunctionObject::.ctor()
 			IL_0039: ldc.i4.0
 			IL_003a: conv.r8
 			IL_003b: ldstr "read"
 			IL_0040: ldc.i4.1
 			IL_0041: ldc.i4.1
-			IL_0042: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read>(!!0, float64, string, bool, bool)
-			IL_0047: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassMethod_C05F8838_ReadsOwnThis_read>(!!0)
+			IL_0042: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0047: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/Scope_read/FunctionObject>(!!0)
 			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 			IL_0051: pop
 			IL_0052: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0057: stloc.s 4
 			IL_0059: ldloc.s 4
-			IL_005b: newobj instance void Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassConstructor_895C327D_ReadsOwnThis::.ctor(object[])
+			IL_005b: newobj instance void Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject::.ctor(object[])
 			IL_0060: ldloc.2
 			IL_0061: ldloc.s 4
 			IL_0063: ldc.i4.0
 			IL_0064: conv.r8
 			IL_0065: ldc.i4.0
 			IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-			IL_006b: castclass Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject_ClassConstructor_895C327D_ReadsOwnThis
+			IL_006b: castclass Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/FunctionObject
 			IL_0070: stloc.s 5
 			IL_0072: ldloc.s 5
 			IL_0074: stloc.1

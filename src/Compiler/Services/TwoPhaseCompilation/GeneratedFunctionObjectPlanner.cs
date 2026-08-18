@@ -1,6 +1,7 @@
 using Acornima.Ast;
 using Jroc.Services.ScopesAbi;
 using Jroc.SymbolTables;
+using Jroc.Utilities;
 
 namespace Jroc.Services.TwoPhaseCompilation;
 
@@ -32,15 +33,16 @@ internal static class GeneratedFunctionObjectPlanner
             Signature = signature,
             Namespace = string.Empty,
             ModuleName = symbolTable.Root.Name,
-            TypeName = callable.Kind is CallableKind.Arrow
-                or CallableKind.FunctionDeclaration
-                or CallableKind.FunctionExpression
-                ? GeneratedFunctionObjectNaming.WrapperTypeName
-                : BuildTypeName(callable),
+            TypeName = GeneratedFunctionObjectNaming.WrapperTypeName,
             CanonicalOwnerTypeName = ResolveCanonicalOwnerTypeName(
                 callable,
                 callableScope,
                 classScope),
+            CanonicalOwnerScopeName = IsClassCallable(callable)
+                ? callableScope is null
+                    ? null
+                    : ScopeNaming.GetRegistryScopeName(callableScope)
+                : null,
             Captures = captures,
             StateFields = BuildStatePlan(
                 callable,
@@ -372,13 +374,14 @@ internal static class GeneratedFunctionObjectPlanner
                     : GeneratedFunctionReturnKind.Value;
     }
 
-    private static string BuildTypeName(CallableId callable)
-    {
-        var identity = callable.Name
-            ?? callable.Location?.ToString()
-            ?? "anonymous";
-        return $"FunctionObject_{callable.Kind}_{StableSuffix(callable.UniqueKey)}_{Sanitize(identity)}";
-    }
+    private static bool IsClassCallable(CallableId callable)
+        => callable.Kind is CallableKind.ClassConstructor
+            or CallableKind.ClassMethod
+            or CallableKind.ClassGetter
+            or CallableKind.ClassSetter
+            or CallableKind.ClassStaticMethod
+            or CallableKind.ClassStaticGetter
+            or CallableKind.ClassStaticSetter;
 
     private static string ResolveCanonicalOwnerTypeName(
         CallableId callable,
@@ -426,15 +429,4 @@ internal static class GeneratedFunctionObjectPlanner
         return new string(chars);
     }
 
-    private static string StableSuffix(string value)
-    {
-        uint hash = 2166136261;
-        foreach (var character in value)
-        {
-            hash ^= character;
-            hash *= 16777619;
-        }
-
-        return hash.ToString("X8", System.Globalization.CultureInfo.InvariantCulture);
-    }
 }

@@ -37,6 +37,79 @@
 			.class nested public auto ansi beforefieldinit Scope_logValue
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Fields
+					.field private initonly object[] _transitionalScopes
+
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor (
+							object[] capture0
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 14 (0xe)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ldarg.0
+						IL_0007: ldarg.1
+						IL_0008: stfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass/Scope_logValue/FunctionObject::_transitionalScopes
+						IL_000d: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 35 (0x23)
+						.maxstack 8
+
+						IL_0000: ldarg.1
+						IL_0001: ldtoken Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass
+						IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+						IL_000b: ldarg.0
+						IL_000c: ldfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass/Scope_logValue/FunctionObject::_transitionalScopes
+						IL_0011: ldnull
+						IL_0012: ldarg.0
+						IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+						IL_0018: castclass Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass
+						IL_001d: call instance object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass::logValue()
+						IL_0022: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
+
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
@@ -53,7 +126,7 @@
 
 			} // end of class Scope_logValue
 
-			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_674B927B_MyClass
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
 				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 			{
 				// Fields
@@ -73,9 +146,9 @@
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 					IL_0006: ldarg.0
 					IL_0007: ldarg.1
-					IL_0008: stfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass/FunctionObject_ClassConstructor_674B927B_MyClass::_transitionalScopes
+					IL_0008: stfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass/FunctionObject::_transitionalScopes
 					IL_000d: ret
-				} // end of method FunctionObject_ClassConstructor_674B927B_MyClass::.ctor
+				} // end of method FunctionObject::.ctor
 
 				.method public hidebysig specialname virtual 
 					instance bool get_IsConstructor () cil managed 
@@ -86,7 +159,7 @@
 
 					IL_0000: ldc.i4.1
 					IL_0001: ret
-				} // end of method FunctionObject_ClassConstructor_674B927B_MyClass::get_IsConstructor
+				} // end of method FunctionObject::get_IsConstructor
 
 				.method public hidebysig specialname virtual 
 					instance bool get_RequiresInvocationContext () cil managed 
@@ -97,80 +170,9 @@
 
 					IL_0000: ldc.i4.0
 					IL_0001: ret
-				} // end of method FunctionObject_ClassConstructor_674B927B_MyClass::get_RequiresInvocationContext
+				} // end of method FunctionObject::get_RequiresInvocationContext
 
-			} // end of class FunctionObject_ClassConstructor_674B927B_MyClass
-
-			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_C626B0F5_MyClass_logValue
-				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-			{
-				// Fields
-				.field private initonly object[] _transitionalScopes
-
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor (
-						object[] capture0
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 14 (0xe)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-					IL_0006: ldarg.0
-					IL_0007: ldarg.1
-					IL_0008: stfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass/FunctionObject_ClassMethod_C626B0F5_MyClass_logValue::_transitionalScopes
-					IL_000d: ret
-				} // end of method FunctionObject_ClassMethod_C626B0F5_MyClass_logValue::.ctor
-
-				.method public hidebysig specialname virtual 
-					instance bool get_IsConstructor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 2 (0x2)
-					.maxstack 8
-
-					IL_0000: ldc.i4.0
-					IL_0001: ret
-				} // end of method FunctionObject_ClassMethod_C626B0F5_MyClass_logValue::get_IsConstructor
-
-				.method public hidebysig specialname virtual 
-					instance bool get_RequiresInvocationContext () cil managed 
-				{
-					// Header size: 1
-					// Code size: 2 (0x2)
-					.maxstack 8
-
-					IL_0000: ldc.i4.0
-					IL_0001: ret
-				} // end of method FunctionObject_ClassMethod_C626B0F5_MyClass_logValue::get_RequiresInvocationContext
-
-				.method family hidebysig virtual 
-					instance object CallCore (
-						object thisArgument,
-						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 35 (0x23)
-					.maxstack 8
-
-					IL_0000: ldarg.1
-					IL_0001: ldtoken Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass
-					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-					IL_000b: ldarg.0
-					IL_000c: ldfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass/FunctionObject_ClassMethod_C626B0F5_MyClass_logValue::_transitionalScopes
-					IL_0011: ldnull
-					IL_0012: ldarg.0
-					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-					IL_0018: castclass Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass
-					IL_001d: call instance object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass::logValue()
-					IL_0022: ret
-				} // end of method FunctionObject_ClassMethod_C626B0F5_MyClass_logValue::CallCore
-
-			} // end of class FunctionObject_ClassMethod_C626B0F5_MyClass_logValue
+			} // end of class FunctionObject
 
 
 			// Fields

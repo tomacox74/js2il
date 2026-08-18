@@ -33,6 +33,65 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+				.field private initonly class [System.Runtime]System.Object _privateBrand
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0,
+						class [System.Runtime]System.Object capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 29 (0x1d)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Classes_PrivateBrandCheck/Example/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0015: ldarg.0
+					IL_0016: ldarg.2
+					IL_0017: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_ctor/FunctionObject::_privateBrand
+					IL_001c: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -52,6 +111,81 @@
 		.class nested public auto ansi beforefieldinit Scope_hasBrand
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class [System.Runtime]System.Object _privateBrand
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class [System.Runtime]System.Object capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_hasBrand/FunctionObject::_privateBrand
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 37 (0x25)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Classes_PrivateBrandCheck/Example
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_hasBrand/FunctionObject::_privateBrand
+					IL_0011: ldarg.0
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateGeneratedStaticMethodReceiver(object, class [System.Runtime]System.Type, object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0017: pop
+					IL_0018: ldarg.2
+					IL_0019: ldc.i4.0
+					IL_001a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_001f: call object Modules.Classes_PrivateBrandCheck/Example::hasBrand(object)
+					IL_0024: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -71,6 +205,81 @@
 		.class nested public auto ansi beforefieldinit Scope_read
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class [System.Runtime]System.Object _privateBrand
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class [System.Runtime]System.Object capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_read/FunctionObject::_privateBrand
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 37 (0x25)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Classes_PrivateBrandCheck/Example
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_read/FunctionObject::_privateBrand
+					IL_0011: ldarg.0
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateGeneratedStaticMethodReceiver(object, class [System.Runtime]System.Type, object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0017: pop
+					IL_0018: ldarg.2
+					IL_0019: ldc.i4.0
+					IL_001a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_001f: call object Modules.Classes_PrivateBrandCheck/Example::read(object)
+					IL_0024: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -90,6 +299,84 @@
 		.class nested public auto ansi beforefieldinit Scope_write
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class [System.Runtime]System.Object _privateBrand
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class [System.Runtime]System.Object capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_write/FunctionObject::_privateBrand
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 44 (0x2c)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Classes_PrivateBrandCheck/Example
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/Scope_write/FunctionObject::_privateBrand
+					IL_0011: ldarg.0
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateGeneratedStaticMethodReceiver(object, class [System.Runtime]System.Type, object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0017: pop
+					IL_0018: ldarg.2
+					IL_0019: ldc.i4.0
+					IL_001a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_001f: ldarg.2
+					IL_0020: ldc.i4.1
+					IL_0021: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0026: call object Modules.Classes_PrivateBrandCheck/Example::write(object, object)
+					IL_002b: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -105,285 +392,6 @@
 			} // end of method Scope_write::.ctor
 
 		} // end of class Scope_write
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_9D4431D5_Example
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-			.field private initonly class [System.Runtime]System.Object _privateBrand
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0,
-					class [System.Runtime]System.Object capture1
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 29 (0x1d)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassConstructor_9D4431D5_Example::_transitionalScopes
-				IL_0015: ldarg.0
-				IL_0016: ldarg.2
-				IL_0017: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassConstructor_9D4431D5_Example::_privateBrand
-				IL_001c: ret
-			} // end of method FunctionObject_ClassConstructor_9D4431D5_Example::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_9D4431D5_Example::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_9D4431D5_Example::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_9D4431D5_Example
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly class [System.Runtime]System.Object _privateBrand
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class [System.Runtime]System.Object capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::_privateBrand
-				IL_000d: ret
-			} // end of method FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 37 (0x25)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Classes_PrivateBrandCheck/Example
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::_privateBrand
-				IL_0011: ldarg.0
-				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateGeneratedStaticMethodReceiver(object, class [System.Runtime]System.Type, object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0017: pop
-				IL_0018: ldarg.2
-				IL_0019: ldc.i4.0
-				IL_001a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_001f: call object Modules.Classes_PrivateBrandCheck/Example::hasBrand(object)
-				IL_0024: ret
-			} // end of method FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::CallCore
-
-		} // end of class FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassStaticMethod_0D98644E_Example_read
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly class [System.Runtime]System.Object _privateBrand
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class [System.Runtime]System.Object capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_0D98644E_Example_read::_privateBrand
-				IL_000d: ret
-			} // end of method FunctionObject_ClassStaticMethod_0D98644E_Example_read::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_0D98644E_Example_read::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_0D98644E_Example_read::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 37 (0x25)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Classes_PrivateBrandCheck/Example
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_0D98644E_Example_read::_privateBrand
-				IL_0011: ldarg.0
-				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateGeneratedStaticMethodReceiver(object, class [System.Runtime]System.Type, object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0017: pop
-				IL_0018: ldarg.2
-				IL_0019: ldc.i4.0
-				IL_001a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_001f: call object Modules.Classes_PrivateBrandCheck/Example::read(object)
-				IL_0024: ret
-			} // end of method FunctionObject_ClassStaticMethod_0D98644E_Example_read::CallCore
-
-		} // end of class FunctionObject_ClassStaticMethod_0D98644E_Example_read
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassStaticMethod_7FC71C11_Example_write
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly class [System.Runtime]System.Object _privateBrand
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class [System.Runtime]System.Object capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_7FC71C11_Example_write::_privateBrand
-				IL_000d: ret
-			} // end of method FunctionObject_ClassStaticMethod_7FC71C11_Example_write::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_7FC71C11_Example_write::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_7FC71C11_Example_write::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 44 (0x2c)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Classes_PrivateBrandCheck/Example
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld class [System.Runtime]System.Object Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_7FC71C11_Example_write::_privateBrand
-				IL_0011: ldarg.0
-				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateGeneratedStaticMethodReceiver(object, class [System.Runtime]System.Type, object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0017: pop
-				IL_0018: ldarg.2
-				IL_0019: ldc.i4.0
-				IL_001a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_001f: ldarg.2
-				IL_0020: ldc.i4.1
-				IL_0021: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0026: call object Modules.Classes_PrivateBrandCheck/Example::write(object, object)
-				IL_002b: ret
-			} // end of method FunctionObject_ClassStaticMethod_7FC71C11_Example_write::CallCore
-
-		} // end of class FunctionObject_ClassStaticMethod_7FC71C11_Example_write
 
 
 		// Fields
@@ -536,7 +544,7 @@
 
 		} // end of class Scope
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_E9613B62_Derived
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -556,9 +564,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_PrivateBrandCheck/Derived/FunctionObject_ClassConstructor_E9613B62_Derived::_transitionalScopes
+				IL_0008: stfld object[] Modules.Classes_PrivateBrandCheck/Derived/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_E9613B62_Derived::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -569,7 +577,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_E9613B62_Derived::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -580,9 +588,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_E9613B62_Derived::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_E9613B62_Derived
+		} // end of class FunctionObject
 
 
 		// Fields
@@ -801,8 +809,8 @@
 			[12] object,
 			[13] class [System.Runtime]System.Type,
 			[14] object[],
-			[15] class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassConstructor_9D4431D5_Example,
-			[16] class Modules.Classes_PrivateBrandCheck/Derived/FunctionObject_ClassConstructor_E9613B62_Derived,
+			[15] class Modules.Classes_PrivateBrandCheck/Example/Scope_ctor/FunctionObject,
+			[16] class Modules.Classes_PrivateBrandCheck/Derived/FunctionObject,
 			[17] object,
 			[18] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[19] class Modules.Classes_PrivateBrandCheck/Example,
@@ -829,14 +837,14 @@
 		IL_0031: ldloc.s 13
 		IL_0033: ldstr "hasBrand"
 		IL_0038: ldloc.s 13
-		IL_003a: newobj instance void Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand::.ctor(class [System.Runtime]System.Object)
+		IL_003a: newobj instance void Modules.Classes_PrivateBrandCheck/Example/Scope_hasBrand/FunctionObject::.ctor(class [System.Runtime]System.Object)
 		IL_003f: ldc.i4.1
 		IL_0040: conv.r8
 		IL_0041: ldstr "hasBrand"
 		IL_0046: ldc.i4.0
 		IL_0047: ldc.i4.1
-		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand>(!!0, float64, string, bool, bool)
-		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_C1D86EAB_Example_hasBrand>(!!0)
+		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_PrivateBrandCheck/Example/Scope_hasBrand/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_PrivateBrandCheck/Example/Scope_hasBrand/FunctionObject>(!!0)
 		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0057: pop
 		IL_0058: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
@@ -844,14 +852,14 @@
 		IL_005f: ldloc.s 13
 		IL_0061: ldstr "read"
 		IL_0066: ldloc.s 13
-		IL_0068: newobj instance void Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_0D98644E_Example_read::.ctor(class [System.Runtime]System.Object)
+		IL_0068: newobj instance void Modules.Classes_PrivateBrandCheck/Example/Scope_read/FunctionObject::.ctor(class [System.Runtime]System.Object)
 		IL_006d: ldc.i4.1
 		IL_006e: conv.r8
 		IL_006f: ldstr "read"
 		IL_0074: ldc.i4.0
 		IL_0075: ldc.i4.1
-		IL_0076: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_0D98644E_Example_read>(!!0, float64, string, bool, bool)
-		IL_007b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_0D98644E_Example_read>(!!0)
+		IL_0076: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_PrivateBrandCheck/Example/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_007b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_PrivateBrandCheck/Example/Scope_read/FunctionObject>(!!0)
 		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0085: pop
 		IL_0086: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
@@ -859,14 +867,14 @@
 		IL_008d: ldloc.s 13
 		IL_008f: ldstr "write"
 		IL_0094: ldloc.s 13
-		IL_0096: newobj instance void Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_7FC71C11_Example_write::.ctor(class [System.Runtime]System.Object)
+		IL_0096: newobj instance void Modules.Classes_PrivateBrandCheck/Example/Scope_write/FunctionObject::.ctor(class [System.Runtime]System.Object)
 		IL_009b: ldc.i4.2
 		IL_009c: conv.r8
 		IL_009d: ldstr "write"
 		IL_00a2: ldc.i4.0
 		IL_00a3: ldc.i4.1
-		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_7FC71C11_Example_write>(!!0, float64, string, bool, bool)
-		IL_00a9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassStaticMethod_7FC71C11_Example_write>(!!0)
+		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_PrivateBrandCheck/Example/Scope_write/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00a9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_PrivateBrandCheck/Example/Scope_write/FunctionObject>(!!0)
 		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_00b3: pop
 		IL_00b4: ldc.i4.1
@@ -878,14 +886,14 @@
 		IL_00be: stloc.s 14
 		IL_00c0: ldloc.s 14
 		IL_00c2: ldnull
-		IL_00c3: newobj instance void Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassConstructor_9D4431D5_Example::.ctor(object[], class [System.Runtime]System.Object)
+		IL_00c3: newobj instance void Modules.Classes_PrivateBrandCheck/Example/Scope_ctor/FunctionObject::.ctor(object[], class [System.Runtime]System.Object)
 		IL_00c8: ldloc.s 13
 		IL_00ca: ldloc.s 14
 		IL_00cc: ldc.i4.1
 		IL_00cd: conv.r8
 		IL_00ce: ldc.i4.0
 		IL_00cf: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00d4: castclass Modules.Classes_PrivateBrandCheck/Example/FunctionObject_ClassConstructor_9D4431D5_Example
+		IL_00d4: castclass Modules.Classes_PrivateBrandCheck/Example/Scope_ctor/FunctionObject
 		IL_00d9: stloc.s 15
 		IL_00db: ldloc.0
 		IL_00dc: ldloc.s 15
@@ -903,14 +911,14 @@
 		IL_00fe: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0103: stloc.s 13
 		IL_0105: ldloc.s 14
-		IL_0107: newobj instance void Modules.Classes_PrivateBrandCheck/Derived/FunctionObject_ClassConstructor_E9613B62_Derived::.ctor(object[])
+		IL_0107: newobj instance void Modules.Classes_PrivateBrandCheck/Derived/FunctionObject::.ctor(object[])
 		IL_010c: ldloc.s 13
 		IL_010e: ldloc.s 14
 		IL_0110: ldc.i4.0
 		IL_0111: conv.r8
 		IL_0112: ldc.i4.0
 		IL_0113: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0118: castclass Modules.Classes_PrivateBrandCheck/Derived/FunctionObject_ClassConstructor_E9613B62_Derived
+		IL_0118: castclass Modules.Classes_PrivateBrandCheck/Derived/FunctionObject
 		IL_011d: stloc.s 16
 		IL_011f: ldloc.s 16
 		IL_0121: ldloc.s 15

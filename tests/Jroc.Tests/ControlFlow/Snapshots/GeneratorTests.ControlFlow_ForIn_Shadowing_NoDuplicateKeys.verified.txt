@@ -33,6 +33,60 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -48,58 +102,6 @@
 			} // end of method Scope_ctor::.ctor
 
 		} // end of class Scope_ctor
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_190F5919_Base
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/FunctionObject_ClassConstructor_190F5919_Base::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassConstructor_190F5919_Base::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_190F5919_Base::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_190F5919_Base::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_190F5919_Base
 
 
 		// Fields
@@ -152,6 +154,94 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+				.field private initonly class [System.Runtime]System.Object _homeObject
+				.field private initonly object[] _lexicalSuperScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0,
+						class [System.Runtime]System.Object capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 37 (0x25)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.s 17
+					IL_0009: ldc.i4.0
+					IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000f: ldarg.0
+					IL_0010: ldarg.1
+					IL_0011: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0016: ldarg.0
+					IL_0017: ldarg.2
+					IL_0018: stfld class [System.Runtime]System.Object Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject::_homeObject
+					IL_001d: ldarg.0
+					IL_001e: ldarg.3
+					IL_001f: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_0024: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object GetLexicalSuperReceiverCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld class [System.Runtime]System.Object Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject::_homeObject
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperReceiverCore
+
+				.method family hidebysig virtual 
+					instance object[] GetLexicalSuperScopesCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperScopesCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -167,92 +257,6 @@
 			} // end of method Scope_ctor::.ctor
 
 		} // end of class Scope_ctor
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_B41CF45D_Derived
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-			.field private initonly class [System.Runtime]System.Object _homeObject
-			.field private initonly object[] _lexicalSuperScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0,
-					class [System.Runtime]System.Object capture1,
-					object[] capture2
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 37 (0x25)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.s 17
-				IL_0009: ldc.i4.0
-				IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000f: ldarg.0
-				IL_0010: ldarg.1
-				IL_0011: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived::_transitionalScopes
-				IL_0016: ldarg.0
-				IL_0017: ldarg.2
-				IL_0018: stfld class [System.Runtime]System.Object Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived::_homeObject
-				IL_001d: ldarg.0
-				IL_001e: ldarg.3
-				IL_001f: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived::_lexicalSuperScopes
-				IL_0024: ret
-			} // end of method FunctionObject_ClassConstructor_B41CF45D_Derived::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_B41CF45D_Derived::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_B41CF45D_Derived::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object GetLexicalSuperReceiverCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld class [System.Runtime]System.Object Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived::_homeObject
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_B41CF45D_Derived::GetLexicalSuperReceiverCore
-
-			.method family hidebysig virtual 
-				instance object[] GetLexicalSuperScopesCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived::_lexicalSuperScopes
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_B41CF45D_Derived::GetLexicalSuperScopesCore
-
-		} // end of class FunctionObject_ClassConstructor_B41CF45D_Derived
 
 
 		// Fields
@@ -413,8 +417,8 @@
 			[5] object,
 			[6] object[],
 			[7] class [System.Runtime]System.Type,
-			[8] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/FunctionObject_ClassConstructor_190F5919_Base,
-			[9] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived,
+			[8] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/Scope_ctor/FunctionObject,
+			[9] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject,
 			[10] object,
 			[11] bool,
 			[12] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -437,14 +441,14 @@
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0027: stloc.s 7
 		IL_0029: ldloc.s 6
-		IL_002b: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/FunctionObject_ClassConstructor_190F5919_Base::.ctor(object[])
+		IL_002b: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_0030: ldloc.s 7
 		IL_0032: ldloc.s 6
 		IL_0034: ldc.i4.0
 		IL_0035: conv.r8
 		IL_0036: ldc.i4.0
 		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_003c: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/FunctionObject_ClassConstructor_190F5919_Base
+		IL_003c: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base/Scope_ctor/FunctionObject
 		IL_0041: stloc.s 8
 		IL_0043: ldloc.0
 		IL_0044: ldloc.s 8
@@ -469,14 +473,14 @@
 		IL_007b: ldc.i4.0
 		IL_007c: ldloc.0
 		IL_007d: stelem.ref
-		IL_007e: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived::.ctor(object[], class [System.Runtime]System.Object, object[])
+		IL_007e: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject::.ctor(object[], class [System.Runtime]System.Object, object[])
 		IL_0083: ldloc.s 7
 		IL_0085: ldloc.s 6
 		IL_0087: ldc.i4.0
 		IL_0088: conv.r8
 		IL_0089: ldc.i4.0
 		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_008f: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/FunctionObject_ClassConstructor_B41CF45D_Derived
+		IL_008f: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived/Scope_ctor/FunctionObject
 		IL_0094: stloc.s 9
 		IL_0096: ldloc.s 9
 		IL_0098: ldloc.s 8

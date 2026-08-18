@@ -33,6 +33,60 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Generator_ClassMethod_WithThis/Counter/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -52,6 +106,88 @@
 		.class nested public auto ansi beforefieldinit Scope_getCountLater
 			extends [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.3
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 48 (0x30)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Generator_ClassMethod_WithThis/Counter
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Generator_ClassMethod_WithThis/Counter
+					IL_001d: ldarg.0
+					IL_001e: ldfld object[] Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject::_transitionalScopes
+					IL_0023: ldnull
+					IL_0024: call instance object Modules.Generator_ClassMethod_WithThis/Counter::getCountLater(object[], object)
+					IL_0029: ldarg.0
+					IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
+					IL_002f: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -67,138 +203,6 @@
 			} // end of method Scope_getCountLater::.ctor
 
 		} // end of class Scope_getCountLater
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_3DEBA3B4_Counter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_3DEBA3B4_Counter::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassConstructor_3DEBA3B4_Counter::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_3DEBA3B4_Counter::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_3DEBA3B4_Counter::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_3DEBA3B4_Counter
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.3
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 48 (0x30)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Generator_ClassMethod_WithThis/Counter
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Generator_ClassMethod_WithThis/Counter
-				IL_001d: ldarg.0
-				IL_001e: ldfld object[] Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::_transitionalScopes
-				IL_0023: ldnull
-				IL_0024: call instance object Modules.Generator_ClassMethod_WithThis/Counter::getCountLater(object[], object)
-				IL_0029: ldarg.0
-				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
-				IL_002f: ret
-			} // end of method FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::CallCore
-
-		} // end of class FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater
 
 
 		// Fields
@@ -259,7 +263,7 @@
 			IL_001f: ldftn instance object Modules.Generator_ClassMethod_WithThis/Counter::getCountLater(object[], object)
 			IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 			IL_002a: ldarg.1
-			IL_002b: ldtoken Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater
+			IL_002b: ldtoken Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject
 			IL_0030: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 			IL_0035: ldc.i4.0
 			IL_0036: newarr [System.Runtime]System.Object
@@ -424,7 +428,7 @@
 			[5] class [System.Runtime]System.Type,
 			[6] object,
 			[7] object[],
-			[8] class Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_3DEBA3B4_Counter,
+			[8] class Modules.Generator_ClassMethod_WithThis/Counter/Scope_ctor/FunctionObject,
 			[9] class Modules.Generator_ClassMethod_WithThis/Counter,
 			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[11] object
@@ -447,15 +451,15 @@
 		IL_0032: ldloc.s 6
 		IL_0034: ldstr "getCountLater"
 		IL_0039: ldloc.s 7
-		IL_003b: newobj instance void Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater::.ctor(object[])
+		IL_003b: newobj instance void Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject::.ctor(object[])
 		IL_0040: ldc.i4.0
 		IL_0041: conv.r8
 		IL_0042: ldstr "getCountLater"
 		IL_0047: ldc.i4.1
 		IL_0048: ldc.i4.1
-		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater>(!!0, float64, string, bool, bool)
+		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
-		IL_0053: castclass Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassMethod_5CAB54E8_Counter_getCountLater
+		IL_0053: castclass Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater/FunctionObject
 		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_005d: pop
 		IL_005e: ldc.i4.1
@@ -466,14 +470,14 @@
 		IL_0067: stelem.ref
 		IL_0068: stloc.s 7
 		IL_006a: ldloc.s 7
-		IL_006c: newobj instance void Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_3DEBA3B4_Counter::.ctor(object[])
+		IL_006c: newobj instance void Modules.Generator_ClassMethod_WithThis/Counter/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_0071: ldloc.s 5
 		IL_0073: ldloc.s 7
 		IL_0075: ldc.i4.0
 		IL_0076: conv.r8
 		IL_0077: ldc.i4.0
 		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_007d: castclass Modules.Generator_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_3DEBA3B4_Counter
+		IL_007d: castclass Modules.Generator_ClassMethod_WithThis/Counter/Scope_ctor/FunctionObject
 		IL_0082: stloc.s 8
 		IL_0084: ldloc.s 8
 		IL_0086: stloc.1

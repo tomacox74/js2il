@@ -271,9 +271,9 @@ public sealed class GeneratedFunctionObjectEmissionTests
 
         var methodFunctionType = Assert.Single(
             GetFunctionObjectTypes(compiled.Assembly),
-            type => type.Name.Contains("ClassMethod", StringComparison.Ordinal)
-                && type.Name.EndsWith("_Echo_method", StringComparison.Ordinal));
-        Assert.Equal("Echo", methodFunctionType.DeclaringType!.Name);
+            type => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName
+                && type.DeclaringType?.Name == "Scope_method"
+                && type.DeclaringType.DeclaringType?.Name == "Echo");
         var methodFunction = Assert.IsAssignableFrom<JsFunctionObject>(
             Activator.CreateInstance(methodFunctionType));
         var echoType = compiled.Assembly.GetTypes().Single(type => type.Name == "Echo");
@@ -293,13 +293,13 @@ public sealed class GeneratedFunctionObjectEmissionTests
             type => typeof(JsAsyncFunctionObject).IsAssignableFrom(type));
         Assert.Contains(
             functionObjectTypes,
-            type => type.Name.Contains("ClassMethod", StringComparison.Ordinal));
+            type => IsClassMemberFunctionObject(type, "Scope_method"));
         Assert.Contains(
             functionObjectTypes,
-            type => type.Name.Contains("ClassGetter", StringComparison.Ordinal));
+            type => IsClassMemberFunctionObject(type, "Scope_get_accessor"));
         Assert.Contains(
             functionObjectTypes,
-            type => type.Name.Contains("ClassSetter", StringComparison.Ordinal));
+            type => IsClassMemberFunctionObject(type, "Scope_set_accessor"));
         Assert.Contains(
             functionObjectTypes,
             type => typeof(JsClassConstructorObject).IsAssignableFrom(type));
@@ -345,9 +345,7 @@ public sealed class GeneratedFunctionObjectEmissionTests
         using var compiled = CompileAndLoad(Source);
         var constructorObjectType = Assert.Single(
             GetFunctionObjectTypes(compiled.Assembly),
-            type => type.Name.Contains(
-                "ClassConstructor",
-                StringComparison.Ordinal)
+            type => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName
                 && type.DeclaringType?.Name == "Echo");
         Assert.Equal(
             typeof(JsClassConstructorObject),
@@ -400,6 +398,11 @@ public sealed class GeneratedFunctionObjectEmissionTests
             constructorObject,
             ObjectRuntime.GetProperty(prototype!, "constructor"));
     }
+
+    private static bool IsClassMemberFunctionObject(Type type, string ownerScopeName)
+        => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName
+            && type.DeclaringType?.Name == ownerScopeName
+            && type.DeclaringType.DeclaringType?.Name == "Example";
 
     [Fact]
     public void CommonArityAdaptersDoNotAllocateArgumentArrays()

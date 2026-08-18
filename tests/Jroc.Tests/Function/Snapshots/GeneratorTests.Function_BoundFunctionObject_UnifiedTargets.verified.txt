@@ -603,6 +603,60 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 23 (0x17)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.s 9
+					IL_0009: ldc.i4.0
+					IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000f: ldarg.0
+					IL_0010: ldarg.1
+					IL_0011: stfld object[] Modules.Function_BoundFunctionObject_UnifiedTargets/Box/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0016: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -618,58 +672,6 @@
 			} // end of method Scope_ctor::.ctor
 
 		} // end of class Scope_ctor
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_5F154764_Box
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 23 (0x17)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.s 9
-				IL_0009: ldc.i4.0
-				IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000f: ldarg.0
-				IL_0010: ldarg.1
-				IL_0011: stfld object[] Modules.Function_BoundFunctionObject_UnifiedTargets/Box/FunctionObject_ClassConstructor_5F154764_Box::_transitionalScopes
-				IL_0016: ret
-			} // end of method FunctionObject_ClassConstructor_5F154764_Box::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_5F154764_Box::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_5F154764_Box::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_5F154764_Box
 
 
 		// Fields
@@ -828,7 +830,7 @@
 			[30] class Modules.Function_BoundFunctionObject_UnifiedTargets/FunctionExpression_object/FunctionObject,
 			[31] class Modules.Function_BoundFunctionObject_UnifiedTargets/ArrowFunction_L30C15/FunctionObject,
 			[32] class [System.Runtime]System.Type,
-			[33] class Modules.Function_BoundFunctionObject_UnifiedTargets/Box/FunctionObject_ClassConstructor_5F154764_Box,
+			[33] class Modules.Function_BoundFunctionObject_UnifiedTargets/Box/Scope_ctor/FunctionObject,
 			[34] class Modules.Function_BoundFunctionObject_UnifiedTargets/FunctionExpression_L59C13/FunctionObject
 		)
 
@@ -1258,14 +1260,14 @@
 		IL_0519: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_051e: stloc.s 32
 		IL_0520: ldloc.s 16
-		IL_0522: newobj instance void Modules.Function_BoundFunctionObject_UnifiedTargets/Box/FunctionObject_ClassConstructor_5F154764_Box::.ctor(object[])
+		IL_0522: newobj instance void Modules.Function_BoundFunctionObject_UnifiedTargets/Box/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_0527: ldloc.s 32
 		IL_0529: ldloc.s 16
 		IL_052b: ldc.i4.2
 		IL_052c: conv.r8
 		IL_052d: ldc.i4.0
 		IL_052e: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0533: castclass Modules.Function_BoundFunctionObject_UnifiedTargets/Box/FunctionObject_ClassConstructor_5F154764_Box
+		IL_0533: castclass Modules.Function_BoundFunctionObject_UnifiedTargets/Box/Scope_ctor/FunctionObject
 		IL_0538: stloc.s 33
 		IL_053a: ldloc.s 33
 		IL_053c: stloc.s 12

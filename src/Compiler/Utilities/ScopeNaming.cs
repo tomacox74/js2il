@@ -25,8 +25,15 @@ internal static class ScopeNaming
             return scope.Name;
         }
 
+        var qualifiedName = scope.GetQualifiedName();
+        if (scope.Parent?.Kind == ScopeKind.Class
+            && !string.IsNullOrWhiteSpace(scope.DotNetTypeName))
+        {
+            qualifiedName = $"{scope.Parent.GetQualifiedName()}/{scope.DotNetTypeName}";
+        }
+
         var moduleName = GetModuleName(scope);
-        return $"{moduleName}/{scope.GetQualifiedName()}";
+        return $"{moduleName}/{qualifiedName}";
     }
 
     public static string GetRegistryClassName(Scope classScope)

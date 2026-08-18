@@ -624,6 +624,60 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -643,6 +697,79 @@
 		.class nested public auto ansi beforefieldinit Scope_setBitTrue
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 47 (0x2f)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance object Modules.Compile_Performance_PrimeJavaScript/BitArray::setBitTrue(float64)
+					IL_002e: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -844,6 +971,93 @@
 
 			} // end of class Block_L83C29
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 12
+					// Code size: 71 (0x47)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: ldarg.2
+					IL_002a: ldc.i4.1
+					IL_002b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0035: ldarg.2
+					IL_0036: ldc.i4.2
+					IL_0037: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_003c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0041: call instance object Modules.Compile_Performance_PrimeJavaScript/BitArray::setBitsTrue(float64, float64, float64)
+					IL_0046: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -864,6 +1078,80 @@
 		.class nested public auto ansi beforefieldinit Scope_testBitTrue
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 52 (0x34)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance float64 Modules.Compile_Performance_PrimeJavaScript/BitArray::testBitTrue(float64)
+					IL_002e: box [System.Runtime]System.Double
+					IL_0033: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -903,6 +1191,78 @@
 
 			} // end of class Block_L107C34
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 52 (0x34)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance float64 Modules.Compile_Performance_PrimeJavaScript/BitArray::searchBitFalse(float64)
+					IL_002e: box [System.Runtime]System.Double
+					IL_0033: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -919,360 +1279,6 @@
 			} // end of method Scope_searchBitFalse::.ctor
 
 		} // end of class Scope_searchBitFalse
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_29DE0AB5_BitArray
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassConstructor_29DE0AB5_BitArray::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassConstructor_29DE0AB5_BitArray::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_29DE0AB5_BitArray::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_29DE0AB5_BitArray::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_29DE0AB5_BitArray
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_64943931_BitArray_setBitTrue
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 15 (0xf)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
-			} // end of method FunctionObject_ClassMethod_64943931_BitArray_setBitTrue::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_64943931_BitArray_setBitTrue::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_64943931_BitArray_setBitTrue::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 47 (0x2f)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance object Modules.Compile_Performance_PrimeJavaScript/BitArray::setBitTrue(float64)
-				IL_002e: ret
-			} // end of method FunctionObject_ClassMethod_64943931_BitArray_setBitTrue::CallCore
-
-		} // end of class FunctionObject_ClassMethod_64943931_BitArray_setBitTrue
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 12
-				// Code size: 71 (0x47)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: ldarg.2
-				IL_002a: ldc.i4.1
-				IL_002b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0035: ldarg.2
-				IL_0036: ldc.i4.2
-				IL_0037: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_003c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0041: call instance object Modules.Compile_Performance_PrimeJavaScript/BitArray::setBitsTrue(float64, float64, float64)
-				IL_0046: ret
-			} // end of method FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::CallCore
-
-		} // end of class FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 15 (0xf)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
-			} // end of method FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 52 (0x34)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance float64 Modules.Compile_Performance_PrimeJavaScript/BitArray::testBitTrue(float64)
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: ret
-			} // end of method FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue::CallCore
-
-		} // end of class FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 15 (0xf)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
-			} // end of method FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 52 (0x34)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance float64 Modules.Compile_Performance_PrimeJavaScript/BitArray::searchBitFalse(float64)
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: ret
-			} // end of method FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse::CallCore
-
-		} // end of class FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse
 
 
 		// Fields
@@ -1780,6 +1786,65 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly class Modules.Compile_Performance_PrimeJavaScript/Scope _environment0_Compile_Performance_PrimeJavaScript
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Compile_Performance_PrimeJavaScript/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 29 (0x1d)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld class Modules.Compile_Performance_PrimeJavaScript/Scope Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_ctor/FunctionObject::_environment0_Compile_Performance_PrimeJavaScript
+					IL_0015: ldarg.0
+					IL_0016: ldarg.2
+					IL_0017: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_001c: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -1819,6 +1884,81 @@
 
 			} // end of class Block_L133C2
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_runSieve/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 35 (0x23)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_runSieve/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_001d: call instance class Modules.Compile_Performance_PrimeJavaScript/PrimeSieve Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::runSieve()
+					IL_0022: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -1839,6 +1979,84 @@
 		.class nested public auto ansi beforefieldinit Scope_countPrimes
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_countPrimes/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 40 (0x28)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_countPrimes/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_001d: call instance float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::countPrimes()
+					IL_0022: box [System.Runtime]System.Double
+					IL_0027: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -1979,6 +2197,84 @@
 
 			} // end of class Scope_For_L159C7
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_getPrimes/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_getPrimes/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::getPrimes(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -2019,6 +2315,85 @@
 
 			} // end of class Block_L187C2
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_validatePrimeCount/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 47 (0x2f)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/Scope_validatePrimeCount/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance bool Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::validatePrimeCount(object)
+					IL_0029: box [System.Runtime]System.Boolean
+					IL_002e: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -2035,371 +2410,6 @@
 			} // end of method Scope_validatePrimeCount::.ctor
 
 		} // end of class Scope_validatePrimeCount
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_CC015EE2_PrimeSieve
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly class Modules.Compile_Performance_PrimeJavaScript/Scope _environment0_Compile_Performance_PrimeJavaScript
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class Modules.Compile_Performance_PrimeJavaScript/Scope capture0,
-					object[] capture1
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 29 (0x1d)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld class Modules.Compile_Performance_PrimeJavaScript/Scope Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassConstructor_CC015EE2_PrimeSieve::_environment0_Compile_Performance_PrimeJavaScript
-				IL_0015: ldarg.0
-				IL_0016: ldarg.2
-				IL_0017: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassConstructor_CC015EE2_PrimeSieve::_transitionalScopes
-				IL_001c: ret
-			} // end of method FunctionObject_ClassConstructor_CC015EE2_PrimeSieve::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_CC015EE2_PrimeSieve::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_CC015EE2_PrimeSieve::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_CC015EE2_PrimeSieve
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 35 (0x23)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_001d: call instance class Modules.Compile_Performance_PrimeJavaScript/PrimeSieve Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::runSieve()
-				IL_0022: ret
-			} // end of method FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve::CallCore
-
-		} // end of class FunctionObject_ClassMethod_95B40C02_PrimeSieve_runSieve
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 40 (0x28)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_001d: call instance float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::countPrimes()
-				IL_0022: box [System.Runtime]System.Double
-				IL_0027: ret
-			} // end of method FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes::CallCore
-
-		} // end of class FunctionObject_ClassMethod_ACB840E2_PrimeSieve_countPrimes
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::getPrimes(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes::CallCore
-
-		} // end of class FunctionObject_ClassMethod_3CB2830D_PrimeSieve_getPrimes
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 47 (0x2f)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve/FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance bool Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::validatePrimeCount(object)
-				IL_0029: box [System.Runtime]System.Boolean
-				IL_002e: ret
-			} // end of method FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount::CallCore
-
-		} // end of class FunctionObject_ClassMethod_35212B1B_PrimeSieve_validatePrimeCount
 
 
 		// Fields
@@ -3147,7 +3157,7 @@
 			[7] float64,
 			[8] class [System.Runtime]System.Type,
 			[9] object[],
-			[10] class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassConstructor_29DE0AB5_BitArray,
+			[10] class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject,
 			[11] class Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject
 		)
 
@@ -3257,14 +3267,14 @@
 		IL_016b: stloc.s 9
 		IL_016d: ldloc.s 5
 		IL_016f: ldstr "setBitTrue"
-		IL_0174: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_64943931_BitArray_setBitTrue::.ctor()
+		IL_0174: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject::.ctor()
 		IL_0179: ldc.i4.1
 		IL_017a: conv.r8
 		IL_017b: ldstr "setBitTrue"
 		IL_0180: ldc.i4.1
 		IL_0181: ldc.i4.1
-		IL_0182: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_64943931_BitArray_setBitTrue>(!!0, float64, string, bool, bool)
-		IL_0187: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_64943931_BitArray_setBitTrue>(!!0)
+		IL_0182: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0187: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject>(!!0)
 		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0191: pop
 		IL_0192: ldc.i4.1
@@ -3277,42 +3287,42 @@
 		IL_019e: ldloc.s 5
 		IL_01a0: ldstr "setBitsTrue"
 		IL_01a5: ldloc.s 9
-		IL_01a7: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue::.ctor(object[])
+		IL_01a7: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject::.ctor(object[])
 		IL_01ac: ldc.i4.3
 		IL_01ad: conv.r8
 		IL_01ae: ldstr "setBitsTrue"
 		IL_01b3: ldc.i4.1
 		IL_01b4: ldc.i4.1
-		IL_01b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue>(!!0, float64, string, bool, bool)
-		IL_01ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_9D7610E2_BitArray_setBitsTrue>(!!0)
+		IL_01b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject>(!!0)
 		IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_01c4: pop
 		IL_01c5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_01ca: stloc.s 9
 		IL_01cc: ldloc.s 5
 		IL_01ce: ldstr "testBitTrue"
-		IL_01d3: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue::.ctor()
+		IL_01d3: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject::.ctor()
 		IL_01d8: ldc.i4.1
 		IL_01d9: conv.r8
 		IL_01da: ldstr "testBitTrue"
 		IL_01df: ldc.i4.1
 		IL_01e0: ldc.i4.1
-		IL_01e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue>(!!0, float64, string, bool, bool)
-		IL_01e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_F5DAB081_BitArray_testBitTrue>(!!0)
+		IL_01e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject>(!!0)
 		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_01f0: pop
 		IL_01f1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_01f6: stloc.s 9
 		IL_01f8: ldloc.s 5
 		IL_01fa: ldstr "searchBitFalse"
-		IL_01ff: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse::.ctor()
+		IL_01ff: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject::.ctor()
 		IL_0204: ldc.i4.1
 		IL_0205: conv.r8
 		IL_0206: ldstr "searchBitFalse"
 		IL_020b: ldc.i4.1
 		IL_020c: ldc.i4.1
-		IL_020d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse>(!!0, float64, string, bool, bool)
-		IL_0212: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassMethod_93DC7074_BitArray_searchBitFalse>(!!0)
+		IL_020d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0212: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject>(!!0)
 		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_021c: pop
 		IL_021d: ldc.i4.1
@@ -3323,14 +3333,14 @@
 		IL_0226: stelem.ref
 		IL_0227: stloc.s 9
 		IL_0229: ldloc.s 9
-		IL_022b: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassConstructor_29DE0AB5_BitArray::.ctor(object[])
+		IL_022b: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_0230: ldloc.s 8
 		IL_0232: ldloc.s 9
 		IL_0234: ldc.i4.1
 		IL_0235: conv.r8
 		IL_0236: ldc.i4.0
 		IL_0237: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_023c: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray/FunctionObject_ClassConstructor_29DE0AB5_BitArray
+		IL_023c: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject
 		IL_0241: stloc.s 10
 		IL_0243: ldloc.0
 		IL_0244: ldloc.s 10

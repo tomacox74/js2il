@@ -37,6 +37,112 @@
 			.class nested public auto ansi beforefieldinit Scope_n
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Fields
+					.field private initonly class [System.Runtime]System.Object _homeObject
+					.field private initonly object[] _lexicalSuperScopes
+
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor (
+							class [System.Runtime]System.Object capture0,
+							object[] capture1
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 30 (0x1e)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ldarg.0
+						IL_0007: ldc.i4.s 17
+						IL_0009: ldc.i4.0
+						IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+						IL_000f: ldarg.0
+						IL_0010: ldarg.1
+						IL_0011: stfld class [System.Runtime]System.Object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::_homeObject
+						IL_0016: ldarg.0
+						IL_0017: ldarg.2
+						IL_0018: stfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::_lexicalSuperScopes
+						IL_001d: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.1
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object GetLexicalSuperReceiverCore () cil managed 
+					{
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: ldfld class [System.Runtime]System.Object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::_homeObject
+						IL_0006: ret
+					} // end of method FunctionObject::GetLexicalSuperReceiverCore
+
+					.method family hidebysig virtual 
+						instance object[] GetLexicalSuperScopesCore () cil managed 
+					{
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: ldfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::_lexicalSuperScopes
+						IL_0006: ret
+					} // end of method FunctionObject::GetLexicalSuperScopesCore
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 35 (0x23)
+						.maxstack 8
+
+						IL_0000: ldarg.1
+						IL_0001: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+						IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+						IL_000b: ldc.i4.1
+						IL_000c: newarr [System.Runtime]System.Object
+						IL_0011: ldnull
+						IL_0012: ldarg.0
+						IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+						IL_0018: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+						IL_001d: call instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
+						IL_0022: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
+
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
@@ -53,7 +159,7 @@
 
 			} // end of class Scope_n
 
-			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_0C45EDF4_NestedDerived
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
 				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 			{
 				// Fields
@@ -73,9 +179,9 @@
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 					IL_0006: ldarg.0
 					IL_0007: ldarg.1
-					IL_0008: stfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassConstructor_0C45EDF4_NestedDerived::_transitionalScopes
+					IL_0008: stfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject::_transitionalScopes
 					IL_000d: ret
-				} // end of method FunctionObject_ClassConstructor_0C45EDF4_NestedDerived::.ctor
+				} // end of method FunctionObject::.ctor
 
 				.method public hidebysig specialname virtual 
 					instance bool get_IsConstructor () cil managed 
@@ -86,7 +192,7 @@
 
 					IL_0000: ldc.i4.1
 					IL_0001: ret
-				} // end of method FunctionObject_ClassConstructor_0C45EDF4_NestedDerived::get_IsConstructor
+				} // end of method FunctionObject::get_IsConstructor
 
 				.method public hidebysig specialname virtual 
 					instance bool get_RequiresInvocationContext () cil managed 
@@ -97,113 +203,9 @@
 
 					IL_0000: ldc.i4.0
 					IL_0001: ret
-				} // end of method FunctionObject_ClassConstructor_0C45EDF4_NestedDerived::get_RequiresInvocationContext
+				} // end of method FunctionObject::get_RequiresInvocationContext
 
-			} // end of class FunctionObject_ClassConstructor_0C45EDF4_NestedDerived
-
-			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_A5621FA9_NestedDerived_n
-				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-			{
-				// Fields
-				.field private initonly class [System.Runtime]System.Object _homeObject
-				.field private initonly object[] _lexicalSuperScopes
-
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor (
-						class [System.Runtime]System.Object capture0,
-						object[] capture1
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 30 (0x1e)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-					IL_0006: ldarg.0
-					IL_0007: ldc.i4.s 17
-					IL_0009: ldc.i4.0
-					IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-					IL_000f: ldarg.0
-					IL_0010: ldarg.1
-					IL_0011: stfld class [System.Runtime]System.Object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::_homeObject
-					IL_0016: ldarg.0
-					IL_0017: ldarg.2
-					IL_0018: stfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::_lexicalSuperScopes
-					IL_001d: ret
-				} // end of method FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::.ctor
-
-				.method public hidebysig specialname virtual 
-					instance bool get_IsConstructor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 2 (0x2)
-					.maxstack 8
-
-					IL_0000: ldc.i4.0
-					IL_0001: ret
-				} // end of method FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::get_IsConstructor
-
-				.method public hidebysig specialname virtual 
-					instance bool get_RequiresInvocationContext () cil managed 
-				{
-					// Header size: 1
-					// Code size: 2 (0x2)
-					.maxstack 8
-
-					IL_0000: ldc.i4.1
-					IL_0001: ret
-				} // end of method FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::get_RequiresInvocationContext
-
-				.method family hidebysig virtual 
-					instance object GetLexicalSuperReceiverCore () cil managed 
-				{
-					// Header size: 1
-					// Code size: 7 (0x7)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: ldfld class [System.Runtime]System.Object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::_homeObject
-					IL_0006: ret
-				} // end of method FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::GetLexicalSuperReceiverCore
-
-				.method family hidebysig virtual 
-					instance object[] GetLexicalSuperScopesCore () cil managed 
-				{
-					// Header size: 1
-					// Code size: 7 (0x7)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: ldfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::_lexicalSuperScopes
-					IL_0006: ret
-				} // end of method FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::GetLexicalSuperScopesCore
-
-				.method family hidebysig virtual 
-					instance object CallCore (
-						object thisArgument,
-						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 35 (0x23)
-					.maxstack 8
-
-					IL_0000: ldarg.1
-					IL_0001: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-					IL_000b: ldc.i4.1
-					IL_000c: newarr [System.Runtime]System.Object
-					IL_0011: ldnull
-					IL_0012: ldarg.0
-					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-					IL_0018: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-					IL_001d: call instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
-					IL_0022: ret
-				} // end of method FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::CallCore
-
-			} // end of class FunctionObject_ClassMethod_A5621FA9_NestedDerived_n
+			} // end of class FunctionObject
 
 
 			// Fields
@@ -404,7 +406,7 @@
 				[2] class [System.Runtime]System.Type,
 				[3] object,
 				[4] object[],
-				[5] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassConstructor_0C45EDF4_NestedDerived,
+				[5] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject,
 				[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
@@ -425,14 +427,14 @@
 			IL_002f: ldstr "n"
 			IL_0034: ldloc.3
 			IL_0035: ldloc.s 4
-			IL_0037: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n::.ctor(class [System.Runtime]System.Object, object[])
+			IL_0037: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::.ctor(class [System.Runtime]System.Object, object[])
 			IL_003c: ldc.i4.0
 			IL_003d: conv.r8
 			IL_003e: ldstr "n"
 			IL_0043: ldc.i4.1
 			IL_0044: ldc.i4.1
-			IL_0045: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n>(!!0, float64, string, bool, bool)
-			IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassMethod_A5621FA9_NestedDerived_n>(!!0)
+			IL_0045: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject>(!!0)
 			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 			IL_0054: pop
 			IL_0055: ldc.i4.2
@@ -447,14 +449,14 @@
 			IL_0062: stelem.ref
 			IL_0063: stloc.s 4
 			IL_0065: ldloc.s 4
-			IL_0067: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassConstructor_0C45EDF4_NestedDerived::.ctor(object[])
+			IL_0067: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject::.ctor(object[])
 			IL_006c: ldloc.2
 			IL_006d: ldloc.s 4
 			IL_006f: ldc.i4.0
 			IL_0070: conv.r8
 			IL_0071: ldc.i4.0
 			IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-			IL_0077: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject_ClassConstructor_0C45EDF4_NestedDerived
+			IL_0077: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject
 			IL_007c: stloc.s 5
 			IL_007e: ldarg.0
 			IL_007f: ldfld object Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::GlobalBase
@@ -552,6 +554,72 @@
 		.class nested public auto ansi beforefieldinit Scope_m
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 40 (0x28)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
+					IL_001d: call instance float64 Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase::m()
+					IL_0022: box [System.Runtime]System.Double
+					IL_0027: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -568,7 +636,7 @@
 
 		} // end of class Scope_m
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_F01B26D3_GlobalBase
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -588,9 +656,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassConstructor_F01B26D3_GlobalBase::_transitionalScopes
+				IL_0008: stfld object[] Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_F01B26D3_GlobalBase::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -601,7 +669,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_F01B26D3_GlobalBase::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -612,73 +680,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_F01B26D3_GlobalBase::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_F01B26D3_GlobalBase
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 40 (0x28)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
-				IL_001d: call instance float64 Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase::m()
-				IL_0022: box [System.Runtime]System.Double
-				IL_0027: ret
-			} // end of method FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m::CallCore
-
-		} // end of class FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -762,7 +766,7 @@
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
 			[4] object,
-			[5] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassConstructor_F01B26D3_GlobalBase
+			[5] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::.ctor()
@@ -800,14 +804,14 @@
 		IL_0055: stloc.2
 		IL_0056: ldloc.s 4
 		IL_0058: ldstr "m"
-		IL_005d: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m::.ctor()
+		IL_005d: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject::.ctor()
 		IL_0062: ldc.i4.0
 		IL_0063: conv.r8
 		IL_0064: ldstr "m"
 		IL_0069: ldc.i4.0
 		IL_006a: ldc.i4.1
-		IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m>(!!0, float64, string, bool, bool)
-		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassMethod_C3B86AF7_GlobalBase_m>(!!0)
+		IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject>(!!0)
 		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_007a: pop
 		IL_007b: ldc.i4.1
@@ -818,14 +822,14 @@
 		IL_0084: stelem.ref
 		IL_0085: stloc.2
 		IL_0086: ldloc.2
-		IL_0087: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassConstructor_F01B26D3_GlobalBase::.ctor(object[])
+		IL_0087: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject::.ctor(object[])
 		IL_008c: ldloc.3
 		IL_008d: ldloc.2
 		IL_008e: ldc.i4.0
 		IL_008f: conv.r8
 		IL_0090: ldc.i4.0
 		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0096: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject_ClassConstructor_F01B26D3_GlobalBase
+		IL_0096: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject
 		IL_009b: stloc.s 5
 		IL_009d: ldloc.0
 		IL_009e: ldloc.s 5

@@ -33,6 +33,84 @@
 		.class nested public auto ansi beforefieldinit Scope_logSecret
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class [System.Runtime]System.Object _privateBrand
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class [System.Runtime]System.Object capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject::_privateBrand
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 40 (0x28)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldarg.0
+					IL_0012: ldfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject::_privateBrand
+					IL_0017: ldarg.0
+					IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_001d: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+					IL_0022: call instance object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::logSecret()
+					IL_0027: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -49,7 +127,7 @@
 
 		} // end of class Scope_logSecret
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_B2B50D0B_Greeter
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -71,12 +149,12 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassConstructor_B2B50D0B_Greeter::_transitionalScopes
+				IL_0008: stfld object[] Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::_transitionalScopes
 				IL_000d: ldarg.0
 				IL_000e: ldarg.2
-				IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassConstructor_B2B50D0B_Greeter::_privateBrand
+				IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::_privateBrand
 				IL_0014: ret
-			} // end of method FunctionObject_ClassConstructor_B2B50D0B_Greeter::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -87,7 +165,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_B2B50D0B_Greeter::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -98,85 +176,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_B2B50D0B_Greeter::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_B2B50D0B_Greeter
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_96735848_Greeter_logSecret
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly class [System.Runtime]System.Object _privateBrand
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class [System.Runtime]System.Object capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassMethod_96735848_Greeter_logSecret::_privateBrand
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_96735848_Greeter_logSecret::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_96735848_Greeter_logSecret::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_96735848_Greeter_logSecret::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 40 (0x28)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldarg.0
-				IL_0012: ldfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassMethod_96735848_Greeter_logSecret::_privateBrand
-				IL_0017: ldarg.0
-				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_001d: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
-				IL_0022: call instance object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::logSecret()
-				IL_0027: ret
-			} // end of method FunctionObject_ClassMethod_96735848_Greeter_logSecret::CallCore
-
-		} // end of class FunctionObject_ClassMethod_96735848_Greeter_logSecret
+		} // end of class FunctionObject
 
 
 		// Fields
@@ -278,7 +280,7 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassConstructor_B2B50D0B_Greeter,
+			[6] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject,
 			[7] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
 		)
 
@@ -299,14 +301,14 @@
 		IL_0030: ldloc.s 4
 		IL_0032: ldstr "logSecret"
 		IL_0037: ldloc.3
-		IL_0038: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassMethod_96735848_Greeter_logSecret::.ctor(class [System.Runtime]System.Object)
+		IL_0038: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject::.ctor(class [System.Runtime]System.Object)
 		IL_003d: ldc.i4.0
 		IL_003e: conv.r8
 		IL_003f: ldstr "logSecret"
 		IL_0044: ldc.i4.1
 		IL_0045: ldc.i4.1
-		IL_0046: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassMethod_96735848_Greeter_logSecret>(!!0, float64, string, bool, bool)
-		IL_004b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassMethod_96735848_Greeter_logSecret>(!!0)
+		IL_0046: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_004b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject>(!!0)
 		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0055: pop
 		IL_0056: ldc.i4.1
@@ -318,14 +320,14 @@
 		IL_0060: stloc.s 5
 		IL_0062: ldloc.s 5
 		IL_0064: ldnull
-		IL_0065: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassConstructor_B2B50D0B_Greeter::.ctor(object[], class [System.Runtime]System.Object)
+		IL_0065: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::.ctor(object[], class [System.Runtime]System.Object)
 		IL_006a: ldloc.3
 		IL_006b: ldloc.s 5
 		IL_006d: ldc.i4.0
 		IL_006e: conv.r8
 		IL_006f: ldc.i4.0
 		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0075: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject_ClassConstructor_B2B50D0B_Greeter
+		IL_0075: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject
 		IL_007a: stloc.s 6
 		IL_007c: ldloc.s 6
 		IL_007e: stloc.1

@@ -5299,6 +5299,60 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -5318,6 +5372,91 @@
 		.class nested public auto ansi beforefieldinit Scope_run
 			extends [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorScope
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.3
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 55 (0x37)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
+					IL_001d: ldarg.0
+					IL_001e: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject::_transitionalScopes
+					IL_0023: ldnull
+					IL_0024: ldarg.2
+					IL_0025: ldc.i4.0
+					IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_002b: call instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::run(object[], object, object)
+					IL_0030: ldarg.0
+					IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
+					IL_0036: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -5337,6 +5476,78 @@
 		.class nested public auto ansi beforefieldinit Scope_callRun
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::callRun(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -5356,6 +5567,82 @@
 		.class nested public auto ansi beforefieldinit Scope_twice
 			extends [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorScope
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 22 (0x16)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.3
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_twice/FunctionObject::_transitionalScopes
+					IL_0015: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 26 (0x1a)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_twice/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: ldarg.2
+					IL_0008: ldc.i4.0
+					IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_000e: call object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::twice(object[], object, object)
+					IL_0013: ldarg.0
+					IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
+					IL_0019: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -5371,285 +5658,6 @@
 			} // end of method Scope_twice::.ctor
 
 		} // end of class Scope_twice
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.3
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 55 (0x37)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
-				IL_001d: ldarg.0
-				IL_001e: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::_transitionalScopes
-				IL_0023: ldnull
-				IL_0024: ldarg.2
-				IL_0025: ldc.i4.0
-				IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_002b: call instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::run(object[], object, object)
-				IL_0030: ldarg.0
-				IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
-				IL_0036: ret
-			} // end of method FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::CallCore
-
-		} // end of class FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 15 (0xf)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
-			} // end of method FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::callRun(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun::CallCore
-
-		} // end of class FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 22 (0x16)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.3
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ldarg.0
-				IL_000f: ldarg.1
-				IL_0010: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::_transitionalScopes
-				IL_0015: ret
-			} // end of method FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 26 (0x1a)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::_transitionalScopes
-				IL_0006: ldnull
-				IL_0007: ldarg.2
-				IL_0008: ldc.i4.0
-				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: call object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::twice(object[], object, object)
-				IL_0013: ldarg.0
-				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
-				IL_0019: ret
-			} // end of method FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::CallCore
-
-		} // end of class FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice
 
 
 		// Fields
@@ -5715,7 +5723,7 @@
 			IL_0020: ldftn instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::run(object[], object, object)
 			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_002b: ldarg.1
-			IL_002c: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run
+			IL_002c: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject
 			IL_0031: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 			IL_0036: ldc.i4.1
 			IL_0037: newarr [System.Runtime]System.Object
@@ -5990,7 +5998,7 @@
 			IL_0020: ldftn object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::twice(object[], object, object)
 			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_002b: ldarg.0
-			IL_002c: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice
+			IL_002c: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_twice/FunctionObject
 			IL_0031: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 			IL_0036: ldc.i4.1
 			IL_0037: newarr [System.Runtime]System.Object
@@ -6237,6 +6245,115 @@
 		.class nested public auto ansi beforefieldinit Scope_callSuper
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class [System.Runtime]System.Object _homeObject
+				.field private initonly object[] _lexicalSuperScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class [System.Runtime]System.Object capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 30 (0x1e)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.s 17
+					IL_0009: ldc.i4.0
+					IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000f: ldarg.0
+					IL_0010: ldarg.1
+					IL_0011: stfld class [System.Runtime]System.Object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject::_homeObject
+					IL_0016: ldarg.0
+					IL_0017: ldarg.2
+					IL_0018: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject::_lexicalSuperScopes
+					IL_001d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object GetLexicalSuperReceiverCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld class [System.Runtime]System.Object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject::_homeObject
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperReceiverCore
+
+				.method family hidebysig virtual 
+					instance object[] GetLexicalSuperScopesCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject::_lexicalSuperScopes
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperScopesCore
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass::callSuper(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -6253,7 +6370,7 @@
 
 		} // end of class Scope_callSuper
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -6273,9 +6390,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::_transitionalScopes
+				IL_0008: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -6286,7 +6403,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -6297,116 +6414,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly class [System.Runtime]System.Object _homeObject
-			.field private initonly object[] _lexicalSuperScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class [System.Runtime]System.Object capture0,
-					object[] capture1
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 30 (0x1e)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.s 17
-				IL_0009: ldc.i4.0
-				IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000f: ldarg.0
-				IL_0010: ldarg.1
-				IL_0011: stfld class [System.Runtime]System.Object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::_homeObject
-				IL_0016: ldarg.0
-				IL_0017: ldarg.2
-				IL_0018: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::_lexicalSuperScopes
-				IL_001d: ret
-			} // end of method FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object GetLexicalSuperReceiverCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld class [System.Runtime]System.Object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::_homeObject
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::GetLexicalSuperReceiverCore
-
-			.method family hidebysig virtual 
-				instance object[] GetLexicalSuperScopesCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::_lexicalSuperScopes
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::GetLexicalSuperScopesCore
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass::callSuper(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::CallCore
-
-		} // end of class FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper
+		} // end of class FunctionObject
 
 
 		// Fields
@@ -6558,8 +6568,8 @@
 			[7] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/FunctionExpression_object/FunctionObject,
 			[8] class [System.Runtime]System.Type,
 			[9] object,
-			[10] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass,
-			[11] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
+			[10] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_ctor/FunctionObject,
+			[11] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
@@ -6696,29 +6706,29 @@
 		IL_0154: ldloc.s 9
 		IL_0156: ldstr "run"
 		IL_015b: ldloc.2
-		IL_015c: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run::.ctor(object[])
+		IL_015c: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject::.ctor(object[])
 		IL_0161: ldc.i4.1
 		IL_0162: conv.r8
 		IL_0163: ldstr "run"
 		IL_0168: ldc.i4.1
 		IL_0169: ldc.i4.1
-		IL_016a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run>(!!0, float64, string, bool, bool)
+		IL_016a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorFunction::InitializeFunctionObject(object)
-		IL_0174: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_B5ED7E37_AsyncGeneratorClass_run
+		IL_0174: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_run/FunctionObject
 		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_017e: pop
 		IL_017f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0184: stloc.2
 		IL_0185: ldloc.s 9
 		IL_0187: ldstr "callRun"
-		IL_018c: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun::.ctor()
+		IL_018c: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_callRun/FunctionObject::.ctor()
 		IL_0191: ldc.i4.1
 		IL_0192: conv.r8
 		IL_0193: ldstr "callRun"
 		IL_0198: ldc.i4.1
 		IL_0199: ldc.i4.1
-		IL_019a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun>(!!0, float64, string, bool, bool)
-		IL_019f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassMethod_4A6554A3_AsyncGeneratorClass_callRun>(!!0)
+		IL_019a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_callRun/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_019f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_callRun/FunctionObject>(!!0)
 		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_01a9: pop
 		IL_01aa: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
@@ -6726,15 +6736,15 @@
 		IL_01b0: ldloc.s 8
 		IL_01b2: ldstr "twice"
 		IL_01b7: ldloc.2
-		IL_01b8: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice::.ctor(object[])
+		IL_01b8: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_twice/FunctionObject::.ctor(object[])
 		IL_01bd: ldc.i4.1
 		IL_01be: conv.r8
 		IL_01bf: ldstr "twice"
 		IL_01c4: ldc.i4.1
 		IL_01c5: ldc.i4.1
-		IL_01c6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice>(!!0, float64, string, bool, bool)
+		IL_01c6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_twice/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorFunction::InitializeFunctionObject(object)
-		IL_01d0: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassStaticMethod_2A88B5AC_AsyncGeneratorClass_twice
+		IL_01d0: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_twice/FunctionObject
 		IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_01da: pop
 		IL_01db: ldc.i4.1
@@ -6745,14 +6755,14 @@
 		IL_01e4: stelem.ref
 		IL_01e5: stloc.2
 		IL_01e6: ldloc.2
-		IL_01e7: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::.ctor(object[])
+		IL_01e7: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_01ec: ldloc.s 8
 		IL_01ee: ldloc.2
 		IL_01ef: ldc.i4.1
 		IL_01f0: conv.r8
 		IL_01f1: ldc.i4.0
 		IL_01f2: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_01f7: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass
+		IL_01f7: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/Scope_ctor/FunctionObject
 		IL_01fc: stloc.s 10
 		IL_01fe: ldloc.0
 		IL_01ff: ldloc.s 10
@@ -6772,14 +6782,14 @@
 		IL_0232: ldstr "callSuper"
 		IL_0237: ldloc.s 9
 		IL_0239: ldloc.2
-		IL_023a: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::.ctor(class [System.Runtime]System.Object, object[])
+		IL_023a: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject::.ctor(class [System.Runtime]System.Object, object[])
 		IL_023f: ldc.i4.1
 		IL_0240: conv.r8
 		IL_0241: ldstr "callSuper"
 		IL_0246: ldc.i4.1
 		IL_0247: ldc.i4.1
-		IL_0248: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper>(!!0, float64, string, bool, bool)
-		IL_024d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper>(!!0)
+		IL_0248: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_024d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/Scope_callSuper/FunctionObject>(!!0)
 		IL_0252: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0257: pop
 		IL_0258: ldc.i4.1
@@ -6790,14 +6800,14 @@
 		IL_0261: stelem.ref
 		IL_0262: stloc.2
 		IL_0263: ldloc.2
-		IL_0264: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::.ctor(object[])
+		IL_0264: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject::.ctor(object[])
 		IL_0269: ldloc.s 8
 		IL_026b: ldloc.2
 		IL_026c: ldc.i4.0
 		IL_026d: conv.r8
 		IL_026e: ldc.i4.0
 		IL_026f: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0274: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
+		IL_0274: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject
 		IL_0279: stloc.s 11
 		IL_027b: ldloc.s 11
 		IL_027d: ldloc.s 10

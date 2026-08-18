@@ -137,13 +137,14 @@ internal sealed class GeneratedFunctionObjectEmitter
             }
 
             var canonicalBody = (MethodDefinitionHandle)bodyToken;
-            var ownerType = ResolveCanonicalOwnerType(plan);
-            _nestedTypeRegistry.Add(typeHandle, ownerType);
+            var canonicalOwnerType = ResolveCanonicalOwnerType(plan);
+            var nestingOwnerType = ResolveNestingOwnerType(plan, canonicalOwnerType);
+            _nestedTypeRegistry.Add(typeHandle, nestingOwnerType);
             _functionObjectRegistry.SetMetadata(new GeneratedFunctionObjectMetadata
             {
                 Plan = plan,
                 TypeHandle = typeHandle,
-                CanonicalOwnerTypeHandle = ownerType,
+                CanonicalOwnerTypeHandle = canonicalOwnerType,
                 ConstructorHandle = constructor,
                 IsConstructorGetterHandle = isConstructorGetter,
                 RequiresInvocationContextGetterHandle = requiresContextGetter,
@@ -1023,6 +1024,21 @@ internal sealed class GeneratedFunctionObjectEmitter
 
         throw new InvalidOperationException(
             $"Could not resolve canonical owner type for '{callable.DisplayName}'.");
+    }
+
+    private TypeDefinitionHandle ResolveNestingOwnerType(
+        GeneratedFunctionObjectPlan plan,
+        TypeDefinitionHandle canonicalOwnerType)
+    {
+        if (!string.IsNullOrWhiteSpace(plan.CanonicalOwnerScopeName)
+            && _scopeMetadata.TryGetScopeTypeHandle(
+                plan.CanonicalOwnerScopeName,
+                out var scopeOwner))
+        {
+            return scopeOwner;
+        }
+
+        return canonicalOwnerType;
     }
 
     private BlobHandle CreateFieldSignature(EntityHandle typeHandle)

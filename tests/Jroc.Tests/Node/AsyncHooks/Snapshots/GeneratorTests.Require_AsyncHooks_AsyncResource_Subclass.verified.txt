@@ -251,6 +251,94 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+				.field private initonly class [System.Runtime]System.Object _homeObject
+				.field private initonly object[] _lexicalSuperScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0,
+						class [System.Runtime]System.Object capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 37 (0x25)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.s 17
+					IL_0009: ldc.i4.0
+					IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000f: ldarg.0
+					IL_0010: ldarg.1
+					IL_0011: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0016: ldarg.0
+					IL_0017: ldarg.2
+					IL_0018: stfld class [System.Runtime]System.Object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject::_homeObject
+					IL_001d: ldarg.0
+					IL_001e: ldarg.3
+					IL_001f: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_0024: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object GetLexicalSuperReceiverCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld class [System.Runtime]System.Object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject::_homeObject
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperReceiverCore
+
+				.method family hidebysig virtual 
+					instance object[] GetLexicalSuperScopesCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperScopesCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -270,6 +358,81 @@
 		.class nested public auto ansi beforefieldinit Scope_deliver
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 49 (0x31)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: ldarg.2
+					IL_0025: ldc.i4.1
+					IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_002b: call instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
+					IL_0030: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -285,165 +448,6 @@
 			} // end of method Scope_deliver::.ctor
 
 		} // end of class Scope_deliver
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-			.field private initonly class [System.Runtime]System.Object _homeObject
-			.field private initonly object[] _lexicalSuperScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0,
-					class [System.Runtime]System.Object capture1,
-					object[] capture2
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 37 (0x25)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.s 17
-				IL_0009: ldc.i4.0
-				IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000f: ldarg.0
-				IL_0010: ldarg.1
-				IL_0011: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_transitionalScopes
-				IL_0016: ldarg.0
-				IL_0017: ldarg.2
-				IL_0018: stfld class [System.Runtime]System.Object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_homeObject
-				IL_001d: ldarg.0
-				IL_001e: ldarg.3
-				IL_001f: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_lexicalSuperScopes
-				IL_0024: ret
-			} // end of method FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object GetLexicalSuperReceiverCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld class [System.Runtime]System.Object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_homeObject
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::GetLexicalSuperReceiverCore
-
-			.method family hidebysig virtual 
-				instance object[] GetLexicalSuperScopesCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_lexicalSuperScopes
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::GetLexicalSuperScopesCore
-
-		} // end of class FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 15 (0xf)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.1
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
-			} // end of method FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 49 (0x31)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: ldarg.2
-				IL_0025: ldc.i4.1
-				IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_002b: call instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
-				IL_0030: ret
-			} // end of method FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver::CallCore
-
-		} // end of class FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver
 
 
 		// Fields
@@ -592,7 +596,7 @@
 			[3] object,
 			[4] class [System.Runtime]System.Type,
 			[5] object[],
-			[6] class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler,
+			[6] class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject,
 			[7] object[],
 			[8] class Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject,
 			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -641,14 +645,14 @@
 		IL_006f: stloc.s 5
 		IL_0071: ldloc.3
 		IL_0072: ldstr "deliver"
-		IL_0077: newobj instance void Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver::.ctor()
+		IL_0077: newobj instance void Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_deliver/FunctionObject::.ctor()
 		IL_007c: ldc.i4.2
 		IL_007d: conv.r8
 		IL_007e: ldstr "deliver"
 		IL_0083: ldc.i4.1
 		IL_0084: ldc.i4.1
-		IL_0085: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver>(!!0, float64, string, bool, bool)
-		IL_008a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver>(!!0)
+		IL_0085: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_deliver/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_008a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_deliver/FunctionObject>(!!0)
 		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0094: pop
 		IL_0095: ldc.i4.1
@@ -666,14 +670,14 @@
 		IL_00af: ldc.i4.0
 		IL_00b0: ldloc.0
 		IL_00b1: stelem.ref
-		IL_00b2: newobj instance void Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::.ctor(object[], class [System.Runtime]System.Object, object[])
+		IL_00b2: newobj instance void Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject::.ctor(object[], class [System.Runtime]System.Object, object[])
 		IL_00b7: ldloc.s 4
 		IL_00b9: ldloc.s 5
 		IL_00bb: ldc.i4.1
 		IL_00bc: conv.r8
 		IL_00bd: ldc.i4.0
 		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00c3: castclass Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler
+		IL_00c3: castclass Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject
 		IL_00c8: stloc.s 6
 		IL_00ca: ldloc.0
 		IL_00cb: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::AsyncResource

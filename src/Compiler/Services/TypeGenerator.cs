@@ -259,6 +259,13 @@ namespace Jroc.Services
             return scope.Name;
         }
 
+        private static string GetChildScopeDeduplicationName(Scope scope)
+            => scope.Parent?.Kind == ScopeKind.Class
+                && scope.Kind == ScopeKind.Function
+                && !string.IsNullOrWhiteSpace(scope.DotNetTypeName)
+                ? scope.DotNetTypeName
+                : scope.Name;
+
         private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
         {
             var scopeKey = GetRegistryScopeName(scope);
@@ -423,7 +430,7 @@ namespace Jroc.Services
             var seenChildNames = new HashSet<string>();
             foreach (var childScope in scope.Children)
             {
-                if (!seenChildNames.Add(childScope.Name))
+                if (!seenChildNames.Add(GetChildScopeDeduplicationName(childScope)))
                 {
                     // Duplicate child scope name under the same parent (e.g., repeated traversal). Skip.
                     continue;
@@ -510,7 +517,7 @@ namespace Jroc.Services
             var seenChildNames = new HashSet<string>(StringComparer.Ordinal);
             foreach (var child in root.Children)
             {
-                if (seenChildNames.Add(child.Name))
+                if (seenChildNames.Add(GetChildScopeDeduplicationName(child)))
                 {
                     count += CountScopeTypeDefinitions(child);
                 }
@@ -893,7 +900,7 @@ namespace Jroc.Services
             var seenChildNames = new HashSet<string>();
             foreach (var childScope in scope.Children)
             {
-                if (!seenChildNames.Add(childScope.Name))
+                if (!seenChildNames.Add(GetChildScopeDeduplicationName(childScope)))
                 {
                     continue;
                 }
