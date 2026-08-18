@@ -2,6 +2,16 @@
 "use strict";
 
 const cp = require("node:child_process");
+const path = require("node:path");
+const { maybeRunCompiledWithJroc } = require("./selfCompileWithJroc");
+
+maybeRunCompiledWithJroc({
+  scriptPath: __filename,
+  outputDirectory: path.join(__dirname, "out", "summarizePrCiFailures"),
+  assemblyName: "summarizePrCiFailures",
+  bootstrapEnvironmentVariable: "JROC_SUMMARIZE_PR_CI_FAILURES_BOOTSTRAPPED",
+  nodeOnlyEnvironmentVariable: "JROC_SUMMARIZE_PR_CI_FAILURES_NODE_ONLY",
+});
 
 function parseArgs(argv) {
   const args = {
@@ -23,6 +33,8 @@ function parseArgs(argv) {
         break;
       case "--no-logs":
         args.includeLogs = false;
+        break;
+      case "--node-only":
         break;
       case "--help":
       case "-h":
@@ -49,6 +61,7 @@ Options:
   --pr, -p <number>      Pull request number (positional form also supported)
   --repo <owner/name>    Explicit repository override
   --no-logs              Do not fetch failed job logs for failed test names
+  --node-only            Skip JROC self-compilation
   --help, -h             Show help
 `);
 }
