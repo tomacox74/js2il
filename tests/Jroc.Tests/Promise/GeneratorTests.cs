@@ -325,4 +325,10 @@ public class GeneratorTests : GeneratorTestsBase
     {
         return GenerateTest(nameof(Promise_Race_NullIterable));
     }
+
+    [Fact]
+    public Task Promise_ExplicitReceiverAbi()
+    {
+        return GenerateTest(nameof(Promise_ExplicitReceiverAbi));
+    }
 }

@@ -5,9 +5,9 @@ namespace JavaScriptRuntime
 {
     public sealed class AbortController : JsObject
     {
-        private static readonly Func<object[], object?[]?, object?> PrototypeAbortValue =
+        private static readonly BuiltinFunction1 PrototypeAbortValue =
             PrototypeAbort;
-        private static readonly Func<object[], object?[]?, object?> PrototypeSignalGetterValue =
+        private static readonly BuiltinFunction0 PrototypeSignalGetterValue =
             PrototypeSignalGetter;
 
         /// <summary>Realm-owned <c>AbortController.prototype</c> intrinsic.</summary>
@@ -45,12 +45,17 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            Function.InitializeFunctionInstance(PrototypeAbortValue, 1d, "abort");
+            Function.InitializeFunctionInstance(
+                PrototypeAbortValue,
+                1d,
+                "abort",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeAbortValue));
             Function.MarkUndefinedPrototype(PrototypeAbortValue);
             Function.InitializeFunctionInstance(
                 PrototypeSignalGetterValue,
                 0d,
-                "get signal");
+                "get signal",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeSignalGetterValue));
             Function.MarkUndefinedPrototype(PrototypeSignalGetterValue);
             AbortIntrinsicSurface.DefinePrototypeMethod(
                 prototype,
@@ -62,19 +67,18 @@ namespace JavaScriptRuntime
                 PrototypeSignalGetterValue);
         }
 
-        private static object? PrototypeAbort(object[] scopes, object?[]? args)
+        private static object? PrototypeAbort(object? thisArgument, object? reasonArgument)
         {
-            GetAbortControllerReceiver("abort").abort(
-                args is { Length: > 0 } ? args[0] : null);
+            GetAbortControllerReceiver(thisArgument, "abort").abort(reasonArgument);
             return null;
         }
 
-        private static object? PrototypeSignalGetter(object[] scopes, object?[]? args)
-            => GetAbortControllerReceiver("signal").signal;
+        private static object? PrototypeSignalGetter(object? thisArgument)
+            => GetAbortControllerReceiver(thisArgument, "signal").signal;
 
-        private static AbortController GetAbortControllerReceiver(string memberName)
+        private static AbortController GetAbortControllerReceiver(object? thisValue, string memberName)
         {
-            if (RuntimeServices.GetCurrentThis() is not AbortController controller)
+            if (thisValue is not AbortController controller)
             {
                 throw new TypeError(
                     $"AbortController.prototype.{memberName} called on incompatible receiver");
@@ -86,13 +90,13 @@ namespace JavaScriptRuntime
 
     public sealed class AbortSignal : JsObject
     {
-        private static readonly Func<object[], object?[]?, object?> PrototypeAddEventListenerValue =
+        private static readonly BuiltinFunction3 PrototypeAddEventListenerValue =
             PrototypeAddEventListener;
-        private static readonly Func<object[], object?[]?, object?> PrototypeRemoveEventListenerValue =
+        private static readonly BuiltinFunction3 PrototypeRemoveEventListenerValue =
             PrototypeRemoveEventListener;
-        private static readonly Func<object[], object?[]?, object?> PrototypeAbortedGetterValue =
+        private static readonly BuiltinFunction0 PrototypeAbortedGetterValue =
             PrototypeAbortedGetter;
-        private static readonly Func<object[], object?[]?, object?> PrototypeReasonGetterValue =
+        private static readonly BuiltinFunction0 PrototypeReasonGetterValue =
             PrototypeReasonGetter;
 
         /// <summary>Realm-owned <c>AbortSignal.prototype</c> intrinsic.</summary>
@@ -231,22 +235,26 @@ namespace JavaScriptRuntime
             Function.InitializeFunctionInstance(
                 PrototypeAddEventListenerValue,
                 2d,
-                "addEventListener");
+                "addEventListener",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeAddEventListenerValue));
             Function.MarkUndefinedPrototype(PrototypeAddEventListenerValue);
             Function.InitializeFunctionInstance(
                 PrototypeRemoveEventListenerValue,
                 2d,
-                "removeEventListener");
+                "removeEventListener",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeRemoveEventListenerValue));
             Function.MarkUndefinedPrototype(PrototypeRemoveEventListenerValue);
             Function.InitializeFunctionInstance(
                 PrototypeAbortedGetterValue,
                 0d,
-                "get aborted");
+                "get aborted",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeAbortedGetterValue));
             Function.MarkUndefinedPrototype(PrototypeAbortedGetterValue);
             Function.InitializeFunctionInstance(
                 PrototypeReasonGetterValue,
                 0d,
-                "get reason");
+                "get reason",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeReasonGetterValue));
             Function.MarkUndefinedPrototype(PrototypeReasonGetterValue);
 
             AbortIntrinsicSurface.DefinePrototypeAccessor(
@@ -267,35 +275,39 @@ namespace JavaScriptRuntime
                 PrototypeRemoveEventListenerValue);
         }
 
-        private static object? PrototypeAbortedGetter(object[] scopes, object?[]? args)
-            => GetAbortSignalReceiver("aborted").aborted;
+        private static object? PrototypeAbortedGetter(object? thisArgument)
+            => GetAbortSignalReceiver(thisArgument, "aborted").aborted;
 
-        private static object? PrototypeReasonGetter(object[] scopes, object?[]? args)
-            => GetAbortSignalReceiver("reason").reason;
+        private static object? PrototypeReasonGetter(object? thisArgument)
+            => GetAbortSignalReceiver(thisArgument, "reason").reason;
 
         private static object? PrototypeAddEventListener(
-            object[] scopes,
-            object?[]? args)
+            object? thisArgument,
+            object? eventNameArgument,
+            object? listenerArgument,
+            object? optionsArgument)
         {
-            return GetAbortSignalReceiver("addEventListener").addEventListener(
-                args is { Length: > 0 } ? args[0] : null,
-                args is { Length: > 1 } ? args[1] : null,
-                args is { Length: > 2 } ? args[2] : null);
+            return GetAbortSignalReceiver(thisArgument, "addEventListener").addEventListener(
+                eventNameArgument,
+                listenerArgument,
+                optionsArgument);
         }
 
         private static object? PrototypeRemoveEventListener(
-            object[] scopes,
-            object?[]? args)
+            object? thisArgument,
+            object? eventNameArgument,
+            object? listenerArgument,
+            object? optionsArgument)
         {
-            return GetAbortSignalReceiver("removeEventListener").removeEventListener(
-                args is { Length: > 0 } ? args[0] : null,
-                args is { Length: > 1 } ? args[1] : null,
-                args is { Length: > 2 } ? args[2] : null);
+            return GetAbortSignalReceiver(thisArgument, "removeEventListener").removeEventListener(
+                eventNameArgument,
+                listenerArgument,
+                optionsArgument);
         }
 
-        private static AbortSignal GetAbortSignalReceiver(string memberName)
+        private static AbortSignal GetAbortSignalReceiver(object? thisValue, string memberName)
         {
-            if (RuntimeServices.GetCurrentThis() is not AbortSignal signal)
+            if (thisValue is not AbortSignal signal)
             {
                 throw new TypeError(
                     $"AbortSignal.prototype.{memberName} called on incompatible receiver");

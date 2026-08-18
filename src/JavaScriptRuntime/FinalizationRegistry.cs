@@ -167,10 +167,18 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            Func<object[], object?[]?, object?> register = PrototypeRegister;
-            Func<object[], object?[]?, object?> unregister = PrototypeUnregister;
-            Function.InitializeFunctionInstance(register, 2d, "register");
-            Function.InitializeFunctionInstance(unregister, 1d, "unregister");
+            BuiltinFunction3 register = PrototypeRegister;
+            BuiltinFunction1 unregister = PrototypeUnregister;
+            Function.InitializeFunctionInstance(
+                register,
+                2d,
+                "register",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(register));
+            Function.InitializeFunctionInstance(
+                unregister,
+                1d,
+                "unregister",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(unregister));
             PropertyDescriptorStore.DefineOrUpdate(register, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -213,29 +221,28 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static object? PrototypeRegister(object[] _, object?[]? args)
+        private static object? PrototypeRegister(
+            object? thisArgument,
+            object? target,
+            object? heldValue,
+            object? unregisterToken)
         {
-            if (RuntimeServices.GetCurrentThis() is not FinalizationRegistry finalizationRegistry)
+            if (thisArgument is not FinalizationRegistry finalizationRegistry)
             {
                 throw new TypeError("FinalizationRegistry.prototype.register called on incompatible receiver");
             }
 
-            args ??= [];
-            return finalizationRegistry.register(
-                args.Length > 0 ? args[0] : null,
-                args.Length > 1 ? args[1] : null,
-                args.Length > 2 ? args[2] : null);
+            return finalizationRegistry.register(target, heldValue, unregisterToken);
         }
 
-        private static object? PrototypeUnregister(object[] _, object?[]? args)
+        private static object? PrototypeUnregister(object? thisArgument, object? unregisterToken)
         {
-            if (RuntimeServices.GetCurrentThis() is not FinalizationRegistry finalizationRegistry)
+            if (thisArgument is not FinalizationRegistry finalizationRegistry)
             {
                 throw new TypeError("FinalizationRegistry.prototype.unregister called on incompatible receiver");
             }
 
-            args ??= [];
-            return finalizationRegistry.unregister(args.Length > 0 ? args[0] : null);
+            return finalizationRegistry.unregister(unregisterToken);
         }
     }
 }

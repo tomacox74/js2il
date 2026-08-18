@@ -318,4 +318,10 @@ public class ExecutionTests : ExecutionTestsBase
     {
         return ExecutionTest(nameof(Promise_Race_NullIterable));
     }
+
+    [Fact]
+    public Task Promise_ExplicitReceiverAbi()
+    {
+        return ExecutionTest(nameof(Promise_ExplicitReceiverAbi));
+    }
 }

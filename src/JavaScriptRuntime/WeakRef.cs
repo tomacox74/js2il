@@ -53,8 +53,12 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            Func<object[], object?[]?, object?> deref = PrototypeDeref;
-            Function.InitializeFunctionInstance(deref, 0d, "deref");
+            BuiltinFunction0 deref = PrototypeDeref;
+            Function.InitializeFunctionInstance(
+                deref,
+                0d,
+                "deref",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(deref));
             PropertyDescriptorStore.DefineOrUpdate(deref, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -81,9 +85,9 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static object? PrototypeDeref(object[] scopes, object?[]? args)
+        private static object? PrototypeDeref(object? thisArgument)
         {
-            if (RuntimeServices.GetCurrentThis() is not WeakRef weakRef)
+            if (thisArgument is not WeakRef weakRef)
             {
                 throw new TypeError("WeakRef.prototype.deref called on incompatible receiver");
             }

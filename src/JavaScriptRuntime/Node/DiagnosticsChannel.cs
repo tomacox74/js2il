@@ -93,30 +93,28 @@ public sealed partial class ChannelObject : JsObject
         DiagnosticsChannelSurface.DefineMethod(
             this,
             "publish",
-            (Func<object[], object?[]?, object?>)((_, args) => publish(
-                args is { Length: > 0 } ? args[0] : null)),
+            (BuiltinFunction1)((_, message) => publish(message)),
             1);
         DiagnosticsChannelSurface.DefineMethod(
             this,
             "subscribe",
-            (Func<object[], object?[]?, object?>)((_, args) =>
+            (BuiltinFunction1)((_, onMessage) =>
             {
-                Subscribe(args is { Length: > 0 } ? args[0] : null);
+                Subscribe(onMessage);
                 return null;
             }),
             1);
         DiagnosticsChannelSurface.DefineMethod(
             this,
             "unsubscribe",
-            (Func<object[], object?[]?, object?>)((_, args) => Unsubscribe(
-                args is { Length: > 0 } ? args[0] : null)),
+            (BuiltinFunction1)((_, onMessage) => Unsubscribe(onMessage)),
             1);
         PropertyDescriptorStore.DefineOrUpdate(this, "hasSubscribers", new JsPropertyDescriptor
         {
             Kind = JsPropertyDescriptorKind.Accessor,
             Enumerable = false,
             Configurable = true,
-            Get = (Func<object[], object?[]?, object?>)((_, _) => hasSubscribers)
+            Get = (BuiltinFunction0)(_ => hasSubscribers)
         });
     }
 
@@ -234,7 +232,7 @@ internal static class DiagnosticsChannelSurface
             callback,
             length,
             name,
-            requiresInvocationContext: true);
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(callback));
         Function.MarkUndefinedPrototype(callback);
         PropertyDescriptorStore.DefineOrUpdate(target, name, new JsPropertyDescriptor
         {

@@ -153,5 +153,8 @@ namespace Jroc.Tests.Array
 
         [Fact]
         public Task Array_StableLoadReceiver_EvaluationOrder() { var testName = nameof(Array_StableLoadReceiver_EvaluationOrder); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_ExplicitReceiverAbi() { var testName = nameof(Array_ExplicitReceiverAbi); return GenerateTest(testName); }
     }
 }

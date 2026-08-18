@@ -29,11 +29,11 @@ namespace JavaScriptRuntime
         private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
         private static readonly string SearchSymbolPropertyKey = Symbol.search.DebugId;
         private static readonly string SplitSymbolPropertyKey = Symbol.split.DebugId;
-        private static readonly Func<object?, object> MatchSymbolDelegate = MatchSymbolMethod;
-        private static readonly Func<object?, object> MatchAllSymbolDelegate = MatchAllSymbolMethod;
-        private static readonly Func<object?, object?, object> ReplaceSymbolDelegate = ReplaceSymbolMethod;
-        private static readonly Func<object?, object> SearchSymbolDelegate = SearchSymbolMethod;
-        private static readonly Func<object?, object?, object> SplitSymbolDelegate = SplitSymbolMethod;
+        private static readonly BuiltinFunction1 MatchSymbolDelegate = MatchSymbolMethod;
+        private static readonly BuiltinFunction1 MatchAllSymbolDelegate = MatchAllSymbolMethod;
+        private static readonly BuiltinFunction2 ReplaceSymbolDelegate = ReplaceSymbolMethod;
+        private static readonly BuiltinFunction1 SearchSymbolDelegate = SearchSymbolMethod;
+        private static readonly BuiltinFunction2 SplitSymbolDelegate = SplitSymbolMethod;
         /// <summary>Realm-owned <c>RegExp.prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject Prototype
             => RuntimeIntrinsics.Current.GetOrCreate(
@@ -359,9 +359,9 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, this, limit);
         }
 
-        private static RegExp GetCurrentThisRegExp(string wellKnownSymbolName)
+        private static RegExp GetCurrentThisRegExp(object? thisArgument, string wellKnownSymbolName)
         {
-            if (RuntimeServices.GetCurrentThis() is not RegExp regExp)
+            if (thisArgument is not RegExp regExp)
             {
                 throw new TypeError($"RegExp.prototype[@@{wellKnownSymbolName}] called on incompatible receiver");
             }
@@ -369,33 +369,33 @@ namespace JavaScriptRuntime
             return regExp;
         }
 
-        private static object MatchSymbolMethod(object? input)
+        private static object? MatchSymbolMethod(object? thisArgument, object? input)
         {
-            var regExp = GetCurrentThisRegExp("match");
+            var regExp = GetCurrentThisRegExp(thisArgument, "match");
             return JavaScriptRuntime.String.MatchWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
         }
 
-        private static object MatchAllSymbolMethod(object? input)
+        private static object? MatchAllSymbolMethod(object? thisArgument, object? input)
         {
-            var regExp = GetCurrentThisRegExp("matchAll");
+            var regExp = GetCurrentThisRegExp(thisArgument, "matchAll");
             return CreateMatchAllIterator(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
         }
 
-        private static object ReplaceSymbolMethod(object? input, object? replacement)
+        private static object? ReplaceSymbolMethod(object? thisArgument, object? input, object? replacement)
         {
-            var regExp = GetCurrentThisRegExp("replace");
+            var regExp = GetCurrentThisRegExp(thisArgument, "replace");
             return JavaScriptRuntime.String.ReplaceWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, replacement);
         }
 
-        private static object SearchSymbolMethod(object? input)
+        private static object? SearchSymbolMethod(object? thisArgument, object? input)
         {
-            var regExp = GetCurrentThisRegExp("search");
+            var regExp = GetCurrentThisRegExp(thisArgument, "search");
             return JavaScriptRuntime.String.SearchWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
         }
 
-        private static object SplitSymbolMethod(object? input, object? limit)
+        private static object? SplitSymbolMethod(object? thisArgument, object? input, object? limit)
         {
-            var regExp = GetCurrentThisRegExp("split");
+            var regExp = GetCurrentThisRegExp(thisArgument, "split");
             return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, limit);
         }
 
@@ -408,9 +408,9 @@ namespace JavaScriptRuntime
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
-            DefinePrototypeMethod(prototype, "exec", (Func<object[], object?[]?, object?>)PrototypeExec);
-            DefinePrototypeMethod(prototype, "test", (Func<object[], object?[]?, object?>)PrototypeTest);
-            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
+            DefinePrototypeMethod(prototype, "exec", (BuiltinFunction1)PrototypeExec);
+            DefinePrototypeMethod(prototype, "test", (BuiltinFunction1)PrototypeTest);
+            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString);
             DefinePrototypeGetter(prototype, "dotAll", static regExp => regExp.dotAll);
             DefinePrototypeGetter(prototype, "flags", static regExp => regExp.flags);
             DefinePrototypeGetter(prototype, "global", static regExp => regExp.global);
@@ -427,8 +427,8 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)RegExpStringIteratorPrototypeNext);
-            DefineSymbolMethod(prototype, Symbol.iterator.DebugId, (Func<object[], object?[]?, object?>)RegExpStringIteratorPrototypeIterator);
+            DefinePrototypeMethod(prototype, "next", (BuiltinFunction0)RegExpStringIteratorPrototypeNext);
+            DefineSymbolMethod(prototype, Symbol.iterator.DebugId, (BuiltinFunction0)RegExpStringIteratorPrototypeIterator);
         }
 
         private static void DefinePrototypeMethod(object target, string key, object? value)
@@ -453,13 +453,13 @@ namespace JavaScriptRuntime
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (Func<object[], object?[]?, object?>)((_, _) => getter(GetRegExpReceiver(key)))
+                Get = (BuiltinFunction0)(thisArgument => getter(GetRegExpReceiver(thisArgument, key)))
             });
         }
 
-        private static RegExp GetRegExpReceiver(string propertyName)
+        private static RegExp GetRegExpReceiver(object? thisArgument, string propertyName)
         {
-            if (RuntimeServices.GetCurrentThis() is not RegExp regExp)
+            if (thisArgument is not RegExp regExp)
             {
                 throw new TypeError($"RegExp.prototype.{propertyName} called on incompatible receiver");
             }
@@ -467,20 +467,20 @@ namespace JavaScriptRuntime
             return regExp;
         }
 
-        private static object? PrototypeExec(object[] scopes, object?[]? args)
-            => GetRegExpReceiver("exec").exec(args != null && args.Length > 0 ? args[0] : null);
+        private static object? PrototypeExec(object? thisArgument, object? input)
+            => GetRegExpReceiver(thisArgument, "exec").exec(input);
 
-        private static object? PrototypeTest(object[] scopes, object?[]? args)
-            => GetRegExpReceiver("test").test(args != null && args.Length > 0 ? args[0] : null);
+        private static object? PrototypeTest(object? thisArgument, object? input)
+            => GetRegExpReceiver(thisArgument, "test").test(input);
 
-        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        private static object? PrototypeToString(object? thisArgument)
         {
-            return GetRegExpReceiver("toString").toString();
+            return GetRegExpReceiver(thisArgument, "toString").toString();
         }
 
-        private static object? RegExpStringIteratorPrototypeNext(object[] scopes, object?[]? args)
+        private static object? RegExpStringIteratorPrototypeNext(object? thisArgument)
         {
-            if (RuntimeServices.GetCurrentThis() is not RegExpStringIterator iterator)
+            if (thisArgument is not RegExpStringIterator iterator)
             {
                 throw new TypeError("RegExp String Iterator.prototype.next called on incompatible receiver");
             }
@@ -488,9 +488,9 @@ namespace JavaScriptRuntime
             return iterator.Next();
         }
 
-        private static object? RegExpStringIteratorPrototypeIterator(object[] scopes, object?[]? args)
+        private static object? RegExpStringIteratorPrototypeIterator(object? thisArgument)
         {
-            if (RuntimeServices.GetCurrentThis() is not RegExpStringIterator iterator)
+            if (thisArgument is not RegExpStringIterator iterator)
             {
                 throw new TypeError("RegExp String Iterator.prototype[Symbol.iterator] called on incompatible receiver");
             }

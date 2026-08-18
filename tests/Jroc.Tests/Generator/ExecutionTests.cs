@@ -71,5 +71,8 @@ namespace Jroc.Tests.Generator
         [Fact]
         public Task Generator_Prototype_Constructor() { var testName = nameof(Generator_Prototype_Constructor); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task Generator_ExplicitReceiverAbi() { var testName = nameof(Generator_ExplicitReceiverAbi); return ExecutionTest(testName); }
+
     }
 }

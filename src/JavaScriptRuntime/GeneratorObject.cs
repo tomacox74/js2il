@@ -58,9 +58,9 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
 
         PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
         DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
-        DefineDataProperty(prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
-        DefineDataProperty(prototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
-        DefineDataProperty(prototype, "throw", (Func<object[], object?[]?, object?>)PrototypeThrow);
+        DefineDataProperty(prototype, "next", (BuiltinFunction1)PrototypeNext);
+        DefineDataProperty(prototype, "return", (BuiltinFunction1)PrototypeReturn);
+        DefineDataProperty(prototype, "throw", (BuiltinFunction1)PrototypeThrow);
         DefineDataProperty(prototype, Symbol.toStringTag.DebugId, "Generator");
     }
 
@@ -239,10 +239,9 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
         });
     }
 
-    private static GeneratorObject GetReceiver(string methodName)
+    private static GeneratorObject GetReceiver(object? thisValue, string methodName)
     {
-        var receiver = RuntimeServices.GetCurrentThis();
-        if (receiver is GeneratorObject generator)
+        if (thisValue is GeneratorObject generator)
         {
             return generator;
         }
@@ -250,25 +249,24 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
         throw new TypeError($"Generator.prototype.{methodName} called on incompatible receiver");
     }
 
-    private static object? PrototypeNext(object[] scopes, object?[]? args)
+    private static object? PrototypeNext(object? thisArgument, object? valueArgument)
     {
-        var receiver = RuntimeServices.GetCurrentThis();
-        if (receiver is DynamicGeneratorIterator dynamicGenerator)
+        if (thisArgument is DynamicGeneratorIterator dynamicGenerator)
         {
-            return dynamicGenerator.next(args != null && args.Length > 0 ? args[0] : null);
+            return dynamicGenerator.next(valueArgument);
         }
 
-        return GetReceiver("next").next(args != null && args.Length > 0 ? args[0] : null);
+        return GetReceiver(thisArgument, "next").next(valueArgument);
     }
 
-    private static object? PrototypeReturn(object[] scopes, object?[]? args)
+    private static object? PrototypeReturn(object? thisArgument, object? valueArgument)
     {
-        return GetReceiver("return").@return(args != null && args.Length > 0 ? args[0] : null);
+        return GetReceiver(thisArgument, "return").@return(valueArgument);
     }
 
-    private static object? PrototypeThrow(object[] scopes, object?[]? args)
+    private static object? PrototypeThrow(object? thisArgument, object? valueArgument)
     {
-        return GetReceiver("throw").@throw(args != null && args.Length > 0 ? args[0] : null);
+        return GetReceiver(thisArgument, "throw").@throw(valueArgument);
     }
 
     private GeneratorScope GetLeafScope()

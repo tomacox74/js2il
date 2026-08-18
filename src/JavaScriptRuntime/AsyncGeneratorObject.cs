@@ -45,15 +45,15 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
         DefineDataProperty(
             PrototypeObject,
             "next",
-            (Func<object[], object?[]?, object?>)PrototypeNext);
+            (BuiltinFunction1)PrototypeNext);
         DefineDataProperty(
             PrototypeObject,
             "return",
-            (Func<object[], object?[]?, object?>)PrototypeReturn);
+            (BuiltinFunction1)PrototypeReturn);
         DefineDataProperty(
             PrototypeObject,
             "throw",
-            (Func<object[], object?[]?, object?>)PrototypeThrow);
+            (BuiltinFunction1)PrototypeThrow);
         DefineDataProperty(
             PrototypeObject,
             Symbol.toStringTag.DebugId,
@@ -78,10 +78,9 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
             });
     }
 
-    private static AsyncGeneratorObject GetReceiver(string methodName)
+    private static AsyncGeneratorObject GetReceiver(object? thisValue, string methodName)
     {
-        if (RuntimeServices.GetCurrentThis()
-            is AsyncGeneratorObject generator)
+        if (thisValue is AsyncGeneratorObject generator)
         {
             return generator;
         }
@@ -91,22 +90,19 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
     }
 
     private static object? PrototypeNext(
-        object[] scopes,
-        object?[]? args)
-        => GetReceiver("next").next(
-            args is { Length: > 0 } ? args[0] : null);
+        object? thisArgument,
+        object? valueArgument)
+        => GetReceiver(thisArgument, "next").next(valueArgument);
 
     private static object? PrototypeReturn(
-        object[] scopes,
-        object?[]? args)
-        => GetReceiver("return").@return(
-            args is { Length: > 0 } ? args[0] : null);
+        object? thisArgument,
+        object? valueArgument)
+        => GetReceiver(thisArgument, "return").@return(valueArgument);
 
     private static object? PrototypeThrow(
-        object[] scopes,
-        object?[]? args)
-        => GetReceiver("throw").@throw(
-            args is { Length: > 0 } ? args[0] : null);
+        object? thisArgument,
+        object? valueArgument)
+        => GetReceiver(thisArgument, "throw").@throw(valueArgument);
 
     private AsyncGeneratorScope GetLeafScope()
     {

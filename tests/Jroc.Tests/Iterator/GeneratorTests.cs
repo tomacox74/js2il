@@ -14,5 +14,8 @@ namespace Jroc.Tests.Iterator
 
         [Fact]
         public Task Iterator_Helper_Next_Return() { var testName = nameof(Iterator_Helper_Next_Return); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Iterator_ExplicitReceiverAbi() { var testName = nameof(Iterator_ExplicitReceiverAbi); return GenerateTest(testName); }
     }
 }

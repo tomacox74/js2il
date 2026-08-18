@@ -3,6 +3,9 @@
 
 const cp = require("node:child_process");
 
+const GH_MAX_BUFFER_BYTES = 32 * 1024 * 1024;
+const COMMAND_FAILURE_OUTPUT_LIMIT = 8 * 1024;
+
 function parseArgs(argv) {
   const args = {
     prNumber: null,
@@ -58,18 +61,28 @@ function runGh(args) {
     return cp.execFileSync("gh", args, {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
+      maxBuffer: GH_MAX_BUFFER_BYTES,
     }).trim();
   } catch (error) {
     const stdout = error?.stdout ? String(error.stdout).trim() : "";
     const stderr = error?.stderr ? String(error.stderr).trim() : "";
     if (stdout) {
-      process.stderr.write(stdout + "\n");
+      process.stderr.write(truncateCommandFailureOutput(stdout) + "\n");
     }
     if (stderr) {
-      process.stderr.write(stderr + "\n");
+      process.stderr.write(truncateCommandFailureOutput(stderr) + "\n");
     }
     throw new Error(`Failed to run: gh ${args.join(" ")}`);
   }
+}
+
+function truncateCommandFailureOutput(output) {
+  if (output.length <= COMMAND_FAILURE_OUTPUT_LIMIT) {
+    return output;
+  }
+
+  return `[... ${output.length - COMMAND_FAILURE_OUTPUT_LIMIT} characters omitted ...]\n`
+    + output.slice(-COMMAND_FAILURE_OUTPUT_LIMIT);
 }
 
 function inferRepoFromGitRemote() {
@@ -289,9 +302,18 @@ function main() {
   });
 }
 
-try {
-  process.exitCode = main();
-} catch (error) {
-  process.stderr.write(`${error?.message ?? String(error)}\n`);
-  process.exitCode = 2;
+if (require.main === module) {
+  try {
+    process.exitCode = main();
+  } catch (error) {
+    process.stderr.write(`${error?.message ?? String(error)}\n`);
+    process.exitCode = 2;
+  }
 }
+
+module.exports = {
+  parseFailedTestsFromLog,
+  runGh,
+  stripActionsLogPrefix,
+  truncateCommandFailureOutput,
+};

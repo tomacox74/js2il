@@ -678,32 +678,32 @@ internal sealed class AsyncResourceConstructor : JsFunctionObject
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "runInAsyncScope",
-            (Func<object[], object?[]?, object?>)RunInAsyncScope,
+            (BuiltinFunctionVariadic)RunInAsyncScope,
             1);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "emitDestroy",
-            (Func<object[], object?[]?, object?>)EmitDestroy,
+            (BuiltinFunction0)EmitDestroy,
             0);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "asyncId",
-            (Func<object[], object?[]?, object?>)AsyncId,
+            (BuiltinFunction0)AsyncId,
             0);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "triggerAsyncId",
-            (Func<object[], object?[]?, object?>)TriggerAsyncId,
+            (BuiltinFunction0)TriggerAsyncId,
             0);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "bind",
-            (Func<object[], object?[]?, object?>)Bind,
+            (BuiltinFunction2)Bind,
             1);
         this["prototype"] = Prototype;
         Prototype["constructor"] = this;
         this["bind"] = AsyncHooksSurface.CreateFunction(
-            (Func<object[], object?[]?, object?>)StaticBind,
+            (BuiltinFunctionVariadic)StaticBind,
             "bind",
             2);
     }
@@ -748,48 +748,45 @@ internal sealed class AsyncResourceConstructor : JsFunctionObject
         AsyncResourceObject.SetState(receiver, state);
     }
 
-    private static object? RunInAsyncScope(object[] scopes, object?[]? args)
+    private static object? RunInAsyncScope(object? thisArgument, in JsCallArguments arguments)
     {
-        var receiver = RuntimeServices.GetCurrentThis()!;
-        var state = AsyncResourceObject.GetState(receiver);
+        var state = AsyncResourceObject.GetState(thisArgument!);
         return state.Runtime.RunInResource(
             state.State,
-            args is { Length: > 0 } ? args[0] : null,
-            args is { Length: > 1 } ? args[1] : null,
-            args is { Length: > 2 } ? args[2..] : null);
+            arguments.GetArgument(0),
+            arguments.GetArgument(1),
+            arguments.Count > 2 ? arguments.ToArray()[2..] : null);
     }
 
-    private static object? EmitDestroy(object[] scopes, object?[]? args)
+    private static object? EmitDestroy(object? thisArgument)
     {
-        var receiver = RuntimeServices.GetCurrentThis()!;
-        var state = AsyncResourceObject.GetState(receiver);
+        var state = AsyncResourceObject.GetState(thisArgument!);
         state.Runtime.EmitDestroy(state.State);
-        return receiver;
+        return thisArgument;
     }
 
-    private static object? AsyncId(object[] scopes, object?[]? args)
-        => (double)AsyncResourceObject.GetState(
-            RuntimeServices.GetCurrentThis()!).State.AsyncId;
+    private static object? AsyncId(object? thisArgument)
+        => (double)AsyncResourceObject.GetState(thisArgument!).State.AsyncId;
 
-    private static object? TriggerAsyncId(object[] scopes, object?[]? args)
-        => (double)AsyncResourceObject.GetState(
-            RuntimeServices.GetCurrentThis()!).State.TriggerAsyncId;
+    private static object? TriggerAsyncId(object? thisArgument)
+        => (double)AsyncResourceObject.GetState(thisArgument!).State.TriggerAsyncId;
 
-    private static object? Bind(object[] scopes, object?[]? args)
+    private static object? Bind(object? thisArgument, object? fn, object? bindThisArg)
     {
-        var receiver = RuntimeServices.GetCurrentThis()!;
+        var receiver = thisArgument!;
         return AsyncResourceObject.GetState(receiver).CreateBound(
-            args is { Length: > 0 } ? args[0] : null,
-            args is { Length: > 1 } ? args[1] : receiver);
+            fn,
+            bindThisArg ?? receiver);
     }
 
-    private static object? StaticBind(object[] scopes, object?[]? args)
+    private static object? StaticBind(object? thisArgument, in JsCallArguments arguments)
     {
-        var constructor = (AsyncResourceConstructor)RuntimeServices.GetCurrentThis()!;
-        var type = args is { Length: > 1 }
-            ? DotNet2JSConversions.ToString(args[1])
-            : args is { Length: > 0 }
-                ? AsyncHooksSurface.GetFunctionName(args[0])
+        var constructor = (AsyncResourceConstructor)thisArgument!;
+        var fn = arguments.GetArgument(0);
+        var type = arguments.Count > 1
+            ? DotNet2JSConversions.ToString(arguments.GetArgument(1))
+            : arguments.Count > 0
+                ? AsyncHooksSurface.GetFunctionName(fn)
                 : string.Empty;
         if (type.Length == 0)
         {
@@ -798,8 +795,8 @@ internal sealed class AsyncResourceConstructor : JsFunctionObject
         var resource = new AsyncResourceObject(constructor._runtime, constructor.Prototype);
         constructor.Initialize(resource, type, null);
         return resource.bind(
-            args is { Length: > 0 } ? args[0]! : null!,
-            args is { Length: > 2 } ? args[2] : resource);
+            fn!,
+            arguments.Count > 2 ? arguments.GetArgument(2) : resource);
     }
 }
 
@@ -873,8 +870,8 @@ public sealed partial class AsyncResourceObject : JsObject
                 throw new TypeError("The \"fn\" argument must be of type function.");
             }
 
-            Func<object[], object?[]?, object?> bound = (_, args)
-                => Runtime.RunInResource(State, callback, thisArgument, args);
+            BuiltinFunctionVariadic bound = (object? _, in JsCallArguments arguments)
+                => Runtime.RunInResource(State, callback, thisArgument, arguments.ToArray());
             return AsyncHooksSurface.CreateFunction(
                 bound,
                 AsyncHooksSurface.GetFunctionName(callback),
@@ -894,43 +891,43 @@ internal sealed class AsyncLocalStorageConstructor : JsFunctionObject
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "disable",
-            (Func<object[], object?[]?, object?>)Disable,
+            (BuiltinFunction0)Disable,
             0);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "getStore",
-            (Func<object[], object?[]?, object?>)GetStore,
+            (BuiltinFunction0)GetStore,
             0);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "enterWith",
-            (Func<object[], object?[]?, object?>)EnterWith,
+            (BuiltinFunction1)EnterWith,
             1);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "run",
-            (Func<object[], object?[]?, object?>)Run,
+            (BuiltinFunctionVariadic)Run,
             2);
         AsyncHooksSurface.DefineMethod(
             Prototype,
             "exit",
-            (Func<object[], object?[]?, object?>)Exit,
+            (BuiltinFunctionVariadic)Exit,
             1);
         PropertyDescriptorStore.DefineOrUpdate(Prototype, "name", new JsPropertyDescriptor
         {
             Kind = JsPropertyDescriptorKind.Accessor,
             Enumerable = false,
             Configurable = true,
-            Get = (Func<object[], object?[]?, object?>)Name
+            Get = (BuiltinFunction0)Name
         });
         this["prototype"] = Prototype;
         Prototype["constructor"] = this;
         this["bind"] = AsyncHooksSurface.CreateFunction(
-            (Func<object[], object?[]?, object?>)Bind,
+            (BuiltinFunctionVariadic)Bind,
             "bind",
             1);
         this["snapshot"] = AsyncHooksSurface.CreateFunction(
-            (Func<object[], object?[]?, object?>)Snapshot,
+            (BuiltinFunction0)Snapshot,
             "snapshot",
             0);
     }
@@ -949,66 +946,66 @@ internal sealed class AsyncLocalStorageConstructor : JsFunctionObject
             arguments.Count > 0 ? arguments.GetArgument(0) : null,
             Prototype);
 
-    private static AsyncLocalStorageObject GetReceiver(object[] scopes)
-        => RuntimeServices.GetCurrentThis() as AsyncLocalStorageObject
+    private static AsyncLocalStorageObject GetReceiver(object? thisArgument)
+        => thisArgument as AsyncLocalStorageObject
             ?? throw new TypeError(
                 "The \"this\" argument must be an instance of AsyncLocalStorage.");
 
-    private static object? Disable(object[] scopes, object?[]? args)
-        => GetReceiver(scopes).disable();
+    private static object? Disable(object? thisArgument)
+        => GetReceiver(thisArgument).disable();
 
-    private static object? GetStore(object[] scopes, object?[]? args)
-        => GetReceiver(scopes).getStore();
+    private static object? GetStore(object? thisArgument)
+        => GetReceiver(thisArgument).getStore();
 
-    private static object? EnterWith(object[] scopes, object?[]? args)
-        => GetReceiver(scopes).enterWith(args is { Length: > 0 } ? args[0] : null);
+    private static object? EnterWith(object? thisArgument, object? store)
+        => GetReceiver(thisArgument).enterWith(store);
 
-    private static object? Run(object[] scopes, object?[]? args)
-        => GetReceiver(scopes).run(
-            args is { Length: > 0 } ? args[0] : null,
-            args is { Length: > 1 } ? args[1] : null,
-            args is { Length: > 2 } ? args[2..] : []);
+    private static object? Run(object? thisArgument, in JsCallArguments arguments)
+        => GetReceiver(thisArgument).run(
+            arguments.GetArgument(0),
+            arguments.GetArgument(1),
+            arguments.Count > 2 ? arguments.ToArray()[2..] : []);
 
-    private static object? Exit(object[] scopes, object?[]? args)
-        => GetReceiver(scopes).exit(
-            args is { Length: > 0 } ? args[0] : null,
-            args is { Length: > 1 } ? args[1..] : []);
+    private static object? Exit(object? thisArgument, in JsCallArguments arguments)
+        => GetReceiver(thisArgument).exit(
+            arguments.GetArgument(0),
+            arguments.Count > 1 ? arguments.ToArray()[1..] : []);
 
-    private static object? Name(object[] scopes, object?[]? args)
-        => GetReceiver(scopes).name;
+    private static object? Name(object? thisArgument)
+        => GetReceiver(thisArgument).name;
 
-    private static object? Bind(object[] scopes, object?[]? args)
+    private static object? Bind(object? thisArgument, in JsCallArguments arguments)
     {
-        var constructor = (AsyncLocalStorageConstructor)RuntimeServices.GetCurrentThis()!;
-        var callback = args is { Length: > 0 } ? args[0] : null;
+        var constructor = (AsyncLocalStorageConstructor)thisArgument!;
+        var callback = arguments.GetArgument(0);
         var frame = constructor._runtime.CaptureFrame();
         if (!CallableOperations.IsCallable(callback))
         {
             throw new TypeError("The \"fn\" argument must be of type function.");
         }
 
-        Func<object[], object?[]?, object?> bound = (callScopes, callArgs)
+        BuiltinFunctionVariadic bound = (object? boundThisArgument, in JsCallArguments boundArguments)
             => constructor._runtime.RunWithCapturedFrame(
                 frame,
                 callback,
-                RuntimeServices.GetCurrentThis(),
-                callArgs);
+                boundThisArgument,
+                boundArguments.ToArray());
         return AsyncHooksSurface.CreateFunction(
             bound,
             AsyncHooksSurface.GetFunctionName(callback),
             AsyncHooksSurface.GetFunctionLength(callback));
     }
 
-    private static object? Snapshot(object[] scopes, object?[]? args)
+    private static object? Snapshot(object? thisArgument)
     {
-        var constructor = (AsyncLocalStorageConstructor)RuntimeServices.GetCurrentThis()!;
+        var constructor = (AsyncLocalStorageConstructor)thisArgument!;
         var frame = constructor._runtime.CaptureFrame();
-        Func<object[], object?[]?, object?> snapshot = (callScopes, callArgs)
+        BuiltinFunctionVariadic snapshot = (object? snapshotThisArgument, in JsCallArguments snapshotArguments)
             => constructor._runtime.RunWithCapturedFrame(
                 frame,
-                callArgs is { Length: > 0 } ? callArgs[0] : null,
-                RuntimeServices.GetCurrentThis(),
-                callArgs is { Length: > 1 } ? callArgs[1..] : null);
+                snapshotArguments.GetArgument(0),
+                snapshotThisArgument,
+                snapshotArguments.Count > 1 ? snapshotArguments.ToArray()[1..] : null);
         return AsyncHooksSurface.CreateFunction(snapshot, string.Empty, 1);
     }
 }
@@ -1174,7 +1171,7 @@ internal static class AsyncHooksSurface
             callback,
             length,
             name,
-            requiresInvocationContext: true);
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(callback));
         Function.MarkUndefinedPrototype(callback);
         return callback;
     }
@@ -1189,7 +1186,7 @@ internal static class AsyncHooksSurface
             callback,
             length,
             name,
-            requiresInvocationContext: true);
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(callback));
         Function.MarkUndefinedPrototype(callback);
         PropertyDescriptorStore.DefineOrUpdate(target, name, new JsPropertyDescriptor
         {

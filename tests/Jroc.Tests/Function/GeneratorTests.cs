@@ -398,6 +398,9 @@ namespace Jroc.Tests.Function
         [Fact]
         public Task Function_CallableMaterialization_IdentityAndCaptures() { var testName = nameof(Function_CallableMaterialization_IdentityAndCaptures); return GenerateTest(testName); }
 
+        [Fact]
+        public Task Function_ExplicitReceiverAbi() { var testName = nameof(Function_ExplicitReceiverAbi); return GenerateTest(testName); }
+
         private static void AssertSignature(
             Type moduleType,
             string functionName,
