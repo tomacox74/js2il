@@ -222,6 +222,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_ExplicitReceiverAbi()
+        {
+            return ExecutionTest(nameof(String_ExplicitReceiverAbi));
+        }
+
+        [Fact]
         public Task String_Repeat_Basic()
         {
             return ExecutionTest(nameof(String_Repeat_Basic));
