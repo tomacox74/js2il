@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T01:50:49Z
+> Last generated (UTC): 2026-08-17T23:42:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -78,7 +78,7 @@
 | 22.2.6.6 | get RegExp.prototype.hasIndices | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices) |
 | 22.2.6.7 | get RegExp.prototype.ignoreCase | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase) |
 | 22.2.6.8 | RegExp.prototype [ %Symbol.match% ] ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.match%) |
-| 22.2.6.9 | RegExp.prototype [ %Symbol.matchAll% ] ( string ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%) |
+| 22.2.6.9 | RegExp.prototype [ %Symbol.matchAll% ] ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%) |
 | 22.2.6.10 | get RegExp.prototype.multiline | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.multiline) |
 | 22.2.6.11 | RegExp.prototype [ %Symbol.replace% ] ( string , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.replace%) |
 | 22.2.6.12 | RegExp.prototype [ %Symbol.search% ] ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.search%) |
@@ -171,6 +171,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | RegExp.prototype [ %Symbol.match% ] | Supported with Limitations | [`String_Match_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_Global.js)<br>[`String_Match_NonGlobal.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_RegExp_SymbolDispatch_Custom.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js) |  | Implemented by exposing a symbol-keyed matcher on RegExp instances and by routing String.prototype.match through well-known symbol dispatch. Custom objects with Symbol.match overrides are honored. The runtime still models only a subset of RegExp exotic behavior. |
+
+### 22.2.6.9 ([tc39.es](https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| RegExp.prototype [ %Symbol.matchAll% ] | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.matchAll/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExpStringIteratorPrototype/next/ExecutionTests.cs` | `test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor.js`<br>`test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-is-null-or-undefined.js`<br>`test/built-ins/RegExp/prototype/Symbol.matchAll/species-regexp-get-global-throws.js`<br>`test/built-ins/RegExp/prototype/Symbol.matchAll/this-lastindex-cached.js`<br>`test/built-ins/RegExp/prototype/Symbol.matchAll/this-tostring-flags.js`<br>`test/built-ins/RegExpStringIteratorPrototype/next/next-iteration.js`<br>`test/built-ins/RegExpStringIteratorPrototype/next/next-iteration-global.js`<br>`test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec.js`<br>`test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-get-throws.js`<br>`test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-not-callable.js` | Creates lazy RegExp String Iterators, honors species construction and cached lastIndex, and uses dynamic exec dispatch. Full RegExp exotic and Unicode behavior remains incomplete. |
 
 ### 22.2.6.10 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.multiline))
 

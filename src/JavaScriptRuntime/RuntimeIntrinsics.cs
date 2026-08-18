@@ -66,6 +66,7 @@ internal enum RuntimeIntrinsicSlot
     DataViewPrototype,
     DatePrototype,
     RegExpPrototype,
+    RegExpStringIteratorPrototype,
     IteratorPrototype,
     IteratorHelperPrototype,
     AsyncIteratorPrototype,

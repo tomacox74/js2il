@@ -25,4 +25,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "year-zero")]
     public Task year_zero()
         => ExecutionTestFromFile("year-zero");
+
+    [Fact(DisplayName = "time-value-maximum-range")]
+    public Task time_value_maximum_range()
+        => ExecutionTestFromFile("time-value-maximum-range");
+
+    [Fact(DisplayName = "zero")]
+    public Task zero()
+        => ExecutionTestFromFile("zero");
 }

@@ -236,6 +236,19 @@ internal sealed partial class LIRToILCompiler
                 TryEmitStackValueInstruction(convertToString, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(convertToString.Result, ilEncoder, allocation);
                 break;
+
+            case LIRConvertToStringDiscard convertToStringDiscard:
+                EmitLoadTempAsObject(convertToStringDiscard.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toStringMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.DotNet2JSConversions),
+                        nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toStringMref);
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                }
+                break;
             case LIRTypeof:
                 if (!IsMaterialized(((LIRTypeof)instruction).Result, allocation))
                 {

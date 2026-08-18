@@ -20,5 +20,11 @@ namespace Jroc.Tests.Date
             // Use the test name that matches the verified output
             return ExecutionTest(nameof(Date_Parse_IsoString));
         }
+
+        [Fact]
+        public Task Date_SetUTCFullYear_ExtendedRange()
+        {
+            return ExecutionTest(nameof(Date_SetUTCFullYear_ExtendedRange));
+        }
     }
 }

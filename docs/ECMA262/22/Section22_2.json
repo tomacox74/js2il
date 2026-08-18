@@ -396,7 +396,7 @@
     {
       "clause": "22.2.6.9",
       "title": "RegExp.prototype [ %Symbol.matchAll% ] ( string )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%"
     },
     {
@@ -706,6 +706,29 @@
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
         ],
         "notes": "Implemented by exposing a symbol-keyed matcher on RegExp instances and by routing String.prototype.match through well-known symbol dispatch. Custom objects with Symbol.match overrides are honored. The runtime still models only a subset of RegExp exotic behavior."
+      },
+      {
+        "clause": "22.2.6.9",
+        "feature": "RegExp.prototype [ %Symbol.matchAll% ]",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.matchAll/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExpStringIteratorPrototype/next/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor.js",
+          "test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-is-null-or-undefined.js",
+          "test/built-ins/RegExp/prototype/Symbol.matchAll/species-regexp-get-global-throws.js",
+          "test/built-ins/RegExp/prototype/Symbol.matchAll/this-lastindex-cached.js",
+          "test/built-ins/RegExp/prototype/Symbol.matchAll/this-tostring-flags.js",
+          "test/built-ins/RegExpStringIteratorPrototype/next/next-iteration.js",
+          "test/built-ins/RegExpStringIteratorPrototype/next/next-iteration-global.js",
+          "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec.js",
+          "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-get-throws.js",
+          "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-not-callable.js"
+        ],
+        "notes": "Creates lazy RegExp String Iterators, honors species construction and cached lastIndex, and uses dynamic exec dispatch. Full RegExp exotic and Unicode behavior remains incomplete."
       },
       {
         "clause": "22.2.6.10",

@@ -10,7 +10,7 @@ public static class Test262HostRuntimeIntrinsics
         var included = harnessFiles?.ToHashSet(StringComparer.Ordinal)
             ?? [];
         var builder = new HostRuntimeIntrinsicDescriptorsBuilder()
-            .AddGlobalFactory("assert", CreateNodeAssertAdapter)
+            .AddGlobalFactory("assert", () => CreateNodeAssertAdapter(included))
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
             .AddGlobalFactory("$ERROR", () => CreateFunction(
                 (Action<object?>)(message => throw CreateTest262Error(message)),
@@ -77,10 +77,15 @@ public static class Test262HostRuntimeIntrinsics
             builder.AddGlobalFactory("NaNs", CreateNaNs);
         }
 
+        if (included.Contains("regExpUtils.js"))
+        {
+            Test262RegExpHelpers.Register(builder);
+        }
+
         return builder.Build();
     }
 
-    private static object CreateNodeAssertAdapter()
+    private static object CreateNodeAssertAdapter(ISet<string> included)
     {
         var assert = new AssertModule();
         ObjectRuntime.SetItem(assert, "sameValue", CreateFunction(
@@ -106,6 +111,14 @@ public static class Test262HostRuntimeIntrinsics
                 assert.ok(CompareArray(actual, expected), message)),
             "compareArray",
             3));
+        if (included.Contains("compareIterator.js"))
+        {
+            ObjectRuntime.SetItem(assert, "compareIterator", CreateFunction(
+                Test262RegExpHelpers.CompareIterator,
+                "compareIterator",
+                3));
+        }
+
         return assert;
     }
 

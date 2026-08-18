@@ -37,6 +37,20 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (expression is HIRUnaryExpression
+            {
+                Operator: Acornima.Operator.UnaryPlus
+            } unaryPlus)
+        {
+            if (!TryLowerExpression(unaryPlus.Argument, out var argument))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRConvertToNumberDiscard(argument));
+            return true;
+        }
+
         if (expression is HIRCallExpression
             {
                 Callee: HIRVariableExpression { Name.Kind: BindingKind.Global, Name.Name: "Number" }
@@ -52,6 +66,41 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRConvertToNumberDiscard(args[0]));
             }
 
+            return true;
+        }
+
+        if (expression is HIRCallExpression
+            {
+                Callee: HIRVariableExpression { Name.Name: "String" }
+            } stringCall)
+        {
+            if (!TryEvaluateCallArguments(stringCall.Arguments, 1, out var args))
+            {
+                return false;
+            }
+
+            if (args.Count > 0)
+            {
+                _methodBodyIR.Instructions.Add(new LIRConvertToStringDiscard(args[0]));
+            }
+
+            return true;
+        }
+
+        if (expression is HIRCallExpression
+            {
+                Callee: HIRVariableExpression { Name.Name: "Symbol" }
+            } symbolCall)
+        {
+            if (!TryEvaluateCallArguments(symbolCall.Arguments, 1, out var args))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                "Symbol",
+                "Call",
+                args.Count == 0 ? Array.Empty<TempVariable>() : new[] { args[0] }));
             return true;
         }
 
