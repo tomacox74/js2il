@@ -388,6 +388,276 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
+    public void ReceiverAwareBuiltinAdaptersUseExplicitThisAndFixedArguments()
+    {
+        BuiltinFunction0 function0 = static thisArgument => thisArgument;
+        BuiltinFunction1 function1 = static (_, argument0) => argument0;
+        BuiltinFunction2 function2 = static (thisArgument, argument0, argument1) =>
+            new ReceiverAwareCallSnapshot(
+                thisArgument,
+                [argument0, argument1],
+                RuntimeServices.GetCurrentThis(),
+                RuntimeServices.GetCurrentCallee());
+        BuiltinFunction3 function3 = static (_, _, _, argument2) => argument2;
+        BuiltinFunction4 function4 = static (_, _, _, _, argument3) => argument3;
+        BuiltinFunction5 function5 = static (_, _, _, _, _, argument4) => argument4;
+
+        var adapter0 = BuiltinDelegateFunctionAdapter.FromDelegate(function0);
+        var adapter1 = BuiltinDelegateFunctionAdapter.FromDelegate(function1);
+        var adapter2 = BuiltinDelegateFunctionAdapter.FromDelegate(function2);
+        var adapter3 = BuiltinDelegateFunctionAdapter.FromDelegate(function3);
+        var adapter4 = BuiltinDelegateFunctionAdapter.FromDelegate(function4);
+        var adapter5 = BuiltinDelegateFunctionAdapter.FromDelegate(function5);
+
+        Assert.All(
+            new[] { adapter0, adapter1, adapter2, adapter3, adapter4, adapter5 },
+            adapter => Assert.False(adapter.RequiresInvocationContext));
+        Assert.Equal(0d, ObjectRuntime.GetProperty(adapter0, "length"));
+        Assert.Equal(1d, ObjectRuntime.GetProperty(adapter1, "length"));
+        Assert.Equal(2d, ObjectRuntime.GetProperty(adapter2, "length"));
+        Assert.Equal(3d, ObjectRuntime.GetProperty(adapter3, "length"));
+        Assert.Equal(4d, ObjectRuntime.GetProperty(adapter4, "length"));
+        Assert.Equal(5d, ObjectRuntime.GetProperty(adapter5, "length"));
+
+        Assert.Equal("this", CallableOperations.Call0(adapter0, "this"));
+        var objectReceiver = new JsObject();
+        Assert.Same(
+            objectReceiver,
+            CallableOperations.Call0(adapter0, objectReceiver));
+        Assert.Null(CallableOperations.Call0(adapter0, null));
+        Assert.Equal("a0", CallableOperations.Call1(adapter1, "this", "a0"));
+        var snapshot = Assert.IsType<ReceiverAwareCallSnapshot>(
+            CallableOperations.Call2(adapter2, "this", "a0", "a1"));
+        Assert.Equal("this", snapshot.ThisArgument);
+        Assert.Equal(new object?[] { "a0", "a1" }, snapshot.Arguments);
+        Assert.Null(snapshot.AmbientThis);
+        Assert.Null(snapshot.AmbientCallee);
+        Assert.Equal("a2", CallableOperations.Call3(adapter3, "this", "a0", "a1", "a2"));
+        Assert.Equal("a3", CallableOperations.Call4(adapter4, "this", "a0", "a1", "a2", "a3"));
+        Assert.Equal("a4", CallableOperations.Call5(adapter5, "this", "a0", "a1", "a2", "a3", "a4"));
+    }
+
+    [Fact]
+    public void ReceiverAwareBuiltinAdapterPreservesAliasesCallApplyAndReflectApply()
+    {
+        BuiltinFunction2 function = static (thisArgument, argument0, argument1) =>
+            $"{thisArgument}:{argument0}:{argument1}";
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+        var holder = new JsObject { ["alias"] = adapter };
+        var alias = ObjectRuntime.GetProperty(holder, "alias");
+        var bound = JavaScriptRuntime.Function.Bind(
+            alias!,
+            "bound",
+            ["a"]);
+
+        Assert.Same(adapter, alias);
+        Assert.Equal(
+            "direct:a:b",
+            CallableOperations.Call2(alias, "direct", "a", "b"));
+        Assert.Equal(
+            "call:a:b",
+            JavaScriptRuntime.Function.Call(
+                alias!,
+                "call",
+                ["a", "b"]));
+        Assert.Equal(
+            "apply:a:b",
+            JavaScriptRuntime.Function.Apply(
+                alias!,
+                "apply",
+                new JavaScriptRuntime.Array(new object?[] { "a", "b" })));
+        Assert.Equal(
+            "reflect:a:b",
+            JavaScriptRuntime.Reflect.apply(
+                alias,
+                "reflect",
+                new JavaScriptRuntime.Array(new object?[] { "a", "b" })));
+        Assert.Equal(
+            "bound:a:b",
+            CallableOperations.Call1(bound, "ignored", "b"));
+        Assert.Equal(1d, ObjectRuntime.GetProperty(bound, "length"));
+    }
+
+    [Fact]
+    public void ReceiverAwareBuiltinAdapterPadsMissingArgumentsAndIgnoresExtras()
+    {
+        BuiltinFunction2 function = static (_, argument0, argument1) =>
+            new object?[] { argument0, argument1 };
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+
+        Assert.Equal(
+            new object?[] { "a0", null },
+            Assert.IsType<object?[]>(
+                CallableOperations.Call1(adapter, null, "a0")));
+        Assert.Equal(
+            new object?[] { "a0", "a1" },
+            Assert.IsType<object?[]>(
+                CallableOperations.Call(
+                    adapter,
+                    null,
+                    ["a0", "a1", "ignored"])));
+    }
+
+    [Fact]
+    public void ReceiverAwareBuiltinAdapterDoesNotReplaceAmbientSentinels()
+    {
+        object? observedThis = null;
+        object?[]? observedArguments = null;
+        object? observedCallee = null;
+        object? observedNewTarget = null;
+        BuiltinFunction1 function = (thisArgument, argument0) =>
+        {
+            Assert.Equal("explicit-this", thisArgument);
+            Assert.Equal("explicit-argument", argument0);
+            observedThis = RuntimeServices.GetCurrentThis();
+            observedArguments = RuntimeServices.GetCurrentArguments();
+            observedCallee = RuntimeServices.GetCurrentCallee();
+            observedNewTarget = RuntimeServices.GetCurrentNewTarget();
+            return null;
+        };
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+        var ambientArguments = new object?[] { "ambient-argument" };
+        var previousThis = RuntimeServices.SetCurrentThis("ambient-this");
+        var previousArguments = RuntimeServices.SetCurrentArguments(ambientArguments);
+        var previousCallee = RuntimeServices.SetCurrentCallee("ambient-callee");
+        var previousNewTarget = RuntimeServices.SetCurrentNewTarget("ambient-new-target");
+        try
+        {
+            _ = CallableOperations.Call1(
+                adapter,
+                "explicit-this",
+                "explicit-argument");
+
+            Assert.Equal("ambient-this", observedThis);
+            Assert.Same(ambientArguments, observedArguments);
+            Assert.Equal("ambient-callee", observedCallee);
+            Assert.Equal("ambient-new-target", observedNewTarget);
+            Assert.Equal("ambient-this", RuntimeServices.GetCurrentThis());
+            Assert.Same(ambientArguments, RuntimeServices.GetCurrentArguments());
+            Assert.Equal("ambient-callee", RuntimeServices.GetCurrentCallee());
+            Assert.Equal("ambient-new-target", RuntimeServices.GetCurrentNewTarget());
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            RuntimeServices.SetCurrentCallee(previousCallee);
+            RuntimeServices.SetCurrentArguments(previousArguments);
+            RuntimeServices.SetCurrentThis(previousThis);
+        }
+    }
+
+    [Fact]
+    public void ReceiverAwareVariadicBuiltinReceivesPackedArgumentsWithoutAmbientState()
+    {
+        BuiltinFunctionVariadic function =
+            static (object? thisArgument, in JsCallArguments arguments) =>
+                new VariadicCallSnapshot(
+                    thisArgument,
+                    arguments.Count,
+                    arguments.UsesArrayStorage,
+                    arguments.GetArgument(arguments.Count - 1),
+                    RuntimeServices.GetCurrentThis());
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+
+        Assert.False(adapter.RequiresInvocationContext);
+        Assert.Equal(0d, ObjectRuntime.GetProperty(adapter, "length"));
+
+        var inline = Assert.IsType<VariadicCallSnapshot>(
+            CallableOperations.Call3(adapter, "inline", 1d, 2d, 3d));
+        Assert.Equal(new VariadicCallSnapshot("inline", 3, false, 3d, null), inline);
+
+        var arbitrary = Assert.IsType<VariadicCallSnapshot>(
+            CallableOperations.Call(
+                adapter,
+                "array",
+                [1d, 2d, 3d, 4d, 5d, 6d]));
+        Assert.Equal(new VariadicCallSnapshot("array", 6, true, 6d, null), arbitrary);
+    }
+
+    [Fact]
+    public void ReceiverAwareFixedArityBuiltinAdaptersAllocateNoInvocationState()
+    {
+        var adapters = new[]
+        {
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                (BuiltinFunction0)(static thisArgument => thisArgument)),
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                (BuiltinFunction1)(static (_, argument0) => argument0)),
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                (BuiltinFunction2)(static (_, _, argument1) => argument1)),
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                (BuiltinFunction3)(static (_, _, _, argument2) => argument2)),
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                (BuiltinFunction4)(static (_, _, _, _, argument3) => argument3)),
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                (BuiltinFunction5)(static (_, _, _, _, _, argument4) => argument4))
+        };
+
+        for (var index = 0; index < 1_000; index++)
+        {
+            for (var arity = 0; arity <= 5; arity++)
+            {
+                _ = InvokeReceiverAwareAdapter(adapters[arity], arity);
+            }
+        }
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        object? result = null;
+        for (var index = 0; index < 10_000; index++)
+        {
+            for (var arity = 0; arity <= 5; arity++)
+            {
+                result = InvokeReceiverAwareAdapter(adapters[arity], arity);
+            }
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal("argument", result);
+        Assert.Equal(0, allocated);
+    }
+
+    [Fact]
+    public void ReceiverAwareBuiltinAdapterPropagatesErrors()
+    {
+        BuiltinFunction1 function = static (_, _) =>
+            throw new TypeError("receiver-aware failure");
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+
+        var exception = Assert.Throws<TypeError>(
+            () => CallableOperations.Call1(adapter, "this", "argument"));
+
+        Assert.Equal("receiver-aware failure", exception.Message);
+    }
+
+    [Fact]
+    public void ReceiverAwareBuiltinAdapterPreservesConstructorReceiverAndNewTarget()
+    {
+        BuiltinFunction1 function = static (thisArgument, argument0) =>
+        {
+            var receiver = Assert.IsType<JsObject>(thisArgument);
+            receiver["value"] = argument0;
+            receiver["newTarget"] = RuntimeServices.GetCurrentNewTarget();
+            receiver["ambientThis"] = RuntimeServices.GetCurrentThis();
+            return null;
+        };
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+        Assert.False(adapter.RequiresInvocationContext);
+        JavaScriptRuntime.Function.MarkConstructible(adapter);
+        var newTarget = new JsObject();
+
+        var result = Assert.IsType<JsObject>(
+            CallableOperations.Construct1(
+                adapter,
+                newTarget,
+                "value"));
+
+        Assert.True(adapter.RequiresInvocationContext);
+        Assert.Equal("value", result["value"]);
+        Assert.Same(newTarget, result["newTarget"]);
+        Assert.Same(result, result["ambientThis"]);
+    }
+
+    [Fact]
     public void FixedArityGeneratedAbiAdapterCallsDoNotAllocateArgumentArrays()
     {
         JsFuncNoScopes3 callback =
@@ -511,6 +781,20 @@ public sealed class JsFunctionObjectRuntimeTests
 
     private static object? StaticEcho(object argument)
         => argument;
+
+    private static object? InvokeReceiverAwareAdapter(
+        BuiltinDelegateFunctionAdapter adapter,
+        int arity)
+        => arity switch
+        {
+            0 => CallableOperations.Call0(adapter, "argument"),
+            1 => CallableOperations.Call1(adapter, null, "argument"),
+            2 => CallableOperations.Call2(adapter, null, null, "argument"),
+            3 => CallableOperations.Call3(adapter, null, null, null, "argument"),
+            4 => CallableOperations.Call4(adapter, null, null, null, null, "argument"),
+            5 => CallableOperations.Call5(adapter, null, null, null, null, null, "argument"),
+            _ => throw new ArgumentOutOfRangeException(nameof(arity))
+        };
 
     [Fact]
     public void CompiledContinuationsAreNotJavaScriptCallableValues()
@@ -716,4 +1000,17 @@ public sealed class JsFunctionObjectRuntimeTests
         object? ThisArgument,
         object?[] Arguments,
         bool UsesArrayStorage);
+
+    private sealed record ReceiverAwareCallSnapshot(
+        object? ThisArgument,
+        object?[] Arguments,
+        object? AmbientThis,
+        object? AmbientCallee);
+
+    private sealed record VariadicCallSnapshot(
+        object? ThisArgument,
+        int Count,
+        bool UsesArrayStorage,
+        object? LastArgument,
+        object? AmbientThis);
 }

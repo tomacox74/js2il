@@ -17,7 +17,7 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
     private readonly Closure.DelegateInvokeMetadata _invokeMetadata;
     private readonly object _initializationLock = new();
     private bool _isConstructor;
-    private bool _requiresInvocationContext = true;
+    private bool _requiresInvocationContext;
 
     public BuiltinDelegateFunctionAdapter(
         Delegate target,
@@ -28,6 +28,9 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
         _scopes = scopes ?? RuntimeServices.EmptyScopes;
         _invokeMetadata = Closure.GetDelegateInvokeMetadata(target);
         _isConstructor = isConstructor;
+        _requiresInvocationContext =
+            isConstructor
+            || !BuiltinFunctionDelegates.IsReceiverAware(target);
         using (PropertyDescriptorStore.BeginIntrinsicInitialization())
         {
             Function.DefineMetadataProperty(
@@ -97,10 +100,14 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
         bool requiresInvocationContext,
         bool? isConstructor = null)
     {
-        _requiresInvocationContext = requiresInvocationContext;
+        var resolvedIsConstructor = isConstructor ?? _isConstructor;
+        _requiresInvocationContext =
+            requiresInvocationContext
+            || (resolvedIsConstructor
+                && BuiltinFunctionDelegates.IsReceiverAware(Target));
         if (isConstructor.HasValue)
         {
-            _isConstructor = isConstructor.Value;
+            _isConstructor = resolvedIsConstructor;
         }
     }
 
@@ -110,6 +117,7 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
                 Target,
                 _invokeMetadata,
                 _scopes,
+                thisArgument,
                 arguments,
                 newTarget: null));
 
