@@ -3165,25 +3165,6 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
 		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 		{
@@ -3349,6 +3330,72 @@
 		.class nested public auto ansi beforefieldinit Scope_read
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 40 (0x28)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_StableConstCallable_Fallbacks/StableConstBase
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstBase
+					IL_001d: call instance float64 Modules.Function_StableConstCallable_Fallbacks/StableConstBase::read()
+					IL_0022: box [System.Runtime]System.Double
+					IL_0027: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -3365,7 +3412,7 @@
 
 		} // end of class Scope_read
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_FF86048C_StableConstBase
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -3385,9 +3432,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassConstructor_FF86048C_StableConstBase::_transitionalScopes
+				IL_0008: stfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_FF86048C_StableConstBase::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -3398,7 +3445,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_FF86048C_StableConstBase::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -3409,73 +3456,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_FF86048C_StableConstBase::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_FF86048C_StableConstBase
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_D5ADD173_StableConstBase_read
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_D5ADD173_StableConstBase_read::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_D5ADD173_StableConstBase_read::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_D5ADD173_StableConstBase_read::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 40 (0x28)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_StableConstCallable_Fallbacks/StableConstBase
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstBase
-				IL_001d: call instance float64 Modules.Function_StableConstCallable_Fallbacks/StableConstBase::read()
-				IL_0022: box [System.Runtime]System.Double
-				IL_0027: ret
-			} // end of method FunctionObject_ClassMethod_D5ADD173_StableConstBase_read::CallCore
-
-		} // end of class FunctionObject_ClassMethod_D5ADD173_StableConstBase_read
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -3536,6 +3519,98 @@
 		.class nested public auto ansi beforefieldinit Scope_read
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/Scope_read/FunctionObject::_transitionalScopes
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 35 (0x23)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_StableConstCallable_Fallbacks/StableConstDerived
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/Scope_read/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstDerived
+					IL_001d: call instance object Modules.Function_StableConstCallable_Fallbacks/StableConstDerived::read()
+					IL_0022: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -3552,7 +3627,7 @@
 
 		} // end of class Scope_read
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -3572,9 +3647,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived::_transitionalScopes
+				IL_0008: stfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -3585,7 +3660,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -3596,80 +3671,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::_transitionalScopes
-				IL_000d: ret
-			} // end of method FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 35 (0x23)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_StableConstCallable_Fallbacks/StableConstDerived
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstDerived
-				IL_001d: call instance object Modules.Function_StableConstCallable_Fallbacks/StableConstDerived::read()
-				IL_0022: ret
-			} // end of method FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::CallCore
-
-		} // end of class FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read
+		} // end of class FunctionObject
 
 
 		// Fields
@@ -3835,8 +3839,8 @@
 			[24] class Modules.Function_StableConstCallable_Fallbacks/ownIdentity/FunctionObject,
 			[25] class [System.Runtime]System.Type,
 			[26] object,
-			[27] class Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassConstructor_FF86048C_StableConstBase,
-			[28] class Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived,
+			[27] class Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject,
+			[28] class Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject,
 			[29] object,
 			[30] object,
 			[31] object,
@@ -4148,14 +4152,14 @@
 		IL_031e: stloc.s 13
 		IL_0320: ldloc.s 26
 		IL_0322: ldstr "read"
-		IL_0327: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassMethod_D5ADD173_StableConstBase_read::.ctor()
+		IL_0327: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstBase/Scope_read/FunctionObject::.ctor()
 		IL_032c: ldc.i4.0
 		IL_032d: conv.r8
 		IL_032e: ldstr "read"
 		IL_0333: ldc.i4.0
 		IL_0334: ldc.i4.1
-		IL_0335: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassMethod_D5ADD173_StableConstBase_read>(!!0, float64, string, bool, bool)
-		IL_033a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassMethod_D5ADD173_StableConstBase_read>(!!0)
+		IL_0335: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Fallbacks/StableConstBase/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_033a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Fallbacks/StableConstBase/Scope_read/FunctionObject>(!!0)
 		IL_033f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0344: pop
 		IL_0345: ldc.i4.1
@@ -4166,14 +4170,14 @@
 		IL_034e: stelem.ref
 		IL_034f: stloc.s 13
 		IL_0351: ldloc.s 13
-		IL_0353: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassConstructor_FF86048C_StableConstBase::.ctor(object[])
+		IL_0353: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject::.ctor(object[])
 		IL_0358: ldloc.s 25
 		IL_035a: ldloc.s 13
 		IL_035c: ldc.i4.0
 		IL_035d: conv.r8
 		IL_035e: ldc.i4.0
 		IL_035f: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0364: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject_ClassConstructor_FF86048C_StableConstBase
+		IL_0364: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstBase/FunctionObject
 		IL_0369: stloc.s 27
 		IL_036b: ldloc.0
 		IL_036c: ldloc.s 27
@@ -4192,14 +4196,14 @@
 		IL_039e: ldloc.s 26
 		IL_03a0: ldstr "read"
 		IL_03a5: ldloc.s 13
-		IL_03a7: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read::.ctor(object[])
+		IL_03a7: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/Scope_read/FunctionObject::.ctor(object[])
 		IL_03ac: ldc.i4.0
 		IL_03ad: conv.r8
 		IL_03ae: ldstr "read"
 		IL_03b3: ldc.i4.0
 		IL_03b4: ldc.i4.1
-		IL_03b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read>(!!0, float64, string, bool, bool)
-		IL_03ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassMethod_7C6EEB13_StableConstDerived_read>(!!0)
+		IL_03b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/Scope_read/FunctionObject>(!!0)
 		IL_03bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_03c4: pop
 		IL_03c5: ldc.i4.1
@@ -4210,14 +4214,14 @@
 		IL_03ce: stelem.ref
 		IL_03cf: stloc.s 13
 		IL_03d1: ldloc.s 13
-		IL_03d3: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived::.ctor(object[])
+		IL_03d3: newobj instance void Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject::.ctor(object[])
 		IL_03d8: ldloc.s 25
 		IL_03da: ldloc.s 13
 		IL_03dc: ldc.i4.0
 		IL_03dd: conv.r8
 		IL_03de: ldc.i4.0
 		IL_03df: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_03e4: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject_ClassConstructor_6FDF1CC2_StableConstDerived
+		IL_03e4: castclass Modules.Function_StableConstCallable_Fallbacks/StableConstDerived/FunctionObject
 		IL_03e9: stloc.s 28
 		IL_03eb: ldloc.s 28
 		IL_03ed: ldloc.s 27

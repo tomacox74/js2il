@@ -33,6 +33,56 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -48,54 +98,6 @@
 			} // end of method Scope_ctor::.ctor
 
 		} // end of class Scope_ctor
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16::_transitionalScopes
-				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16
 
 
 		// Fields
@@ -164,7 +166,7 @@
 			[3] object,
 			[4] class [System.Runtime]System.Type,
 			[5] object[],
-			[6] class Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16,
+			[6] class Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/Scope_ctor/FunctionObject,
 			[7] object,
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
@@ -194,14 +196,14 @@
 		IL_0045: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_004a: stloc.s 4
 		IL_004c: ldloc.s 5
-		IL_004e: newobj instance void Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16::.ctor(object[])
+		IL_004e: newobj instance void Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_0053: ldloc.s 4
 		IL_0055: ldloc.s 5
 		IL_0057: ldc.i4.1
 		IL_0058: conv.r8
 		IL_0059: ldc.i4.1
 		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_005f: castclass Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/FunctionObject_ClassConstructor_8DAADD44_ClassExpression_L3C16
+		IL_005f: castclass Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/Scope_ctor/FunctionObject
 		IL_0064: stloc.s 6
 		IL_0066: ldloc.s 6
 		IL_0068: ldstr "Function"

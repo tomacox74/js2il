@@ -33,6 +33,62 @@
 		.class nested public auto ansi beforefieldinit Scope_helloWorld
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 6 (0x6)
+					.maxstack 8
+
+					IL_0000: call object Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter::helloWorld()
+					IL_0005: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -49,7 +105,7 @@
 
 		} // end of class Scope_helloWorld
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_CA02D6DD_Greeter
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -69,9 +125,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter::_transitionalScopes
+				IL_0008: stfld object[] Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_CA02D6DD_Greeter::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -82,7 +138,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_CA02D6DD_Greeter::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -93,63 +149,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_CA02D6DD_Greeter::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_CA02D6DD_Greeter
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 6 (0x6)
-				.maxstack 8
-
-				IL_0000: call object Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter::helloWorld()
-				IL_0005: ret
-			} // end of method FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld::CallCore
-
-		} // end of class FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -231,7 +233,7 @@
 			[1] object,
 			[2] class [System.Runtime]System.Type,
 			[3] object[],
-			[4] class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter
+			[4] class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Scope::.ctor()
@@ -250,14 +252,14 @@
 		IL_002d: stloc.3
 		IL_002e: ldloc.2
 		IL_002f: ldstr "helloWorld"
-		IL_0034: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld::.ctor()
+		IL_0034: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject::.ctor()
 		IL_0039: ldc.i4.0
 		IL_003a: conv.r8
 		IL_003b: ldstr "helloWorld"
 		IL_0040: ldc.i4.0
 		IL_0041: ldc.i4.1
-		IL_0042: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld>(!!0, float64, string, bool, bool)
-		IL_0047: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassStaticMethod_6C2663DE_Greeter_helloWorld>(!!0)
+		IL_0042: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0047: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject>(!!0)
 		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0051: pop
 		IL_0052: ldc.i4.1
@@ -268,14 +270,14 @@
 		IL_005b: stelem.ref
 		IL_005c: stloc.3
 		IL_005d: ldloc.3
-		IL_005e: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter::.ctor(object[])
+		IL_005e: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject::.ctor(object[])
 		IL_0063: ldloc.2
 		IL_0064: ldloc.3
 		IL_0065: ldc.i4.0
 		IL_0066: conv.r8
 		IL_0067: ldc.i4.0
 		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_006d: castclass Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter
+		IL_006d: castclass Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject
 		IL_0072: stloc.s 4
 		IL_0074: ldloc.s 4
 		IL_0076: stloc.1

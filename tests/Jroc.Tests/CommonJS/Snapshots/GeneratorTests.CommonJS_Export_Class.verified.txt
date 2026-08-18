@@ -160,6 +160,77 @@
 		.class nested public auto ansi beforefieldinit Scope_add
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 49 (0x31)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.CommonJS_Export_Class_Lib/Calculator
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: ldarg.2
+					IL_0025: ldc.i4.1
+					IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_002b: call instance object Modules.CommonJS_Export_Class_Lib/Calculator::'add'(object, object)
+					IL_0030: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -179,6 +250,77 @@
 		.class nested public auto ansi beforefieldinit Scope_multiply
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 49 (0x31)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.CommonJS_Export_Class_Lib/Calculator
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: ldarg.2
+					IL_0025: ldc.i4.1
+					IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_002b: call instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
+					IL_0030: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -195,7 +337,7 @@
 
 		} // end of class Scope_multiply
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_4A903940_Calculator
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -215,9 +357,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassConstructor_4A903940_Calculator::_transitionalScopes
+				IL_0008: stfld object[] Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_4A903940_Calculator::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -228,7 +370,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_4A903940_Calculator::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -239,147 +381,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_4A903940_Calculator::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_4A903940_Calculator
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_C6420A76_Calculator_add
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_C6420A76_Calculator_add::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C6420A76_Calculator_add::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C6420A76_Calculator_add::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 49 (0x31)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.CommonJS_Export_Class_Lib/Calculator
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: ldarg.2
-				IL_0025: ldc.i4.1
-				IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_002b: call instance object Modules.CommonJS_Export_Class_Lib/Calculator::'add'(object, object)
-				IL_0030: ret
-			} // end of method FunctionObject_ClassMethod_C6420A76_Calculator_add::CallCore
-
-		} // end of class FunctionObject_ClassMethod_C6420A76_Calculator_add
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_56B18E5B_Calculator_multiply
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_56B18E5B_Calculator_multiply::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_56B18E5B_Calculator_multiply::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_56B18E5B_Calculator_multiply::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 49 (0x31)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.CommonJS_Export_Class_Lib/Calculator
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: ldarg.2
-				IL_0025: ldc.i4.1
-				IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_002b: call instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
-				IL_0030: ret
-			} // end of method FunctionObject_ClassMethod_56B18E5B_Calculator_multiply::CallCore
-
-		} // end of class FunctionObject_ClassMethod_56B18E5B_Calculator_multiply
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -485,7 +489,7 @@
 			[2] class [System.Runtime]System.Type,
 			[3] object,
 			[4] object[],
-			[5] class Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassConstructor_4A903940_Calculator
+			[5] class Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_Class_Lib/Scope::.ctor()
@@ -504,28 +508,28 @@
 		IL_002d: stloc.s 4
 		IL_002f: ldloc.3
 		IL_0030: ldstr "add"
-		IL_0035: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassMethod_C6420A76_Calculator_add::.ctor()
+		IL_0035: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject::.ctor()
 		IL_003a: ldc.i4.2
 		IL_003b: conv.r8
 		IL_003c: ldstr "add"
 		IL_0041: ldc.i4.0
 		IL_0042: ldc.i4.1
-		IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassMethod_C6420A76_Calculator_add>(!!0, float64, string, bool, bool)
-		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassMethod_C6420A76_Calculator_add>(!!0)
+		IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject>(!!0)
 		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0052: pop
 		IL_0053: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0058: stloc.s 4
 		IL_005a: ldloc.3
 		IL_005b: ldstr "multiply"
-		IL_0060: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassMethod_56B18E5B_Calculator_multiply::.ctor()
+		IL_0060: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject::.ctor()
 		IL_0065: ldc.i4.2
 		IL_0066: conv.r8
 		IL_0067: ldstr "multiply"
 		IL_006c: ldc.i4.0
 		IL_006d: ldc.i4.1
-		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassMethod_56B18E5B_Calculator_multiply>(!!0, float64, string, bool, bool)
-		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassMethod_56B18E5B_Calculator_multiply>(!!0)
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject>(!!0)
 		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_007d: pop
 		IL_007e: ldc.i4.1
@@ -536,14 +540,14 @@
 		IL_0087: stelem.ref
 		IL_0088: stloc.s 4
 		IL_008a: ldloc.s 4
-		IL_008c: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassConstructor_4A903940_Calculator::.ctor(object[])
+		IL_008c: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject::.ctor(object[])
 		IL_0091: ldloc.2
 		IL_0092: ldloc.s 4
 		IL_0094: ldc.i4.0
 		IL_0095: conv.r8
 		IL_0096: ldc.i4.0
 		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_009c: castclass Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject_ClassConstructor_4A903940_Calculator
+		IL_009c: castclass Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject
 		IL_00a1: stloc.s 5
 		IL_00a3: ldloc.s 5
 		IL_00a5: stloc.1

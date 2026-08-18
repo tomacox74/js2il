@@ -33,6 +33,71 @@
 		.class nested public auto ansi beforefieldinit Scope_greet
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 35 (0x23)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17
+					IL_001d: call instance object Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17::greet()
+					IL_0022: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -49,7 +114,7 @@
 
 		} // end of class Scope_greet
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -69,9 +134,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17::_transitionalScopes
+				IL_0008: stfld object[] Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -82,7 +147,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -93,72 +158,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 35 (0x23)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17
-				IL_001d: call instance object Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17::greet()
-				IL_0022: ret
-			} // end of method FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet::CallCore
-
-		} // end of class FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -234,7 +236,7 @@
 			[4] class [System.Runtime]System.Type,
 			[5] object,
 			[6] object[],
-			[7] class Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17,
+			[7] class Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject,
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[9] object,
 			[10] bool,
@@ -267,14 +269,14 @@
 		IL_0057: stloc.s 6
 		IL_0059: ldloc.s 5
 		IL_005b: ldstr "greet"
-		IL_0060: newobj instance void Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet::.ctor()
+		IL_0060: newobj instance void Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/Scope_greet/FunctionObject::.ctor()
 		IL_0065: ldc.i4.0
 		IL_0066: conv.r8
 		IL_0067: ldstr "greet"
 		IL_006c: ldc.i4.0
 		IL_006d: ldc.i4.1
-		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet>(!!0, float64, string, bool, bool)
-		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassMethod_3B133C66_ClassExpression_L1C17_greet>(!!0)
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/Scope_greet/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/Scope_greet/FunctionObject>(!!0)
 		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_007d: pop
 		IL_007e: ldc.i4.1
@@ -285,14 +287,14 @@
 		IL_0087: stelem.ref
 		IL_0088: stloc.s 6
 		IL_008a: ldloc.s 6
-		IL_008c: newobj instance void Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17::.ctor(object[])
+		IL_008c: newobj instance void Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject::.ctor(object[])
 		IL_0091: ldloc.s 4
 		IL_0093: ldloc.s 6
 		IL_0095: ldc.i4.0
 		IL_0096: conv.r8
 		IL_0097: ldc.i4.1
 		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_009d: castclass Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject_ClassConstructor_FB181732_ClassExpression_L1C17
+		IL_009d: castclass Modules.Classes_ClassExpression_LazyPrototypeMetadata/ClassExpression_L1C17/FunctionObject
 		IL_00a2: stloc.s 7
 		IL_00a4: ldloc.s 7
 		IL_00a6: ldstr "Greeter"
