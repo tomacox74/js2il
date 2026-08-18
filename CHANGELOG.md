@@ -11,6 +11,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   preserves custom `@@replace` dispatch ordering, and invokes functional
   replacements with the required match arguments. Empty global-RegExp matches
   retain the correct `lastIndex` for `matchAll` iteration.
+- perf(runtime): migrate `String.prototype` and String iterator built-ins to
+  the explicit-receiver ABI (issue #1889). Fixed arities zero through five no
+  longer publish ambient invocation state or allocate argument arrays,
+  `concat` retains a receiver-aware variadic path, trim aliases share their
+  canonical function objects, and the legacy `substr` surface is now exposed.
 - perf(runtime): add an internal explicit-receiver built-in ABI for fixed
   arities zero through five and a variadic fallback (issue #1888).
   Receiver-aware adapters now bypass ambient invocation state and invoke

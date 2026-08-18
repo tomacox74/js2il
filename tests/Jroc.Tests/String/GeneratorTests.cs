@@ -244,6 +244,13 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_ExplicitReceiverAbi()
+        {
+            var testName = nameof(String_ExplicitReceiverAbi);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Repeat_Basic()
         {
             var testName = nameof(String_Repeat_Basic);

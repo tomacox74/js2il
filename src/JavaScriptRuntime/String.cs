@@ -57,43 +57,44 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
 
-            DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
-            DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt, 1);
-            DefinePrototypeMethod(prototype, "charCodeAt", (Func<object[], object?[]?, object?>)PrototypeCharCodeAt, 1);
-            DefinePrototypeMethod(prototype, "codePointAt", (Func<object[], object?[]?, object?>)PrototypeCodePointAt, 1);
-            DefinePrototypeMethod(prototype, "concat", (Func<object[], object?[]?, object?>)PrototypeConcat, 1);
-            DefinePrototypeMethod(prototype, "endsWith", (Func<object[], object?[]?, object?>)PrototypeEndsWith, 1);
-            DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes, 1);
-            DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
-            DefinePrototypeMethod(prototype, "isWellFormed", (Func<object[], object?[]?, object?>)PrototypeIsWellFormed, 0);
-            DefinePrototypeMethod(prototype, "lastIndexOf", (Func<object[], object?[]?, object?>)PrototypeLastIndexOf, 1);
-            DefinePrototypeMethod(prototype, "localeCompare", (Func<object[], object?[]?, object?>)PrototypeLocaleCompare, 1);
-            DefinePrototypeMethod(prototype, "match", (Func<object[], object?[]?, object?>)PrototypeMatch, 1);
-            DefinePrototypeMethod(prototype, "matchAll", (Func<object[], object?[]?, object?>)PrototypeMatchAll, 1);
-            DefinePrototypeMethod(prototype, "normalize", (Func<object[], object?[]?, object?>)PrototypeNormalize, 0);
-            DefinePrototypeMethod(prototype, "padEnd", (Func<object[], object?[]?, object?>)PrototypePadEnd, 1);
-            DefinePrototypeMethod(prototype, "padStart", (Func<object[], object?[]?, object?>)PrototypePadStart, 1);
-            DefinePrototypeMethod(prototype, "repeat", (Func<object[], object?[]?, object?>)PrototypeRepeat, 1);
-            DefinePrototypeMethod(prototype, "replace", (Func<object[], object?[]?, object?>)PrototypeReplace, 2);
-            DefinePrototypeMethod(prototype, "replaceAll", (Func<object[], object?[]?, object?>)PrototypeReplaceAll, 2);
-            DefinePrototypeMethod(prototype, "search", (Func<object[], object?[]?, object?>)PrototypeSearch, 1);
-            DefinePrototypeMethod(prototype, "slice", (Func<object[], object?[]?, object?>)PrototypeSlice, 2);
-            DefinePrototypeMethod(prototype, "split", (Func<object[], object?[]?, object?>)PrototypeSplit, 2);
-            DefinePrototypeMethod(prototype, "startsWith", (Func<object[], object?[]?, object?>)PrototypeStartsWith, 1);
-            DefinePrototypeMethod(prototype, "substring", (Func<object[], object?[]?, object?>)PrototypeSubstring, 2);
-            DefinePrototypeMethod(prototype, "toLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLowerCase, 0);
-            DefinePrototypeMethod(prototype, "toLocaleLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLocaleLowerCase, 0);
-            DefinePrototypeMethod(prototype, "toLocaleUpperCase", (Func<object[], object?[]?, object?>)PrototypeToLocaleUpperCase, 0);
-            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
-            DefinePrototypeMethod(prototype, "toUpperCase", (Func<object[], object?[]?, object?>)PrototypeToUpperCase, 0);
-            DefinePrototypeMethod(prototype, "toWellFormed", (Func<object[], object?[]?, object?>)PrototypeToWellFormed, 0);
-            DefinePrototypeMethod(prototype, "trim", (Func<object[], object?[]?, object?>)PrototypeTrim, 0);
-            DefinePrototypeMethod(prototype, "trimEnd", (Func<object[], object?[]?, object?>)PrototypeTrimEnd, 0);
-            DefinePrototypeMethod(prototype, "trimLeft", (Func<object[], object?[]?, object?>)((scopes, args) => PrototypeTrimStart(scopes, args)), 0);
-            DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)((scopes, args) => PrototypeTrimEnd(scopes, args)), 0);
-            DefinePrototypeMethod(prototype, "trimStart", (Func<object[], object?[]?, object?>)PrototypeTrimStart, 0);
-            DefinePrototypeMethod(prototype, "valueOf", (Func<object[], object?[]?, object?>)PrototypeValueOf, 0);
-            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator, 0, "[Symbol.iterator]");
+            DefinePrototypeMethod(prototype, "at", (BuiltinFunction1)PrototypeAt, 1);
+            DefinePrototypeMethod(prototype, "charAt", (BuiltinFunction1)PrototypeCharAt, 1);
+            DefinePrototypeMethod(prototype, "charCodeAt", (BuiltinFunction1)PrototypeCharCodeAt, 1);
+            DefinePrototypeMethod(prototype, "codePointAt", (BuiltinFunction1)PrototypeCodePointAt, 1);
+            DefinePrototypeMethod(prototype, "concat", (BuiltinFunctionVariadic)PrototypeConcat, 1);
+            DefinePrototypeMethod(prototype, "endsWith", (BuiltinFunction2)PrototypeEndsWith, 1);
+            DefinePrototypeMethod(prototype, "includes", (BuiltinFunction2)PrototypeIncludes, 1);
+            DefinePrototypeMethod(prototype, "indexOf", (BuiltinFunction2)PrototypeIndexOf, 1);
+            DefinePrototypeMethod(prototype, "isWellFormed", (BuiltinFunction0)PrototypeIsWellFormed, 0);
+            DefinePrototypeMethod(prototype, "lastIndexOf", (BuiltinFunction2)PrototypeLastIndexOf, 1);
+            DefinePrototypeMethod(prototype, "localeCompare", (BuiltinFunction3)PrototypeLocaleCompare, 1);
+            DefinePrototypeMethod(prototype, "match", (BuiltinFunction1)PrototypeMatch, 1);
+            DefinePrototypeMethod(prototype, "matchAll", (BuiltinFunction1)PrototypeMatchAll, 1);
+            DefinePrototypeMethod(prototype, "normalize", (BuiltinFunction1)PrototypeNormalize, 0);
+            DefinePrototypeMethod(prototype, "padEnd", (BuiltinFunction2)PrototypePadEnd, 1);
+            DefinePrototypeMethod(prototype, "padStart", (BuiltinFunction2)PrototypePadStart, 1);
+            DefinePrototypeMethod(prototype, "repeat", (BuiltinFunction1)PrototypeRepeat, 1);
+            DefinePrototypeMethod(prototype, "replace", (BuiltinFunction2)PrototypeReplace, 2);
+            DefinePrototypeMethod(prototype, "replaceAll", (BuiltinFunction2)PrototypeReplaceAll, 2);
+            DefinePrototypeMethod(prototype, "search", (BuiltinFunction1)PrototypeSearch, 1);
+            DefinePrototypeMethod(prototype, "slice", (BuiltinFunction2)PrototypeSlice, 2);
+            DefinePrototypeMethod(prototype, "split", (BuiltinFunction2)PrototypeSplit, 2);
+            DefinePrototypeMethod(prototype, "startsWith", (BuiltinFunction2)PrototypeStartsWith, 1);
+            DefinePrototypeMethod(prototype, "substr", (BuiltinFunction2)PrototypeSubstr, 2);
+            DefinePrototypeMethod(prototype, "substring", (BuiltinFunction2)PrototypeSubstring, 2);
+            DefinePrototypeMethod(prototype, "toLowerCase", (BuiltinFunction0)PrototypeToLowerCase, 0);
+            DefinePrototypeMethod(prototype, "toLocaleLowerCase", (BuiltinFunction0)PrototypeToLocaleLowerCase, 0);
+            DefinePrototypeMethod(prototype, "toLocaleUpperCase", (BuiltinFunction0)PrototypeToLocaleUpperCase, 0);
+            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "toUpperCase", (BuiltinFunction0)PrototypeToUpperCase, 0);
+            DefinePrototypeMethod(prototype, "toWellFormed", (BuiltinFunction0)PrototypeToWellFormed, 0);
+            DefinePrototypeMethod(prototype, "trim", (BuiltinFunction0)PrototypeTrim, 0);
+            DefinePrototypeMethod(prototype, "trimEnd", (BuiltinFunction0)PrototypeTrimEnd, 0);
+            DefinePrototypeMethod(prototype, "trimStart", (BuiltinFunction0)PrototypeTrimStart, 0);
+            DefinePrototypeAlias(prototype, "trimLeft", "trimStart");
+            DefinePrototypeAlias(prototype, "trimRight", "trimEnd");
+            DefinePrototypeMethod(prototype, "valueOf", (BuiltinFunction0)PrototypeValueOf, 0);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (BuiltinFunction0)PrototypeIterator, 0, "[Symbol.iterator]");
             PropertyDescriptorStore.DefineOrUpdate(prototype, StringDataPropertyName, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -117,8 +118,8 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext, 0);
-            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0, "[Symbol.iterator]");
+            DefinePrototypeMethod(prototype, "next", (BuiltinFunction0)StringIteratorPrototypeNext, 0);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (BuiltinFunction0)StringIteratorPrototypeIterator, 0, "[Symbol.iterator]");
             PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -142,7 +143,10 @@ namespace JavaScriptRuntime
                 JavaScriptRuntime.Function.InitializeFunctionInstance(
                     builtinFunction,
                     length,
-                    functionName);
+                    functionName,
+                    requiresInvocationContext:
+                        !BuiltinFunctionDelegates.IsReceiverAware(
+                            builtinFunction.Target));
                 PropertyDescriptorStore.DefineOrUpdate(builtinFunction, "prototype", new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,
@@ -160,6 +164,23 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = value
+            });
+        }
+
+        private static void DefinePrototypeAlias(object target, string alias, string canonicalName)
+        {
+            if (!PropertyDescriptorStore.TryGetOwn(target, canonicalName, out var canonicalDescriptor))
+            {
+                throw new InvalidOperationException($"String.prototype.{canonicalName} is not initialized.");
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, alias, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = canonicalDescriptor.Value
             });
         }
 
@@ -593,148 +614,135 @@ namespace JavaScriptRuntime
             return builder.ToString();
         }
 
-        private static object? PrototypeAt(object[] scopes, object?[]? args)
-            => At(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypeAt(object? thisArgument, object? index)
+            => At(ThisStringValue(thisArgument), index);
 
-        private static object? PrototypeCharAt(object[] scopes, object?[]? args)
+        private static object? PrototypeCharAt(object? thisArgument, object? index)
+            => CharAt(ThisStringValue(thisArgument), index);
+
+        private static object? PrototypeCharCodeAt(object? thisArgument, object? index)
+            => CharCodeAt(ThisStringValue(thisArgument), index);
+
+        private static object? PrototypeCodePointAt(object? thisArgument, object? index)
+            => CodePointAt(ThisStringValue(thisArgument), index);
+
+        private static object? PrototypeConcat(object? thisArgument, in JsCallArguments arguments)
         {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return args == null || args.Length == 0 ? CharAt(input) : CharAt(input, args[0]);
+            var builder = new StringBuilder(ThisStringValue(thisArgument));
+            for (var index = 0; index < arguments.Count; index++)
+            {
+                var argument = arguments.GetArgument(index);
+                if (argument is Symbol)
+                {
+                    throw new TypeError("Cannot convert a Symbol value to a string");
+                }
+
+                builder.Append(DotNet2JSConversions.ToString(argument));
+            }
+
+            return builder.ToString();
         }
 
-        private static object? PrototypeCharCodeAt(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return args == null || args.Length == 0 ? CharCodeAt(input) : CharCodeAt(input, args[0]);
-        }
+        private static object? PrototypeEndsWith(object? thisArgument, object? searchString, object? endPosition)
+            => EndsWith(ThisStringValue(thisArgument), searchString, endPosition);
 
-        private static object? PrototypeCodePointAt(object[] scopes, object?[]? args)
-            => CodePointAt(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypeIncludes(object? thisArgument, object? searchString, object? position)
+            => IncludesDynamic(ThisStringValue(thisArgument), searchString, position);
 
-        private static object? PrototypeConcat(object[] scopes, object?[]? args)
-            => Concat(ThisStringValue(RuntimeServices.GetCurrentThis()), args ?? System.Array.Empty<object?>());
+        private static object? PrototypeIndexOf(object? thisArgument, object? searchString, object? position)
+            => IndexOfDynamic(ThisStringValue(thisArgument), searchString, position);
 
-        private static object? PrototypeEndsWith(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return EndsWith(input, GetArg(args, 0), GetArg(args, 1));
-        }
+        private static object? PrototypeIsWellFormed(object? thisArgument)
+            => IsWellFormed(ThisStringValue(thisArgument));
 
-        private static object? PrototypeIncludes(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return IncludesDynamic(input, GetArg(args, 0), GetArg(args, 1));
-        }
+        private static object? PrototypeIterator(object? thisArgument)
+            => CreateIterator(ThisStringValue(thisArgument));
 
-        private static object? PrototypeIndexOf(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return IndexOfDynamic(input, GetArg(args, 0), GetArg(args, 1));
-        }
+        private static object? PrototypeLastIndexOf(object? thisArgument, object? searchString, object? position)
+            => LastIndexOfDynamic(ThisStringValue(thisArgument), searchString, position);
 
-        private static object? PrototypeIsWellFormed(object[] scopes, object?[]? args)
-            => IsWellFormed(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeLocaleCompare(
+            object? thisArgument,
+            object? compareString,
+            object? locales,
+            object? options)
+            => LocaleCompare(
+                ThisStringValue(thisArgument),
+                DotNet2JSConversions.ToString(compareString),
+                locales,
+                options);
 
-        private static object? PrototypeIterator(object[] scopes, object?[]? args)
-            => CreateIterator(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeMatch(object? thisArgument, object? regexp)
+            => Match(ThisStringValue(thisArgument), regexp);
 
-        private static object? PrototypeLastIndexOf(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return LastIndexOfDynamic(input, GetArg(args, 0), GetArg(args, 1));
-        }
+        private static object? PrototypeMatchAll(object? thisArgument, object? regexp)
+            => MatchAll(ThisStringValue(thisArgument), regexp);
 
-        private static object? PrototypeLocaleCompare(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            var other = DotNet2JSConversions.ToString(GetArg(args, 0));
-            return LocaleCompare(input, other, GetArg(args, 1), GetArg(args, 2));
-        }
+        private static object? PrototypeNormalize(object? thisArgument, object? form)
+            => Normalize(ThisStringValue(thisArgument), form);
 
-        private static object? PrototypeMatch(object[] scopes, object?[]? args)
-            => Match(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypePadEnd(object? thisArgument, object? maxLength, object? fillString)
+            => PadEnd(ThisStringValue(thisArgument), maxLength, fillString);
 
-        private static object? PrototypeMatchAll(object[] scopes, object?[]? args)
-            => MatchAll(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypePadStart(object? thisArgument, object? maxLength, object? fillString)
+            => PadStart(ThisStringValue(thisArgument), maxLength, fillString);
 
-        private static object? PrototypeNormalize(object[] scopes, object?[]? args)
-            => Normalize(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypeRepeat(object? thisArgument, object? count)
+            => Repeat(ThisStringValue(thisArgument), count);
 
-        private static object? PrototypePadEnd(object[] scopes, object?[]? args)
-            => PadEnd(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+        private static object? PrototypeReplace(object? thisArgument, object? searchValue, object? replaceValue)
+            => Replace(ThisStringValue(thisArgument), searchValue, replaceValue);
 
-        private static object? PrototypePadStart(object[] scopes, object?[]? args)
-            => PadStart(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+        private static object? PrototypeReplaceAll(object? thisArgument, object? searchValue, object? replaceValue)
+            => ReplaceAll(thisArgument, searchValue, replaceValue);
 
-        private static object? PrototypeRepeat(object[] scopes, object?[]? args)
-            => Repeat(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypeSearch(object? thisArgument, object? regexp)
+            => Search(ThisStringValue(thisArgument), regexp);
 
-        private static object? PrototypeReplace(object[] scopes, object?[]? args)
-            => Replace(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+        private static object? PrototypeSlice(object? thisArgument, object? start, object? end)
+            => Slice(ThisStringValue(thisArgument), start, end);
 
-        private static object? PrototypeReplaceAll(object[] scopes, object?[]? args)
-            => ReplaceAll(RuntimeServices.GetCurrentThis(), GetArg(args, 0), GetArg(args, 1));
+        private static object? PrototypeSplit(object? thisArgument, object? separator, object? limit)
+            => Split(ThisStringValue(thisArgument), separator, limit);
 
-        private static object? PrototypeSearch(object[] scopes, object?[]? args)
-            => Search(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+        private static object? PrototypeStartsWith(object? thisArgument, object? searchString, object? position)
+            => StartsWith(ThisStringValue(thisArgument), searchString, position);
 
-        private static object? PrototypeSlice(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return args == null || args.Length < 2
-                ? Slice(input, GetArg(args, 0))
-                : Slice(input, GetArg(args, 0), args[1]);
-        }
+        private static object? PrototypeSubstr(object? thisArgument, object? start, object? length)
+            => Substr(ThisStringValue(thisArgument), start, length);
 
-        private static object? PrototypeSplit(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return Split(input, GetArg(args, 0), GetArg(args, 1));
-        }
+        private static object? PrototypeSubstring(object? thisArgument, object? start, object? end)
+            => Substring(ThisStringValue(thisArgument), start, end);
 
-        private static object? PrototypeStartsWith(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return StartsWith(input, GetArg(args, 0), GetArg(args, 1));
-        }
+        private static object? PrototypeToLowerCase(object? thisArgument)
+            => ToLowerCase(ThisStringValue(thisArgument));
 
-        private static object? PrototypeSubstring(object[] scopes, object?[]? args)
-        {
-            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            return args == null || args.Length < 2
-                ? Substring(input, GetArg(args, 0))
-                : Substring(input, GetArg(args, 0), args[1]);
-        }
+        private static object? PrototypeToLocaleLowerCase(object? thisArgument)
+            => ToLocaleLowerCase(ThisStringValue(thisArgument));
 
-        private static object? PrototypeToLowerCase(object[] scopes, object?[]? args)
-            => ToLowerCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeToLocaleUpperCase(object? thisArgument)
+            => ToLocaleUpperCase(ThisStringValue(thisArgument));
 
-        private static object? PrototypeToLocaleLowerCase(object[] scopes, object?[]? args)
-            => ToLocaleLowerCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeToString(object? thisArgument)
+            => ThisStringValue(thisArgument);
 
-        private static object? PrototypeToLocaleUpperCase(object[] scopes, object?[]? args)
-            => ToLocaleUpperCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeToUpperCase(object? thisArgument)
+            => ToUpperCase(ThisStringValue(thisArgument));
 
-        private static object? PrototypeToString(object[] scopes, object?[]? args)
-            => ThisStringValue(RuntimeServices.GetCurrentThis());
+        private static object? PrototypeToWellFormed(object? thisArgument)
+            => ToWellFormed(ThisStringValue(thisArgument));
 
-        private static object? PrototypeToUpperCase(object[] scopes, object?[]? args)
-            => ToUpperCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeTrim(object? thisArgument)
+            => Trim(ThisStringValue(thisArgument));
 
-        private static object? PrototypeToWellFormed(object[] scopes, object?[]? args)
-            => ToWellFormed(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeTrimEnd(object? thisArgument)
+            => TrimEnd(ThisStringValue(thisArgument));
 
-        private static object? PrototypeTrim(object[] scopes, object?[]? args)
-            => Trim(ThisStringValue(RuntimeServices.GetCurrentThis()));
+        private static object? PrototypeTrimStart(object? thisArgument)
+            => TrimStart(ThisStringValue(thisArgument));
 
-        private static object? PrototypeTrimEnd(object[] scopes, object?[]? args)
-            => TrimEnd(ThisStringValue(RuntimeServices.GetCurrentThis()));
-
-        private static object? PrototypeTrimStart(object[] scopes, object?[]? args)
-            => TrimStart(ThisStringValue(RuntimeServices.GetCurrentThis()));
-
-        private static object? PrototypeValueOf(object[] scopes, object?[]? args)
-            => ThisStringValue(RuntimeServices.GetCurrentThis());
+        private static object? PrototypeValueOf(object? thisArgument)
+            => ThisStringValue(thisArgument);
 
         private static object? ConstructorFromCharCode(object[] scopes, object?[]? args)
             => FromCharCode(args);
@@ -751,12 +759,12 @@ namespace JavaScriptRuntime
             return Raw(template, substitutions);
         }
 
-        private static object? StringIteratorPrototypeIterator(object[] scopes, object?[]? args)
-            => RuntimeServices.GetCurrentThis();
+        private static object? StringIteratorPrototypeIterator(object? thisArgument)
+            => thisArgument;
 
-        private static object? StringIteratorPrototypeNext(object[] scopes, object?[]? args)
+        private static object? StringIteratorPrototypeNext(object? thisArgument)
         {
-            var iterator = RuntimeServices.GetCurrentThis() as PublicStringIterator
+            var iterator = thisArgument as PublicStringIterator
                 ?? throw new TypeError("String Iterator.prototype.next called on incompatible receiver");
             return iterator.next();
         }
