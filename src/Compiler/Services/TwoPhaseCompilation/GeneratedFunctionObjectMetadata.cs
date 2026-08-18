@@ -50,6 +50,8 @@ public sealed record GeneratedFunctionObjectPlan
 
     public required string CanonicalOwnerTypeName { get; init; }
 
+    public string? CanonicalOwnerScopeName { get; init; }
+
     public IReadOnlyList<GeneratedFunctionCapturePlan> Captures { get; init; } =
         Array.Empty<GeneratedFunctionCapturePlan>();
 

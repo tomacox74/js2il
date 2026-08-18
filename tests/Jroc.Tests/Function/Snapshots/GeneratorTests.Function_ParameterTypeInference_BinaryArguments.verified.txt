@@ -11,25 +11,6 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
 		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 		{
@@ -165,6 +146,76 @@
 		.class nested public auto ansi beforefieldinit Scope_add
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 52 (0x34)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::'add'(float64)
+					IL_002e: box [System.Runtime]System.Double
+					IL_0033: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -184,6 +235,76 @@
 		.class nested public auto ansi beforefieldinit Scope_multiply
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 52 (0x34)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::multiply(float64)
+					IL_002e: box [System.Runtime]System.Double
+					IL_0033: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -203,6 +324,76 @@
 		.class nested public auto ansi beforefieldinit Scope_shift
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 52 (0x34)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::shift(float64)
+					IL_002e: box [System.Runtime]System.Double
+					IL_0033: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -222,6 +413,76 @@
 		.class nested public auto ansi beforefieldinit Scope_increment
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 52 (0x34)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::increment(float64)
+					IL_002e: box [System.Runtime]System.Double
+					IL_0033: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -241,6 +502,75 @@
 		.class nested public auto ansi beforefieldinit Scope_incrementBoolean
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 47 (0x2f)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::incrementBoolean(object)
+					IL_0029: box [System.Runtime]System.Double
+					IL_002e: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -260,6 +590,74 @@
 		.class nested public auto ansi beforefieldinit Scope_dynamicAdd
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::dynamicAdd(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -279,6 +677,74 @@
 		.class nested public auto ansi beforefieldinit Scope_bigint
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::bigint(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -298,6 +764,74 @@
 		.class nested public auto ansi beforefieldinit Scope_destructure
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::destructure(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -336,6 +870,72 @@
 				} // end of method Block_L42C28::.ctor
 
 			} // end of class Block_L42C28
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterate(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
 
 
 			// Methods
@@ -377,6 +977,72 @@
 
 			} // end of class Block_L49C32
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVar(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -417,6 +1083,80 @@
 
 			} // end of class Block_L56C38
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/Scope_iterateVarIn/FunctionObject::_transitionalScopes
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/Scope_iterateVarIn/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVarIn(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -437,6 +1177,74 @@
 		.class nested public auto ansi beforefieldinit Scope_redeclare
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::redeclare(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -456,6 +1264,101 @@
 		.class nested public auto ansi beforefieldinit Scope_functionRedeclare
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/Scope_functionRedeclare/FunctionObject::_transitionalScopes
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 42 (0x2a)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/Scope_functionRedeclare/FunctionObject::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: ldarg.2
+					IL_001e: ldc.i4.0
+					IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::functionRedeclare(object)
+					IL_0029: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -495,6 +1398,69 @@
 
 			} // end of class Block_L91C15
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 35 (0x23)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
+					IL_001d: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::run()
+					IL_0022: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -512,7 +1478,7 @@
 
 		} // end of class Scope_run
 
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_0F0D7DBD_BinaryReceiver
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
@@ -532,9 +1498,9 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/FunctionObject_ClassConstructor_0F0D7DBD_BinaryReceiver::_transitionalScopes
+				IL_0008: stfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/FunctionObject::_transitionalScopes
 				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_0F0D7DBD_BinaryReceiver::.ctor
+			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
@@ -545,7 +1511,7 @@
 
 				IL_0000: ldc.i4.1
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_0F0D7DBD_BinaryReceiver::get_IsConstructor
+			} // end of method FunctionObject::get_IsConstructor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
@@ -556,955 +1522,9 @@
 
 				IL_0000: ldc.i4.0
 				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_0F0D7DBD_BinaryReceiver::get_RequiresInvocationContext
+			} // end of method FunctionObject::get_RequiresInvocationContext
 
-		} // end of class FunctionObject_ClassConstructor_0F0D7DBD_BinaryReceiver
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_19915569_BinaryReceiver_add
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_19915569_BinaryReceiver_add::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_19915569_BinaryReceiver_add::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_19915569_BinaryReceiver_add::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 52 (0x34)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::'add'(float64)
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: ret
-			} // end of method FunctionObject_ClassMethod_19915569_BinaryReceiver_add::CallCore
-
-		} // end of class FunctionObject_ClassMethod_19915569_BinaryReceiver_add
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_C89F94A2_BinaryReceiver_multiply
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_C89F94A2_BinaryReceiver_multiply::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C89F94A2_BinaryReceiver_multiply::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_C89F94A2_BinaryReceiver_multiply::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 52 (0x34)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::multiply(float64)
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: ret
-			} // end of method FunctionObject_ClassMethod_C89F94A2_BinaryReceiver_multiply::CallCore
-
-		} // end of class FunctionObject_ClassMethod_C89F94A2_BinaryReceiver_multiply
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_0942BEAA_BinaryReceiver_shift
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_0942BEAA_BinaryReceiver_shift::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_0942BEAA_BinaryReceiver_shift::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_0942BEAA_BinaryReceiver_shift::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 52 (0x34)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::shift(float64)
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: ret
-			} // end of method FunctionObject_ClassMethod_0942BEAA_BinaryReceiver_shift::CallCore
-
-		} // end of class FunctionObject_ClassMethod_0942BEAA_BinaryReceiver_shift
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_A00A558B_BinaryReceiver_increment
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_A00A558B_BinaryReceiver_increment::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_A00A558B_BinaryReceiver_increment::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_A00A558B_BinaryReceiver_increment::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 52 (0x34)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0029: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::increment(float64)
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: ret
-			} // end of method FunctionObject_ClassMethod_A00A558B_BinaryReceiver_increment::CallCore
-
-		} // end of class FunctionObject_ClassMethod_A00A558B_BinaryReceiver_increment
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_46A1F899_BinaryReceiver_incrementBoolean
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_46A1F899_BinaryReceiver_incrementBoolean::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_46A1F899_BinaryReceiver_incrementBoolean::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_46A1F899_BinaryReceiver_incrementBoolean::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 47 (0x2f)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::incrementBoolean(object)
-				IL_0029: box [System.Runtime]System.Double
-				IL_002e: ret
-			} // end of method FunctionObject_ClassMethod_46A1F899_BinaryReceiver_incrementBoolean::CallCore
-
-		} // end of class FunctionObject_ClassMethod_46A1F899_BinaryReceiver_incrementBoolean
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_79F89F2A_BinaryReceiver_dynamicAdd
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_79F89F2A_BinaryReceiver_dynamicAdd::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_79F89F2A_BinaryReceiver_dynamicAdd::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_79F89F2A_BinaryReceiver_dynamicAdd::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::dynamicAdd(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_79F89F2A_BinaryReceiver_dynamicAdd::CallCore
-
-		} // end of class FunctionObject_ClassMethod_79F89F2A_BinaryReceiver_dynamicAdd
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_0A9F6F8D_BinaryReceiver_bigint
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_0A9F6F8D_BinaryReceiver_bigint::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_0A9F6F8D_BinaryReceiver_bigint::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_0A9F6F8D_BinaryReceiver_bigint::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::bigint(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_0A9F6F8D_BinaryReceiver_bigint::CallCore
-
-		} // end of class FunctionObject_ClassMethod_0A9F6F8D_BinaryReceiver_bigint
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_B38BD446_BinaryReceiver_destructure
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_B38BD446_BinaryReceiver_destructure::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_B38BD446_BinaryReceiver_destructure::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_B38BD446_BinaryReceiver_destructure::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::destructure(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_B38BD446_BinaryReceiver_destructure::CallCore
-
-		} // end of class FunctionObject_ClassMethod_B38BD446_BinaryReceiver_destructure
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_09673A3C_BinaryReceiver_iterate
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_09673A3C_BinaryReceiver_iterate::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_09673A3C_BinaryReceiver_iterate::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_09673A3C_BinaryReceiver_iterate::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterate(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_09673A3C_BinaryReceiver_iterate::CallCore
-
-		} // end of class FunctionObject_ClassMethod_09673A3C_BinaryReceiver_iterate
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_AE05B70D_BinaryReceiver_iterateVar
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_AE05B70D_BinaryReceiver_iterateVar::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_AE05B70D_BinaryReceiver_iterateVar::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_AE05B70D_BinaryReceiver_iterateVar::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVar(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_AE05B70D_BinaryReceiver_iterateVar::CallCore
-
-		} // end of class FunctionObject_ClassMethod_AE05B70D_BinaryReceiver_iterateVar
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn::_transitionalScopes
-				IL_000d: ret
-			} // end of method FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVarIn(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn::CallCore
-
-		} // end of class FunctionObject_ClassMethod_F6371A46_BinaryReceiver_iterateVarIn
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_12AA8A1B_BinaryReceiver_redeclare
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_12AA8A1B_BinaryReceiver_redeclare::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_12AA8A1B_BinaryReceiver_redeclare::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_12AA8A1B_BinaryReceiver_redeclare::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::redeclare(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_12AA8A1B_BinaryReceiver_redeclare::CallCore
-
-		} // end of class FunctionObject_ClassMethod_12AA8A1B_BinaryReceiver_redeclare
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare::_transitionalScopes
-				IL_000d: ret
-			} // end of method FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldarg.0
-				IL_000c: ldfld object[] Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver/FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare::_transitionalScopes
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::functionRedeclare(object)
-				IL_0029: ret
-			} // end of method FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare::CallCore
-
-		} // end of class FunctionObject_ClassMethod_2F3C6E2F_BinaryReceiver_functionRedeclare
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_EC78B053_BinaryReceiver_run
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_EC78B053_BinaryReceiver_run::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_EC78B053_BinaryReceiver_run::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_EC78B053_BinaryReceiver_run::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 35 (0x23)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver
-				IL_001d: call instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::run()
-				IL_0022: ret
-			} // end of method FunctionObject_ClassMethod_EC78B053_BinaryReceiver_run::CallCore
-
-		} // end of class FunctionObject_ClassMethod_EC78B053_BinaryReceiver_run
+		} // end of class FunctionObject
 
 
 		// Fields

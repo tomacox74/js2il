@@ -177,6 +177,56 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_000d: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -196,6 +246,71 @@
 		.class nested public auto ansi beforefieldinit Scope_greet
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 35 (0x23)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldc.i4.1
+					IL_000c: newarr [System.Runtime]System.Object
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+					IL_001d: call instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
+					IL_0022: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -211,117 +326,6 @@
 			} // end of method Scope_greet::.ctor
 
 		} // end of class Scope_greet
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_8A4450FF_Person
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassConstructor_8A4450FF_Person::_transitionalScopes
-				IL_000d: ret
-			} // end of method FunctionObject_ClassConstructor_8A4450FF_Person::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_8A4450FF_Person::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_8A4450FF_Person::get_RequiresInvocationContext
-
-		} // end of class FunctionObject_ClassConstructor_8A4450FF_Person
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_FC1697C3_Person_greet
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_ClassMethod_FC1697C3_Person_greet::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_FC1697C3_Person_greet::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassMethod_FC1697C3_Person_greet::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 35 (0x23)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
-				IL_001d: call instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-				IL_0022: ret
-			} // end of method FunctionObject_ClassMethod_FC1697C3_Person_greet::CallCore
-
-		} // end of class FunctionObject_ClassMethod_FC1697C3_Person_greet
 
 
 		// Fields
@@ -429,7 +433,7 @@
 			[2] class [System.Runtime]System.Type,
 			[3] object,
 			[4] object[],
-			[5] class Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassConstructor_8A4450FF_Person
+			[5] class Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_ctor/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Scope::.ctor()
@@ -448,14 +452,14 @@
 		IL_002d: stloc.s 4
 		IL_002f: ldloc.3
 		IL_0030: ldstr "greet"
-		IL_0035: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassMethod_FC1697C3_Person_greet::.ctor()
+		IL_0035: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_greet/FunctionObject::.ctor()
 		IL_003a: ldc.i4.0
 		IL_003b: conv.r8
 		IL_003c: ldstr "greet"
 		IL_0041: ldc.i4.1
 		IL_0042: ldc.i4.1
-		IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassMethod_FC1697C3_Person_greet>(!!0, float64, string, bool, bool)
-		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassMethod_FC1697C3_Person_greet>(!!0)
+		IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_greet/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_greet/FunctionObject>(!!0)
 		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_0052: pop
 		IL_0053: ldc.i4.1
@@ -466,14 +470,14 @@
 		IL_005c: stelem.ref
 		IL_005d: stloc.s 4
 		IL_005f: ldloc.s 4
-		IL_0061: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassConstructor_8A4450FF_Person::.ctor(object[])
+		IL_0061: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_ctor/FunctionObject::.ctor(object[])
 		IL_0066: ldloc.2
 		IL_0067: ldloc.s 4
 		IL_0069: ldc.i4.2
 		IL_006a: conv.r8
 		IL_006b: ldc.i4.0
 		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0071: castclass Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/FunctionObject_ClassConstructor_8A4450FF_Person
+		IL_0071: castclass Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_ctor/FunctionObject
 		IL_0076: stloc.s 5
 		IL_0078: ldloc.s 5
 		IL_007a: stloc.1

@@ -33,6 +33,90 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+				.field private initonly class [System.Runtime]System.Object _homeObject
+				.field private initonly object[] _lexicalSuperScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0,
+						class [System.Runtime]System.Object capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject::_homeObject
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object GetLexicalSuperReceiverCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject::_homeObject
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperReceiverCore
+
+				.method family hidebysig virtual 
+					instance object[] GetLexicalSuperScopesCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperScopesCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -48,88 +132,6 @@
 			} // end of method Scope_ctor::.ctor
 
 		} // end of class Scope_ctor
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_13C3A4AD_NodeList
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-			.field private initonly class [System.Runtime]System.Object _homeObject
-			.field private initonly object[] _lexicalSuperScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0,
-					class [System.Runtime]System.Object capture1,
-					object[] capture2
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 28 (0x1c)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList::_transitionalScopes
-				IL_000d: ldarg.0
-				IL_000e: ldarg.2
-				IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList::_homeObject
-				IL_0014: ldarg.0
-				IL_0015: ldarg.3
-				IL_0016: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList::_lexicalSuperScopes
-				IL_001b: ret
-			} // end of method FunctionObject_ClassConstructor_13C3A4AD_NodeList::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_13C3A4AD_NodeList::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_13C3A4AD_NodeList::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object GetLexicalSuperReceiverCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList::_homeObject
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_13C3A4AD_NodeList::GetLexicalSuperReceiverCore
-
-			.method family hidebysig virtual 
-				instance object[] GetLexicalSuperScopesCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList::_lexicalSuperScopes
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_13C3A4AD_NodeList::GetLexicalSuperScopesCore
-
-		} // end of class FunctionObject_ClassConstructor_13C3A4AD_NodeList
 
 
 		// Methods
@@ -230,6 +232,90 @@
 		.class nested public auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+			{
+				// Fields
+				.field private initonly object[] _transitionalScopes
+				.field private initonly class [System.Runtime]System.Object _homeObject
+				.field private initonly object[] _lexicalSuperScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						object[] capture0,
+						class [System.Runtime]System.Object capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject::_homeObject
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object GetLexicalSuperReceiverCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject::_homeObject
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperReceiverCore
+
+				.method family hidebysig virtual 
+					instance object[] GetLexicalSuperScopesCore () cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject::_lexicalSuperScopes
+					IL_0006: ret
+				} // end of method FunctionObject::GetLexicalSuperScopesCore
+
+			} // end of class FunctionObject
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -245,88 +331,6 @@
 			} // end of method Scope_ctor::.ctor
 
 		} // end of class Scope_ctor
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_FCCAD460_Y
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
-		{
-			// Fields
-			.field private initonly object[] _transitionalScopes
-			.field private initonly class [System.Runtime]System.Object _homeObject
-			.field private initonly object[] _lexicalSuperScopes
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					object[] capture0,
-					class [System.Runtime]System.Object capture1,
-					object[] capture2
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 28 (0x1c)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y::_transitionalScopes
-				IL_000d: ldarg.0
-				IL_000e: ldarg.2
-				IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y::_homeObject
-				IL_0014: ldarg.0
-				IL_0015: ldarg.3
-				IL_0016: stfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y::_lexicalSuperScopes
-				IL_001b: ret
-			} // end of method FunctionObject_ClassConstructor_FCCAD460_Y::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_FCCAD460_Y::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_ClassConstructor_FCCAD460_Y::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object GetLexicalSuperReceiverCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld class [System.Runtime]System.Object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y::_homeObject
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_FCCAD460_Y::GetLexicalSuperReceiverCore
-
-			.method family hidebysig virtual 
-				instance object[] GetLexicalSuperScopesCore () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y::_lexicalSuperScopes
-				IL_0006: ret
-			} // end of method FunctionObject_ClassConstructor_FCCAD460_Y::GetLexicalSuperScopesCore
-
-		} // end of class FunctionObject_ClassConstructor_FCCAD460_Y
 
 
 		// Methods
@@ -418,11 +422,11 @@
 			[4] object,
 			[5] object[],
 			[6] class [System.Runtime]System.Type,
-			[7] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList,
+			[7] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject,
 			[8] object,
 			[9] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[11] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y
+			[11] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::.ctor()
@@ -448,14 +452,14 @@
 		IL_0037: ldc.i4.0
 		IL_0038: ldloc.0
 		IL_0039: stelem.ref
-		IL_003a: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList::.ctor(object[], class [System.Runtime]System.Object, object[])
+		IL_003a: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject::.ctor(object[], class [System.Runtime]System.Object, object[])
 		IL_003f: ldloc.s 6
 		IL_0041: ldloc.s 5
 		IL_0043: ldc.i4.1
 		IL_0044: conv.r8
 		IL_0045: ldc.i4.0
 		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_004b: castclass Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/FunctionObject_ClassConstructor_13C3A4AD_NodeList
+		IL_004b: castclass Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList/Scope_ctor/FunctionObject
 		IL_0050: stloc.s 7
 		IL_0052: ldstr "Array"
 		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -561,14 +565,14 @@
 		IL_01a0: ldc.i4.0
 		IL_01a1: ldloc.0
 		IL_01a2: stelem.ref
-		IL_01a3: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y::.ctor(object[], class [System.Runtime]System.Object, object[])
+		IL_01a3: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject::.ctor(object[], class [System.Runtime]System.Object, object[])
 		IL_01a8: ldloc.s 6
 		IL_01aa: ldloc.s 5
 		IL_01ac: ldc.i4.0
 		IL_01ad: conv.r8
 		IL_01ae: ldc.i4.0
 		IL_01af: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_01b4: castclass Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/FunctionObject_ClassConstructor_FCCAD460_Y
+		IL_01b4: castclass Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y/Scope_ctor/FunctionObject
 		IL_01b9: stloc.s 11
 		IL_01bb: ldstr "Array"
 		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
