@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.10 - 2026-08-18
+
 - perf(compiler/runtime): pass AOT-planned invocation requirements through a
   stack-only generated-call context (issue #1896). Synchronous generated
   functions now read `this`, strict `arguments`, rest arguments, and
