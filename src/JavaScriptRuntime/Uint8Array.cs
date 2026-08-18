@@ -147,30 +147,31 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
+            // Static; the receiver is ignored (issue #1895).
             DefineBuiltinFunction(
                 constructorValue,
                 "fromHex",
-                (Func<object[], object?[]?, object?>)ConstructorFromHex,
+                (BuiltinFunction1)ConstructorFromHex,
                 1);
             DefineBuiltinFunction(
                 Prototype,
                 "setFromBase64",
-                (Func<object[], object?[]?, object?>)PrototypeSetFromBase64,
+                (BuiltinFunction1)PrototypeSetFromBase64,
                 1);
             DefineBuiltinFunction(
                 Prototype,
                 "setFromHex",
-                (Func<object[], object?[]?, object?>)PrototypeSetFromHex,
+                (BuiltinFunction1)PrototypeSetFromHex,
                 1);
             DefineBuiltinFunction(
                 Prototype,
                 "toBase64",
-                (Func<object[], object?[]?, object?>)PrototypeToBase64,
+                (BuiltinFunction1)PrototypeToBase64,
                 0);
             DefineBuiltinFunction(
                 Prototype,
                 "toHex",
-                (Func<object[], object?[]?, object?>)PrototypeToHex,
+                (BuiltinFunction0)PrototypeToHex,
                 0);
         }
 
@@ -292,42 +293,42 @@ namespace JavaScriptRuntime
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Uint8Array(buffer, byteOffset, length);
 
-        private static object? ConstructorFromHex(object[] _, object?[]? args)
-            => fromHex(GetArgument(args, 0));
+        private static object? ConstructorFromHex(object? thisArgument, object? source)
+            => fromHex(source);
 
-        private static object? PrototypeSetFromBase64(object[] _, object?[]? args)
+        private static object? PrototypeSetFromBase64(object? thisArgument, object? source)
         {
-            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            if (thisArgument is not Uint8Array array)
             {
                 throw new TypeError("Uint8Array.prototype.setFromBase64 called on incompatible receiver");
             }
 
-            return array.setFromBase64(GetArgument(args, 0));
+            return array.setFromBase64(source);
         }
 
-        private static object? PrototypeSetFromHex(object[] _, object?[]? args)
+        private static object? PrototypeSetFromHex(object? thisArgument, object? source)
         {
-            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            if (thisArgument is not Uint8Array array)
             {
                 throw new TypeError("Uint8Array.prototype.setFromHex called on incompatible receiver");
             }
 
-            return array.setFromHex(GetArgument(args, 0));
+            return array.setFromHex(source);
         }
 
-        private static object? PrototypeToBase64(object[] _, object?[]? args)
+        private static object? PrototypeToBase64(object? thisArgument, object? options)
         {
-            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            if (thisArgument is not Uint8Array array)
             {
                 throw new TypeError("Uint8Array.prototype.toBase64 called on incompatible receiver");
             }
 
-            return array.ToBase64Core(GetArgument(args, 0));
+            return array.ToBase64Core(options);
         }
 
-        private static object? PrototypeToHex(object[] _, object?[]? __)
+        private static object? PrototypeToHex(object? thisArgument)
         {
-            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            if (thisArgument is not Uint8Array array)
             {
                 throw new TypeError("Uint8Array.prototype.toHex called on incompatible receiver");
             }
@@ -378,10 +379,14 @@ namespace JavaScriptRuntime
         private static void DefineBuiltinFunction(
             object target,
             string name,
-            Func<object[], object?[]?, object?> function,
+            Delegate function,
             double length)
         {
-            Function.InitializeFunctionInstance(function, length, name);
+            Function.InitializeFunctionInstance(
+                function,
+                length,
+                name,
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(function));
             PropertyDescriptorStore.DefineOrUpdate(function, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -399,9 +404,6 @@ namespace JavaScriptRuntime
                 Value = function
             });
         }
-
-        private static object? GetArgument(object?[]? args, int index)
-            => args != null && args.Length > index ? args[index] : null;
 
         private void InitializeIntrinsicSurface()
             => PrototypeChain.InitializePrototype(this, Prototype);

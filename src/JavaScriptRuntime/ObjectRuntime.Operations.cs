@@ -800,102 +800,72 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool @is(object? value1, object? value2) => Operators.SameValue(value1, value2);
 
-        private static readonly Func<object[], object?, object> _objectGetOwnPropertyNamesValue = static (_, value) =>
+        // Static Object constructor methods never read the receiver (issue #1895).
+        private static readonly BuiltinFunction1 _objectGetOwnPropertyNamesValue = static (_, value) =>
             getOwnPropertyNames(value!);
-        private static readonly Func<object[], object?, object> _objectKeysValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectKeysValue = static (_, value) =>
             keys(value!);
-        private static readonly Func<object[], object?, object> _objectValuesValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectValuesValue = static (_, value) =>
             values(value!);
-        private static readonly Func<object[], object?, object> _objectEntriesValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectEntriesValue = static (_, value) =>
             entries(value!);
-        private static readonly Func<object[], object?[], object> _objectAssignValue = static (_, args) =>
+        private static readonly BuiltinFunctionVariadic _objectAssignValue = static (_, in arguments) =>
         {
-            var target = (args == null || args.Length == 0) ? null : args[0];
-            var sources = (args != null && args.Length > 1)
-                ? args.Skip(1).ToArray()
+            var target = arguments.Count > 0 ? arguments.GetArgument(0) : null;
+            var sources = arguments.Count > 1
+                ? arguments.ToArray().Skip(1).ToArray()
                 : System.Array.Empty<object?>();
             return assign(target!, sources);
         };
-        private static readonly Func<object[], object?, object> _objectFromEntriesValue = static (_, iterable) =>
+        private static readonly BuiltinFunction1 _objectFromEntriesValue = static (_, iterable) =>
             fromEntries(iterable!);
-        private static readonly Func<object[], object?[], object> _objectCreateValue = static (_, args) =>
-        {
-            var prototype = (args != null && args.Length > 0) ? args[0] : null;
-            var properties = (args != null && args.Length > 1) ? args[1] : null;
-            return create(prototype, properties);
-        };
-        private static readonly Func<object[], object?[], object> _objectDefinePropertyValue = static (_, args) =>
-        {
-            var target = (args != null && args.Length > 0) ? args[0] : null;
-            var prop = (args != null && args.Length > 1) ? args[1] : null;
-            var attributes = (args != null && args.Length > 2) ? args[2] : null;
-            return defineProperty(target!, prop, attributes);
-        };
-        private static readonly Func<object[], object?[], object> _objectDefinePropertiesValue = static (_, args) =>
-        {
-            var target = (args != null && args.Length > 0) ? args[0] : null;
-            var properties = (args != null && args.Length > 1) ? args[1] : null;
-            return defineProperties(target!, properties);
-        };
-        private static readonly Func<object[], object?[], object> _objectGetOwnPropertyDescriptorValue = static (_, args) =>
-        {
-            var target = (args != null && args.Length > 0) ? args[0] : null;
-            var prop = (args != null && args.Length > 1) ? args[1] : null;
-            return getOwnPropertyDescriptor(target!, prop)!;
-        };
-        private static readonly Func<object[], object?, object> _objectGetOwnPropertyDescriptorsValue = static (_, value) =>
+        private static readonly BuiltinFunction2 _objectCreateValue = static (_, prototype, properties) =>
+            create(prototype, properties);
+        private static readonly BuiltinFunction3 _objectDefinePropertyValue = static (_, target, prop, attributes) =>
+            defineProperty(target!, prop, attributes);
+        private static readonly BuiltinFunction2 _objectDefinePropertiesValue = static (_, target, properties) =>
+            defineProperties(target!, properties);
+        private static readonly BuiltinFunction2 _objectGetOwnPropertyDescriptorValue = static (_, target, prop) =>
+            getOwnPropertyDescriptor(target!, prop)!;
+        private static readonly BuiltinFunction1 _objectGetOwnPropertyDescriptorsValue = static (_, value) =>
             getOwnPropertyDescriptors(value!);
-        private static readonly Func<object[], object?, object> _objectGetOwnPropertySymbolsValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectGetOwnPropertySymbolsValue = static (_, value) =>
             getOwnPropertySymbols(value!);
-        private static readonly Func<object[], object?, object> _objectGetPrototypeOfValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectGetPrototypeOfValue = static (_, value) =>
             getPrototypeOf(value!)!;
-        private static readonly Func<object[], object?[], object> _objectSetPrototypeOfValue = static (_, args) =>
-        {
-            var target = (args != null && args.Length > 0) ? args[0] : null;
-            var prototype = (args != null && args.Length > 1) ? args[1] : null;
-            return setPrototypeOf(target!, prototype);
-        };
-        private static readonly Func<object[], object?[], object> _objectHasOwnValue = static (_, args) =>
-        {
-            var target = (args != null && args.Length > 0) ? args[0] : null;
-            var prop = (args != null && args.Length > 1) ? args[1] : null;
-            return hasOwn(target!, prop);
-        };
-        private static readonly Func<object[], object?[], object> _objectIsValue = static (_, args) =>
-        {
-            var value1 = (args != null && args.Length > 0) ? args[0] : null;
-            var value2 = (args != null && args.Length > 1) ? args[1] : null;
-            return @is(value1, value2);
-        };
-        private static readonly Func<object[], object?, object> _objectPreventExtensionsValue = static (_, value) =>
+        private static readonly BuiltinFunction2 _objectSetPrototypeOfValue = static (_, target, prototype) =>
+            setPrototypeOf(target!, prototype);
+        private static readonly BuiltinFunction2 _objectHasOwnValue = static (_, target, prop) =>
+            hasOwn(target!, prop);
+        private static readonly BuiltinFunction2 _objectIsValue = static (_, value1, value2) =>
+            @is(value1, value2);
+        private static readonly BuiltinFunction1 _objectPreventExtensionsValue = static (_, value) =>
             preventExtensions(value!);
-        private static readonly Func<object[], object?, object> _objectIsExtensibleValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectIsExtensibleValue = static (_, value) =>
             isExtensible(value!);
-        private static readonly Func<object[], object?, object> _objectSealValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectSealValue = static (_, value) =>
             seal(value!);
-        private static readonly Func<object[], object?, object> _objectFreezeValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectFreezeValue = static (_, value) =>
             freeze(value!);
-        private static readonly Func<object[], object?, object> _objectIsSealedValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectIsSealedValue = static (_, value) =>
             isSealed(value!);
-        private static readonly Func<object[], object?, object> _objectIsFrozenValue = static (_, value) =>
+        private static readonly BuiltinFunction1 _objectIsFrozenValue = static (_, value) =>
             isFrozen(value!);
-        private static readonly Func<object[], object?[], object> _objectGroupByValue = static (_, args) =>
-        {
-            var items = (args != null && args.Length > 0) ? args[0] : null;
-            var callback = (args != null && args.Length > 1) ? args[1] : null;
-            return groupBy(items!, callback!);
-        };
+        private static readonly BuiltinFunction2 _objectGroupByValue = static (_, items, callback) =>
+            groupBy(items!, callback!);
 
-        private static readonly Func<object[], object?[], object?> _objectPrototypeHasOwnPropertyValue = PrototypeHasOwnProperty;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeIsPrototypeOfValue = PrototypeIsPrototypeOf;
-        private static readonly Func<object[], object?[], object?> _objectPrototypePropertyIsEnumerableValue = PrototypePropertyIsEnumerable;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeToLocaleStringValue = PrototypeToLocaleString;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeToStringValue = PrototypeToString;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeValueOfValue = PrototypeValueOf;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeDefineGetterValue = PrototypeDefineGetter;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeDefineSetterValue = PrototypeDefineSetter;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeLookupGetterValue = PrototypeLookupGetter;
-        private static readonly Func<object[], object?[], object?> _objectPrototypeLookupSetterValue = PrototypeLookupSetter;
+        // Object.prototype methods read the receiver explicitly instead of ambient
+        // RuntimeServices.GetCurrentThis() (issue #1895).
+        private static readonly BuiltinFunction1 _objectPrototypeHasOwnPropertyValue = PrototypeHasOwnProperty;
+        private static readonly BuiltinFunction1 _objectPrototypeIsPrototypeOfValue = PrototypeIsPrototypeOf;
+        private static readonly BuiltinFunction1 _objectPrototypePropertyIsEnumerableValue = PrototypePropertyIsEnumerable;
+        private static readonly BuiltinFunction0 _objectPrototypeToLocaleStringValue = PrototypeToLocaleString;
+        private static readonly BuiltinFunction0 _objectPrototypeToStringValue = PrototypeToString;
+        private static readonly BuiltinFunction0 _objectPrototypeValueOfValue = PrototypeValueOf;
+        private static readonly BuiltinFunction2 _objectPrototypeDefineGetterValue = PrototypeDefineGetter;
+        private static readonly BuiltinFunction2 _objectPrototypeDefineSetterValue = PrototypeDefineSetter;
+        private static readonly BuiltinFunction1 _objectPrototypeLookupGetterValue = PrototypeLookupGetter;
+        private static readonly BuiltinFunction1 _objectPrototypeLookupSetterValue = PrototypeLookupSetter;
 
         internal static JsObject CreateOrdinaryObject()
         {
@@ -954,11 +924,15 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "is", _objectIsValue);
             InitializeBuiltinStaticFunction(_objectIsValue, "is", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "isExtensible", _objectIsExtensibleValue);
+            InitializeBuiltinStaticFunction(_objectIsExtensibleValue, "isExtensible", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "isFrozen", _objectIsFrozenValue);
+            InitializeBuiltinStaticFunction(_objectIsFrozenValue, "isFrozen", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "isSealed", _objectIsSealedValue);
+            InitializeBuiltinStaticFunction(_objectIsSealedValue, "isSealed", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "keys", _objectKeysValue);
             InitializeBuiltinStaticFunction(_objectKeysValue, "keys", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "preventExtensions", _objectPreventExtensionsValue);
+            InitializeBuiltinStaticFunction(_objectPreventExtensionsValue, "preventExtensions", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "seal", _objectSealValue);
             InitializeBuiltinStaticFunction(_objectSealValue, "seal", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "setPrototypeOf", _objectSetPrototypeOfValue);
@@ -1382,7 +1356,7 @@ namespace JavaScriptRuntime
                     Enumerable = false,
                     Configurable = true,
                     Writable = true,
-                    Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
+                    Value = (BuiltinFunction0)(_ => DotNet2JSConversions.ToString(primitiveValue))
                 });
             }
 
@@ -1394,7 +1368,7 @@ namespace JavaScriptRuntime
                     Enumerable = false,
                     Configurable = true,
                     Writable = true,
-                    Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
+                    Value = (BuiltinFunction0)(_ => primitiveValue)
                 });
             }
 
@@ -1991,29 +1965,26 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private static object GetCurrentThisObjectOrThrow()
+        private static object RequireObjectCoercibleReceiver(object? thisArgument)
         {
-            var target = RuntimeServices.GetCurrentThis();
-            if (target is null || target is JsNull)
+            if (thisArgument is null || thisArgument is JsNull)
             {
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            return target;
+            return thisArgument;
         }
 
-        private static object? PrototypeHasOwnProperty(object[] scopes, object?[] args)
+        private static object? PrototypeHasOwnProperty(object? thisArgument, object? prop)
         {
-            var prop = args != null && args.Length > 0 ? args[0] : null;
             var key = ToPropertyKeyString(prop);
-            var target = GetCurrentThisObjectOrThrow();
+            var target = RequireObjectCoercibleReceiver(thisArgument);
             return HasOwnProperty(target, key);
         }
 
-        private static object? PrototypeIsPrototypeOf(object[] scopes, object?[] args)
+        private static object? PrototypeIsPrototypeOf(object? thisArgument, object? value)
         {
-            var prototypeCandidate = GetCurrentThisObjectOrThrow();
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var prototypeCandidate = RequireObjectCoercibleReceiver(thisArgument);
 
             PrototypeChain.Enable();
 
@@ -2052,11 +2023,10 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        private static object? PrototypePropertyIsEnumerable(object[] scopes, object?[] args)
+        private static object? PrototypePropertyIsEnumerable(object? thisArgument, object? prop)
         {
-            var prop = args != null && args.Length > 0 ? args[0] : null;
             var key = ToPropertyKeyString(prop);
-            var target = GetCurrentThisObjectOrThrow();
+            var target = RequireObjectCoercibleReceiver(thisArgument);
 
             if (target is JavaScriptRuntime.Proxy && TryGetOwnPropertyDescriptor(target, key, out var proxyDescriptor))
             {
@@ -2096,15 +2066,15 @@ namespace JavaScriptRuntime
                 || type.GetField(key, BindingFlags.Instance | BindingFlags.Public) != null;
         }
 
-        private static object? PrototypeToLocaleString(object[] scopes, object?[] args)
+        private static object? PrototypeToLocaleString(object? thisArgument)
         {
-            _ = GetCurrentThisObjectOrThrow();
-            return PrototypeToString(scopes, args);
+            _ = RequireObjectCoercibleReceiver(thisArgument);
+            return PrototypeToString(thisArgument);
         }
 
-        private static object? PrototypeToString(object[] scopes, object?[] args)
+        private static object? PrototypeToString(object? thisArgument)
         {
-            var thisVal = RuntimeServices.GetCurrentThis();
+            var thisVal = thisArgument;
 
             if (thisVal == null) return "[object Undefined]";
             if (thisVal is JsNull) return "[object Null]";
@@ -2131,16 +2101,14 @@ namespace JavaScriptRuntime
             return "[object Object]";
         }
 
-        private static object? PrototypeValueOf(object[] scopes, object?[] args)
+        private static object? PrototypeValueOf(object? thisArgument)
         {
-            return GetCurrentThisObjectOrThrow();
+            return RequireObjectCoercibleReceiver(thisArgument);
         }
 
-        private static object? PrototypeDefineGetter(object[] scopes, object?[] args)
+        private static object? PrototypeDefineGetter(object? thisArgument, object? prop, object? getter)
         {
-            var target = GetCurrentThisObjectOrThrow();
-            var prop = args != null && args.Length > 0 ? args[0] : null;
-            var getter = args != null && args.Length > 1 ? args[1] : null;
+            var target = RequireObjectCoercibleReceiver(thisArgument);
             if (getter is null || getter is JsNull || !CallableOperations.IsCallable(getter))
             {
                 throw new TypeError("Getter must be a function");
@@ -2191,11 +2159,9 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        private static object? PrototypeDefineSetter(object[] scopes, object?[] args)
+        private static object? PrototypeDefineSetter(object? thisArgument, object? prop, object? setter)
         {
-            var target = GetCurrentThisObjectOrThrow();
-            var prop = args != null && args.Length > 0 ? args[0] : null;
-            var setter = args != null && args.Length > 1 ? args[1] : null;
+            var target = RequireObjectCoercibleReceiver(thisArgument);
             if (setter is null || setter is JsNull || !CallableOperations.IsCallable(setter))
             {
                 throw new TypeError("Setter must be a function");
@@ -2246,10 +2212,9 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        private static object? PrototypeLookupGetter(object[] scopes, object?[] args)
+        private static object? PrototypeLookupGetter(object? thisArgument, object? prop)
         {
-            var target = GetCurrentThisObjectOrThrow();
-            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var target = RequireObjectCoercibleReceiver(thisArgument);
             var key = ToPropertyKeyString(prop);
 
             if (PropertyDescriptorStore.TryGetOwn(target, key, out var own) && own.Kind == JsPropertyDescriptorKind.Accessor)
@@ -2282,10 +2247,9 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        private static object? PrototypeLookupSetter(object[] scopes, object?[] args)
+        private static object? PrototypeLookupSetter(object? thisArgument, object? prop)
         {
-            var target = GetCurrentThisObjectOrThrow();
-            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var target = RequireObjectCoercibleReceiver(thisArgument);
             var key = ToPropertyKeyString(prop);
 
             if (PropertyDescriptorStore.TryGetOwn(target, key, out var own) && own.Kind == JsPropertyDescriptorKind.Accessor)
@@ -4017,9 +3981,11 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            Func<object[], object?[]?, object?> functionValue = (unusedScopes, args) =>
+            // Ordinary reflected static-class dispatch (e.g. Math): the receiver is ignored,
+            // so this reads no ambient invocation state (issue #1895).
+            BuiltinFunctionVariadic functionValue = (_, in arguments) =>
             {
-                TryCallStaticClassMethod(target, propName, (object[]?)args ?? System.Array.Empty<object>(), out var result);
+                TryCallStaticClassMethod(target, propName, (object[])arguments.ToArray(), out var result);
                 return result;
             };
             var functionObject =

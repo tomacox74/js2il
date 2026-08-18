@@ -26,12 +26,7 @@ namespace JavaScriptRuntime.Node
             // Expose util.inspect as a delegate-valued property so util.inspect.custom is observable.
             _inspectFunction =
                 BuiltinDelegateFunctionAdapter.FromDelegate(
-                    new Func<object[], object?[], object?>((scopes, args) =>
-                    {
-                        var value = args.Length > 0 ? args[0] : null;
-                        var options = args.Length > 1 ? args[1] : null;
-                        return inspect(value, options);
-                    }));
+                    (BuiltinFunction2)((_, value, options) => inspect(value, options)));
 
             PropertyDescriptorStore.DefineOrUpdate(this, "inspect", new JsPropertyDescriptor
             {
@@ -59,7 +54,7 @@ namespace JavaScriptRuntime.Node
                 Enumerable = true,
                 Configurable = true,
                 Writable = true,
-                Value = new Func<object[], object?[], object?>((scopes, args) => format(args))
+                Value = (BuiltinFunctionVariadic)((object? _, in JsCallArguments arguments) => format(arguments.ToArray()))
             });
 
             _types = new UtilTypesModule();
@@ -73,22 +68,22 @@ namespace JavaScriptRuntime.Node
             }
 
             // Return a function that when called, returns a Promise
-            Func<object[], object?, object?> promisified = (scopes, args) =>
+            BuiltinFunctionVariadic promisified = (object? thisArgument, in JsCallArguments arguments) =>
             {
                 var resolvers = Promise.withResolvers();
 
-                Func<object[], object[], object?> wrappedCallback =
-                    (cbScopes, cbArgs) =>
+                BuiltinFunctionVariadic wrappedCallback =
+                    (object? _, in JsCallArguments callbackArguments) =>
                 {
-                    if (cbArgs.Length > 0 && cbArgs[0] != null && cbArgs[0] is not JsNull)
+                    if (callbackArguments.Count > 0 && callbackArguments.GetArgument(0) != null && callbackArguments.GetArgument(0) is not JsNull)
                     {
                         // Error-first: first arg is error, reject the promise
-                        CallableOperations.Call1(resolvers.reject, null, cbArgs[0]);
+                        CallableOperations.Call1(resolvers.reject, null, callbackArguments.GetArgument(0));
                     }
                     else
                     {
                         // Success: resolve with second argument (or undefined if not present)
-                        var result = cbArgs.Length > 1 ? cbArgs[1] : null;
+                        var result = callbackArguments.Count > 1 ? callbackArguments.GetArgument(1) : null;
                         CallableOperations.Call1(resolvers.resolve, null, result);
                     }
                     return null;
@@ -98,8 +93,7 @@ namespace JavaScriptRuntime.Node
                         wrappedCallback);
 
                 // Prepare arguments array with the wrapped callback appended
-                var argsArray = args != null ? (args as object[] ?? new object[] { args }) : new object[0];
-                var newArgs = new List<object>(argsArray)
+                var newArgs = new List<object?>(arguments.ToArray())
                 {
                     wrappedCallbackValue
                 };
@@ -107,7 +101,7 @@ namespace JavaScriptRuntime.Node
                 // Invoke the original callback-style function
                 try
                 {
-                    CallableOperations.Call(callback, RuntimeServices.GetCurrentThis(), newArgs.ToArray());
+                    CallableOperations.Call(callback, thisArgument, newArgs.ToArray());
                 }
                 catch (Exception ex)
                 {

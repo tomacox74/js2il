@@ -114,31 +114,29 @@ namespace JavaScriptRuntime
 
         private static void ConfigurePrototype(JsObject prototype)
         {
-            var prototypeEntries = (Func<object[], object?[]?, object?>)PrototypeEntries;
-            var prototypeKeys = (Func<object[], object?[]?, object?>)PrototypeKeys;
-            var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
-            DefinePrototypeMethod(prototype, "join", (Func<object[], object?[]?, object?>)PrototypeJoin, 1);
-            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
-            DefinePrototypeMethod(prototype, "push", (Func<object[], object?[]?, object?>)PrototypePush, 1);
-            DefinePrototypeMethod(prototype, "reduce", (Func<object[], object?[]?, object?>)PrototypeReduce, 1);
-            DefinePrototypeMethod(prototype, "reduceRight", (Func<object[], object?[]?, object?>)PrototypeReduceRight, 1);
-            DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
-            DefinePrototypeMethod(prototype, "every", (Func<object[], object?[]?, object?>)PrototypeEvery, 1);
-            DefinePrototypeMethod(prototype, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
-            DefinePrototypeMethod(prototype, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
-            DefinePrototypeMethod(prototype, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
-            DefinePrototypeMethod(prototype, "find", (Func<object[], object?[]?, object?>)PrototypeFind, 1);
-            DefinePrototypeMethod(prototype, "findIndex", (Func<object[], object?[]?, object?>)PrototypeFindIndex, 1);
-            DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes, 1);
-            DefinePrototypeMethod(prototype, "findLast", (Func<object[], object?[]?, object?>)PrototypeFindLast, 1);
-            DefinePrototypeMethod(prototype, "findLastIndex", (Func<object[], object?[]?, object?>)PrototypeFindLastIndex, 1);
-            DefinePrototypeMethod(prototype, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
-            DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
-            DefinePrototypeMethod(prototype, "toSorted", (Func<object[], object?[]?, object?>)PrototypeToSorted, 1);
-            DefinePrototypeMethod(prototype, "with", (Func<object[], object?[]?, object?>)PrototypeWith, 2);
-            DefinePrototypeMethod(prototype, "entries", prototypeEntries, 0);
-            DefinePrototypeMethod(prototype, "keys", prototypeKeys, 0);
-            DefinePrototypeMethod(prototype, "values", prototypeValues, 0);
+            DefinePrototypeMethod(prototype, "join", (BuiltinFunction1)PrototypeJoin, 1);
+            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "push", (BuiltinFunctionVariadic)PrototypePush, 1);
+            DefinePrototypeMethod(prototype, "reduce", (BuiltinFunctionVariadic)PrototypeReduce, 1);
+            DefinePrototypeMethod(prototype, "reduceRight", (BuiltinFunctionVariadic)PrototypeReduceRight, 1);
+            DefinePrototypeMethod(prototype, "indexOf", (BuiltinFunction2)PrototypeIndexOf, 1);
+            DefinePrototypeMethod(prototype, "every", (BuiltinFunction2)PrototypeEvery, 1);
+            DefinePrototypeMethod(prototype, "some", (BuiltinFunction2)PrototypeSome, 1);
+            DefinePrototypeMethod(prototype, "filter", (BuiltinFunction2)PrototypeFilter, 1);
+            DefinePrototypeMethod(prototype, "map", (BuiltinFunction2)PrototypeMap, 1);
+            DefinePrototypeMethod(prototype, "find", (BuiltinFunction2)PrototypeFind, 1);
+            DefinePrototypeMethod(prototype, "findIndex", (BuiltinFunction2)PrototypeFindIndex, 1);
+            DefinePrototypeMethod(prototype, "includes", (BuiltinFunction2)PrototypeIncludes, 1);
+            DefinePrototypeMethod(prototype, "findLast", (BuiltinFunction2)PrototypeFindLast, 1);
+            DefinePrototypeMethod(prototype, "findLastIndex", (BuiltinFunction2)PrototypeFindLastIndex, 1);
+            DefinePrototypeMethod(prototype, "flat", (BuiltinFunction1)PrototypeFlat, 0);
+            DefinePrototypeMethod(prototype, "at", (BuiltinFunction1)PrototypeAt, 1);
+            DefinePrototypeMethod(prototype, "toSorted", (BuiltinFunction1)PrototypeToSorted, 1);
+            DefinePrototypeMethod(prototype, "with", (BuiltinFunction2)PrototypeWith, 2);
+            DefinePrototypeMethod(prototype, "entries", (BuiltinFunction0)PrototypeEntries, 0);
+            DefinePrototypeMethod(prototype, "keys", (BuiltinFunction0)PrototypeKeys, 0);
+            var prototypeValues =
+                DefinePrototypeMethod(prototype, "values", (BuiltinFunction0)PrototypeValues, 0);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -194,25 +192,40 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
+        private static object? DefinePrototypeMethod(JsObject prototype, string name, Delegate method, double length)
         {
-            JavaScriptRuntime.Function.InitializeFunctionInstance(method, length, name);
-            PropertyDescriptorStore.DefineOrUpdate(method, "prototype", new JsPropertyDescriptor
+            var value =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    method);
+            if (value is BuiltinDelegateFunctionAdapter builtinFunction)
             {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = null
-            });
+                JavaScriptRuntime.Function.InitializeFunctionInstance(
+                    builtinFunction,
+                    length,
+                    name,
+                    requiresInvocationContext:
+                        !BuiltinFunctionDelegates.IsReceiverAware(
+                            builtinFunction.Target));
+                PropertyDescriptorStore.DefineOrUpdate(builtinFunction, "prototype", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = false,
+                    Value = null
+                });
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
                 Configurable = true,
                 Writable = true,
-                Value = method
+                Value = value
             });
+
+            return value;
         }
 
         public bool hasOwnProperty(object? prop)
@@ -366,58 +379,49 @@ namespace JavaScriptRuntime
             _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
         }
 
-        private static object PrototypeJoin(object[] scopes, object?[]? args)
+        private static object PrototypeJoin(object? thisArgument, object? separator)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is not JavaScriptRuntime.Array jsArray)
+            if (thisArgument is not JavaScriptRuntime.Array jsArray)
             {
                 throw new TypeError("Array.prototype.join called on non-array");
             }
 
-            return jsArray.join(ToNonNullableObjectArray(args));
+            // A missing separator and an explicit `undefined` separator are
+            // indistinguishable once bound to a fixed-arity parameter; both take
+            // the default-separator path here (matching real engines).
+            return separator is null
+                ? jsArray.join(System.Array.Empty<object>())
+                : jsArray.join(new object[] { separator });
         }
 
-        private static object PrototypeToString(object[] scopes, object?[]? args)
+        private static object PrototypeToString(object? thisArgument)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is not JavaScriptRuntime.Array jsArray)
+            if (thisArgument is not JavaScriptRuntime.Array jsArray)
             {
                 throw new TypeError("Array.prototype.toString called on non-array");
             }
 
-            return jsArray.toString(ToNonNullableObjectArray(args));
+            return jsArray.toString();
         }
 
-        private static object PrototypePush(object[] scopes, object?[]? args)
+        private static object PrototypePush(object? thisArgument, in JsCallArguments arguments)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is not JavaScriptRuntime.Array jsArray)
+            if (thisArgument is not JavaScriptRuntime.Array jsArray)
             {
                 throw new TypeError("Array.prototype.push called on non-array");
             }
 
-            if (args == null || args.Length == 0)
+            return arguments.Count switch
             {
-                return jsArray.push();
-            }
-
-            if (args.Length == 1)
-            {
-                return jsArray.push(args[0]);
-            }
-
-            var converted = new object[args.Length];
-            for (int i = 0; i < args.Length; i++)
-            {
-                converted[i] = args[i]!;
-            }
-            return jsArray.push(converted);
+                0 => jsArray.push(),
+                1 => jsArray.push(arguments.GetArgument(0)),
+                _ => jsArray.push(ToNonNullableObjectArray(arguments.ToArray())!)
+            };
         }
 
-        private static object? PrototypeReduce(object[] scopes, object?[]? args)
+        private static object? PrototypeReduce(object? thisArgument, in JsCallArguments arguments)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is null || receiver is JsNull)
+            if (thisArgument is null || thisArgument is JsNull)
             {
                 if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JROC_DIAG_REDUCE")))
                 {
@@ -428,34 +432,25 @@ namespace JavaScriptRuntime
             }
 
             // Fast path: true JS array instance.
-            if (receiver is JavaScriptRuntime.Array jsArray)
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                if (args == null || args.Length == 0)
-                {
-                    return jsArray.reduce(System.Array.Empty<object>());
-                }
-
-                var converted = new object[args.Length];
-                for (int i = 0; i < args.Length; i++)
-                {
-                    converted[i] = args[i]!;
-                }
-
-                return jsArray.reduce(converted);
+                return arguments.Count == 0
+                    ? jsArray.reduce(System.Array.Empty<object>())
+                    : jsArray.reduce(ToNonNullableObjectArray(arguments.ToArray())!);
             }
 
             // Generic array-like path: supports NodeList and other array-like objects.
             // This is needed because real-world libs often use:
             //   const reduce = Array.prototype.reduce; reduce.call(arrayLike, cb, init)
-            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
-            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var iterationReceiver = GetArrayMethodIterationReceiver(thisArgument);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(thisArgument);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "reduce");
+            var callback = RequireCallback(arguments.GetArgument(0), "reduce");
             int k;
             object? accumulator;
-            if (args != null && args.Length >= 2)
+            if (arguments.Count >= 2)
             {
-                accumulator = args[1];
+                accumulator = arguments.GetArgument(1);
                 k = 0;
             }
             else
@@ -502,10 +497,9 @@ namespace JavaScriptRuntime
             return accumulator;
         }
 
-        private static object? PrototypeReduceRight(object[] scopes, object?[]? args)
+        private static object? PrototypeReduceRight(object? thisArgument, in JsCallArguments arguments)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is null || receiver is JsNull)
+            if (thisArgument is null || thisArgument is JsNull)
             {
                 if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JROC_DIAG_REDUCE")))
                 {
@@ -515,31 +509,22 @@ namespace JavaScriptRuntime
                 throw new TypeError("Reduce called on null or undefined");
             }
 
-            if (receiver is JavaScriptRuntime.Array jsArray)
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                if (args == null || args.Length == 0)
-                {
-                    return jsArray.reduceRight(System.Array.Empty<object>());
-                }
-
-                var converted = new object[args.Length];
-                for (int i = 0; i < args.Length; i++)
-                {
-                    converted[i] = args[i]!;
-                }
-
-                return jsArray.reduceRight(converted);
+                return arguments.Count == 0
+                    ? jsArray.reduceRight(System.Array.Empty<object>())
+                    : jsArray.reduceRight(ToNonNullableObjectArray(arguments.ToArray())!);
             }
 
-            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
-            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var iterationReceiver = GetArrayMethodIterationReceiver(thisArgument);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(thisArgument);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "reduceRight");
+            var callback = RequireCallback(arguments.GetArgument(0), "reduceRight");
             int k;
             object? accumulator;
-            if (args != null && args.Length >= 2)
+            if (arguments.Count >= 2)
             {
-                accumulator = args[1];
+                accumulator = arguments.GetArgument(1);
                 k = length - 1;
             }
             else
@@ -586,52 +571,39 @@ namespace JavaScriptRuntime
             return accumulator;
         }
 
-        private static object? PrototypeIndexOf(object[] scopes, object?[]? args)
+        private static object? PrototypeIndexOf(object? thisArgument, object? searchElement, object? fromIndex)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is null || receiver is JsNull)
+            if (thisArgument is null || thisArgument is JsNull)
             {
                 throw new TypeError("Array.prototype.indexOf called on null or undefined");
             }
 
-            // Fast path for real JS array
-            if (receiver is JavaScriptRuntime.Array jsArray)
+            // Fast path for real JS array. A missing fromIndex and an explicit
+            // `undefined` fromIndex are indistinguishable once bound to a
+            // fixed-arity parameter; ToInt(null, 0) below already treats both
+            // the same as omitted (default 0), so no special-casing is needed.
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                if (args == null || args.Length == 0)
-                {
-                    return jsArray.indexOf();
-                }
-
-                var converted = new object[args.Length];
-                for (int i = 0; i < args.Length; i++)
-                {
-                    converted[i] = args[i]!;
-                }
-
-                return jsArray.indexOf(converted);
+                return jsArray.indexOf(new object[] { searchElement!, fromIndex! });
             }
 
             // Generic array-like indexOf
-            object? searchElement = args != null && args.Length > 0 ? args[0] : null;
-            int length = ToArrayLikeLength(receiver);
-            double fromIndexNum = 0;
-            if (args != null && args.Length > 1)
+            int length = ToArrayLikeLength(thisArgument);
+            double fromIndexNum;
+            try { fromIndexNum = TypeUtilities.ToNumber(fromIndex); }
+            catch { fromIndexNum = double.NaN; }
+            if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum))
             {
-                try { fromIndexNum = TypeUtilities.ToNumber(args[1]); }
-                catch { fromIndexNum = double.NaN; }
-                if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum))
-                {
-                    fromIndexNum = 0;
-                }
-                else if (double.IsPositiveInfinity(fromIndexNum))
-                {
-                    // +Infinity means start at/after the end.
-                    fromIndexNum = length;
-                }
-                else
-                {
-                    fromIndexNum = global::System.Math.Truncate(fromIndexNum);
-                }
+                fromIndexNum = 0;
+            }
+            else if (double.IsPositiveInfinity(fromIndexNum))
+            {
+                // +Infinity means start at/after the end.
+                fromIndexNum = length;
+            }
+            else
+            {
+                fromIndexNum = global::System.Math.Truncate(fromIndexNum);
             }
 
             int k;
@@ -662,7 +634,7 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                var element = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
+                var element = JavaScriptRuntime.ObjectRuntime.GetItem(thisArgument, (double)i);
                 if (JavaScriptRuntime.Operators.StrictEqual(element, searchElement))
                 {
                     return (double)i;
@@ -672,14 +644,13 @@ namespace JavaScriptRuntime
             return -1d;
         }
 
-        private static object? PrototypeEvery(object[] scopes, object?[]? args)
+        private static object? PrototypeEvery(object? thisArgument, object? callback, object? thisArg)
         {
-            var receiver = RequireArrayLikeReceiver("every");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "every");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "every");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, "every");
 
             for (int i = 0; i < length; i++)
             {
@@ -699,14 +670,13 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private static object? PrototypeFilter(object[] scopes, object?[]? args)
+        private static object? PrototypeFilter(object? thisArgument, object? callback, object? thisArg)
         {
-            var receiver = RequireArrayLikeReceiver("filter");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "filter");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "filter");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, "filter");
             var result = new Array();
 
             for (int i = 0; i < length; i++)
@@ -727,14 +697,13 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private static object? PrototypeSome(object[] scopes, object?[]? args)
+        private static object? PrototypeSome(object? thisArgument, object? callback, object? thisArg)
         {
-            var receiver = RequireArrayLikeReceiver("some");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "some");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "some");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, "some");
 
             for (int i = 0; i < length; i++)
             {
@@ -754,14 +723,13 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        private static object? PrototypeFind(object[] scopes, object?[]? args)
+        private static object? PrototypeFind(object? thisArgument, object? callback, object? thisArg)
         {
-            var receiver = RequireArrayLikeReceiver("find");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "find");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "find");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, "find");
 
             for (int i = 0; i < length; i++)
             {
@@ -776,14 +744,13 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        private static object? PrototypeFindIndex(object[] scopes, object?[]? args)
+        private static object? PrototypeFindIndex(object? thisArgument, object? callback, object? thisArg)
         {
-            var receiver = RequireArrayLikeReceiver("findIndex");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "findIndex");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "findIndex");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, "findIndex");
 
             for (int i = 0; i < length; i++)
             {
@@ -798,9 +765,9 @@ namespace JavaScriptRuntime
             return -1d;
         }
 
-        private static object? PrototypeIncludes(object[] scopes, object?[]? args)
+        private static object? PrototypeIncludes(object? thisArgument, object? searchElement, object? fromIndex)
         {
-            var receiver = RequireArrayLikeReceiver("includes");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "includes");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var length = ToArrayLikeLengthAsDouble(iterationReceiver);
             if (length <= 0d)
@@ -808,10 +775,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var searchElement = args != null && args.Length > 0 ? args[0] : null;
-            var startIndex = args != null && args.Length > 1
-                ? CoerceArrayLikeSearchStartIndex(args[1], length)
-                : 0d;
+            var startIndex = CoerceArrayLikeSearchStartIndex(fromIndex, length);
 
             for (var index = startIndex; index < length; index++)
             {
@@ -824,19 +788,18 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        private static object? PrototypeFindLast(object[] scopes, object?[]? args)
-            => FindFromLast(RequireArrayLikeReceiver("findLast"), args, returnIndex: false);
+        private static object? PrototypeFindLast(object? thisArgument, object? callback, object? thisArg)
+            => FindFromLast(RequireArrayLikeReceiver(thisArgument, "findLast"), callback, thisArg, returnIndex: false);
 
-        private static object? PrototypeFindLastIndex(object[] scopes, object?[]? args)
-            => FindFromLast(RequireArrayLikeReceiver("findLastIndex"), args, returnIndex: true);
+        private static object? PrototypeFindLastIndex(object? thisArgument, object? callback, object? thisArg)
+            => FindFromLast(RequireArrayLikeReceiver(thisArgument, "findLastIndex"), callback, thisArg, returnIndex: true);
 
-        private static object? FindFromLast(object receiver, object?[]? args, bool returnIndex)
+        private static object? FindFromLast(object receiver, object? callback, object? thisArg, bool returnIndex)
         {
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             var length = ToArrayLikeLengthAsDouble(iterationReceiver);
-            var callback = RequireCallback(args, returnIndex ? "findLastIndex" : "findLast");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, returnIndex ? "findLastIndex" : "findLast");
 
             for (var index = length - 1d; index >= 0d; index--)
             {
@@ -855,14 +818,23 @@ namespace JavaScriptRuntime
             return returnIndex ? -1d : null;
         }
 
-        private static object? PrototypeMap(object[] scopes, object?[]? args)
+        // Legacy args-array overload retained for the compiler's direct
+        // instance-method dispatch path (findLast(object[]), findLastIndex(object[])),
+        // which is out of scope for the explicit-receiver ABI migration.
+        private static object? FindFromLast(object receiver, object?[]? args, bool returnIndex)
         {
-            var receiver = RequireArrayLikeReceiver("map");
+            var callback = args is { Length: > 0 } ? args[0] : null;
+            var thisArg = args is { Length: > 1 } ? args[1] : null;
+            return FindFromLast(receiver, callback, thisArg, returnIndex);
+        }
+
+        private static object? PrototypeMap(object? thisArgument, object? callback, object? thisArg)
+        {
+            var receiver = RequireArrayLikeReceiver(thisArgument, "map");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
-            var callback = RequireCallback(args, "map");
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            callback = RequireCallback(callback, "map");
             var result = new Array
             {
                 length = length
@@ -882,63 +854,59 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private static object? PrototypeAt(object[] scopes, object?[]? args)
+        private static object? PrototypeAt(object? thisArgument, object? index)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is null || receiver is JsNull)
+            if (thisArgument is null || thisArgument is JsNull)
             {
                 throw new TypeError("Array.prototype.at called on null or undefined");
             }
 
-            // Fast path for real JS array
-            if (receiver is JavaScriptRuntime.Array jsArray)
+            // Fast path for real JS array. A missing index and an explicit
+            // `undefined` index are indistinguishable once bound to a
+            // fixed-arity parameter; both resolve to relative index 0 here
+            // (matching real engines), rather than the previous zero-arg
+            // shortcut that always returned undefined.
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                if (args == null || args.Length == 0)
-                {
-                    return jsArray.at();
-                }
-
-                return jsArray.at(args[0]);
+                return jsArray.at(index);
             }
 
             // Generic array-like at
-            double relativeIndex = args != null && args.Length > 0
-                ? ToIntegerOrInfinityForAt(args[0])
-                : 0d;
+            double relativeIndex = ToIntegerOrInfinityForAt(index);
 
-            int length = ToArrayLikeLength(receiver);
-            int index;
+            int length = ToArrayLikeLength(thisArgument);
+            int arrayIndex;
             if (relativeIndex >= 0)
             {
-                index = (int)relativeIndex;
+                arrayIndex = (int)relativeIndex;
             }
             else
             {
-                index = length + (int)relativeIndex;
+                arrayIndex = length + (int)relativeIndex;
             }
 
-            if (index < 0 || index >= length)
+            if (arrayIndex < 0 || arrayIndex >= length)
             {
                 return null; // undefined
             }
 
-            return JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)index);
+            return JavaScriptRuntime.ObjectRuntime.GetItem(thisArgument, (double)arrayIndex);
         }
 
-        private static object? PrototypeToSorted(object[] scopes, object?[]? args)
-            => ToSorted(RuntimeServices.GetCurrentThis(), args);
+        private static object? PrototypeToSorted(object? thisArgument, object? compareFn)
+            => ToSorted(thisArgument, new object?[] { compareFn });
 
-        private static object? PrototypeWith(object[] scopes, object?[]? args)
-            => With(RuntimeServices.GetCurrentThis(), args);
+        private static object? PrototypeWith(object? thisArgument, object? index, object? value)
+            => With(thisArgument, new object?[] { index, value });
 
-        private static object? PrototypeFlat(object[] scopes, object?[]? args)
+        private static object? PrototypeFlat(object? thisArgument, object? depthArgument)
         {
-            var receiver = RequireArrayLikeReceiver("flat");
+            var receiver = RequireArrayLikeReceiver(thisArgument, "flat");
 
             int depth = 1;
-            if (args != null && args.Length > 0 && args[0] != null)
+            if (depthArgument != null)
             {
-                depth = ToInt(args[0]!, 0);
+                depth = ToInt(depthArgument, 0);
             }
             if (depth < 0)
             {
@@ -950,9 +918,8 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private static object RequireArrayLikeReceiver(string methodName)
+        private static object RequireArrayLikeReceiver(object? receiver, string methodName)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
             if (receiver is null || receiver is JsNull)
             {
                 throw new TypeError($"Array.prototype.{methodName} called on null or undefined");
@@ -961,20 +928,19 @@ namespace JavaScriptRuntime
             return receiver;
         }
 
-        private static object RequireCallback(object?[]? args, string methodName)
+        private static object RequireCallback(object? callback, string methodName)
         {
-            if (args == null || args.Length == 0 || args[0] is null || args[0] is JsNull)
+            if (callback is null || callback is JsNull)
             {
                 throw new TypeError($"Array.prototype.{methodName} requires a callback function");
             }
 
-            var callback = args[0];
             if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("callback is not a function");
             }
 
-            return callback!;
+            return callback;
         }
 
         private static object GetArrayMethodIterationReceiver(object receiver)
@@ -1126,19 +1092,19 @@ namespace JavaScriptRuntime
             return global::System.Math.Max(length + relativeIndex, 0d);
         }
 
-        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+        private static object? PrototypeEntries(object? thisArgument)
         {
-            return CreateIteratorFromReceiver(RuntimeServices.GetCurrentThis(), ArrayIteratorKind.Entries, "entries");
+            return CreateIteratorFromReceiver(thisArgument, ArrayIteratorKind.Entries, "entries");
         }
 
-        private static object? PrototypeKeys(object[] scopes, object?[]? args)
+        private static object? PrototypeKeys(object? thisArgument)
         {
-            return CreateIteratorFromReceiver(RuntimeServices.GetCurrentThis(), ArrayIteratorKind.Keys, "keys");
+            return CreateIteratorFromReceiver(thisArgument, ArrayIteratorKind.Keys, "keys");
         }
 
-        private static object? PrototypeValues(object[] scopes, object?[]? args)
+        private static object? PrototypeValues(object? thisArgument)
         {
-            return CreateIteratorFromReceiver(RuntimeServices.GetCurrentThis(), ArrayIteratorKind.Values, "values");
+            return CreateIteratorFromReceiver(thisArgument, ArrayIteratorKind.Values, "values");
         }
 
         private static IJavaScriptIterator CreateIteratorFromReceiver(object? receiver, ArrayIteratorKind kind, string methodName)

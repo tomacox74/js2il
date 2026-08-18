@@ -18,6 +18,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `every`/`filter`/`map`/`some`/`reduce`/`reduceRight`/`find`/`findIndex`/`includes`,
   fix generic receiver boxing plus `length`/`fromIndex` coercion and callback
   ordering semantics, and refresh the Section 23.1 ECMA-262 support evidence.
+- perf(runtime): migrate the remaining runtime-owned Array, RegExp,
+  collection, iterator, generator, Function, Promise, Abort, primitive,
+  typed-array, Date, Object, and selected Node built-ins to the
+  explicit-receiver ABI (issue #1895). Fixed-arity calls now bypass ambient
+  invocation state and argument-array allocation, while generated callables
+  that require lexical, callee, or `new.target` state remain on an explicit
+  source-audited allowlist.
 
 ## v0.12.9 - 2026-08-18
 

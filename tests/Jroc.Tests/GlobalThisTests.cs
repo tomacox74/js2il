@@ -15,7 +15,7 @@ public class GlobalThisTests
         Assert.IsType<JsObject>(JavaScriptRuntime.Array.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.String.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.String.StringIteratorPrototype);
-        Assert.IsType<JsObject>(RegExp.Prototype);
+        Assert.IsType<JsObject>(JavaScriptRuntime.RegExp.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.Map.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.Set.Prototype);
     }
@@ -74,7 +74,7 @@ public class GlobalThisTests
             JavaScriptRuntime.Array.Prototype,
             JavaScriptRuntime.String.Prototype,
             JavaScriptRuntime.String.StringIteratorPrototype,
-            RegExp.Prototype,
+            JavaScriptRuntime.RegExp.Prototype,
             JavaScriptRuntime.Map.Prototype,
             JavaScriptRuntime.Set.Prototype
         };

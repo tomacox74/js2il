@@ -172,7 +172,8 @@ public static class AsyncFunction
         var callArgs = args ?? System.Array.Empty<object?>();
         var length = Function.ParseDynamicFunctionParameterNames(callArgs).Length;
 
-        Func<object[], object?[]?, object?> functionValue = static (_, __) => Promise.resolve(null);
+        // Ordinary placeholder body; the receiver is ignored (issue #1895).
+        BuiltinFunction0 functionValue = static thisArgument => Promise.resolve(null);
         InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
         return BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
     }

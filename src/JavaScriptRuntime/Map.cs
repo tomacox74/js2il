@@ -7,7 +7,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Map")]
     public sealed class Map : JsObject, IEnumerable<object[]>
     {
-        private static readonly Func<object[], object?[]?, object?> _prototypeEntriesValue = PrototypeEntries;
+        private static readonly BuiltinFunction0 _prototypeEntriesValue = PrototypeEntries;
         /// <summary>Realm-owned <c>Map Iterator prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject IteratorPrototype
             => RuntimeIntrinsics.Current.GetOrCreate(
@@ -28,17 +28,17 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(exp, "set", PrototypeSet);
-            DefinePrototypeMethod(exp, "get", PrototypeGet);
-            DefinePrototypeMethod(exp, "has", PrototypeHas);
-            DefinePrototypeMethod(exp, "delete", PrototypeDelete);
-            DefinePrototypeMethod(exp, "clear", PrototypeClear);
-            DefinePrototypeMethod(exp, "keys", PrototypeKeys);
-            DefinePrototypeMethod(exp, "values", PrototypeValues);
+            DefinePrototypeMethod(exp, "set", (BuiltinFunction2)PrototypeSet);
+            DefinePrototypeMethod(exp, "get", (BuiltinFunction1)PrototypeGet);
+            DefinePrototypeMethod(exp, "has", (BuiltinFunction1)PrototypeHas);
+            DefinePrototypeMethod(exp, "delete", (BuiltinFunction1)PrototypeDelete);
+            DefinePrototypeMethod(exp, "clear", (BuiltinFunction0)PrototypeClear);
+            DefinePrototypeMethod(exp, "keys", (BuiltinFunction0)PrototypeKeys);
+            DefinePrototypeMethod(exp, "values", (BuiltinFunction0)PrototypeValues);
             DefinePrototypeMethod(exp, "entries", _prototypeEntriesValue);
-            DefinePrototypeMethod(exp, "forEach", PrototypeForEach);
-            DefinePrototypeMethod(exp, "getOrInsert", PrototypeGetOrInsert, 2);
-            DefinePrototypeMethod(exp, "getOrInsertComputed", PrototypeGetOrInsertComputed, 2);
+            DefinePrototypeMethod(exp, "forEach", (BuiltinFunction2)PrototypeForEach);
+            DefinePrototypeMethod(exp, "getOrInsert", (BuiltinFunction2)PrototypeGetOrInsert, 2);
+            DefinePrototypeMethod(exp, "getOrInsertComputed", (BuiltinFunction2)PrototypeGetOrInsertComputed, 2);
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -52,7 +52,7 @@ namespace JavaScriptRuntime
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+                Get = (BuiltinFunction0)PrototypeSizeGetter
             });
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
@@ -79,7 +79,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -94,18 +94,21 @@ namespace JavaScriptRuntime
         private static void DefinePrototypeMethod(
             JsObject prototype,
             string name,
-            Func<object[], object?[]?, object?> method,
+            Delegate method,
             double length)
         {
-            Function.InitializeFunctionInstance(method, length, name);
+            Function.InitializeFunctionInstance(
+                method,
+                length,
+                name,
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(method));
             Function.MarkUndefinedPrototype(method);
             DefinePrototypeMethod(prototype, name, method);
         }
 
-        private static Map GetMapReceiver(string methodName)
+        private static Map GetMapReceiver(object? thisArgument, string methodName)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is not Map map)
+            if (thisArgument is not Map map)
             {
                 throw new TypeError($"Map.prototype.{methodName} called on incompatible receiver");
             }
@@ -113,84 +116,73 @@ namespace JavaScriptRuntime
             return map;
         }
 
-        private static object? PrototypeSet(object[] scopes, object?[]? args)
+        private static object? PrototypeSet(object? thisArgument, object? key, object? value)
         {
-            var map = GetMapReceiver("set");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            var value = args != null && args.Length > 1 ? args[1] : null;
+            var map = GetMapReceiver(thisArgument, "set");
             return map.set(key, value);
         }
 
-        private static object? PrototypeGet(object[] scopes, object?[]? args)
+        private static object? PrototypeGet(object? thisArgument, object? key)
         {
-            var map = GetMapReceiver("get");
-            var key = args != null && args.Length > 0 ? args[0] : null;
+            var map = GetMapReceiver(thisArgument, "get");
             return map.get(key);
         }
 
-        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        private static object? PrototypeHas(object? thisArgument, object? key)
         {
-            var map = GetMapReceiver("has");
-            var key = args != null && args.Length > 0 ? args[0] : null;
+            var map = GetMapReceiver(thisArgument, "has");
             return map.has(key);
         }
 
-        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        private static object? PrototypeDelete(object? thisArgument, object? key)
         {
-            var map = GetMapReceiver("delete");
-            var key = args != null && args.Length > 0 ? args[0] : null;
+            var map = GetMapReceiver(thisArgument, "delete");
             return map.delete(key);
         }
 
-        private static object? PrototypeClear(object[] scopes, object?[]? args)
+        private static object? PrototypeClear(object? thisArgument)
         {
-            GetMapReceiver("clear").clear();
+            GetMapReceiver(thisArgument, "clear").clear();
             return null;
         }
 
-        private static object? PrototypeKeys(object[] scopes, object?[]? args)
+        private static object? PrototypeKeys(object? thisArgument)
         {
-            return GetMapReceiver("keys").keys();
+            return GetMapReceiver(thisArgument, "keys").keys();
         }
 
-        private static object? PrototypeValues(object[] scopes, object?[]? args)
+        private static object? PrototypeValues(object? thisArgument)
         {
-            return GetMapReceiver("values").values();
+            return GetMapReceiver(thisArgument, "values").values();
         }
 
-        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+        private static object? PrototypeEntries(object? thisArgument)
         {
-            return GetMapReceiver("entries").entries();
+            return GetMapReceiver(thisArgument, "entries").entries();
         }
 
-        private static object? PrototypeForEach(object[] scopes, object?[]? args)
+        private static object? PrototypeForEach(object? thisArgument, object? callback, object? forEachThisArg)
         {
-            var map = GetMapReceiver("forEach");
-            var callback = args != null && args.Length > 0 ? args[0] : null;
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            map.forEach(callback, thisArg);
+            var map = GetMapReceiver(thisArgument, "forEach");
+            map.forEach(callback, forEachThisArg);
             return null;
         }
 
-        private static object? PrototypeGetOrInsert(object[] scopes, object?[]? args)
+        private static object? PrototypeGetOrInsert(object? thisArgument, object? key, object? value)
         {
-            var map = GetMapReceiver("getOrInsert");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            var value = args != null && args.Length > 1 ? args[1] : null;
+            var map = GetMapReceiver(thisArgument, "getOrInsert");
             return map.getOrInsert(key, value);
         }
 
-        private static object? PrototypeGetOrInsertComputed(object[] scopes, object?[]? args)
+        private static object? PrototypeGetOrInsertComputed(object? thisArgument, object? key, object? callback)
         {
-            var map = GetMapReceiver("getOrInsertComputed");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            var callback = args != null && args.Length > 1 ? args[1] : null;
+            var map = GetMapReceiver(thisArgument, "getOrInsertComputed");
             return map.getOrInsertComputed(key, callback);
         }
 
-        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+        private static object? PrototypeSizeGetter(object? thisArgument)
         {
-            return GetMapReceiver("size").size;
+            return GetMapReceiver(thisArgument, "size").size;
         }
 
         private void InitializeIntrinsicSurface()

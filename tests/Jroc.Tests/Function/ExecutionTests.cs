@@ -333,5 +333,8 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Function_CallableMaterialization_WithCallSite() { var testName = nameof(Function_CallableMaterialization_WithCallSite); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ExplicitReceiverAbi() { var testName = nameof(Function_ExplicitReceiverAbi); return ExecutionTest(testName); }
     }
 }

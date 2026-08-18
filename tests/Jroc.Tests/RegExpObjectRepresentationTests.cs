@@ -10,11 +10,11 @@ public sealed class RegExpObjectRepresentationTests
     {
         var services = RuntimeServices.BuildServiceProvider();
         using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
-        var regExp = new RegExp("a", "g");
+        var regExp = new JavaScriptRuntime.RegExp("a", "g");
         var customPrototype = new JsObject();
 
         Assert.IsAssignableFrom<JsObject>(regExp);
-        Assert.Same(RegExp.Prototype, JsObjectConstructor.getPrototypeOf(regExp));
+        Assert.Same(JavaScriptRuntime.RegExp.Prototype, JsObjectConstructor.getPrototypeOf(regExp));
         Assert.Equal("a", ObjectRuntime.GetProperty(regExp, "source"));
         Assert.Equal("g", ObjectRuntime.GetProperty(regExp, "flags"));
 

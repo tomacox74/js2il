@@ -9,9 +9,9 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("Promise")]
 public sealed class Promise : JsObject, IJavaScriptPromise
 {
-    private static readonly Func<object[], object?[]?, object?> PrototypeThenValue = PrototypeThen;
-    private static readonly Func<object[], object?[]?, object?> PrototypeCatchValue = PrototypeCatch;
-    private static readonly Func<object[], object?[]?, object?> PrototypeFinallyValue = PrototypeFinally;
+    private static readonly BuiltinFunction2 PrototypeThenValue = PrototypeThen;
+    private static readonly BuiltinFunction1 PrototypeCatchValue = PrototypeCatch;
+    private static readonly BuiltinFunction1 PrototypeFinallyValue = PrototypeFinally;
     /// <summary>Realm-owned <c>Promise.prototype</c> intrinsic (issue #1824).</summary>
     internal static object Prototype
         => RuntimeIntrinsics.Current.GetOrCreate(
@@ -62,11 +62,23 @@ public sealed class Promise : JsObject, IJavaScriptPromise
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        Function.InitializeFunctionInstance(PrototypeThenValue, 2d, "then");
+        Function.InitializeFunctionInstance(
+            PrototypeThenValue,
+            2d,
+            "then",
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeThenValue));
         Function.MarkUndefinedPrototype(PrototypeThenValue);
-        Function.InitializeFunctionInstance(PrototypeCatchValue, 1d, "catch");
+        Function.InitializeFunctionInstance(
+            PrototypeCatchValue,
+            1d,
+            "catch",
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeCatchValue));
         Function.MarkUndefinedPrototype(PrototypeCatchValue);
-        Function.InitializeFunctionInstance(PrototypeFinallyValue, 1d, "finally");
+        Function.InitializeFunctionInstance(
+            PrototypeFinallyValue,
+            1d,
+            "finally",
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(PrototypeFinallyValue));
         Function.MarkUndefinedPrototype(PrototypeFinallyValue);
 
         DefineDataProperty(prototype, "then", PrototypeThenValue);
@@ -94,10 +106,9 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         });
     }
 
-    private static Promise GetPromiseReceiver(string methodName)
+    private static Promise GetPromiseReceiver(object? thisValue, string methodName)
     {
-        var receiver = RuntimeServices.GetCurrentThis();
-        if (receiver is not Promise promise)
+        if (thisValue is not Promise promise)
         {
             throw new TypeError($"Promise.prototype.{methodName} called on incompatible receiver");
         }
@@ -105,21 +116,19 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         return promise;
     }
 
-    private static object? PrototypeThen(object[] scopes, object?[]? args)
+    private static object? PrototypeThen(object? thisArgument, object? onFulfilledArgument, object? onRejectedArgument)
     {
-        return GetPromiseReceiver("then").then(
-            args != null && args.Length > 0 ? args[0] : null,
-            args != null && args.Length > 1 ? args[1] : null);
+        return GetPromiseReceiver(thisArgument, "then").then(onFulfilledArgument, onRejectedArgument);
     }
 
-    private static object? PrototypeCatch(object[] scopes, object?[]? args)
+    private static object? PrototypeCatch(object? thisArgument, object? onRejectedArgument)
     {
-        return GetPromiseReceiver("catch").@catch(args != null && args.Length > 0 ? args[0] : null);
+        return GetPromiseReceiver(thisArgument, "catch").@catch(onRejectedArgument);
     }
 
-    private static object? PrototypeFinally(object[] scopes, object?[]? args)
+    private static object? PrototypeFinally(object? thisArgument, object? onFinallyArgument)
     {
-        return GetPromiseReceiver("finally").@finally(args != null && args.Length > 0 ? args[0] : null);
+        return GetPromiseReceiver(thisArgument, "finally").@finally(onFinallyArgument);
     }
 
     /// <summary>

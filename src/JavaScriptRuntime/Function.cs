@@ -14,8 +14,8 @@ namespace JavaScriptRuntime
 [IntrinsicObject("Function")]
 public static class Function
 {
-    private static readonly Func<object[], object?[], object?> _restrictedPropertyThrower =
-        static (_, _) => throw new TypeError("Cannot access restricted function property");
+    private static readonly BuiltinFunction0 _restrictedPropertyThrower =
+        static _ => throw new TypeError("Cannot access restricted function property");
 
     /// <summary>
     /// This realm's <c>%Function.prototype%</c>. Realm-owned (issue #1824): the object
@@ -40,15 +40,15 @@ public static class Function
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);
-        DefinePrototypeMethod(prototype, "apply", (Func<object[], object?[]?, object?>)PrototypeApply, 2);
-        DefinePrototypeMethod(prototype, "call", (Func<object[], object?[]?, object?>)PrototypeCall, 1);
-        DefinePrototypeMethod(prototype, "bind", (Func<object[], object?[]?, object?>)PrototypeBind, 1);
-        DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
+        DefinePrototypeMethod(prototype, "apply", (BuiltinFunction2)PrototypeApply, 2);
+        DefinePrototypeMethod(prototype, "call", (BuiltinFunctionVariadic)PrototypeCall, 1);
+        DefinePrototypeMethod(prototype, "bind", (BuiltinFunctionVariadic)PrototypeBind, 1);
+        DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
         DefineRestrictedProperty(prototype, "caller");
         DefineRestrictedProperty(prototype, "arguments");
     }
 
-    private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
+    private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method, double length)
     {
         var value = CreateBuiltinPrototypeFunction(method, length);
         PrototypeChain.SetPrototype(value, prototype);
@@ -75,7 +75,7 @@ public static class Function
         return false;
     }
 
-    private static Func<object[], object?[]?, object?> CreateBuiltinPrototypeFunction(Func<object[], object?[]?, object?> method, double length)
+    private static Delegate CreateBuiltinPrototypeFunction(Delegate method, double length)
     {
         ConfigureCallableObject(method, hasRestrictedProperties: false);
         PropertyDescriptorStore.DefineOrUpdate(method, "length", new JsPropertyDescriptor
@@ -234,61 +234,72 @@ public static class Function
         private static bool IsCallableObject(object? target)
             => CallableOperations.IsCallable(target);
 
-        private static object? PrototypeApply(object[] scopes, object?[]? args)
+        private static object? PrototypeApply(object? thisArgument, object? thisArgArgument, object? argArrayArgument)
         {
-            var target = RuntimeServices.GetCurrentThis();
-            if (!IsCallableObject(target))
+            if (!IsCallableObject(thisArgument))
             {
                 throw new TypeError("Function.prototype.apply called on non-function");
             }
 
-            var thisArg = args != null && args.Length > 0 ? args[0] : null;
-            var argArray = args != null && args.Length > 1 ? args[1] : null;
-            return Apply(target!, thisArg, argArray);
+            return Apply(thisArgument!, thisArgArgument, argArrayArgument);
         }
 
-        private static object? PrototypeCall(object[] scopes, object?[]? args)
+        private static object? PrototypeCall(object? thisArgument, in JsCallArguments arguments)
         {
-            var target = RuntimeServices.GetCurrentThis();
-            if (!IsCallableObject(target))
+            if (!IsCallableObject(thisArgument))
             {
                 throw new TypeError("Function.prototype.call called on non-function");
             }
 
-            var thisArg = args != null && args.Length > 0 ? args[0] : null;
-            var callArgs = args != null && args.Length > 1
-                ? args.Skip(1).ToArray()
-                : System.Array.Empty<object?>();
+            var thisArg = arguments.GetArgument(0);
+            var callArgs = Tail(arguments);
 
-            return Call(target!, thisArg, callArgs);
+            return Call(thisArgument!, thisArg, callArgs);
         }
 
-        private static object? PrototypeBind(object[] scopes, object?[]? args)
+        private static object? PrototypeBind(object? thisArgument, in JsCallArguments arguments)
         {
-            var target = RuntimeServices.GetCurrentThis();
-            if (!CallableOperations.IsCallable(target))
+            if (!CallableOperations.IsCallable(thisArgument))
             {
                 throw new TypeError("Function.prototype.bind called on non-function");
             }
 
-            var thisArg = args != null && args.Length > 0 ? args[0] : null;
-            var boundArgs = args != null && args.Length > 1
-                ? args.Skip(1).ToArray()
-                : System.Array.Empty<object?>();
+            var thisArg = arguments.GetArgument(0);
+            var boundArgs = Tail(arguments);
 
-            return Bind(target!, thisArg, boundArgs);
+            return Bind(thisArgument!, thisArg, boundArgs);
         }
 
-        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        private static object? PrototypeToString(object? thisArgument)
         {
-            var target = RuntimeServices.GetCurrentThis();
-            if (CallableOperations.IsCallable(target))
+            if (CallableOperations.IsCallable(thisArgument))
             {
-                var name = ObjectRuntime.GetProperty(target!, "name") as string
+                var name = ObjectRuntime.GetProperty(thisArgument!, "name") as string
                     ?? string.Empty;
                 return $"function {name}() {{ [native code] }}";
             }
             throw new TypeError("Function.prototype.toString called on non-function");
+        }
+
+        /// <summary>
+        /// Returns every argument after the leading <c>thisArg</c> as an array, for
+        /// forwarding to <see cref="Call(object, object?, object?[])"/>/<see cref="Bind"/>.
+        /// </summary>
+        private static object?[] Tail(in JsCallArguments arguments)
+        {
+            var count = arguments.Count;
+            if (count <= 1)
+            {
+                return System.Array.Empty<object?>();
+            }
+
+            var tail = new object?[count - 1];
+            for (var index = 0; index < tail.Length; index++)
+            {
+                tail[index] = arguments.GetArgument(index + 1);
+            }
+
+            return tail;
         }
 
         private static object?[] NormalizeApplyArguments(object? argArray)

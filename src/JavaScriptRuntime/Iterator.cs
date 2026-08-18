@@ -24,28 +24,28 @@ public static class Iterator
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         DefineDataProperty(iteratorConstructorValue, "prototype", Prototype);
-        DefineDataProperty(iteratorConstructorValue, "from", (Func<object[], object?[]?, object?>)ConstructorFrom);
+        DefineDataProperty(iteratorConstructorValue, "from", (BuiltinFunction1)ConstructorFrom);
 
         DefineDataProperty(Prototype, "constructor", iteratorConstructorValue);
-        DefineDataProperty(Prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
-        DefineDataProperty(Prototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
-        DefineDataProperty(Prototype, "drop", (Func<object[], object?[]?, object?>)PrototypeDrop);
-        DefineDataProperty(Prototype, "every", (Func<object[], object?[]?, object?>)PrototypeEvery);
-        DefineDataProperty(Prototype, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter);
-        DefineDataProperty(Prototype, "find", (Func<object[], object?[]?, object?>)PrototypeFind);
-        DefineDataProperty(Prototype, "flatMap", (Func<object[], object?[]?, object?>)PrototypeFlatMap);
-        DefineDataProperty(Prototype, "forEach", (Func<object[], object?[]?, object?>)PrototypeForEach);
-        DefineDataProperty(Prototype, "map", (Func<object[], object?[]?, object?>)PrototypeMap);
-        DefineDataProperty(Prototype, "reduce", (Func<object[], object?[]?, object?>)PrototypeReduce);
-        DefineDataProperty(Prototype, "some", (Func<object[], object?[]?, object?>)PrototypeSome);
-        DefineDataProperty(Prototype, "take", (Func<object[], object?[]?, object?>)PrototypeTake);
-        DefineDataProperty(Prototype, "toArray", (Func<object[], object?[]?, object?>)PrototypeToArray);
-        DefineDataProperty(Prototype, Symbol.iterator.DebugId, (Func<object[], object?[]?, object?>)PrototypeSymbolIterator);
+        DefineDataProperty(Prototype, "next", (BuiltinFunction0)PrototypeNext);
+        DefineDataProperty(Prototype, "return", (BuiltinFunction0)PrototypeReturn);
+        DefineDataProperty(Prototype, "drop", (BuiltinFunctionVariadic)PrototypeDrop);
+        DefineDataProperty(Prototype, "every", (BuiltinFunction1)PrototypeEvery);
+        DefineDataProperty(Prototype, "filter", (BuiltinFunction1)PrototypeFilter);
+        DefineDataProperty(Prototype, "find", (BuiltinFunction1)PrototypeFind);
+        DefineDataProperty(Prototype, "flatMap", (BuiltinFunction1)PrototypeFlatMap);
+        DefineDataProperty(Prototype, "forEach", (BuiltinFunction1)PrototypeForEach);
+        DefineDataProperty(Prototype, "map", (BuiltinFunction1)PrototypeMap);
+        DefineDataProperty(Prototype, "reduce", (BuiltinFunctionVariadic)PrototypeReduce);
+        DefineDataProperty(Prototype, "some", (BuiltinFunction1)PrototypeSome);
+        DefineDataProperty(Prototype, "take", (BuiltinFunctionVariadic)PrototypeTake);
+        DefineDataProperty(Prototype, "toArray", (BuiltinFunction0)PrototypeToArray);
+        DefineDataProperty(Prototype, Symbol.iterator.DebugId, (BuiltinFunction0)PrototypeSymbolIterator);
         DefineDataProperty(Prototype, Symbol.toStringTag.DebugId, "Iterator");
 
-        DefineDataProperty(HelperPrototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
-        DefineDataProperty(HelperPrototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
-        DefineDataProperty(HelperPrototype, Symbol.iterator.DebugId, (Func<object[], object?[]?, object?>)PrototypeSymbolIterator);
+        DefineDataProperty(HelperPrototype, "next", (BuiltinFunction0)PrototypeNext);
+        DefineDataProperty(HelperPrototype, "return", (BuiltinFunction0)PrototypeReturn);
+        DefineDataProperty(HelperPrototype, Symbol.iterator.DebugId, (BuiltinFunction0)PrototypeSymbolIterator);
         DefineDataProperty(HelperPrototype, Symbol.toStringTag.DebugId, "Iterator Helper");
     }
 
@@ -106,19 +106,19 @@ public static class Iterator
         });
     }
 
-    private static object? ConstructorFrom(object[] scopes, object?[]? args)
+    private static object? ConstructorFrom(object? thisArgument, object? value)
     {
-        return From(args != null && args.Length > 0 ? args[0] : null);
+        return From(value);
     }
 
-    private static object? PrototypeNext(object[] scopes, object?[]? args)
+    private static object? PrototypeNext(object? thisArgument)
     {
-        return GetReceiverIterator("next").Next();
+        return GetReceiverIterator(thisArgument, "next").Next();
     }
 
-    private static object? PrototypeReturn(object[] scopes, object?[]? args)
+    private static object? PrototypeReturn(object? thisArgument)
     {
-        var iterator = GetReceiverIterator("return");
+        var iterator = GetReceiverIterator(thisArgument, "return");
         if (iterator.HasReturn)
         {
             iterator.Return();
@@ -127,15 +127,15 @@ public static class Iterator
         return IteratorResult.Create(null, done: true);
     }
 
-    private static object? PrototypeDrop(object[] scopes, object?[]? args)
+    private static object? PrototypeDrop(object? thisArgument, in JsCallArguments arguments)
     {
-        return new DropIteratorHelper(GetReceiverIterator("drop"), GetNonNegativeInteger(args, "drop"));
+        return new DropIteratorHelper(GetReceiverIterator(thisArgument, "drop"), GetNonNegativeInteger(arguments, "drop"));
     }
 
-    private static object? PrototypeEvery(object[] scopes, object?[]? args)
+    private static object? PrototypeEvery(object? thisArgument, object? predicateArgument)
     {
-        var iterator = GetReceiverIterator("every");
-        var predicate = GetRequiredCallback(args, "every");
+        var iterator = GetReceiverIterator(thisArgument, "every");
+        var predicate = GetRequiredCallback(predicateArgument, "every");
         long index = 0;
 
         try
@@ -162,15 +162,15 @@ public static class Iterator
         }
     }
 
-    private static object? PrototypeFilter(object[] scopes, object?[]? args)
+    private static object? PrototypeFilter(object? thisArgument, object? predicateArgument)
     {
-        return new FilterIteratorHelper(GetReceiverIterator("filter"), GetRequiredCallback(args, "filter"));
+        return new FilterIteratorHelper(GetReceiverIterator(thisArgument, "filter"), GetRequiredCallback(predicateArgument, "filter"));
     }
 
-    private static object? PrototypeFind(object[] scopes, object?[]? args)
+    private static object? PrototypeFind(object? thisArgument, object? predicateArgument)
     {
-        var iterator = GetReceiverIterator("find");
-        var predicate = GetRequiredCallback(args, "find");
+        var iterator = GetReceiverIterator(thisArgument, "find");
+        var predicate = GetRequiredCallback(predicateArgument, "find");
         long index = 0;
 
         try
@@ -197,15 +197,15 @@ public static class Iterator
         }
     }
 
-    private static object? PrototypeFlatMap(object[] scopes, object?[]? args)
+    private static object? PrototypeFlatMap(object? thisArgument, object? mapperArgument)
     {
-        return new FlatMapIteratorHelper(GetReceiverIterator("flatMap"), GetRequiredCallback(args, "flatMap"));
+        return new FlatMapIteratorHelper(GetReceiverIterator(thisArgument, "flatMap"), GetRequiredCallback(mapperArgument, "flatMap"));
     }
 
-    private static object? PrototypeForEach(object[] scopes, object?[]? args)
+    private static object? PrototypeForEach(object? thisArgument, object? procedureArgument)
     {
-        var iterator = GetReceiverIterator("forEach");
-        var procedure = GetRequiredCallback(args, "forEach");
+        var iterator = GetReceiverIterator(thisArgument, "forEach");
+        var procedure = GetRequiredCallback(procedureArgument, "forEach");
         long index = 0;
 
         try
@@ -228,16 +228,16 @@ public static class Iterator
         }
     }
 
-    private static object? PrototypeMap(object[] scopes, object?[]? args)
+    private static object? PrototypeMap(object? thisArgument, object? mapperArgument)
     {
-        return new MapIteratorHelper(GetReceiverIterator("map"), GetRequiredCallback(args, "map"));
+        return new MapIteratorHelper(GetReceiverIterator(thisArgument, "map"), GetRequiredCallback(mapperArgument, "map"));
     }
 
-    private static object? PrototypeReduce(object[] scopes, object?[]? args)
+    private static object? PrototypeReduce(object? thisArgument, in JsCallArguments arguments)
     {
-        var iterator = GetReceiverIterator("reduce");
-        var reducer = GetRequiredCallback(args, "reduce");
-        bool hasInitialValue = args != null && args.Length > 1;
+        var iterator = GetReceiverIterator(thisArgument, "reduce");
+        var reducer = GetRequiredCallback(arguments.GetArgument(0), "reduce");
+        bool hasInitialValue = arguments.Count > 1;
         object? accumulator = null;
         long index = 0;
 
@@ -245,7 +245,7 @@ public static class Iterator
         {
             if (hasInitialValue)
             {
-                accumulator = args![1];
+                accumulator = arguments.GetArgument(1);
             }
             else
             {
@@ -277,10 +277,10 @@ public static class Iterator
         }
     }
 
-    private static object? PrototypeSome(object[] scopes, object?[]? args)
+    private static object? PrototypeSome(object? thisArgument, object? predicateArgument)
     {
-        var iterator = GetReceiverIterator("some");
-        var predicate = GetRequiredCallback(args, "some");
+        var iterator = GetReceiverIterator(thisArgument, "some");
+        var predicate = GetRequiredCallback(predicateArgument, "some");
         long index = 0;
 
         try
@@ -307,14 +307,14 @@ public static class Iterator
         }
     }
 
-    private static object? PrototypeTake(object[] scopes, object?[]? args)
+    private static object? PrototypeTake(object? thisArgument, in JsCallArguments arguments)
     {
-        return new TakeIteratorHelper(GetReceiverIterator("take"), GetNonNegativeInteger(args, "take"));
+        return new TakeIteratorHelper(GetReceiverIterator(thisArgument, "take"), GetNonNegativeInteger(arguments, "take"));
     }
 
-    private static object? PrototypeToArray(object[] scopes, object?[]? args)
+    private static object? PrototypeToArray(object? thisArgument)
     {
-        var iterator = GetReceiverIterator("toArray");
+        var iterator = GetReceiverIterator(thisArgument, "toArray");
         var result = new JavaScriptRuntime.Array();
 
         try
@@ -337,14 +337,13 @@ public static class Iterator
         }
     }
 
-    private static object? PrototypeSymbolIterator(object[] scopes, object?[]? args)
+    private static object? PrototypeSymbolIterator(object? thisArgument)
     {
-        return RuntimeServices.GetCurrentThis();
+        return thisArgument;
     }
 
-    private static IJavaScriptIterator GetReceiverIterator(string methodName)
+    private static IJavaScriptIterator GetReceiverIterator(object? thisValue, string methodName)
     {
-        var thisValue = RuntimeServices.GetCurrentThis();
         if (thisValue is IJavaScriptIterator iterator)
         {
             return iterator;
@@ -375,9 +374,8 @@ public static class Iterator
         return false;
     }
 
-    private static object GetRequiredCallback(object?[]? args, string methodName)
+    private static object GetRequiredCallback(object? callback, string methodName)
     {
-        var callback = args != null && args.Length > 0 ? args[0] : null;
         if (CallableOperations.IsCallable(callback))
         {
             return callback!;
@@ -386,14 +384,14 @@ public static class Iterator
         throw new TypeError($"Iterator.prototype.{methodName} requires a callback function");
     }
 
-    private static double GetNonNegativeInteger(object?[]? args, string methodName)
+    private static double GetNonNegativeInteger(in JsCallArguments arguments, string methodName)
     {
-        if (args == null || args.Length == 0)
+        if (arguments.Count == 0)
         {
             throw new TypeError($"Iterator.prototype.{methodName} requires a limit");
         }
 
-        var value = TypeUtilities.ToNumber(args[0]);
+        var value = TypeUtilities.ToNumber(arguments.GetArgument(0));
         if (double.IsNaN(value))
         {
             return 0;

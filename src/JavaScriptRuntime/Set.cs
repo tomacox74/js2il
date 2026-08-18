@@ -7,7 +7,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Set")]
     public sealed class Set : JsObject, IEnumerable<object>
     {
-        private static readonly Func<object[], object?[]?, object?> _prototypeValuesValue = PrototypeValues;
+        private static readonly BuiltinFunction0 _prototypeValuesValue = PrototypeValues;
         /// <summary>Realm-owned <c>Set Iterator prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject IteratorPrototype
             => RuntimeIntrinsics.Current.GetOrCreate(
@@ -27,27 +27,27 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(exp, "add", PrototypeAdd);
-            DefinePrototypeMethod(exp, "has", PrototypeHas);
-            DefinePrototypeMethod(exp, "delete", PrototypeDelete);
-            DefinePrototypeMethod(exp, "clear", PrototypeClear);
-            DefinePrototypeMethod(exp, "entries", PrototypeEntries);
-            DefinePrototypeMethod(exp, "forEach", PrototypeForEach);
+            DefinePrototypeMethod(exp, "add", (BuiltinFunction1)PrototypeAdd);
+            DefinePrototypeMethod(exp, "has", (BuiltinFunction1)PrototypeHas);
+            DefinePrototypeMethod(exp, "delete", (BuiltinFunction1)PrototypeDelete);
+            DefinePrototypeMethod(exp, "clear", (BuiltinFunction0)PrototypeClear);
+            DefinePrototypeMethod(exp, "entries", (BuiltinFunction0)PrototypeEntries);
+            DefinePrototypeMethod(exp, "forEach", (BuiltinFunction2)PrototypeForEach);
             DefinePrototypeMethod(exp, "keys", _prototypeValuesValue);
             DefinePrototypeMethod(exp, "values", _prototypeValuesValue);
-            DefinePrototypeMethod(exp, "difference", PrototypeDifference);
-            DefinePrototypeMethod(exp, "intersection", PrototypeIntersection);
-            DefinePrototypeMethod(exp, "isDisjointFrom", PrototypeIsDisjointFrom);
-            DefinePrototypeMethod(exp, "isSubsetOf", PrototypeIsSubsetOf);
-            DefinePrototypeMethod(exp, "isSupersetOf", PrototypeIsSupersetOf);
-            DefinePrototypeMethod(exp, "symmetricDifference", PrototypeSymmetricDifference);
-            DefinePrototypeMethod(exp, "union", PrototypeUnion);
+            DefinePrototypeMethod(exp, "difference", (BuiltinFunction1)PrototypeDifference);
+            DefinePrototypeMethod(exp, "intersection", (BuiltinFunction1)PrototypeIntersection);
+            DefinePrototypeMethod(exp, "isDisjointFrom", (BuiltinFunction1)PrototypeIsDisjointFrom);
+            DefinePrototypeMethod(exp, "isSubsetOf", (BuiltinFunction1)PrototypeIsSubsetOf);
+            DefinePrototypeMethod(exp, "isSupersetOf", (BuiltinFunction1)PrototypeIsSupersetOf);
+            DefinePrototypeMethod(exp, "symmetricDifference", (BuiltinFunction1)PrototypeSymmetricDifference);
+            DefinePrototypeMethod(exp, "union", (BuiltinFunction1)PrototypeUnion);
             PropertyDescriptorStore.DefineOrUpdate(exp, "size", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+                Get = (BuiltinFunction0)PrototypeSizeGetter
             });
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
@@ -82,7 +82,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -94,10 +94,9 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static Set GetSetReceiver(string methodName)
+        private static Set GetSetReceiver(object? thisArgument, string methodName)
         {
-            var receiver = RuntimeServices.GetCurrentThis();
-            if (receiver is not Set set)
+            if (thisArgument is not Set set)
             {
                 throw new TypeError($"Set.prototype.{methodName} called on incompatible receiver");
             }
@@ -105,104 +104,92 @@ namespace JavaScriptRuntime
             return set;
         }
 
-        private static object? PrototypeAdd(object[] scopes, object?[]? args)
+        private static object? PrototypeAdd(object? thisArgument, object? value)
         {
-            var set = GetSetReceiver("add");
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "add");
             return set.add(value);
         }
 
-        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        private static object? PrototypeHas(object? thisArgument, object? value)
         {
-            var set = GetSetReceiver("has");
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "has");
             return set.has(value);
         }
 
-        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        private static object? PrototypeDelete(object? thisArgument, object? value)
         {
-            var set = GetSetReceiver("delete");
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "delete");
             return set.delete(value);
         }
 
-        private static object? PrototypeClear(object[] scopes, object?[]? args)
+        private static object? PrototypeClear(object? thisArgument)
         {
-            GetSetReceiver("clear").clear();
+            GetSetReceiver(thisArgument, "clear").clear();
             return null;
         }
 
-        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+        private static object? PrototypeEntries(object? thisArgument)
         {
-            return GetSetReceiver("entries").entries();
+            return GetSetReceiver(thisArgument, "entries").entries();
         }
 
-        private static object? PrototypeValues(object[] scopes, object?[]? args)
+        private static object? PrototypeValues(object? thisArgument)
         {
-            return GetSetReceiver("values").values();
+            return GetSetReceiver(thisArgument, "values").values();
         }
 
-        private static object? PrototypeForEach(object[] scopes, object?[]? args)
+        private static object? PrototypeForEach(object? thisArgument, object? callback, object? forEachThisArg)
         {
-            var set = GetSetReceiver("forEach");
-            var callback = args != null && args.Length > 0 ? args[0] : null;
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            set.forEach(callback, thisArg);
+            var set = GetSetReceiver(thisArgument, "forEach");
+            set.forEach(callback, forEachThisArg);
             return null;
         }
 
-        private static object? PrototypeDifference(object[] scopes, object?[]? args)
+        private static object? PrototypeDifference(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("difference");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "difference");
             return set.difference(other);
         }
 
-        private static object? PrototypeIntersection(object[] scopes, object?[]? args)
+        private static object? PrototypeIntersection(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("intersection");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "intersection");
             return set.intersection(other);
         }
 
-        private static object? PrototypeIsDisjointFrom(object[] scopes, object?[]? args)
+        private static object? PrototypeIsDisjointFrom(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("isDisjointFrom");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "isDisjointFrom");
             return set.isDisjointFrom(other);
         }
 
-        private static object? PrototypeIsSubsetOf(object[] scopes, object?[]? args)
+        private static object? PrototypeIsSubsetOf(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("isSubsetOf");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "isSubsetOf");
             return set.isSubsetOf(other);
         }
 
-        private static object? PrototypeIsSupersetOf(object[] scopes, object?[]? args)
+        private static object? PrototypeIsSupersetOf(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("isSupersetOf");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "isSupersetOf");
             return set.isSupersetOf(other);
         }
 
-        private static object? PrototypeSymmetricDifference(object[] scopes, object?[]? args)
+        private static object? PrototypeSymmetricDifference(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("symmetricDifference");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "symmetricDifference");
             return set.symmetricDifference(other);
         }
 
-        private static object? PrototypeUnion(object[] scopes, object?[]? args)
+        private static object? PrototypeUnion(object? thisArgument, object? other)
         {
-            var set = GetSetReceiver("union");
-            var other = args != null && args.Length > 0 ? args[0] : null;
+            var set = GetSetReceiver(thisArgument, "union");
             return set.union(other);
         }
 
-        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+        private static object? PrototypeSizeGetter(object? thisArgument)
         {
-            return GetSetReceiver("size").size;
+            return GetSetReceiver(thisArgument, "size").size;
         }
 
         private void InitializeIntrinsicSurface()

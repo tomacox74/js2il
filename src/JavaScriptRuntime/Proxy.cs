@@ -106,7 +106,7 @@ namespace JavaScriptRuntime
             var proxy = new Proxy(target, handler);
             var result = new JsObject();
             result["proxy"] = proxy;
-            result["revoke"] = (Func<object[], object?[]?, object?>)((object[] scopes, object?[]? args) =>
+            result["revoke"] = (BuiltinFunction0)(thisArgument =>
             {
                 proxy.Revoke();
                 return null;

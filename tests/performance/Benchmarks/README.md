@@ -251,6 +251,9 @@ dotnet run -c Release -- --filter *Jint*
 # Run the late-bound dispatch benchmark class only
 dotnet run -c Release -- --dispatch --filter *LateBoundDispatch*
 
+# Run representative Array, RegExp, collection, and Node built-in adapters
+dotnet run -c Release -- --builtin-invocation
+
 # Run only one Dromaeo scenario
 dotnet run -c Release -- --dromaeo --scenario dromaeo-3d-cube
 

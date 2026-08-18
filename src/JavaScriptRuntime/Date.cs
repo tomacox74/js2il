@@ -196,63 +196,67 @@ namespace JavaScriptRuntime
                 Value = "Date"
             });
 
-            DefineConstructorMethod("now", static (_, __) => now(), 0d);
-            DefineConstructorMethod("parse", static (_, args) =>
-            {
-                var input = args != null && args.Length > 0 ? args[0] : null;
-                return parse(DotNet2JSConversions.ToString(input));
-            }, 1d);
-            DefineConstructorMethod("UTC", static (_, args) => UTC(ConvertBuiltinArgs(args)), 7d);
+            // Static; the receiver is ignored (issue #1895).
+            DefineConstructorMethod("now", (BuiltinFunction0)(static _ => now()), 0d);
+            // Static; the receiver is ignored (issue #1895).
+            DefineConstructorMethod("parse", (BuiltinFunction1)(static (_, input) =>
+                parse(DotNet2JSConversions.ToString(input))), 1d);
+            // Static; the receiver is ignored (issue #1895).
+            DefineConstructorMethod("UTC", (BuiltinFunctionVariadic)ConstructorUTC, 7d);
 
-            DefinePrototypeMethod("getDate", static (date, _) => date.getDate(), 0d);
-            DefinePrototypeMethod("getDay", static (date, _) => date.getDay(), 0d);
-            DefinePrototypeMethod("getFullYear", static (date, _) => date.getFullYear(), 0d);
-            DefinePrototypeMethod("getHours", static (date, _) => date.getHours(), 0d);
-            DefinePrototypeMethod("getMilliseconds", static (date, _) => date.getMilliseconds(), 0d);
-            DefinePrototypeMethod("getMinutes", static (date, _) => date.getMinutes(), 0d);
-            DefinePrototypeMethod("getMonth", static (date, _) => date.getMonth(), 0d);
-            DefinePrototypeMethod("getSeconds", static (date, _) => date.getSeconds(), 0d);
-            DefinePrototypeMethod("getTime", static (date, _) => date.getTime(), 0d);
-            DefinePrototypeMethod("getTimezoneOffset", static (date, _) => date.getTimezoneOffset(), 0d);
-            DefinePrototypeMethod("getUTCDate", static (date, _) => date.getUTCDate(), 0d);
-            DefinePrototypeMethod("getUTCDay", static (date, _) => date.getUTCDay(), 0d);
-            DefinePrototypeMethod("getUTCFullYear", static (date, _) => date.getUTCFullYear(), 0d);
-            DefinePrototypeMethod("getUTCHours", static (date, _) => date.getUTCHours(), 0d);
-            DefinePrototypeMethod("getUTCMilliseconds", static (date, _) => date.getUTCMilliseconds(), 0d);
-            DefinePrototypeMethod("getUTCMinutes", static (date, _) => date.getUTCMinutes(), 0d);
-            DefinePrototypeMethod("getUTCMonth", static (date, _) => date.getUTCMonth(), 0d);
-            DefinePrototypeMethod("getUTCSeconds", static (date, _) => date.getUTCSeconds(), 0d);
+            DefinePrototypeMethod("getDate", static date => date.getDate(), 0d);
+            DefinePrototypeMethod("getDay", static date => date.getDay(), 0d);
+            DefinePrototypeMethod("getFullYear", static date => date.getFullYear(), 0d);
+            DefinePrototypeMethod("getHours", static date => date.getHours(), 0d);
+            DefinePrototypeMethod("getMilliseconds", static date => date.getMilliseconds(), 0d);
+            DefinePrototypeMethod("getMinutes", static date => date.getMinutes(), 0d);
+            DefinePrototypeMethod("getMonth", static date => date.getMonth(), 0d);
+            DefinePrototypeMethod("getSeconds", static date => date.getSeconds(), 0d);
+            DefinePrototypeMethod("getTime", static date => date.getTime(), 0d);
+            DefinePrototypeMethod("getTimezoneOffset", static date => date.getTimezoneOffset(), 0d);
+            DefinePrototypeMethod("getUTCDate", static date => date.getUTCDate(), 0d);
+            DefinePrototypeMethod("getUTCDay", static date => date.getUTCDay(), 0d);
+            DefinePrototypeMethod("getUTCFullYear", static date => date.getUTCFullYear(), 0d);
+            DefinePrototypeMethod("getUTCHours", static date => date.getUTCHours(), 0d);
+            DefinePrototypeMethod("getUTCMilliseconds", static date => date.getUTCMilliseconds(), 0d);
+            DefinePrototypeMethod("getUTCMinutes", static date => date.getUTCMinutes(), 0d);
+            DefinePrototypeMethod("getUTCMonth", static date => date.getUTCMonth(), 0d);
+            DefinePrototypeMethod("getUTCSeconds", static date => date.getUTCSeconds(), 0d);
 
-            DefinePrototypeMethod("setDate", static (date, args) => date.setDate(GetBuiltinArg(args, 0)), 1d);
-            DefinePrototypeMethod("setFullYear", static (date, args) => date.setFullYear(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefinePrototypeMethod("setHours", static (date, args) => date.setHours(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2), GetBuiltinArg(args, 3)), 4d);
-            DefinePrototypeMethod("setMilliseconds", static (date, args) => date.setMilliseconds(GetBuiltinArg(args, 0)), 1d);
-            DefinePrototypeMethod("setMinutes", static (date, args) => date.setMinutes(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefinePrototypeMethod("setMonth", static (date, args) => date.setMonth(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-            DefinePrototypeMethod("setSeconds", static (date, args) => date.setSeconds(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-            DefinePrototypeMethod("setTime", static (date, args) => date.setTime(GetBuiltinArg(args, 0)), 1d);
-            DefinePrototypeMethod("setUTCDate", static (date, args) => date.setUTCDate(GetBuiltinArg(args, 0)), 1d);
-            DefinePrototypeMethod("setUTCFullYear", static (date, args) => date.setUTCFullYear(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefinePrototypeMethod("setUTCHours", static (date, args) => date.setUTCHours(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2), GetBuiltinArg(args, 3)), 4d);
-            DefinePrototypeMethod("setUTCMilliseconds", static (date, args) => date.setUTCMilliseconds(GetBuiltinArg(args, 0)), 1d);
-            DefinePrototypeMethod("setUTCMinutes", static (date, args) => date.setUTCMinutes(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefinePrototypeMethod("setUTCMonth", static (date, args) => date.setUTCMonth(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-            DefinePrototypeMethod("setUTCSeconds", static (date, args) => date.setUTCSeconds(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
+            DefinePrototypeMethod("setDate", static (date, arg0) => date.setDate(arg0), 1d);
+            DefinePrototypeMethod("setFullYear", static (date, arg0, arg1, arg2) => date.setFullYear(arg0, arg1, arg2), 3d);
+            DefinePrototypeMethod("setHours", static (date, arg0, arg1, arg2, arg3) => date.setHours(arg0, arg1, arg2, arg3), 4d);
+            DefinePrototypeMethod("setMilliseconds", static (date, arg0) => date.setMilliseconds(arg0), 1d);
+            DefinePrototypeMethod("setMinutes", static (date, arg0, arg1, arg2) => date.setMinutes(arg0, arg1, arg2), 3d);
+            DefinePrototypeMethod("setMonth", static (date, arg0, arg1) => date.setMonth(arg0, arg1), 2d);
+            DefinePrototypeMethod("setSeconds", static (date, arg0, arg1) => date.setSeconds(arg0, arg1), 2d);
+            DefinePrototypeMethod("setTime", static (date, arg0) => date.setTime(arg0), 1d);
+            DefinePrototypeMethod("setUTCDate", static (date, arg0) => date.setUTCDate(arg0), 1d);
+            DefinePrototypeMethod("setUTCFullYear", static (date, arg0, arg1, arg2) => date.setUTCFullYear(arg0, arg1, arg2), 3d);
+            DefinePrototypeMethod("setUTCHours", static (date, arg0, arg1, arg2, arg3) => date.setUTCHours(arg0, arg1, arg2, arg3), 4d);
+            DefinePrototypeMethod("setUTCMilliseconds", static (date, arg0) => date.setUTCMilliseconds(arg0), 1d);
+            DefinePrototypeMethod("setUTCMinutes", static (date, arg0, arg1, arg2) => date.setUTCMinutes(arg0, arg1, arg2), 3d);
+            DefinePrototypeMethod("setUTCMonth", static (date, arg0, arg1) => date.setUTCMonth(arg0, arg1), 2d);
+            DefinePrototypeMethod("setUTCSeconds", static (date, arg0, arg1) => date.setUTCSeconds(arg0, arg1), 2d);
 
-            DefinePrototypeMethod("toDateString", static (date, _) => date.toDateString(), 0d);
-            DefinePrototypeMethod("toISOString", static (date, _) => date.toISOString(), 0d);
-            DefineGenericPrototypeMethod("toJSON", static (value, _) => ToJson(value), 1d);
-            DefinePrototypeMethod("toLocaleDateString", static (date, _) => date.toLocaleDateString(), 0d);
-            DefinePrototypeMethod("toLocaleString", static (date, _) => date.toLocaleString(), 0d);
-            DefinePrototypeMethod("toLocaleTimeString", static (date, _) => date.toLocaleTimeString(), 0d);
-            DefinePrototypeMethod("toString", static (date, _) => date.toString(), 0d);
-            DefinePrototypeMethod("toTimeString", static (date, _) => date.toTimeString(), 0d);
-            DefinePrototypeMethod("toUTCString", static (date, _) => date.toUTCString(), 0d);
-            DefinePrototypeMethod("valueOf", static (date, _) => date.valueOf(), 0d);
+            DefinePrototypeMethod("toDateString", static date => date.toDateString(), 0d);
+            DefinePrototypeMethod("toISOString", static date => date.toISOString(), 0d);
+            DefineGenericPrototypeMethod("toJSON", static value => ToJson(value), 1d);
+            DefinePrototypeMethod("toLocaleDateString", static date => date.toLocaleDateString(), 0d);
+            DefinePrototypeMethod("toLocaleString", static date => date.toLocaleString(), 0d);
+            DefinePrototypeMethod("toLocaleTimeString", static date => date.toLocaleTimeString(), 0d);
+            DefinePrototypeMethod("toString", static date => date.toString(), 0d);
+            DefinePrototypeMethod("toTimeString", static date => date.toTimeString(), 0d);
+            DefinePrototypeMethod("toUTCString", static date => date.toUTCString(), 0d);
+            DefinePrototypeMethod("valueOf", static date => date.valueOf(), 0d);
 
-            var toPrimitive = (Func<object[], object?[]?, object?>)((_, args) =>
-                ThisDateValue(RuntimeServices.GetCurrentThis()).toPrimitive(DotNet2JSConversions.ToString(GetBuiltinArg(args, 0))));
-            Function.InitializeFunctionInstance(toPrimitive, 1d, "[Symbol.toPrimitive]");
+            BuiltinFunction1 toPrimitive = static (thisArgument, hint) =>
+                ThisDateValue(thisArgument).toPrimitive(DotNet2JSConversions.ToString(hint));
+            Function.InitializeFunctionInstance(
+                toPrimitive,
+                1d,
+                "[Symbol.toPrimitive]",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(toPrimitive));
             PropertyDescriptorStore.DefineOrUpdate(toPrimitive, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1182,9 +1186,13 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private static void DefineConstructorMethod(string key, Func<object[], object?[]?, object?> implementation, double length)
+        private static void DefineConstructorMethod(string key, Delegate implementation, double length)
         {
-            Function.InitializeFunctionInstance(implementation, length, key);
+            Function.InitializeFunctionInstance(
+                implementation,
+                length,
+                key,
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(implementation));
             PropertyDescriptorStore.DefineOrUpdate(implementation, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1203,27 +1211,57 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(string key, Func<Date, object?[]?, object?> implementation, double length)
+        private static void DefinePrototypeMethod(string key, Func<Date, object?> implementation, double length)
         {
-            Func<object[], object?[]?, object?> functionValue = (_, args) =>
-                implementation(ThisDateValue(RuntimeServices.GetCurrentThis()), args);
+            BuiltinFunction0 functionValue = thisArgument => implementation(ThisDateValue(thisArgument));
             DefinePrototypeFunction(key, functionValue, length);
         }
 
-        private static void DefineGenericPrototypeMethod(string key, Func<object?, object?[]?, object?> implementation, double length)
+        private static void DefinePrototypeMethod(string key, Func<Date, object?, object?> implementation, double length)
         {
-            Func<object[], object?[]?, object?> functionValue = (_, args) =>
-                implementation(RuntimeServices.GetCurrentThis(), args);
+            BuiltinFunction1 functionValue = (thisArgument, arg0) => implementation(ThisDateValue(thisArgument), arg0);
+            DefinePrototypeFunction(key, functionValue, length);
+        }
+
+        private static void DefinePrototypeMethod(string key, Func<Date, object?, object?, object?> implementation, double length)
+        {
+            BuiltinFunction2 functionValue = (thisArgument, arg0, arg1) => implementation(ThisDateValue(thisArgument), arg0, arg1);
+            DefinePrototypeFunction(key, functionValue, length);
+        }
+
+        private static void DefinePrototypeMethod(string key, Func<Date, object?, object?, object?, object?> implementation, double length)
+        {
+            BuiltinFunction3 functionValue = (thisArgument, arg0, arg1, arg2) => implementation(ThisDateValue(thisArgument), arg0, arg1, arg2);
+            DefinePrototypeFunction(key, functionValue, length);
+        }
+
+        private static void DefinePrototypeMethod(string key, Func<Date, object?, object?, object?, object?, object?> implementation, double length)
+        {
+            BuiltinFunction4 functionValue = (thisArgument, arg0, arg1, arg2, arg3) => implementation(ThisDateValue(thisArgument), arg0, arg1, arg2, arg3);
+            DefinePrototypeFunction(key, functionValue, length);
+        }
+
+        private static void DefineGenericPrototypeMethod(string key, Func<object?, object?> implementation, double length)
+        {
+            BuiltinFunction1 functionValue = (thisArgument, _) => implementation(thisArgument);
             DefinePrototypeFunction(key, functionValue, length, hasPrototypeProperty: false);
         }
 
+        // Static; the receiver is ignored (issue #1895).
+        private static object? ConstructorUTC(object? thisArgument, in JsCallArguments arguments)
+            => UTC(ConvertBuiltinArgs(arguments.ToArray()));
+
         private static void DefinePrototypeFunction(
             string key,
-            Func<object[], object?[]?, object?> functionValue,
+            Delegate functionValue,
             double length,
             bool hasPrototypeProperty = true)
         {
-            Function.InitializeFunctionInstance(functionValue, length, key);
+            Function.InitializeFunctionInstance(
+                functionValue,
+                length,
+                key,
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(functionValue));
             if (hasPrototypeProperty)
             {
                 PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
@@ -1243,11 +1281,6 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = functionValue
             });
-        }
-
-        private static object? GetBuiltinArg(object?[]? args, int index)
-        {
-            return args != null && args.Length > index ? args[index] : null;
         }
 
         private static object[] ConvertBuiltinArgs(object?[]? args)

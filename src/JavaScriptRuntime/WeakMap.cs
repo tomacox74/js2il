@@ -156,10 +156,10 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
-            DefinePrototypeMethod(prototype, "get", PrototypeGet);
-            DefinePrototypeMethod(prototype, "has", PrototypeHas);
-            DefinePrototypeMethod(prototype, "set", PrototypeSet);
+            DefinePrototypeMethod(prototype, "delete", (BuiltinFunction1)PrototypeDelete);
+            DefinePrototypeMethod(prototype, "get", (BuiltinFunction1)PrototypeGet);
+            DefinePrototypeMethod(prototype, "has", (BuiltinFunction1)PrototypeHas);
+            DefinePrototypeMethod(prototype, "set", (BuiltinFunction2)PrototypeSet);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -170,7 +170,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(object prototype, string name, Delegate method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -182,10 +182,9 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static WeakMap GetThisWeakMap(string memberName)
+        private static WeakMap GetThisWeakMap(object? thisArgument, string memberName)
         {
-            var thisValue = RuntimeServices.GetCurrentThis();
-            if (thisValue is not WeakMap weakMap)
+            if (thisArgument is not WeakMap weakMap)
             {
                 throw new TypeError($"WeakMap.prototype.{memberName} called on non-WeakMap");
             }
@@ -193,32 +192,27 @@ namespace JavaScriptRuntime
             return weakMap;
         }
 
-        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        private static object? PrototypeDelete(object? thisArgument, object? key)
         {
-            var weakMap = GetThisWeakMap("delete");
-            var key = args != null && args.Length > 0 ? args[0] : null;
+            var weakMap = GetThisWeakMap(thisArgument, "delete");
             return weakMap.delete(key);
         }
 
-        private static object? PrototypeGet(object[] scopes, object?[]? args)
+        private static object? PrototypeGet(object? thisArgument, object? key)
         {
-            var weakMap = GetThisWeakMap("get");
-            var key = args != null && args.Length > 0 ? args[0] : null;
+            var weakMap = GetThisWeakMap(thisArgument, "get");
             return weakMap.get(key);
         }
 
-        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        private static object? PrototypeHas(object? thisArgument, object? key)
         {
-            var weakMap = GetThisWeakMap("has");
-            var key = args != null && args.Length > 0 ? args[0] : null;
+            var weakMap = GetThisWeakMap(thisArgument, "has");
             return weakMap.has(key);
         }
 
-        private static object? PrototypeSet(object[] scopes, object?[]? args)
+        private static object? PrototypeSet(object? thisArgument, object? key, object? value)
         {
-            var weakMap = GetThisWeakMap("set");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            var value = args != null && args.Length > 1 ? args[1] : null;
+            var weakMap = GetThisWeakMap(thisArgument, "set");
             return weakMap.set(key, value);
         }
     }

@@ -39,7 +39,6 @@ namespace JavaScriptRuntime.Node
                     URLConstructorValue);
             }
         }
-
         public object URLSearchParams
         {
             get
@@ -334,20 +333,20 @@ namespace JavaScriptRuntime.Node
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeAccessor(prototype, "hash", PrototypeHashGetter, PrototypeHashSetter);
-            DefinePrototypeAccessor(prototype, "host", PrototypeHostGetter);
-            DefinePrototypeAccessor(prototype, "hostname", PrototypeHostnameGetter);
-            DefinePrototypeAccessor(prototype, "href", PrototypeHrefGetter);
-            DefinePrototypeAccessor(prototype, "origin", PrototypeOriginGetter);
-            DefinePrototypeAccessor(prototype, "password", PrototypePasswordGetter);
-            DefinePrototypeAccessor(prototype, "pathname", PrototypePathnameGetter);
-            DefinePrototypeAccessor(prototype, "port", PrototypePortGetter);
-            DefinePrototypeAccessor(prototype, "protocol", PrototypeProtocolGetter);
-            DefinePrototypeAccessor(prototype, "search", PrototypeSearchGetter, PrototypeSearchSetter);
-            DefinePrototypeAccessor(prototype, "searchParams", PrototypeSearchParamsGetter);
-            DefinePrototypeAccessor(prototype, "username", PrototypeUsernameGetter);
-            DefinePrototypeMethod(prototype, "toJSON", PrototypeToJson);
-            DefinePrototypeMethod(prototype, "toString", PrototypeToString);
+            DefinePrototypeAccessor(prototype, "hash", (BuiltinFunction0)PrototypeHashGetter, (BuiltinFunction1)PrototypeHashSetter);
+            DefinePrototypeAccessor(prototype, "host", (BuiltinFunction0)PrototypeHostGetter);
+            DefinePrototypeAccessor(prototype, "hostname", (BuiltinFunction0)PrototypeHostnameGetter);
+            DefinePrototypeAccessor(prototype, "href", (BuiltinFunction0)PrototypeHrefGetter);
+            DefinePrototypeAccessor(prototype, "origin", (BuiltinFunction0)PrototypeOriginGetter);
+            DefinePrototypeAccessor(prototype, "password", (BuiltinFunction0)PrototypePasswordGetter);
+            DefinePrototypeAccessor(prototype, "pathname", (BuiltinFunction0)PrototypePathnameGetter);
+            DefinePrototypeAccessor(prototype, "port", (BuiltinFunction0)PrototypePortGetter);
+            DefinePrototypeAccessor(prototype, "protocol", (BuiltinFunction0)PrototypeProtocolGetter);
+            DefinePrototypeAccessor(prototype, "search", (BuiltinFunction0)PrototypeSearchGetter, (BuiltinFunction1)PrototypeSearchSetter);
+            DefinePrototypeAccessor(prototype, "searchParams", (BuiltinFunction0)PrototypeSearchParamsGetter);
+            DefinePrototypeAccessor(prototype, "username", (BuiltinFunction0)PrototypeUsernameGetter);
+            DefinePrototypeMethod(prototype, "toJSON", (BuiltinFunction0)PrototypeToJson);
+            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString);
             PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -358,7 +357,7 @@ namespace JavaScriptRuntime.Node
             });
         }
 
-        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(object prototype, string name, Delegate method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -373,8 +372,8 @@ namespace JavaScriptRuntime.Node
         private static void DefinePrototypeAccessor(
             object prototype,
             string name,
-            Func<object[], object?[]?, object?> getter,
-            Func<object[], object?[]?, object?>? setter = null)
+            Delegate getter,
+            Delegate? setter = null)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -386,10 +385,9 @@ namespace JavaScriptRuntime.Node
             });
         }
 
-        private static URL GetUrlReceiver(string memberName)
+        private static URL GetUrlReceiver(object? thisArgument, string memberName)
         {
-            var thisValue = RuntimeServices.GetCurrentThis();
-            if (thisValue is not URL url)
+            if (thisArgument is not URL url)
             {
                 throw new TypeError($"URL.prototype.{memberName} called on incompatible receiver");
             }
@@ -397,66 +395,64 @@ namespace JavaScriptRuntime.Node
             return url;
         }
 
-        private static object? PrototypeHashGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("hash").hash;
+        private static object? PrototypeHashGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "hash").hash;
 
-        private static object? PrototypeHashSetter(object[] scopes, object?[]? args)
+        private static object? PrototypeHashSetter(object? thisArgument, object? value)
         {
-            GetUrlReceiver("hash").hash = UrlQueryHelpers.CoerceString(
-                args != null && args.Length > 0 ? args[0] : null);
+            GetUrlReceiver(thisArgument, "hash").hash = UrlQueryHelpers.CoerceString(value);
             return null;
         }
 
-        private static object? PrototypeHostGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("host").host;
+        private static object? PrototypeHostGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "host").host;
 
-        private static object? PrototypeHostnameGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("hostname").hostname;
+        private static object? PrototypeHostnameGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "hostname").hostname;
 
-        private static object? PrototypeHrefGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("href").href;
+        private static object? PrototypeHrefGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "href").href;
 
-        private static object? PrototypeOriginGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("origin").origin;
+        private static object? PrototypeOriginGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "origin").origin;
 
-        private static object? PrototypePasswordGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("password").password;
+        private static object? PrototypePasswordGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "password").password;
 
-        private static object? PrototypePathnameGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("pathname").pathname;
+        private static object? PrototypePathnameGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "pathname").pathname;
 
-        private static object? PrototypePortGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("port").port;
+        private static object? PrototypePortGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "port").port;
 
-        private static object? PrototypeProtocolGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("protocol").protocol;
+        private static object? PrototypeProtocolGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "protocol").protocol;
 
-        private static object? PrototypeSearchGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("search").search;
+        private static object? PrototypeSearchGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "search").search;
 
-        private static object? PrototypeSearchSetter(object[] scopes, object?[]? args)
+        private static object? PrototypeSearchSetter(object? thisArgument, object? value)
         {
-            GetUrlReceiver("search").search = UrlQueryHelpers.CoerceString(
-                args != null && args.Length > 0 ? args[0] : null);
+            GetUrlReceiver(thisArgument, "search").search = UrlQueryHelpers.CoerceString(value);
             return null;
         }
 
-        private static object? PrototypeSearchParamsGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("searchParams").searchParams;
+        private static object? PrototypeSearchParamsGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "searchParams").searchParams;
 
-        private static object? PrototypeToJson(object[] scopes, object?[]? args)
-            => GetUrlReceiver("toJSON").toJSON();
+        private static object? PrototypeToJson(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "toJSON").toJSON();
 
-        private static object? PrototypeToString(object[] scopes, object?[]? args)
-            => GetUrlReceiver("toString").toString();
+        private static object? PrototypeToString(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "toString").toString();
 
-        private static object? PrototypeUsernameGetter(object[] scopes, object?[]? args)
-            => GetUrlReceiver("username").username;
+        private static object? PrototypeUsernameGetter(object? thisArgument)
+            => GetUrlReceiver(thisArgument, "username").username;
     }
 
     public sealed class URLSearchParams : JsObject
     {
-        private static readonly Func<object[], object?[]?, object?> PrototypeEntriesValue = PrototypeEntries;
+        private static readonly BuiltinFunction0 PrototypeEntriesValue = PrototypeEntries;
 
         /// <summary>Realm-owned <c>URLSearchParams.prototype</c> (issue #1824).</summary>
         internal static object Prototype
@@ -771,24 +767,24 @@ namespace JavaScriptRuntime.Node
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(prototype, "append", PrototypeAppend);
-            DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
+            DefinePrototypeMethod(prototype, "append", (BuiltinFunction2)PrototypeAppend);
+            DefinePrototypeMethod(prototype, "delete", (BuiltinFunction1)PrototypeDelete);
             DefinePrototypeMethod(prototype, "entries", PrototypeEntriesValue);
-            DefinePrototypeMethod(prototype, "forEach", PrototypeForEach);
-            DefinePrototypeMethod(prototype, "get", PrototypeGet);
-            DefinePrototypeMethod(prototype, "getAll", PrototypeGetAll);
-            DefinePrototypeMethod(prototype, "has", PrototypeHas);
-            DefinePrototypeMethod(prototype, "keys", PrototypeKeys);
-            DefinePrototypeMethod(prototype, "set", PrototypeSet);
-            DefinePrototypeMethod(prototype, "sort", PrototypeSort);
-            DefinePrototypeMethod(prototype, "toString", PrototypeToString);
-            DefinePrototypeMethod(prototype, "values", PrototypeValues);
+            DefinePrototypeMethod(prototype, "forEach", (BuiltinFunction2)PrototypeForEach);
+            DefinePrototypeMethod(prototype, "get", (BuiltinFunction1)PrototypeGet);
+            DefinePrototypeMethod(prototype, "getAll", (BuiltinFunction1)PrototypeGetAll);
+            DefinePrototypeMethod(prototype, "has", (BuiltinFunction1)PrototypeHas);
+            DefinePrototypeMethod(prototype, "keys", (BuiltinFunction0)PrototypeKeys);
+            DefinePrototypeMethod(prototype, "set", (BuiltinFunction2)PrototypeSet);
+            DefinePrototypeMethod(prototype, "sort", (BuiltinFunction0)PrototypeSort);
+            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString);
+            DefinePrototypeMethod(prototype, "values", (BuiltinFunction0)PrototypeValues);
             PropertyDescriptorStore.DefineOrUpdate(prototype, "size", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+                Get = (BuiltinFunction0)PrototypeSizeGetter
             });
             PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
@@ -808,7 +804,7 @@ namespace JavaScriptRuntime.Node
             });
         }
 
-        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(object prototype, string name, Delegate method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -820,10 +816,9 @@ namespace JavaScriptRuntime.Node
             });
         }
 
-        private static URLSearchParams GetUrlSearchParamsReceiver(string memberName)
+        private static URLSearchParams GetUrlSearchParamsReceiver(object? thisArgument, string memberName)
         {
-            var thisValue = RuntimeServices.GetCurrentThis();
-            if (thisValue is not URLSearchParams searchParams)
+            if (thisArgument is not URLSearchParams searchParams)
             {
                 throw new TypeError($"URLSearchParams.prototype.{memberName} called on incompatible receiver");
             }
@@ -831,80 +826,70 @@ namespace JavaScriptRuntime.Node
             return searchParams;
         }
 
-        private static object? PrototypeAppend(object[] scopes, object?[]? args)
+        private static object? PrototypeAppend(object? thisArgument, object? name, object? value)
         {
-            var searchParams = GetUrlSearchParamsReceiver("append");
-            var name = args != null && args.Length > 0 ? args[0] : null;
-            var value = args != null && args.Length > 1 ? args[1] : null;
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "append");
             searchParams.append(name!, value!);
             return null;
         }
 
-        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        private static object? PrototypeDelete(object? thisArgument, object? name)
         {
-            var searchParams = GetUrlSearchParamsReceiver("delete");
-            var name = args != null && args.Length > 0 ? args[0] : null;
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "delete");
             searchParams.@delete(name!);
             return null;
         }
 
-        private static object? PrototypeEntries(object[] scopes, object?[]? args)
-            => GetUrlSearchParamsReceiver("entries").entries();
+        private static object? PrototypeEntries(object? thisArgument)
+            => GetUrlSearchParamsReceiver(thisArgument, "entries").entries();
 
-        private static object? PrototypeForEach(object[] scopes, object?[]? args)
+        private static object? PrototypeForEach(object? thisArgument, object? callback, object? forEachThisArg)
         {
-            var searchParams = GetUrlSearchParamsReceiver("forEach");
-            var callback = args != null && args.Length > 0 ? args[0] : null;
-            var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            return searchParams.forEach(callback!, thisArg);
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "forEach");
+            return searchParams.forEach(callback!, forEachThisArg);
         }
 
-        private static object? PrototypeGet(object[] scopes, object?[]? args)
+        private static object? PrototypeGet(object? thisArgument, object? name)
         {
-            var searchParams = GetUrlSearchParamsReceiver("get");
-            var name = args != null && args.Length > 0 ? args[0] : null;
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "get");
             return searchParams.get(name!);
         }
 
-        private static object? PrototypeGetAll(object[] scopes, object?[]? args)
+        private static object? PrototypeGetAll(object? thisArgument, object? name)
         {
-            var searchParams = GetUrlSearchParamsReceiver("getAll");
-            var name = args != null && args.Length > 0 ? args[0] : null;
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "getAll");
             return searchParams.getAll(name!);
         }
 
-        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        private static object? PrototypeHas(object? thisArgument, object? name)
         {
-            var searchParams = GetUrlSearchParamsReceiver("has");
-            var name = args != null && args.Length > 0 ? args[0] : null;
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "has");
             return searchParams.has(name!);
         }
 
-        private static object? PrototypeKeys(object[] scopes, object?[]? args)
-            => GetUrlSearchParamsReceiver("keys").keys();
+        private static object? PrototypeKeys(object? thisArgument)
+            => GetUrlSearchParamsReceiver(thisArgument, "keys").keys();
 
-        private static object? PrototypeSet(object[] scopes, object?[]? args)
+        private static object? PrototypeSet(object? thisArgument, object? name, object? value)
         {
-            var searchParams = GetUrlSearchParamsReceiver("set");
-            var name = args != null && args.Length > 0 ? args[0] : null;
-            var value = args != null && args.Length > 1 ? args[1] : null;
+            var searchParams = GetUrlSearchParamsReceiver(thisArgument, "set");
             searchParams.set(name!, value!);
             return null;
         }
 
-        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
-            => GetUrlSearchParamsReceiver("size").size;
+        private static object? PrototypeSizeGetter(object? thisArgument)
+            => GetUrlSearchParamsReceiver(thisArgument, "size").size;
 
-        private static object? PrototypeSort(object[] scopes, object?[]? args)
+        private static object? PrototypeSort(object? thisArgument)
         {
-            GetUrlSearchParamsReceiver("sort").sort();
+            GetUrlSearchParamsReceiver(thisArgument, "sort").sort();
             return null;
         }
 
-        private static object? PrototypeToString(object[] scopes, object?[]? args)
-            => GetUrlSearchParamsReceiver("toString").toString();
+        private static object? PrototypeToString(object? thisArgument)
+            => GetUrlSearchParamsReceiver(thisArgument, "toString").toString();
 
-        private static object? PrototypeValues(object[] scopes, object?[]? args)
-            => GetUrlSearchParamsReceiver("values").values();
+        private static object? PrototypeValues(object? thisArgument)
+            => GetUrlSearchParamsReceiver(thisArgument, "values").values();
     }
 }

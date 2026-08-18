@@ -54,6 +54,11 @@ else
         var summary = BenchmarkRunner.Run<JsFunctionObjectInvocationBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--builtin-invocation")
+    {
+        var summary = BenchmarkRunner.Run<BuiltinFamilyInvocationBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--async-context")
     {
         var summary = BenchmarkRunner.Run<AsyncContextBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -137,6 +142,7 @@ Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array 
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");
 Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-object and legacy invocation ABIs");
+Console.WriteLine("  dotnet run -c Release --builtin-invocation # Measure representative runtime-owned built-in adapters");
 Console.WriteLine("  dotnet run -c Release --async-context # Compare disabled and enabled async-context overhead");
 Console.WriteLine("  dotnet run -c Release --callable-arity-analysis # Measure benchmark/runtime call-site arities");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");

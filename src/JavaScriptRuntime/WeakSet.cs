@@ -111,9 +111,9 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(prototype, "add", PrototypeAdd);
-            DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
-            DefinePrototypeMethod(prototype, "has", PrototypeHas);
+            DefinePrototypeMethod(prototype, "add", (BuiltinFunction1)PrototypeAdd);
+            DefinePrototypeMethod(prototype, "delete", (BuiltinFunction1)PrototypeDelete);
+            DefinePrototypeMethod(prototype, "has", (BuiltinFunction1)PrototypeHas);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -124,7 +124,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(object prototype, string name, Delegate method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
@@ -136,10 +136,9 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static WeakSet GetThisWeakSet(string memberName)
+        private static WeakSet GetThisWeakSet(object? thisArgument, string memberName)
         {
-            var thisValue = RuntimeServices.GetCurrentThis();
-            if (thisValue is not WeakSet weakSet)
+            if (thisArgument is not WeakSet weakSet)
             {
                 throw new TypeError($"WeakSet.prototype.{memberName} called on non-WeakSet");
             }
@@ -147,24 +146,21 @@ namespace JavaScriptRuntime
             return weakSet;
         }
 
-        private static object? PrototypeAdd(object[] scopes, object?[]? args)
+        private static object? PrototypeAdd(object? thisArgument, object? value)
         {
-            var weakSet = GetThisWeakSet("add");
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var weakSet = GetThisWeakSet(thisArgument, "add");
             return weakSet.add(value);
         }
 
-        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        private static object? PrototypeDelete(object? thisArgument, object? value)
         {
-            var weakSet = GetThisWeakSet("delete");
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var weakSet = GetThisWeakSet(thisArgument, "delete");
             return weakSet.delete(value);
         }
 
-        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        private static object? PrototypeHas(object? thisArgument, object? value)
         {
-            var weakSet = GetThisWeakSet("has");
-            var value = args != null && args.Length > 0 ? args[0] : null;
+            var weakSet = GetThisWeakSet(thisArgument, "has");
             return weakSet.has(value);
         }
     }

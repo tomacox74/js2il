@@ -288,6 +288,79 @@ public sealed class CallableBoundaryInventoryTests
     }
 
     [Fact]
+    public void RuntimeAmbientInvocationReads_AreLimitedToGeneratedCallableInfrastructure()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var runtimeFiles = EnumerateSourceFiles(repositoryRoot)
+            .Where(file => file.RelativePath.StartsWith(
+                "src/JavaScriptRuntime/",
+                StringComparison.Ordinal))
+            .ToArray();
+        var ambientRead = new Regex(
+            @"RuntimeServices\.GetCurrent(?:This|Arguments|Callee|NewTarget)\(\)",
+            RegexOptions.CultureInvariant);
+        var actual = runtimeFiles
+            .Select(file => new
+            {
+                file.RelativePath,
+                Count = file.Content
+                    .Split('\n')
+                    .Where(line => !line.TrimStart().StartsWith("//", StringComparison.Ordinal))
+                    .Sum(line => ambientRead.Count(line))
+            })
+            .Where(entry => entry.Count > 0)
+            .ToDictionary(
+                entry => entry.RelativePath,
+                entry => entry.Count,
+                StringComparer.Ordinal);
+
+        Assert.Equal(
+            new Dictionary<string, int>(StringComparer.Ordinal)
+            {
+                ["src/JavaScriptRuntime/AsyncGeneratorObject.cs"] = 1,
+                ["src/JavaScriptRuntime/AsyncScope.cs"] = 4,
+                ["src/JavaScriptRuntime/Closure.cs"] = 10,
+                ["src/JavaScriptRuntime/GeneratorObject.cs"] = 1,
+                ["src/JavaScriptRuntime/ObjectRuntime.Operations.cs"] = 3
+            },
+            actual);
+    }
+
+    [Fact]
+    public void RuntimeLegacyArgumentArrayAdapters_AreLimitedToGeneratedCallableInfrastructure()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var runtimeFiles = EnumerateSourceFiles(repositoryRoot)
+            .Where(file => file.RelativePath.StartsWith(
+                "src/JavaScriptRuntime/",
+                StringComparison.Ordinal))
+            .ToArray();
+        var legacyDelegate = new Regex(
+            @"Func<object\[\],\s*object\?\[\]\?,\s*object\?>",
+            RegexOptions.CultureInvariant);
+        var actual = runtimeFiles
+            .Select(file => new
+            {
+                file.RelativePath,
+                Count = legacyDelegate.Count(file.Content)
+            })
+            .Where(entry => entry.Count > 0)
+            .ToDictionary(
+                entry => entry.RelativePath,
+                entry => entry.Count,
+                StringComparer.Ordinal);
+
+        Assert.Equal(
+            new Dictionary<string, int>(StringComparer.Ordinal)
+            {
+                ["src/JavaScriptRuntime/AsyncGeneratorFunction.cs"] = 2,
+                ["src/JavaScriptRuntime/GeneratorObject.cs"] = 2,
+                ["src/JavaScriptRuntime/RuntimeServices.cs"] = 2
+            },
+            actual);
+    }
+
+    [Fact]
     public void LoweringAndIlEmission_DoNotDependOnAstCallableSemantics()
     {
         var repositoryRoot = FindRepositoryRoot();

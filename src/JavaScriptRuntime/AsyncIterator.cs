@@ -16,9 +16,9 @@ public static class AsyncIterator
 
         DefineDataProperty(asyncIteratorConstructorValue, "prototype", Prototype);
         DefineDataProperty(Prototype, "constructor", asyncIteratorConstructorValue);
-        DefineDataProperty(Prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
-        DefineDataProperty(Prototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
-        DefineDataProperty(Prototype, Symbol.asyncIterator.DebugId, (Func<object[], object?[]?, object?>)PrototypeSymbolAsyncIterator);
+        DefineDataProperty(Prototype, "next", (BuiltinFunction0)PrototypeNext);
+        DefineDataProperty(Prototype, "return", (BuiltinFunction1)PrototypeReturn);
+        DefineDataProperty(Prototype, Symbol.asyncIterator.DebugId, (BuiltinFunction0)PrototypeSymbolAsyncIterator);
         DefineDataProperty(Prototype, Symbol.toStringTag.DebugId, "AsyncIterator");
     }
 
@@ -42,10 +42,9 @@ public static class AsyncIterator
         });
     }
 
-    private static object? PrototypeNext(object[] scopes, object?[]? args)
+    private static object? PrototypeNext(object? thisArgument)
     {
-        var receiver = RuntimeServices.GetCurrentThis();
-        if (receiver is IJavaScriptAsyncIterator iterator)
+        if (thisArgument is IJavaScriptAsyncIterator iterator)
         {
             return iterator.Next();
         }
@@ -53,16 +52,14 @@ public static class AsyncIterator
         throw new TypeError("AsyncIterator.prototype.next called on incompatible receiver");
     }
 
-    private static object? PrototypeReturn(object[] scopes, object?[]? args)
+    private static object? PrototypeReturn(object? thisArgument, object? returnValue)
     {
-        var receiver = RuntimeServices.GetCurrentThis();
-        var returnValue = args != null && args.Length > 0 ? args[0] : null;
-        if (receiver is AsyncGeneratorObject asyncGenerator)
+        if (thisArgument is AsyncGeneratorObject asyncGenerator)
         {
             return asyncGenerator.@return(returnValue);
         }
 
-        if (receiver is IJavaScriptAsyncIterator iterator)
+        if (thisArgument is IJavaScriptAsyncIterator iterator)
         {
             return iterator.HasReturn
                 ? iterator.Return()
@@ -72,8 +69,8 @@ public static class AsyncIterator
         throw new TypeError("AsyncIterator.prototype.return called on incompatible receiver");
     }
 
-    private static object? PrototypeSymbolAsyncIterator(object[] scopes, object?[]? args)
+    private static object? PrototypeSymbolAsyncIterator(object? thisArgument)
     {
-        return RuntimeServices.GetCurrentThis();
+        return thisArgument;
     }
 }

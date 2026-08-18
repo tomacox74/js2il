@@ -200,9 +200,9 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = Prototype
             });
-            DefinePrototypeMethod(stringConstructorValue, "fromCharCode", (Func<object[], object?[]?, object?>)ConstructorFromCharCode, 1);
-            DefinePrototypeMethod(stringConstructorValue, "fromCodePoint", (Func<object[], object?[]?, object?>)ConstructorFromCodePoint, 1);
-            DefinePrototypeMethod(stringConstructorValue, "raw", (Func<object[], object?[]?, object?>)ConstructorRaw, 1);
+            DefinePrototypeMethod(stringConstructorValue, "fromCharCode", (BuiltinFunctionVariadic)ConstructorFromCharCode, 1);
+            DefinePrototypeMethod(stringConstructorValue, "fromCodePoint", (BuiltinFunctionVariadic)ConstructorFromCodePoint, 1);
+            DefinePrototypeMethod(stringConstructorValue, "raw", (BuiltinFunctionVariadic)ConstructorRaw, 1);
             PropertyDescriptorStore.DefineOrUpdate(Prototype, "constructor", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -744,16 +744,17 @@ namespace JavaScriptRuntime
         private static object? PrototypeValueOf(object? thisArgument)
             => ThisStringValue(thisArgument);
 
-        private static object? ConstructorFromCharCode(object[] scopes, object?[]? args)
-            => FromCharCode(args);
+        private static object? ConstructorFromCharCode(object? thisArgument, in JsCallArguments arguments)
+            => FromCharCode(arguments.ToArray());
 
-        private static object? ConstructorFromCodePoint(object[] scopes, object?[]? args)
-            => FromCodePoint(args);
+        private static object? ConstructorFromCodePoint(object? thisArgument, in JsCallArguments arguments)
+            => FromCodePoint(arguments.ToArray());
 
-        private static object? ConstructorRaw(object[] scopes, object?[]? args)
+        private static object? ConstructorRaw(object? thisArgument, in JsCallArguments arguments)
         {
+            var args = arguments.ToArray();
             var template = GetArg(args, 0);
-            var substitutions = args == null || args.Length <= 1
+            var substitutions = args.Length <= 1
                 ? System.Array.Empty<object?>()
                 : args[1..];
             return Raw(template, substitutions);
