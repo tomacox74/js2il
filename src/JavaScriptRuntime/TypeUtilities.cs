@@ -362,21 +362,28 @@ namespace JavaScriptRuntime
         }
 
         internal static bool TryCoerceObjectToPrimitive(object value, string hint, out object? result)
+            => TryCoerceObjectToPrimitive(value, hint, out result, out _);
+
+        internal static bool TryCoerceObjectToPrimitive(
+            object value,
+            string hint,
+            out object? result,
+            out bool ordinaryCoercionAttempted)
         {
+            ordinaryCoercionAttempted = false;
+
             if (value.GetType().IsValueType || value is string)
             {
                 result = value;
                 return true;
             }
 
-            if (TryInvokeToPrimitiveMethod(value, hint, out result)
-                || TryInvokeOrdinaryToPrimitive(value, hint, out result))
+            if (TryInvokeToPrimitiveMethod(value, hint, out result))
             {
                 return true;
             }
 
-            result = null;
-            return false;
+            return TryInvokeOrdinaryToPrimitive(value, hint, out result, out ordinaryCoercionAttempted);
         }
 
         private static bool TryInvokeToPrimitiveMethod(object receiver, string hint, out object? result)
@@ -402,8 +409,13 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private static bool TryInvokeOrdinaryToPrimitive(object receiver, string hint, out object? result)
+        private static bool TryInvokeOrdinaryToPrimitive(
+            object receiver,
+            string hint,
+            out object? result,
+            out bool attempted)
         {
+            attempted = false;
             var methodNames = string.Equals(hint, "string", StringComparison.Ordinal)
                 ? new[] { "toString", "valueOf" }
                 : new[] { "valueOf", "toString" };
@@ -416,6 +428,7 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
+                attempted = true;
                 result = InvokeWithThis(receiver, member!);
                 if (IsPrimitive(result))
                 {

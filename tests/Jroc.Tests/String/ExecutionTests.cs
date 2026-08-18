@@ -252,6 +252,18 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_ObjectReturningToPrimitiveMethods_Throws()
+        {
+            return ExecutionTest(nameof(String_ObjectReturningToPrimitiveMethods_Throws));
+        }
+
+        [Fact]
+        public Task String_NullPrototypeObject_Throws()
+        {
+            return ExecutionTest(nameof(String_NullPrototypeObject_Throws));
+        }
+
+        [Fact]
         public Task String_RegExp_NamedGroups_Indices()
         {
             return ExecutionTest(nameof(String_RegExp_NamedGroups_Indices));

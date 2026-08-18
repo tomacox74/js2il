@@ -46,6 +46,7 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.Proxy"] = ProxyReason,
             ["JavaScriptRuntime.RangeError"] = ErrorReason,
             ["JavaScriptRuntime.ReferenceError"] = ErrorReason,
+            ["JavaScriptRuntime.RegExp+RegExpStringIterator"] = IteratorReason,
             ["JavaScriptRuntime.SharedArrayBuffer"] = BufferViewReason,
             ["JavaScriptRuntime.String+PublicStringIterator"] = IteratorReason,
             ["JavaScriptRuntime.SuppressedError"] = ErrorReason,

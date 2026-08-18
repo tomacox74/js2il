@@ -21,9 +21,8 @@ namespace JavaScriptRuntime
             => ToStringCore(value, rejectSymbols: true);
 
         /// <summary>
-        /// Applies the Symbol constructor's description conversion. Its ToString step
-        /// rejects Symbols and must throw when neither object conversion method returns
-        /// a primitive.
+        /// Applies the abstract ECMAScript ToString operation for callers that must
+        /// reject Symbol values.
         /// </summary>
         public static string ToStringRejectingSymbols(object? value)
         {
@@ -91,15 +90,30 @@ namespace JavaScriptRuntime
                 return ToStringCore(stringDataDescriptor.Value, rejectSymbols);
             }
 
+            var ordinaryCoercionAttempted = false;
             if (!value.GetType().IsValueType
-                && TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive))
+                && TypeUtilities.TryCoerceObjectToPrimitive(
+                    value,
+                    "string",
+                    out var primitive,
+                    out ordinaryCoercionAttempted))
             {
                 return ToStringCore(primitive, rejectSymbols);
             }
 
             if (value is JsObject)
             {
-                throw new TypeError("Cannot convert object to primitive value");
+                if (ordinaryCoercionAttempted
+                    || PropertyDescriptorStore.TryGetOwn(
+                        value,
+                        ObjectRuntime.PrimitiveValuePropertyName,
+                        out _)
+                    || PrototypeChain.TryGetPrototype(value, out _))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+
+                return "[object Object]";
             }
 
             if (value is IDictionary<string, object?> dictObject)
