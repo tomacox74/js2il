@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): pass AOT-planned invocation requirements through a
+  stack-only generated-call context (issue #1896). Synchronous generated
+  functions now read `this`, strict `arguments`, rest arguments, and
+  `new.target` from explicit entry parameters where their ABI supports it;
+  remaining named-callee, lexical-super, and resumable paths publish only the
+  ambient values they require. Explicit `this` calls allocate no steady-state
+  invocation context.
 - runtime/test262/docs: port 22 Object/Number `test262` fixtures for
   `Object.getPrototypeOf`, `Object.hasOwn`, `Object.prototype.hasOwnProperty`,
   `Object.prototype.propertyIsEnumerable`, and `Number.prototype.toFixed`.

@@ -59,6 +59,112 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(_bclReferences.JsFunctionObjectType);
     }
 
+    private GeneratedFunctionObjectMetadata GetGeneratedFunctionMetadata(
+        CallableId callableId)
+        => _generatedFunctionObjectRegistry.GetMetadata(callableId);
+
+    private void EmitGeneratedDirectCallNewTarget(
+        GeneratedFunctionObjectMetadata? metadata,
+        TempVariable? functionValue,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (metadata?.Plan.Callable.Kind != CallableKind.Arrow
+            || (metadata.Plan.InvocationRequirements
+                & JavaScriptRuntime.InvocationContextRequirements.NewTarget) == 0)
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            return;
+        }
+
+        if (functionValue is { } value)
+        {
+            EmitLoadGeneratedFunctionObject(
+                value,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            ilEncoder.Call(
+                _bclReferences
+                    .RuntimeServices_ResolveGeneratedDirectCallNewTarget_Ref);
+            return;
+        }
+
+        if (methodDescriptor.HasNewTargetParameter)
+        {
+            var newTargetIndex = (methodDescriptor.IsStatic ? 0 : 1)
+                + (methodDescriptor.HasScopesParameter ? 1 : 0);
+            ilEncoder.LoadArgument(newTargetIndex);
+            return;
+        }
+
+        ilEncoder.Call(
+            _bclReferences.RuntimeServices_GetCurrentNewTarget_Ref);
+    }
+
+    private void EmitGeneratedDirectInvocationContext(
+        GeneratedFunctionObjectMetadata metadata,
+        TempVariable? functionValue,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var plan = metadata.Plan;
+        ilEncoder.LoadConstantI4((int)plan.InvocationRequirements);
+        if (functionValue is { } value)
+        {
+            EmitLoadGeneratedFunctionObject(
+                value,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.LoadConstantI4(
+                plan.UsesNonStrictThisBinding ? 1 : 0);
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            ilEncoder.LoadConstantI4(
+                plan.UsesNonStrictThisBinding ? 1 : 0);
+            if (plan.Callable.Kind == CallableKind.Arrow)
+            {
+                EmitLoadCurrentThis(ilEncoder, methodDescriptor);
+            }
+            else
+            {
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
+        }
+        ilEncoder.Call(
+            _bclReferences
+                .RuntimeServices_ResolveGeneratedDirectCallThis_Ref);
+        ilEncoder.OpCode(ILOpCode.Ldnull);
+        if (functionValue is { } calleeValue)
+        {
+            EmitLoadGeneratedFunctionObject(
+                calleeValue,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+        }
+        EmitGeneratedDirectCallNewTarget(
+            metadata,
+            functionValue,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        ilEncoder.Call(
+            _bclReferences
+                .GeneratedInvocationContext_CreateFromArray_Ref);
+    }
+
     private bool? TryCompileInstructionToIL_Calls(
         LIRInstruction instruction,
         InstructionEncoder ilEncoder,
@@ -86,6 +192,8 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
+                    var generatedMetadata =
+                        GetGeneratedFunctionMetadata(callableId);
 
                     // Look up the callable's signature to determine if scopes parameter is required
                     bool requiresScopes = true; // Default to true for safety
@@ -97,9 +205,8 @@ internal sealed partial class LIRToILCompiler
 
                     bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
 
-                    // If the callee needs an `arguments` object or has rest parameters, preserve the full runtime args list.
-                    // The generated static adapter sets the ambient arguments context and then calls the
-                    // canonical typed MethodDef directly.
+                    // If the callee needs an `arguments` object or has rest parameters,
+                    // preserve the full runtime args list through its generated array adapter.
                     if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
                     {
                         if (callFunc.FunctionValue is { } functionValue)
@@ -171,8 +278,22 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     }
 
-                    // Normal function call path: new.target is undefined.
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    EmitGeneratedDirectCallNewTarget(
+                        generatedMetadata,
+                        callFunc.FunctionValue,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    if (generatedMetadata?.Plan
+                            .HasExplicitInvocationContextParameter == true)
+                    {
+                        EmitGeneratedDirectInvocationContext(
+                            generatedMetadata,
+                            callFunc.FunctionValue,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
 
                     // Load all arguments
                     for (int i = 0; i < argsToPass; i++)
@@ -223,6 +344,9 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
+                    var generatedMetadata =
+                        GetGeneratedFunctionMetadata(
+                            tailCall.CallableId);
                     var callableSignature = reader.GetSignature(tailCall.CallableId);
                     bool requiresScopes = callableSignature?.RequiresScopesParameter ?? true;
                     bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
@@ -246,8 +370,22 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
-                    // new.target is undefined for ordinary function tail calls.
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    EmitGeneratedDirectCallNewTarget(
+                        generatedMetadata,
+                        functionValue: null,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    if (generatedMetadata?.Plan
+                            .HasExplicitInvocationContextParameter == true)
+                    {
+                        EmitGeneratedDirectInvocationContext(
+                            generatedMetadata,
+                            functionValue: null,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
 
                     for (int i = 0; i < argsToPass; i++)
                     {
@@ -1246,16 +1384,56 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
-
+                    var generatedMetadata =
+                        GetGeneratedFunctionMetadata(
+                            callDeclared.CallableId);
                     var signature = reader.GetSignature(callDeclared.CallableId);
                     var jsArgumentOffset = (signature?.RequiresScopesParameter == true ? 1 : 0) + 1;
+                    var newTargetArgumentIndex =
+                        signature?.RequiresScopesParameter == true ? 1 : 0;
                     for (var i = 0; i < callDeclared.Arguments.Count; i++)
                     {
                         var jsParameterIndex = i - jsArgumentOffset;
                         var parameterClrType = signature?.ParameterClrTypes != null && jsParameterIndex >= 0 && jsParameterIndex < signature.ParameterClrTypes.Count
                             ? signature.ParameterClrTypes[jsParameterIndex]
                             : null;
-                        EmitLoadTempAsParameterType(callDeclared.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
+                        if (i == newTargetArgumentIndex
+                            && generatedMetadata.Plan.Callable.Kind
+                                == CallableKind.Arrow
+                            && (generatedMetadata.Plan
+                                    .InvocationRequirements
+                                & JavaScriptRuntime
+                                    .InvocationContextRequirements
+                                    .NewTarget) != 0)
+                        {
+                            EmitGeneratedDirectCallNewTarget(
+                                generatedMetadata,
+                                functionValue: null,
+                                ilEncoder,
+                                allocation,
+                                methodDescriptor);
+                        }
+                        else
+                        {
+                            EmitLoadTempAsParameterType(
+                                callDeclared.Arguments[i],
+                                parameterClrType,
+                                ilEncoder,
+                                allocation,
+                                methodDescriptor);
+                        }
+
+                        if (i == newTargetArgumentIndex
+                            && generatedMetadata.Plan
+                                .HasExplicitInvocationContextParameter)
+                        {
+                            EmitGeneratedDirectInvocationContext(
+                                generatedMetadata,
+                                functionValue: null,
+                                ilEncoder,
+                                allocation,
+                                methodDescriptor);
+                        }
                     }
 
                     ilEncoder.OpCode(ILOpCode.Call);
@@ -1326,6 +1504,30 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
+                    if (methodDescriptor.HasInvocationContextParameter
+                        && string.Equals(
+                            callRuntimeServices.MethodName,
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee),
+                            StringComparison.Ordinal)
+                        && callRuntimeServices.Arguments.Count == 0)
+                    {
+                        ilEncoder.LoadArgument(
+                            GetIlArgIndexForInvocationContext(
+                                methodDescriptor));
+                        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                            nameof(JavaScriptRuntime.GeneratedInvocationContext.GetCallee),
+                            new[]
+                            {
+                                typeof(JavaScriptRuntime.GeneratedInvocationContext)
+                            }));
+                        EmitStoreTemp(
+                            callRuntimeServices.Result,
+                            ilEncoder,
+                            allocation);
+                        break;
+                    }
+
                     // Emit call to JavaScriptRuntime.RuntimeServices static method
                     var runtimeServicesType = typeof(JavaScriptRuntime.RuntimeServices);
                     
@@ -1336,11 +1538,28 @@ internal sealed partial class LIRToILCompiler
                             $"RuntimeServices call '{callRuntimeServices.MethodName}' has {parameterTypeCount} parameter types for {callRuntimeServices.Arguments.Count} arguments.");
                     }
 
-                    var paramTypes = new Type[callRuntimeServices.Arguments.Count];
+                    var usesExplicitRestArguments =
+                        methodDescriptor.HasInvocationContextParameter
+                        && string.Equals(
+                            callRuntimeServices.MethodName,
+                            nameof(JavaScriptRuntime.RuntimeServices.CollectRestArguments),
+                            StringComparison.Ordinal);
+                    var paramTypes = new Type[
+                        callRuntimeServices.Arguments.Count
+                        + (usesExplicitRestArguments ? 1 : 0)];
+                    if (usesExplicitRestArguments)
+                    {
+                        paramTypes[0] =
+                            typeof(JavaScriptRuntime.GeneratedInvocationContext);
+                        ilEncoder.LoadArgument(
+                            GetIlArgIndexForInvocationContext(
+                                methodDescriptor));
+                    }
                     for (int i = 0; i < callRuntimeServices.Arguments.Count; i++)
                     {
                         var parameterType = callRuntimeServices.ParameterTypes?[i] ?? typeof(object);
-                        paramTypes[i] = parameterType;
+                        paramTypes[i + (usesExplicitRestArguments ? 1 : 0)] =
+                            parameterType;
                         EmitLoadTempForParameter(
                             callRuntimeServices.Arguments[i],
                             parameterType,
@@ -1437,10 +1656,9 @@ internal sealed partial class LIRToILCompiler
     {
         if (methodDescriptor.IsStatic)
         {
-            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.RuntimeServices),
-                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis),
-                Type.EmptyTypes));
+            EmitLoadCurrentThis(
+                ilEncoder,
+                methodDescriptor);
         }
         else
         {

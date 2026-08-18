@@ -211,6 +211,28 @@ public class RuntimeServices
         return _currentLexicalSuperReceiver.Value ?? ResolveLexicalThis(_currentThis.Value);
     }
 
+    public static object? ResolveGeneratedDirectCallThis(
+        JsFunctionObject? functionObject,
+        bool usesNonStrictThisBinding,
+        object? lexicalThis)
+    {
+        if (functionObject is not null)
+        {
+            return functionObject.ResolveThisArgument(null);
+        }
+
+        return usesNonStrictThisBinding
+            ? GlobalThis.globalThis
+            : lexicalThis;
+    }
+
+    public static object? ResolveGeneratedDirectCallNewTarget(
+        JsFunctionObject? functionObject,
+        object? lexicalNewTarget)
+        => functionObject is not null
+            ? functionObject.ResolveCallNewTarget()
+            : lexicalNewTarget;
+
     public static object? GetCurrentLexicalSuperPropertyReceiver()
     {
         return ResolveLexicalThis(_currentThis.Value);
@@ -1394,21 +1416,40 @@ public class RuntimeServices
             return;
         }
 
-        if (!functionObject.RequiresInvocationContext)
+        var requirements = functionObject.InvocationRequirements;
+        if (functionObject.SupportsExplicitInvocationContext
+            || requirements == InvocationContextRequirements.None)
         {
             (_generatedFunctionDirectCallStack ??= new())
                 .Push(GeneratedFunctionDirectCallState.NoContext);
             return;
         }
 
-        var effectiveThisArgument = functionObject.ResolveThisArgument(null);
-        var previousThis = SetCurrentThis(effectiveThisArgument);
-        var previousArguments = SetCurrentCallArguments(
-            JsCallArguments.FromArray(arguments));
-        var previousCallee = SetCurrentCallee(functionObject);
-        var previousNewTarget = SetCurrentNewTarget(
-            functionObject.ResolveCallNewTarget());
-        var lexicalSuperScopes = functionObject.GetLexicalSuperScopes();
+        var needsThis =
+            (requirements & InvocationContextRequirements.This) != 0;
+        var needsArguments =
+            (requirements & InvocationContextRequirements.Arguments) != 0;
+        var needsCallee =
+            (requirements & InvocationContextRequirements.Callee) != 0;
+        var needsNewTarget =
+            (requirements & InvocationContextRequirements.NewTarget) != 0;
+        var needsLexicalSuper =
+            (requirements & InvocationContextRequirements.LexicalSuper) != 0;
+        var previousThis = needsThis
+            ? SetCurrentThis(functionObject.ResolveThisArgument(null))
+            : null;
+        var previousArguments = needsArguments
+            ? SetCurrentCallArguments(JsCallArguments.FromArray(arguments))
+            : default;
+        var previousCallee = needsCallee
+            ? SetCurrentCallee(functionObject)
+            : null;
+        var previousNewTarget = needsNewTarget
+            ? SetCurrentNewTarget(functionObject.ResolveCallNewTarget())
+            : null;
+        var lexicalSuperScopes = needsLexicalSuper
+            ? functionObject.GetLexicalSuperScopes()
+            : null;
         var previousSuperReceiver = lexicalSuperScopes is null
             ? null
             : SetCurrentLexicalSuperReceiver(
@@ -1425,7 +1466,8 @@ public class RuntimeServices
                 previousNewTarget,
                 previousSuperReceiver,
                 previousSuperScopes,
-                lexicalSuperScopes is not null));
+                lexicalSuperScopes is not null,
+                requirements));
     }
 
     /// <summary>
@@ -1453,11 +1495,25 @@ public class RuntimeServices
                 SetCurrentLexicalSuperScopes(callState.PreviousSuperScopes);
                 SetCurrentLexicalSuperReceiver(callState.PreviousSuperReceiver);
             }
-            SetCurrentNewTarget(callState.PreviousNewTarget);
-            SetCurrentCallee(callState.PreviousCallee);
+            if ((callState.Requirements
+                    & InvocationContextRequirements.NewTarget) != 0)
+            {
+                SetCurrentNewTarget(callState.PreviousNewTarget);
+            }
+            if ((callState.Requirements
+                    & InvocationContextRequirements.Callee) != 0)
+            {
+                SetCurrentCallee(callState.PreviousCallee);
+            }
         }
-        RestoreCurrentCallArguments(callState.PreviousArguments);
-        if (callState.HasFunctionContext)
+        if ((callState.Requirements
+                & InvocationContextRequirements.Arguments) != 0)
+        {
+            RestoreCurrentCallArguments(callState.PreviousArguments);
+        }
+        if (callState.HasFunctionContext
+            && (callState.Requirements
+                & InvocationContextRequirements.This) != 0)
         {
             SetCurrentThis(callState.PreviousThis);
         }
@@ -1471,6 +1527,7 @@ public class RuntimeServices
         object? PreviousSuperReceiver,
         object[]? PreviousSuperScopes,
         bool HasLexicalSuperState,
+        InvocationContextRequirements Requirements,
         bool HasFunctionContext,
         bool HasInvocationContext)
     {
@@ -1483,7 +1540,8 @@ public class RuntimeServices
             object? previousNewTarget,
             object? previousSuperReceiver,
             object[]? previousSuperScopes,
-            bool hasLexicalSuperState)
+            bool hasLexicalSuperState,
+            InvocationContextRequirements requirements)
             : this(
                 previousThis,
                 previousArguments,
@@ -1492,6 +1550,7 @@ public class RuntimeServices
                 previousSuperReceiver,
                 previousSuperScopes,
                 hasLexicalSuperState,
+                requirements,
                 HasFunctionContext: true,
                 HasInvocationContext: true)
         {
@@ -1507,6 +1566,7 @@ public class RuntimeServices
                 null,
                 null,
                 HasLexicalSuperState: false,
+                InvocationContextRequirements.Arguments,
                 HasFunctionContext: false,
                 HasInvocationContext: true);
     }
@@ -1659,6 +1719,21 @@ public class RuntimeServices
         return new ArgumentsObject(args, scopeInstance, parameterNames, includeCallee ? _currentCallee.Value : null, restrictCallee);
     }
 
+    public static ArgumentsObject CreateArgumentsObject(
+        GeneratedInvocationContext context,
+        object? scopeInstance,
+        string[]? parameterNames,
+        bool includeCallee,
+        bool restrictCallee)
+        => new(
+            GeneratedInvocationContext.GetArguments(context),
+            scopeInstance,
+            parameterNames,
+            includeCallee
+                ? GeneratedInvocationContext.GetCallee(context)
+                : null,
+            restrictCallee);
+
     /// <summary>
     /// Gets the count of arguments passed to the current function.
     /// Used for rest parameter initialization.
@@ -1687,6 +1762,20 @@ public class RuntimeServices
         var restArgs = new object?[args.Length - startIndexAsInt];
         System.Array.Copy(args, startIndexAsInt, restArgs, 0, restArgs.Length);
         return new Array(restArgs);
+    }
+
+    public static Array CollectRestArguments(
+        GeneratedInvocationContext context,
+        double startIndex)
+    {
+        var start = System.Math.Max(0, (int)startIndex);
+        var count = GeneratedInvocationContext.GetArgumentCount(context);
+        var result = new Array();
+        for (var index = start; index < count; index++)
+        {
+            result.Add(GeneratedInvocationContext.GetArgument(context, index));
+        }
+        return result;
     }
 
     /// <summary>

@@ -38,12 +38,16 @@
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 15 (0xf)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.1
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -64,7 +68,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -75,15 +79,22 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 18 (0x12)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_0005: ldarg.2
-				IL_0006: ldc.i4.0
-				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000c: call object Modules.Stream_Transform_Basic/FunctionExpression_L9C23::__js_call__(object, object)
-				IL_0011: ret
+				IL_0000: ldnull
+				IL_0001: ldc.i4.1
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldnull
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: call object Modules.Stream_Transform_Basic/FunctionExpression_L9C23::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001c: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -94,15 +105,22 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 
 				IL_0000: ldarg.3
-				IL_0001: ldarg.2
-				IL_0002: ldc.i4.0
-				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0008: call object Modules.Stream_Transform_Basic/FunctionExpression_L9C23::__js_call__(object, object)
-				IL_000d: ret
+				IL_0001: ldc.i4.1
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldarg.3
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: call object Modules.Stream_Transform_Basic/FunctionExpression_L9C23::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001c: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -130,6 +148,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
 				object chunk
 			) cil managed 
 		{
@@ -137,29 +156,30 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 49 (0x31)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object
 			)
 
-			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0016: ldstr "toUpperCase"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0020: stloc.1
-			IL_0021: ldloc.0
-			IL_0022: ldstr "push"
-			IL_0027: ldloc.1
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0010: stloc.0
+			IL_0011: ldarg.2
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: ldstr "toUpperCase"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0021: stloc.1
+			IL_0022: ldloc.0
+			IL_0023: ldstr "push"
+			IL_0028: ldloc.1
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_002e: pop
+			IL_002f: ldnull
+			IL_0030: ret
 		} // end of method FunctionExpression_L9C23::__js_call__
 
 	} // end of class FunctionExpression_L9C23
@@ -240,17 +260,17 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 24 (0x18)
+				// Code size: 20 (0x14)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld class Modules.Stream_Transform_Basic/Scope Modules.Stream_Transform_Basic/FunctionExpression_L14C18/FunctionObject::_environment0_Stream_Transform_Basic
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: ldarg.2
-				IL_000c: ldc.i4.0
-				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0012: call object Modules.Stream_Transform_Basic/FunctionExpression_L14C18::__js_call__(class Modules.Stream_Transform_Basic/Scope, object, object)
-				IL_0017: ret
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Stream_Transform_Basic/FunctionExpression_L14C18::__js_call__(class Modules.Stream_Transform_Basic/Scope, object, object)
+				IL_0013: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -404,14 +424,14 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 17 (0x11)
+				// Code size: 13 (0xd)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld class Modules.Stream_Transform_Basic/Scope Modules.Stream_Transform_Basic/FunctionExpression_L18C22/FunctionObject::_environment0_Stream_Transform_Basic
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.Stream_Transform_Basic/FunctionExpression_L18C22::__js_call__(class Modules.Stream_Transform_Basic/Scope, object)
-				IL_0010: ret
+				IL_0006: ldnull
+				IL_0007: call object Modules.Stream_Transform_Basic/FunctionExpression_L18C22::__js_call__(class Modules.Stream_Transform_Basic/Scope, object)
+				IL_000c: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -598,7 +618,7 @@
 		IL_0058: ldc.i4.1
 		IL_0059: conv.r8
 		IL_005a: ldstr ""
-		IL_005f: ldc.i4.1
+		IL_005f: ldc.i4.0
 		IL_0060: ldc.i4.1
 		IL_0061: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Stream_Transform_Basic/FunctionExpression_L9C23/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0066: stloc.s 7

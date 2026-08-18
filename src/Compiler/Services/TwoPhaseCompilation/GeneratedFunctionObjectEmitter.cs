@@ -264,6 +264,17 @@ internal sealed class GeneratedFunctionObjectEmitter
                 : metadata.Plan.ReturnKind == GeneratedFunctionReturnKind.Promise
                     ? _bclReferences.JsAsyncFunctionObject_Ctor_Ref
                     : _bclReferences.JsFunctionObject_Ctor_Ref);
+        if (metadata.Plan.InvocationRequirements
+            != JavaScriptRuntime.InvocationContextRequirements.None)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.LoadConstantI4((int)metadata.Plan.InvocationRequirements);
+            encoder.LoadConstantI4(
+                metadata.Plan.SupportsExplicitInvocationContext ? 1 : 0);
+            encoder.Call(
+                _bclReferences
+                    .JsFunctionObject_InitializeInvocationContext_Ref);
+        }
 
         for (var index = 0; index < parameterTypes.Length; index++)
         {
@@ -385,6 +396,19 @@ internal sealed class GeneratedFunctionObjectEmitter
     private int EmitArrayCallAdapterWithInvocationContext(
         GeneratedFunctionObjectMetadata metadata)
     {
+        if (metadata.Plan.SupportsExplicitInvocationContext)
+        {
+            var directIl = new BlobBuilder();
+            var directEncoder = new InstructionEncoder(directIl);
+            EmitCanonicalArrayCall(metadata, directEncoder);
+            directEncoder.OpCode(ILOpCode.Ret);
+            return AddMethodBody(
+                directEncoder,
+                maxStack: System.Math.Max(
+                    8,
+                    metadata.Plan.Signature.JsParamCount + 6));
+        }
+
         var il = new BlobBuilder();
         var controlFlow = new ControlFlowBuilder();
         var encoder = new InstructionEncoder(il, controlFlow);
@@ -467,9 +491,24 @@ internal sealed class GeneratedFunctionObjectEmitter
                     $"Unsupported callable scope ABI '{plan.Signature.ScopeAbiKind}'.");
         }
 
-        // Direct function calls supply undefined new.target. Arrow lexical new.target is
-        // carried by the generated function object's ambient invocation context.
-        encoder.OpCode(ILOpCode.Ldnull);
+        EmitArrayAdapterNewTarget(metadata, encoder);
+        if (plan.HasExplicitInvocationContextParameter)
+        {
+            encoder.LoadConstantI4((int)plan.InvocationRequirements);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.LoadConstantI4(
+                plan.UsesNonStrictThisBinding ? 1 : 0);
+            encoder.OpCode(ILOpCode.Ldnull);
+            encoder.Call(
+                _bclReferences
+                    .RuntimeServices_ResolveGeneratedDirectCallThis_Ref);
+            encoder.OpCode(ILOpCode.Ldarg_2);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            EmitArrayAdapterNewTarget(metadata, encoder);
+            encoder.Call(
+                _bclReferences
+                    .GeneratedInvocationContext_CreateFromArray_Ref);
+        }
         for (var index = 0;
              index < plan.Signature.JsParamCount;
              index++)
@@ -489,6 +528,25 @@ internal sealed class GeneratedFunctionObjectEmitter
         EmitReturnAdaptation(
             encoder,
             plan.Signature.ReturnClrType);
+    }
+
+    private void EmitArrayAdapterNewTarget(
+        GeneratedFunctionObjectMetadata metadata,
+        InstructionEncoder encoder)
+    {
+        if (metadata.Plan.Callable.Kind == CallableKind.Arrow
+            && (metadata.Plan.InvocationRequirements
+                & JavaScriptRuntime.InvocationContextRequirements.NewTarget) != 0)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldnull);
+            encoder.Call(
+                _bclReferences
+                    .RuntimeServices_ResolveGeneratedDirectCallNewTarget_Ref);
+            return;
+        }
+
+        encoder.OpCode(ILOpCode.Ldnull);
     }
 
     private static bool CanEmitArrayCallAdapter(
@@ -687,6 +745,10 @@ internal sealed class GeneratedFunctionObjectEmitter
                 {
                     encoder.LoadArgument(newTargetIndex.Value);
                 }
+                else if (plan.SupportsExplicitInvocationContext)
+                {
+                    encoder.OpCode(ILOpCode.Ldnull);
+                }
                 else
                 {
                     encoder.Call(_bclReferences.RuntimeServices_GetCurrentNewTarget_Ref);
@@ -709,6 +771,16 @@ internal sealed class GeneratedFunctionObjectEmitter
             encoder.OpCode(ILOpCode.Ldnull);
         }
 
+        if (plan.HasExplicitInvocationContextParameter)
+        {
+            EmitExplicitInvocationContext(
+                metadata,
+                encoder,
+                thisArgumentIndex,
+                argumentsIndex,
+                newTargetIndex);
+        }
+
         for (var index = 0; index < plan.Signature.JsParamCount; index++)
         {
             encoder.LoadArgument(argumentsIndex);
@@ -720,6 +792,45 @@ internal sealed class GeneratedFunctionObjectEmitter
         encoder.OpCode(ILOpCode.Call);
         encoder.Token(metadata.EntryPoints[0].MethodHandle);
         EmitReturnAdaptation(encoder, plan.Signature.ReturnClrType);
+    }
+
+    private void EmitExplicitInvocationContext(
+        GeneratedFunctionObjectMetadata metadata,
+        InstructionEncoder encoder,
+        int thisArgumentIndex,
+        int argumentsIndex,
+        int? newTargetIndex)
+    {
+        var plan = metadata.Plan;
+        encoder.LoadConstantI4((int)plan.InvocationRequirements);
+        encoder.LoadArgument(thisArgumentIndex);
+        encoder.LoadArgument(argumentsIndex);
+        encoder.OpCode(ILOpCode.Ldobj);
+        encoder.Token(_bclReferences.JsCallArgumentsType);
+        encoder.OpCode(ILOpCode.Ldarg_0);
+
+        var lexicalNewTarget = plan.StateFields.FirstOrDefault(
+            state => state.Kind
+                == GeneratedFunctionStateKind.LexicalNewTarget);
+        if (plan.Callable.Kind == CallableKind.Arrow
+            && lexicalNewTarget is not null)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldfld);
+            encoder.Token(
+                metadata.FieldHandles[lexicalNewTarget.FieldName]);
+        }
+        else if (newTargetIndex.HasValue)
+        {
+            encoder.LoadArgument(newTargetIndex.Value);
+        }
+        else
+        {
+            encoder.OpCode(ILOpCode.Ldnull);
+        }
+
+        encoder.Call(
+            _bclReferences.GeneratedInvocationContext_Create_Ref);
     }
 
     private void EmitPrivateBrand(

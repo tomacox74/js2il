@@ -92,6 +92,11 @@ sealed record MethodDescriptor
     /// </summary>
     public bool HasNewTargetParameter { get; set; } = true;
 
+    public bool HasInvocationContextParameter { get; set; }
+
+    public JavaScriptRuntime.InvocationContextRequirements
+        InvocationRequirements { get; set; }
+
     /// <summary>
     /// For instance methods that access parent scopes, this is the field handle to the _scopes field.
     /// When set, IL emission loads scopes via: ldarg.0 (this), ldfld ScopesFieldHandle
@@ -460,6 +465,24 @@ internal sealed class JsMethodCompiler
             parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
         }
 
+        var generatedFunctionObjectRegistry =
+            _serviceProvider.GetService<GeneratedFunctionObjectRegistry>();
+        var generatedPlan =
+            generatedFunctionObjectRegistry != null
+            && generatedFunctionObjectRegistry.TryGetPlan(
+                callable,
+                out var plannedFunctionObject)
+                ? plannedFunctionObject
+                : null;
+        var hasInvocationContextParameter =
+            generatedPlan?.HasExplicitInvocationContextParameter == true;
+        if (hasInvocationContextParameter)
+        {
+            parameters.Add(new MethodParameterDescriptor(
+                "invocationContext",
+                typeof(JavaScriptRuntime.GeneratedInvocationContext)));
+        }
+
         for (var i = 0; i < lirMethod!.Parameters.Count; i++)
         {
             parameters.Add(new MethodParameterDescriptor(
@@ -499,6 +522,11 @@ internal sealed class JsMethodCompiler
             ScopeAbiKind = effectiveScopeAbiKind,
             SingleScopeTypeHandle = singleScopeTypeHandle,
             HasNewTargetParameter = hasNewTargetParameter,
+            HasInvocationContextParameter =
+                hasInvocationContextParameter,
+            InvocationRequirements =
+                generatedPlan?.InvocationRequirements
+                ?? JavaScriptRuntime.InvocationContextRequirements.None,
             ReturnsVoid = returnsVoid,
             ReturnClrType = returnsVoid
                 ? typeof(void)

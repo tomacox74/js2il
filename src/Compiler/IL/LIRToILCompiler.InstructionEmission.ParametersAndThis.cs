@@ -47,9 +47,24 @@ internal sealed partial class LIRToILCompiler
 
                     if (methodDescriptor.IsStatic)
                     {
-                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getThisRef);
+                        if (methodDescriptor.HasInvocationContextParameter)
+                        {
+                            EmitLoadCurrentThis(
+                                ilEncoder,
+                                methodDescriptor);
+                            ilEncoder.Call(
+                                _bclReferences
+                                    .RuntimeServices_ResolveLexicalThis_Ref);
+                            EmitStoreTemp(
+                                loadThis.Result,
+                                ilEncoder,
+                                allocation);
+                            break;
+                        }
+
+                        EmitLoadCurrentThis(
+                            ilEncoder,
+                            methodDescriptor);
                         ilEncoder.Call(_bclReferences.RuntimeServices_ResolveLexicalThis_Ref);
                         EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
                         break;

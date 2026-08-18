@@ -86,6 +86,35 @@ namespace Jroc.Services
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle JsObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsObject), Type.EmptyTypes);
         public MemberReferenceHandle JsFunctionObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsFunctionObject), Type.EmptyTypes);
+        public MemberReferenceHandle JsFunctionObject_InitializeInvocationContext_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.JsFunctionObject),
+                "InitializeInvocationContext",
+                new[] { typeof(int), typeof(bool) });
+        public MemberReferenceHandle GeneratedInvocationContext_Create_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                nameof(JavaScriptRuntime.GeneratedInvocationContext.Create),
+                new[]
+                {
+                    typeof(int),
+                    typeof(object),
+                    typeof(JavaScriptRuntime.JsCallArguments),
+                    typeof(object),
+                    typeof(object)
+                });
+        public MemberReferenceHandle GeneratedInvocationContext_CreateFromArray_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                nameof(JavaScriptRuntime.GeneratedInvocationContext.CreateFromArray),
+                new[]
+                {
+                    typeof(int),
+                    typeof(object),
+                    typeof(object[]),
+                    typeof(object),
+                    typeof(object)
+                });
         public MemberReferenceHandle JsClassConstructorObject_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(
                 typeof(JavaScriptRuntime.JsClassConstructorObject),
@@ -152,6 +181,25 @@ namespace Jroc.Services
                 typeof(JavaScriptRuntime.RuntimeServices),
                 nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTarget),
                 Type.EmptyTypes);
+        public MemberReferenceHandle RuntimeServices_ResolveGeneratedDirectCallThis_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedDirectCallThis),
+                new[]
+                {
+                    typeof(JavaScriptRuntime.JsFunctionObject),
+                    typeof(bool),
+                    typeof(object)
+                });
+        public MemberReferenceHandle RuntimeServices_ResolveGeneratedDirectCallNewTarget_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedDirectCallNewTarget),
+                new[]
+                {
+                    typeof(JavaScriptRuntime.JsFunctionObject),
+                    typeof(object)
+                });
         public MemberReferenceHandle RuntimeServices_GetArgumentOrUndefined_Ref =>
             _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.RuntimeServices),

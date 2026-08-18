@@ -6,6 +6,9 @@ namespace JavaScriptRuntime;
 public abstract class JsFunctionObject : JsObject
 {
     private object? _boundWithObject;
+    private InvocationContextRequirements _plannedInvocationRequirements;
+    private bool _hasPlannedInvocationRequirements;
+    private bool _supportsExplicitInvocationContext;
 
     protected JsFunctionObject()
     {
@@ -21,6 +24,27 @@ public abstract class JsFunctionObject : JsObject
     /// Gets whether invocation must populate ambient runtime call state.
     /// </summary>
     public virtual bool RequiresInvocationContext => true;
+
+    public InvocationContextRequirements InvocationRequirements
+        => _hasPlannedInvocationRequirements
+            ? _plannedInvocationRequirements
+            : RequiresInvocationContext
+                ? InvocationContextRequirements.All
+                : InvocationContextRequirements.None;
+
+    public bool SupportsExplicitInvocationContext
+        => _supportsExplicitInvocationContext;
+
+    protected void InitializeInvocationContext(
+        int requirements,
+        bool supportsExplicitInvocationContext)
+    {
+        _plannedInvocationRequirements =
+            (InvocationContextRequirements)requirements;
+        _hasPlannedInvocationRequirements = true;
+        _supportsExplicitInvocationContext =
+            supportsExplicitInvocationContext;
+    }
 
     internal object? InvokeCall(object? thisArgument, in JsCallArguments arguments)
         => CallCore(thisArgument, arguments);

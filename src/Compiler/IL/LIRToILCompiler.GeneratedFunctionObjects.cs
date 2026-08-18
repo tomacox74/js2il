@@ -206,10 +206,19 @@ internal sealed partial class LIRToILCompiler
                 break;
 
             case GeneratedFunctionStateKind.LexicalNewTarget:
-                ilEncoder.OpCode(ILOpCode.Call);
-                ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
-                    typeof(JavaScriptRuntime.RuntimeServices),
-                    nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTarget)));
+                if (methodDescriptor.HasNewTargetParameter)
+                {
+                    ilEncoder.LoadArgument(methodDescriptor.IsStatic
+                        ? methodDescriptor.HasScopesParameter ? 1 : 0
+                        : methodDescriptor.HasScopesParameter ? 2 : 1);
+                }
+                else
+                {
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTarget)));
+                }
                 break;
 
             case GeneratedFunctionStateKind.HomeObject:
@@ -277,10 +286,9 @@ internal sealed partial class LIRToILCompiler
     {
         if (methodDescriptor.IsDerivedConstructor || methodDescriptor.IsStatic)
         {
-            ilEncoder.OpCode(ILOpCode.Call);
-            ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.RuntimeServices),
-                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis)));
+            EmitLoadCurrentThis(
+                ilEncoder,
+                methodDescriptor);
             return;
         }
 

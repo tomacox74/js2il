@@ -36,6 +36,12 @@ public sealed record CallableSemantics
 
     public bool HasNestedArrowLexicalContext { get; init; }
 
+    public bool NestedArrowUsesThis { get; init; }
+
+    public bool NestedArrowUsesNewTarget { get; init; }
+
+    public bool NestedArrowUsesSuper { get; init; }
+
     public static CallableSemantics FromNode(
         Node? callableNode,
         CallableKind callableKind,
@@ -66,6 +72,8 @@ public sealed record CallableSemantics
                 break;
         }
         var requirements = InspectBody(callable);
+        var nestedArrowRequirements =
+            AnalyzeNestedArrowLexicalContext(callableNode);
 
         return new CallableSemantics
         {
@@ -90,8 +98,14 @@ public sealed record CallableSemantics
             UsesNewTarget = requirements.UsesNewTarget,
             UsesSuper = requirements.UsesSuper,
             UsesPrivateNames = requirements.UsesPrivateNames,
+            NestedArrowUsesThis = nestedArrowRequirements.UsesThis,
+            NestedArrowUsesNewTarget =
+                nestedArrowRequirements.UsesNewTarget,
+            NestedArrowUsesSuper = nestedArrowRequirements.UsesSuper,
             HasNestedArrowLexicalContext =
-                AnalyzeNestedArrowLexicalContext(callableNode)
+                nestedArrowRequirements.UsesThis
+                || nestedArrowRequirements.UsesNewTarget
+                || nestedArrowRequirements.UsesSuper
         };
     }
 
@@ -151,45 +165,59 @@ public sealed record CallableSemantics
         }
     }
 
-    private static bool AnalyzeNestedArrowLexicalContext(Node? root)
+    private static CallableRequirements AnalyzeNestedArrowLexicalContext(
+        Node? root)
     {
         if (root == null)
         {
-            return false;
+            return default;
         }
 
-        return Visit(root, isRoot: true);
+        var requirements = new CallableRequirements();
+        Visit(root, isRoot: true);
+        return requirements;
 
-        static bool Visit(Node node, bool isRoot)
+        void Visit(Node node, bool isRoot)
         {
             if (!isRoot && node is FunctionDeclaration or FunctionExpression)
             {
-                return false;
+                return;
             }
 
-            if (!isRoot
-                && node is ArrowFunctionExpression arrow
-                && VisitArrowBody(arrow.Body))
+            if (!isRoot && node is ArrowFunctionExpression arrow)
             {
-                return true;
+                VisitArrowBody(arrow.Body);
+                return;
             }
 
-            return node.ChildNodes.Any(child => Visit(child, isRoot: false));
+            foreach (var child in node.ChildNodes)
+            {
+                Visit(child, isRoot: false);
+            }
         }
 
-        static bool VisitArrowBody(Node node)
+        void VisitArrowBody(Node node)
         {
             if (node is FunctionDeclaration or FunctionExpression)
             {
-                return false;
+                return;
             }
 
-            if (node is ThisExpression or MetaProperty or Super)
+            requirements = node switch
             {
-                return true;
-            }
+                ThisExpression =>
+                    requirements with { UsesThis = true },
+                MetaProperty =>
+                    requirements with { UsesNewTarget = true },
+                Super =>
+                    requirements with { UsesSuper = true },
+                _ => requirements
+            };
 
-            return node.ChildNodes.Any(VisitArrowBody);
+            foreach (var child in node.ChildNodes)
+            {
+                VisitArrowBody(child);
+            }
         }
     }
 

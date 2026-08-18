@@ -452,6 +452,88 @@ public sealed class GeneratedFunctionObjectEmissionTests
             BindingFlags.Static | BindingFlags.NonPublic));
     }
 
+    [Fact]
+    public void ExplicitThisContextAvoidsAmbientStateAndSteadyStateAllocations()
+    {
+        using var compiled = CompileAndLoad(
+            "function currentThis() { return this; }");
+        var functionObjectType = Assert.Single(
+            GetFunctionObjectTypes(compiled.Assembly));
+        var functionObject = Assert.IsAssignableFrom<JsFunctionObject>(
+            Activator.CreateInstance(functionObjectType));
+        var receiver = new JsObject();
+
+        Assert.Equal(
+            InvocationContextRequirements.This,
+            functionObject.InvocationRequirements);
+        Assert.True(functionObject.SupportsExplicitInvocationContext);
+        Assert.False(functionObject.RequiresInvocationContext);
+
+        var canonicalBody = functionObjectType.DeclaringType!.GetMethod(
+            "__js_call__",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
+        Assert.Contains(
+            typeof(GeneratedInvocationContext),
+            canonicalBody.GetParameters()
+                .Select(parameter => parameter.ParameterType));
+
+        for (var index = 0; index < 1_000; index++)
+        {
+            Assert.Same(
+                receiver,
+                CallableOperations.Call0(functionObject, receiver));
+        }
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        object? result = null;
+        for (var index = 0; index < 10_000; index++)
+        {
+            result = CallableOperations.Call0(functionObject, receiver);
+        }
+        var allocated =
+            GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Same(receiver, result);
+        Assert.Equal(0, allocated);
+    }
+
+    [Theory]
+    [InlineData(
+        "function count() { \"use strict\"; return arguments.length; }",
+        "count")]
+    [InlineData(
+        "const count = (...values) => values.length;",
+        null)]
+    public void ExplicitArgumentsContextPreservesPackedArguments(
+        string source,
+        string? declaringTypeName)
+    {
+        using var compiled = CompileAndLoad(source);
+        var functionObjectType = Assert.Single(
+            GetFunctionObjectTypes(compiled.Assembly));
+        if (declaringTypeName is not null)
+        {
+            Assert.Equal(
+                declaringTypeName,
+                functionObjectType.DeclaringType?.Name);
+        }
+
+        var functionObject = Assert.IsAssignableFrom<JsFunctionObject>(
+            Activator.CreateInstance(functionObjectType));
+        Assert.Equal(
+            InvocationContextRequirements.Arguments,
+            functionObject.InvocationRequirements);
+        Assert.True(functionObject.SupportsExplicitInvocationContext);
+        Assert.False(functionObject.RequiresInvocationContext);
+        Assert.Equal(
+            2d,
+            CallableOperations.Call2(
+                functionObject,
+                null,
+                "first",
+                "second"));
+    }
+
     private static string[] DescribeFunctionObjectTypes(Assembly assembly)
     {
         return GetFunctionObjectTypes(assembly)

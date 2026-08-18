@@ -15,6 +15,16 @@ internal static class GeneratedFunctionObjectPlanner
         var classScope = ResolveClassScope(callable, symbolTable, callableScope);
         var captures = BuildCapturePlan(callableScope, signature, out var slotCount);
         var returnKind = GetReturnKind(callable);
+        var invocationRequirements = GetInvocationRequirements(
+            callable,
+            callableScope,
+            returnKind);
+        var supportsExplicitInvocationContext =
+            SupportsExplicitInvocationContext(
+                callable,
+                callableScope,
+                returnKind,
+                invocationRequirements);
 
         return new GeneratedFunctionObjectPlan
         {
@@ -38,17 +48,13 @@ internal static class GeneratedFunctionObjectPlanner
                 signature),
             ScopeChainSlotCount = slotCount,
             IsConstructable = IsConstructable(callable),
+            InvocationRequirements = invocationRequirements,
+            SupportsExplicitInvocationContext =
+                supportsExplicitInvocationContext,
             RequiresInvocationContext =
-                callable.NeedsArgumentsObject
-                || callable.HasRestParameters
-                || callable.Semantics.IsNamedFunctionExpression
-                || callableScope?.MayUseBoundWithObject == true
-                || callable.Semantics.HasNestedArrowLexicalContext
-                || callable.Semantics.UsesThis
-                || callable.Semantics.UsesNewTarget
-                || callable.Semantics.UsesSuper
-                || returnKind is GeneratedFunctionReturnKind.Generator
-                    or GeneratedFunctionReturnKind.AsyncGenerator,
+                invocationRequirements
+                    != JavaScriptRuntime.InvocationContextRequirements.None
+                && !supportsExplicitInvocationContext,
             UsesNonStrictThisBinding =
                 callable.Kind is CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
@@ -60,6 +66,78 @@ internal static class GeneratedFunctionObjectPlanner
             ReturnKind = returnKind
         };
     }
+
+    private static JavaScriptRuntime.InvocationContextRequirements
+        GetInvocationRequirements(
+            CallableId callable,
+            Scope? callableScope,
+            GeneratedFunctionReturnKind returnKind)
+    {
+        var requirements =
+            JavaScriptRuntime.InvocationContextRequirements.None;
+        if (callable.Semantics.UsesThis
+            || callable.Semantics.NestedArrowUsesThis)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.This;
+        }
+        if (callable.NeedsArgumentsObject || callable.HasRestParameters)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.Arguments;
+        }
+        if (callable.Semantics.IsNamedFunctionExpression
+            || callable.IncludeCalleeInArgumentsObject
+            || callableScope?.MayUseBoundWithObject == true)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.Callee;
+        }
+        if (callable.Semantics.UsesNewTarget
+            || callable.Semantics.NestedArrowUsesNewTarget)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.NewTarget;
+        }
+        if (callable.Semantics.UsesSuper
+            || callable.Semantics.NestedArrowUsesSuper)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.LexicalSuper;
+        }
+        if (callable.Semantics.UsesSuper)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.This;
+        }
+        if (returnKind is GeneratedFunctionReturnKind.Generator
+            or GeneratedFunctionReturnKind.AsyncGenerator)
+        {
+            requirements |=
+                JavaScriptRuntime.InvocationContextRequirements.This
+                | JavaScriptRuntime.InvocationContextRequirements.Arguments;
+        }
+        return requirements;
+    }
+
+    private static bool SupportsExplicitInvocationContext(
+        CallableId callable,
+        Scope? callableScope,
+        GeneratedFunctionReturnKind returnKind,
+        JavaScriptRuntime.InvocationContextRequirements requirements)
+        => callable.Kind is CallableKind.FunctionDeclaration
+                or CallableKind.FunctionExpression
+                or CallableKind.Arrow
+            && returnKind == GeneratedFunctionReturnKind.Value
+            && callableScope?.MayUseBoundWithObject != true
+            && !callable.Semantics.NestedArrowUsesSuper
+            && !callable.Semantics.IsNamedFunctionExpression
+            && !callable.IncludeCalleeInArgumentsObject
+            && (requirements
+                & ~(JavaScriptRuntime.InvocationContextRequirements.This
+                    | JavaScriptRuntime.InvocationContextRequirements.Arguments
+                    | JavaScriptRuntime.InvocationContextRequirements.NewTarget))
+                == JavaScriptRuntime.InvocationContextRequirements.None;
 
     private static bool HasDirectSpreadCall(
         CallableId callable,

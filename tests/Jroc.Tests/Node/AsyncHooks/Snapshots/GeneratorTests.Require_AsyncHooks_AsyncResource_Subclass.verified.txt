@@ -43,15 +43,19 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 22 (0x16)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject::_environment0_Require_AsyncHooks_AsyncResource_Subclass
-				IL_000d: ret
+				IL_0007: ldc.i4.1
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ldarg.0
+				IL_000f: ldarg.1
+				IL_0010: stfld class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject::_environment0_Require_AsyncHooks_AsyncResource_Subclass
+				IL_0015: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -72,7 +76,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -83,20 +87,27 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 31 (0x1f)
+				// Code size: 42 (0x2a)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject::_environment0_Require_AsyncHooks_AsyncResource_Subclass
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: ldarg.2
-				IL_000c: ldc.i4.0
-				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0012: ldarg.2
-				IL_0013: ldc.i4.1
-				IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0019: call object Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler::__js_call__(class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope, object, object, object)
-				IL_001e: ret
+				IL_0006: ldnull
+				IL_0007: ldc.i4.1
+				IL_0008: ldarg.1
+				IL_0009: ldarg.2
+				IL_000a: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_000f: ldarg.0
+				IL_0010: ldnull
+				IL_0011: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0016: ldarg.2
+				IL_0017: ldc.i4.0
+				IL_0018: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001d: ldarg.2
+				IL_001e: ldc.i4.1
+				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0024: call object Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler::__js_call__(class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, object)
+				IL_0029: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -107,20 +118,27 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 27 (0x1b)
+				// Code size: 42 (0x2a)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject::_environment0_Require_AsyncHooks_AsyncResource_Subclass
 				IL_0006: ldarg.3
-				IL_0007: ldarg.2
-				IL_0008: ldc.i4.0
-				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: ldarg.2
-				IL_000f: ldc.i4.1
-				IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0015: call object Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler::__js_call__(class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope, object, object, object)
-				IL_001a: ret
+				IL_0007: ldc.i4.1
+				IL_0008: ldarg.1
+				IL_0009: ldarg.2
+				IL_000a: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_000f: ldarg.0
+				IL_0010: ldarg.3
+				IL_0011: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0016: ldarg.2
+				IL_0017: ldc.i4.0
+				IL_0018: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001d: ldarg.2
+				IL_001e: ldc.i4.1
+				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0024: call object Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler::__js_call__(class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, object)
+				IL_0029: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -149,6 +167,7 @@
 			object __js_call__ (
 				class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope scope,
 				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
 				object 'error',
 				object data
 			) cil managed 
@@ -159,7 +178,7 @@
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
 			// Header size: 12
-			// Code size: 93 (0x5d)
+			// Code size: 95 (0x5f)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -175,32 +194,33 @@
 			IL_000c: ldstr "Cannot access 'handler' before initialization"
 			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 			IL_0016: stloc.1
-			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0021: ldloc.1
-			IL_0022: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0027: stloc.2
-			IL_0028: ldloc.2
-			IL_0029: box [System.Runtime]System.Boolean
-			IL_002e: stloc.3
-			IL_002f: ldloc.0
-			IL_0030: ldstr "derived receiver:"
-			IL_0035: ldloc.3
-			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_003b: pop
-			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: stloc.0
-			IL_0042: ldloc.0
-			IL_0043: ldstr "error:"
-			IL_0048: ldarg.2
-			IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004e: pop
-			IL_004f: ldarg.3
-			IL_0050: ldstr "statusCode"
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005a: stloc.1
-			IL_005b: ldloc.1
-			IL_005c: ret
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0022: ldloc.1
+			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0028: stloc.2
+			IL_0029: ldloc.2
+			IL_002a: box [System.Runtime]System.Boolean
+			IL_002f: stloc.3
+			IL_0030: ldloc.0
+			IL_0031: ldstr "derived receiver:"
+			IL_0036: ldloc.3
+			IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_003c: pop
+			IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0042: stloc.0
+			IL_0043: ldloc.0
+			IL_0044: ldstr "error:"
+			IL_0049: ldarg.3
+			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_004f: pop
+			IL_0050: ldarg.s data
+			IL_0052: ldstr "statusCode"
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005c: stloc.1
+			IL_005d: ldloc.1
+			IL_005e: ret
 		} // end of method FunctionExpression_handler::__js_call__
 
 	} // end of class FunctionExpression_handler
@@ -283,21 +303,25 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 28 (0x1c)
+				// Code size: 37 (0x25)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_transitionalScopes
-				IL_000d: ldarg.0
-				IL_000e: ldarg.2
-				IL_000f: stfld class [System.Runtime]System.Object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_homeObject
-				IL_0014: ldarg.0
-				IL_0015: ldarg.3
-				IL_0016: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_lexicalSuperScopes
-				IL_001b: ret
+				IL_0007: ldc.i4.s 17
+				IL_0009: ldc.i4.0
+				IL_000a: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000f: ldarg.0
+				IL_0010: ldarg.1
+				IL_0011: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_transitionalScopes
+				IL_0016: ldarg.0
+				IL_0017: ldarg.2
+				IL_0018: stfld class [System.Runtime]System.Object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_homeObject
+				IL_001d: ldarg.0
+				IL_001e: ldarg.3
+				IL_001f: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::_lexicalSuperScopes
+				IL_0024: ret
 			} // end of method FunctionObject_ClassConstructor_56E834DB_UndiciStyleHandler::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -356,12 +380,16 @@
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 15 (0xf)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.1
+				IL_0008: ldc.i4.0
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ret
 			} // end of method FunctionObject_ClassMethod_4E00F3BF_UndiciStyleHandler_deliver::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -678,7 +706,7 @@
 		IL_0102: ldc.i4.2
 		IL_0103: conv.r8
 		IL_0104: ldstr ""
-		IL_0109: ldc.i4.1
+		IL_0109: ldc.i4.0
 		IL_010a: ldc.i4.1
 		IL_010b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0110: stloc.s 8

@@ -34,30 +34,39 @@ through `Construct5` and `Construct`; fixed construction entry points carry
 ## Invocation context
 
 Every `JsFunctionObject` receives `this`, `JsCallArguments`, and (for
-construction) `newTarget` explicitly. Generated adapters override
-`RequiresInvocationContext` with `false` when the callable does not read
-ambient call state. That path installs no `AsyncLocal` values and performs no
-argument materialization.
+construction) `newTarget` explicitly. `GeneratedFunctionObjectPlanner`
+classifies each generated callable with independent `This`, `Arguments`,
+`Callee`, `NewTarget`, and `LexicalSuper` requirements.
 
-Callables that use `arguments`, reflective callee state, or another runtime
-feature that requires ambient invocation state retain the default value of
-`true`. `CallableOperations` then installs receiver, packed arguments, callee,
-and `newTarget` for the duration of the call and restores outer state in a
-`finally` block. `RuntimeServices.GetCurrentArguments()` lazily materializes
-inline arguments on first observation and returns the same array for the
-remainder of that invocation.
+Synchronous generated functions whose canonical ABI can accept explicit state
+receive a readonly `GeneratedInvocationContext` value after `newTarget`.
+The generated adapter populates only the planned values. Ordinary-function
+`this` is loaded from that parameter rather than
+`RuntimeServices.GetCurrentThis()`. Strict `arguments` objects and rest
+parameters consume the packed `JsCallArguments` from the same value and
+materialize an array only when source semantics request one. `new.target`
+continues to use its existing explicit canonical parameter.
+
+Generated callables needing no invocation data, plus callables using the
+explicit context, install no `AsyncLocal` values. Compatibility paths for
+named-function identity, non-strict `arguments.callee`, bound `with`
+environments, lexical `super`, and resumable state machines retain ambient
+transport. `CallableOperations` and generated array adapters publish only the
+individual values selected by `InvocationContextRequirements`, then restore
+only those values in a `finally` block. Inline arguments remain lazy and
+stable for the duration of an invocation.
 
 Known spread/rest/`arguments` calls still end in the canonical typed MethodDef.
 Their generated static array adapter receives the actual `JsFunctionObject`
 alongside scopes and the existing argument array whenever the callable is
 materialized. A proven direct-only rest callable passes no function object and
 installs only argument state because no JavaScript-visible identity exists.
-`RuntimeServices.PushGeneratedFunctionDirectCall` establishes the same
-receiver, callee, arguments, `new.target`, and lexical-super state used by
-`CallableOperations`; the adapter restores that state with
+`RuntimeServices.PushGeneratedFunctionDirectCall` establishes only the
+planned receiver, callee, arguments, `new.target`, and lexical-super values
+still required by a compatibility path; the adapter restores that state with
 `PopGeneratedFunctionDirectCall` from a `finally` block. This preserves
 `arguments.callee` identity and nested-call isolation without creating a CLR
-delegate or widening the canonical body signature.
+delegate.
 
 ## Generated adapter contract
 

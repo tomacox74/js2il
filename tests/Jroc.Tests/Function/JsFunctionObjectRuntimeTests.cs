@@ -547,6 +547,58 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
+    public void SelectiveInvocationRequirementsPublishOnlyRequestedValues()
+    {
+        var function = new SelectiveContextFunction(
+            InvocationContextRequirements.Arguments
+            | InvocationContextRequirements.Callee);
+        var ambientArguments = new object?[] { "ambient-argument" };
+        var previousThis = RuntimeServices.SetCurrentThis("ambient-this");
+        var previousArguments =
+            RuntimeServices.SetCurrentArguments(ambientArguments);
+        var previousCallee =
+            RuntimeServices.SetCurrentCallee("ambient-callee");
+        var previousNewTarget =
+            RuntimeServices.SetCurrentNewTarget("ambient-new-target");
+        try
+        {
+            var observed = Assert.IsType<SelectiveContextSnapshot>(
+                CallableOperations.Call1(
+                    function,
+                    "explicit-this",
+                    "explicit-argument"));
+
+            Assert.Equal("ambient-this", observed.ThisArgument);
+            Assert.Equal(
+                new object?[] { "explicit-argument" },
+                observed.Arguments);
+            Assert.Same(function, observed.Callee);
+            Assert.Equal(
+                "ambient-new-target",
+                observed.NewTarget);
+            Assert.Equal(
+                "ambient-this",
+                RuntimeServices.GetCurrentThis());
+            Assert.Same(
+                ambientArguments,
+                RuntimeServices.GetCurrentArguments());
+            Assert.Equal(
+                "ambient-callee",
+                RuntimeServices.GetCurrentCallee());
+            Assert.Equal(
+                "ambient-new-target",
+                RuntimeServices.GetCurrentNewTarget());
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            RuntimeServices.SetCurrentCallee(previousCallee);
+            RuntimeServices.SetCurrentArguments(previousArguments);
+            RuntimeServices.SetCurrentThis(previousThis);
+        }
+    }
+
+    [Fact]
     public void ReceiverAwareVariadicBuiltinReceivesPackedArgumentsWithoutAmbientState()
     {
         BuiltinFunctionVariadic function =
@@ -969,6 +1021,26 @@ public sealed class JsFunctionObjectRuntimeTests
                 arguments.UsesArrayStorage);
     }
 
+    private sealed class SelectiveContextFunction : JsFunctionObject
+    {
+        public SelectiveContextFunction(
+            InvocationContextRequirements requirements)
+        {
+            InitializeInvocationContext(
+                (int)requirements,
+                supportsExplicitInvocationContext: false);
+        }
+
+        protected override object? CallCore(
+            object? thisArgument,
+            in JsCallArguments arguments)
+            => new SelectiveContextSnapshot(
+                RuntimeServices.GetCurrentThis(),
+                RuntimeServices.GetCurrentArguments(),
+                RuntimeServices.GetCurrentCallee(),
+                RuntimeServices.GetCurrentNewTarget());
+    }
+
     private sealed class DelegateHost
     {
         public object? Echo(object value) => value;
@@ -984,6 +1056,12 @@ public sealed class JsFunctionObjectRuntimeTests
     private sealed record CallSnapshot(
         object? ThisArgument,
         object? Argument,
+        object? Callee,
+        object? NewTarget);
+
+    private sealed record SelectiveContextSnapshot(
+        object? ThisArgument,
+        object?[]? Arguments,
         object? Callee,
         object? NewTarget);
 

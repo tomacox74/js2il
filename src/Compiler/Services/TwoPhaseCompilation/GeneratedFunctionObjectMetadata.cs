@@ -62,6 +62,16 @@ public sealed record GeneratedFunctionObjectPlan
 
     public bool RequiresInvocationContext { get; init; }
 
+    public JavaScriptRuntime.InvocationContextRequirements InvocationRequirements { get; init; }
+
+    public bool SupportsExplicitInvocationContext { get; init; }
+
+    public bool HasExplicitInvocationContextParameter
+        => SupportsExplicitInvocationContext
+            && (InvocationRequirements
+                & ~JavaScriptRuntime.InvocationContextRequirements.NewTarget)
+                != JavaScriptRuntime.InvocationContextRequirements.None;
+
     public bool UsesNonStrictThisBinding { get; init; }
 
     public bool RequiresArrayCallAdapter { get; init; }
