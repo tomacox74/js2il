@@ -45,12 +45,16 @@
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 15 (0xf)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.2
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -71,7 +75,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -82,37 +86,28 @@
 					object[] arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 41 (0x29)
+				// Header size: 1
+				// Code size: 38 (0x26)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldarg.2
-				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
-				.try
-				{
-					IL_0007: ldnull
-					IL_0008: ldarg.2
-					IL_0009: ldc.i4.0
-					IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
-					IL_000f: ldarg.2
-					IL_0010: ldc.i4.1
-					IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
-					IL_0016: call object Modules.Function_Arguments_Basics/f::__js_call__(object, object, object)
-					IL_001b: stloc.0
-					IL_001c: leave IL_0027
-				} // end .try
-				finally
-				{
-					IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
-					IL_0026: endfinally
-				} // end handler
-
-				IL_0027: ldloc.0
-				IL_0028: ret
+				IL_0000: ldnull
+				IL_0001: ldc.i4.2
+				IL_0002: ldarg.0
+				IL_0003: ldc.i4.0
+				IL_0004: ldnull
+				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedDirectCallThis(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, bool, object)
+				IL_000a: ldarg.2
+				IL_000b: ldarg.0
+				IL_000c: ldnull
+				IL_000d: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::CreateFromArray(int32, object, object[], object, object)
+				IL_0012: ldarg.2
+				IL_0013: ldc.i4.0
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+				IL_0019: ldarg.2
+				IL_001a: ldc.i4.1
+				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+				IL_0020: call object Modules.Function_Arguments_Basics/f::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, object)
+				IL_0025: ret
 			} // end of method FunctionObject::__js_call_with_arguments__
 
 			.method family hidebysig virtual 
@@ -122,18 +117,25 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 25 (0x19)
+				// Code size: 36 (0x24)
 				.maxstack 8
 
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_0005: ldarg.2
-				IL_0006: ldc.i4.0
-				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000c: ldarg.2
-				IL_000d: ldc.i4.1
-				IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0013: call object Modules.Function_Arguments_Basics/f::__js_call__(object, object, object)
-				IL_0018: ret
+				IL_0000: ldnull
+				IL_0001: ldc.i4.2
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldnull
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: ldarg.2
+				IL_0018: ldc.i4.1
+				IL_0019: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001e: call object Modules.Function_Arguments_Basics/f::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, object)
+				IL_0023: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -144,18 +146,25 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 21 (0x15)
+				// Code size: 36 (0x24)
 				.maxstack 8
 
 				IL_0000: ldarg.3
-				IL_0001: ldarg.2
-				IL_0002: ldc.i4.0
-				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0008: ldarg.2
-				IL_0009: ldc.i4.1
-				IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000f: call object Modules.Function_Arguments_Basics/f::__js_call__(object, object, object)
-				IL_0014: ret
+				IL_0001: ldc.i4.2
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldarg.3
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: ldarg.2
+				IL_0018: ldc.i4.1
+				IL_0019: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001e: call object Modules.Function_Arguments_Basics/f::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, object)
+				IL_0023: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -183,6 +192,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
 				object a,
 				object b
 			) cil managed 
@@ -191,7 +201,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 159 (0x9f)
+			// Code size: 160 (0xa0)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_Basics/f/Scope,
@@ -202,58 +212,59 @@
 			IL_0000: newobj instance void Modules.Function_Arguments_Basics/f/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldnull
-			IL_0009: ldc.i4.0
-			IL_000a: ldc.i4.1
-			IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[], bool, bool)
-			IL_0010: stfld object Modules.Function_Arguments_Basics/f/Scope::arguments
-			IL_0015: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001a: stloc.1
-			IL_001b: ldloc.0
-			IL_001c: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
-			IL_0021: ldstr "length"
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_002b: stloc.2
-			IL_002c: ldloc.1
-			IL_002d: ldloc.2
-			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0033: pop
-			IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0039: stloc.1
-			IL_003a: ldloc.0
-			IL_003b: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
-			IL_0040: ldc.r8 0.0
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_004e: stloc.2
-			IL_004f: ldloc.1
-			IL_0050: ldloc.2
-			IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0056: pop
-			IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005c: stloc.1
-			IL_005d: ldloc.0
-			IL_005e: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
-			IL_0063: ldc.r8 1
-			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0071: stloc.2
-			IL_0072: ldloc.1
-			IL_0073: ldloc.2
-			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0079: pop
-			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007f: stloc.1
-			IL_0080: ldloc.0
-			IL_0081: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
-			IL_0086: ldc.r8 2
-			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0094: stloc.2
-			IL_0095: ldloc.1
-			IL_0096: ldloc.2
-			IL_0097: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_009c: pop
-			IL_009d: ldnull
-			IL_009e: ret
+			IL_0007: ldarg.1
+			IL_0008: ldloc.0
+			IL_0009: ldnull
+			IL_000a: ldc.i4.0
+			IL_000b: ldc.i4.1
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, string[], bool, bool)
+			IL_0011: stfld object Modules.Function_Arguments_Basics/f/Scope::arguments
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
+			IL_0022: ldstr "length"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002c: stloc.2
+			IL_002d: ldloc.1
+			IL_002e: ldloc.2
+			IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0034: pop
+			IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003a: stloc.1
+			IL_003b: ldloc.0
+			IL_003c: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
+			IL_0041: ldc.r8 0.0
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_004f: stloc.2
+			IL_0050: ldloc.1
+			IL_0051: ldloc.2
+			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0057: pop
+			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005d: stloc.1
+			IL_005e: ldloc.0
+			IL_005f: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
+			IL_0064: ldc.r8 1
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0072: stloc.2
+			IL_0073: ldloc.1
+			IL_0074: ldloc.2
+			IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_007a: pop
+			IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0080: stloc.1
+			IL_0081: ldloc.0
+			IL_0082: ldfld object Modules.Function_Arguments_Basics/f/Scope::arguments
+			IL_0087: ldc.r8 2
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0095: stloc.2
+			IL_0096: ldloc.1
+			IL_0097: ldloc.2
+			IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_009d: pop
+			IL_009e: ldnull
+			IL_009f: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -447,15 +458,19 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 22 (0x16)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Function_Arguments_Basics/Scope Modules.Function_Arguments_Basics/outer/FunctionObject::_environment0_Function_Arguments_Basics
-				IL_000d: ret
+				IL_0007: ldc.i4.2
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ldarg.0
+				IL_000f: ldarg.1
+				IL_0010: stfld class Modules.Function_Arguments_Basics/Scope Modules.Function_Arguments_Basics/outer/FunctionObject::_environment0_Function_Arguments_Basics
+				IL_0015: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -476,7 +491,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -487,38 +502,29 @@
 					object[] arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 42 (0x2a)
+				// Header size: 1
+				// Code size: 39 (0x27)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldarg.2
-				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
-				.try
-				{
-					IL_0007: ldarg.1
-					IL_0008: ldc.i4.0
-					IL_0009: ldelem.ref
-					IL_000a: castclass Modules.Function_Arguments_Basics/Scope
-					IL_000f: ldnull
-					IL_0010: ldarg.2
-					IL_0011: ldc.i4.0
-					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
-					IL_0017: call object Modules.Function_Arguments_Basics/outer::__js_call__(class Modules.Function_Arguments_Basics/Scope, object, object)
-					IL_001c: stloc.0
-					IL_001d: leave IL_0028
-				} // end .try
-				finally
-				{
-					IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
-					IL_0027: endfinally
-				} // end handler
-
-				IL_0028: ldloc.0
-				IL_0029: ret
+				IL_0000: ldarg.1
+				IL_0001: ldc.i4.0
+				IL_0002: ldelem.ref
+				IL_0003: castclass Modules.Function_Arguments_Basics/Scope
+				IL_0008: ldnull
+				IL_0009: ldc.i4.2
+				IL_000a: ldarg.0
+				IL_000b: ldc.i4.0
+				IL_000c: ldnull
+				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedDirectCallThis(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, bool, object)
+				IL_0012: ldarg.2
+				IL_0013: ldarg.0
+				IL_0014: ldnull
+				IL_0015: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::CreateFromArray(int32, object, object[], object, object)
+				IL_001a: ldarg.2
+				IL_001b: ldc.i4.0
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+				IL_0021: call object Modules.Function_Arguments_Basics/outer::__js_call__(class Modules.Function_Arguments_Basics/Scope, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_0026: ret
 			} // end of method FunctionObject::__js_call_with_arguments__
 
 			.method family hidebysig virtual 
@@ -528,17 +534,24 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 24 (0x18)
+				// Code size: 35 (0x23)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld class Modules.Function_Arguments_Basics/Scope Modules.Function_Arguments_Basics/outer/FunctionObject::_environment0_Function_Arguments_Basics
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: ldarg.2
-				IL_000c: ldc.i4.0
-				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0012: call object Modules.Function_Arguments_Basics/outer::__js_call__(class Modules.Function_Arguments_Basics/Scope, object, object)
-				IL_0017: ret
+				IL_0006: ldnull
+				IL_0007: ldc.i4.2
+				IL_0008: ldarg.1
+				IL_0009: ldarg.2
+				IL_000a: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_000f: ldarg.0
+				IL_0010: ldnull
+				IL_0011: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0016: ldarg.2
+				IL_0017: ldc.i4.0
+				IL_0018: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001d: call object Modules.Function_Arguments_Basics/outer::__js_call__(class Modules.Function_Arguments_Basics/Scope, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_0022: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -549,17 +562,24 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 20 (0x14)
+				// Code size: 35 (0x23)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld class Modules.Function_Arguments_Basics/Scope Modules.Function_Arguments_Basics/outer/FunctionObject::_environment0_Function_Arguments_Basics
 				IL_0006: ldarg.3
-				IL_0007: ldarg.2
-				IL_0008: ldc.i4.0
-				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: call object Modules.Function_Arguments_Basics/outer::__js_call__(class Modules.Function_Arguments_Basics/Scope, object, object)
-				IL_0013: ret
+				IL_0007: ldc.i4.2
+				IL_0008: ldarg.1
+				IL_0009: ldarg.2
+				IL_000a: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_000f: ldarg.0
+				IL_0010: ldarg.3
+				IL_0011: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0016: ldarg.2
+				IL_0017: ldc.i4.0
+				IL_0018: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001d: call object Modules.Function_Arguments_Basics/outer::__js_call__(class Modules.Function_Arguments_Basics/Scope, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_0022: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -588,6 +608,7 @@
 			object __js_call__ (
 				class Modules.Function_Arguments_Basics/Scope scope,
 				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
 				object a
 			) cil managed 
 		{
@@ -597,7 +618,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 117 (0x75)
+			// Code size: 118 (0x76)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_Basics/outer/Scope,
@@ -609,56 +630,57 @@
 			IL_0000: newobj instance void Modules.Function_Arguments_Basics/outer/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldnull
-			IL_0009: ldc.i4.0
-			IL_000a: ldc.i4.1
-			IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[], bool, bool)
-			IL_0010: stfld object Modules.Function_Arguments_Basics/outer/Scope::arguments
-			IL_0015: ldc.i4.2
-			IL_0016: newarr [System.Runtime]System.Object
-			IL_001b: dup
-			IL_001c: ldc.i4.0
-			IL_001d: ldarg.0
-			IL_001e: stelem.ref
-			IL_001f: dup
-			IL_0020: ldc.i4.1
-			IL_0021: ldloc.0
-			IL_0022: stelem.ref
-			IL_0023: stloc.2
-			IL_0024: ldloc.2
-			IL_0025: ldc.i4.1
-			IL_0026: ldelem.ref
-			IL_0027: castclass Modules.Function_Arguments_Basics/outer/Scope
-			IL_002c: ldloc.2
-			IL_002d: newobj instance void Modules.Function_Arguments_Basics/outer/ArrowFunction_L14C19/FunctionObject::.ctor(class Modules.Function_Arguments_Basics/outer/Scope, object[])
-			IL_0032: ldc.i4.0
-			IL_0033: conv.r8
-			IL_0034: ldstr ""
-			IL_0039: ldc.i4.0
+			IL_0007: ldarg.2
+			IL_0008: ldloc.0
+			IL_0009: ldnull
+			IL_000a: ldc.i4.0
+			IL_000b: ldc.i4.1
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, string[], bool, bool)
+			IL_0011: stfld object Modules.Function_Arguments_Basics/outer/Scope::arguments
+			IL_0016: ldc.i4.2
+			IL_0017: newarr [System.Runtime]System.Object
+			IL_001c: dup
+			IL_001d: ldc.i4.0
+			IL_001e: ldarg.0
+			IL_001f: stelem.ref
+			IL_0020: dup
+			IL_0021: ldc.i4.1
+			IL_0022: ldloc.0
+			IL_0023: stelem.ref
+			IL_0024: stloc.2
+			IL_0025: ldloc.2
+			IL_0026: ldc.i4.1
+			IL_0027: ldelem.ref
+			IL_0028: castclass Modules.Function_Arguments_Basics/outer/Scope
+			IL_002d: ldloc.2
+			IL_002e: newobj instance void Modules.Function_Arguments_Basics/outer/ArrowFunction_L14C19/FunctionObject::.ctor(class Modules.Function_Arguments_Basics/outer/Scope, object[])
+			IL_0033: ldc.i4.0
+			IL_0034: conv.r8
+			IL_0035: ldstr ""
 			IL_003a: ldc.i4.0
-			IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Basics/outer/ArrowFunction_L14C19/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_Arguments_Basics/outer/ArrowFunction_L14C19/FunctionObject>(!!0)
-			IL_0045: stloc.3
-			IL_0046: ldloc.3
-			IL_0047: ldstr "arrow"
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-			IL_0051: stloc.1
-			IL_0052: ldc.i4.1
-			IL_0053: newarr [System.Runtime]System.Object
-			IL_0058: dup
-			IL_0059: ldc.i4.0
-			IL_005a: ldarg.0
-			IL_005b: stelem.ref
-			IL_005c: stloc.2
-			IL_005d: ldloc.1
-			IL_005e: ldloc.2
-			IL_005f: ldc.r8 99
-			IL_0068: box [System.Runtime]System.Double
-			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_0072: pop
-			IL_0073: ldnull
-			IL_0074: ret
+			IL_003b: ldc.i4.0
+			IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Basics/outer/ArrowFunction_L14C19/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_Arguments_Basics/outer/ArrowFunction_L14C19/FunctionObject>(!!0)
+			IL_0046: stloc.3
+			IL_0047: ldloc.3
+			IL_0048: ldstr "arrow"
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+			IL_0052: stloc.1
+			IL_0053: ldc.i4.1
+			IL_0054: newarr [System.Runtime]System.Object
+			IL_0059: dup
+			IL_005a: ldc.i4.0
+			IL_005b: ldarg.0
+			IL_005c: stelem.ref
+			IL_005d: stloc.2
+			IL_005e: ldloc.1
+			IL_005f: ldloc.2
+			IL_0060: ldc.r8 99
+			IL_0069: box [System.Runtime]System.Double
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_0073: pop
+			IL_0074: ldnull
+			IL_0075: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -705,12 +727,16 @@
 					instance void .ctor () cil managed 
 				{
 					// Header size: 1
-					// Code size: 7 (0x7)
+					// Code size: 15 (0xf)
 					.maxstack 8
 
 					IL_0000: ldarg.0
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-					IL_0006: ret
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.2
+					IL_0008: ldc.i4.1
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
 				} // end of method FunctionObject::.ctor
 
 				.method public hidebysig specialname virtual 
@@ -731,7 +757,7 @@
 					// Code size: 2 (0x2)
 					.maxstack 8
 
-					IL_0000: ldc.i4.1
+					IL_0000: ldc.i4.0
 					IL_0001: ret
 				} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -742,31 +768,22 @@
 						object[] arguments
 					) cil managed 
 				{
-					// Header size: 12
-					// Code size: 27 (0x1b)
+					// Header size: 1
+					// Code size: 24 (0x18)
 					.maxstack 8
-					.locals init (
-						[0] object
-					)
 
-					IL_0000: ldarg.0
-					IL_0001: ldarg.2
-					IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
-					.try
-					{
-						IL_0007: ldnull
-						IL_0008: call object Modules.Function_Arguments_Basics/g/inner::__js_call__(object)
-						IL_000d: stloc.0
-						IL_000e: leave IL_0019
-					} // end .try
-					finally
-					{
-						IL_0013: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
-						IL_0018: endfinally
-					} // end handler
-
-					IL_0019: ldloc.0
-					IL_001a: ret
+					IL_0000: ldnull
+					IL_0001: ldc.i4.2
+					IL_0002: ldarg.0
+					IL_0003: ldc.i4.0
+					IL_0004: ldnull
+					IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedDirectCallThis(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, bool, object)
+					IL_000a: ldarg.2
+					IL_000b: ldarg.0
+					IL_000c: ldnull
+					IL_000d: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::CreateFromArray(int32, object, object[], object, object)
+					IL_0012: call object Modules.Function_Arguments_Basics/g/inner::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+					IL_0017: ret
 				} // end of method FunctionObject::__js_call_with_arguments__
 
 				.method family hidebysig virtual 
@@ -776,12 +793,19 @@
 					) cil managed 
 				{
 					// Header size: 1
-					// Code size: 11 (0xb)
+					// Code size: 22 (0x16)
 					.maxstack 8
 
-					IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-					IL_0005: call object Modules.Function_Arguments_Basics/g/inner::__js_call__(object)
-					IL_000a: ret
+					IL_0000: ldnull
+					IL_0001: ldc.i4.2
+					IL_0002: ldarg.1
+					IL_0003: ldarg.2
+					IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+					IL_0009: ldarg.0
+					IL_000a: ldnull
+					IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+					IL_0010: call object Modules.Function_Arguments_Basics/g/inner::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+					IL_0015: ret
 				} // end of method FunctionObject::CallCore
 
 				.method family hidebysig virtual 
@@ -792,12 +816,19 @@
 					) cil managed 
 				{
 					// Header size: 1
-					// Code size: 7 (0x7)
+					// Code size: 22 (0x16)
 					.maxstack 8
 
 					IL_0000: ldarg.3
-					IL_0001: call object Modules.Function_Arguments_Basics/g/inner::__js_call__(object)
-					IL_0006: ret
+					IL_0001: ldc.i4.2
+					IL_0002: ldarg.1
+					IL_0003: ldarg.2
+					IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+					IL_0009: ldarg.0
+					IL_000a: ldarg.3
+					IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+					IL_0010: call object Modules.Function_Arguments_Basics/g/inner::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+					IL_0015: ret
 				} // end of method FunctionObject::ConstructBodyCore
 
 				.method family hidebysig virtual 
@@ -824,14 +855,15 @@
 			// Methods
 			.method public hidebysig static 
 				object __js_call__ (
-					object newTarget
+					object newTarget,
+					valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext
 				) cil managed 
 			{
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 54 (0x36)
+				// Code size: 55 (0x37)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Function_Arguments_Basics/g/inner/Scope,
@@ -842,25 +874,26 @@
 				IL_0000: newobj instance void Modules.Function_Arguments_Basics/g/inner/Scope::.ctor()
 				IL_0005: stloc.0
 				IL_0006: ldloc.0
-				IL_0007: ldloc.0
-				IL_0008: ldnull
-				IL_0009: ldc.i4.0
-				IL_000a: ldc.i4.1
-				IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[], bool, bool)
-				IL_0010: stfld object Modules.Function_Arguments_Basics/g/inner/Scope::arguments
-				IL_0015: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_001a: stloc.1
-				IL_001b: ldloc.0
-				IL_001c: ldfld object Modules.Function_Arguments_Basics/g/inner/Scope::arguments
-				IL_0021: ldstr "length"
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_002b: stloc.2
-				IL_002c: ldloc.1
-				IL_002d: ldloc.2
-				IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0033: pop
-				IL_0034: ldnull
-				IL_0035: ret
+				IL_0007: ldarg.1
+				IL_0008: ldloc.0
+				IL_0009: ldnull
+				IL_000a: ldc.i4.0
+				IL_000b: ldc.i4.1
+				IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, string[], bool, bool)
+				IL_0011: stfld object Modules.Function_Arguments_Basics/g/inner/Scope::arguments
+				IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_001b: stloc.1
+				IL_001c: ldloc.0
+				IL_001d: ldfld object Modules.Function_Arguments_Basics/g/inner/Scope::arguments
+				IL_0022: ldstr "length"
+				IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_002c: stloc.2
+				IL_002d: ldloc.1
+				IL_002e: ldloc.2
+				IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0034: pop
+				IL_0035: ldnull
+				IL_0036: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -936,12 +969,12 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 11 (0xb)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_0005: call object Modules.Function_Arguments_Basics/g::__js_call__(object)
-				IL_000a: ret
+				IL_0000: ldnull
+				IL_0001: call object Modules.Function_Arguments_Basics/g::__js_call__(object)
+				IL_0006: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -1007,7 +1040,7 @@
 			IL_0011: ldc.i4.0
 			IL_0012: conv.r8
 			IL_0013: ldstr "inner"
-			IL_0018: ldc.i4.1
+			IL_0018: ldc.i4.0
 			IL_0019: ldc.i4.1
 			IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Basics/g/inner/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_001f: stloc.1
@@ -1092,7 +1125,7 @@
 		IL_0017: ldc.i4.2
 		IL_0018: conv.r8
 		IL_0019: ldstr "f"
-		IL_001e: ldc.i4.1
+		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Basics/f/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
@@ -1111,7 +1144,7 @@
 		IL_0040: ldc.i4.1
 		IL_0041: conv.r8
 		IL_0042: ldstr "outer"
-		IL_0047: ldc.i4.1
+		IL_0047: ldc.i4.0
 		IL_0048: ldc.i4.1
 		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Basics/outer/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_004e: stloc.2

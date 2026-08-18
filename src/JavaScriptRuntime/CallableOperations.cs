@@ -297,16 +297,38 @@ public static class CallableOperations
         object? newTarget)
     {
         var effectiveThisArgument = functionObject.ResolveThisArgument(thisArgument);
-        if (!functionObject.RequiresInvocationContext)
+        var requirements = functionObject.InvocationRequirements;
+        if (functionObject.SupportsExplicitInvocationContext
+            || requirements == InvocationContextRequirements.None)
         {
             return functionObject.InvokeCall(effectiveThisArgument, arguments);
         }
 
-        var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArgument);
-        var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
-        var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
-        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
-        var lexicalSuperScopes = functionObject.GetLexicalSuperScopes();
+        var needsThis =
+            (requirements & InvocationContextRequirements.This) != 0;
+        var needsArguments =
+            (requirements & InvocationContextRequirements.Arguments) != 0;
+        var needsCallee =
+            (requirements & InvocationContextRequirements.Callee) != 0;
+        var needsNewTarget =
+            (requirements & InvocationContextRequirements.NewTarget) != 0;
+        var needsLexicalSuper =
+            (requirements & InvocationContextRequirements.LexicalSuper) != 0;
+        var previousThis = needsThis
+            ? RuntimeServices.SetCurrentThis(effectiveThisArgument)
+            : null;
+        var previousArguments = needsArguments
+            ? RuntimeServices.SetCurrentCallArguments(arguments)
+            : default;
+        var previousCallee = needsCallee
+            ? RuntimeServices.SetCurrentCallee(functionObject)
+            : null;
+        var previousNewTarget = needsNewTarget
+            ? RuntimeServices.SetCurrentNewTarget(newTarget)
+            : null;
+        var lexicalSuperScopes = needsLexicalSuper
+            ? functionObject.GetLexicalSuperScopes()
+            : null;
         var previousSuperReceiver = lexicalSuperScopes is null
             ? null
             : RuntimeServices.SetCurrentLexicalSuperReceiver(
@@ -325,10 +347,22 @@ public static class CallableOperations
                 RuntimeServices.SetCurrentLexicalSuperScopes(previousSuperScopes);
                 RuntimeServices.SetCurrentLexicalSuperReceiver(previousSuperReceiver);
             }
-            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-            RuntimeServices.SetCurrentCallee(previousCallee);
-            RuntimeServices.RestoreCurrentCallArguments(previousArguments);
-            RuntimeServices.SetCurrentThis(previousThis);
+            if (needsNewTarget)
+            {
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+            if (needsCallee)
+            {
+                RuntimeServices.SetCurrentCallee(previousCallee);
+            }
+            if (needsArguments)
+            {
+                RuntimeServices.RestoreCurrentCallArguments(previousArguments);
+            }
+            if (needsThis)
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
     }
 
@@ -337,23 +371,46 @@ public static class CallableOperations
         in JsCallArguments arguments,
         object? newTarget)
     {
-        if (!functionObject.RequiresInvocationContext)
+        var requirements = functionObject.InvocationRequirements;
+        if (functionObject.SupportsExplicitInvocationContext
+            || requirements == InvocationContextRequirements.None)
         {
             return functionObject.InvokeConstruct(arguments, newTarget);
         }
 
-        var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
-        var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
-        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
+        var needsArguments =
+            (requirements & InvocationContextRequirements.Arguments) != 0;
+        var needsCallee =
+            (requirements & InvocationContextRequirements.Callee) != 0;
+        var needsNewTarget =
+            (requirements & InvocationContextRequirements.NewTarget) != 0;
+        var previousArguments = needsArguments
+            ? RuntimeServices.SetCurrentCallArguments(arguments)
+            : default;
+        var previousCallee = needsCallee
+            ? RuntimeServices.SetCurrentCallee(functionObject)
+            : null;
+        var previousNewTarget = needsNewTarget
+            ? RuntimeServices.SetCurrentNewTarget(newTarget)
+            : null;
         try
         {
             return functionObject.InvokeConstruct(arguments, newTarget);
         }
         finally
         {
-            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-            RuntimeServices.SetCurrentCallee(previousCallee);
-            RuntimeServices.RestoreCurrentCallArguments(previousArguments);
+            if (needsNewTarget)
+            {
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+            if (needsCallee)
+            {
+                RuntimeServices.SetCurrentCallee(previousCallee);
+            }
+            if (needsArguments)
+            {
+                RuntimeServices.RestoreCurrentCallArguments(previousArguments);
+            }
         }
     }
 
@@ -363,25 +420,36 @@ public static class CallableOperations
         in JsCallArguments arguments,
         object? newTarget)
     {
-        var previousThis = RuntimeServices.SetCurrentThis(receiver);
-        if (!functionObject.RequiresInvocationContext)
+        var requirements = functionObject.InvocationRequirements;
+        if (functionObject.SupportsExplicitInvocationContext
+            || requirements == InvocationContextRequirements.None)
         {
-            try
-            {
-                return functionObject.InvokeConstructBody(
-                    receiver,
-                    arguments,
-                    newTarget);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            return functionObject.InvokeConstructBody(
+                receiver,
+                arguments,
+                newTarget);
         }
 
-        var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
-        var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
-        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
+        var needsThis =
+            (requirements & InvocationContextRequirements.This) != 0;
+        var needsArguments =
+            (requirements & InvocationContextRequirements.Arguments) != 0;
+        var needsCallee =
+            (requirements & InvocationContextRequirements.Callee) != 0;
+        var needsNewTarget =
+            (requirements & InvocationContextRequirements.NewTarget) != 0;
+        var previousThis = needsThis
+            ? RuntimeServices.SetCurrentThis(receiver)
+            : null;
+        var previousArguments = needsArguments
+            ? RuntimeServices.SetCurrentCallArguments(arguments)
+            : default;
+        var previousCallee = needsCallee
+            ? RuntimeServices.SetCurrentCallee(functionObject)
+            : null;
+        var previousNewTarget = needsNewTarget
+            ? RuntimeServices.SetCurrentNewTarget(newTarget)
+            : null;
         try
         {
             return functionObject.InvokeConstructBody(
@@ -391,10 +459,22 @@ public static class CallableOperations
         }
         finally
         {
-            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-            RuntimeServices.SetCurrentCallee(previousCallee);
-            RuntimeServices.RestoreCurrentCallArguments(previousArguments);
-            RuntimeServices.SetCurrentThis(previousThis);
+            if (needsNewTarget)
+            {
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+            if (needsCallee)
+            {
+                RuntimeServices.SetCurrentCallee(previousCallee);
+            }
+            if (needsArguments)
+            {
+                RuntimeServices.RestoreCurrentCallArguments(previousArguments);
+            }
+            if (needsThis)
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
     }
 

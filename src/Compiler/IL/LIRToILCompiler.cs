@@ -638,8 +638,46 @@ internal sealed partial class LIRToILCompiler
         // - instance with scopes+newTarget: base=3 (arg0=this, arg1=scopes, arg2=newTarget)
         int baseIndex = (methodDescriptor.IsStatic ? 0 : 1)
             + (inferredHasScopes ? 1 : 0)
-            + (inferredHasNewTarget ? 1 : 0);
+            + (inferredHasNewTarget ? 1 : 0)
+            + (methodDescriptor.HasInvocationContextParameter ? 1 : 0);
         return baseIndex + jsParameterIndex;
+    }
+
+    private static int GetIlArgIndexForInvocationContext(
+        MethodDescriptor methodDescriptor)
+    {
+        if (!methodDescriptor.HasInvocationContextParameter)
+        {
+            throw new InvalidOperationException(
+                "Method does not declare an explicit invocation context parameter.");
+        }
+
+        return (methodDescriptor.IsStatic ? 0 : 1)
+            + (methodDescriptor.HasScopesParameter ? 1 : 0)
+            + (methodDescriptor.HasNewTargetParameter ? 1 : 0);
+    }
+
+    private void EmitLoadCurrentThis(
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor)
+    {
+        if (methodDescriptor.HasInvocationContextParameter)
+        {
+            ilEncoder.LoadArgument(
+                GetIlArgIndexForInvocationContext(methodDescriptor));
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                nameof(JavaScriptRuntime.GeneratedInvocationContext.GetThis),
+                new[]
+                {
+                    typeof(JavaScriptRuntime.GeneratedInvocationContext)
+                }));
+            return;
+        }
+
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis)));
     }
 
     /// <summary>

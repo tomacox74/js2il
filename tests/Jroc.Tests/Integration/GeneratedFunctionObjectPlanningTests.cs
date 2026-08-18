@@ -56,7 +56,11 @@ public sealed class GeneratedFunctionObjectPlanningTests
         Assert.Equal(
             ["_lexicalThis"],
             lexical.StateFields.Select(field => field.FieldName));
-        Assert.True(lexical.RequiresInvocationContext);
+        Assert.True(
+            lexical.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.This));
+        Assert.True(lexical.SupportsExplicitInvocationContext);
+        Assert.False(lexical.RequiresInvocationContext);
 
         var ordinary = Assert.Single(
             plans,
@@ -101,6 +105,76 @@ public sealed class GeneratedFunctionObjectPlanningTests
         Assert.False(byName["generatorValue"].IsConstructable);
         Assert.False(byName["asyncGeneratorValue"].IsConstructable);
         Assert.True(byName["ordinaryValue"].IsConstructable);
+    }
+
+    [Fact]
+    public void PlannerTracksInvocationRequirementsIndependently()
+    {
+        const string source = """
+            function onlyThis() { return this; }
+            function strictArguments() {
+                "use strict";
+                return arguments.length;
+            }
+            const named = function ownName() { return ownName; };
+            function outer() {
+                return () => this;
+            }
+            function* generatorValue(value) { yield value; }
+            """;
+
+        var (symbolTable, coordinator, registry) = Build(source);
+        coordinator.RunPhase1Discovery(symbolTable);
+
+        var plans = registry.GetPlansInStableOrder();
+        var onlyThis = Assert.Single(
+            plans,
+            plan => plan.Callable.Name == "onlyThis");
+        Assert.Equal(
+            JavaScriptRuntime.InvocationContextRequirements.This,
+            onlyThis.InvocationRequirements);
+        Assert.True(onlyThis.SupportsExplicitInvocationContext);
+
+        var strictArguments = Assert.Single(
+            plans,
+            plan => plan.Callable.Name == "strictArguments");
+        Assert.Equal(
+            JavaScriptRuntime.InvocationContextRequirements.Arguments,
+            strictArguments.InvocationRequirements);
+        Assert.True(strictArguments.SupportsExplicitInvocationContext);
+
+        var named = Assert.Single(
+            plans,
+            plan => plan.Callable.Name == "ownName");
+        Assert.True(
+            named.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.Callee));
+        Assert.False(named.SupportsExplicitInvocationContext);
+
+        var outer = Assert.Single(
+            plans,
+            plan => plan.Callable.Name == "outer");
+        Assert.True(
+            outer.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.This));
+        Assert.False(
+            outer.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.NewTarget));
+        Assert.False(
+            outer.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.LexicalSuper));
+        Assert.True(outer.SupportsExplicitInvocationContext);
+
+        var generator = Assert.Single(
+            plans,
+            plan => plan.Callable.Name == "generatorValue");
+        Assert.True(
+            generator.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.This));
+        Assert.True(
+            generator.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.Arguments));
+        Assert.False(generator.SupportsExplicitInvocationContext);
     }
 
     [Fact]

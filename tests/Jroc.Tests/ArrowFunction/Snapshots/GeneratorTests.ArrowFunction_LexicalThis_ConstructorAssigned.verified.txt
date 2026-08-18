@@ -24,15 +24,19 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 22 (0x16)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class [System.Runtime]System.Object Modules.ArrowFunction_LexicalThis_ConstructorAssigned/ArrowFunction_L6C21/FunctionObject::_lexicalThis
-				IL_000d: ret
+				IL_0007: ldc.i4.1
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ldarg.0
+				IL_000f: ldarg.1
+				IL_0010: stfld class [System.Runtime]System.Object Modules.ArrowFunction_LexicalThis_ConstructorAssigned/ArrowFunction_L6C21/FunctionObject::_lexicalThis
+				IL_0015: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -53,7 +57,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -78,13 +82,20 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 12 (0xc)
+				// Code size: 27 (0x1b)
 				.maxstack 8
 
 				IL_0000: ldnull
-				IL_0001: call float64 Modules.ArrowFunction_LexicalThis_ConstructorAssigned/ArrowFunction_L6C21::__js_call__(object)
-				IL_0006: box [System.Runtime]System.Double
-				IL_000b: ret
+				IL_0001: ldc.i4.1
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldnull
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: call float64 Modules.ArrowFunction_LexicalThis_ConstructorAssigned/ArrowFunction_L6C21::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+				IL_0015: box [System.Runtime]System.Double
+				IL_001a: ret
 			} // end of method FunctionObject::CallCore
 
 		} // end of class FunctionObject
@@ -93,20 +104,22 @@
 		// Methods
 		.method public hidebysig static 
 			float64 __js_call__ (
-				object newTarget
+				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 16 (0x10)
+			// Code size: 17 (0x11)
 			.maxstack 8
 
-			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0005: ldstr "x"
-			IL_000a: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, string)
-			IL_000f: ret
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0006: ldstr "x"
+			IL_000b: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, string)
+			IL_0010: ret
 		} // end of method ArrowFunction_L6C21::__js_call__
 
 	} // end of class ArrowFunction_L6C21
@@ -170,15 +183,19 @@
 					) cil managed 
 				{
 					// Header size: 1
-					// Code size: 14 (0xe)
+					// Code size: 22 (0x16)
 					.maxstack 8
 
 					IL_0000: ldarg.0
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 					IL_0006: ldarg.0
-					IL_0007: ldarg.1
-					IL_0008: stfld object[] Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter/Scope_ctor/FunctionObject::_transitionalScopes
-					IL_000d: ret
+					IL_0007: ldc.i4.1
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ldarg.0
+					IL_000f: ldarg.1
+					IL_0010: stfld object[] Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter/Scope_ctor/FunctionObject::_transitionalScopes
+					IL_0015: ret
 				} // end of method FunctionObject::.ctor
 
 				.method public hidebysig specialname virtual 
@@ -273,7 +290,7 @@
 			IL_002f: ldc.i4.0
 			IL_0030: conv.r8
 			IL_0031: ldstr ""
-			IL_0036: ldc.i4.1
+			IL_0036: ldc.i4.0
 			IL_0037: ldc.i4.0
 			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/ArrowFunction_L6C21/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_003d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/ArrowFunction_L6C21/FunctionObject>(!!0)

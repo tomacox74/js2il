@@ -38,12 +38,16 @@
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 15 (0xf)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.2
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -64,7 +68,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -75,34 +79,25 @@
 					object[] arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 34 (0x22)
+				// Header size: 1
+				// Code size: 31 (0x1f)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldarg.2
-				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
-				.try
-				{
-					IL_0007: ldnull
-					IL_0008: ldarg.2
-					IL_0009: ldc.i4.0
-					IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
-					IL_000f: call object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object, object)
-					IL_0014: stloc.0
-					IL_0015: leave IL_0020
-				} // end .try
-				finally
-				{
-					IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
-					IL_001f: endfinally
-				} // end handler
-
-				IL_0020: ldloc.0
-				IL_0021: ret
+				IL_0000: ldnull
+				IL_0001: ldc.i4.2
+				IL_0002: ldarg.0
+				IL_0003: ldc.i4.0
+				IL_0004: ldnull
+				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedDirectCallThis(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, bool, object)
+				IL_000a: ldarg.2
+				IL_000b: ldarg.0
+				IL_000c: ldnull
+				IL_000d: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::CreateFromArray(int32, object, object[], object, object)
+				IL_0012: ldarg.2
+				IL_0013: ldc.i4.0
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+				IL_0019: call object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001e: ret
 			} // end of method FunctionObject::__js_call_with_arguments__
 
 			.method family hidebysig virtual 
@@ -112,15 +107,22 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 18 (0x12)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_0005: ldarg.2
-				IL_0006: ldc.i4.0
-				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000c: call object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object, object)
-				IL_0011: ret
+				IL_0000: ldnull
+				IL_0001: ldc.i4.2
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldnull
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: call object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001c: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -131,15 +133,22 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 
 				IL_0000: ldarg.3
-				IL_0001: ldarg.2
-				IL_0002: ldc.i4.0
-				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0008: call object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object, object)
-				IL_000d: ret
+				IL_0001: ldc.i4.2
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldarg.3
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: call object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001c: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -167,6 +176,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
 				object strings
 			) cil managed 
 		{
@@ -174,7 +184,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 181 (0xb5)
+			// Code size: 182 (0xb6)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -182,63 +192,64 @@
 				[2] object
 			)
 
-			IL_0000: ldc.r8 1
-			IL_0009: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(float64)
-			IL_000e: stloc.0
-			IL_000f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0014: stloc.1
-			IL_0015: ldarg.1
-			IL_0016: ldc.r8 0.0
-			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0024: stloc.2
-			IL_0025: ldloc.1
-			IL_0026: ldstr "cooked[0]:"
-			IL_002b: ldloc.2
-			IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0031: pop
-			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0037: stloc.1
-			IL_0038: ldarg.1
-			IL_0039: ldstr "raw"
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0043: stloc.2
-			IL_0044: ldloc.2
-			IL_0045: ldc.r8 0.0
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0053: stloc.2
-			IL_0054: ldloc.1
-			IL_0055: ldstr "raw[0]:"
-			IL_005a: ldloc.2
-			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0060: pop
-			IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0066: stloc.1
-			IL_0067: ldarg.1
-			IL_0068: ldc.r8 1
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0076: stloc.2
-			IL_0077: ldloc.1
-			IL_0078: ldstr "cooked[1]:"
-			IL_007d: ldloc.2
-			IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0083: pop
-			IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0089: stloc.1
-			IL_008a: ldarg.1
-			IL_008b: ldstr "raw"
-			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0095: stloc.2
-			IL_0096: ldloc.2
-			IL_0097: ldc.r8 1
-			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00a5: stloc.2
-			IL_00a6: ldloc.1
-			IL_00a7: ldstr "raw[1]:"
-			IL_00ac: ldloc.2
-			IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00b2: pop
-			IL_00b3: ldnull
-			IL_00b4: ret
+			IL_0000: ldarg.1
+			IL_0001: ldc.r8 1
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, float64)
+			IL_000f: stloc.0
+			IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0015: stloc.1
+			IL_0016: ldarg.2
+			IL_0017: ldc.r8 0.0
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0025: stloc.2
+			IL_0026: ldloc.1
+			IL_0027: ldstr "cooked[0]:"
+			IL_002c: ldloc.2
+			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0032: pop
+			IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0038: stloc.1
+			IL_0039: ldarg.2
+			IL_003a: ldstr "raw"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0044: stloc.2
+			IL_0045: ldloc.2
+			IL_0046: ldc.r8 0.0
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0054: stloc.2
+			IL_0055: ldloc.1
+			IL_0056: ldstr "raw[0]:"
+			IL_005b: ldloc.2
+			IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0061: pop
+			IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0067: stloc.1
+			IL_0068: ldarg.2
+			IL_0069: ldc.r8 1
+			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0077: stloc.2
+			IL_0078: ldloc.1
+			IL_0079: ldstr "cooked[1]:"
+			IL_007e: ldloc.2
+			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0084: pop
+			IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008a: stloc.1
+			IL_008b: ldarg.2
+			IL_008c: ldstr "raw"
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0096: stloc.2
+			IL_0097: ldloc.2
+			IL_0098: ldc.r8 1
+			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00a6: stloc.2
+			IL_00a7: ldloc.1
+			IL_00a8: ldstr "raw[1]:"
+			IL_00ad: ldloc.2
+			IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00b3: pop
+			IL_00b4: ldnull
+			IL_00b5: ret
 		} // end of method tag::__js_call__
 
 	} // end of class tag
@@ -304,7 +315,7 @@
 		IL_0016: ldc.i4.1
 		IL_0017: conv.r8
 		IL_0018: ldstr "tag"
-		IL_001d: ldc.i4.1
+		IL_001d: ldc.i4.0
 		IL_001e: ldc.i4.1
 		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_TaggedTemplate_RawStrings/tag/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0024: stloc.1

@@ -192,11 +192,9 @@ internal sealed partial class LIRToILCompiler
                     //   not a CLR instance, so castclass+stfld would fail.
                     if (methodDescriptor.IsStatic)
                     {
-                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getThisRef);
+                        EmitLoadCurrentThis(
+                            ilEncoder,
+                            methodDescriptor);
 
                         ilEncoder.Ldstr(_metadataBuilder, storeInstanceField.FieldName);
                         EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
@@ -395,11 +393,9 @@ internal sealed partial class LIRToILCompiler
                     //   not a CLR instance, so castclass+ldfld would fail.
                     if (methodDescriptor.IsStatic)
                     {
-                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getThisRef);
+                        EmitLoadCurrentThis(
+                            ilEncoder,
+                            methodDescriptor);
 
                         ilEncoder.Ldstr(_metadataBuilder, loadInstanceField.FieldName);
                         if (fieldClrType == typeof(double))

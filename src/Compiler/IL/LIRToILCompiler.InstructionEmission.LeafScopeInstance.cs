@@ -82,6 +82,22 @@ internal sealed partial class LIRToILCompiler
         int jsParamCount,
         CallableId? callableId)
     {
+        if (methodDescriptor.HasInvocationContextParameter
+            && methodDescriptor.InvocationRequirements.HasFlag(
+                JavaScriptRuntime.InvocationContextRequirements.Arguments))
+        {
+            ilEncoder.LoadArgument(
+                GetIlArgIndexForInvocationContext(methodDescriptor));
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                nameof(JavaScriptRuntime.GeneratedInvocationContext.GetArguments),
+                new[]
+                {
+                    typeof(JavaScriptRuntime.GeneratedInvocationContext)
+                }));
+            return;
+        }
+
         if (callableId is null)
         {
             EmitFallbackArguments(
@@ -150,6 +166,11 @@ internal sealed partial class LIRToILCompiler
 
         ilEncoder.LoadLocal(0);
         // scope.arguments = RuntimeServices.CreateArgumentsObject(scope, mappedParameterNames, includeCallee, restrictCallee);
+        if (methodDescriptor.HasInvocationContextParameter)
+        {
+            ilEncoder.LoadArgument(
+                GetIlArgIndexForInvocationContext(methodDescriptor));
+        }
         ilEncoder.LoadLocal(0);
         EmitLoadArgumentsParameterNamesArray(ilEncoder, callableId.ArgumentsParameterNames);
         ilEncoder.LoadConstantI4(callableId.IncludeCalleeInArgumentsObject ? 1 : 0);
@@ -157,7 +178,22 @@ internal sealed partial class LIRToILCompiler
         var createArgsRef = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.RuntimeServices),
             nameof(JavaScriptRuntime.RuntimeServices.CreateArgumentsObject),
-            new[] { typeof(object), typeof(string[]), typeof(bool), typeof(bool) });
+            methodDescriptor.HasInvocationContextParameter
+                ? new[]
+                {
+                    typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                    typeof(object),
+                    typeof(string[]),
+                    typeof(bool),
+                    typeof(bool)
+                }
+                : new[]
+                {
+                    typeof(object),
+                    typeof(string[]),
+                    typeof(bool),
+                    typeof(bool)
+                });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(createArgsRef);
         EmitStoreFieldByName(ilEncoder, scopeName, "arguments");

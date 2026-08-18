@@ -16,6 +16,21 @@ const readsNewTarget = function () {
     return new.target === undefined;
 };
 const recurse = value => value === 0 ? 0 : value + recurse(value - 1);
+function readsDirectThis() {
+    return this === globalThis;
+}
+function readsStrictDirectThis() {
+    "use strict";
+    return this === undefined;
+}
+function readsNestedArrowThis() {
+    const read = () => this.value;
+    return read();
+}
+function ReadsNestedArrowNewTarget() {
+    const read = () => new.target === ReadsNestedArrowNewTarget;
+    console.log("newTarget", read());
+}
 
 const nestedOrdinaryFunction = () => {
     function readsOwnThis() {
@@ -48,3 +63,9 @@ console.log(
     recurse(4));
 console.log("nested", nestedOrdinaryFunction(), nestedOrdinaryClass());
 console.log("identity", addOne === identity, addOne === addOne, addOne.name, named.name);
+console.log(
+    "context",
+    readsDirectThis(),
+    readsStrictDirectThis(),
+    readsNestedArrowThis.call({ value: 9 }));
+new ReadsNestedArrowNewTarget();
