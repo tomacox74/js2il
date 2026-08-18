@@ -28,60 +28,15 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
+const { maybeRunCompiledWithJroc } = require('./selfCompileWithJroc');
 
-function maybeRunCompiledWithJroc() {
-  if (process.env.JROC_RELEASE_BOOTSTRAPPED === '1') {
-    return;
-  }
-  if (process.env.JROC_RELEASE_NODE_ONLY === '1' || process.argv.includes('--node-only')) {
-    return;
-  }
-
-  const argv0 = path.basename((process.argv[0] || '').toLowerCase());
-  const runningViaNode = argv0 === 'node' || argv0 === 'node.exe';
-  if (!runningViaNode) {
-    return;
-  }
-
-  const scriptPath = __filename;
-  const outDir = path.join(__dirname, 'out', 'release');
-  const dllPath = path.join(outDir, 'release.dll');
-
-  try {
-    fs.rmSync(outDir, { recursive: true, force: true });
-  } catch {
-    // ignore cleanup errors before compile
-  }
-  fs.mkdirSync(outDir, { recursive: true });
-
-  const compile = cp.spawnSync('jroc', [scriptPath, outDir], {
-    stdio: 'inherit',
-    cwd: path.resolve(__dirname, '..'),
-  });
-  if (compile.error) {
-    throw compile.error;
-  }
-  if (compile.status !== 0) {
-    process.exit(compile.status ?? 1);
-  }
-
-  if (!fs.existsSync(dllPath)) {
-    throw new Error(`Compiled release assembly not found: ${dllPath}`);
-  }
-
-  const forwardedArgs = process.argv.slice(2);
-  const runCompiled = cp.spawnSync('dotnet', [dllPath, ...forwardedArgs], {
-    stdio: 'inherit',
-    cwd: path.resolve(__dirname, '..'),
-    env: { ...process.env, JROC_RELEASE_BOOTSTRAPPED: '1' },
-  });
-  if (runCompiled.error) {
-    throw runCompiled.error;
-  }
-  process.exit(runCompiled.status ?? 1);
-}
-
-maybeRunCompiledWithJroc();
+maybeRunCompiledWithJroc({
+  scriptPath: __filename,
+  outputDirectory: path.join(__dirname, 'out', 'release'),
+  assemblyName: 'release',
+  bootstrapEnvironmentVariable: 'JROC_RELEASE_BOOTSTRAPPED',
+  nodeOnlyEnvironmentVariable: 'JROC_RELEASE_NODE_ONLY',
+});
 
 function isRepoRoot(dir) {
   return (
