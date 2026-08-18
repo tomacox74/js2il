@@ -706,6 +706,8 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Function.MarkConstructible(
                 _objectConstructorValue);
             ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(_objectPrototypeValue, JsNull.Null);
+            PrototypeChain.SetPrototype(Math, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Array.ImmutablePrototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_atomicsValue, _objectPrototypeValue);
@@ -1466,6 +1468,7 @@ namespace JavaScriptRuntime
         private void SeedGlobalObjectIfMissing()
         {
             var dict = (IDictionary<string, object?>)this;
+            PrototypeChain.SetPrototype(this, _objectPrototypeValue);
 
             // Self reference.
             dict[nameof(GlobalThis.globalThis)] = this;

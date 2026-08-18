@@ -179,11 +179,11 @@ namespace JavaScriptRuntime
         internal static string ToFixedString(object? value, object? fractionDigitsArgument)
         {
             var number = ThisNumberValue(value);
+            var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toFixed");
             if (double.IsNaN(number)) return "NaN";
             if (double.IsPositiveInfinity(number)) return "Infinity";
             if (double.IsNegativeInfinity(number)) return "-Infinity";
 
-            var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toFixed");
             return number.ToString($"F{fractionDigits}", CultureInfo.InvariantCulture);
         }
 

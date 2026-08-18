@@ -127,6 +127,9 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
             DefinePrototypeMethod(prototype, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
             DefinePrototypeMethod(prototype, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
+            DefinePrototypeMethod(prototype, "find", (Func<object[], object?[]?, object?>)PrototypeFind, 1);
+            DefinePrototypeMethod(prototype, "findIndex", (Func<object[], object?[]?, object?>)PrototypeFindIndex, 1);
+            DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes, 1);
             DefinePrototypeMethod(prototype, "findLast", (Func<object[], object?[]?, object?>)PrototypeFindLast, 1);
             DefinePrototypeMethod(prototype, "findLastIndex", (Func<object[], object?[]?, object?>)PrototypeFindLastIndex, 1);
             DefinePrototypeMethod(prototype, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
@@ -444,30 +447,13 @@ namespace JavaScriptRuntime
             // Generic array-like path: supports NodeList and other array-like objects.
             // This is needed because real-world libs often use:
             //   const reduce = Array.prototype.reduce; reduce.call(arrayLike, cb, init)
-            if (args == null || args.Length == 0)
-            {
-                // No callback provided.
-                throw new TypeError("undefined is not a function");
-            }
-
-            var callback = args[0];
-            if (callback is null || callback is JsNull)
-            {
-                throw new TypeError("undefined is not a function");
-            }
-
-            if (!CallableOperations.IsCallable(callback))
-            {
-                throw new TypeError("callback is not a function");
-            }
-
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
+            var callback = RequireCallback(args, "reduce");
             int k;
-
             object? accumulator;
-            if (args.Length >= 2)
+            if (args != null && args.Length >= 2)
             {
                 accumulator = args[1];
                 k = 0;
@@ -502,9 +488,11 @@ namespace JavaScriptRuntime
                     continue;
                 }
                 var current = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                accumulator = CallableOperations.Call4(
+                accumulator = InvokeArrayCallback(
                     callback,
                     null,
+                    "Array.prototype.reduce",
+                    4,
                     accumulator,
                     current,
                     (double)i,
@@ -543,29 +531,13 @@ namespace JavaScriptRuntime
                 return jsArray.reduceRight(converted);
             }
 
-            if (args == null || args.Length == 0)
-            {
-                // No callback provided.
-                throw new TypeError("undefined is not a function");
-            }
-
-            var callback = args[0];
-            if (callback is null || callback is JsNull)
-            {
-                throw new TypeError("undefined is not a function");
-            }
-
-            if (!CallableOperations.IsCallable(callback))
-            {
-                throw new TypeError("callback is not a function");
-            }
-
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
             int length = ToArrayLikeLength(iterationReceiver);
+            var callback = RequireCallback(args, "reduceRight");
             int k;
             object? accumulator;
-            if (args.Length >= 2)
+            if (args != null && args.Length >= 2)
             {
                 accumulator = args[1];
                 k = length - 1;
@@ -600,9 +572,11 @@ namespace JavaScriptRuntime
                     continue;
                 }
                 var current = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                accumulator = CallableOperations.Call4(
+                accumulator = InvokeArrayCallback(
                     callback,
                     null,
+                    "Array.prototype.reduceRight",
+                    4,
                     accumulator,
                     current,
                     (double)i,
@@ -703,9 +677,9 @@ namespace JavaScriptRuntime
             var receiver = RequireArrayLikeReceiver("every");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
             var callback = RequireCallback(args, "every");
             var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            int length = ToArrayLikeLength(iterationReceiver);
 
             for (int i = 0; i < length; i++)
             {
@@ -715,7 +689,7 @@ namespace JavaScriptRuntime
                 }
 
                 var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                var result = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                var result = InvokeArrayCallback(callback, thisArg, "Array.prototype.every", 3, value, (double)i, callbackReceiver, null);
                 if (!JavaScriptRuntime.Operators.IsTruthy(result))
                 {
                     return false;
@@ -730,9 +704,9 @@ namespace JavaScriptRuntime
             var receiver = RequireArrayLikeReceiver("filter");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
             var callback = RequireCallback(args, "filter");
             var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            int length = ToArrayLikeLength(iterationReceiver);
             var result = new Array();
 
             for (int i = 0; i < length; i++)
@@ -743,7 +717,7 @@ namespace JavaScriptRuntime
                 }
 
                 var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                var keep = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                var keep = InvokeArrayCallback(callback, thisArg, "Array.prototype.filter", 3, value, (double)i, callbackReceiver, null);
                 if (JavaScriptRuntime.Operators.IsTruthy(keep))
                 {
                     result.Add(value);
@@ -758,9 +732,9 @@ namespace JavaScriptRuntime
             var receiver = RequireArrayLikeReceiver("some");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
             var callback = RequireCallback(args, "some");
             var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            int length = ToArrayLikeLength(iterationReceiver);
 
             for (int i = 0; i < length; i++)
             {
@@ -770,8 +744,78 @@ namespace JavaScriptRuntime
                 }
 
                 var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                var result = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                var result = InvokeArrayCallback(callback, thisArg, "Array.prototype.some", 3, value, (double)i, callbackReceiver, null);
                 if (JavaScriptRuntime.Operators.IsTruthy(result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static object? PrototypeFind(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("find");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
+            var callback = RequireCallback(args, "find");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+
+            for (int i = 0; i < length; i++)
+            {
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                var result = InvokeArrayCallback(callback, thisArg, "Array.prototype.find", 3, value, (double)i, callbackReceiver, null);
+                if (JavaScriptRuntime.Operators.IsTruthy(result))
+                {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        private static object? PrototypeFindIndex(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("findIndex");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
+            var callback = RequireCallback(args, "findIndex");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+
+            for (int i = 0; i < length; i++)
+            {
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                var result = InvokeArrayCallback(callback, thisArg, "Array.prototype.findIndex", 3, value, (double)i, callbackReceiver, null);
+                if (JavaScriptRuntime.Operators.IsTruthy(result))
+                {
+                    return (double)i;
+                }
+            }
+
+            return -1d;
+        }
+
+        private static object? PrototypeIncludes(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("includes");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var length = ToArrayLikeLengthAsDouble(iterationReceiver);
+            if (length <= 0d)
+            {
+                return false;
+            }
+
+            var searchElement = args != null && args.Length > 0 ? args[0] : null;
+            var startIndex = args != null && args.Length > 1
+                ? CoerceArrayLikeSearchStartIndex(args[1], length)
+                : 0d;
+
+            for (var index = startIndex; index < length; index++)
+            {
+                if (SameValueZero(JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, index), searchElement))
                 {
                     return true;
                 }
@@ -816,9 +860,9 @@ namespace JavaScriptRuntime
             var receiver = RequireArrayLikeReceiver("map");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
             var callback = RequireCallback(args, "map");
             var thisArg = args != null && args.Length > 1 ? args[1] : null;
-            int length = ToArrayLikeLength(iterationReceiver);
             var result = new Array
             {
                 length = length
@@ -832,7 +876,7 @@ namespace JavaScriptRuntime
                 }
 
                 var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                result[i] = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                result[i] = InvokeArrayCallback(callback, thisArg, "Array.prototype.map", 3, value, (double)i, callbackReceiver, null);
             }
 
             return result;
@@ -973,6 +1017,23 @@ namespace JavaScriptRuntime
             return receiver;
         }
 
+        private static object? InvokeArrayCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)
+        {
+            if (!CallableOperations.IsCallable(callback))
+            {
+                throw new TypeError($"{callbackKind} callback is not a function");
+            }
+
+            return argCount switch
+            {
+                <= 0 => CallableOperations.Call0(callback, thisArg),
+                1 => CallableOperations.Call1(callback, thisArg, a0),
+                2 => CallableOperations.Call2(callback, thisArg, a0, a1),
+                3 => CallableOperations.Call3(callback, thisArg, a0, a1, a2),
+                _ => CallableOperations.Call4(callback, thisArg, a0, a1, a2, a3)
+            };
+        }
+
         private static object[]? ToNonNullableObjectArray(object?[]? args)
         {
             if (args is null)
@@ -1004,15 +1065,10 @@ namespace JavaScriptRuntime
 
         private static int ToArrayLikeLength(object receiver)
         {
-            var lenValue = JavaScriptRuntime.ObjectRuntime.GetProperty(receiver, "length");
-            double d;
-            try { d = TypeUtilities.ToNumber(lenValue); }
-            catch { d = 0d; }
-            if (double.IsNaN(d) || double.IsNegativeInfinity(d) || d < 0) d = 0;
-            if (double.IsPositiveInfinity(d)) d = int.MaxValue;
-            d = global::System.Math.Truncate(d);
-            if (d > int.MaxValue) d = int.MaxValue;
-            return (int)d;
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            return length > int.MaxValue
+                ? int.MaxValue
+                : (int)length;
         }
 
         private static double ToArrayLikeLengthAsDouble(object receiver)
@@ -1031,6 +1087,43 @@ namespace JavaScriptRuntime
             }
 
             return global::System.Math.Min(global::System.Math.Truncate(length), 9007199254740991d);
+        }
+
+        private static double ToIntegerOrInfinity(object? value)
+        {
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number) || number == 0d)
+            {
+                return 0d;
+            }
+
+            if (double.IsInfinity(number))
+            {
+                return number;
+            }
+
+            return global::System.Math.Truncate(number);
+        }
+
+        private static double CoerceArrayLikeSearchStartIndex(object? value, double length)
+        {
+            var relativeIndex = ToIntegerOrInfinity(value);
+            if (double.IsPositiveInfinity(relativeIndex))
+            {
+                return length;
+            }
+
+            if (double.IsNegativeInfinity(relativeIndex))
+            {
+                return 0d;
+            }
+
+            if (relativeIndex >= 0d)
+            {
+                return global::System.Math.Min(relativeIndex, length);
+            }
+
+            return global::System.Math.Max(length + relativeIndex, 0d);
         }
 
         private static object? PrototypeEntries(object[] scopes, object?[]? args)
@@ -3014,7 +3107,7 @@ namespace JavaScriptRuntime
                 };
             }
 
-            throw new InvalidOperationException($"{callbackKind} callback is not a supported function type");
+            throw new TypeError($"{callbackKind} callback is not a function");
         }
 
         /// <summary>
@@ -3120,6 +3213,10 @@ namespace JavaScriptRuntime
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             bool hasInitial = args != null && args.Length > 1;
+            if (!CallableOperations.IsCallable(cb))
+            {
+                throw new TypeError("reduce callback is not a function");
+            }
 
             if (this.Count == 0 && !hasInitial)
             {
@@ -3156,6 +3253,10 @@ namespace JavaScriptRuntime
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             bool hasInitial = args != null && args.Length > 1;
+            if (!CallableOperations.IsCallable(cb))
+            {
+                throw new TypeError("reduceRight callback is not a function");
+            }
 
             if (this.Count == 0 && !hasInitial)
             {
@@ -3223,11 +3324,17 @@ namespace JavaScriptRuntime
         public double findIndex(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = 0; i < this.Count; i++)
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            if (!CallableOperations.IsCallable(cb))
             {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "findIndex");
-                var result = invoke(this[i], (double)i, this, null);
+                throw new TypeError("findIndex callback is not a function");
+            }
+
+            var length = this.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var value = ObjectRuntime.GetItem(this, (double)i);
+                var result = InvokeArrayCallback(cb, thisArg, "Array.prototype.findIndex", 3, value, (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return (double)i;
@@ -3261,13 +3368,17 @@ namespace JavaScriptRuntime
         public object? find(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-
-            for (int i = 0; i < this.Count; i++)
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            if (!CallableOperations.IsCallable(cb))
             {
-                var value = this[i];
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "find");
-                var result = invoke(value, (double)i, this, null);
+                throw new TypeError("find callback is not a function");
+            }
+
+            var length = this.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var value = ObjectRuntime.GetItem(this, (double)i);
+                var result = InvokeArrayCallback(cb, thisArg, "Array.prototype.find", 3, value, (double)i, this, null);
 
                 if (Operators.IsTruthy(result))
                 {
@@ -3468,28 +3579,17 @@ namespace JavaScriptRuntime
 
             object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
 
-            // Determine starting index per spec
-            int k = 0;
-            if (args != null && args.Length > 1 && args[1] != null)
+            var startIndex = args != null && args.Length > 1
+                ? CoerceArrayLikeSearchStartIndex(args[1], len)
+                : 0d;
+            if (startIndex >= len)
             {
-                int fromIndex = 0;
-                var idx = args[1];
-                if (idx is double dd) fromIndex = (int)dd;
-                else if (idx is float ff) fromIndex = (int)ff;
-                else if (idx is int ii) fromIndex = ii;
-                else if (idx is long ll) fromIndex = (int)ll;
-                else if (idx is short ss) fromIndex = ss;
-                else if (idx is byte bb) fromIndex = bb;
-                else if (idx is string s && double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var pd)) fromIndex = (int)pd;
-
-                if (fromIndex >= 0) k = fromIndex;
-                else { k = len + fromIndex; if (k < 0) k = 0; }
-                if (k >= len) return false;
+                return false;
             }
 
-            for (int i = k; i < len; i++)
+            for (int i = (int)startIndex; i < len; i++)
             {
-                if (SameValueZero(this[i], searchElement)) return true;
+                if (SameValueZero(ObjectRuntime.GetItem(this, (double)i), searchElement)) return true;
             }
             return false;
         }

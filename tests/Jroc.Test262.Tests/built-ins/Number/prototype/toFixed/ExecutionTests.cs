@@ -13,4 +13,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "return-type")]
     public Task return_type()
         => ExecutionTestFromFile("return-type");
+
+    [Fact(DisplayName = "S15.7.4.5_A1.3_T01")]
+    public Task S15_7_4_5_A1_3_T01()
+        => ExecutionTestFromFile("S15.7.4.5_A1.3_T01");
 }

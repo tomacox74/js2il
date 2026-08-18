@@ -155,4 +155,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task _15_4_4_20_2_1()
         => ExecutionTestFromFile("15.4.4.20-2-1");
 
+    [Fact(DisplayName = "15.4.4.20-3-22")]
+    public Task _15_4_4_20_3_22()
+        => ExecutionTestFromFile("15.4.4.20-3-22");
+
 }

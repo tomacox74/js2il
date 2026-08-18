@@ -89,4 +89,28 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "symbol_own_property")]
     public Task symbol_own_property()
         => ExecutionTestFromFile("symbol_own_property");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "symbol_property_toPrimitive")]
+    public Task symbol_property_toPrimitive()
+        => ExecutionTestFromFile("symbol_property_toPrimitive");
+
+    [Fact(DisplayName = "symbol_property_toString")]
+    public Task symbol_property_toString()
+        => ExecutionTestFromFile("symbol_property_toString");
+
+    [Fact(DisplayName = "symbol_property_valueOf")]
+    public Task symbol_property_valueOf()
+        => ExecutionTestFromFile("symbol_property_valueOf");
+
+    [Fact(DisplayName = "topropertykey_before_toobject")]
+    public Task topropertykey_before_toobject()
+        => ExecutionTestFromFile("topropertykey_before_toobject");
 }

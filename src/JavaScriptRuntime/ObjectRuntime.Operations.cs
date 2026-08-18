@@ -950,6 +950,7 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "groupBy", _objectGroupByValue);
             InitializeBuiltinStaticFunction(_objectGroupByValue, "groupBy", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "hasOwn", _objectHasOwnValue);
+            InitializeBuiltinStaticFunction(_objectHasOwnValue, "hasOwn", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "is", _objectIsValue);
             InitializeBuiltinStaticFunction(_objectIsValue, "is", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "isExtensible", _objectIsExtensibleValue);
@@ -967,8 +968,10 @@ namespace JavaScriptRuntime
 
             DefineBuiltinDataProperty(objectPrototypeValue, "constructor", objectConstructorValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "hasOwnProperty", _objectPrototypeHasOwnPropertyValue, enumerable: false, configurable: true, writable: true);
+            InitializeBuiltinStaticFunction(_objectPrototypeHasOwnPropertyValue, "hasOwnProperty", 1);
             DefineBuiltinDataProperty(objectPrototypeValue, "isPrototypeOf", _objectPrototypeIsPrototypeOfValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "propertyIsEnumerable", _objectPrototypePropertyIsEnumerableValue, enumerable: false, configurable: true, writable: true);
+            InitializeBuiltinStaticFunction(_objectPrototypePropertyIsEnumerableValue, "propertyIsEnumerable", 1);
             DefineBuiltinDataProperty(objectPrototypeValue, "toLocaleString", _objectPrototypeToLocaleStringValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "toString", _objectPrototypeToStringValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "valueOf", _objectPrototypeValueOfValue, enumerable: false, configurable: true, writable: true);
@@ -1088,8 +1091,23 @@ namespace JavaScriptRuntime
             // Calling getPrototypeOf is itself an opt-in signal.
             PrototypeChain.Enable();
 
+            if (ReferenceEquals(obj, GlobalThis.ObjectPrototypeValue))
+            {
+                return JsNull.Null;
+            }
+
             if (!PrototypeChain.TryGetPrototype(obj, out var prototype))
             {
+                if (obj is GlobalThis)
+                {
+                    return GlobalThis.ObjectPrototypeValue;
+                }
+
+                if (ReferenceEquals(obj, GlobalThis.Math))
+                {
+                    return GlobalThis.ObjectPrototypeValue;
+                }
+
                 return null;
             }
 
@@ -1986,9 +2004,10 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeHasOwnProperty(object[] scopes, object?[] args)
         {
-            var target = GetCurrentThisObjectOrThrow();
             var prop = args != null && args.Length > 0 ? args[0] : null;
-            return hasOwn(target, prop);
+            var key = ToPropertyKeyString(prop);
+            var target = GetCurrentThisObjectOrThrow();
+            return HasOwnProperty(target, key);
         }
 
         private static object? PrototypeIsPrototypeOf(object[] scopes, object?[] args)
@@ -2035,9 +2054,9 @@ namespace JavaScriptRuntime
 
         private static object? PrototypePropertyIsEnumerable(object[] scopes, object?[] args)
         {
-            var target = GetCurrentThisObjectOrThrow();
             var prop = args != null && args.Length > 0 ? args[0] : null;
             var key = ToPropertyKeyString(prop);
+            var target = GetCurrentThisObjectOrThrow();
 
             if (target is JavaScriptRuntime.Proxy && TryGetOwnPropertyDescriptor(target, key, out var proxyDescriptor))
             {
@@ -3265,6 +3284,19 @@ namespace JavaScriptRuntime
 
         public static string ToPropertyKeyString(object? key)
         {
+            if (key is not null
+                && key is not JsNull
+                && key is not string
+                && !TypeUtilities.IsPrimitive(key))
+            {
+                if (!TypeUtilities.TryCoerceObjectToPrimitive(key, "string", out var primitive))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+
+                return ToPropertyKeyString(primitive);
+            }
+
             if (key is Symbol sym)
             {
                 // NOTE: We don't yet model true ECMAScript symbol-keyed properties.

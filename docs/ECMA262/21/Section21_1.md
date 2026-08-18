@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T02:52:27Z
+> Last generated (UTC): 2026-08-18T05:14:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -177,7 +177,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.prototype.toFixed(fractionDigits) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toFixed/ExecutionTests.cs` | `built-ins/Number/prototype/toFixed/prop-desc.js`<br>`built-ins/Number/prototype/toFixed/return-type.js` | Implemented with expected descriptor metadata, string return behavior, special NaN/infinity handling, and RangeError validation for digits outside 0..100. Exhaustive ECMAScript decimal-rounding edge cases are not yet fully tracked. |
+| Number.prototype.toFixed(fractionDigits) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toFixed/ExecutionTests.cs` | `built-ins/Number/prototype/toFixed/S15.7.4.5_A1.3_T01.js`<br>`built-ins/Number/prototype/toFixed/prop-desc.js`<br>`built-ins/Number/prototype/toFixed/return-type.js` | Implemented with expected descriptor metadata, string return behavior, special NaN/infinity handling (including Number wrapper NaN receivers), and RangeError validation for digits outside 0..100. Exhaustive ECMAScript decimal-rounding edge cases are not yet fully tracked. |
 
 ### 21.1.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype.tolocalestring))
 
