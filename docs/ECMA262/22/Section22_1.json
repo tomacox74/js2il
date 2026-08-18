@@ -749,7 +749,7 @@
         "feature": "String.prototype.matchAll",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.matchall",
-        "notes": "Implemented in JavaScriptRuntime.String.MatchAll through Symbol.matchAll delegation. Global RegExp inputs return a lazy RegExp String Iterator; custom Symbol.matchAll methods and abrupt property access are forwarded. Broader RegExp exotic behavior remains limited.",
+        "notes": "Implemented in JavaScriptRuntime.String.MatchAll through Symbol.matchAll delegation. Global RegExp inputs validate their flags before receiver coercion and return a lazy RegExp String Iterator; custom Symbol.matchAll methods and abrupt property access are forwarded. Null and undefined fall back through RegExpCreate, including empty-match iterator advancement. Broader RegExp exotic behavior remains limited.",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_MatchAll_Basic.js",
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js",
@@ -763,7 +763,12 @@
           "test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-invocation.js",
           "test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-throws.js",
           "test/built-ins/String/prototype/matchAll/regexp-matchAll-throws.js",
-          "test/built-ins/String/prototype/matchAll/regexp-get-matchAll-throws.js"
+          "test/built-ins/String/prototype/matchAll/regexp-get-matchAll-throws.js",
+          "test/built-ins/String/prototype/matchAll/flags-undefined-throws.js",
+          "test/built-ins/String/prototype/matchAll/regexp-is-null.js",
+          "test/built-ins/String/prototype/matchAll/regexp-is-undefined-or-null-invokes-matchAll.js",
+          "test/built-ins/String/prototype/matchAll/regexp-is-undefined.js",
+          "test/built-ins/String/prototype/matchAll/toString-this-val.js"
         ]
       },
       {
@@ -900,7 +905,7 @@
         "feature": "String.prototype.replaceAll",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.replaceall",
-        "notes": "Implemented for literal-string search values, callable and string replacements, global RegExp inputs, object @@replace dispatch, primitive search values that must not observe prototype @@replace hooks, and replacement templates other than named-capture $<name> substitutions.",
+        "notes": "Implemented for literal-string search values, callable and string replacements, global RegExp inputs, and object @@replace dispatch. RegExp detection and global-flag validation precede receiver and replacement coercion; callable replacements receive each match, position, and input, and abrupt completions propagate. Primitive search values do not observe prototype @@replace hooks. Named-capture $<name> substitutions remain unsupported.",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/String/prototype/replaceAll/ExecutionTests.cs"
@@ -909,7 +914,22 @@
           "test/built-ins/String/prototype/replaceAll/cstm-replaceall-on-bigint-primitive.js",
           "test/built-ins/String/prototype/replaceAll/cstm-replaceall-on-boolean-primitive.js",
           "test/built-ins/String/prototype/replaceAll/cstm-replaceall-on-number-primitive.js",
-          "test/built-ins/String/prototype/replaceAll/cstm-replaceall-on-string-primitive.js"
+          "test/built-ins/String/prototype/replaceAll/cstm-replaceall-on-string-primitive.js",
+          "test/built-ins/String/prototype/replaceAll/replaceValue-call-abrupt.js",
+          "test/built-ins/String/prototype/replaceAll/replaceValue-call-each-match-position.js",
+          "test/built-ins/String/prototype/replaceAll/replaceValue-call-matching-empty.js",
+          "test/built-ins/String/prototype/replaceAll/replaceValue-call-tostring-abrupt.js",
+          "test/built-ins/String/prototype/replaceAll/replaceValue-fn-skip-toString.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-flags-no-g-throws.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-flags-null-undefined-throws.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-flags-toString-abrupt.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-get-flags-abrupt.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-isRegExp-abrupt.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-before-tostring.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-call-abrupt.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-call.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-is-null.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-method-abrupt.js"
         ]
       },
       {

@@ -673,7 +673,7 @@ namespace JavaScriptRuntime
             => Replace(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
 
         private static object? PrototypeReplaceAll(object[] scopes, object?[]? args)
-            => ReplaceAll(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+            => ReplaceAll(RuntimeServices.GetCurrentThis(), GetArg(args, 0), GetArg(args, 1));
 
         private static object? PrototypeSearch(object[] scopes, object?[]? args)
             => Search(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
@@ -1191,9 +1191,11 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (regexp is RegExp regExp && !regExp.global)
+            if (regexp is not null
+                && regexp is not JsNull
+                && RegExp.IsRegExp(regexp))
             {
-                throw new TypeError("String.prototype.matchAll requires a global RegExp");
+                ValidateGlobalRegExp(regexp, "String.prototype.matchAll requires a global RegExp");
             }
 
             if (TryInvokeWellKnownSymbol(regexp, Symbol.matchAll, input, out var symbolResult))
@@ -1877,37 +1879,50 @@ namespace JavaScriptRuntime
 
         public static object ReplaceAll(string input, object? searchValue, object? replaceValue)
         {
-            input ??= string.Empty;
+            return ReplaceAll((object?)input, searchValue, replaceValue);
+        }
 
-            if (searchValue is RegExp { global: false })
+        public static object ReplaceAll(object? receiver, object? searchValue, object? replaceValue)
+        {
+            RequireObjectCoercible(receiver);
+
+            if (searchValue is not null
+                && searchValue is not JsNull)
             {
-                throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
+                if (RegExp.IsRegExp(searchValue))
+                {
+                    ValidateGlobalRegExp(
+                        searchValue,
+                        "String.prototype.replaceAll called with a non-global RegExp argument");
+                }
+
+                if (TryInvokeWellKnownSymbol(searchValue, Symbol.replace, receiver!, replaceValue, out var symbolResult))
+                {
+                    return symbolResult!;
+                }
             }
 
-            if (TryInvokeWellKnownSymbol(searchValue, Symbol.replace, input, replaceValue, out var symbolResult))
-            {
-                return symbolResult!;
-            }
+            var input = ToSearchString(receiver);
+            return ReplaceAllLiteral(input, searchValue, replaceValue);
+        }
 
+        private static object ReplaceAllLiteral(string input, object? searchValue, object? replaceValue)
+        {
             var pattern = ToSearchString(searchValue);
-            if (replaceValue is Func<object[], object, object> callback1)
+            if (CallableOperations.IsCallable(replaceValue))
             {
                 if (pattern.Length == 0)
                 {
-                    return ReplaceEmptyPattern(input, _ => ToSearchString(callback1(System.Array.Empty<object>(), string.Empty)));
+                    return ReplaceEmptyPattern(
+                        input,
+                        index => InvokeStringReplaceCallback(replaceValue!, string.Empty, index, input));
                 }
 
-                return ReplaceLiteralWithCallback(input, pattern, global: true, (match, _) => ToSearchString(callback1(System.Array.Empty<object>(), match)));
-            }
-
-            if (replaceValue is Func<object[], object> callback0)
-            {
-                if (pattern.Length == 0)
-                {
-                    return ReplaceEmptyPattern(input, _ => ToSearchString(callback0(System.Array.Empty<object>())));
-                }
-
-                return ReplaceLiteralWithCallback(input, pattern, global: true, (_, _) => ToSearchString(callback0(System.Array.Empty<object>())));
+                return ReplaceLiteralWithCallback(
+                    input,
+                    pattern,
+                    global: true,
+                    (match, index) => InvokeStringReplaceCallback(replaceValue!, match, index, input));
             }
 
             var replacementText = ToSearchString(replaceValue);
@@ -1923,6 +1938,24 @@ namespace JavaScriptRuntime
 
             return ReplaceLiteralWithCallback(input, pattern, global: true,
                 (match, index) => GetSubstitution(replacementText, match, input, index, null));
+        }
+
+        private static void RequireObjectCoercible(object? value)
+        {
+            if (value is null or JsNull)
+            {
+                throw new TypeError("String.prototype method called on null or undefined");
+            }
+        }
+
+        private static void ValidateGlobalRegExp(object value, string errorMessage)
+        {
+            var flags = ObjectRuntime.GetItem(value, "flags");
+            RequireObjectCoercible(flags);
+            if (ToSearchString(flags).IndexOf('g') < 0)
+            {
+                throw new TypeError(errorMessage);
+            }
         }
 
         private static string Pad(string input, object? maxLength, object? fillString, bool padStart)
@@ -2645,6 +2678,23 @@ namespace JavaScriptRuntime
             }
 
             result = CallableOperations.Call2(callable, target, input, arg1);
+            return true;
+        }
+
+        private static bool TryInvokeWellKnownSymbol(
+            object? target,
+            Symbol symbol,
+            object receiver,
+            object? arg1,
+            out object? result)
+        {
+            result = null;
+            if (!TryGetWellKnownSymbolCallable(target, symbol, out var callable))
+            {
+                return false;
+            }
+
+            result = CallableOperations.Call2(callable, target, receiver, arg1);
             return true;
         }
 

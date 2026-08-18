@@ -53,4 +53,64 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "cstm-replaceall-on-string-primitive.js")]
     public Task cstm_replaceall_on_string_primitive()
         => ExecutionTestFromFile("cstm-replaceall-on-string-primitive");
+
+    [Fact(DisplayName = "replaceValue-call-abrupt.js")]
+    public Task replaceValue_call_abrupt()
+        => ExecutionTestFromFile("replaceValue-call-abrupt");
+
+    [Fact(DisplayName = "replaceValue-call-each-match-position.js")]
+    public Task replaceValue_call_each_match_position()
+        => ExecutionTestFromFile("replaceValue-call-each-match-position");
+
+    [Fact(DisplayName = "replaceValue-call-matching-empty.js")]
+    public Task replaceValue_call_matching_empty()
+        => ExecutionTestFromFile("replaceValue-call-matching-empty");
+
+    [Fact(DisplayName = "replaceValue-call-tostring-abrupt.js")]
+    public Task replaceValue_call_tostring_abrupt()
+        => ExecutionTestFromFile("replaceValue-call-tostring-abrupt");
+
+    [Fact(DisplayName = "replaceValue-fn-skip-toString.js")]
+    public Task replaceValue_fn_skip_toString()
+        => ExecutionTestFromFile("replaceValue-fn-skip-toString");
+
+    [Fact(DisplayName = "searchValue-flags-no-g-throws.js")]
+    public Task searchValue_flags_no_g_throws()
+        => ExecutionTestFromFile("searchValue-flags-no-g-throws");
+
+    [Fact(DisplayName = "searchValue-flags-null-undefined-throws.js")]
+    public Task searchValue_flags_null_undefined_throws()
+        => ExecutionTestFromFile("searchValue-flags-null-undefined-throws");
+
+    [Fact(DisplayName = "searchValue-flags-toString-abrupt.js")]
+    public Task searchValue_flags_toString_abrupt()
+        => ExecutionTestFromFile("searchValue-flags-toString-abrupt");
+
+    [Fact(DisplayName = "searchValue-get-flags-abrupt.js")]
+    public Task searchValue_get_flags_abrupt()
+        => ExecutionTestFromFile("searchValue-get-flags-abrupt");
+
+    [Fact(DisplayName = "searchValue-isRegExp-abrupt.js")]
+    public Task searchValue_isRegExp_abrupt()
+        => ExecutionTestFromFile("searchValue-isRegExp-abrupt");
+
+    [Fact(DisplayName = "searchValue-replacer-before-tostring.js")]
+    public Task searchValue_replacer_before_tostring()
+        => ExecutionTestFromFile("searchValue-replacer-before-tostring");
+
+    [Fact(DisplayName = "searchValue-replacer-call-abrupt.js")]
+    public Task searchValue_replacer_call_abrupt()
+        => ExecutionTestFromFile("searchValue-replacer-call-abrupt");
+
+    [Fact(DisplayName = "searchValue-replacer-call.js")]
+    public Task searchValue_replacer_call()
+        => ExecutionTestFromFile("searchValue-replacer-call");
+
+    [Fact(DisplayName = "searchValue-replacer-is-null.js")]
+    public Task searchValue_replacer_is_null()
+        => ExecutionTestFromFile("searchValue-replacer-is-null");
+
+    [Fact(DisplayName = "searchValue-replacer-method-abrupt.js")]
+    public Task searchValue_replacer_method_abrupt()
+        => ExecutionTestFromFile("searchValue-replacer-method-abrupt");
 }

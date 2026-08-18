@@ -37,4 +37,24 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "regexp-get-matchAll-throws.js")]
     public Task regexp_get_matchAll_throws()
         => ExecutionTestFromFile("regexp-get-matchAll-throws");
+
+    [Fact(DisplayName = "flags-undefined-throws.js")]
+    public Task flags_undefined_throws()
+        => ExecutionTestFromFile("flags-undefined-throws");
+
+    [Fact(DisplayName = "regexp-is-null.js")]
+    public Task regexp_is_null()
+        => ExecutionTestFromFile("regexp-is-null");
+
+    [Fact(DisplayName = "regexp-is-undefined-or-null-invokes-matchAll.js")]
+    public Task regexp_is_undefined_or_null_invokes_matchAll()
+        => ExecutionTestFromFile("regexp-is-undefined-or-null-invokes-matchAll");
+
+    [Fact(DisplayName = "regexp-is-undefined.js")]
+    public Task regexp_is_undefined()
+        => ExecutionTestFromFile("regexp-is-undefined");
+
+    [Fact(DisplayName = "toString-this-val.js")]
+    public Task toString_this_val()
+        => ExecutionTestFromFile("toString-this-val");
 }

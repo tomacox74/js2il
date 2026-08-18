@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs: add 20 test262 String regressions for `replaceAll` and
+  `matchAll`. `replaceAll` now validates RegExp flags before coercion,
+  preserves custom `@@replace` dispatch ordering, and invokes functional
+  replacements with the required match arguments. Empty global-RegExp matches
+  retain the correct `lastIndex` for `matchAll` iteration.
 - perf(runtime): add an internal explicit-receiver built-in ABI for fixed
   arities zero through five and a variadic fallback (issue #1888).
   Receiver-aware adapters now bypass ambient invocation state and invoke
