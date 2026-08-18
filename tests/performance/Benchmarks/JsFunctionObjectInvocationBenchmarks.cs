@@ -26,7 +26,10 @@ public class JsFunctionObjectInvocationBenchmarks
     private readonly ContextualBenchmarkFunction _contextualFunctionObject = new();
     private readonly JsFuncNoScopes3 _builtinDelegate =
         static (_, _, _, argument2) => argument2;
+    private readonly BuiltinFunction3 _receiverAwareBuiltin =
+        static (_, _, _, argument2) => argument2;
     private BuiltinDelegateFunctionAdapter _builtinAdapter = null!;
+    private BuiltinDelegateFunctionAdapter _receiverAwareBuiltinAdapter = null!;
 
     [GlobalSetup]
     public void Setup()
@@ -38,16 +41,27 @@ public class JsFunctionObjectInvocationBenchmarks
             requiresInvocationContext: false);
         _builtinAdapter =
             BuiltinDelegateFunctionAdapter.FromDelegate(_builtinDelegate);
+        _receiverAwareBuiltinAdapter =
+            BuiltinDelegateFunctionAdapter.FromDelegate(_receiverAwareBuiltin);
     }
+
+    [Benchmark(Description = "Receiver-aware built-in adapter fixed arity 3")]
+    public object ReceiverAwareBuiltinAdapterFixed3()
+        => CallableOperations.Call3(
+            _receiverAwareBuiltinAdapter,
+            Argument0,
+            Argument0,
+            Argument1,
+            Argument2)!;
 
     [Benchmark(Baseline = true, Description = "Built-in delegate adapter fixed arity 3")]
     public object BuiltinDelegateAdapterFixed3()
-        => Closure.InvokeWithArgs3(
+        => CallableOperations.Call3(
             _builtinAdapter,
-            RuntimeServices.EmptyScopes,
+            Argument0,
             Argument0,
             Argument1,
-            Argument2);
+            Argument2)!;
 
     [Benchmark(Description = "JsFunctionObject fixed arity 3")]
     public object FunctionObjectFixed3()

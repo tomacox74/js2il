@@ -785,6 +785,7 @@ public static class Function
                     constructor.Target,
                     constructor.InvokeMetadata,
                     constructor.Scopes,
+                    instance,
                     arguments,
                     newTarget);
                 result =
@@ -816,6 +817,7 @@ public static class Function
                     constructor.Target,
                     constructor.InvokeMetadata,
                     constructor.Scopes,
+                    receiver,
                     JsCallArguments.FromArray(callArgs),
                     newTarget);
                 result =
@@ -832,6 +834,10 @@ public static class Function
         public static double GetLength(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
+            if (BuiltinFunctionDelegates.TryGetLength(target, out var builtinLength))
+            {
+                return builtinLength;
+            }
 
             var invoke = target.GetType().GetMethod("Invoke")
                 ?? throw new ArgumentException($"Delegate type '{target.GetType()}' does not define Invoke().", nameof(target));

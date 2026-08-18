@@ -407,6 +407,32 @@ namespace JavaScriptRuntime
             Delegate target,
             DelegateInvokeMetadata metadata,
             object[] scopes,
+            object? thisArgument,
+            in JsCallArguments arguments,
+            object? newTarget)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+            if (BuiltinFunctionDelegates.TryInvoke(
+                    target,
+                    thisArgument,
+                    arguments,
+                    out var result))
+            {
+                return result;
+            }
+
+            return InvokeBuiltinDelegate(
+                target,
+                metadata,
+                scopes,
+                arguments,
+                newTarget);
+        }
+
+        internal static object? InvokeBuiltinDelegate(
+            Delegate target,
+            DelegateInvokeMetadata metadata,
+            object[] scopes,
             in JsCallArguments arguments,
             object? newTarget)
         {

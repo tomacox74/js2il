@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): add an internal explicit-receiver built-in ABI for fixed
+  arities zero through five and a variadic fallback (issue #1888).
+  Receiver-aware adapters now bypass ambient invocation state and invoke
+  directly from `JsCallArguments`, eliminating per-call context and
+  fixed-arity argument-array allocation while legacy built-in delegates remain
+  compatible.
 - compiler/runtime: preserve observable `String.prototype` lookup for
   primitive-string method calls (issue #1894). The compiler and runtime no
   longer early-bind String helpers that bypass replacement, deletion,
