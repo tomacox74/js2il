@@ -6,11 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- perf(compiler): retain flow-sensitive receiver candidate sets across
+- compiler: record receiver candidate sets across
   assignments and captured/deferred closures (issue #1898). Candidates keep
-  guarded String specialization available without treating an object-typed
-  field as a proven string, so all non-string and prototype-mutated paths
-  retain their exact generic fallback.
+  primitive strings distinct from boxed String objects and remain
+  analysis-only until representation-compatible guarded specialization is
+  available.
 - perf(compiler): emit realm-epoch-guarded fixed-arity String intrinsic calls
   with exact `CallMember0..5` fallbacks (issue #1891). Proven receivers skip
   the type test, uncertain receivers use `isinst string`, and the guarded

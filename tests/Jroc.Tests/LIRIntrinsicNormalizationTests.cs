@@ -115,7 +115,7 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
-    public void Normalize_Rewrites_StringCandidateFieldMemberCall_WithReceiverTypeTest()
+    public void Normalize_DoesNotRewrite_StringCandidateFieldMemberCall_WithKnownNonStringType()
     {
         var parser = new JavaScriptParser();
         var program = parser.ParseJavaScript("var value;", "candidate.js");
@@ -150,9 +150,7 @@ public sealed class LIRIntrinsicNormalizationTests
 
         LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
 
-        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(
-            body.Instructions[1]);
-        Assert.False(guarded.ReceiverIsProvenString);
+        Assert.IsType<LIRCallMember0>(body.Instructions[1]);
     }
 
     [Fact]

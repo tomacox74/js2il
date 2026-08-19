@@ -139,6 +139,32 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotTreatStringObjectAsPrimitiveString()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var text = new String('seed');
+        ");
+
+        var text = symbolTable.GetBindingInfo("text");
+        Assert.NotNull(text);
+        Assert.DoesNotContain(typeof(string), text.ReceiverCandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_IgnoreNonAdditionCompoundAssignmentRhs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var text = 'seed';
+            var value = 1;
+            value -= text;
+        ");
+
+        var value = symbolTable.GetBindingInfo("value");
+        Assert.NotNull(value);
+        Assert.DoesNotContain(typeof(string), value.ReceiverCandidateClrTypes);
+    }
+
+    [Fact]
     public void SymbolTable_ReceiverCandidates_TrackArrayAndTypedArrayWrites()
     {
         var symbolTable = BuildSymbolTable(@"

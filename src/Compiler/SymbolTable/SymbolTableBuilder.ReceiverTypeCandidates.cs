@@ -7,6 +7,8 @@ public partial class SymbolTableBuilder
 {
     private void InferReceiverTypeCandidates(Scope root)
     {
+        var stringObjectCandidateBindings = new HashSet<BindingInfo>();
+
         foreach (var scope in EnumerateScopes(root))
         {
             foreach (var binding in scope.Bindings.Values)
@@ -48,7 +50,7 @@ public partial class SymbolTableBuilder
                         Id: Identifier identifier,
                         Init: { } initializer
                     }:
-                        AddCandidates(
+                        AddAssignmentCandidates(
                             TryResolveBinding(scope, identifier.Name),
                             initializer,
                             scope);
@@ -60,10 +62,18 @@ public partial class SymbolTableBuilder
                     } assignment:
                     {
                         var binding = TryResolveBinding(scope, identifier.Name);
-                        AddCandidates(binding, assignment.Right, scope);
-
-                        if (assignment.Operator == Operator.AdditionAssignment
-                            && binding?.ReceiverCandidateClrTypes.Contains(typeof(string)) == true)
+                        if (assignment.Operator == Operator.Assignment)
+                        {
+                            AddAssignmentCandidates(
+                                binding,
+                                assignment.Right,
+                                scope);
+                        }
+                        else if (assignment.Operator == Operator.AdditionAssignment
+                            && binding != null
+                            && (binding.ReceiverCandidateClrTypes.Contains(typeof(string))
+                                || stringObjectCandidateBindings.Contains(binding)
+                                || ContainsStringCandidate(assignment.Right, scope)))
                         {
                             changed |= binding.ReceiverCandidateClrTypes.Add(typeof(string));
                         }
@@ -75,6 +85,19 @@ public partial class SymbolTableBuilder
                 {
                     pending.Push((child, false));
                 }
+            }
+        }
+
+        void AddAssignmentCandidates(
+            BindingInfo? binding,
+            Expression expression,
+            Scope scope)
+        {
+            AddCandidates(binding, expression, scope);
+            if (binding != null
+                && IsStringObjectCandidate(expression, scope))
+            {
+                changed |= stringObjectCandidateBindings.Add(binding);
             }
         }
 
@@ -114,11 +137,6 @@ public partial class SymbolTableBuilder
                     yield return typeof(JavaScriptRuntime.Array);
                     yield break;
 
-                case NewExpression
-                    {
-                        Callee: Identifier { Name: "String" }
-                    }
-                    when !IsIdentifierShadowed(scope, "String"):
                 case CallExpression
                     {
                         Callee: Identifier { Name: "String" }
@@ -181,6 +199,18 @@ public partial class SymbolTableBuilder
             }
         }
 
+        bool IsStringObjectCandidate(Expression expression, Scope scope)
+            => expression switch
+            {
+                NewExpression
+                {
+                    Callee: Identifier { Name: "String" }
+                } => !IsIdentifierShadowed(scope, "String"),
+                Identifier identifier => TryResolveBinding(scope, identifier.Name) is { } sourceBinding
+                    && stringObjectCandidateBindings.Contains(sourceBinding),
+                _ => false
+            };
+
         bool ContainsStringCandidate(Expression expression, Scope scope)
         {
             var pending = new Stack<Expression>();
@@ -214,8 +244,9 @@ public partial class SymbolTableBuilder
                         return true;
 
                     case Identifier identifier
-                        when TryResolveBinding(scope, identifier.Name)
-                            ?.ReceiverCandidateClrTypes.Contains(typeof(string)) == true:
+                        when TryResolveBinding(scope, identifier.Name) is { } binding
+                            && (binding.ReceiverCandidateClrTypes.Contains(typeof(string))
+                                || stringObjectCandidateBindings.Contains(binding)):
                         return true;
 
                     case NonLogicalBinaryExpression

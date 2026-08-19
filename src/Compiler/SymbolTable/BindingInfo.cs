@@ -82,9 +82,10 @@ public class BindingInfo
     }
 
     /// <summary>
-    /// Reference receiver types observed at any write to this binding. Unlike
-    /// <see cref="ClrType"/>, these are candidates rather than a representation
-    /// guarantee, so consumers must retain a runtime guard and generic fallback.
+    /// Reference receiver types conservatively observed as possible assignment
+    /// results for this binding. Unlike <see cref="ClrType"/>, these are
+    /// analysis candidates rather than a representation guarantee, so future
+    /// consumers must retain a runtime guard and generic fallback.
     /// </summary>
     public HashSet<Type> ReceiverCandidateClrTypes { get; } = [];
 
