@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.11 - 2026-08-19
+
 - perf(runtime/docs): evaluate a reusable thread-static compatibility frame
   (issue #1890). The benchmark control reaches 0 B/call, but production retains
   the 200 B/call immutable `AsyncLocal` fallback because residual state must
