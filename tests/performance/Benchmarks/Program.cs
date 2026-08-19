@@ -64,6 +64,12 @@ else
         var summary = BenchmarkRunner.Run<AsyncContextBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--intrinsic-epochs")
+    {
+        var summary = BenchmarkRunner.Run<IntrinsicPrototypeEpochBenchmarks>(
+            args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
 #if SOURCE_JROC_PROJECTS
     else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
     {
@@ -144,6 +150,7 @@ Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable m
 Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-object and legacy invocation ABIs");
 Console.WriteLine("  dotnet run -c Release --builtin-invocation # Measure representative runtime-owned built-in adapters");
 Console.WriteLine("  dotnet run -c Release --async-context # Compare disabled and enabled async-context overhead");
+Console.WriteLine("  dotnet run -c Release --intrinsic-epochs # Measure realm-owned intrinsic epoch guards");
 Console.WriteLine("  dotnet run -c Release --callable-arity-analysis # Measure benchmark/runtime call-site arities");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");

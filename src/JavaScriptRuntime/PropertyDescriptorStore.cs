@@ -476,12 +476,14 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
 
             NotifyCanonicalIndexMutation(GetLookupStore(target), key);
+            RuntimeIntrinsics.NotifyPrototypeMutation(target);
             return;
         }
 
         var store = CurrentStore;
         store.DefineOrUpdate(target, key, descriptor);
         NotifyCanonicalIndexMutation(store, key);
+        RuntimeIntrinsics.NotifyPrototypeMutation(target);
     }
 
     internal static void CopyOwnProperties(object source, object target)
@@ -542,12 +544,20 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
 
             NotifyCanonicalIndexMutation(GetLookupStore(target), key);
+            if (inlineDeleted)
+            {
+                RuntimeIntrinsics.NotifyPrototypeMutation(target);
+            }
             return inlineDeleted;
         }
 
         var store = CurrentStore;
         var deleted = store.Delete(target, key);
         NotifyCanonicalIndexMutation(store, key);
+        if (deleted)
+        {
+            RuntimeIntrinsics.NotifyPrototypeMutation(target);
+        }
         return deleted;
     }
 
@@ -572,6 +582,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         }
 
         Array.NotifyPrototypeMutation();
+        RuntimeIntrinsics.NotifyPrototypeMutation(target);
     }
 
     internal static bool HasExternalDescriptorStateForTests(object target)

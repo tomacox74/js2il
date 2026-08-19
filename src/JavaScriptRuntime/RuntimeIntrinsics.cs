@@ -139,6 +139,7 @@ internal enum RuntimeIntrinsicSlot
 internal sealed class RuntimeIntrinsics
 {
     private const int MaxWaitChainLength = 64;
+    private const int PrototypeFamilyCount = 1;
 
     private static readonly TimeSpan WaitSlice = TimeSpan.FromMilliseconds(20);
 
@@ -158,6 +159,8 @@ internal sealed class RuntimeIntrinsics
 
     private readonly object _slotTableGate = new();
     private readonly SlotEntry?[] _slots = new SlotEntry?[(int)RuntimeIntrinsicSlot.Count];
+    private readonly long[] _prototypeMutationEpochs =
+        new long[PrototypeFamilyCount];
 
     /// <summary>
     /// Fully initialized slot values. Only written after the slot's initializer has
@@ -175,6 +178,53 @@ internal sealed class RuntimeIntrinsics
     /// not keep the intrinsic graph alive (see <c>Array</c>'s cached prototype-chain state).
     /// </summary>
     internal long Id { get; }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal long ReadPrototypeMutationEpoch(
+        IntrinsicPrototypeFamily family)
+    {
+        var index = (int)family;
+        if ((uint)index >= PrototypeFamilyCount)
+        {
+            throw new ArgumentOutOfRangeException(nameof(family));
+        }
+
+        return Volatile.Read(ref _prototypeMutationEpochs[index]);
+    }
+
+    internal static void NotifyPrototypeMutation(object target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        if (PropertyDescriptorStore.IsIntrinsicInitialization
+            || IsInitializingOnCurrentThread)
+        {
+            return;
+        }
+
+        var intrinsics = RuntimeExecutionContext.Current?.Realm.Intrinsics
+            ?? Volatile.Read(ref _processDefault);
+        intrinsics?.NotifyOwnedPrototypeMutation(
+            BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(target));
+    }
+
+    private void NotifyOwnedPrototypeMutation(object target)
+    {
+        if (ReferenceEquals(
+                target,
+                Volatile.Read(
+                    ref _published[
+                        (int)RuntimeIntrinsicSlot.StringPrototype]))
+            || ReferenceEquals(
+                target,
+                Volatile.Read(
+                    ref _published[
+                        (int)RuntimeIntrinsicSlot.ObjectPrototype])))
+        {
+            Interlocked.Increment(
+                ref _prototypeMutationEpochs[
+                    (int)IntrinsicPrototypeFamily.String]);
+        }
+    }
 
     /// <summary>
     /// Per-realm stable adapter identities for runtime-owned built-in delegates.
