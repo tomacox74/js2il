@@ -15,6 +15,7 @@ These design documents describe the JROC compiler pipeline, including callable p
 
 - [Async/await lowering specification](AsyncAwait_LoweringSpec.md)
 - [Async/await three-way comparison](AsyncAwait_ThreeWay_Comparison.md)
+- [Guarded String intrinsic calls](GuardedStringIntrinsicCalls.md)
 - [Instruction chaining](InstructionChaining.md)
 - [LIR rematerialization](LIRRematerialization.md)
 - [LIR stack scheduler](LIRStackScheduler.md)

@@ -210,7 +210,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1221 (0x4c5)
+		// Code size: 1321 (0x529)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_ExplicitReceiverAbi/Scope,
@@ -402,209 +402,236 @@
 		IL_023e: ldloc.s 10
 		IL_0240: box [System.Runtime]System.Double
 		IL_0245: stloc.s 11
-		IL_0247: ldstr "abcdef"
-		IL_024c: ldstr "substr"
-		IL_0251: ldloc.s 11
-		IL_0253: ldc.r8 2
-		IL_025c: box [System.Runtime]System.Double
-		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0266: stloc.s 8
-		IL_0268: ldloc.s 6
-		IL_026a: ldloc.s 8
-		IL_026c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0271: pop
-		IL_0272: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0277: stloc.s 6
-		IL_0279: ldstr "String"
-		IL_027e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0283: ldstr "prototype"
-		IL_0288: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_028d: stloc.s 8
-		IL_028f: ldloc.s 8
-		IL_0291: ldstr "trimLeft"
-		IL_0296: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_029b: stloc.s 8
-		IL_029d: ldstr "String"
-		IL_02a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02a7: ldstr "prototype"
-		IL_02ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02b1: stloc.s 7
-		IL_02b3: ldloc.s 7
-		IL_02b5: ldstr "trimStart"
-		IL_02ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02bf: stloc.s 7
-		IL_02c1: ldloc.s 8
-		IL_02c3: ldloc.s 7
-		IL_02c5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_02ca: stloc.s 12
-		IL_02cc: ldloc.s 12
-		IL_02ce: box [System.Runtime]System.Boolean
-		IL_02d3: stloc.s 13
-		IL_02d5: ldloc.s 6
-		IL_02d7: ldloc.s 13
-		IL_02d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02de: pop
-		IL_02df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02e4: stloc.s 6
-		IL_02e6: ldstr "String"
-		IL_02eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02f0: ldstr "prototype"
-		IL_02f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02fa: stloc.s 7
-		IL_02fc: ldloc.s 7
-		IL_02fe: ldstr "trimRight"
-		IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0308: stloc.s 7
-		IL_030a: ldstr "String"
-		IL_030f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0314: ldstr "prototype"
-		IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_031e: stloc.s 8
-		IL_0320: ldloc.s 8
-		IL_0322: ldstr "trimEnd"
-		IL_0327: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_032c: stloc.s 8
-		IL_032e: ldloc.s 7
-		IL_0330: ldloc.s 8
-		IL_0332: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0337: stloc.s 12
-		IL_0339: ldloc.s 12
-		IL_033b: box [System.Runtime]System.Boolean
-		IL_0340: stloc.s 13
-		IL_0342: ldloc.s 6
-		IL_0344: ldloc.s 13
-		IL_0346: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_034b: pop
+		IL_0247: ldc.i4.0
+		IL_0248: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_024d: brfalse IL_0273
+
+		IL_0252: ldstr "abcdef"
+		IL_0257: ldloc.s 11
+		IL_0259: ldc.r8 2
+		IL_0262: box [System.Runtime]System.Double
+		IL_0267: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object, object)
+		IL_026c: stloc.s 8
+		IL_026e: br IL_0294
+
+		IL_0273: ldstr "abcdef"
+		IL_0278: ldstr "substr"
+		IL_027d: ldloc.s 11
+		IL_027f: ldc.r8 2
+		IL_0288: box [System.Runtime]System.Double
+		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0292: stloc.s 8
+
+		IL_0294: ldloc.s 6
+		IL_0296: ldloc.s 8
+		IL_0298: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_029d: pop
+		IL_029e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02a3: stloc.s 6
+		IL_02a5: ldstr "String"
+		IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02af: ldstr "prototype"
+		IL_02b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02b9: stloc.s 8
+		IL_02bb: ldloc.s 8
+		IL_02bd: ldstr "trimLeft"
+		IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02c7: stloc.s 8
+		IL_02c9: ldstr "String"
+		IL_02ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02d3: ldstr "prototype"
+		IL_02d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02dd: stloc.s 7
+		IL_02df: ldloc.s 7
+		IL_02e1: ldstr "trimStart"
+		IL_02e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02eb: stloc.s 7
+		IL_02ed: ldloc.s 8
+		IL_02ef: ldloc.s 7
+		IL_02f1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_02f6: stloc.s 12
+		IL_02f8: ldloc.s 12
+		IL_02fa: box [System.Runtime]System.Boolean
+		IL_02ff: stloc.s 13
+		IL_0301: ldloc.s 6
+		IL_0303: ldloc.s 13
+		IL_0305: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_030a: pop
+		IL_030b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0310: stloc.s 6
+		IL_0312: ldstr "String"
+		IL_0317: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_031c: ldstr "prototype"
+		IL_0321: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0326: stloc.s 7
+		IL_0328: ldloc.s 7
+		IL_032a: ldstr "trimRight"
+		IL_032f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0334: stloc.s 7
+		IL_0336: ldstr "String"
+		IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0340: ldstr "prototype"
+		IL_0345: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_034a: stloc.s 8
+		IL_034c: ldloc.s 8
+		IL_034e: ldstr "trimEnd"
+		IL_0353: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0358: stloc.s 8
+		IL_035a: ldloc.s 7
+		IL_035c: ldloc.s 8
+		IL_035e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0363: stloc.s 12
+		IL_0365: ldloc.s 12
+		IL_0367: box [System.Runtime]System.Boolean
+		IL_036c: stloc.s 13
+		IL_036e: ldloc.s 6
+		IL_0370: ldloc.s 13
+		IL_0372: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0377: pop
 		.try
 		{
-			IL_034c: nop
-			IL_034d: ldstr "String"
-			IL_0352: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0357: ldstr "prototype"
-			IL_035c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0361: stloc.s 8
-			IL_0363: ldloc.s 8
-			IL_0365: ldstr "trim"
-			IL_036a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_036f: stloc.s 8
-			IL_0371: ldloc.s 8
-			IL_0373: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0378: ldstr "call"
-			IL_037d: ldc.i4.0
-			IL_037e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0388: pop
-			IL_0389: leave IL_03f2
+			IL_0378: nop
+			IL_0379: ldstr "String"
+			IL_037e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0383: ldstr "prototype"
+			IL_0388: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_038d: stloc.s 8
+			IL_038f: ldloc.s 8
+			IL_0391: ldstr "trim"
+			IL_0396: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_039b: stloc.s 8
+			IL_039d: ldloc.s 8
+			IL_039f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_03a4: ldstr "call"
+			IL_03a9: ldc.i4.0
+			IL_03aa: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_03af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_03b4: pop
+			IL_03b5: leave IL_041e
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_038e: stloc.1
-			IL_038f: ldloc.1
-			IL_0390: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0395: dup
-			IL_0396: brtrue IL_03ab
+			IL_03ba: stloc.1
+			IL_03bb: ldloc.1
+			IL_03bc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_03c1: dup
+			IL_03c2: brtrue IL_03d7
 
-			IL_039b: pop
-			IL_039c: ldloc.1
-			IL_039d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_03a2: dup
-			IL_03a3: brtrue IL_03b6
+			IL_03c7: pop
+			IL_03c8: ldloc.1
+			IL_03c9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_03ce: dup
+			IL_03cf: brtrue IL_03e2
 
-			IL_03a8: pop
-			IL_03a9: rethrow
+			IL_03d4: pop
+			IL_03d5: rethrow
 
-			IL_03ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_03b0: stloc.2
-			IL_03b1: br IL_03b7
+			IL_03d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_03dc: stloc.2
+			IL_03dd: br IL_03e3
 
-			IL_03b6: stloc.2
+			IL_03e2: stloc.2
 
-			IL_03b7: ldloc.2
-			IL_03b8: stloc.3
-			IL_03b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03be: stloc.s 6
-			IL_03c0: ldloc.3
-			IL_03c1: stloc.s 8
-			IL_03c3: ldstr "TypeError"
-			IL_03c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_03cd: stloc.s 7
-			IL_03cf: ldloc.s 8
-			IL_03d1: ldloc.s 7
-			IL_03d3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_03d8: stloc.s 12
-			IL_03da: ldloc.s 12
-			IL_03dc: box [System.Runtime]System.Boolean
-			IL_03e1: stloc.s 13
-			IL_03e3: ldloc.s 6
-			IL_03e5: ldloc.s 13
-			IL_03e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03ec: pop
-			IL_03ed: leave IL_03f2
+			IL_03e3: ldloc.2
+			IL_03e4: stloc.3
+			IL_03e5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03ea: stloc.s 6
+			IL_03ec: ldloc.3
+			IL_03ed: stloc.s 8
+			IL_03ef: ldstr "TypeError"
+			IL_03f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_03f9: stloc.s 7
+			IL_03fb: ldloc.s 8
+			IL_03fd: ldloc.s 7
+			IL_03ff: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0404: stloc.s 12
+			IL_0406: ldloc.s 12
+			IL_0408: box [System.Runtime]System.Boolean
+			IL_040d: stloc.s 13
+			IL_040f: ldloc.s 6
+			IL_0411: ldloc.s 13
+			IL_0413: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0418: pop
+			IL_0419: leave IL_041e
 		} // end handler
 
-		IL_03f2: ldstr "String"
-		IL_03f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03fc: ldstr "prototype"
-		IL_0401: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0406: stloc.s 7
-		IL_0408: ldloc.s 7
-		IL_040a: ldstr "slice"
-		IL_040f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0414: stloc.s 4
-		IL_0416: ldstr "String"
-		IL_041b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0420: ldstr "prototype"
-		IL_0425: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_042a: stloc.s 7
-		IL_042c: ldc.i4.1
-		IL_042d: newarr [System.Runtime]System.Object
-		IL_0432: dup
-		IL_0433: ldc.i4.0
-		IL_0434: ldloc.0
-		IL_0435: stelem.ref
-		IL_0436: stloc.s 14
-		IL_0438: newobj instance void Modules.String_ExplicitReceiverAbi/FunctionExpression_L19C25/FunctionObject::.ctor()
-		IL_043d: ldc.i4.0
-		IL_043e: conv.r8
-		IL_043f: ldstr ""
-		IL_0444: ldc.i4.0
-		IL_0445: ldc.i4.1
-		IL_0446: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_ExplicitReceiverAbi/FunctionExpression_L19C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_044b: stloc.s 15
-		IL_044d: ldloc.s 7
-		IL_044f: ldstr "slice"
-		IL_0454: ldloc.s 15
-		IL_0456: ldc.i4.1
-		IL_0457: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_045c: pop
-		IL_045d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0462: stloc.s 6
-		IL_0464: ldstr "abcdef"
-		IL_0469: ldstr "slice"
-		IL_046e: ldc.r8 1
-		IL_0477: box [System.Runtime]System.Double
-		IL_047c: ldc.r8 4
-		IL_0485: box [System.Runtime]System.Double
-		IL_048a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_048f: stloc.s 7
-		IL_0491: ldloc.s 6
-		IL_0493: ldloc.s 7
-		IL_0495: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_049a: pop
-		IL_049b: ldstr "String"
-		IL_04a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04a5: ldstr "prototype"
-		IL_04aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04af: stloc.s 7
-		IL_04b1: ldloc.s 7
-		IL_04b3: ldstr "slice"
-		IL_04b8: ldloc.s 4
-		IL_04ba: ldc.i4.1
-		IL_04bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_04c0: pop
-		IL_04c1: ldnull
-		IL_04c2: stloc.s 5
-		IL_04c4: ret
+		IL_041e: ldstr "String"
+		IL_0423: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0428: ldstr "prototype"
+		IL_042d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0432: stloc.s 7
+		IL_0434: ldloc.s 7
+		IL_0436: ldstr "slice"
+		IL_043b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0440: stloc.s 4
+		IL_0442: ldstr "String"
+		IL_0447: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_044c: ldstr "prototype"
+		IL_0451: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0456: stloc.s 7
+		IL_0458: ldc.i4.1
+		IL_0459: newarr [System.Runtime]System.Object
+		IL_045e: dup
+		IL_045f: ldc.i4.0
+		IL_0460: ldloc.0
+		IL_0461: stelem.ref
+		IL_0462: stloc.s 14
+		IL_0464: newobj instance void Modules.String_ExplicitReceiverAbi/FunctionExpression_L19C25/FunctionObject::.ctor()
+		IL_0469: ldc.i4.0
+		IL_046a: conv.r8
+		IL_046b: ldstr ""
+		IL_0470: ldc.i4.0
+		IL_0471: ldc.i4.1
+		IL_0472: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_ExplicitReceiverAbi/FunctionExpression_L19C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0477: stloc.s 15
+		IL_0479: ldloc.s 7
+		IL_047b: ldstr "slice"
+		IL_0480: ldloc.s 15
+		IL_0482: ldc.i4.1
+		IL_0483: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0488: pop
+		IL_0489: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_048e: stloc.s 6
+		IL_0490: ldc.i4.0
+		IL_0491: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0496: brfalse IL_04c8
+
+		IL_049b: ldstr "abcdef"
+		IL_04a0: ldc.r8 1
+		IL_04a9: box [System.Runtime]System.Double
+		IL_04ae: ldc.r8 4
+		IL_04b7: box [System.Runtime]System.Double
+		IL_04bc: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object, object)
+		IL_04c1: stloc.s 7
+		IL_04c3: br IL_04f5
+
+		IL_04c8: ldstr "abcdef"
+		IL_04cd: ldstr "slice"
+		IL_04d2: ldc.r8 1
+		IL_04db: box [System.Runtime]System.Double
+		IL_04e0: ldc.r8 4
+		IL_04e9: box [System.Runtime]System.Double
+		IL_04ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_04f3: stloc.s 7
+
+		IL_04f5: ldloc.s 6
+		IL_04f7: ldloc.s 7
+		IL_04f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04fe: pop
+		IL_04ff: ldstr "String"
+		IL_0504: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0509: ldstr "prototype"
+		IL_050e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0513: stloc.s 7
+		IL_0515: ldloc.s 7
+		IL_0517: ldstr "slice"
+		IL_051c: ldloc.s 4
+		IL_051e: ldc.i4.1
+		IL_051f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0524: pop
+		IL_0525: ldnull
+		IL_0526: stloc.s 5
+		IL_0528: ret
 	} // end of method String_ExplicitReceiverAbi::__js_module_init__
 
 } // end of class Modules.String_ExplicitReceiverAbi

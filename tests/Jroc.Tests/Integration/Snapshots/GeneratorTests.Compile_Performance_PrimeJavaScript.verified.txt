@@ -3144,7 +3144,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 673 (0x2a1)
+		// Code size: 724 (0x2d4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Compile_Performance_PrimeJavaScript/Scope,
@@ -3246,141 +3246,161 @@
 		IL_011b: stloc.s 5
 		IL_011d: ldloc.s 5
 		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0124: ldstr "includes"
-		IL_0129: ldstr "verbose"
-		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0133: stloc.s 5
-		IL_0135: ldloc.1
-		IL_0136: castclass Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config
-		IL_013b: ldloc.s 5
-		IL_013d: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_verbose(object)
-		IL_0142: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-		IL_0147: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_014c: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-		IL_0151: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0156: stloc.s 8
-		IL_0158: ldloc.s 8
-		IL_015a: ldstr "prototype"
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0164: stloc.s 5
-		IL_0166: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_016b: stloc.s 9
-		IL_016d: ldloc.s 5
-		IL_016f: ldstr "setBitTrue"
-		IL_0174: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject::.ctor()
-		IL_0179: ldc.i4.1
-		IL_017a: conv.r8
-		IL_017b: ldstr "setBitTrue"
-		IL_0180: ldc.i4.1
-		IL_0181: ldc.i4.1
-		IL_0182: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0187: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject>(!!0)
-		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0191: pop
-		IL_0192: ldc.i4.1
-		IL_0193: newarr [System.Runtime]System.Object
-		IL_0198: dup
-		IL_0199: ldc.i4.0
-		IL_019a: ldloc.0
-		IL_019b: stelem.ref
-		IL_019c: stloc.s 9
-		IL_019e: ldloc.s 5
-		IL_01a0: ldstr "setBitsTrue"
-		IL_01a5: ldloc.s 9
-		IL_01a7: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject::.ctor(object[])
-		IL_01ac: ldc.i4.3
+		IL_0124: stloc.s 5
+		IL_0126: ldc.i4.0
+		IL_0127: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_012c: brfalse IL_0155
+
+		IL_0131: ldloc.s 5
+		IL_0133: isinst [System.Runtime]System.String
+		IL_0138: dup
+		IL_0139: brfalse IL_0154
+
+		IL_013e: ldstr "verbose"
+		IL_0143: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+		IL_0148: box [System.Runtime]System.Boolean
+		IL_014d: stloc.s 5
+		IL_014f: br IL_0168
+
+		IL_0154: pop
+
+		IL_0155: ldloc.s 5
+		IL_0157: ldstr "includes"
+		IL_015c: ldstr "verbose"
+		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0166: stloc.s 5
+
+		IL_0168: ldloc.1
+		IL_0169: castclass Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config
+		IL_016e: ldloc.s 5
+		IL_0170: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_verbose(object)
+		IL_0175: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+		IL_017a: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_017f: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+		IL_0184: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0189: stloc.s 8
+		IL_018b: ldloc.s 8
+		IL_018d: ldstr "prototype"
+		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0197: stloc.s 5
+		IL_0199: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_019e: stloc.s 9
+		IL_01a0: ldloc.s 5
+		IL_01a2: ldstr "setBitTrue"
+		IL_01a7: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject::.ctor()
+		IL_01ac: ldc.i4.1
 		IL_01ad: conv.r8
-		IL_01ae: ldstr "setBitsTrue"
+		IL_01ae: ldstr "setBitTrue"
 		IL_01b3: ldc.i4.1
 		IL_01b4: ldc.i4.1
-		IL_01b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject>(!!0)
+		IL_01b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitTrue/FunctionObject>(!!0)
 		IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
 		IL_01c4: pop
-		IL_01c5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01ca: stloc.s 9
-		IL_01cc: ldloc.s 5
-		IL_01ce: ldstr "testBitTrue"
-		IL_01d3: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject::.ctor()
-		IL_01d8: ldc.i4.1
-		IL_01d9: conv.r8
-		IL_01da: ldstr "testBitTrue"
-		IL_01df: ldc.i4.1
-		IL_01e0: ldc.i4.1
-		IL_01e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject>(!!0)
-		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_01f0: pop
-		IL_01f1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01f6: stloc.s 9
-		IL_01f8: ldloc.s 5
-		IL_01fa: ldstr "searchBitFalse"
-		IL_01ff: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject::.ctor()
-		IL_0204: ldc.i4.1
-		IL_0205: conv.r8
-		IL_0206: ldstr "searchBitFalse"
+		IL_01c5: ldc.i4.1
+		IL_01c6: newarr [System.Runtime]System.Object
+		IL_01cb: dup
+		IL_01cc: ldc.i4.0
+		IL_01cd: ldloc.0
+		IL_01ce: stelem.ref
+		IL_01cf: stloc.s 9
+		IL_01d1: ldloc.s 5
+		IL_01d3: ldstr "setBitsTrue"
+		IL_01d8: ldloc.s 9
+		IL_01da: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject::.ctor(object[])
+		IL_01df: ldc.i4.3
+		IL_01e0: conv.r8
+		IL_01e1: ldstr "setBitsTrue"
+		IL_01e6: ldc.i4.1
+		IL_01e7: ldc.i4.1
+		IL_01e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_setBitsTrue/FunctionObject>(!!0)
+		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_01f7: pop
+		IL_01f8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01fd: stloc.s 9
+		IL_01ff: ldloc.s 5
+		IL_0201: ldstr "testBitTrue"
+		IL_0206: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject::.ctor()
 		IL_020b: ldc.i4.1
-		IL_020c: ldc.i4.1
-		IL_020d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0212: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject>(!!0)
-		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_021c: pop
-		IL_021d: ldc.i4.1
-		IL_021e: newarr [System.Runtime]System.Object
-		IL_0223: dup
-		IL_0224: ldc.i4.0
-		IL_0225: ldloc.0
-		IL_0226: stelem.ref
-		IL_0227: stloc.s 9
-		IL_0229: ldloc.s 9
-		IL_022b: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject::.ctor(object[])
-		IL_0230: ldloc.s 8
-		IL_0232: ldloc.s 9
-		IL_0234: ldc.i4.1
-		IL_0235: conv.r8
-		IL_0236: ldc.i4.0
-		IL_0237: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_023c: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject
-		IL_0241: stloc.s 10
-		IL_0243: ldloc.0
-		IL_0244: ldloc.s 10
-		IL_0246: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::BitArray
-		IL_024b: nop
-		IL_024c: ldc.i4.1
-		IL_024d: newarr [System.Runtime]System.Object
-		IL_0252: dup
-		IL_0253: ldc.i4.0
-		IL_0254: ldloc.0
-		IL_0255: stelem.ref
-		IL_0256: stloc.s 9
-		IL_0258: ldloc.s 9
-		IL_025a: ldc.i4.0
-		IL_025b: ldelem.ref
-		IL_025c: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-		IL_0261: newobj instance void Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject::.ctor(class Modules.Compile_Performance_PrimeJavaScript/Scope)
-		IL_0266: ldc.i4.1
-		IL_0267: conv.r8
-		IL_0268: ldstr ""
-		IL_026d: ldc.i4.0
-		IL_026e: ldc.i4.0
-		IL_026f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0274: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject>(!!0)
-		IL_0279: stloc.s 11
-		IL_027b: ldloc.s 11
-		IL_027d: ldstr "runSieveBatch"
-		IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0287: stloc.s 5
-		IL_0289: ldloc.0
-		IL_028a: ldloc.s 5
-		IL_028c: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::runSieveBatch
-		IL_0291: nop
-		IL_0292: ldloc.0
-		IL_0293: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-		IL_0298: ldnull
-		IL_0299: ldloc.1
-		IL_029a: call object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object)
-		IL_029f: pop
-		IL_02a0: ret
+		IL_020c: conv.r8
+		IL_020d: ldstr "testBitTrue"
+		IL_0212: ldc.i4.1
+		IL_0213: ldc.i4.1
+		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0219: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_testBitTrue/FunctionObject>(!!0)
+		IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0223: pop
+		IL_0224: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0229: stloc.s 9
+		IL_022b: ldloc.s 5
+		IL_022d: ldstr "searchBitFalse"
+		IL_0232: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject::.ctor()
+		IL_0237: ldc.i4.1
+		IL_0238: conv.r8
+		IL_0239: ldstr "searchBitFalse"
+		IL_023e: ldc.i4.1
+		IL_023f: ldc.i4.1
+		IL_0240: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0245: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_searchBitFalse/FunctionObject>(!!0)
+		IL_024a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_024f: pop
+		IL_0250: ldc.i4.1
+		IL_0251: newarr [System.Runtime]System.Object
+		IL_0256: dup
+		IL_0257: ldc.i4.0
+		IL_0258: ldloc.0
+		IL_0259: stelem.ref
+		IL_025a: stloc.s 9
+		IL_025c: ldloc.s 9
+		IL_025e: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_0263: ldloc.s 8
+		IL_0265: ldloc.s 9
+		IL_0267: ldc.i4.1
+		IL_0268: conv.r8
+		IL_0269: ldc.i4.0
+		IL_026a: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_026f: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject
+		IL_0274: stloc.s 10
+		IL_0276: ldloc.0
+		IL_0277: ldloc.s 10
+		IL_0279: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::BitArray
+		IL_027e: nop
+		IL_027f: ldc.i4.1
+		IL_0280: newarr [System.Runtime]System.Object
+		IL_0285: dup
+		IL_0286: ldc.i4.0
+		IL_0287: ldloc.0
+		IL_0288: stelem.ref
+		IL_0289: stloc.s 9
+		IL_028b: ldloc.s 9
+		IL_028d: ldc.i4.0
+		IL_028e: ldelem.ref
+		IL_028f: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+		IL_0294: newobj instance void Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject::.ctor(class Modules.Compile_Performance_PrimeJavaScript/Scope)
+		IL_0299: ldc.i4.1
+		IL_029a: conv.r8
+		IL_029b: ldstr ""
+		IL_02a0: ldc.i4.0
+		IL_02a1: ldc.i4.0
+		IL_02a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02a7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23/FunctionObject>(!!0)
+		IL_02ac: stloc.s 11
+		IL_02ae: ldloc.s 11
+		IL_02b0: ldstr "runSieveBatch"
+		IL_02b5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_02ba: stloc.s 5
+		IL_02bc: ldloc.0
+		IL_02bd: ldloc.s 5
+		IL_02bf: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::runSieveBatch
+		IL_02c4: nop
+		IL_02c5: ldloc.0
+		IL_02c6: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+		IL_02cb: ldnull
+		IL_02cc: ldloc.1
+		IL_02cd: call object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object)
+		IL_02d2: pop
+		IL_02d3: ret
 	} // end of method Compile_Performance_PrimeJavaScript::__js_module_init__
 
 } // end of class Modules.Compile_Performance_PrimeJavaScript

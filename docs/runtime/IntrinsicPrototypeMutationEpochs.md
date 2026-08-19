@@ -107,3 +107,6 @@ The 2026-08-19 .NET 10 ShortRun measured:
 The read and invalidation costs support per-family counters: ordinary guarded
 reads remain single-digit nanoseconds, while unrelated intrinsic families avoid
 coarse invalidation and unnecessary fallback.
+
+The compiler consumer and exact generic fallback are documented in
+[Guarded String intrinsic calls](../compiler/GuardedStringIntrinsicCalls.md).

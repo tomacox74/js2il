@@ -594,7 +594,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 222 (0xde)
+				// Code size: 316 (0x13c)
 				.maxstack 8
 				.locals init (
 					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -618,77 +618,117 @@
 				IL_001c: castclass Modules.Require_ChildProcess_Fork_Silent/runSilentTrue/Scope
 				IL_0021: ldfld object Modules.Require_ChildProcess_Fork_Silent/runSilentTrue/Scope::stdout
 				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_002b: ldstr "indexOf"
-				IL_0030: ldstr "silent child stdout"
-				IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_003a: stloc.1
-				IL_003b: ldloc.1
-				IL_003c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0041: ldc.r8 0.0
-				IL_004a: clt
-				IL_004c: ldc.i4.0
-				IL_004d: ceq
-				IL_004f: stloc.2
-				IL_0050: ldloc.2
-				IL_0051: box [System.Runtime]System.Boolean
-				IL_0056: stloc.3
-				IL_0057: ldloc.0
-				IL_0058: ldstr "silent true stdout marker:"
-				IL_005d: ldloc.3
-				IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0063: pop
-				IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0069: stloc.0
-				IL_006a: ldarg.0
-				IL_006b: ldc.i4.1
-				IL_006c: ldelem.ref
-				IL_006d: castclass Modules.Require_ChildProcess_Fork_Silent/runSilentTrue/Scope
-				IL_0072: ldfld object Modules.Require_ChildProcess_Fork_Silent/runSilentTrue/Scope::stderr
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_007c: ldstr "indexOf"
-				IL_0081: ldstr "silent child stderr"
-				IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_008b: stloc.1
-				IL_008c: ldloc.1
-				IL_008d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0092: ldc.r8 0.0
-				IL_009b: clt
-				IL_009d: ldc.i4.0
-				IL_009e: ceq
-				IL_00a0: stloc.2
-				IL_00a1: ldloc.2
-				IL_00a2: box [System.Runtime]System.Boolean
-				IL_00a7: stloc.3
-				IL_00a8: ldloc.0
-				IL_00a9: ldstr "silent true stderr marker:"
-				IL_00ae: ldloc.3
-				IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_00b4: pop
-				IL_00b5: ldarg.0
-				IL_00b6: ldc.i4.0
-				IL_00b7: ldelem.ref
-				IL_00b8: castclass Modules.Require_ChildProcess_Fork_Silent/Scope
-				IL_00bd: ldfld object Modules.Require_ChildProcess_Fork_Silent/Scope::runSilentFalse
-				IL_00c2: stloc.1
-				IL_00c3: ldloc.1
-				IL_00c4: ldc.i4.2
-				IL_00c5: newarr [System.Runtime]System.Object
-				IL_00ca: dup
-				IL_00cb: ldc.i4.0
-				IL_00cc: ldarg.0
-				IL_00cd: ldc.i4.0
-				IL_00ce: ldelem.ref
-				IL_00cf: stelem.ref
-				IL_00d0: dup
-				IL_00d1: ldc.i4.1
-				IL_00d2: ldarg.0
-				IL_00d3: ldc.i4.1
-				IL_00d4: ldelem.ref
-				IL_00d5: stelem.ref
-				IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-				IL_00db: pop
-				IL_00dc: ldnull
-				IL_00dd: ret
+				IL_002b: stloc.1
+				IL_002c: ldc.i4.0
+				IL_002d: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_0032: brfalse IL_0059
+
+				IL_0037: ldloc.1
+				IL_0038: isinst [System.Runtime]System.String
+				IL_003d: dup
+				IL_003e: brfalse IL_0058
+
+				IL_0043: ldstr "silent child stdout"
+				IL_0048: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+				IL_004d: box [System.Runtime]System.Double
+				IL_0052: stloc.1
+				IL_0053: br IL_006a
+
+				IL_0058: pop
+
+				IL_0059: ldloc.1
+				IL_005a: ldstr "indexOf"
+				IL_005f: ldstr "silent child stdout"
+				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0069: stloc.1
+
+				IL_006a: ldloc.1
+				IL_006b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0070: ldc.r8 0.0
+				IL_0079: clt
+				IL_007b: ldc.i4.0
+				IL_007c: ceq
+				IL_007e: stloc.2
+				IL_007f: ldloc.2
+				IL_0080: box [System.Runtime]System.Boolean
+				IL_0085: stloc.3
+				IL_0086: ldloc.0
+				IL_0087: ldstr "silent true stdout marker:"
+				IL_008c: ldloc.3
+				IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0092: pop
+				IL_0093: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0098: stloc.0
+				IL_0099: ldarg.0
+				IL_009a: ldc.i4.1
+				IL_009b: ldelem.ref
+				IL_009c: castclass Modules.Require_ChildProcess_Fork_Silent/runSilentTrue/Scope
+				IL_00a1: ldfld object Modules.Require_ChildProcess_Fork_Silent/runSilentTrue/Scope::stderr
+				IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00ab: stloc.1
+				IL_00ac: ldc.i4.0
+				IL_00ad: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_00b2: brfalse IL_00d9
+
+				IL_00b7: ldloc.1
+				IL_00b8: isinst [System.Runtime]System.String
+				IL_00bd: dup
+				IL_00be: brfalse IL_00d8
+
+				IL_00c3: ldstr "silent child stderr"
+				IL_00c8: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+				IL_00cd: box [System.Runtime]System.Double
+				IL_00d2: stloc.1
+				IL_00d3: br IL_00ea
+
+				IL_00d8: pop
+
+				IL_00d9: ldloc.1
+				IL_00da: ldstr "indexOf"
+				IL_00df: ldstr "silent child stderr"
+				IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_00e9: stloc.1
+
+				IL_00ea: ldloc.1
+				IL_00eb: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00f0: ldc.r8 0.0
+				IL_00f9: clt
+				IL_00fb: ldc.i4.0
+				IL_00fc: ceq
+				IL_00fe: stloc.2
+				IL_00ff: ldloc.2
+				IL_0100: box [System.Runtime]System.Boolean
+				IL_0105: stloc.3
+				IL_0106: ldloc.0
+				IL_0107: ldstr "silent true stderr marker:"
+				IL_010c: ldloc.3
+				IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0112: pop
+				IL_0113: ldarg.0
+				IL_0114: ldc.i4.0
+				IL_0115: ldelem.ref
+				IL_0116: castclass Modules.Require_ChildProcess_Fork_Silent/Scope
+				IL_011b: ldfld object Modules.Require_ChildProcess_Fork_Silent/Scope::runSilentFalse
+				IL_0120: stloc.1
+				IL_0121: ldloc.1
+				IL_0122: ldc.i4.2
+				IL_0123: newarr [System.Runtime]System.Object
+				IL_0128: dup
+				IL_0129: ldc.i4.0
+				IL_012a: ldarg.0
+				IL_012b: ldc.i4.0
+				IL_012c: ldelem.ref
+				IL_012d: stelem.ref
+				IL_012e: dup
+				IL_012f: ldc.i4.1
+				IL_0130: ldarg.0
+				IL_0131: ldc.i4.1
+				IL_0132: ldelem.ref
+				IL_0133: stelem.ref
+				IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+				IL_0139: pop
+				IL_013a: ldnull
+				IL_013b: ret
 			} // end of method ArrowFunction_L31C23::__js_call__
 
 		} // end of class ArrowFunction_L31C23

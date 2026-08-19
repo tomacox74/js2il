@@ -70,6 +70,12 @@ else
             args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--guarded-string-intrinsics")
+    {
+        var summary = BenchmarkRunner.Run<GuardedStringIntrinsicBenchmarks>(
+            args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
 #if SOURCE_JROC_PROJECTS
     else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
     {
@@ -151,6 +157,7 @@ Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-obj
 Console.WriteLine("  dotnet run -c Release --builtin-invocation # Measure representative runtime-owned built-in adapters");
 Console.WriteLine("  dotnet run -c Release --async-context # Compare disabled and enabled async-context overhead");
 Console.WriteLine("  dotnet run -c Release --intrinsic-epochs # Measure realm-owned intrinsic epoch guards");
+Console.WriteLine("  dotnet run -c Release --guarded-string-intrinsics # Compare guarded String helpers with generic lookup");
 Console.WriteLine("  dotnet run -c Release --callable-arity-analysis # Measure benchmark/runtime call-site arities");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");

@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): emit realm-epoch-guarded fixed-arity String intrinsic calls
+  with exact `CallMember0..5` fallbacks (issue #1891). Proven receivers skip
+  the type test, uncertain receivers use `isinst string`, and the guarded
+  `String.trim` microbenchmark improves 193.275 ns / 88 B to 7.835 ns / 0 B.
 - perf(runtime): add a realm-owned String prototype mutation epoch for guarded
   compiler specialization (issue #1892). Assignment, descriptor definition and
   deletion, accessors, default-callable replacement, and prototype-link changes

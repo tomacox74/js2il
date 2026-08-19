@@ -44,7 +44,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 846 (0x34e)
+		// Code size: 1050 (0x41a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_ImportMeta_Url/Scope,
@@ -199,123 +199,203 @@
 		IL_01bf: stloc.s 6
 		IL_01c1: ldloc.s 6
 		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01c8: ldstr "startsWith"
-		IL_01cd: ldstr "file://"
-		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d7: stloc.s 6
-		IL_01d9: ldloc.s 8
-		IL_01db: ldstr "main has file url:"
-		IL_01e0: ldloc.s 6
-		IL_01e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01e7: pop
-		IL_01e8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01ed: stloc.s 8
-		IL_01ef: ldarg.3
-		IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01f5: ldstr "split"
-		IL_01fa: ldstr "\\"
-		IL_01ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0204: stloc.s 6
-		IL_0206: ldloc.s 6
-		IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_020d: ldstr "join"
-		IL_0212: ldstr "/"
-		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_021c: stloc.s 6
-		IL_021e: ldloc.2
-		IL_021f: ldloc.s 6
-		IL_0221: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0226: stloc.s 9
-		IL_0228: ldloc.s 9
-		IL_022a: box [System.Runtime]System.Boolean
-		IL_022f: stloc.s 10
-		IL_0231: ldloc.s 8
-		IL_0233: ldstr "main path matches filename:"
-		IL_0238: ldloc.s 10
-		IL_023a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_023f: pop
-		IL_0240: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0245: stloc.s 8
-		IL_0247: ldloc.3
-		IL_0248: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_024d: ldstr "endsWith"
-		IL_0252: ldstr "/fixtures/main.txt"
-		IL_0257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_025c: stloc.s 6
-		IL_025e: ldloc.s 8
-		IL_0260: ldstr "main asset path:"
-		IL_0265: ldloc.s 6
-		IL_0267: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_026c: pop
-		IL_026d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0272: stloc.s 8
-		IL_0274: ldloc.0
-		IL_0275: ldfld object Modules.Import_ImportMeta_Url/Scope::'*esm-src:./Import_ImportMeta_Url_Lib.mjs'
-		IL_027a: stloc.s 6
-		IL_027c: ldloc.s 6
-		IL_027e: ldstr "importedUrlHasFileScheme"
-		IL_0283: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
-		IL_0288: stloc.s 6
-		IL_028a: ldloc.s 8
-		IL_028c: ldstr "lib has file url:"
-		IL_0291: ldloc.s 6
-		IL_0293: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0298: pop
-		IL_0299: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_029e: stloc.s 8
-		IL_02a0: ldloc.s 4
-		IL_02a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02a7: ldstr "endsWith"
-		IL_02ac: ldstr "/Import_ImportMeta_Url_Lib"
-		IL_02b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02b6: stloc.s 6
-		IL_02b8: ldloc.s 8
-		IL_02ba: ldstr "lib path:"
-		IL_02bf: ldloc.s 6
-		IL_02c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02c6: pop
-		IL_02c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02cc: stloc.s 8
-		IL_02ce: ldloc.s 5
-		IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02d5: ldstr "endsWith"
-		IL_02da: ldstr "/fixtures/lib.txt"
-		IL_02df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02e4: stloc.s 6
-		IL_02e6: ldloc.s 8
-		IL_02e8: ldstr "lib asset path:"
-		IL_02ed: ldloc.s 6
-		IL_02ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02f4: pop
-		IL_02f5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02fa: stloc.s 8
-		IL_02fc: ldloc.0
-		IL_02fd: ldfld object Modules.Import_ImportMeta_Url/Scope::'*esm-src:./Import_ImportMeta_Url_Lib.mjs'
-		IL_0302: stloc.s 6
-		IL_0304: ldloc.s 6
-		IL_0306: ldstr "importedModuleFilenameMatches"
-		IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
-		IL_0310: stloc.s 6
-		IL_0312: ldloc.s 8
-		IL_0314: ldstr "lib module.filename:"
-		IL_0319: ldloc.s 6
-		IL_031b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0320: pop
-		IL_0321: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0326: stloc.s 8
-		IL_0328: ldloc.0
-		IL_0329: ldfld object Modules.Import_ImportMeta_Url/Scope::'*esm-src:./Import_ImportMeta_Url_Lib.mjs'
-		IL_032e: stloc.s 6
-		IL_0330: ldloc.s 6
-		IL_0332: ldstr "importedModulePathMatches"
-		IL_0337: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
-		IL_033c: stloc.s 6
-		IL_033e: ldloc.s 8
-		IL_0340: ldstr "lib module.path:"
-		IL_0345: ldloc.s 6
-		IL_0347: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_034c: pop
-		IL_034d: ret
+		IL_01c8: stloc.s 6
+		IL_01ca: ldc.i4.0
+		IL_01cb: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_01d0: brfalse IL_01f9
+
+		IL_01d5: ldloc.s 6
+		IL_01d7: isinst [System.Runtime]System.String
+		IL_01dc: dup
+		IL_01dd: brfalse IL_01f8
+
+		IL_01e2: ldstr "file://"
+		IL_01e7: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+		IL_01ec: box [System.Runtime]System.Boolean
+		IL_01f1: stloc.s 6
+		IL_01f3: br IL_020c
+
+		IL_01f8: pop
+
+		IL_01f9: ldloc.s 6
+		IL_01fb: ldstr "startsWith"
+		IL_0200: ldstr "file://"
+		IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_020a: stloc.s 6
+
+		IL_020c: ldloc.s 8
+		IL_020e: ldstr "main has file url:"
+		IL_0213: ldloc.s 6
+		IL_0215: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_021a: pop
+		IL_021b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0220: stloc.s 8
+		IL_0222: ldarg.3
+		IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0228: ldstr "split"
+		IL_022d: ldstr "\\"
+		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0237: stloc.s 6
+		IL_0239: ldloc.s 6
+		IL_023b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0240: ldstr "join"
+		IL_0245: ldstr "/"
+		IL_024a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_024f: stloc.s 6
+		IL_0251: ldloc.2
+		IL_0252: ldloc.s 6
+		IL_0254: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0259: stloc.s 9
+		IL_025b: ldloc.s 9
+		IL_025d: box [System.Runtime]System.Boolean
+		IL_0262: stloc.s 10
+		IL_0264: ldloc.s 8
+		IL_0266: ldstr "main path matches filename:"
+		IL_026b: ldloc.s 10
+		IL_026d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0272: pop
+		IL_0273: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0278: stloc.s 8
+		IL_027a: ldloc.3
+		IL_027b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0280: stloc.s 6
+		IL_0282: ldc.i4.0
+		IL_0283: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0288: brfalse IL_02b1
+
+		IL_028d: ldloc.s 6
+		IL_028f: isinst [System.Runtime]System.String
+		IL_0294: dup
+		IL_0295: brfalse IL_02b0
+
+		IL_029a: ldstr "/fixtures/main.txt"
+		IL_029f: call bool [JavaScriptRuntime]JavaScriptRuntime.String::EndsWith(string, string)
+		IL_02a4: box [System.Runtime]System.Boolean
+		IL_02a9: stloc.s 6
+		IL_02ab: br IL_02c4
+
+		IL_02b0: pop
+
+		IL_02b1: ldloc.s 6
+		IL_02b3: ldstr "endsWith"
+		IL_02b8: ldstr "/fixtures/main.txt"
+		IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02c2: stloc.s 6
+
+		IL_02c4: ldloc.s 8
+		IL_02c6: ldstr "main asset path:"
+		IL_02cb: ldloc.s 6
+		IL_02cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02d2: pop
+		IL_02d3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d8: stloc.s 8
+		IL_02da: ldloc.0
+		IL_02db: ldfld object Modules.Import_ImportMeta_Url/Scope::'*esm-src:./Import_ImportMeta_Url_Lib.mjs'
+		IL_02e0: stloc.s 6
+		IL_02e2: ldloc.s 6
+		IL_02e4: ldstr "importedUrlHasFileScheme"
+		IL_02e9: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
+		IL_02ee: stloc.s 6
+		IL_02f0: ldloc.s 8
+		IL_02f2: ldstr "lib has file url:"
+		IL_02f7: ldloc.s 6
+		IL_02f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02fe: pop
+		IL_02ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0304: stloc.s 8
+		IL_0306: ldloc.s 4
+		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_030d: stloc.s 6
+		IL_030f: ldc.i4.0
+		IL_0310: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0315: brfalse IL_033e
+
+		IL_031a: ldloc.s 6
+		IL_031c: isinst [System.Runtime]System.String
+		IL_0321: dup
+		IL_0322: brfalse IL_033d
+
+		IL_0327: ldstr "/Import_ImportMeta_Url_Lib"
+		IL_032c: call bool [JavaScriptRuntime]JavaScriptRuntime.String::EndsWith(string, string)
+		IL_0331: box [System.Runtime]System.Boolean
+		IL_0336: stloc.s 6
+		IL_0338: br IL_0351
+
+		IL_033d: pop
+
+		IL_033e: ldloc.s 6
+		IL_0340: ldstr "endsWith"
+		IL_0345: ldstr "/Import_ImportMeta_Url_Lib"
+		IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_034f: stloc.s 6
+
+		IL_0351: ldloc.s 8
+		IL_0353: ldstr "lib path:"
+		IL_0358: ldloc.s 6
+		IL_035a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_035f: pop
+		IL_0360: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0365: stloc.s 8
+		IL_0367: ldloc.s 5
+		IL_0369: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_036e: stloc.s 6
+		IL_0370: ldc.i4.0
+		IL_0371: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0376: brfalse IL_039f
+
+		IL_037b: ldloc.s 6
+		IL_037d: isinst [System.Runtime]System.String
+		IL_0382: dup
+		IL_0383: brfalse IL_039e
+
+		IL_0388: ldstr "/fixtures/lib.txt"
+		IL_038d: call bool [JavaScriptRuntime]JavaScriptRuntime.String::EndsWith(string, string)
+		IL_0392: box [System.Runtime]System.Boolean
+		IL_0397: stloc.s 6
+		IL_0399: br IL_03b2
+
+		IL_039e: pop
+
+		IL_039f: ldloc.s 6
+		IL_03a1: ldstr "endsWith"
+		IL_03a6: ldstr "/fixtures/lib.txt"
+		IL_03ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03b0: stloc.s 6
+
+		IL_03b2: ldloc.s 8
+		IL_03b4: ldstr "lib asset path:"
+		IL_03b9: ldloc.s 6
+		IL_03bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03c0: pop
+		IL_03c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03c6: stloc.s 8
+		IL_03c8: ldloc.0
+		IL_03c9: ldfld object Modules.Import_ImportMeta_Url/Scope::'*esm-src:./Import_ImportMeta_Url_Lib.mjs'
+		IL_03ce: stloc.s 6
+		IL_03d0: ldloc.s 6
+		IL_03d2: ldstr "importedModuleFilenameMatches"
+		IL_03d7: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
+		IL_03dc: stloc.s 6
+		IL_03de: ldloc.s 8
+		IL_03e0: ldstr "lib module.filename:"
+		IL_03e5: ldloc.s 6
+		IL_03e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03ec: pop
+		IL_03ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03f2: stloc.s 8
+		IL_03f4: ldloc.0
+		IL_03f5: ldfld object Modules.Import_ImportMeta_Url/Scope::'*esm-src:./Import_ImportMeta_Url_Lib.mjs'
+		IL_03fa: stloc.s 6
+		IL_03fc: ldloc.s 6
+		IL_03fe: ldstr "importedModulePathMatches"
+		IL_0403: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
+		IL_0408: stloc.s 6
+		IL_040a: ldloc.s 8
+		IL_040c: ldstr "lib module.path:"
+		IL_0411: ldloc.s 6
+		IL_0413: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0418: pop
+		IL_0419: ret
 	} // end of method Import_ImportMeta_Url::__js_module_init__
 
 } // end of class Modules.Import_ImportMeta_Url
@@ -355,7 +435,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 350 (0x15e)
+		// Code size: 400 (0x190)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_ImportMeta_Url_Lib/Scope,
@@ -403,72 +483,92 @@
 		IL_0072: pop
 		IL_0073: ldloc.1
 		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0079: ldstr "startsWith"
-		IL_007e: ldstr "file://"
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0088: stloc.2
-		IL_0089: ldstr "Import_ImportMeta_Url_Lib"
-		IL_008e: ldstr "importedUrlHasFileScheme"
-		IL_0093: ldloc.2
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
-		IL_0099: pop
-		IL_009a: ldarg.2
-		IL_009b: ldstr "filename"
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a5: stloc.s 5
-		IL_00a7: ldloc.s 5
-		IL_00a9: ldarg.3
-		IL_00aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00af: stloc.3
-		IL_00b0: ldloc.3
-		IL_00b1: box [System.Runtime]System.Boolean
-		IL_00b6: stloc.s 6
-		IL_00b8: ldstr "Import_ImportMeta_Url_Lib"
-		IL_00bd: ldstr "importedModuleFilenameMatches"
-		IL_00c2: ldloc.s 6
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
-		IL_00c9: pop
-		IL_00ca: ldarg.2
-		IL_00cb: ldstr "path"
-		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d5: stloc.s 5
-		IL_00d7: ldloc.s 5
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00de: ldstr "split"
-		IL_00e3: ldstr "\\"
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ed: stloc.s 5
-		IL_00ef: ldloc.s 5
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f6: ldstr "join"
-		IL_00fb: ldstr "/"
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0105: stloc.s 5
-		IL_0107: ldarg.s __dirname
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010e: ldstr "split"
-		IL_0113: ldstr "\\"
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011d: stloc.s 7
-		IL_011f: ldloc.s 7
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0126: ldstr "join"
-		IL_012b: ldstr "/"
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0135: stloc.s 7
-		IL_0137: ldloc.s 5
-		IL_0139: ldloc.s 7
-		IL_013b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0140: stloc.s 4
-		IL_0142: ldloc.s 4
-		IL_0144: box [System.Runtime]System.Boolean
-		IL_0149: stloc.s 6
-		IL_014b: ldstr "Import_ImportMeta_Url_Lib"
-		IL_0150: ldstr "importedModulePathMatches"
-		IL_0155: ldloc.s 6
-		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
-		IL_015c: pop
-		IL_015d: ret
+		IL_0079: stloc.s 5
+		IL_007b: ldc.i4.0
+		IL_007c: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0081: brfalse IL_00a9
+
+		IL_0086: ldloc.s 5
+		IL_0088: isinst [System.Runtime]System.String
+		IL_008d: dup
+		IL_008e: brfalse IL_00a8
+
+		IL_0093: ldstr "file://"
+		IL_0098: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+		IL_009d: box [System.Runtime]System.Boolean
+		IL_00a2: stloc.2
+		IL_00a3: br IL_00bb
+
+		IL_00a8: pop
+
+		IL_00a9: ldloc.s 5
+		IL_00ab: ldstr "startsWith"
+		IL_00b0: ldstr "file://"
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ba: stloc.2
+
+		IL_00bb: ldstr "Import_ImportMeta_Url_Lib"
+		IL_00c0: ldstr "importedUrlHasFileScheme"
+		IL_00c5: ldloc.2
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_00cb: pop
+		IL_00cc: ldarg.2
+		IL_00cd: ldstr "filename"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d7: stloc.s 5
+		IL_00d9: ldloc.s 5
+		IL_00db: ldarg.3
+		IL_00dc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00e1: stloc.3
+		IL_00e2: ldloc.3
+		IL_00e3: box [System.Runtime]System.Boolean
+		IL_00e8: stloc.s 6
+		IL_00ea: ldstr "Import_ImportMeta_Url_Lib"
+		IL_00ef: ldstr "importedModuleFilenameMatches"
+		IL_00f4: ldloc.s 6
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_00fb: pop
+		IL_00fc: ldarg.2
+		IL_00fd: ldstr "path"
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0107: stloc.s 5
+		IL_0109: ldloc.s 5
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0110: ldstr "split"
+		IL_0115: ldstr "\\"
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_011f: stloc.s 5
+		IL_0121: ldloc.s 5
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0128: ldstr "join"
+		IL_012d: ldstr "/"
+		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0137: stloc.s 5
+		IL_0139: ldarg.s __dirname
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0140: ldstr "split"
+		IL_0145: ldstr "\\"
+		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_014f: stloc.s 7
+		IL_0151: ldloc.s 7
+		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0158: ldstr "join"
+		IL_015d: ldstr "/"
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0167: stloc.s 7
+		IL_0169: ldloc.s 5
+		IL_016b: ldloc.s 7
+		IL_016d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0172: stloc.s 4
+		IL_0174: ldloc.s 4
+		IL_0176: box [System.Runtime]System.Boolean
+		IL_017b: stloc.s 6
+		IL_017d: ldstr "Import_ImportMeta_Url_Lib"
+		IL_0182: ldstr "importedModulePathMatches"
+		IL_0187: ldloc.s 6
+		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_018e: pop
+		IL_018f: ret
 	} // end of method Import_ImportMeta_Url_Lib::__js_module_init__
 
 } // end of class Modules.Import_ImportMeta_Url_Lib

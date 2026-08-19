@@ -505,6 +505,8 @@ internal static partial class LIRInstructionInfo
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); break;
             case LIRCallMember5 value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); visitor.Visit(value.A4); break;
+            case LIRCallGuardedStringIntrinsic value:
+                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
             case LIRCallComputedMemberFixed value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.PropertyKey); VisitList(value.Arguments, ref visitor); break;
             case LIRCallNodeModuleContractMember value:
@@ -1007,6 +1009,9 @@ internal static partial class LIRInstructionInfo
                 return true;
             case LIRCallMember5 callMember5:
                 defined = callMember5.Result;
+                return true;
+            case LIRCallGuardedStringIntrinsic guardedString:
+                defined = guardedString.Result;
                 return true;
             case LIRCallComputedMemberFixed callComputedMember:
                 defined = callComputedMember.Result;

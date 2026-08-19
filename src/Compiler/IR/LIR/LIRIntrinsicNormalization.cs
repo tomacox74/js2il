@@ -141,6 +141,10 @@ internal static class LIRIntrinsicNormalization
             }
         }
 
+        FuseCharCodeAtWithConvertToNumber(
+            methodBody,
+            knownSpecializedReceiverClrTypes);
+
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
             var instruction = methodBody.Instructions[i];
@@ -356,6 +360,18 @@ internal static class LIRIntrinsicNormalization
                     continue;
                 }
 
+                if (TryNormalizeGuardedStringMemberCall(
+                        methodBody,
+                        i,
+                        callMember0.Receiver,
+                        callMember0.MethodName,
+                        Array.Empty<TempVariable>(),
+                        callMember0.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
             }
 
             if (instruction is LIRCallMember1 callMember1)
@@ -373,6 +389,18 @@ internal static class LIRIntrinsicNormalization
                 }
 
                 if (TryNormalizeArrayMemberCall(
+                        methodBody,
+                        i,
+                        callMember1.Receiver,
+                        callMember1.MethodName,
+                        new[] { callMember1.A0 },
+                        callMember1.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
+                if (TryNormalizeGuardedStringMemberCall(
                         methodBody,
                         i,
                         callMember1.Receiver,
@@ -427,11 +455,35 @@ internal static class LIRIntrinsicNormalization
                     continue;
                 }
 
+                if (TryNormalizeGuardedStringMemberCall(
+                        methodBody,
+                        i,
+                        callMember2.Receiver,
+                        callMember2.MethodName,
+                        new[] { callMember2.A0, callMember2.A1 },
+                        callMember2.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
             }
 
             if (instruction is LIRCallMember3 callMember3)
             {
-                TryNormalizeArrayMemberCall(
+                if (TryNormalizeArrayMemberCall(
+                    methodBody,
+                    i,
+                    callMember3.Receiver,
+                    callMember3.MethodName,
+                    new[] { callMember3.A0, callMember3.A1, callMember3.A2 },
+                    callMember3.Result,
+                    knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
+                TryNormalizeGuardedStringMemberCall(
                     methodBody,
                     i,
                     callMember3.Receiver,
@@ -443,7 +495,25 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember4 callMember4)
             {
-                TryNormalizeArrayMemberCall(
+                if (TryNormalizeArrayMemberCall(
+                    methodBody,
+                    i,
+                    callMember4.Receiver,
+                    callMember4.MethodName,
+                    new[]
+                    {
+                        callMember4.A0,
+                        callMember4.A1,
+                        callMember4.A2,
+                        callMember4.A3
+                    },
+                    callMember4.Result,
+                    knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
+                TryNormalizeGuardedStringMemberCall(
                     methodBody,
                     i,
                     callMember4.Receiver,
@@ -461,7 +531,26 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember5 callMember5)
             {
-                TryNormalizeArrayMemberCall(
+                if (TryNormalizeArrayMemberCall(
+                    methodBody,
+                    i,
+                    callMember5.Receiver,
+                    callMember5.MethodName,
+                    new[]
+                    {
+                        callMember5.A0,
+                        callMember5.A1,
+                        callMember5.A2,
+                        callMember5.A3,
+                        callMember5.A4
+                    },
+                    callMember5.Result,
+                    knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
+                TryNormalizeGuardedStringMemberCall(
                     methodBody,
                     i,
                     callMember5.Receiver,
@@ -479,13 +568,243 @@ internal static class LIRIntrinsicNormalization
             }
         }
 
-        FuseCharCodeAtWithConvertToNumber(methodBody);
         FuseGetItemWithConvertToNumber(methodBody);
     }
 
     public static void NormalizeLateNumericMemberCalls(MethodBodyIR methodBody)
     {
-        FuseCharCodeAtWithConvertToNumber(methodBody);
+        FuseCharCodeAtWithConvertToNumber(
+            methodBody,
+            knownSpecializedReceiverClrTypes: null);
+    }
+
+    private static bool TryNormalizeGuardedStringMemberCall(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        TempVariable receiver,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        TempVariable result,
+        IReadOnlyDictionary<int, Type> knownSpecializedReceiverClrTypes)
+    {
+        if (!TryResolveSafeStringIntrinsicMethod(
+                methodBody,
+                methodName,
+                arguments,
+                out var intrinsicMethod))
+        {
+            return false;
+        }
+
+        if (!TryClassifyGuardedStringReceiver(
+                methodBody,
+                receiver,
+                knownSpecializedReceiverClrTypes,
+                out var receiverIsProvenString))
+        {
+            return false;
+        }
+
+        methodBody.Instructions[instructionIndex] =
+            new LIRCallGuardedStringIntrinsic(
+                receiver,
+                methodName,
+                intrinsicMethod.Name,
+                intrinsicMethod
+                    .GetParameters()
+                    .Select(static parameter => parameter.ParameterType)
+                    .ToArray(),
+                intrinsicMethod.ReturnType,
+                receiverIsProvenString,
+                arguments,
+                result);
+        ApplyGuardedStringResultStorage(
+            methodBody,
+            result,
+            LIRGuardedStringFallbackResultConversion.None);
+        return true;
+    }
+
+    private static bool TryClassifyGuardedStringReceiver(
+        MethodBodyIR methodBody,
+        TempVariable receiver,
+        IReadOnlyDictionary<int, Type>?
+            knownSpecializedReceiverClrTypes,
+        out bool receiverIsProvenString)
+    {
+        receiverIsProvenString = false;
+        if (knownSpecializedReceiverClrTypes?.TryGetValue(
+                receiver.Index,
+                out var knownReceiverType) == true)
+        {
+            receiverIsProvenString =
+                knownReceiverType == typeof(string);
+            return receiverIsProvenString;
+        }
+
+        if (receiver.Index < 0
+            || receiver.Index >= methodBody.TempStorages.Count)
+        {
+            return true;
+        }
+
+        var storage = methodBody.TempStorages[receiver.Index];
+        if (storage.Kind == ValueStorageKind.Reference
+            && storage.ClrType == typeof(string))
+        {
+            receiverIsProvenString = true;
+            return true;
+        }
+
+        if (!storage.TypeHandle.IsNil)
+        {
+            return false;
+        }
+
+        return storage.Kind == ValueStorageKind.Unknown
+            || storage.ClrType == null
+            || (storage.Kind == ValueStorageKind.Reference
+                && storage.ClrType == typeof(object));
+    }
+
+    private static bool TryResolveSafeStringIntrinsicMethod(
+        MethodBodyIR methodBody,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        out System.Reflection.MethodInfo intrinsicMethod)
+    {
+        intrinsicMethod = null!;
+        if (!IsStringMethodEligibleForEarlyBind(
+                methodName,
+                arguments.Count))
+        {
+            return false;
+        }
+
+        intrinsicMethod = typeof(JavaScriptRuntime.String)
+            .GetMethods(
+                System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.Static)
+            .Where(method => string.Equals(
+                method.Name,
+                methodName,
+                StringComparison.OrdinalIgnoreCase))
+            .Where(method =>
+            {
+                var parameters = method.GetParameters();
+                if (parameters.Length != arguments.Count + 1
+                    || parameters[0].ParameterType != typeof(string))
+                {
+                    return false;
+                }
+
+                for (var i = 1; i < parameters.Length; i++)
+                {
+                    var parameterType = parameters[i].ParameterType;
+                    if (parameterType == typeof(object))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType == typeof(string)
+                        && IsTempStringReference(
+                            methodBody,
+                            arguments[i - 1]))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType == typeof(bool)
+                        && IsUnboxedBool(
+                            methodBody,
+                            arguments[i - 1]))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType == typeof(double)
+                        && IsUnboxedDouble(
+                            methodBody,
+                            arguments[i - 1]))
+                    {
+                        continue;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            })
+            .OrderBy(
+                static method => method.ToString(),
+                StringComparer.Ordinal)
+            .FirstOrDefault()!;
+        return intrinsicMethod != null;
+    }
+
+    private static bool IsStringMethodEligibleForEarlyBind(
+        string methodName,
+        int argumentCount)
+        => argumentCount switch
+        {
+            0 => methodName is
+                "charAt"
+                or "charCodeAt"
+                or "trim"
+                or "trimStart"
+                or "trimLeft"
+                or "trimEnd"
+                or "trimRight"
+                or "toLowerCase"
+                or "toUpperCase",
+            1 => methodName is
+                "charAt"
+                or "charCodeAt"
+                or "substring"
+                or "substr"
+                or "slice"
+                or "indexOf"
+                or "lastIndexOf"
+                or "startsWith"
+                or "endsWith"
+                or "includes",
+            2 => methodName is
+                "substring"
+                or "substr"
+                or "slice"
+                or "indexOf"
+                or "lastIndexOf"
+                or "startsWith"
+                or "endsWith"
+                or "includes",
+            _ => false
+        };
+
+    private static void ApplyGuardedStringResultStorage(
+        MethodBodyIR methodBody,
+        TempVariable result,
+        LIRGuardedStringFallbackResultConversion fallbackResultConversion)
+    {
+        if (result.Index < 0
+            || result.Index >= methodBody.TempStorages.Count)
+        {
+            return;
+        }
+
+        var storage = fallbackResultConversion
+            == LIRGuardedStringFallbackResultConversion.ToNumber
+            ? new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double))
+            : new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object));
+        methodBody.TempStorages[result.Index] = storage;
+        ApplySingleAssignmentSlotStorage(
+            methodBody,
+            result,
+            storage,
+            replaceReferenceStorage: true);
     }
 
     private static bool TryNormalizePromiseMemberCall(
@@ -768,7 +1087,10 @@ internal static class LIRIntrinsicNormalization
         methodBody.Instructions.AddRange(newInstructions);
     }
 
-    private static void FuseCharCodeAtWithConvertToNumber(MethodBodyIR methodBody)
+    private static void FuseCharCodeAtWithConvertToNumber(
+        MethodBodyIR methodBody,
+        IReadOnlyDictionary<int, Type>?
+            knownSpecializedReceiverClrTypes)
     {
         var singleConvertToNumberConsumerByTempIndex = new Dictionary<int, int>();
         var ineligibleTempIndices = new HashSet<int>();
@@ -821,17 +1143,44 @@ internal static class LIRIntrinsicNormalization
             }
 
             var conv = (LIRConvertToNumber)methodBody.Instructions[convIdx];
-            methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
-                IntrinsicName: "String",
-                MethodName: nameof(JavaScriptRuntime.String.CharCodeAtAsNumber),
-                Arguments: new[] { callMember.Receiver, callMember.A0 },
-                Result: conv.Result);
-            indicesToRemove.Add(convIdx);
-
-            if (conv.Result.Index >= 0 && conv.Result.Index < methodBody.TempStorages.Count)
+            var arguments = new[] { callMember.A0 };
+            if (!TryResolveSafeStringIntrinsicMethod(
+                    methodBody,
+                    callMember.MethodName,
+                    arguments,
+                    out var intrinsicMethod))
             {
-                methodBody.TempStorages[conv.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                continue;
             }
+
+            if (!TryClassifyGuardedStringReceiver(
+                    methodBody,
+                    callMember.Receiver,
+                    knownSpecializedReceiverClrTypes,
+                    out var receiverIsProvenString))
+            {
+                continue;
+            }
+
+            methodBody.Instructions[i] =
+                new LIRCallGuardedStringIntrinsic(
+                    callMember.Receiver,
+                    callMember.MethodName,
+                    intrinsicMethod.Name,
+                    intrinsicMethod
+                        .GetParameters()
+                        .Select(static parameter => parameter.ParameterType)
+                        .ToArray(),
+                    intrinsicMethod.ReturnType,
+                    receiverIsProvenString,
+                    arguments,
+                    conv.Result,
+                    LIRGuardedStringFallbackResultConversion.ToNumber);
+            indicesToRemove.Add(convIdx);
+            ApplyGuardedStringResultStorage(
+                methodBody,
+                conv.Result,
+                LIRGuardedStringFallbackResultConversion.ToNumber);
         }
 
         if (indicesToRemove.Count == 0)
@@ -885,7 +1234,11 @@ internal static class LIRIntrinsicNormalization
         ApplySingleAssignmentSlotStorage(methodBody, result, storage);
     }
 
-    private static void ApplySingleAssignmentSlotStorage(MethodBodyIR methodBody, TempVariable result, ValueStorage storage)
+    private static void ApplySingleAssignmentSlotStorage(
+        MethodBodyIR methodBody,
+        TempVariable result,
+        ValueStorage storage,
+        bool replaceReferenceStorage = false)
     {
         if (result.Index < 0 || result.Index >= methodBody.TempVariableSlots.Count)
         {
@@ -901,7 +1254,9 @@ internal static class LIRIntrinsicNormalization
         }
 
         var current = methodBody.VariableStorages[slot];
-        if (current.Kind == ValueStorageKind.Reference && current.ClrType == typeof(object))
+        if (current.Kind == ValueStorageKind.Reference
+            && (current.ClrType == typeof(object)
+                || replaceReferenceStorage))
         {
             methodBody.VariableStorages[slot] = storage;
         }

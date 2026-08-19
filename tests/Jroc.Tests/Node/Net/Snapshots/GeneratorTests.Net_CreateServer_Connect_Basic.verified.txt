@@ -346,7 +346,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 144 (0x90)
+				// Code size: 181 (0xb5)
 				.maxstack 8
 				.locals init (
 					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -384,29 +384,47 @@
 				IL_003e: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
 				IL_0043: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::received
 				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_004d: ldstr "toUpperCase"
-				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_0057: stloc.3
-				IL_0058: ldstr "pong:"
-				IL_005d: ldloc.3
-				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0063: stloc.2
-				IL_0064: ldloc.1
-				IL_0065: ldstr "write"
-				IL_006a: ldloc.2
-				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_004d: stloc.3
+				IL_004e: ldc.i4.0
+				IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_0054: brfalse IL_0071
+
+				IL_0059: ldloc.3
+				IL_005a: isinst [System.Runtime]System.String
+				IL_005f: dup
+				IL_0060: brfalse IL_0070
+
+				IL_0065: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
+				IL_006a: stloc.3
+				IL_006b: br IL_007d
+
 				IL_0070: pop
-				IL_0071: ldarg.0
-				IL_0072: ldc.i4.1
-				IL_0073: ldelem.ref
-				IL_0074: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
-				IL_0079: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::socket
-				IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0083: ldstr "end"
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_008d: pop
-				IL_008e: ldnull
-				IL_008f: ret
+
+				IL_0071: ldloc.3
+				IL_0072: ldstr "toUpperCase"
+				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_007c: stloc.3
+
+				IL_007d: ldstr "pong:"
+				IL_0082: ldloc.3
+				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0088: stloc.2
+				IL_0089: ldloc.1
+				IL_008a: ldstr "write"
+				IL_008f: ldloc.2
+				IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0095: pop
+				IL_0096: ldarg.0
+				IL_0097: ldc.i4.1
+				IL_0098: ldelem.ref
+				IL_0099: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
+				IL_009e: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::socket
+				IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00a8: ldstr "end"
+				IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_00b2: pop
+				IL_00b3: ldnull
+				IL_00b4: ret
 			} // end of method FunctionExpression_server_L12C19::__js_call__
 
 		} // end of class FunctionExpression_server_L12C19

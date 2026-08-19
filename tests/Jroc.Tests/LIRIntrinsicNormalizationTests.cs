@@ -60,6 +60,112 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_Rewrites_ProvenStringMemberCall_ToGuardedIntrinsic()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(
+            new LIRCallMember1(receiver, "charAt", argument, result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(
+            body.Instructions[0]);
+        Assert.True(guarded.ReceiverIsProvenString);
+        Assert.Equal("charAt", guarded.MemberName);
+        Assert.Equal(nameof(JavaScriptRuntime.String.CharAt), guarded.IntrinsicMethodName);
+        Assert.Equal(
+            [typeof(string), typeof(object)],
+            guarded.IntrinsicParameterTypes);
+        Assert.Equal(typeof(string), guarded.IntrinsicReturnClrType);
+        Assert.Equal(LIRGuardedStringFallbackResultConversion.None, guarded.FallbackResultConversion);
+        Assert.Equal(ValueStorageKind.Reference, body.TempStorages[result.Index].Kind);
+        Assert.Equal(typeof(object), body.TempStorages[result.Index].ClrType);
+    }
+
+    [Fact]
+    public void Normalize_Rewrites_UncertainStringMemberCall_WithReceiverTypeTest()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRCallMember0(receiver, "trim", result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(
+            body.Instructions[0]);
+        Assert.False(guarded.ReceiverIsProvenString);
+        Assert.Equal("trim", guarded.MemberName);
+        Assert.Empty(guarded.Arguments);
+    }
+
+    [Fact]
+    public void Normalize_DoesNotAddStringGuard_ForKnownNonStringReceiver()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(JavaScriptRuntime.Array)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRCallMember0(receiver, "trim", result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        Assert.IsType<LIRCallMember0>(body.Instructions[0]);
+    }
+
+    [Fact]
+    public void Normalize_Fuses_CharCodeAtNumberConversion_IntoGuardedIntrinsic()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var callResult = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var numberResult = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        body.Instructions.Add(
+            new LIRCallMember1(receiver, "charCodeAt", index, callResult));
+        body.Instructions.Add(
+            new LIRConvertToNumber(callResult, numberResult));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(
+            Assert.Single(body.Instructions));
+        Assert.False(guarded.ReceiverIsProvenString);
+        Assert.Equal(
+            LIRGuardedStringFallbackResultConversion.ToNumber,
+            guarded.FallbackResultConversion);
+        Assert.Equal(typeof(double), guarded.IntrinsicReturnClrType);
+        Assert.Equal(ValueStorageKind.UnboxedValue, body.TempStorages[numberResult.Index].Kind);
+        Assert.Equal(typeof(double), body.TempStorages[numberResult.Index].ClrType);
+    }
+
+    [Fact]
     public void Normalize_Rewrites_SetItem_To_Int32ArrayElementSet_WhenReceiverProvenViaCopyAndOperandsAreDouble()
     {
         var classRegistry = new ClassRegistry();
