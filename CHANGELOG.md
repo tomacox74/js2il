@@ -6,11 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- compiler: record receiver candidate sets across
-  assignments and captured/deferred closures (issue #1898). Candidates keep
-  primitive strings distinct from boxed String objects and remain
-  analysis-only until representation-compatible guarded specialization is
-  available.
+- compiler: record receiver candidate sets across assignments and
+  captured/deferred closures, then compute per-program-point receiver facts
+  across SSA copies, mutable slots, branches, loop back edges, and captured
+  field writes (issue #1898). Facts distinguish unknown/non-candidate paths
+  from observed reference types and remain analysis-only until
+  representation-compatible guarded specialization is available.
 - perf(compiler): emit realm-epoch-guarded fixed-arity String intrinsic calls
   with exact `CallMember0..5` fallbacks (issue #1891). Proven receivers skip
   the type test, uncertain receivers use `isinst string`, and the guarded

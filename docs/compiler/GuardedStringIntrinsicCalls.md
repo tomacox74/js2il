@@ -60,6 +60,31 @@ JavaScript addition coerces that object to a primitive.
 Candidate sets also retain Array and typed-array observations for future
 guarded specializations, but do not affect their lowering today.
 
+### Per-program-point facts
+
+After final LIR normalization and variable-slot coalescing, the compiler runs a
+forward fixed-point analysis over the method control-flow graph. It tracks
+receiver candidates separately for SSA temps, mutable variable slots,
+parameters, and captured scope fields. Plain assignments are strong updates;
+branch joins and loop back edges union the incoming candidates until the graph
+stabilizes.
+
+To bound compile-time and memory cost, facts are materialized only for the
+backward slice rooted at dynamic receiver operands. The slice follows copies,
+object coercions, parameter loads/stores, mutable slots, and captured field
+loads/stores, so receiver-relevant dependencies are retained without recording
+unrelated method state.
+
+Each recorded fact distinguishes explicitly observed candidate CLR types from
+non-candidate values and unconstrained values. This preserves uncertainty at
+joins instead of treating a candidate seen on one path as proof for every path.
+The facts are available before instruction operands and after instruction
+definitions, including phi-like LIR temps written by copies in multiple
+branches. Calls and suspension points conservatively invalidate captured field
+facts, and control leaving a protected region with a `finally` invalidates
+mutable facts rather than assuming the handler has no relevant writes. The
+facts remain analysis-only and do not change generated IL.
+
 ## Current specialization surface
 
 The initial allowlist matches the previously supported String early-binding

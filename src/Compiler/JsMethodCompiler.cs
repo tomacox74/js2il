@@ -1130,6 +1130,15 @@ internal sealed class JsMethodCompiler
         // sequence produced by the normalization and CSE passes above.
         LIRVariableSlotCoalescing.Optimize(lirMethod!);
 
+        // Compute per-program-point receiver facts over the final control-flow
+        // graph. These facts are analysis-only until a guarded specialization
+        // explicitly consumes them.
+        if (ReceiverTypeFlowAnalysis.RequiresAnalysis(lirMethod!))
+        {
+            lirMethod!.ReceiverTypeFlowFacts =
+                ReceiverTypeFlowAnalysis.Analyze(lirMethod);
+        }
+
         methodBody = lirMethod!;
         return true;
     }

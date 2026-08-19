@@ -109,4 +109,10 @@ public sealed class MethodBodyIR
     /// This enables optimizations like inlining LIRConvertToObject for const variables.
     /// </summary>
     public HashSet<int> SingleAssignmentSlots { get; } = new();
+
+    /// <summary>
+    /// Flow-sensitive receiver facts for the final LIR instruction sequence.
+    /// Populated after all normalization and variable-slot coalescing passes.
+    /// </summary>
+    internal ReceiverTypeFlowFacts? ReceiverTypeFlowFacts { get; set; }
 }
