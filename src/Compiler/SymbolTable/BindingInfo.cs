@@ -82,6 +82,13 @@ public class BindingInfo
     }
 
     /// <summary>
+    /// Reference receiver types observed at any write to this binding. Unlike
+    /// <see cref="ClrType"/>, these are candidates rather than a representation
+    /// guarantee, so consumers must retain a runtime guard and generic fallback.
+    /// </summary>
+    public HashSet<Type> ReceiverCandidateClrTypes { get; } = [];
+
+    /// <summary>
     /// True when this binding is the target of any write operation (assignment/update/initializer).
     /// This is used for conservative optimizations that require proving a binding is never reassigned.
     /// </summary>

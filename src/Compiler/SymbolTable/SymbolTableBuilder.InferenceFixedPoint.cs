@@ -23,6 +23,7 @@ public partial class SymbolTableBuilder
             // Definite-initialization runs immediately after variable inference so transient
             // guesses from hoisted var initializers cannot become field or return facts.
             InferVariableClrTypes(root);
+            InferReceiverTypeCandidates(root);
             InferDefinitelyInitializedNumericVarLocals(root);
             InferClassInstanceFieldClrTypes(root);
             InferCallableReturnClrTypes(root);
@@ -72,16 +73,19 @@ public partial class SymbolTableBuilder
     private static string FormatInferredType(BindingInfo binding)
     {
         var clrType = binding.ClrType?.FullName ?? "<unknown>";
+        var receiverCandidates = binding.ReceiverCandidateClrTypes.Count == 0
+            ? string.Empty
+            : $" [receiver candidates: {string.Join(", ", binding.ReceiverCandidateClrTypes.Select(static type => type.FullName))}]";
         if (binding.ObjectLiteralShape is not { IsEligible: true } shape)
         {
-            return clrType;
+            return clrType + receiverCandidates;
         }
 
         var members = string.Join(
             ", ",
             shape.Members.Select(member =>
                 $"{member.Name}: {(member.IsFunction ? "function" : member.ClrType?.FullName ?? "System.Object")}"));
-        return $"{clrType} [object literal: {{ {members} }}]";
+        return $"{clrType} [object literal: {{ {members} }}]{receiverCandidates}";
     }
 
     private static string CaptureInferenceState(Scope root)
@@ -124,6 +128,11 @@ public partial class SymbolTableBuilder
                 AppendType(state, binding.StableElementClrType);
                 state.Append(binding.IsStableType ? '1' : '0');
                 state.Append(binding.CanUseUnboxedLocal ? '1' : '0');
+                foreach (var candidate in binding.ReceiverCandidateClrTypes.OrderBy(static type => type.FullName, StringComparer.Ordinal))
+                {
+                    AppendType(state, candidate);
+                }
+                state.Append(';');
 
                 if (binding.ObjectLiteralShape is not { } shape)
                 {

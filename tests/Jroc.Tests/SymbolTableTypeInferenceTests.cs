@@ -116,6 +116,44 @@ public class SymbolTableTypeInferenceTests
         Assert.Null(secondBinding.ClrType);
     }
 
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_PreserveCapturedStringAcrossDeferredWrites()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var text;
+            function invoke(callback) {
+                callback();
+            }
+            invoke(function () {
+                text = new String('seed');
+            });
+            invoke(function () {
+                text += text;
+            });
+        ");
+
+        var text = symbolTable.GetBindingInfo("text");
+        Assert.NotNull(text);
+        Assert.Contains(typeof(string), text.ReceiverCandidateClrTypes);
+        Assert.NotEqual(typeof(string), text.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_TrackArrayAndTypedArrayWrites()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var values = [];
+            var typed = new Int32Array(4);
+        ");
+
+        var values = symbolTable.GetBindingInfo("values");
+        var typed = symbolTable.GetBindingInfo("typed");
+        Assert.NotNull(values);
+        Assert.NotNull(typed);
+        Assert.Contains(typeof(JavaScriptRuntime.Array), values.ReceiverCandidateClrTypes);
+        Assert.Contains(typeof(JavaScriptRuntime.Int32Array), typed.ReceiverCandidateClrTypes);
+    }
+
     [Theory]
     [InlineData(typeof(double), "42", "testVar++")]
     [InlineData(typeof(double), "42", "++testVar")]
@@ -1229,6 +1267,21 @@ public class SymbolTableTypeInferenceTests
         Assert.NotNull(tmpBinding);
         Assert.True(tmpBinding!.IsStableType);
         Assert.Equal(typeof(JavaScriptRuntime.Array), tmpBinding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DromaeoObjectString_StrIncludesString()
+    {
+        const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_String.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var symbolTable = BuildSymbolTable(reader.ReadToEnd());
+
+        var str = symbolTable.GetBindingInfo("str");
+        Assert.NotNull(str);
+        Assert.Contains(typeof(string), str.ReceiverCandidateClrTypes);
     }
 
     [Fact]

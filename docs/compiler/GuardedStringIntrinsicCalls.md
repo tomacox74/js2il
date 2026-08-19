@@ -41,6 +41,22 @@ Stable `substring` calls now pass through this guarded instruction instead of
 using their former unconditional HIR-level direct call. The previous
 unguarded `charCodeAt` numeric fusion is guarded as well.
 
+## Receiver candidates
+
+The symbol-table fixed point separately records reference receiver candidates
+observed at declarations and writes. A candidate is not a CLR storage claim:
+conflicting assignments, captured fields, and deferred callbacks can all make
+the value at a particular read unknown. Candidates therefore never remove a
+runtime check or authorize an unguarded intrinsic call.
+
+When a captured binding has `string` among its candidates, lowering retains the
+guarded String path even if its field is otherwise object-typed or has another
+specialized CLR classification. The generated `isinst string` check selects
+the helper only for a primitive string; every other value, including a boxed
+String object, takes the original generic member-call fallback. Candidate sets
+also retain Array and typed-array observations for future guarded
+specializations, but do not bypass their prototype lookup today.
+
 ## Current specialization surface
 
 The initial allowlist matches the previously supported String early-binding
@@ -76,6 +92,13 @@ The guard removes about 96% of the generic dispatch time in this focused case
 and eliminates its steady-state allocation. The uncertain receiver type test
 adds about 0.2 ns while retaining the complete generic fallback.
 
+The 2026-08-19 local DefaultJob run of `dromaeo-object-string` on .NET
+10.0.11 measured JROC execution at 22.03 ms (N=13) with 44.24 MB allocated
+per module load. Compiling that exact fixture before and after receiver
+candidate tracking produced the same 22,528-byte module assembly. This is
+expected: candidates preserve guarded specialization at object-typed captured
+reads rather than turning them into an unguarded direct call.
+
 ## Validation
 
 Coverage includes:
@@ -87,6 +110,8 @@ Coverage includes:
 - cross-realm prototype isolation using one compiled module loaded twice;
 - guarded numeric fallback conversion;
 - zero-allocation guard plus `String.trim` fast-path execution;
+- the `dromaeo-object-string` fixture, including captured writes and deferred
+  callbacks whose hot calls must keep an `isinst string` plus generic fallback;
 - targeted `built-ins/String/prototype/**` test262 tests.
 
 The realm-owned invalidation contract is documented in

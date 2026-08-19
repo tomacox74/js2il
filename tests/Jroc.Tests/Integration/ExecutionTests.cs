@@ -19,6 +19,9 @@ namespace Jroc.Tests.Integration
         public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp), preferOutOfProc: true);
 
         [Fact]
+        public Task Compile_Performance_Dromaeo_Object_String() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_String), preferOutOfProc: true);
+
+        [Fact]
         public async Task Compile_Scripts_ExtractEcma262SectionHtml_UrlMode()
         {
             await using var server = await LoopbackEcma262Server.StartAsync();

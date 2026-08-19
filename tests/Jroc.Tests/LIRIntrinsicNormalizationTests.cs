@@ -1,5 +1,7 @@
+using Acornima;
 using Jroc.IR;
 using Jroc.Services;
+using Jroc.SymbolTables;
 using Xunit;
 
 namespace Jroc.Tests;
@@ -110,6 +112,47 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.False(guarded.ReceiverIsProvenString);
         Assert.Equal("trim", guarded.MemberName);
         Assert.Empty(guarded.Arguments);
+    }
+
+    [Fact]
+    public void Normalize_Rewrites_StringCandidateFieldMemberCall_WithReceiverTypeTest()
+    {
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript("var value;", "candidate.js");
+        var scope = new Jroc.SymbolTables.Scope(
+            "GlobalScope",
+            ScopeKind.Global,
+            parent: null,
+            program);
+        var binding = new BindingInfo("value", BindingKind.Var, scope, program)
+        {
+            ClrType = typeof(JavaScriptRuntime.String)
+        };
+        binding.ReceiverCandidateClrTypes.Add(typeof(string));
+
+        var body = new MethodBodyIR();
+        var scopeInstance = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRLoadScopeField(
+            scopeInstance,
+            binding,
+            new FieldId("GlobalScope", "value"),
+            new ScopeId("GlobalScope"),
+            receiver));
+        body.Instructions.Add(new LIRCallMember0(receiver, "trim", result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(
+            body.Instructions[1]);
+        Assert.False(guarded.ReceiverIsProvenString);
     }
 
     [Fact]

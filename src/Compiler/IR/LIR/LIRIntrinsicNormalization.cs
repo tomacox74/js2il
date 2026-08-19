@@ -1,5 +1,6 @@
 using Jroc.IL;
 using Jroc.Services;
+using Jroc.SymbolTables;
 using Jroc.Services.TwoPhaseCompilation;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -36,6 +37,9 @@ internal static class LIRIntrinsicNormalization
         // Track temps proven to be constant strings (e.g., property access keys).
         // This allows safe rewrites like `r.promise` -> direct CLR getter when r is known.
         var knownConstStrings = new Dictionary<int, string>();
+
+        // Candidates remain object-typed and can only use guarded specialization.
+        var knownStringCandidateReceivers = new HashSet<int>();
 
         // Seed known intrinsic receiver types from temp storage when it is already specific.
         // This covers cases like Promise.withResolvers() which returns a concrete runtime type.
@@ -94,6 +98,7 @@ internal static class LIRIntrinsicNormalization
                     {
                         knownSpecializedReceiverClrTypes[loadScopeField.Result.Index] = loadScopeField.Binding.ClrType!;
                     }
+                    AddStringReceiverCandidate(loadScopeField.Binding, loadScopeField.Result);
                     break;
 
                 case LIRLoadLeafScopeField loadLeafScopeField:
@@ -102,6 +107,7 @@ internal static class LIRIntrinsicNormalization
                     {
                         knownSpecializedReceiverClrTypes[loadLeafScopeField.Result.Index] = loadLeafScopeField.Binding.ClrType!;
                     }
+                    AddStringReceiverCandidate(loadLeafScopeField.Binding, loadLeafScopeField.Result);
                     break;
 
                 case LIRLoadParentScopeField loadParentScopeField:
@@ -110,6 +116,7 @@ internal static class LIRIntrinsicNormalization
                     {
                         knownSpecializedReceiverClrTypes[loadParentScopeField.Result.Index] = loadParentScopeField.Binding.ClrType!;
                     }
+                    AddStringReceiverCandidate(loadParentScopeField.Binding, loadParentScopeField.Result);
                     break;
 
                 case LIRCallIntrinsicStatic
@@ -123,6 +130,9 @@ internal static class LIRIntrinsicNormalization
                     {
                         knownSpecializedReceiverClrTypes[requireObjectCoercible.Result.Index] = coercedReceiverType;
                     }
+                    CopyStringReceiverCandidate(
+                        requireObjectCoercible.Arguments[0],
+                        requireObjectCoercible.Result);
                     break;
 
                 case LIRCopyTemp copyTemp:
@@ -137,13 +147,15 @@ internal static class LIRIntrinsicNormalization
                     {
                         knownConstStrings[copyTemp.Destination.Index] = srcConstString;
                     }
+                    CopyStringReceiverCandidate(copyTemp.Source, copyTemp.Destination);
                     break;
             }
         }
 
         FuseCharCodeAtWithConvertToNumber(
             methodBody,
-            knownSpecializedReceiverClrTypes);
+            knownSpecializedReceiverClrTypes,
+            knownStringCandidateReceivers);
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
@@ -162,6 +174,7 @@ internal static class LIRIntrinsicNormalization
                 {
                     knownConstStrings[copyTemp.Destination.Index] = copiedConstString;
                 }
+                CopyStringReceiverCandidate(copyTemp.Source, copyTemp.Destination);
             }
 
             if (instruction is LIRCallIntrinsicStatic
@@ -174,6 +187,18 @@ internal static class LIRIntrinsicNormalization
                 && knownSpecializedReceiverClrTypes.TryGetValue(requireObjectCoercible.Arguments[0].Index, out var coercedReceiverType))
             {
                 knownSpecializedReceiverClrTypes[requireObjectCoercible.Result.Index] = coercedReceiverType;
+            }
+            if (instruction is LIRCallIntrinsicStatic
+                {
+                    IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                    MethodName: nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible)
+                } candidateRequireObjectCoercible
+                && candidateRequireObjectCoercible.Result.Index >= 0
+                && candidateRequireObjectCoercible.Arguments.Count == 1)
+            {
+                CopyStringReceiverCandidate(
+                    candidateRequireObjectCoercible.Arguments[0],
+                    candidateRequireObjectCoercible.Result);
             }
 
             if (instruction is LIRGetLength getLength)
@@ -367,7 +392,8 @@ internal static class LIRIntrinsicNormalization
                         callMember0.MethodName,
                         Array.Empty<TempVariable>(),
                         callMember0.Result,
-                        knownSpecializedReceiverClrTypes))
+                        knownSpecializedReceiverClrTypes,
+                        knownStringCandidateReceivers))
                 {
                     continue;
                 }
@@ -407,7 +433,8 @@ internal static class LIRIntrinsicNormalization
                         callMember1.MethodName,
                         new[] { callMember1.A0 },
                         callMember1.Result,
-                        knownSpecializedReceiverClrTypes))
+                        knownSpecializedReceiverClrTypes,
+                        knownStringCandidateReceivers))
                 {
                     continue;
                 }
@@ -462,7 +489,8 @@ internal static class LIRIntrinsicNormalization
                         callMember2.MethodName,
                         new[] { callMember2.A0, callMember2.A1 },
                         callMember2.Result,
-                        knownSpecializedReceiverClrTypes))
+                        knownSpecializedReceiverClrTypes,
+                        knownStringCandidateReceivers))
                 {
                     continue;
                 }
@@ -490,7 +518,8 @@ internal static class LIRIntrinsicNormalization
                     callMember3.MethodName,
                     new[] { callMember3.A0, callMember3.A1, callMember3.A2 },
                     callMember3.Result,
-                    knownSpecializedReceiverClrTypes);
+                    knownSpecializedReceiverClrTypes,
+                    knownStringCandidateReceivers);
             }
 
             if (instruction is LIRCallMember4 callMember4)
@@ -526,7 +555,8 @@ internal static class LIRIntrinsicNormalization
                         callMember4.A3
                     },
                     callMember4.Result,
-                    knownSpecializedReceiverClrTypes);
+                    knownSpecializedReceiverClrTypes,
+                    knownStringCandidateReceivers);
             }
 
             if (instruction is LIRCallMember5 callMember5)
@@ -564,18 +594,38 @@ internal static class LIRIntrinsicNormalization
                         callMember5.A4
                     },
                     callMember5.Result,
-                    knownSpecializedReceiverClrTypes);
+                    knownSpecializedReceiverClrTypes,
+                    knownStringCandidateReceivers);
             }
         }
 
         FuseGetItemWithConvertToNumber(methodBody);
+
+        void AddStringReceiverCandidate(BindingInfo binding, TempVariable result)
+        {
+            if (result.Index >= 0
+                && binding.ReceiverCandidateClrTypes.Contains(typeof(string)))
+            {
+                knownStringCandidateReceivers.Add(result.Index);
+            }
+        }
+
+        void CopyStringReceiverCandidate(TempVariable source, TempVariable destination)
+        {
+            if (destination.Index >= 0
+                && knownStringCandidateReceivers.Contains(source.Index))
+            {
+                knownStringCandidateReceivers.Add(destination.Index);
+            }
+        }
     }
 
     public static void NormalizeLateNumericMemberCalls(MethodBodyIR methodBody)
     {
         FuseCharCodeAtWithConvertToNumber(
             methodBody,
-            knownSpecializedReceiverClrTypes: null);
+            knownSpecializedReceiverClrTypes: null,
+            knownStringCandidateReceivers: null);
     }
 
     private static bool TryNormalizeGuardedStringMemberCall(
@@ -585,7 +635,8 @@ internal static class LIRIntrinsicNormalization
         string methodName,
         IReadOnlyList<TempVariable> arguments,
         TempVariable result,
-        IReadOnlyDictionary<int, Type> knownSpecializedReceiverClrTypes)
+        IReadOnlyDictionary<int, Type> knownSpecializedReceiverClrTypes,
+        IReadOnlySet<int>? knownStringCandidateReceivers = null)
     {
         if (!TryResolveSafeStringIntrinsicMethod(
                 methodBody,
@@ -600,6 +651,7 @@ internal static class LIRIntrinsicNormalization
                 methodBody,
                 receiver,
                 knownSpecializedReceiverClrTypes,
+                knownStringCandidateReceivers,
                 out var receiverIsProvenString))
         {
             return false;
@@ -630,6 +682,7 @@ internal static class LIRIntrinsicNormalization
         TempVariable receiver,
         IReadOnlyDictionary<int, Type>?
             knownSpecializedReceiverClrTypes,
+        IReadOnlySet<int>? knownStringCandidateReceivers,
         out bool receiverIsProvenString)
     {
         receiverIsProvenString = false;
@@ -639,7 +692,13 @@ internal static class LIRIntrinsicNormalization
         {
             receiverIsProvenString =
                 knownReceiverType == typeof(string);
-            return receiverIsProvenString;
+            return receiverIsProvenString
+                || knownStringCandidateReceivers?.Contains(receiver.Index) == true;
+        }
+
+        if (knownStringCandidateReceivers?.Contains(receiver.Index) == true)
+        {
+            return true;
         }
 
         if (receiver.Index < 0
@@ -1090,7 +1149,8 @@ internal static class LIRIntrinsicNormalization
     private static void FuseCharCodeAtWithConvertToNumber(
         MethodBodyIR methodBody,
         IReadOnlyDictionary<int, Type>?
-            knownSpecializedReceiverClrTypes)
+            knownSpecializedReceiverClrTypes,
+        IReadOnlySet<int>? knownStringCandidateReceivers)
     {
         var singleConvertToNumberConsumerByTempIndex = new Dictionary<int, int>();
         var ineligibleTempIndices = new HashSet<int>();
@@ -1157,6 +1217,7 @@ internal static class LIRIntrinsicNormalization
                     methodBody,
                     callMember.Receiver,
                     knownSpecializedReceiverClrTypes,
+                    knownStringCandidateReceivers,
                     out var receiverIsProvenString))
             {
                 continue;

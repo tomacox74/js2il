@@ -41,6 +41,9 @@ namespace Jroc.Tests.Integration
         public Task Compile_Performance_Dromaeo_Object_Regexp() => GenerateTest(nameof(Compile_Performance_Dromaeo_Object_Regexp));
 
         [Fact]
+        public Task Compile_Performance_Dromaeo_Object_String() => GenerateTest(nameof(Compile_Performance_Dromaeo_Object_String));
+
+        [Fact]
         public Task Compile_Performance_PrimeJavaScript() => GenerateTest(nameof(Compile_Performance_PrimeJavaScript));
     }
 }
