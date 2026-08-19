@@ -29,50 +29,52 @@ public partial class SymbolTableBuilder
 
         void VisitScope(Scope scope)
         {
-            Visit(scope.AstNode, scope, isScopeRoot: true);
-        }
+            var pending = new Stack<(Node Node, bool IsScopeRoot)>();
+            pending.Push((scope.AstNode, true));
 
-        void Visit(Node node, Scope scope, bool isScopeRoot)
-        {
-            if (!isScopeRoot
-                && scope.Children.Any(child => ReferenceEquals(child.AstNode, node)))
+            while (pending.Count > 0)
             {
-                return;
-            }
-
-            switch (node)
-            {
-                case VariableDeclarator
+                var (node, isScopeRoot) = pending.Pop();
+                if (!isScopeRoot
+                    && scope.Children.Any(child => ReferenceEquals(child.AstNode, node)))
                 {
-                    Id: Identifier identifier,
-                    Init: { } initializer
-                }:
-                    AddCandidates(
-                        TryResolveBinding(scope, identifier.Name),
-                        initializer,
-                        scope);
-                    break;
-
-                case AssignmentExpression
-                {
-                    Left: Identifier identifier
-                } assignment:
-                {
-                    var binding = TryResolveBinding(scope, identifier.Name);
-                    AddCandidates(binding, assignment.Right, scope);
-
-                    if (assignment.Operator == Operator.AdditionAssignment
-                        && binding?.ReceiverCandidateClrTypes.Contains(typeof(string)) == true)
-                    {
-                        changed |= binding.ReceiverCandidateClrTypes.Add(typeof(string));
-                    }
-                    break;
+                    continue;
                 }
-            }
 
-            foreach (var child in node.ChildNodes)
-            {
-                Visit(child, scope, isScopeRoot: false);
+                switch (node)
+                {
+                    case VariableDeclarator
+                    {
+                        Id: Identifier identifier,
+                        Init: { } initializer
+                    }:
+                        AddCandidates(
+                            TryResolveBinding(scope, identifier.Name),
+                            initializer,
+                            scope);
+                        break;
+
+                    case AssignmentExpression
+                    {
+                        Left: Identifier identifier
+                    } assignment:
+                    {
+                        var binding = TryResolveBinding(scope, identifier.Name);
+                        AddCandidates(binding, assignment.Right, scope);
+
+                        if (assignment.Operator == Operator.AdditionAssignment
+                            && binding?.ReceiverCandidateClrTypes.Contains(typeof(string)) == true)
+                        {
+                            changed |= binding.ReceiverCandidateClrTypes.Add(typeof(string));
+                        }
+                        break;
+                    }
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    pending.Push((child, false));
+                }
             }
         }
 
@@ -102,70 +104,131 @@ public partial class SymbolTableBuilder
                 yield break;
             }
 
-            if (expression is NewExpression
-                {
-                    Callee: Identifier { Name: "String" }
-                }
-                && !IsIdentifierShadowed(scope, "String"))
+            switch (expression)
             {
-                yield return typeof(string);
-                yield break;
-            }
+                case StringLiteral:
+                    yield return typeof(string);
+                    yield break;
 
-            if (expression is CallExpression
-                {
-                    Callee: Identifier { Name: "String" }
-                }
-                && !IsIdentifierShadowed(scope, "String"))
-            {
-                yield return typeof(string);
-                yield break;
-            }
+                case ArrayExpression:
+                    yield return typeof(JavaScriptRuntime.Array);
+                    yield break;
 
-            if (expression is CallExpression
-                {
-                    Callee: MemberExpression
+                case NewExpression
                     {
-                        Computed: false,
-                        Object: Identifier { Name: "String" },
-                        Property: Identifier { Name: "fromCharCode" }
+                        Callee: Identifier { Name: "String" }
                     }
-                }
-                && !IsIdentifierShadowed(scope, "String"))
-            {
-                yield return typeof(string);
-                yield break;
-            }
-
-            if (expression is NonLogicalBinaryExpression
-                {
-                    Operator: Operator.Addition
-                } addition)
-            {
-                foreach (var candidate in GetReceiverCandidates(addition.Left, scope))
-                {
-                    if (candidate == typeof(string))
+                    when !IsIdentifierShadowed(scope, "String"):
+                case CallExpression
                     {
-                        yield return candidate;
-                        yield break;
+                        Callee: Identifier { Name: "String" }
                     }
-                }
-
-                foreach (var candidate in GetReceiverCandidates(addition.Right, scope))
-                {
-                    if (candidate == typeof(string))
+                    when !IsIdentifierShadowed(scope, "String"):
+                case CallExpression
                     {
-                        yield return candidate;
-                        yield break;
+                        Callee: MemberExpression
+                        {
+                            Computed: false,
+                            Object: Identifier { Name: "String" },
+                            Property: Identifier { Name: "fromCharCode" }
+                        }
                     }
+                    when !IsIdentifierShadowed(scope, "String"):
+                    yield return typeof(string);
+                    yield break;
+
+                case NewExpression
+                    {
+                        Callee: Identifier constructor
+                    }
+                    when string.Equals(constructor.Name, "Array", StringComparison.Ordinal)
+                         && !IsIdentifierShadowed(scope, "Array"):
+                    yield return typeof(JavaScriptRuntime.Array);
+                    yield break;
+
+                case NewExpression
+                    {
+                        Callee: Identifier constructor
+                    }
+                    when _runtimeIntrinsicCatalog.TryGetIntrinsicObject(constructor.Name, out var intrinsic)
+                         && intrinsic != null:
+                    if (IsReceiverCandidateType(intrinsic.Type))
+                    {
+                        yield return intrinsic.Type;
+                    }
+                    yield break;
+
+                case CallExpression
+                    {
+                        Callee: MemberExpression
+                        {
+                            Computed: false,
+                            Object: Identifier { Name: "Array" },
+                            Property: Identifier { Name: "of" or "from" }
+                        }
+                    }
+                    when !IsIdentifierShadowed(scope, "Array"):
+                    yield return typeof(JavaScriptRuntime.Array);
+                    yield break;
+
+                case NonLogicalBinaryExpression
+                    {
+                        Operator: Operator.Addition
+                    } addition
+                    when ContainsStringCandidate(addition, scope):
+                    yield return typeof(string);
+                    yield break;
+            }
+        }
+
+        bool ContainsStringCandidate(Expression expression, Scope scope)
+        {
+            var pending = new Stack<Expression>();
+            pending.Push(expression);
+
+            while (pending.Count > 0)
+            {
+                switch (pending.Pop())
+                {
+                    case StringLiteral:
+                    case NewExpression
+                        {
+                            Callee: Identifier { Name: "String" }
+                        }
+                        when !IsIdentifierShadowed(scope, "String"):
+                    case CallExpression
+                        {
+                            Callee: Identifier { Name: "String" }
+                        }
+                        when !IsIdentifierShadowed(scope, "String"):
+                    case CallExpression
+                        {
+                            Callee: MemberExpression
+                            {
+                                Computed: false,
+                                Object: Identifier { Name: "String" },
+                                Property: Identifier { Name: "fromCharCode" }
+                            }
+                        }
+                        when !IsIdentifierShadowed(scope, "String"):
+                        return true;
+
+                    case Identifier identifier
+                        when TryResolveBinding(scope, identifier.Name)
+                            ?.ReceiverCandidateClrTypes.Contains(typeof(string)) == true:
+                        return true;
+
+                    case NonLogicalBinaryExpression
+                        {
+                            Operator: Operator.Addition
+                        } addition:
+                        pending.Push(addition.Left);
+                        pending.Push(addition.Right);
+                        break;
                 }
             }
 
-            var inferredType = InferExpressionClrType(expression, scope);
-            if (IsReceiverCandidateType(inferredType))
-            {
-                yield return inferredType!;
-            }
+            return false;
         }
     }
 
