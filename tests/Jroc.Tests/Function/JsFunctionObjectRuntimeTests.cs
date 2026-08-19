@@ -149,6 +149,29 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
+    public void CompatibilityInvocationFrameFlowsAcrossTaskThreadHop()
+    {
+        var callerThreadId = Environment.CurrentManagedThreadId;
+        var function = new ThreadHopFunction();
+
+        var result = Assert.IsType<ThreadHopSnapshot>(
+            CallableOperations.Call1(
+                function,
+                "thread-hop-this",
+                "thread-hop-argument"));
+
+        Assert.NotEqual(callerThreadId, result.ThreadId);
+        Assert.Equal("thread-hop-this", result.ThisArgument);
+        Assert.Equal("thread-hop-argument", result.Argument);
+        Assert.Same(function, result.Callee);
+        Assert.Null(result.NewTarget);
+        Assert.Null(RuntimeServices.GetCurrentThis());
+        Assert.Null(RuntimeServices.GetCurrentArguments());
+        Assert.Null(RuntimeServices.GetCurrentCallee());
+        Assert.Null(RuntimeServices.GetCurrentNewTarget());
+    }
+
+    [Fact]
     public void CallableOperations_ConstructsOnlyConstructableFunctionObjects()
     {
         var constructor = new ConstructableFunction();
@@ -1084,6 +1107,25 @@ public sealed class JsFunctionObjectRuntimeTests
         }
     }
 
+    private sealed class ThreadHopFunction : JsFunctionObject
+    {
+        protected override object? CallCore(
+            object? thisArgument,
+            in JsCallArguments arguments)
+            => Task.Factory.StartNew(
+                    () => new ThreadHopSnapshot(
+                        Environment.CurrentManagedThreadId,
+                        RuntimeServices.GetCurrentThis(),
+                        RuntimeServices.GetCurrentArguments()?[0],
+                        RuntimeServices.GetCurrentCallee(),
+                        RuntimeServices.GetCurrentNewTarget()),
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default)
+                .GetAwaiter()
+                .GetResult();
+    }
+
     private sealed class ConstructableFunction : JsFunctionObject
     {
         public override bool IsConstructor => true;
@@ -1178,6 +1220,13 @@ public sealed class JsFunctionObjectRuntimeTests
             RuntimeServices.GetCurrentNewTarget());
 
     private sealed record CallSnapshot(
+        object? ThisArgument,
+        object? Argument,
+        object? Callee,
+        object? NewTarget);
+
+    private sealed record ThreadHopSnapshot(
+        int ThreadId,
         object? ThisArgument,
         object? Argument,
         object? Callee,

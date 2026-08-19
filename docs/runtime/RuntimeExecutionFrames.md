@@ -24,10 +24,11 @@ realm is rejected.
 and the engine's test/bootstrap service override all resolve through this
 frame. Thread identity is not a runtime identity boundary.
 
-The existing invocation-state fields remain separate for now. The
-continuation-scoped values preserve per-continuation snapshots without
-allocating a new execution frame on hot JavaScript call paths. Root frame
-entry explicitly captures, clears, and restores those values and the
+Residual invocation values use one immutable `AsyncLocal` frame. Copy-on-write
+replacement preserves point-in-time snapshots across task/thread hops, while
+root frame entry explicitly captures, clears, and restores that frame plus the
 thread-affine direct-call stacks so a new agent cannot inherit its creator's
 call state. Root engine and hosted entry scopes remain synchronous and
-thread-affine while those stacks use thread-static storage.
+thread-affine while those stacks use thread-static storage. The rejected
+thread-static invocation-frame evaluation is documented in
+[Residual invocation-state transport](ResidualInvocationState.md).

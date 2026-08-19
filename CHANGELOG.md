@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime/docs): evaluate a reusable thread-static compatibility frame
+  (issue #1890). The benchmark control reaches 0 B/call, but production retains
+  the 200 B/call immutable `AsyncLocal` fallback because residual state must
+  preserve point-in-time snapshots across arbitrary task/thread hops.
 - perf(runtime): collapse residual ambient invocation state into one immutable
   `AsyncLocal` frame (issue #1887). Compatibility calls now publish and restore
   `this`, arguments, callee, `new.target`, and lexical-super state with one

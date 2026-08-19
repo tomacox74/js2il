@@ -55,13 +55,7 @@ another thread must not observe itself as reentrant.
 | `PropertyDescriptorStore._intrinsicInitializationDepth` | CLR thread | Reentrant intrinsic bootstrap state |
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
-| `RuntimeServices._currentArguments` | Async flow | Invocation state captured/restored by root frames |
-| `RuntimeServices._currentCallArguments` | Async flow | Invocation state captured/restored by root frames |
-| `RuntimeServices._currentCallee` | Async flow | Invocation state captured/restored by root frames |
-| `RuntimeServices._currentLexicalSuperReceiver` | Async flow | Invocation state captured/restored by root frames |
-| `RuntimeServices._currentLexicalSuperScopes` | Async flow | Invocation state captured/restored by root frames |
-| `RuntimeServices._currentNewTarget` | Async flow | Invocation state captured/restored by root frames |
-| `RuntimeServices._currentThis` | Async flow | Invocation state captured/restored by root frames |
+| `RuntimeServices._currentInvocation` | Async flow | Immutable residual invocation frame captured/restored by root frames |
 | `JsReturnConverter.ResultConversions` | Process metadata | Weak-keyed constructed generic methods |
 
 A weak-keyed table is approved only when the key has the semantic lifetime of

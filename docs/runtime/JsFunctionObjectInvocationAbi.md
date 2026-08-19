@@ -52,9 +52,11 @@ explicit context, install no `AsyncLocal` values. Compatibility paths for
 named-function identity, non-strict `arguments.callee`, bound `with`
 environments, lexical `super`, and resumable state machines retain ambient
 transport. `CallableOperations` and generated array adapters publish only the
-individual values selected by `InvocationContextRequirements`, then restore
-only those values in a `finally` block. Inline arguments remain lazy and
-stable for the duration of an invocation.
+values selected by `InvocationContextRequirements` in one immutable
+`AsyncLocal` frame, then restore the previous frame in a `finally` block.
+Inline arguments remain lazy and stable for the duration of an invocation.
+See [Residual invocation-state transport](ResidualInvocationState.md) for the
+thread-hop audit and issue #1890 decision.
 
 Known spread/rest/`arguments` calls still end in the canonical typed MethodDef.
 Their generated static array adapter receives the actual `JsFunctionObject`
@@ -163,15 +165,22 @@ dotnet run -c Release \
   --callable-abi --filter "*"
 ```
 
-The local .NET 10 ShortRun on 2026-08-05 produced:
+The local .NET 10 ShortRun on 2026-08-19 produced:
 
 | Path | Mean | Allocated |
 | --- | ---: | ---: |
-| `JsFunctionObject` fixed arity 3 | 1.537 ns | 0 B |
-| `JsFunctionObject` pre-materialized arbitrary arguments | 1.572 ns | 0 B |
-| `JsFunctionObject` spread materialization | 12.161 ns | 48 B |
-| legacy `Closure.InvokeWithArgs3` | 18.774 ns | 48 B |
-| `JsFunctionObject` ambient-context fixed arity 3 | 325.786 ns | 304 B |
+| `JsFunctionObject` pre-materialized arbitrary arguments | 1.179 ns | 0 B |
+| `JsFunctionObject` fixed arity 3 | 1.397 ns | 0 B |
+| receiver-aware built-in adapter fixed arity 3 | 6.388 ns | 0 B |
+| built-in delegate adapter fixed arity 3 | 8.633 ns | 0 B |
+| `JsFunctionObject` spread materialization | 10.409 ns | 48 B |
+| thread-static compatibility-frame prototype | 17.358 ns | 0 B |
+| `JsFunctionObject` ambient-context fixed arity 3 | 70.840 ns | 200 B |
+
+Issue #1890 also retains a benchmark-only reusable thread-static frame control.
+It measures 0 B/call but is not used in production because it cannot preserve
+point-in-time compatibility state across arbitrary CLR `ExecutionContext`
+captures without reintroducing copy-on-write publication.
 
 These microbenchmarks guard the ABI shape; end-to-end benchmark results remain
 the authority for application performance. The ambient-context result also
