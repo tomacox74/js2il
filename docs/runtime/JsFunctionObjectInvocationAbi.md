@@ -102,6 +102,11 @@ Runtime-owned built-ins that still use CLR delegates are isolated behind
 materialize arguments when their explicit host ABI requires an array, but
 compiled JavaScript functions never enter this path.
 
+Generated built-in specialization must retain an exact generic fallback.
+Realm-owned assumption tokens are exposed through
+[`IntrinsicPrototypeEpochs`](IntrinsicPrototypeMutationEpochs.md); receiver
+type alone is never sufficient to skip dynamic prototype lookup.
+
 The public .NET hosting boundary projects callable values as runtime-owned
 `Jroc.Runtime.JsCallable` wrappers. Calls, receiver-aware calls, construction,
 and alternate `newTarget` construction marshal to the owning script thread and

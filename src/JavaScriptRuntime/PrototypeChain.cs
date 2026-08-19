@@ -85,6 +85,7 @@ public static class PrototypeChain
             array.DisableDenseGrowthFastPath();
         }
         Array.NotifyPrototypeMutation();
+        RuntimeIntrinsics.NotifyPrototypeMutation(obj);
     }
 
     internal static void InitializePrototype(object obj, object? prototype)
