@@ -11,6 +11,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   deletion, accessors, default-callable replacement, and prototype-link changes
   on `String.prototype` or `Object.prototype` invalidate only the owning realm;
   reads and validation allocate zero bytes.
+
+## v0.12.11 - 2026-08-19
+
 - perf(runtime/docs): evaluate a reusable thread-static compatibility frame
   (issue #1890). The benchmark control reaches 0 B/call, but production retains
   the 200 B/call immutable `AsyncLocal` fallback because residual state must
