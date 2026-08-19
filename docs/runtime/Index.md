@@ -23,4 +23,5 @@ These documents describe the JavaScriptRuntime hosting model and its internal ex
 
 ## Performance
 
+- [Intrinsic prototype mutation epochs](IntrinsicPrototypeMutationEpochs.md)
 - [RegExp and string hot-path performance optimizations](RegExpStringPerformanceOptimizations.md)
