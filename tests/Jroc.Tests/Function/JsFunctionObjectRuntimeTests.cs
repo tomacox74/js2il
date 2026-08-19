@@ -599,6 +599,94 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
+    public void CompatibilityInvocationFrameCutsEntryExitAllocationByHalf()
+    {
+        const int iterationCount = 10_000;
+        const int legacyBytesPerCall = 688;
+        var function = new CompatibilityContextFunction();
+
+        for (var index = 0; index < 1_000; index++)
+        {
+            _ = CallableOperations.Call1(
+                function,
+                "this",
+                "argument");
+        }
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        for (var index = 0; index < iterationCount; index++)
+        {
+            _ = CallableOperations.Call1(
+                function,
+                "this",
+                "argument");
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.True(
+            allocated < iterationCount * legacyBytesPerCall / 2,
+            $"Expected less than 50% of the {legacyBytesPerCall} B/call legacy baseline, but allocated {(double)allocated / iterationCount:F1} B/call.");
+    }
+
+    [Fact]
+    public void CompatibilityInvocationFrameRestoresAllValuesAfterException()
+    {
+        var ambientArguments = new object?[] { "ambient-argument" };
+        var ambientSuperScopes = new object[] { "ambient-scope" };
+        var ambientSuperReceiver = new object();
+        var previousThis = RuntimeServices.SetCurrentThis("ambient-this");
+        var previousArguments =
+            RuntimeServices.SetCurrentArguments(ambientArguments);
+        var previousCallee =
+            RuntimeServices.SetCurrentCallee("ambient-callee");
+        var previousNewTarget =
+            RuntimeServices.SetCurrentNewTarget("ambient-new-target");
+        var previousSuperReceiver =
+            RuntimeServices.SetCurrentLexicalSuperReceiver(
+                ambientSuperReceiver);
+        var previousSuperScopes =
+            RuntimeServices.SetCurrentLexicalSuperScopes(
+                ambientSuperScopes);
+        try
+        {
+            var exception = Assert.Throws<TypeError>(
+                () => CallableOperations.Call1(
+                    new CompatibilityContextFunction(throwOnCall: true),
+                    "call-this",
+                    "call-argument"));
+
+            Assert.Equal("compatibility failure", exception.Message);
+            Assert.Equal("ambient-this", RuntimeServices.GetCurrentThis());
+            Assert.Same(
+                ambientArguments,
+                RuntimeServices.GetCurrentArguments());
+            Assert.Equal(
+                "ambient-callee",
+                RuntimeServices.GetCurrentCallee());
+            Assert.Equal(
+                "ambient-new-target",
+                RuntimeServices.GetCurrentNewTarget());
+            Assert.Same(
+                ambientSuperReceiver,
+                RuntimeServices.GetCurrentLexicalSuperReceiver());
+            Assert.Same(
+                ambientSuperScopes,
+                RuntimeServices.GetCurrentLexicalSuperScopes());
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentLexicalSuperScopes(
+                previousSuperScopes);
+            RuntimeServices.SetCurrentLexicalSuperReceiver(
+                previousSuperReceiver);
+            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            RuntimeServices.SetCurrentCallee(previousCallee);
+            RuntimeServices.SetCurrentArguments(previousArguments);
+            RuntimeServices.SetCurrentThis(previousThis);
+        }
+    }
+
+    [Fact]
     public void ReceiverAwareVariadicBuiltinReceivesPackedArgumentsWithoutAmbientState()
     {
         BuiltinFunctionVariadic function =
@@ -1039,6 +1127,42 @@ public sealed class JsFunctionObjectRuntimeTests
                 RuntimeServices.GetCurrentArguments(),
                 RuntimeServices.GetCurrentCallee(),
                 RuntimeServices.GetCurrentNewTarget());
+    }
+
+    private sealed class CompatibilityContextFunction : JsFunctionObject
+    {
+        private readonly object[] _lexicalSuperScopes = [new object()];
+        private readonly bool _throwOnCall;
+
+        public CompatibilityContextFunction(bool throwOnCall = false)
+        {
+            _throwOnCall = throwOnCall;
+            InitializeInvocationContext(
+                (int)(InvocationContextRequirements.This
+                    | InvocationContextRequirements.Arguments
+                    | InvocationContextRequirements.Callee
+                    | InvocationContextRequirements.NewTarget
+                    | InvocationContextRequirements.LexicalSuper),
+                supportsExplicitInvocationContext: false);
+        }
+
+        protected override object? GetLexicalSuperReceiverCore()
+            => this;
+
+        protected override object[]? GetLexicalSuperScopesCore()
+            => _lexicalSuperScopes;
+
+        protected override object? CallCore(
+            object? thisArgument,
+            in JsCallArguments arguments)
+        {
+            if (_throwOnCall)
+            {
+                throw new TypeError("compatibility failure");
+            }
+
+            return null;
+        }
     }
 
     private sealed class DelegateHost

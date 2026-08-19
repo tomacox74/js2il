@@ -11,13 +11,7 @@ namespace JavaScriptRuntime;
 
 public class RuntimeServices
 {
-    private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
-    private static readonly System.Threading.AsyncLocal<object?> _currentLexicalSuperReceiver = new();
-    private static readonly System.Threading.AsyncLocal<object[]?> _currentLexicalSuperScopes = new();
-    private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
-    private static readonly System.Threading.AsyncLocal<JsCallArguments?> _currentCallArguments = new();
-    private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
-    private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
+    private static readonly System.Threading.AsyncLocal<InvocationFrame?> _currentInvocation = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
     [ThreadStatic] private static Stack<GeneratedFunctionDirectCallState>? _generatedFunctionDirectCallStack;
     [ThreadStatic] private static Stack<object?>? _constructorNewTargetStack;
@@ -34,14 +28,31 @@ public class RuntimeServices
 
     public static object[] GetEmptyScopes() => EmptyScopes;
 
+    internal sealed record InvocationFrame(
+        object? CurrentThis = null,
+        object? CurrentLexicalSuperReceiver = null,
+        object[]? CurrentLexicalSuperScopes = null,
+        object?[]? CurrentArguments = null,
+        JsCallArguments? CurrentCallArguments = null,
+        object? CurrentNewTarget = null,
+        object? CurrentCallee = null)
+    {
+        internal bool IsEmpty =>
+            CurrentThis is null
+            && CurrentLexicalSuperReceiver is null
+            && CurrentLexicalSuperScopes is null
+            && CurrentArguments is null
+            && CurrentCallArguments is null
+            && CurrentNewTarget is null
+            && CurrentCallee is null;
+    }
+
+    internal readonly record struct InvocationFrameState(
+        InvocationFrame? PreviousFrame,
+        bool WasPublished);
+
     private readonly record struct AmbientInvocationState(
-        object? CurrentThis,
-        object? CurrentLexicalSuperReceiver,
-        object[]? CurrentLexicalSuperScopes,
-        object?[]? CurrentArguments,
-        JsCallArguments? CurrentCallArguments,
-        object? CurrentNewTarget,
-        object? CurrentCallee,
+        InvocationFrame? InvocationFrame,
         Stack<object?[]?>? ConstructorArgStack,
         Stack<GeneratedFunctionDirectCallState>? GeneratedFunctionDirectCallStack,
         Stack<object?>? ConstructorNewTargetStack,
@@ -145,38 +156,31 @@ public class RuntimeServices
 
     public static object? GetCurrentThis()
     {
-        return _currentThis.Value;
+        return _currentInvocation.Value?.CurrentThis;
     }
 
     public static object? SetCurrentThis(object? value)
     {
-        var previous = _currentThis.Value;
-        _currentThis.Value = value;
+        var current = _currentInvocation.Value;
+        var previous = current?.CurrentThis;
+        PublishInvocationFrame(
+            (current ?? new InvocationFrame()) with
+            {
+                CurrentThis = value
+            });
         return previous;
     }
 
     internal static object CaptureAndClearAmbientInvocationState()
     {
         var state = new AmbientInvocationState(
-            _currentThis.Value,
-            _currentLexicalSuperReceiver.Value,
-            _currentLexicalSuperScopes.Value,
-            _currentArguments.Value,
-            _currentCallArguments.Value,
-            _currentNewTarget.Value,
-            _currentCallee.Value,
+            _currentInvocation.Value,
             _constructorArgStack,
             _generatedFunctionDirectCallStack,
             _constructorNewTargetStack,
             _derivedConstructorThisStack);
 
-        _currentThis.Value = null;
-        _currentLexicalSuperReceiver.Value = null;
-        _currentLexicalSuperScopes.Value = null;
-        _currentArguments.Value = null;
-        _currentCallArguments.Value = null;
-        _currentNewTarget.Value = null;
-        _currentCallee.Value = null;
+        PublishInvocationFrame(null);
         _constructorArgStack = null;
         _generatedFunctionDirectCallStack = null;
         _constructorNewTargetStack = null;
@@ -193,13 +197,7 @@ public class RuntimeServices
                 nameof(state));
         }
 
-        _currentThis.Value = invocationState.CurrentThis;
-        _currentLexicalSuperReceiver.Value = invocationState.CurrentLexicalSuperReceiver;
-        _currentLexicalSuperScopes.Value = invocationState.CurrentLexicalSuperScopes;
-        _currentArguments.Value = invocationState.CurrentArguments;
-        _currentCallArguments.Value = invocationState.CurrentCallArguments;
-        _currentNewTarget.Value = invocationState.CurrentNewTarget;
-        _currentCallee.Value = invocationState.CurrentCallee;
+        PublishInvocationFrame(invocationState.InvocationFrame);
         _constructorArgStack = invocationState.ConstructorArgStack;
         _generatedFunctionDirectCallStack = invocationState.GeneratedFunctionDirectCallStack;
         _constructorNewTargetStack = invocationState.ConstructorNewTargetStack;
@@ -208,7 +206,9 @@ public class RuntimeServices
 
     public static object? GetCurrentLexicalSuperReceiver()
     {
-        return _currentLexicalSuperReceiver.Value ?? ResolveLexicalThis(_currentThis.Value);
+        var current = _currentInvocation.Value;
+        return current?.CurrentLexicalSuperReceiver
+            ?? ResolveLexicalThis(current?.CurrentThis);
     }
 
     public static object? ResolveGeneratedDirectCallThis(
@@ -235,38 +235,125 @@ public class RuntimeServices
 
     public static object? GetCurrentLexicalSuperPropertyReceiver()
     {
-        return ResolveLexicalThis(_currentThis.Value);
+        return ResolveLexicalThis(_currentInvocation.Value?.CurrentThis);
     }
 
     public static object? SetCurrentLexicalSuperReceiver(object? value)
     {
-        var previous = _currentLexicalSuperReceiver.Value;
-        _currentLexicalSuperReceiver.Value = value;
+        var current = _currentInvocation.Value;
+        var previous = current?.CurrentLexicalSuperReceiver;
+        PublishInvocationFrame(
+            (current ?? new InvocationFrame()) with
+            {
+                CurrentLexicalSuperReceiver = value
+            });
         return previous;
     }
 
     public static object[] GetCurrentLexicalSuperScopes()
     {
-        return _currentLexicalSuperScopes.Value ?? EmptyScopes;
+        return _currentInvocation.Value?.CurrentLexicalSuperScopes
+            ?? EmptyScopes;
     }
 
     public static object[]? SetCurrentLexicalSuperScopes(object[]? value)
     {
-        var previous = _currentLexicalSuperScopes.Value;
-        _currentLexicalSuperScopes.Value = value;
+        var current = _currentInvocation.Value;
+        var previous = current?.CurrentLexicalSuperScopes;
+        PublishInvocationFrame(
+            (current ?? new InvocationFrame()) with
+            {
+                CurrentLexicalSuperScopes = value
+            });
         return previous;
+    }
+
+    internal static InvocationFrameState PushInvocationFrame(
+        InvocationContextRequirements requirements,
+        object? currentThis,
+        in JsCallArguments arguments,
+        object? currentCallee,
+        object? currentNewTarget,
+        object? lexicalSuperReceiver = null,
+        object[]? lexicalSuperScopes = null)
+    {
+        var previous = _currentInvocation.Value;
+        var publishesThis =
+            (requirements & InvocationContextRequirements.This) != 0;
+        var publishesArguments =
+            (requirements & InvocationContextRequirements.Arguments) != 0;
+        var publishesCallee =
+            (requirements & InvocationContextRequirements.Callee) != 0;
+        var publishesNewTarget =
+            (requirements & InvocationContextRequirements.NewTarget) != 0;
+        var publishesLexicalSuper =
+            (requirements & InvocationContextRequirements.LexicalSuper) != 0
+            && lexicalSuperScopes is not null;
+        if (!publishesThis
+            && !publishesArguments
+            && !publishesCallee
+            && !publishesNewTarget
+            && !publishesLexicalSuper)
+        {
+            return default;
+        }
+
+        var next = new InvocationFrame(
+            publishesThis
+                ? currentThis
+                : previous?.CurrentThis,
+            publishesLexicalSuper
+                ? lexicalSuperReceiver
+                : previous?.CurrentLexicalSuperReceiver,
+            publishesLexicalSuper
+                ? lexicalSuperScopes
+                : previous?.CurrentLexicalSuperScopes,
+            publishesArguments
+                ? null
+                : previous?.CurrentArguments,
+            publishesArguments
+                ? arguments
+                : previous?.CurrentCallArguments,
+            publishesNewTarget
+                ? currentNewTarget
+                : previous?.CurrentNewTarget,
+            publishesCallee
+                ? currentCallee
+                : previous?.CurrentCallee);
+        PublishInvocationFrame(next);
+        return new InvocationFrameState(previous, WasPublished: true);
+    }
+
+    internal static void RestoreInvocationFrame(
+        InvocationFrameState state)
+    {
+        if (state.WasPublished)
+        {
+            PublishInvocationFrame(state.PreviousFrame);
+        }
+    }
+
+    private static void PublishInvocationFrame(InvocationFrame? frame)
+    {
+        var next = frame is { IsEmpty: true } ? null : frame;
+        if (!ReferenceEquals(_currentInvocation.Value, next))
+        {
+            _currentInvocation.Value = next;
+        }
     }
 
     public static void PushDerivedConstructorThisBinding()
     {
         _derivedConstructorThisStack ??= new Stack<object?>();
-        _derivedConstructorThisStack.Push(_currentThis.Value);
-        _currentThis.Value = new DerivedConstructorThisBinding();
+        _derivedConstructorThisStack.Push(
+            _currentInvocation.Value?.CurrentThis);
+        SetCurrentThis(new DerivedConstructorThisBinding());
     }
 
     public static void InitializeDerivedConstructorThisBinding(object? value)
     {
-        if (_currentThis.Value is DerivedConstructorThisBinding binding)
+        if (_currentInvocation.Value?.CurrentThis
+            is DerivedConstructorThisBinding binding)
         {
             if (!ReferenceEquals(binding.Value, TemporalDeadZoneSentinel))
             {
@@ -277,7 +364,7 @@ public class RuntimeServices
             return;
         }
 
-        _currentThis.Value = value;
+        SetCurrentThis(value);
     }
 
     public static void ConstructDerivedFunctionBase(object receiver, object constructor, object[] args)
@@ -309,11 +396,11 @@ public class RuntimeServices
     {
         if (_derivedConstructorThisStack is { Count: > 0 } stack)
         {
-            _currentThis.Value = stack.Pop();
+            SetCurrentThis(stack.Pop());
             return;
         }
 
-        _currentThis.Value = null;
+        SetCurrentThis(null);
     }
 
     public static object? ResolveLexicalThis(object? boundThis)
@@ -1333,18 +1420,23 @@ public class RuntimeServices
 
     public static object?[]? GetCurrentArguments()
     {
-        if (_currentArguments.Value is { } materializedArguments)
+        var current = _currentInvocation.Value;
+        if (current?.CurrentArguments is { } materializedArguments)
         {
             return materializedArguments;
         }
 
-        if (_currentCallArguments.Value is not { } callArguments)
+        if (current?.CurrentCallArguments is not { } callArguments)
         {
             return null;
         }
 
         materializedArguments = callArguments.ToArray();
-        _currentArguments.Value = materializedArguments;
+        PublishInvocationFrame(
+            current with
+            {
+                CurrentArguments = materializedArguments
+            });
         return materializedArguments;
     }
 
@@ -1359,7 +1451,8 @@ public class RuntimeServices
         ArgumentNullException.ThrowIfNull(generatedFunctionType);
         ArgumentNullException.ThrowIfNull(fallback);
 
-        return _currentCallee.Value?.GetType() == generatedFunctionType
+        return _currentInvocation.Value?.CurrentCallee?.GetType()
+                == generatedFunctionType
             ? GetCurrentArguments() ?? fallback
             : fallback;
     }
@@ -1371,30 +1464,15 @@ public class RuntimeServices
 
     public static object?[]? SetCurrentArguments(object?[]? value)
     {
-        var previous = _currentArguments.Value;
-        _currentArguments.Value = value;
+        var current = _currentInvocation.Value;
+        var previous = current?.CurrentArguments;
+        PublishInvocationFrame(
+            (current ?? new InvocationFrame()) with
+            {
+                CurrentArguments = value
+            });
         return previous;
     }
-
-    internal static CurrentCallArgumentsState SetCurrentCallArguments(in JsCallArguments value)
-    {
-        var previous = new CurrentCallArgumentsState(
-            _currentArguments.Value,
-            _currentCallArguments.Value);
-        _currentArguments.Value = null;
-        _currentCallArguments.Value = value;
-        return previous;
-    }
-
-    internal static void RestoreCurrentCallArguments(CurrentCallArgumentsState state)
-    {
-        _currentCallArguments.Value = state.PackedArguments;
-        _currentArguments.Value = state.MaterializedArguments;
-    }
-
-    internal readonly record struct CurrentCallArgumentsState(
-        object?[]? MaterializedArguments,
-        JsCallArguments? PackedArguments);
 
     /// <summary>
     /// Establishes the JS invocation state for a generated function object's static direct-call
@@ -1408,11 +1486,15 @@ public class RuntimeServices
 
         if (functionObject is null)
         {
-            var previousArgumentsOnly = SetCurrentCallArguments(
-                JsCallArguments.FromArray(arguments));
+            var argumentsOnly = JsCallArguments.FromArray(arguments);
+            var argumentsOnlyState = PushInvocationFrame(
+                InvocationContextRequirements.Arguments,
+                currentThis: null,
+                argumentsOnly,
+                currentCallee: null,
+                currentNewTarget: null);
             (_generatedFunctionDirectCallStack ??= new()).Push(
-                GeneratedFunctionDirectCallState.ForArgumentsOnly(
-                    previousArgumentsOnly));
+                new GeneratedFunctionDirectCallState(argumentsOnlyState));
             return;
         }
 
@@ -1425,49 +1507,25 @@ public class RuntimeServices
             return;
         }
 
-        var needsThis =
-            (requirements & InvocationContextRequirements.This) != 0;
-        var needsArguments =
-            (requirements & InvocationContextRequirements.Arguments) != 0;
-        var needsCallee =
-            (requirements & InvocationContextRequirements.Callee) != 0;
-        var needsNewTarget =
-            (requirements & InvocationContextRequirements.NewTarget) != 0;
-        var needsLexicalSuper =
-            (requirements & InvocationContextRequirements.LexicalSuper) != 0;
-        var previousThis = needsThis
-            ? SetCurrentThis(functionObject.ResolveThisArgument(null))
-            : null;
-        var previousArguments = needsArguments
-            ? SetCurrentCallArguments(JsCallArguments.FromArray(arguments))
-            : default;
-        var previousCallee = needsCallee
-            ? SetCurrentCallee(functionObject)
-            : null;
-        var previousNewTarget = needsNewTarget
-            ? SetCurrentNewTarget(functionObject.ResolveCallNewTarget())
-            : null;
-        var lexicalSuperScopes = needsLexicalSuper
+        var lexicalSuperScopes =
+            (requirements & InvocationContextRequirements.LexicalSuper) != 0
             ? functionObject.GetLexicalSuperScopes()
             : null;
-        var previousSuperReceiver = lexicalSuperScopes is null
-            ? null
-            : SetCurrentLexicalSuperReceiver(
-                functionObject.GetLexicalSuperReceiver());
-        var previousSuperScopes = lexicalSuperScopes is null
-            ? null
-            : SetCurrentLexicalSuperScopes(lexicalSuperScopes);
+        var lexicalSuperReceiver = lexicalSuperScopes is not null
+            ? functionObject.GetLexicalSuperReceiver()
+            : null;
+        var callArguments = JsCallArguments.FromArray(arguments);
+        var invocationState = PushInvocationFrame(
+            requirements,
+            functionObject.ResolveThisArgument(null),
+            callArguments,
+            functionObject,
+            functionObject.ResolveCallNewTarget(),
+            lexicalSuperReceiver,
+            lexicalSuperScopes);
 
         (_generatedFunctionDirectCallStack ??= new()).Push(
-            new GeneratedFunctionDirectCallState(
-                previousThis,
-                previousArguments,
-                previousCallee,
-                previousNewTarget,
-                previousSuperReceiver,
-                previousSuperScopes,
-                lexicalSuperScopes is not null,
-                requirements));
+            new GeneratedFunctionDirectCallState(invocationState));
     }
 
     /// <summary>
@@ -1483,92 +1541,13 @@ public class RuntimeServices
         }
 
         var callState = stack.Pop();
-        if (!callState.HasInvocationContext)
-        {
-            return;
-        }
-
-        if (callState.HasFunctionContext)
-        {
-            if (callState.HasLexicalSuperState)
-            {
-                SetCurrentLexicalSuperScopes(callState.PreviousSuperScopes);
-                SetCurrentLexicalSuperReceiver(callState.PreviousSuperReceiver);
-            }
-            if ((callState.Requirements
-                    & InvocationContextRequirements.NewTarget) != 0)
-            {
-                SetCurrentNewTarget(callState.PreviousNewTarget);
-            }
-            if ((callState.Requirements
-                    & InvocationContextRequirements.Callee) != 0)
-            {
-                SetCurrentCallee(callState.PreviousCallee);
-            }
-        }
-        if ((callState.Requirements
-                & InvocationContextRequirements.Arguments) != 0)
-        {
-            RestoreCurrentCallArguments(callState.PreviousArguments);
-        }
-        if (callState.HasFunctionContext
-            && (callState.Requirements
-                & InvocationContextRequirements.This) != 0)
-        {
-            SetCurrentThis(callState.PreviousThis);
-        }
+        RestoreInvocationFrame(callState.InvocationState);
     }
 
     private readonly record struct GeneratedFunctionDirectCallState(
-        object? PreviousThis,
-        CurrentCallArgumentsState PreviousArguments,
-        object? PreviousCallee,
-        object? PreviousNewTarget,
-        object? PreviousSuperReceiver,
-        object[]? PreviousSuperScopes,
-        bool HasLexicalSuperState,
-        InvocationContextRequirements Requirements,
-        bool HasFunctionContext,
-        bool HasInvocationContext)
+        InvocationFrameState InvocationState)
     {
         public static GeneratedFunctionDirectCallState NoContext => default;
-
-        public GeneratedFunctionDirectCallState(
-            object? previousThis,
-            CurrentCallArgumentsState previousArguments,
-            object? previousCallee,
-            object? previousNewTarget,
-            object? previousSuperReceiver,
-            object[]? previousSuperScopes,
-            bool hasLexicalSuperState,
-            InvocationContextRequirements requirements)
-            : this(
-                previousThis,
-                previousArguments,
-                previousCallee,
-                previousNewTarget,
-                previousSuperReceiver,
-                previousSuperScopes,
-                hasLexicalSuperState,
-                requirements,
-                HasFunctionContext: true,
-                HasInvocationContext: true)
-        {
-        }
-
-        public static GeneratedFunctionDirectCallState ForArgumentsOnly(
-            CurrentCallArgumentsState previousArguments)
-            => new(
-                null,
-                previousArguments,
-                null,
-                null,
-                null,
-                null,
-                HasLexicalSuperState: false,
-                InvocationContextRequirements.Arguments,
-                HasFunctionContext: false,
-                HasInvocationContext: true);
     }
 
     /// <summary>
@@ -1579,8 +1558,9 @@ public class RuntimeServices
     public static void PushCurrentArguments(object?[]? value)
     {
         _constructorArgStack ??= new Stack<object?[]?>();
-        _constructorArgStack.Push(_currentArguments.Value);
-        _currentArguments.Value = value;
+        _constructorArgStack.Push(
+            _currentInvocation.Value?.CurrentArguments);
+        SetCurrentArguments(value);
     }
 
     /// <summary>
@@ -1591,55 +1571,66 @@ public class RuntimeServices
     {
         if (_constructorArgStack?.Count > 0)
         {
-            _currentArguments.Value = _constructorArgStack.Pop();
+            SetCurrentArguments(_constructorArgStack.Pop());
         }
     }
 
     public static void PushCurrentNewTarget(object? value)
     {
         _constructorNewTargetStack ??= new Stack<object?>();
-        _constructorNewTargetStack.Push(_currentNewTarget.Value);
-        _currentNewTarget.Value = value;
+        _constructorNewTargetStack.Push(
+            _currentInvocation.Value?.CurrentNewTarget);
+        SetCurrentNewTarget(value);
     }
 
     public static void PopCurrentNewTarget()
     {
         if (_constructorNewTargetStack?.Count > 0)
         {
-            _currentNewTarget.Value = _constructorNewTargetStack.Pop();
+            SetCurrentNewTarget(_constructorNewTargetStack.Pop());
         }
     }
 
     public static object? GetCurrentNewTarget()
     {
-        return _currentNewTarget.Value;
+        return _currentInvocation.Value?.CurrentNewTarget;
     }
 
     public static object? GetCurrentNewTargetOrReceiverType(object? receiver)
-        => _currentNewTarget.Value ?? receiver?.GetType();
+        => _currentInvocation.Value?.CurrentNewTarget ?? receiver?.GetType();
 
     public static object? SetCurrentNewTarget(object? value)
     {
-        var previous = _currentNewTarget.Value;
-        _currentNewTarget.Value = value;
+        var current = _currentInvocation.Value;
+        var previous = current?.CurrentNewTarget;
+        PublishInvocationFrame(
+            (current ?? new InvocationFrame()) with
+            {
+                CurrentNewTarget = value
+            });
         return previous;
     }
 
     public static object? GetCurrentCallee()
     {
-        return _currentCallee.Value;
+        return _currentInvocation.Value?.CurrentCallee;
     }
 
     public static object? SetCurrentCallee(object? value)
     {
-        var previous = _currentCallee.Value;
-        _currentCallee.Value = value;
+        var current = _currentInvocation.Value;
+        var previous = current?.CurrentCallee;
+        PublishInvocationFrame(
+            (current ?? new InvocationFrame()) with
+            {
+                CurrentCallee = value
+            });
         return previous;
     }
 
     public static object? ResolveWithBindingOrDefault(object? nameValue, object? defaultValue)
     {
-        var callee = _currentCallee.Value;
+        var callee = _currentInvocation.Value?.CurrentCallee;
         if (callee is not null
             && JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
             && withObject is not null)
@@ -1716,7 +1707,12 @@ public class RuntimeServices
     public static ArgumentsObject CreateArgumentsObject(object? scopeInstance, string[]? parameterNames, bool includeCallee, bool restrictCallee)
     {
         var args = GetCurrentArguments();
-        return new ArgumentsObject(args, scopeInstance, parameterNames, includeCallee ? _currentCallee.Value : null, restrictCallee);
+        return new ArgumentsObject(
+            args,
+            scopeInstance,
+            parameterNames,
+            includeCallee ? GetCurrentCallee() : null,
+            restrictCallee);
     }
 
     public static ArgumentsObject CreateArgumentsObject(

@@ -934,10 +934,10 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing ctor token");
                     }
 
-                    // Push all actual JS arguments into _currentArguments so that the 'arguments' keyword
+                    // Push all actual JS arguments into the invocation frame so that the 'arguments' keyword
                     // inside the base constructor reflects the values passed to super(...), not the outer ctor args.
                     // Only push when there are explicit JS args; if no args are passed (e.g., synthesized default
-                    // constructor calls super() with 0 args), the outer _currentArguments remains visible to Base.
+                    // constructor calls super() with 0 args), the outer frame arguments remain visible to Base.
                     int allArgc = callBaseCtor.AllJsArguments.Count;
                     if (allArgc > 0)
                     {
