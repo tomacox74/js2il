@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(runtime): collapse residual ambient invocation state into one immutable
+  `AsyncLocal` frame (issue #1887). Compatibility calls now publish and restore
+  `this`, arguments, callee, `new.target`, and lexical-super state with one
+  slot update per boundary, while explicit-context calls continue to avoid
+  ambient state entirely.
 
 ## v0.12.10 - 2026-08-18
 

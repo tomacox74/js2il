@@ -53,7 +53,7 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
                     }
 
-                    // Before the newobj call, push all actual call-site arguments into _currentArguments so that
+                    // Before the newobj call, push all actual call-site arguments into the invocation frame so that
                     // the 'arguments' keyword inside the constructor chain (including base constructors) reflects
                     // the actual values passed by the caller — even when MaxArgCount is 0 (default derived ctor).
                     {
@@ -144,7 +144,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(popCurrentNewTarget);
                     }
 
-                    // Restore _currentArguments to its pre-construction state.
+                    // Restore the invocation frame arguments to their pre-construction state.
                     {
                         var popCurrentArguments = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.RuntimeServices),
