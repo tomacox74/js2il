@@ -203,6 +203,34 @@ public sealed class IntrinsicPrototypeEpochTests
             });
     }
 
+    [Fact]
+    public void GuardedStringTrimFastPathAllocatesNothing()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                object receiver = "value";
+                object? result = null;
+                for (var index = 0; index < 32; index++)
+                {
+                    result = GuardedTrim(receiver);
+                }
+
+                var before =
+                    GC.GetAllocatedBytesForCurrentThread();
+                for (var index = 0; index < 10_000; index++)
+                {
+                    result = GuardedTrim(receiver);
+                }
+                var allocated =
+                    GC.GetAllocatedBytesForCurrentThread() - before;
+
+                GC.KeepAlive(result);
+                Assert.Equal(0, allocated);
+            });
+    }
+
     private static void AssertAdvances(Action mutation)
     {
         var before = IntrinsicPrototypeEpochs.Read(
@@ -255,6 +283,18 @@ public sealed class IntrinsicPrototypeEpochTests
         {
             services.OwningRealm!.Agent.Cluster.Dispose();
         }
+    }
+
+    private static object? GuardedTrim(object receiver)
+    {
+        if (IntrinsicPrototypeEpochs.IsPristine(
+                IntrinsicPrototypeFamily.String)
+            && receiver is string input)
+        {
+            return JavaScriptRuntime.String.Trim(input);
+        }
+
+        return ObjectRuntime.CallMember0(receiver, "trim");
     }
 
     private sealed class EpochFunction : JsFunctionObject

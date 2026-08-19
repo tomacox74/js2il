@@ -144,7 +144,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 275 (0x113)
+			// Code size: 322 (0x142)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -195,57 +195,77 @@
 			IL_0069: stloc.1
 			IL_006a: ldloc.1
 			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0070: ldstr "indexOf"
-			IL_0075: ldstr "127.0.0.1:"
-			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_007f: stloc.1
-			IL_0080: ldloc.1
-			IL_0081: ldc.r8 0.0
-			IL_008a: box [System.Runtime]System.Double
-			IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0094: stloc.3
-			IL_0095: ldloc.3
-			IL_0096: box [System.Runtime]System.Boolean
-			IL_009b: stloc.s 4
-			IL_009d: ldstr "req host:"
-			IL_00a2: ldloc.s 4
-			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00a9: stloc.2
-			IL_00aa: ldloc.0
-			IL_00ab: ldloc.2
-			IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00b1: pop
-			IL_00b2: ldarg.2
-			IL_00b3: ldstr "statusCode"
-			IL_00b8: ldc.r8 201
-			IL_00c1: ldc.i4.1
-			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_00c7: pop
-			IL_00c8: ldarg.2
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ce: ldstr "setHeader"
-			IL_00d3: ldstr "X-Answer"
-			IL_00d8: ldstr "42"
-			IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_00e2: pop
-			IL_00e3: ldarg.2
-			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00e9: stloc.1
-			IL_00ea: ldarg.1
-			IL_00eb: ldstr "url"
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f5: stloc.s 5
-			IL_00f7: ldstr "hello:"
-			IL_00fc: ldloc.s 5
-			IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0103: stloc.2
-			IL_0104: ldloc.1
-			IL_0105: ldstr "end"
-			IL_010a: ldloc.2
-			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0110: pop
-			IL_0111: ldnull
-			IL_0112: ret
+			IL_0070: stloc.1
+			IL_0071: ldc.i4.0
+			IL_0072: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_0077: brfalse IL_009e
+
+			IL_007c: ldloc.1
+			IL_007d: isinst [System.Runtime]System.String
+			IL_0082: dup
+			IL_0083: brfalse IL_009d
+
+			IL_0088: ldstr "127.0.0.1:"
+			IL_008d: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+			IL_0092: box [System.Runtime]System.Double
+			IL_0097: stloc.1
+			IL_0098: br IL_00af
+
+			IL_009d: pop
+
+			IL_009e: ldloc.1
+			IL_009f: ldstr "indexOf"
+			IL_00a4: ldstr "127.0.0.1:"
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00ae: stloc.1
+
+			IL_00af: ldloc.1
+			IL_00b0: ldc.r8 0.0
+			IL_00b9: box [System.Runtime]System.Double
+			IL_00be: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00c3: stloc.3
+			IL_00c4: ldloc.3
+			IL_00c5: box [System.Runtime]System.Boolean
+			IL_00ca: stloc.s 4
+			IL_00cc: ldstr "req host:"
+			IL_00d1: ldloc.s 4
+			IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00d8: stloc.2
+			IL_00d9: ldloc.0
+			IL_00da: ldloc.2
+			IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00e0: pop
+			IL_00e1: ldarg.2
+			IL_00e2: ldstr "statusCode"
+			IL_00e7: ldc.r8 201
+			IL_00f0: ldc.i4.1
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_00f6: pop
+			IL_00f7: ldarg.2
+			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00fd: ldstr "setHeader"
+			IL_0102: ldstr "X-Answer"
+			IL_0107: ldstr "42"
+			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0111: pop
+			IL_0112: ldarg.2
+			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0118: stloc.1
+			IL_0119: ldarg.1
+			IL_011a: ldstr "url"
+			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0124: stloc.s 5
+			IL_0126: ldstr "hello:"
+			IL_012b: ldloc.s 5
+			IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0132: stloc.2
+			IL_0133: ldloc.1
+			IL_0134: ldstr "end"
+			IL_0139: ldloc.2
+			IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_013f: pop
+			IL_0140: ldnull
+			IL_0141: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server

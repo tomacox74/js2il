@@ -511,7 +511,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 139 (0x8b)
+			// Code size: 176 (0xb0)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -530,41 +530,59 @@
 			IL_0019: ldarg.0
 			IL_001a: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stdout
 			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0024: ldstr "trim"
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_002e: stloc.1
-			IL_002f: ldloc.0
-			IL_0030: ldstr "stdout:"
-			IL_0035: ldloc.1
-			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_003b: pop
-			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: stloc.0
-			IL_0042: ldarg.0
-			IL_0043: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stderr
-			IL_0048: ldstr "length"
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0052: stloc.1
-			IL_0053: ldloc.0
-			IL_0054: ldstr "stderr length:"
-			IL_0059: ldloc.1
-			IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_005f: pop
-			IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0065: stloc.0
-			IL_0066: ldarg.0
-			IL_0067: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0071: ldstr "kill"
-			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_007b: stloc.1
-			IL_007c: ldloc.0
-			IL_007d: ldstr "kill after close:"
-			IL_0082: ldloc.1
-			IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0088: pop
-			IL_0089: ldnull
-			IL_008a: ret
+			IL_0024: stloc.1
+			IL_0025: ldc.i4.0
+			IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_002b: brfalse IL_0048
+
+			IL_0030: ldloc.1
+			IL_0031: isinst [System.Runtime]System.String
+			IL_0036: dup
+			IL_0037: brfalse IL_0047
+
+			IL_003c: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+			IL_0041: stloc.1
+			IL_0042: br IL_0054
+
+			IL_0047: pop
+
+			IL_0048: ldloc.1
+			IL_0049: ldstr "trim"
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0053: stloc.1
+
+			IL_0054: ldloc.0
+			IL_0055: ldstr "stdout:"
+			IL_005a: ldloc.1
+			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0060: pop
+			IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0066: stloc.0
+			IL_0067: ldarg.0
+			IL_0068: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stderr
+			IL_006d: ldstr "length"
+			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0077: stloc.1
+			IL_0078: ldloc.0
+			IL_0079: ldstr "stderr length:"
+			IL_007e: ldloc.1
+			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0084: pop
+			IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008a: stloc.0
+			IL_008b: ldarg.0
+			IL_008c: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0096: ldstr "kill"
+			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_00a0: stloc.1
+			IL_00a1: ldloc.0
+			IL_00a2: ldstr "kill after close:"
+			IL_00a7: ldloc.1
+			IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00ad: pop
+			IL_00ae: ldnull
+			IL_00af: ret
 		} // end of method ArrowFunction_L29C19::__js_call__
 
 	} // end of class ArrowFunction_L29C19

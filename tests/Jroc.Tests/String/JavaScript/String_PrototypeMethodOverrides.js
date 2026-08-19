@@ -1,5 +1,16 @@
 "use strict";
 
+function callTrim(value) {
+    return value.trim();
+}
+
+console.log(callTrim("  uncertain  "));
+console.log(callTrim({
+    trim: function () {
+        return "object-fallback";
+    }
+}));
+
 var originalCharAt = String.prototype.charAt;
 String.prototype.charAt = function (index) {
     return "replaced-" + index;
@@ -34,6 +45,15 @@ if (originalObjectToUpperCase === undefined) {
     Object.prototype.toUpperCase = originalObjectToUpperCase;
 }
 
+var originalIncludes = String.prototype.includes;
+delete String.prototype.includes;
+try {
+    "abc".includes("a");
+} catch (error) {
+    console.log(error.name);
+}
+String.prototype.includes = originalIncludes;
+
 var originalStartsWith = String.prototype.startsWith;
 String.prototype.startsWith = function (prefix) {
     return "alias-" + prefix;
@@ -42,3 +62,11 @@ var startsWith = "abc".startsWith;
 console.log(startsWith.call("abc", "a"));
 console.log(startsWith.apply("abc", ["b"]));
 String.prototype.startsWith = originalStartsWith;
+
+var originalCharCodeAt = String.prototype.charCodeAt;
+String.prototype.charCodeAt = function () {
+    return "41.9";
+};
+console.log(Math.floor("A".charCodeAt(0)));
+console.log(+"A".charCodeAt(0));
+String.prototype.charCodeAt = originalCharCodeAt;

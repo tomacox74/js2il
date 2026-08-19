@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 879 (0x36f)
+		// Code size: 939 (0x3ab)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_NewApis_Basic/Scope,
@@ -285,16 +285,37 @@
 		IL_0342: stloc.s 4
 		IL_0344: ldloc.s 4
 		IL_0346: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_034b: ldstr "charCodeAt"
-		IL_0350: ldc.r8 1
-		IL_0359: box [System.Runtime]System.Double
-		IL_035e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0363: stloc.s 4
-		IL_0365: ldloc.1
-		IL_0366: ldloc.s 4
-		IL_0368: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_036d: pop
-		IL_036e: ret
+		IL_034b: stloc.s 4
+		IL_034d: ldc.i4.0
+		IL_034e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0353: brfalse IL_0385
+
+		IL_0358: ldloc.s 4
+		IL_035a: isinst [System.Runtime]System.String
+		IL_035f: dup
+		IL_0360: brfalse IL_0384
+
+		IL_0365: ldc.r8 1
+		IL_036e: box [System.Runtime]System.Double
+		IL_0373: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
+		IL_0378: box [System.Runtime]System.Double
+		IL_037d: stloc.s 4
+		IL_037f: br IL_03a1
+
+		IL_0384: pop
+
+		IL_0385: ldloc.s 4
+		IL_0387: ldstr "charCodeAt"
+		IL_038c: ldc.r8 1
+		IL_0395: box [System.Runtime]System.Double
+		IL_039a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_039f: stloc.s 4
+
+		IL_03a1: ldloc.1
+		IL_03a2: ldloc.s 4
+		IL_03a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_03a9: pop
+		IL_03aa: ret
 	} // end of method String_NewApis_Basic::__js_module_init__
 
 } // end of class Modules.String_NewApis_Basic

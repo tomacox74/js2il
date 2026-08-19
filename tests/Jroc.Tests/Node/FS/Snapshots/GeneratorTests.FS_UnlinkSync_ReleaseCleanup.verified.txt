@@ -118,7 +118,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 692 (0x2b4)
+		// Code size: 794 (0x31a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_UnlinkSync_ReleaseCleanup/Scope,
@@ -314,7 +314,7 @@
 				IL_01d9: ldloc.1
 				IL_01da: ldloc.s 6
 				IL_01dc: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::unlinkSync(object)
-				IL_01e1: leave IL_0281
+				IL_01e1: leave IL_02e7
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
@@ -349,53 +349,93 @@
 				IL_022b: stloc.s 12
 				IL_022d: ldloc.s 12
 				IL_022f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0234: ldstr "includes"
-				IL_0239: ldstr "ENOENT:"
-				IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0243: stloc.s 12
-				IL_0245: ldloc.s 10
-				IL_0247: ldstr "message"
-				IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0251: stloc.s 17
-				IL_0253: ldloc.s 17
-				IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_025a: ldstr "includes"
-				IL_025f: ldstr "pr-body.md"
-				IL_0264: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0269: stloc.s 17
-				IL_026b: ldloc.s 16
-				IL_026d: ldstr "MissingError:"
-				IL_0272: ldloc.s 12
-				IL_0274: ldloc.s 17
-				IL_0276: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-				IL_027b: pop
-				IL_027c: leave IL_0281
+				IL_0234: stloc.s 12
+				IL_0236: ldc.i4.0
+				IL_0237: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_023c: brfalse IL_0265
+
+				IL_0241: ldloc.s 12
+				IL_0243: isinst [System.Runtime]System.String
+				IL_0248: dup
+				IL_0249: brfalse IL_0264
+
+				IL_024e: ldstr "ENOENT:"
+				IL_0253: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+				IL_0258: box [System.Runtime]System.Boolean
+				IL_025d: stloc.s 12
+				IL_025f: br IL_0278
+
+				IL_0264: pop
+
+				IL_0265: ldloc.s 12
+				IL_0267: ldstr "includes"
+				IL_026c: ldstr "ENOENT:"
+				IL_0271: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0276: stloc.s 12
+
+				IL_0278: ldloc.s 10
+				IL_027a: ldstr "message"
+				IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0284: stloc.s 17
+				IL_0286: ldloc.s 17
+				IL_0288: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_028d: stloc.s 17
+				IL_028f: ldc.i4.0
+				IL_0290: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_0295: brfalse IL_02be
+
+				IL_029a: ldloc.s 17
+				IL_029c: isinst [System.Runtime]System.String
+				IL_02a1: dup
+				IL_02a2: brfalse IL_02bd
+
+				IL_02a7: ldstr "pr-body.md"
+				IL_02ac: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+				IL_02b1: box [System.Runtime]System.Boolean
+				IL_02b6: stloc.s 17
+				IL_02b8: br IL_02d1
+
+				IL_02bd: pop
+
+				IL_02be: ldloc.s 17
+				IL_02c0: ldstr "includes"
+				IL_02c5: ldstr "pr-body.md"
+				IL_02ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_02cf: stloc.s 17
+
+				IL_02d1: ldloc.s 16
+				IL_02d3: ldstr "MissingError:"
+				IL_02d8: ldloc.s 12
+				IL_02da: ldloc.s 17
+				IL_02dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+				IL_02e1: pop
+				IL_02e2: leave IL_02e7
 			} // end handler
 
-			IL_0281: leave IL_02b0
+			IL_02e7: leave IL_0316
 		} // end .try
 		finally
 		{
-			IL_0286: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_028b: dup
-			IL_028c: ldstr "recursive"
-			IL_0291: ldc.i4.1
-			IL_0292: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0297: dup
-			IL_0298: ldstr "force"
-			IL_029d: ldc.i4.1
-			IL_029e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_02a3: stloc.s 15
-			IL_02a5: ldloc.1
-			IL_02a6: ldloc.s 5
-			IL_02a8: ldloc.s 15
-			IL_02aa: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_02af: endfinally
+			IL_02ec: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_02f1: dup
+			IL_02f2: ldstr "recursive"
+			IL_02f7: ldc.i4.1
+			IL_02f8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_02fd: dup
+			IL_02fe: ldstr "force"
+			IL_0303: ldc.i4.1
+			IL_0304: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0309: stloc.s 15
+			IL_030b: ldloc.1
+			IL_030c: ldloc.s 5
+			IL_030e: ldloc.s 15
+			IL_0310: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_0315: endfinally
 		} // end handler
 
-		IL_02b0: ldnull
-		IL_02b1: stloc.s 11
-		IL_02b3: ret
+		IL_0316: ldnull
+		IL_0317: stloc.s 11
+		IL_0319: ret
 	} // end of method FS_UnlinkSync_ReleaseCleanup::__js_module_init__
 
 } // end of class Modules.FS_UnlinkSync_ReleaseCleanup

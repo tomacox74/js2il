@@ -214,7 +214,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 64 (0x40)
+			// Code size: 97 (0x61)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -234,18 +234,30 @@
 			IL_0019: ldloc.2
 			IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
 			IL_001f: stloc.2
-			IL_0020: ldloc.2
-			IL_0021: ldstr "startsWith"
-			IL_0026: ldstr "ENOENT:"
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0030: stloc.1
-			IL_0031: ldloc.0
-			IL_0032: ldstr "Is ENOENT:"
-			IL_0037: ldloc.1
-			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_003d: pop
-			IL_003e: ldnull
-			IL_003f: ret
+			IL_0020: ldc.i4.0
+			IL_0021: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_0026: brfalse IL_0041
+
+			IL_002b: ldloc.2
+			IL_002c: ldstr "ENOENT:"
+			IL_0031: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+			IL_0036: box [System.Runtime]System.Boolean
+			IL_003b: stloc.1
+			IL_003c: br IL_0052
+
+			IL_0041: ldloc.2
+			IL_0042: ldstr "startsWith"
+			IL_0047: ldstr "ENOENT:"
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0051: stloc.1
+
+			IL_0052: ldloc.0
+			IL_0053: ldstr "Is ENOENT:"
+			IL_0058: ldloc.1
+			IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_005e: pop
+			IL_005f: ldnull
+			IL_0060: ret
 		} // end of method ArrowFunction_L12C12::__js_call__
 
 	} // end of class ArrowFunction_L12C12

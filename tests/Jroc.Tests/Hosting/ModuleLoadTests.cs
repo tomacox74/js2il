@@ -244,6 +244,32 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_GuardedStringIntrinsicsRespectRealmPrototypeIsolation()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "stringGuardRealmIsolation",
+            "stringGuardRealmIsolation.js");
+        using var first = JsEngine.LoadDynamicModule(
+            module.Assembly,
+            "stringGuardRealmIsolation");
+        using var second = JsEngine.LoadDynamicModule(
+            module.Assembly,
+            "stringGuardRealmIsolation");
+        dynamic firstExports = first;
+        dynamic secondExports = second;
+
+        Assert.Equal("first", (string)firstExports.callTrim("  first  "));
+        Assert.Equal("second", (string)secondExports.callTrim("  second  "));
+
+        firstExports.overrideTrim("first-override");
+
+        Assert.Equal(
+            "first-override",
+            (string)firstExports.callTrim("  first  "));
+        Assert.Equal("second", (string)secondExports.callTrim("  second  "));
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Dynamic_AllowsMutatingExportsObject()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");

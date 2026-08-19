@@ -1866,6 +1866,9 @@ internal static class LIRStackScheduler
             LIRCallMember3 call => call.Receiver.Equals(result),
             LIRCallMember4 call => call.Receiver.Equals(result),
             LIRCallMember5 call => call.Receiver.Equals(result),
+            LIRCallGuardedStringIntrinsic call =>
+                call.ReceiverIsProvenString
+                && call.Receiver.Equals(result),
             LIRCallComputedMemberFixed call =>
                 call.Receiver.Equals(result),
             LIRCallFunctionValue call =>

@@ -253,6 +253,29 @@ public record LIRCallMember5(
     TempVariable A4,
     TempVariable Result) : LIRInstruction;
 
+public enum LIRGuardedStringFallbackResultConversion
+{
+    None,
+    ToNumber
+}
+
+/// <summary>
+/// Calls a fixed-arity String intrinsic helper while the current realm's
+/// String prototype chain is pristine, with exact ordinary member dispatch as
+/// the fallback.
+/// </summary>
+public record LIRCallGuardedStringIntrinsic(
+    TempVariable Receiver,
+    string MemberName,
+    string IntrinsicMethodName,
+    IReadOnlyList<Type> IntrinsicParameterTypes,
+    Type IntrinsicReturnClrType,
+    bool ReceiverIsProvenString,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result,
+    LIRGuardedStringFallbackResultConversion FallbackResultConversion =
+        LIRGuardedStringFallbackResultConversion.None) : LIRInstruction;
+
 /// <summary>
 /// Calls a computed member with inline common-arity arguments.
 /// </summary>

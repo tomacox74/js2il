@@ -912,6 +912,8 @@ internal sealed partial class LIRToILCompiler
                     6 + EstimateTempLoadPeak(callMember5.A4),
                     7
                 }.Max(),
+                LIRCallGuardedStringIntrinsic guardedString =>
+                    Math.Max(3, 2 + guardedString.Arguments.Count),
 
                 // Known CLR instance method calls: receiver + args (no padding)
                 LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,

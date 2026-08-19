@@ -1057,7 +1057,7 @@
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
 			// Header size: 12
-			// Code size: 265 (0x109)
+			// Code size: 339 (0x153)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -1140,29 +1140,65 @@
 			IL_00bb: ldarg.0
 			IL_00bc: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stdout
 			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00c6: ldstr "trim"
-			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00d0: stloc.1
-			IL_00d1: ldloc.0
-			IL_00d2: ldstr "stdout:"
-			IL_00d7: ldloc.1
-			IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00dd: pop
-			IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00e3: stloc.0
-			IL_00e4: ldarg.0
-			IL_00e5: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stderr
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ef: ldstr "trim"
-			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00f9: stloc.1
-			IL_00fa: ldloc.0
-			IL_00fb: ldstr "stderr:"
-			IL_0100: ldloc.1
-			IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0106: pop
-			IL_0107: ldnull
-			IL_0108: ret
+			IL_00c6: stloc.1
+			IL_00c7: ldc.i4.0
+			IL_00c8: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_00cd: brfalse IL_00ea
+
+			IL_00d2: ldloc.1
+			IL_00d3: isinst [System.Runtime]System.String
+			IL_00d8: dup
+			IL_00d9: brfalse IL_00e9
+
+			IL_00de: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+			IL_00e3: stloc.1
+			IL_00e4: br IL_00f6
+
+			IL_00e9: pop
+
+			IL_00ea: ldloc.1
+			IL_00eb: ldstr "trim"
+			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_00f5: stloc.1
+
+			IL_00f6: ldloc.0
+			IL_00f7: ldstr "stdout:"
+			IL_00fc: ldloc.1
+			IL_00fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0102: pop
+			IL_0103: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0108: stloc.0
+			IL_0109: ldarg.0
+			IL_010a: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stderr
+			IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0114: stloc.1
+			IL_0115: ldc.i4.0
+			IL_0116: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_011b: brfalse IL_0138
+
+			IL_0120: ldloc.1
+			IL_0121: isinst [System.Runtime]System.String
+			IL_0126: dup
+			IL_0127: brfalse IL_0137
+
+			IL_012c: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+			IL_0131: stloc.1
+			IL_0132: br IL_0144
+
+			IL_0137: pop
+
+			IL_0138: ldloc.1
+			IL_0139: ldstr "trim"
+			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0143: stloc.1
+
+			IL_0144: ldloc.0
+			IL_0145: ldstr "stderr:"
+			IL_014a: ldloc.1
+			IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0150: pop
+			IL_0151: ldnull
+			IL_0152: ret
 		} // end of method ArrowFunction_L63C19::__js_call__
 
 	} // end of class ArrowFunction_L63C19
