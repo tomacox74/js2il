@@ -302,6 +302,118 @@ public sealed class ReceiverTypeFlowAnalysisTests
             readValue.CandidateClrTypes);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void Analyze_InvalidatesCapturedFieldAcrossDynamicPropertyAccess(
+        int accessKind)
+    {
+        var (binding, scopeId, fieldId) = CreateCapturedBinding();
+        var body = new MethodBodyIR();
+        var stringValue = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var scopeInstance = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var propertyReceiver = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var propertyName = AddTemp(
+            body,
+            accessKind == 2
+                ? new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(double))
+                : new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(string)));
+        var propertyValue = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var readAfterAccess = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var callResult = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRConstString("value", stringValue));
+        body.Instructions.Add(new LIRStoreScopeField(
+            scopeInstance,
+            binding,
+            fieldId,
+            scopeId,
+            stringValue));
+        body.Instructions.Add(
+            accessKind == 2
+                ? new LIRConstNumber(0, propertyName)
+                : new LIRConstString("property", propertyName));
+        body.Instructions.Add(
+            accessKind switch
+            {
+                0 => new LIRGetItem(
+                    propertyReceiver,
+                    propertyName,
+                    propertyValue),
+                1 => new LIRSetItem(
+                    propertyReceiver,
+                    propertyName,
+                    stringValue,
+                    propertyValue),
+                _ => new LIRGetJsArrayElement(
+                    propertyReceiver,
+                    propertyName,
+                    propertyValue)
+            });
+        body.Instructions.Add(new LIRLoadScopeField(
+            scopeInstance,
+            binding,
+            fieldId,
+            scopeId,
+            readAfterAccess));
+        body.Instructions.Add(new LIRCallMember0(
+            readAfterAccess,
+            "toString",
+            callResult));
+
+        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+        var readValue = facts.GetTempAfter(4, readAfterAccess);
+
+        Assert.True(readValue.IncludesUnknown);
+        Assert.DoesNotContain(
+            typeof(string),
+            readValue.CandidateClrTypes);
+    }
+
+    [Fact]
+    public void Analyze_InvalidatesAllMutableFactsAtUnsupportedBarrier()
+    {
+        var body = new MethodBodyIR();
+        var stringValue = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var variable = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)),
+            variableSlot: 0);
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRConstString("value", stringValue));
+        body.Instructions.Add(new LIRCopyTemp(stringValue, variable));
+        body.Instructions.Add(new UnknownInstruction());
+        body.Instructions.Add(new LIRCallMember0(variable, "trim", result));
+
+        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+        var value = facts.GetTempBefore(3, variable);
+
+        Assert.True(value.IncludesUnknown);
+        Assert.DoesNotContain(typeof(string), value.CandidateClrTypes);
+    }
+
     [Fact]
     public void Analyze_ContinuesAcrossAwaitResumeBoundary()
     {
@@ -616,4 +728,6 @@ public sealed class ReceiverTypeFlowAnalysisTests
             expected.OrderBy(static type => type.FullName),
             value.CandidateClrTypes.OrderBy(static type => type.FullName));
     }
+
+    private sealed record UnknownInstruction : LIRInstruction;
 }

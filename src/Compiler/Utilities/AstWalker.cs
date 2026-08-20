@@ -258,6 +258,28 @@ public class AstWalker
             case ImportExpression importExpr:
                 Visit(importExpr.Source, visitor);
                 break;
+
+            case ExportNamedDeclaration exportNamed:
+                Visit(exportNamed.Declaration, visitor);
+                if (exportNamed.Source == null)
+                {
+                    VisitNodes(exportNamed.Specifiers, visitor);
+                }
+                Visit(exportNamed.Source, visitor);
+                break;
+
+            case ExportDefaultDeclaration exportDefault:
+                Visit(exportDefault.Declaration, visitor);
+                break;
+
+            case ExportAllDeclaration exportAll:
+                Visit(exportAll.Exported, visitor);
+                Visit(exportAll.Source, visitor);
+                break;
+
+            case ExportSpecifier exportSpecifier:
+                Visit(exportSpecifier.Local, visitor);
+                break;
         }
     }
 
@@ -512,6 +534,49 @@ public class AstWalker
 
             case ImportExpression importExpr:
                 VisitWithContext(importExpr.Source, enterNode, exitNode);
+                break;
+
+            case ExportNamedDeclaration exportNamed:
+                VisitWithContext(
+                    exportNamed.Declaration,
+                    enterNode,
+                    exitNode);
+                if (exportNamed.Source == null)
+                {
+                    VisitNodesWithContext(
+                        exportNamed.Specifiers,
+                        enterNode,
+                        exitNode);
+                }
+                VisitWithContext(
+                    exportNamed.Source,
+                    enterNode,
+                    exitNode);
+                break;
+
+            case ExportDefaultDeclaration exportDefault:
+                VisitWithContext(
+                    exportDefault.Declaration,
+                    enterNode,
+                    exitNode);
+                break;
+
+            case ExportAllDeclaration exportAll:
+                VisitWithContext(
+                    exportAll.Exported,
+                    enterNode,
+                    exitNode);
+                VisitWithContext(
+                    exportAll.Source,
+                    enterNode,
+                    exitNode);
+                break;
+
+            case ExportSpecifier exportSpecifier:
+                VisitWithContext(
+                    exportSpecifier.Local,
+                    enterNode,
+                    exitNode);
                 break;
         }
 

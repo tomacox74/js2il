@@ -81,9 +81,13 @@ joins instead of treating a candidate seen on one path as proof for every path.
 The facts are available before instruction operands and after instruction
 definitions, including phi-like LIR temps written by copies in multiple
 branches. Calls and suspension points conservatively invalidate captured field
-facts, and control leaving a protected region with a `finally` invalidates
-mutable facts rather than assuming the handler has no relevant writes. The
-facts remain analysis-only and do not change generated IL.
+facts. Dynamic property reads and writes do the same because an accessor can
+run an escaping closure that mutates captured state. An unclassified LIR
+instruction invalidates every mutable location, and control leaving a protected
+region with a `finally` does likewise rather than assuming the handler has no
+relevant writes. Plain heap mutation does not invalidate a local binding's
+receiver type because changing an object does not replace the binding value.
+The facts remain analysis-only and do not change generated IL.
 
 ### Interprocedural summaries
 
@@ -100,7 +104,9 @@ binding or be immediately preceded in the same statement list by the captured
 binding's assignment. If that ordering proof is unavailable, the closure
 entry remains unknown. Unknown callbacks, exported/aliased callables, optional
 calls, spread calls, async functions, generators, and invocation-context-
-dependent functions do not contribute interprocedural receiver facts.
+dependent functions do not contribute interprocedural receiver facts. Direct
+ESM declaration exports are classified as escaping even when the export syntax
+contains no separate identifier read.
 
 ## Current specialization surface
 

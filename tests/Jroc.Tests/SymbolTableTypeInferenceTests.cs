@@ -350,6 +350,124 @@ public class SymbolTableTypeInferenceTests
         Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
     }
 
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateExportedCallableInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            export const identity = value => value;
+            identity('text');
+        ");
+
+        var identity = symbolTable.GetBindingInfo("identity");
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+
+        Assert.NotNull(identity);
+        Assert.NotNull(identityScope);
+        Assert.NotNull(identity!.CallableMaterialization);
+        Assert.NotEqual(
+            CallableMaterializationKind.DirectOnly,
+            identity.CallableMaterialization!.Kind);
+        Assert.True(
+            identity.CallableMaterialization.Reasons.HasFlag(
+                CallableMaterializationReason.Export));
+        Assert.Empty(identityScope!.StableParameterClrTypes);
+        Assert.Empty(identityScope.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateNamedExportCallableInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            const identity = value => value;
+            const local = number => number;
+            identity('text');
+            local(1);
+            export { identity as local };
+        ");
+
+        var identity = symbolTable.GetBindingInfo("identity");
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+        var localScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("number"));
+
+        Assert.NotNull(identity);
+        Assert.NotNull(identityScope);
+        Assert.NotNull(localScope);
+        Assert.NotNull(identity!.CallableMaterialization);
+        Assert.NotEqual(
+            CallableMaterializationKind.DirectOnly,
+            identity.CallableMaterialization!.Kind);
+        Assert.True(
+            identity.CallableMaterialization.Reasons.HasFlag(
+                CallableMaterializationReason.Export));
+        Assert.Empty(identityScope!.StableParameterClrTypes);
+        Assert.Empty(identityScope.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+        AssertStableParameterType(
+            localScope!,
+            0,
+            "number",
+            typeof(double));
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_PreservePrivateCallableInsideExport()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            export function outer() {
+                const identity = value => value;
+                identity('text');
+            }
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+
+        Assert.NotNull(identityScope);
+        AssertStableParameterType(
+            identityScope!,
+            0,
+            "value",
+            typeof(string));
+        Assert.True(
+            identityScope.ReceiverParameterTypeSummaries.ContainsKey(0));
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateExportedClassMethodInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            export class Box {
+                identity(value) {
+                    return value;
+                }
+            }
+            const box = new Box();
+            box.identity('text');
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+
+        Assert.NotNull(identityScope);
+        Assert.Empty(identityScope!.StableParameterClrTypes);
+        Assert.Empty(identityScope.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+    }
+
     [Theory]
     [InlineData(typeof(double), "42", "testVar++")]
     [InlineData(typeof(double), "42", "++testVar")]

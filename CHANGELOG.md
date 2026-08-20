@@ -12,8 +12,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   field writes. Direct-only callable summaries now propagate candidate unions
   through parameters, stable returns, and ordering-proven captured closure
   entries (issue #1898). Facts distinguish unknown/non-candidate paths from
-  observed reference types and remain analysis-only until representation-
-  compatible guarded specialization is available.
+  observed reference types, invalidate across opaque property access and
+  unsupported LIR barriers, and reject host-exposed callable summaries. They
+  remain analysis-only until representation-compatible guarded specialization
+  is available.
 - perf(compiler): emit realm-epoch-guarded fixed-arity String intrinsic calls
   with exact `CallMember0..5` fallbacks (issue #1891). Proven receivers skip
   the type test, uncertain receivers use `isinst string`, and the guarded

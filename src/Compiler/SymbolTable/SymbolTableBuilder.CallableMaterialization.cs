@@ -35,6 +35,7 @@ public partial class SymbolTableBuilder
     {
         var scopeByAstNode = new Dictionary<Node, Scope>(ReferenceEqualityComparer.Instance);
         var states = new Dictionary<BindingInfo, CallableAnalysisState>();
+        var parentMap = BuildParentMap(globalScope.AstNode);
         CollectScopes(globalScope);
 
         foreach (var scope in EnumerateCallableAnalysisScopes(globalScope))
@@ -74,6 +75,11 @@ public partial class SymbolTableBuilder
 
                 var state = new CallableAnalysisState(binding, initializer);
                 states.Add(binding, state);
+
+                if (IsWithinExportDeclaration(initializer, parentMap))
+                {
+                    state.Reasons |= CallableMaterializationReason.Export;
+                }
 
                 if (binding.Kind != BindingKind.Const)
                 {
@@ -380,6 +386,33 @@ public partial class SymbolTableBuilder
                     return;
             }
         }
+    }
+
+    private static bool IsWithinExportDeclaration(
+        Node node,
+        IReadOnlyDictionary<Node, Node> parentMap)
+    {
+        var current = node;
+        while (parentMap.TryGetValue(current, out var parent))
+        {
+            if (parent is ExportNamedDeclaration
+                or ExportDefaultDeclaration
+                or ExportAllDeclaration)
+            {
+                return true;
+            }
+
+            if (parent is FunctionDeclaration
+                or FunctionExpression
+                or ArrowFunctionExpression)
+            {
+                return false;
+            }
+
+            current = parent;
+        }
+
+        return false;
     }
 
     private static IEnumerable<Scope> EnumerateCallableAnalysisScopes(Scope scope)

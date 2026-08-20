@@ -82,9 +82,14 @@ public partial class SymbolTableBuilder
         var parentMap = BuildParentMap(root.AstNode);
         foreach (var candidate in candidatesByScope.Values)
         {
-            if (candidate.Scope.AstNode is FunctionExpression
-                && parentMap.TryGetValue(candidate.Scope.AstNode, out var parent)
-                && parent is not Acornima.Ast.MethodDefinition)
+            if (IsWithinExportDeclaration(
+                    candidate.Scope.AstNode,
+                    parentMap)
+                || (candidate.Scope.AstNode is FunctionExpression
+                    && parentMap.TryGetValue(
+                        candidate.Scope.AstNode,
+                        out var parent)
+                    && parent is not Acornima.Ast.MethodDefinition))
             {
                 candidate.IsCallableUnsafe = true;
             }

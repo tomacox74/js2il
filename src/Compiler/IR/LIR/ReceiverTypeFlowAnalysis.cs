@@ -243,9 +243,14 @@ internal static class ReceiverTypeFlowAnalysis
         bool hasFinallyRegion = false)
     {
         var effects = LIRInstructionInfo.GetEffectsForScheduling(instruction);
-        if ((effects & (LIRInstructionEffects.Calls
-                | LIRInstructionEffects.Suspension
-                | LIRInstructionEffects.ScopeReplacement)) != 0)
+        if ((effects & LIRInstructionEffects.UnsupportedBarrier) != 0)
+        {
+            state.InvalidateMutableLocations();
+        }
+        else if ((effects & (LIRInstructionEffects.Calls
+                     | LIRInstructionEffects.Suspension
+                     | LIRInstructionEffects.ScopeReplacement)) != 0
+                 || MayInvokeDynamicAccessor(instruction))
         {
             state.InvalidateCapturedBindings();
         }
@@ -340,6 +345,14 @@ internal static class ReceiverTypeFlowAnalysis
 
         state.SetTemp(methodBody, defined, value);
     }
+
+    private static bool MayInvokeDynamicAccessor(LIRInstruction instruction)
+        => instruction is LIRGetItem
+            or LIRGetItemAsNumber
+            or LIRGetItemAsNumberString
+            or LIRGetJsArrayElement
+            or LIRGetLength
+            or LIRSetItem;
 
     private static FlowValue ResolveLoadValue(
         FlowValue flowValue,
