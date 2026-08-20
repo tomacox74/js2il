@@ -1,4 +1,5 @@
 using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 
 namespace Jroc.IR;
 
@@ -115,4 +116,13 @@ public sealed class MethodBodyIR
     /// Populated after all normalization and variable-slot coalescing passes.
     /// </summary>
     internal ReceiverTypeFlowFacts? ReceiverTypeFlowFacts { get; set; }
+
+    internal Dictionary<int, ReceiverTypeSummary>
+        ReceiverParameterTypeSummaries { get; } = new();
+
+    internal Dictionary<BindingInfo, ReceiverTypeSummary>
+        ReceiverCapturedEntryTypeSummaries { get; } = new();
+
+    internal Dictionary<int, ReceiverTypeSummary>
+        ReceiverTempTypeSummaries { get; } = new();
 }

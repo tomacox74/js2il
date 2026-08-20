@@ -392,6 +392,105 @@ public sealed class ReceiverTypeFlowAnalysisTests
     }
 
     [Fact]
+    public void Analyze_SeedsInterproceduralParameterFacts()
+    {
+        var body = new MethodBodyIR();
+        var parameter = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.ReceiverParameterTypeSummaries[0] =
+            new ReceiverTypeSummary(
+                includesUnknown: false,
+                includesNonCandidate: false,
+                [typeof(string), typeof(JavaScriptRuntime.Array)]);
+
+        body.Instructions.Add(new LIRLoadParameter(0, parameter));
+        body.Instructions.Add(
+            new LIRCallMember0(parameter, "toString", result));
+
+        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+
+        AssertKnownCandidates(
+            facts.GetTempBefore(1, parameter),
+            typeof(string),
+            typeof(JavaScriptRuntime.Array));
+    }
+
+    [Fact]
+    public void Analyze_SeedsProvenCapturedClosureEntryFacts()
+    {
+        var (binding, scopeId, fieldId) = CreateCapturedBinding();
+        var body = new MethodBodyIR();
+        var scopeInstance = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var capturedValue = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.ReceiverCapturedEntryTypeSummaries[binding] =
+            ReceiverTypeSummary.ForCandidate(typeof(string));
+
+        body.Instructions.Add(new LIRLoadScopeField(
+            scopeInstance,
+            binding,
+            fieldId,
+            scopeId,
+            capturedValue));
+        body.Instructions.Add(new LIRCallMember0(
+            capturedValue,
+            "trim",
+            result));
+
+        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+
+        AssertKnownCandidates(
+            facts.GetTempBefore(1, capturedValue),
+            typeof(string));
+    }
+
+    [Fact]
+    public void Analyze_PropagatesKnownCallableReturnSummary()
+    {
+        var body = new MethodBodyIR();
+        var returnedValue = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.ReceiverTempTypeSummaries[returnedValue.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(string)]);
+
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Unknown",
+            "Call",
+            [],
+            returnedValue));
+        body.Instructions.Add(new LIRCallMember0(
+            returnedValue,
+            "trim",
+            result));
+
+        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+        var returnedFact = facts.GetTempBefore(1, returnedValue);
+
+        Assert.True(returnedFact.IncludesUnknown);
+        Assert.True(returnedFact.IncludesNonCandidate);
+        Assert.Contains(
+            typeof(string),
+            returnedFact.CandidateClrTypes);
+    }
+
+    [Fact]
     public void Analyze_DropsMutableFactsAcrossFinallyLeave()
     {
         var (binding, scopeId, fieldId) = CreateCapturedBinding();

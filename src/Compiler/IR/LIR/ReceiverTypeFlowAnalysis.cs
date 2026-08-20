@@ -114,7 +114,7 @@ internal static class ReceiverTypeFlowAnalysis
         var worklist = new Queue<int>();
         var queued = new bool[blocks.Count];
 
-        EnqueueWithInput(0, new FlowState());
+        EnqueueWithInput(0, CreateEntryState());
         foreach (var region in methodBody.ExceptionRegions)
         {
             if (TryGetLabelBlock(blocks, region.HandlerStartLabelId, out var handlerBlock))
@@ -187,6 +187,34 @@ internal static class ReceiverTypeFlowAnalysis
         }
 
         return facts;
+
+        FlowState CreateEntryState()
+        {
+            var state = new FlowState();
+            foreach (var (parameter, summary) in
+                     methodBody.ReceiverParameterTypeSummaries)
+            {
+                if (slice.Parameters.Contains(parameter))
+                {
+                    state.SetParameter(
+                        parameter,
+                        FlowValue.FromSummary(summary));
+                }
+            }
+
+            foreach (var (binding, summary) in
+                     methodBody.ReceiverCapturedEntryTypeSummaries)
+            {
+                if (slice.Bindings.Contains(binding))
+                {
+                    state.SetBinding(
+                        binding,
+                        FlowValue.FromSummary(summary));
+                }
+            }
+
+            return state;
+        }
 
         void EnqueueWithInput(int blockIndex, FlowState incoming)
         {
@@ -303,7 +331,11 @@ internal static class ReceiverTypeFlowAnalysis
             LIRConcatStrings => FlowValue.ForCandidate(typeof(string)),
             LIRConstNumber or LIRConstBoolean or LIRConstNull or LIRConstUndefined
                 => FlowValue.NonCandidate,
-            _ => ClassifyStorage(methodBody, defined)
+            _ => methodBody.ReceiverTempTypeSummaries.TryGetValue(
+                defined.Index,
+                out var summary)
+                    ? FlowValue.FromSummary(summary)
+                    : ClassifyStorage(methodBody, defined)
         };
 
         state.SetTemp(methodBody, defined, value);
@@ -1009,6 +1041,12 @@ internal sealed class FlowValue : IEquatable<FlowValue>
             includesUnknown: false,
             includesNonCandidate: false,
             [type]);
+
+    public static FlowValue FromSummary(ReceiverTypeSummary summary)
+        => new(
+            summary.IncludesUnknown,
+            summary.IncludesNonCandidate,
+            summary.CandidateClrTypes);
 
     public FlowValue Union(FlowValue other)
         => new(

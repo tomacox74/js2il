@@ -604,7 +604,8 @@ public sealed partial class HIRToLIRLowerer
                 DefineDirectCallResultStorage(
                     resultTempVar,
                     stableCallableTarget.CallableId,
-                    symbol.BindingInfo);
+                    symbol.BindingInfo,
+                    stableCallableTarget.CallableScope);
                 return true;
             }
 
@@ -743,7 +744,13 @@ public sealed partial class HIRToLIRLowerer
                 resultTempVar,
                 callableId,
                 callableValue));
-            DefineDirectCallResultStorage(resultTempVar, callableId, symbol.BindingInfo);
+            DefineDirectCallResultStorage(
+                resultTempVar,
+                callableId,
+                symbol.BindingInfo,
+                FindFunctionScope(
+                    symbol.BindingInfo.DeclaringScope,
+                    callableId));
 
             return true;
         }
@@ -1469,7 +1476,11 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private void DefineDirectCallResultStorage(TempVariable resultTempVar, TwoPhase.CallableId? callableId, BindingInfo? symbol)
+    private void DefineDirectCallResultStorage(
+        TempVariable resultTempVar,
+        TwoPhase.CallableId? callableId,
+        BindingInfo? symbol,
+        Scope? callableScope)
     {
         Type? returnClrType = null;
         if (callableId != null && _callableRegistry != null)
@@ -1498,6 +1509,15 @@ public sealed partial class HIRToLIRLowerer
         else
         {
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        if (callableScope?.ReceiverReturnTypeSummary is
+            {
+                HasCandidates: true
+            } summary)
+        {
+            _methodBodyIR.ReceiverTempTypeSummaries[resultTempVar.Index] =
+                summary;
         }
     }
 

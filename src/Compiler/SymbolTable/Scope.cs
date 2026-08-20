@@ -118,6 +118,28 @@ public class Scope
     /// </summary>
     public Dictionary<int, Type> StableParameterClrTypes { get; } = new();
 
+    /// <summary>
+    /// Receiver facts observed at every statically proven call site for a
+    /// parameter. Unlike <see cref="StableParameterClrTypes"/>, candidate
+    /// unions do not change the callable ABI.
+    /// </summary>
+    internal Dictionary<int, ReceiverTypeSummary>
+        ReceiverParameterTypeSummaries { get; } = new();
+
+    /// <summary>
+    /// Receiver facts produced by this callable's conservatively analyzed
+    /// return expressions.
+    /// </summary>
+    internal ReceiverTypeSummary ReceiverReturnTypeSummary { get; set; } =
+        ReceiverTypeSummary.Empty;
+
+    /// <summary>
+    /// Captured receiver facts proven at entry to a non-escaping direct-only
+    /// closure.
+    /// </summary>
+    internal Dictionary<BindingInfo, ReceiverTypeSummary>
+        ReceiverCapturedEntryTypeSummaries { get; } = new();
+
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>

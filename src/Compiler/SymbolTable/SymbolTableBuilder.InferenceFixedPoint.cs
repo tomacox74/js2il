@@ -99,11 +99,34 @@ public partial class SymbolTableBuilder
             AppendType(state, scope.StableReturnClrType);
             AppendType(state, scope.StableReturnArrayElementClrType);
             state.Append(scope.StableReturnIsThis ? '1' : '0').Append(';');
+            state.Append('R');
+            AppendReceiverSummary(
+                state,
+                scope.ReceiverReturnTypeSummary);
 
             foreach (var (index, type) in scope.StableParameterClrTypes.OrderBy(pair => pair.Key))
             {
                 state.Append('P').Append(index).Append(':');
                 AppendType(state, type);
+            }
+
+            foreach (var (index, summary) in
+                     scope.ReceiverParameterTypeSummaries.OrderBy(
+                         pair => pair.Key))
+            {
+                state.Append('Q').Append(index).Append(':');
+                AppendReceiverSummary(state, summary);
+            }
+
+            foreach (var (binding, summary) in
+                     scope.ReceiverCapturedEntryTypeSummaries.OrderBy(
+                         pair => pair.Key.Name,
+                         StringComparer.Ordinal))
+            {
+                state.Append('C');
+                AppendText(state, binding.DeclaringScope.Name);
+                AppendText(state, binding.Name);
+                AppendReceiverSummary(state, summary);
             }
 
             foreach (var (name, type) in scope.StableInstanceFieldClrTypes.OrderBy(pair => pair.Key, StringComparer.Ordinal))
@@ -152,6 +175,21 @@ public partial class SymbolTableBuilder
 
     private static void AppendType(StringBuilder state, Type? type)
         => AppendText(state, type?.AssemblyQualifiedName);
+
+    private static void AppendReceiverSummary(
+        StringBuilder state,
+        ReceiverTypeSummary summary)
+    {
+        state.Append(summary.IncludesUnknown ? '1' : '0');
+        state.Append(summary.IncludesNonCandidate ? '1' : '0');
+        foreach (var candidate in summary.CandidateClrTypes.OrderBy(
+                     static type => type.FullName,
+                     StringComparer.Ordinal))
+        {
+            AppendType(state, candidate);
+        }
+        state.Append(';');
+    }
 
     private static void AppendText(StringBuilder state, string? value)
     {

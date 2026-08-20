@@ -85,6 +85,23 @@ facts, and control leaving a protected region with a `finally` invalidates
 mutable facts rather than assuming the handler has no relevant writes. The
 facts remain analysis-only and do not change generated IL.
 
+### Interprocedural summaries
+
+Statically proven direct-only callables also receive receiver summaries for
+their arguments and return values. Conflicting known call sites retain the
+union of candidate types rather than forcing the callable ABI to one CLR type;
+missing, non-candidate, or unconstrained paths remain explicit in the summary.
+Direct-call results feed those summaries back into the caller's final-LIR flow
+facts.
+
+Captured entry facts are narrower. A closure must be proven direct-only and
+non-escaping, and each call must either observe a lifetime-stable captured
+binding or be immediately preceded in the same statement list by the captured
+binding's assignment. If that ordering proof is unavailable, the closure
+entry remains unknown. Unknown callbacks, exported/aliased callables, optional
+calls, spread calls, async functions, generators, and invocation-context-
+dependent functions do not contribute interprocedural receiver facts.
+
 ## Current specialization surface
 
 The initial allowlist matches the previously supported String early-binding
