@@ -61,7 +61,7 @@ namespace JavaScriptRuntime
         public static bool has(object target, object? propertyKey)
         {
             RequireObjectTarget(target, "has");
-            return Operators.In(ObjectRuntime.ToExternalPropertyKey(ObjectRuntime.ToPropertyKeyString(propertyKey)), target);
+            return ObjectRuntime.HasPropertyIn(propertyKey, target);
         }
 
         public static bool isExtensible(object target)

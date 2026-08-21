@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T16:01:14Z
+> Last generated (UTC): 2026-08-21T22:59:26Z
 
 JROC provides a BigInt callable and core prototype surface backed by System.Numerics.BigInteger, including `BigInt(value)`, `BigInt.asIntN`, `BigInt.asUintN`, `BigInt.prototype`, `toString`, `toLocaleString`, `valueOf`, and wrapper-object integration for the currently covered test262 surface. Full BigInt conversion rules and broader locale/radix coverage still remain incomplete.
 
@@ -52,13 +52,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| BigInt.asIntN(bits, bigint) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/asIntN/ExecutionTests.cs` | `test/built-ins/BigInt/asIntN/arithmetic.js`<br>`test/built-ins/BigInt/asIntN/asIntN.js`<br>`test/built-ins/BigInt/asIntN/length.js`<br>`test/built-ins/BigInt/asIntN/name.js`<br>`test/built-ins/BigInt/asIntN/not-a-constructor.js` | Supports `BigInt.asIntN` arithmetic truncation and callable metadata (name/length, non-constructible) for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported. |
+| BigInt.asIntN(bits, bigint) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/asIntN/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/BigInt/PortNext100ExecutionTests.cs` | `test/built-ins/BigInt/asIntN/arithmetic.js`<br>`test/built-ins/BigInt/asIntN/asIntN.js`<br>`test/built-ins/BigInt/asIntN/length.js`<br>`test/built-ins/BigInt/asIntN/name.js`<br>`test/built-ins/BigInt/asIntN/not-a-constructor.js` | Supports `BigInt.asIntN` arithmetic truncation, callable metadata (name/length, non-constructible), primitive and wrapper coercion, and bits-before-bigint coercion order for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported. |
 
 ### 21.2.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.asuintn))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| BigInt.asUintN(bits, bigint) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/asUintN/ExecutionTests.cs` | `test/built-ins/BigInt/asUintN/arithmetic.js`<br>`test/built-ins/BigInt/asUintN/asUintN.js`<br>`test/built-ins/BigInt/asUintN/length.js`<br>`test/built-ins/BigInt/asUintN/name.js`<br>`test/built-ins/BigInt/asUintN/not-a-constructor.js` | Supports `BigInt.asUintN` modulo truncation and callable metadata (name/length, non-constructible) for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported. |
+| BigInt.asUintN(bits, bigint) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/asUintN/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/BigInt/PortNext100ExecutionTests.cs` | `test/built-ins/BigInt/asUintN/arithmetic.js`<br>`test/built-ins/BigInt/asUintN/asUintN.js`<br>`test/built-ins/BigInt/asUintN/length.js`<br>`test/built-ins/BigInt/asUintN/name.js`<br>`test/built-ins/BigInt/asUintN/not-a-constructor.js` | Supports `BigInt.asUintN` modulo truncation, callable metadata (name/length, non-constructible), primitive and wrapper coercion, and bits-before-bigint coercion order for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported. |
 
 ### 21.2.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype))
 

@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/test262/docs: port 100 test262 fixtures for `parseInt`, `parseFloat`,
+  `Reflect`, Symbol registry APIs, and `BigInt.asIntN`/`BigInt.asUintN`.
+  `BigInt` width helpers now perform the required number-hint primitive
+  coercion, `Reflect.has` preserves symbol property keys, and `Symbol.for`
+  rejects Symbol keys while propagating string-conversion errors.
 
 ## v0.12.11 - 2026-08-19
 

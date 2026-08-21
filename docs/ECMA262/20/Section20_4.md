@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T23:10:56Z
+> Last generated (UTC): 2026-08-21T22:59:26Z
 
 JROC supports Symbol callable creation, global registry APIs (Symbol.for/keyFor), well-known symbols, core Symbol.prototype behaviors (description/toString/valueOf), symbol-key reflection on ordinary objects, Array.prototype.concat spreadability hooks, and Object.prototype.toString Symbol.toStringTag lookup. Some broader well-known-symbol protocol integrations remain tracked as limitations.
 
@@ -50,41 +50,41 @@ JROC supports Symbol callable creation, global registry APIs (Symbol.for/keyFor)
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 20.4.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-symbol-description))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Symbol([description]) callable (basic) | Supported with Limitations | [`IntrinsicCallables_Symbol_Callable_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js) | Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Registry APIs and well-known symbols are documented in separate support entries. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Symbol([description]) callable (basic) | Supported with Limitations | [`IntrinsicCallables_Symbol_Callable_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js) |  | Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Registry APIs and well-known symbols are documented in separate support entries. |
 
 ### 20.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-symbol-constructor))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Symbol constructor properties (well-known symbols) | Supported with Limitations | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js) | Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons. jroc also wires Symbol.asyncIterator, RegExp symbol dispatch, Array.prototype.concat spreadability, and Object.prototype.toString Symbol.toStringTag lookup; hasInstance/species/toPrimitive protocol hooks remain partial. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Symbol constructor properties (well-known symbols) | Supported with Limitations | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js) |  | Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons. jroc also wires Symbol.asyncIterator, RegExp symbol dispatch, Array.prototype.concat spreadability, and Object.prototype.toString Symbol.toStringTag lookup; hasInstance/species/toPrimitive protocol hooks remain partial. |
 
 ### 20.4.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-symbol.for))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Symbol.for(key) and Symbol.keyFor(sym) registry APIs | Supported | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js) | Supports global symbol registry round-tripping and TypeError on non-symbol Symbol.keyFor input. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Symbol.for(key) and Symbol.keyFor(sym) registry APIs | Supported | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js)<br>`tests/Jroc.Test262.Tests/built-ins/Symbol/PortNext100ExecutionTests.cs` |  | Supports global symbol registry round-tripping, callable metadata, and TypeError on non-symbol Symbol.keyFor input. PortNext100ExecutionTests additionally covers Symbol.for key coercion including abrupt toString completion and Symbol input rejection, plus Symbol.keyFor registry hits and misses. |
 
 ### 20.4.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-symbol.isconcatspreadable))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Symbol.isConcatSpreadable influences Array.prototype.concat | Supported with Limitations | [`Array_Concat_SymbolIsConcatSpreadable.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js) | Array.prototype.concat honors explicit Symbol.isConcatSpreadable flags on arrays and ordinary array-like objects. Species, sparse-hole fidelity, and broader exotic concat edge cases remain limited. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Symbol.isConcatSpreadable influences Array.prototype.concat | Supported with Limitations | [`Array_Concat_SymbolIsConcatSpreadable.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js) |  | Array.prototype.concat honors explicit Symbol.isConcatSpreadable flags on arrays and ordinary array-like objects. Species, sparse-hole fidelity, and broader exotic concat edge cases remain limited. |
 
 ### 20.4.2.15 ([tc39.es](https://tc39.es/ecma262/#sec-symbol.tostringtag))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Symbol.toStringTag participates in Object.prototype.toString | Supported with Limitations | [`Object_Prototype_ToString_SymbolToStringTag_Custom.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js)<br>[`Generator_Prototype_ToStringTag.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) | Object.prototype.toString consults Symbol.toStringTag for ordinary objects, arrays, and the built-in generator/runtime types that expose custom brands. Full exotic-brand coverage is not exhaustive. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Symbol.toStringTag participates in Object.prototype.toString | Supported with Limitations | [`Object_Prototype_ToString_SymbolToStringTag_Custom.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js)<br>[`Generator_Prototype_ToStringTag.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) |  | Object.prototype.toString consults Symbol.toStringTag for ordinary objects, arrays, and the built-in generator/runtime types that expose custom brands. Full exotic-brand coverage is not exhaustive. |
 
 ### 20.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-symbol-prototype-object))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Symbol.prototype core surface | Supported | [`IntrinsicCallables_Symbol_Prototype_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js) | Supports description, toString(), and valueOf() behavior for symbol instances. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Symbol.prototype core surface | Supported | [`IntrinsicCallables_Symbol_Prototype_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js) |  | Supports description, toString(), and valueOf() behavior for symbol instances. |
 

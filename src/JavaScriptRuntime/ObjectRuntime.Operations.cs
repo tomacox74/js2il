@@ -6629,30 +6629,14 @@ namespace JavaScriptRuntime
             }
         }
 
-        // Support for the JavaScript 'in' operator (minimal implementation)
-        // Parameter order matches evaluation order in emitter: left (key) then right (object)
         public static bool HasPropertyIn(object? key, object? obj)
         {
-            if (obj is null)
+            if (obj is null || obj is JsNull || TypeUtilities.IsPrimitive(obj))
             {
                 throw new JavaScriptRuntime.TypeError("Right-hand side of 'in' should be an object");
             }
 
-            // Coerce key to property name (symbols not supported yet)
-            string propName = key switch
-            {
-                null => "null",
-                string s => s,
-                double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                float f => f.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                int i => i.ToString(),
-                long l => l.ToString(),
-                short sh => sh.ToString(),
-                byte by => by.ToString(),
-                _ => DotNet2JSConversions.ToString(key)
-            } ?? string.Empty;
-
-            return HasProperty(obj, propName);
+            return HasProperty(obj, ToPropertyKeyString(key));
         }
 
         public static object RequirePrivateBrandTarget(object? value)
