@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.12 - 2026-08-21
+
 - perf(compiler): run receiver candidate inference once after core type
   convergence and skip full receiver-flow solving unless an eligible
   specialization has a backward-reachable candidate source (issue #1898).
