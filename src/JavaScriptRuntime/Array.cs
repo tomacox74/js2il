@@ -461,7 +461,7 @@ namespace JavaScriptRuntime
                 k = 0;
                 for (int i = 0; i < length; i++)
                 {
-                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                     {
                         accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                         k = i + 1;
@@ -478,7 +478,7 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
                     continue;
                 }
@@ -535,7 +535,7 @@ namespace JavaScriptRuntime
                 k = length - 1;
                 for (int i = length - 1; i >= 0; i--)
                 {
-                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                     {
                         accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                         k = i - 1;
@@ -552,7 +552,7 @@ namespace JavaScriptRuntime
 
             for (int i = k; i >= 0; i--)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
                     continue;
                 }
@@ -654,7 +654,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
                     continue;
                 }
@@ -681,7 +681,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
                     continue;
                 }
@@ -707,7 +707,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
                     continue;
                 }
@@ -842,7 +842,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
                     continue;
                 }
@@ -2313,7 +2313,7 @@ namespace JavaScriptRuntime
             for (var source = currentLength - 1; source >= index; source--)
             {
                 var target = source + 1;
-                if (ObjectRuntime.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2354,7 +2354,7 @@ namespace JavaScriptRuntime
             for (var source = currentLength - 1; source >= index; source--)
             {
                 var target = source + items.Count;
-                if (ObjectRuntime.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2390,7 +2390,7 @@ namespace JavaScriptRuntime
             for (var target = index; target < currentLength - 1; target++)
             {
                 var source = target + 1;
-                if (ObjectRuntime.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2428,7 +2428,7 @@ namespace JavaScriptRuntime
             for (var target = index; target < newLength; target++)
             {
                 var source = target + count;
-                if (ObjectRuntime.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2459,8 +2459,8 @@ namespace JavaScriptRuntime
             for (var lower = 0; lower < middle; lower++)
             {
                 var upper = len - lower - 1;
-                var lowerExists = ObjectRuntime.HasPropertyIn((double)lower, this);
-                var upperExists = ObjectRuntime.HasPropertyIn((double)upper, this);
+                var lowerExists = ObjectRuntime.HasPropertyForArrayLike((double)lower, this);
+                var upperExists = ObjectRuntime.HasPropertyForArrayLike((double)upper, this);
                 var lowerValue = lowerExists ? ObjectRuntime.GetItem(this, (double)lower) : null;
                 var upperValue = upperExists ? ObjectRuntime.GetItem(this, (double)upper) : null;
 
@@ -2487,7 +2487,7 @@ namespace JavaScriptRuntime
             var presentValues = new List<object?>();
             for (var i = 0; i < Count; i++)
             {
-                if (ObjectRuntime.HasPropertyIn((double)i, this))
+                if (ObjectRuntime.HasPropertyForArrayLike((double)i, this))
                 {
                     presentValues.Add(ObjectRuntime.GetItem(this, (double)i));
                 }
@@ -3829,7 +3829,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < deleteCount; i++)
             {
                 var source = start + i;
-                if (ObjectRuntime.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                 {
                     removed.TrySetIndexValue(i, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -3841,7 +3841,7 @@ namespace JavaScriptRuntime
                 {
                     var source = target + deleteCount;
                     var destination = target + insertCount;
-                    if (ObjectRuntime.HasPropertyIn((double)source, this))
+                    if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                     {
                         TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                     }
@@ -3861,7 +3861,7 @@ namespace JavaScriptRuntime
                 for (var source = len - 1; source >= start + deleteCount; source--)
                 {
                     var destination = source - deleteCount + insertCount;
-                    if (ObjectRuntime.HasPropertyIn((double)source, this))
+                    if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
                     {
                         TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                     }
@@ -4379,7 +4379,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < length; i++)
             {
                 var key = (double)i;
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn(key, source))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(key, source))
                 {
                     continue;
                 }

@@ -6631,13 +6631,20 @@ namespace JavaScriptRuntime
 
         public static bool HasPropertyIn(object? key, object? obj)
         {
-            if (obj is null || obj is JsNull || TypeUtilities.IsPrimitive(obj))
+            if (!Proxy.IsObjectLikeValue(obj))
             {
                 throw new JavaScriptRuntime.TypeError("Right-hand side of 'in' should be an object");
             }
 
-            return HasProperty(obj, ToPropertyKeyString(key));
+            return HasProperty(obj!, ToPropertyKeyString(key));
         }
+
+        /// <summary>
+        /// Checks a property on an array-like receiver after its caller has applied the
+        /// required method-specific coercion. This intentionally accepts string primitives.
+        /// </summary>
+        public static bool HasPropertyForArrayLike(object? key, object target)
+            => HasProperty(target, ToPropertyKeyString(key));
 
         public static object RequirePrivateBrandTarget(object? value)
         {
