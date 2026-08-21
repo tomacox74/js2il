@@ -170,7 +170,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 125 (0x7d)
+			// Code size: 130 (0x82)
 			.maxstack 8
 			.locals init (
 				[0] string,
@@ -209,14 +209,15 @@
 			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_0064: ldstr "a"
-			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_006e: stloc.1
-			IL_006f: ldloc.1
-			IL_0070: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0075: stloc.0
-			IL_0076: ldloc.0
-			IL_0077: call string [System.Runtime]System.String::Concat(string, string)
-			IL_007c: ret
+			IL_0069: ldstr "Require_Util_Inspect_Custom:<TwoPhaseDummy_M2>:__js_call__:21"
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_0073: stloc.1
+			IL_0074: ldloc.1
+			IL_0075: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_007a: stloc.0
+			IL_007b: ldloc.0
+			IL_007c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0081: ret
 		} // end of method FunctionExpression_L9C14::__js_call__
 
 	} // end of class FunctionExpression_L9C14
@@ -252,7 +253,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 219 (0xdb)
+		// Code size: 229 (0xe5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inspect_Custom/Scope,
@@ -282,68 +283,70 @@
 		IL_0023: stloc.s 4
 		IL_0025: ldloc.1
 		IL_0026: ldstr "inspect"
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0030: stloc.s 5
-		IL_0032: ldloc.s 5
-		IL_0034: ldstr "custom"
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_003e: stloc.s 5
-		IL_0040: ldloc.s 5
-		IL_0042: ldloc.2
-		IL_0043: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0048: stloc.s 6
-		IL_004a: ldloc.s 6
-		IL_004c: box [System.Runtime]System.Boolean
-		IL_0051: stloc.s 7
-		IL_0053: ldloc.s 4
-		IL_0055: ldloc.s 7
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005c: pop
-		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0062: dup
-		IL_0063: ldstr "a"
-		IL_0068: ldc.r8 1
-		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0076: stloc.3
-		IL_0077: ldc.i4.1
-		IL_0078: newarr [System.Runtime]System.Object
-		IL_007d: dup
-		IL_007e: ldc.i4.0
-		IL_007f: ldloc.0
-		IL_0080: stelem.ref
-		IL_0081: stloc.s 8
-		IL_0083: newobj instance void Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject::.ctor()
-		IL_0088: ldc.i4.3
-		IL_0089: conv.r8
-		IL_008a: ldstr ""
-		IL_008f: ldc.i4.0
-		IL_0090: ldc.i4.1
-		IL_0091: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0096: stloc.s 9
-		IL_0098: ldloc.3
-		IL_0099: ldloc.2
-		IL_009a: ldloc.s 9
-		IL_009c: ldc.i4.1
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-		IL_00a2: pop
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: stloc.s 4
-		IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00af: dup
-		IL_00b0: ldstr "depth"
-		IL_00b5: ldc.r8 2
-		IL_00be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00c3: stloc.s 10
-		IL_00c5: ldloc.1
-		IL_00c6: ldloc.3
-		IL_00c7: ldloc.s 10
-		IL_00c9: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object, object)
-		IL_00ce: stloc.s 5
-		IL_00d0: ldloc.s 4
-		IL_00d2: ldloc.s 5
-		IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d9: pop
-		IL_00da: ret
+		IL_002b: ldstr "Require_Util_Inspect_Custom:Modules.Require_Util_Inspect_Custom:__js_module_init__:15"
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0035: stloc.s 5
+		IL_0037: ldloc.s 5
+		IL_0039: ldstr "custom"
+		IL_003e: ldstr "Require_Util_Inspect_Custom:Modules.Require_Util_Inspect_Custom:__js_module_init__:17"
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0048: stloc.s 5
+		IL_004a: ldloc.s 5
+		IL_004c: ldloc.2
+		IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0052: stloc.s 6
+		IL_0054: ldloc.s 6
+		IL_0056: box [System.Runtime]System.Boolean
+		IL_005b: stloc.s 7
+		IL_005d: ldloc.s 4
+		IL_005f: ldloc.s 7
+		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0066: pop
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006c: dup
+		IL_006d: ldstr "a"
+		IL_0072: ldc.r8 1
+		IL_007b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0080: stloc.3
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldloc.0
+		IL_008a: stelem.ref
+		IL_008b: stloc.s 8
+		IL_008d: newobj instance void Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject::.ctor()
+		IL_0092: ldc.i4.3
+		IL_0093: conv.r8
+		IL_0094: ldstr ""
+		IL_0099: ldc.i4.0
+		IL_009a: ldc.i4.1
+		IL_009b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00a0: stloc.s 9
+		IL_00a2: ldloc.3
+		IL_00a3: ldloc.2
+		IL_00a4: ldloc.s 9
+		IL_00a6: ldc.i4.1
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+		IL_00ac: pop
+		IL_00ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b2: stloc.s 4
+		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00b9: dup
+		IL_00ba: ldstr "depth"
+		IL_00bf: ldc.r8 2
+		IL_00c8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00cd: stloc.s 10
+		IL_00cf: ldloc.1
+		IL_00d0: ldloc.3
+		IL_00d1: ldloc.s 10
+		IL_00d3: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object, object)
+		IL_00d8: stloc.s 5
+		IL_00da: ldloc.s 4
+		IL_00dc: ldloc.s 5
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method Require_Util_Inspect_Custom::__js_module_init__
 
 } // end of class Modules.Require_Util_Inspect_Custom

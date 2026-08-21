@@ -201,7 +201,7 @@
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
 			// Header size: 12
-			// Code size: 233 (0xe9)
+			// Code size: 243 (0xf3)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -243,7 +243,7 @@
 				IL_003b: ldloc.s 8
 				IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 				IL_0042: pop
-				IL_0043: leave IL_00e3
+				IL_0043: leave IL_00ed
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
@@ -276,50 +276,52 @@
 				IL_007b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_0080: stloc.s 9
 				IL_0082: ldloc.s 9
-				IL_0084: brfalse IL_009f
+				IL_0084: brfalse IL_00a4
 
 				IL_0089: ldloc.3
 				IL_008a: ldstr "name"
-				IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0094: stloc.s 10
-				IL_0096: ldloc.s 10
-				IL_0098: stloc.s 11
-				IL_009a: br IL_00a2
+				IL_008f: ldstr "String_Repeat_Basic:<TwoPhaseDummy_M2>:__js_call__:28"
+				IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+				IL_0099: stloc.s 10
+				IL_009b: ldloc.s 10
+				IL_009d: stloc.s 11
+				IL_009f: br IL_00a7
 
-				IL_009f: ldloc.3
-				IL_00a0: stloc.s 11
+				IL_00a4: ldloc.3
+				IL_00a5: stloc.s 11
 
-				IL_00a2: ldloc.s 11
-				IL_00a4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_00a9: stloc.s 9
-				IL_00ab: ldloc.s 9
-				IL_00ad: brfalse IL_00c8
+				IL_00a7: ldloc.s 11
+				IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_00ae: stloc.s 9
+				IL_00b0: ldloc.s 9
+				IL_00b2: brfalse IL_00d2
 
-				IL_00b2: ldloc.3
-				IL_00b3: ldstr "name"
-				IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00bd: stloc.s 10
-				IL_00bf: ldloc.s 10
-				IL_00c1: stloc.s 4
-				IL_00c3: br IL_00d4
+				IL_00b7: ldloc.3
+				IL_00b8: ldstr "name"
+				IL_00bd: ldstr "String_Repeat_Basic:<TwoPhaseDummy_M2>:__js_call__:37"
+				IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+				IL_00c7: stloc.s 10
+				IL_00c9: ldloc.s 10
+				IL_00cb: stloc.s 4
+				IL_00cd: br IL_00de
 
-				IL_00c8: ldloc.3
-				IL_00c9: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_00ce: stloc.s 6
-				IL_00d0: ldloc.s 6
-				IL_00d2: stloc.s 4
+				IL_00d2: ldloc.3
+				IL_00d3: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_00d8: stloc.s 6
+				IL_00da: ldloc.s 6
+				IL_00dc: stloc.s 4
 
-				IL_00d4: ldloc.s 7
-				IL_00d6: ldloc.s 4
-				IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00dd: pop
-				IL_00de: leave IL_00e3
+				IL_00de: ldloc.s 7
+				IL_00e0: ldloc.s 4
+				IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00e7: pop
+				IL_00e8: leave IL_00ed
 			} // end handler
 
-			IL_00e3: ldnull
-			IL_00e4: stloc.s 5
-			IL_00e6: ldloc.s 5
-			IL_00e8: ret
+			IL_00ed: ldnull
+			IL_00ee: stloc.s 5
+			IL_00f0: ldloc.s 5
+			IL_00f2: ret
 		} // end of method logRepeat::__js_call__
 
 	} // end of class logRepeat

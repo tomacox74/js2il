@@ -1156,14 +1156,25 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallMember0 callMember0:
                 {
-                    // Emit: ldarg/ldloc receiver, ldstr methodName, call ObjectRuntime.CallMember0
+                    // Emit the realm-owned per-call-site cache prototype for
+                    // dynamic zero-argument member calls.
                     EmitLoadTempAsObject(callMember0.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
+                    ilEncoder.Ldstr(
+                        _metadataBuilder,
+                        GetDynamicLookupInlineCacheSiteKey(
+                            methodDescriptor,
+                            callMember0));
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.ObjectRuntime),
-                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember0),
-                        new[] { typeof(object), typeof(string) });
+                        typeof(JavaScriptRuntime.DynamicLookupInlineCache),
+                        nameof(JavaScriptRuntime.DynamicLookupInlineCache.CallMember0),
+                        new[]
+                        {
+                            typeof(object),
+                            typeof(string),
+                            typeof(string)
+                        });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
 

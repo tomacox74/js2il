@@ -147,12 +147,22 @@ public partial class JsObject
     private JsValue[] _properties = System.Array.Empty<JsValue>();
     private JsShape _shape = JsShape.Empty;
     private object? _prototype;
+    private long _lookupVersion;
     private readonly bool _cacheShapeTransitions;
+
+    internal long LookupVersion => Volatile.Read(ref _lookupVersion);
+
+    internal void BumpLookupVersion()
+        => Interlocked.Increment(ref _lookupVersion);
 
     internal bool TryGetInlinePrototype(out object? prototype)
         => (prototype = _prototype) is not null;
 
-    internal void SetInlinePrototype(object? prototype) => _prototype = prototype;
+    internal void SetInlinePrototype(object? prototype)
+    {
+        _prototype = prototype;
+        BumpLookupVersion();
+    }
 
     /// <summary>Creates an ordinary object using the shared shape-transition cache.</summary>
     public JsObject()
@@ -180,6 +190,7 @@ public partial class JsObject
         var slot = EnsurePropertySlot(key);
         _properties[slot] = value;
         ClearSlotMetadata(slot);
+        BumpLookupVersion();
         AssertInlineInvariants();
     }
 

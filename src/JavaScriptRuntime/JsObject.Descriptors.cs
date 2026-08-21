@@ -115,6 +115,7 @@ public partial class JsObject
             if (IsDefaultDataDescriptor(descriptor))
             {
                 ClearSlotMetadata(slot);
+                BumpLookupVersion();
                 AssertInlineInvariants();
                 return;
             }
@@ -144,6 +145,7 @@ public partial class JsObject
         }
 
         MarkNonDataDescriptors();
+        BumpLookupVersion();
         AssertInlineInvariants();
     }
 
@@ -174,6 +176,7 @@ public partial class JsObject
 
         _shape = _shape.TransitionAway(key);
         _properties = newProperties;
+        BumpLookupVersion();
         AssertInlineInvariants();
         return true;
     }
@@ -198,12 +201,17 @@ public partial class JsObject
         state.ExoticOverrides ??= new Dictionary<string, JsPropertyDescriptor>(StringComparer.Ordinal);
         state.ExoticOverrides[key] = descriptor;
         MarkNonDataDescriptors();
+        BumpLookupVersion();
         AssertInlineInvariants();
     }
 
     internal bool DeleteInlineExoticOwnDescriptor(string key)
     {
         var deleted = _descriptorState?.ExoticOverrides?.Remove(key) == true;
+        if (deleted)
+        {
+            BumpLookupVersion();
+        }
         AssertInlineInvariants();
         return deleted;
     }
@@ -225,6 +233,7 @@ public partial class JsObject
         Debug.Assert(!HasSharedIntrinsicBaseline);
         _descriptorState = null;
         _hasNonDataDescriptors = false;
+        BumpLookupVersion();
         AssertInlineInvariants();
     }
 

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): add realm-owned per-call-site inline-cache
+  prototypes for ordinary-object string property reads and zero-argument
+  member calls (issue #1893). Exact receiver and prototype lookup versions
+  preserve descriptor, accessor, proxy, prototype, and realm semantics;
+  weak entries do not retain otherwise unreachable objects, cache hits
+  allocate zero bytes, and polymorphic sites fall back after four identities.
 - perf(compiler): hoist realm-owned String and typed-array prototype epoch
   checks out of conservative hot-loop/straight-line regions (issue #1897).
   Deterministic callable effects propagate through known calls and lexical

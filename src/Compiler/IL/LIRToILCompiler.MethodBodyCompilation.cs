@@ -666,8 +666,10 @@ internal sealed partial class LIRToILCompiler
                     // Inline item get: receiver + index
                     // Load order matters because receiver remains on stack while index is evaluated.
                     LIRGetItem getItem => Math.Max(
-                        EstimateTempConstructionPeak(getItem.Object),
-                        1 + EstimateTempConstructionPeak(getItem.Index)),
+                        3,
+                        Math.Max(
+                            EstimateTempConstructionPeak(getItem.Object),
+                            1 + EstimateTempConstructionPeak(getItem.Index))),
 
                     // Inline item set: receiver + index + value
                     // Load order matters because earlier values remain on stack while later ones are evaluated.
@@ -871,7 +873,7 @@ internal sealed partial class LIRToILCompiler
                 // Account for inline peaks while earlier operands remain on the stack.
                 LIRCallMember0 callMember0 => Math.Max(
                     EstimateTempLoadPeak(callMember0.Receiver),
-                    2),
+                    3),
                 LIRCallMember1 callMember1 => new[]
                 {
                     EstimateTempLoadPeak(callMember1.Receiver),

@@ -6,6 +6,11 @@ namespace Jroc.IR;
 public sealed class MethodBodyIR
 {
     /// <summary>
+    /// Stable module identity used to namespace realm-owned per-call-site state.
+    /// </summary>
+    internal string? ModuleId { get; set; }
+
+    /// <summary>
     /// The CallableId for this method, if available.
     /// Used for async functions to create a self-referencing closure for state machine continuations.
     /// </summary>

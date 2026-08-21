@@ -107,7 +107,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 33 (0x21)
+			// Code size: 38 (0x26)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -118,15 +118,16 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.1
 			IL_0007: ldstr "value"
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0011: stloc.1
-			IL_0012: ldloc.0
-			IL_0013: ldstr "Value:"
-			IL_0018: ldloc.1
-			IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_000c: ldstr "Async_StaticMethod_SimpleAwait:<TwoPhaseDummy_M2>:__js_call__:5"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_0016: stloc.1
+			IL_0017: ldloc.0
+			IL_0018: ldstr "Value:"
+			IL_001d: ldloc.1
+			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0023: pop
+			IL_0024: ldnull
+			IL_0025: ret
 		} // end of method ArrowFunction_L9C24::__js_call__
 
 	} // end of class ArrowFunction_L9C24
@@ -473,7 +474,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 262 (0x106)
+		// Code size: 272 (0x110)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_StaticMethod_SimpleAwait/Scope,
@@ -495,112 +496,114 @@
 		IL_001b: stloc.2
 		IL_001c: ldloc.2
 		IL_001d: ldstr "prototype"
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0027: pop
-		IL_0028: ldc.i4.1
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldloc.0
-		IL_0031: stelem.ref
-		IL_0032: stloc.3
-		IL_0033: ldc.i4.s 10
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldloc.2
-		IL_003d: stelem.ref
-		IL_003e: dup
-		IL_003f: ldc.i4.1
-		IL_0040: ldstr "getData"
-		IL_0045: stelem.ref
-		IL_0046: dup
-		IL_0047: ldc.i4.2
-		IL_0048: ldstr "getData"
-		IL_004d: stelem.ref
-		IL_004e: dup
-		IL_004f: ldc.i4.3
-		IL_0050: ldc.r8 0.0
-		IL_0059: box [System.Runtime]System.Double
-		IL_005e: stelem.ref
-		IL_005f: dup
-		IL_0060: ldc.i4.4
-		IL_0061: ldstr "getData"
-		IL_0066: stelem.ref
-		IL_0067: dup
-		IL_0068: ldc.i4.5
-		IL_0069: ldc.i4.1
-		IL_006a: box [System.Runtime]System.Boolean
-		IL_006f: stelem.ref
-		IL_0070: dup
-		IL_0071: ldc.i4.6
-		IL_0072: ldc.i4.0
-		IL_0073: box [System.Runtime]System.Boolean
-		IL_0078: stelem.ref
-		IL_0079: dup
-		IL_007a: ldc.i4.7
-		IL_007b: ldc.i4.0
-		IL_007c: box [System.Runtime]System.Boolean
-		IL_0081: stelem.ref
-		IL_0082: dup
-		IL_0083: ldc.i4.8
-		IL_0084: ldc.i4.1
-		IL_0085: box [System.Runtime]System.Boolean
-		IL_008a: stelem.ref
-		IL_008b: dup
-		IL_008c: ldc.i4.s 9
-		IL_008e: ldloc.3
+		IL_0022: ldstr "Async_StaticMethod_SimpleAwait:Modules.Async_StaticMethod_SimpleAwait:__js_module_init__:6"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_002c: pop
+		IL_002d: ldc.i4.1
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: dup
+		IL_0034: ldc.i4.0
+		IL_0035: ldloc.0
+		IL_0036: stelem.ref
+		IL_0037: stloc.3
+		IL_0038: ldc.i4.s 10
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldloc.2
+		IL_0042: stelem.ref
+		IL_0043: dup
+		IL_0044: ldc.i4.1
+		IL_0045: ldstr "getData"
+		IL_004a: stelem.ref
+		IL_004b: dup
+		IL_004c: ldc.i4.2
+		IL_004d: ldstr "getData"
+		IL_0052: stelem.ref
+		IL_0053: dup
+		IL_0054: ldc.i4.3
+		IL_0055: ldc.r8 0.0
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stelem.ref
+		IL_0064: dup
+		IL_0065: ldc.i4.4
+		IL_0066: ldstr "getData"
+		IL_006b: stelem.ref
+		IL_006c: dup
+		IL_006d: ldc.i4.5
+		IL_006e: ldc.i4.1
+		IL_006f: box [System.Runtime]System.Boolean
+		IL_0074: stelem.ref
+		IL_0075: dup
+		IL_0076: ldc.i4.6
+		IL_0077: ldc.i4.0
+		IL_0078: box [System.Runtime]System.Boolean
+		IL_007d: stelem.ref
+		IL_007e: dup
+		IL_007f: ldc.i4.7
+		IL_0080: ldc.i4.0
+		IL_0081: box [System.Runtime]System.Boolean
+		IL_0086: stelem.ref
+		IL_0087: dup
+		IL_0088: ldc.i4.8
+		IL_0089: ldc.i4.1
+		IL_008a: box [System.Runtime]System.Boolean
 		IL_008f: stelem.ref
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
-		IL_0095: pop
-		IL_0096: ldc.i4.1
-		IL_0097: newarr [System.Runtime]System.Object
-		IL_009c: dup
-		IL_009d: ldc.i4.0
-		IL_009e: ldloc.0
-		IL_009f: stelem.ref
-		IL_00a0: stloc.3
-		IL_00a1: ldloc.3
-		IL_00a2: newobj instance void Modules.Async_StaticMethod_SimpleAwait/Fetcher/FunctionObject::.ctor(object[])
-		IL_00a7: ldloc.2
-		IL_00a8: ldloc.3
-		IL_00a9: ldc.i4.0
-		IL_00aa: conv.r8
-		IL_00ab: ldc.i4.0
-		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00b1: castclass Modules.Async_StaticMethod_SimpleAwait/Fetcher/FunctionObject
-		IL_00b6: stloc.s 4
-		IL_00b8: ldloc.s 4
-		IL_00ba: stloc.1
-		IL_00bb: ldloc.1
-		IL_00bc: ldstr "getData"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00c6: stloc.s 5
-		IL_00c8: ldloc.s 5
-		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cf: stloc.s 5
-		IL_00d1: ldc.i4.1
-		IL_00d2: newarr [System.Runtime]System.Object
-		IL_00d7: dup
-		IL_00d8: ldc.i4.0
-		IL_00d9: ldloc.0
-		IL_00da: stelem.ref
-		IL_00db: stloc.3
-		IL_00dc: newobj instance void Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject::.ctor()
-		IL_00e1: ldc.i4.1
-		IL_00e2: conv.r8
-		IL_00e3: ldstr ""
-		IL_00e8: ldc.i4.0
-		IL_00e9: ldc.i4.0
-		IL_00ea: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject>(!!0)
-		IL_00f4: stloc.s 6
-		IL_00f6: ldloc.s 5
-		IL_00f8: ldstr "then"
-		IL_00fd: ldloc.s 6
-		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0104: pop
-		IL_0105: ret
+		IL_0090: dup
+		IL_0091: ldc.i4.s 9
+		IL_0093: ldloc.3
+		IL_0094: stelem.ref
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_009a: pop
+		IL_009b: ldc.i4.1
+		IL_009c: newarr [System.Runtime]System.Object
+		IL_00a1: dup
+		IL_00a2: ldc.i4.0
+		IL_00a3: ldloc.0
+		IL_00a4: stelem.ref
+		IL_00a5: stloc.3
+		IL_00a6: ldloc.3
+		IL_00a7: newobj instance void Modules.Async_StaticMethod_SimpleAwait/Fetcher/FunctionObject::.ctor(object[])
+		IL_00ac: ldloc.2
+		IL_00ad: ldloc.3
+		IL_00ae: ldc.i4.0
+		IL_00af: conv.r8
+		IL_00b0: ldc.i4.0
+		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00b6: castclass Modules.Async_StaticMethod_SimpleAwait/Fetcher/FunctionObject
+		IL_00bb: stloc.s 4
+		IL_00bd: ldloc.s 4
+		IL_00bf: stloc.1
+		IL_00c0: ldloc.1
+		IL_00c1: ldstr "getData"
+		IL_00c6: ldstr "Async_StaticMethod_SimpleAwait:Modules.Async_StaticMethod_SimpleAwait:__js_module_init__:27"
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+		IL_00d0: stloc.s 5
+		IL_00d2: ldloc.s 5
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d9: stloc.s 5
+		IL_00db: ldc.i4.1
+		IL_00dc: newarr [System.Runtime]System.Object
+		IL_00e1: dup
+		IL_00e2: ldc.i4.0
+		IL_00e3: ldloc.0
+		IL_00e4: stelem.ref
+		IL_00e5: stloc.3
+		IL_00e6: newobj instance void Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject::.ctor()
+		IL_00eb: ldc.i4.1
+		IL_00ec: conv.r8
+		IL_00ed: ldstr ""
+		IL_00f2: ldc.i4.0
+		IL_00f3: ldc.i4.0
+		IL_00f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00f9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject>(!!0)
+		IL_00fe: stloc.s 6
+		IL_0100: ldloc.s 5
+		IL_0102: ldstr "then"
+		IL_0107: ldloc.s 6
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010e: pop
+		IL_010f: ret
 	} // end of method Async_StaticMethod_SimpleAwait::__js_module_init__
 
 } // end of class Modules.Async_StaticMethod_SimpleAwait

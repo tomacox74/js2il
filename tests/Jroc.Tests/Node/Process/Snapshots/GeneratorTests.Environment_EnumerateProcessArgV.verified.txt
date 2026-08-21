@@ -59,7 +59,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 216 (0xd8)
+		// Code size: 236 (0xec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Environment_EnumerateProcessArgV/Scope,
@@ -79,79 +79,83 @@
 		IL_000d: ldstr "process"
 		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0017: ldstr "argv"
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0021: stloc.3
-		IL_0022: ldloc.3
-		IL_0023: ldstr "length"
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_002d: stloc.3
-		IL_002e: ldloc.2
-		IL_002f: ldstr "argv length is"
-		IL_0034: ldloc.3
-		IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_003a: pop
-		IL_003b: ldc.r8 0.0
-		IL_0044: stloc.1
-		// loop start (head: IL_0045)
-			IL_0045: ldloc.1
-			IL_0046: stloc.s 4
-			IL_0048: ldstr "process"
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0052: ldstr "argv"
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005c: stloc.3
-			IL_005d: ldloc.3
-			IL_005e: ldstr "length"
-			IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-			IL_0068: stloc.s 5
-			IL_006a: ldloc.s 4
-			IL_006c: ldloc.s 5
-			IL_006e: clt
-			IL_0070: brfalse IL_00d7
+		IL_001c: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:9"
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0026: stloc.3
+		IL_0027: ldloc.3
+		IL_0028: ldstr "length"
+		IL_002d: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:11"
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0037: stloc.3
+		IL_0038: ldloc.2
+		IL_0039: ldstr "argv length is"
+		IL_003e: ldloc.3
+		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0044: pop
+		IL_0045: ldc.r8 0.0
+		IL_004e: stloc.1
+		// loop start (head: IL_004f)
+			IL_004f: ldloc.1
+			IL_0050: stloc.s 4
+			IL_0052: ldstr "process"
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005c: ldstr "argv"
+			IL_0061: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:21"
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_006b: stloc.3
+			IL_006c: ldloc.3
+			IL_006d: ldstr "length"
+			IL_0072: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+			IL_0077: stloc.s 5
+			IL_0079: ldloc.s 4
+			IL_007b: ldloc.s 5
+			IL_007d: clt
+			IL_007f: brfalse IL_00eb
 
-			IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007a: stloc.2
-			IL_007b: ldloc.1
-			IL_007c: box [System.Runtime]System.Double
-			IL_0081: stloc.s 6
-			IL_0083: ldstr "process"
-			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_008d: ldstr "argv"
-			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0097: stloc.3
-			IL_0098: ldloc.3
-			IL_0099: ldloc.1
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_009f: stloc.3
-			IL_00a0: ldloc.2
-			IL_00a1: ldc.i4.4
-			IL_00a2: newarr [System.Runtime]System.Object
-			IL_00a7: dup
-			IL_00a8: ldc.i4.0
-			IL_00a9: ldstr "arg"
-			IL_00ae: stelem.ref
-			IL_00af: dup
-			IL_00b0: ldc.i4.1
-			IL_00b1: ldloc.s 6
-			IL_00b3: stelem.ref
-			IL_00b4: dup
-			IL_00b5: ldc.i4.2
-			IL_00b6: ldstr "="
-			IL_00bb: stelem.ref
-			IL_00bc: dup
-			IL_00bd: ldc.i4.3
-			IL_00be: ldloc.3
-			IL_00bf: stelem.ref
-			IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00c5: pop
-			IL_00c6: ldloc.1
-			IL_00c7: ldc.r8 1
-			IL_00d0: add
-			IL_00d1: stloc.1
-			IL_00d2: br IL_0045
+			IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0089: stloc.2
+			IL_008a: ldloc.1
+			IL_008b: box [System.Runtime]System.Double
+			IL_0090: stloc.s 6
+			IL_0092: ldstr "process"
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_009c: ldstr "argv"
+			IL_00a1: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:34"
+			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_00ab: stloc.3
+			IL_00ac: ldloc.3
+			IL_00ad: ldloc.1
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00b3: stloc.3
+			IL_00b4: ldloc.2
+			IL_00b5: ldc.i4.4
+			IL_00b6: newarr [System.Runtime]System.Object
+			IL_00bb: dup
+			IL_00bc: ldc.i4.0
+			IL_00bd: ldstr "arg"
+			IL_00c2: stelem.ref
+			IL_00c3: dup
+			IL_00c4: ldc.i4.1
+			IL_00c5: ldloc.s 6
+			IL_00c7: stelem.ref
+			IL_00c8: dup
+			IL_00c9: ldc.i4.2
+			IL_00ca: ldstr "="
+			IL_00cf: stelem.ref
+			IL_00d0: dup
+			IL_00d1: ldc.i4.3
+			IL_00d2: ldloc.3
+			IL_00d3: stelem.ref
+			IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00d9: pop
+			IL_00da: ldloc.1
+			IL_00db: ldc.r8 1
+			IL_00e4: add
+			IL_00e5: stloc.1
+			IL_00e6: br IL_004f
 		// end loop
 
-		IL_00d7: ret
+		IL_00eb: ret
 	} // end of method Environment_EnumerateProcessArgV::__js_module_init__
 
 } // end of class Modules.Environment_EnumerateProcessArgV

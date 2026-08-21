@@ -28,6 +28,11 @@ namespace Jroc.Utilities.Ecma335
             _typeName = name ?? throw new ArgumentNullException(nameof(name));
         }
 
+        internal string FullName
+            => string.IsNullOrEmpty(_namespaceName)
+                ? _typeName
+                : $"{_namespaceName}.{_typeName}";
+
         /// <summary>
         /// Wrapper for MetadataBuilder.AddFieldDefinition. Tracks the first field handle and count.
         /// Throws if AddTypeDefinition was already called.

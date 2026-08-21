@@ -178,7 +178,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 337 (0x151)
+			// Code size: 352 (0x160)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -236,77 +236,80 @@
 			IL_0078: ldfld object Modules.Require_AsyncHooks_AsyncResource/Scope::resource
 			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0082: ldstr "asyncId"
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_008c: stloc.s 5
-			IL_008e: ldloc.1
-			IL_008f: ldloc.s 5
-			IL_0091: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0096: stloc.2
-			IL_0097: ldloc.2
-			IL_0098: box [System.Runtime]System.Boolean
-			IL_009d: stloc.3
-			IL_009e: ldloc.0
-			IL_009f: ldstr "resource id:"
-			IL_00a4: ldloc.3
-			IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00aa: pop
-			IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b0: stloc.0
-			IL_00b1: ldarg.0
-			IL_00b2: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule Modules.Require_AsyncHooks_AsyncResource/Scope::asyncHooks
-			IL_00b7: stloc.s 4
-			IL_00b9: ldloc.s 4
-			IL_00bb: ldstr "triggerAsyncId"
-			IL_00c0: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-			IL_00c5: brtrue IL_00dd
+			IL_0087: ldstr "Require_AsyncHooks_AsyncResource:<TwoPhaseDummy_M2>:__js_call__:15"
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+			IL_0091: stloc.s 5
+			IL_0093: ldloc.1
+			IL_0094: ldloc.s 5
+			IL_0096: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_009b: stloc.2
+			IL_009c: ldloc.2
+			IL_009d: box [System.Runtime]System.Boolean
+			IL_00a2: stloc.3
+			IL_00a3: ldloc.0
+			IL_00a4: ldstr "resource id:"
+			IL_00a9: ldloc.3
+			IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00af: pop
+			IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b5: stloc.0
+			IL_00b6: ldarg.0
+			IL_00b7: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule Modules.Require_AsyncHooks_AsyncResource/Scope::asyncHooks
+			IL_00bc: stloc.s 4
+			IL_00be: ldloc.s 4
+			IL_00c0: ldstr "triggerAsyncId"
+			IL_00c5: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_00ca: brtrue IL_00e2
 
-			IL_00ca: ldloc.s 4
-			IL_00cc: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule::triggerAsyncId()
-			IL_00d1: box [System.Runtime]System.Double
-			IL_00d6: stloc.s 5
-			IL_00d8: br IL_00f1
+			IL_00cf: ldloc.s 4
+			IL_00d1: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule::triggerAsyncId()
+			IL_00d6: box [System.Runtime]System.Double
+			IL_00db: stloc.s 5
+			IL_00dd: br IL_00f6
 
-			IL_00dd: ldloc.s 4
-			IL_00df: ldstr "triggerAsyncId"
-			IL_00e4: ldc.i4.0
-			IL_00e5: newarr [System.Runtime]System.Object
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-			IL_00ef: stloc.s 5
+			IL_00e2: ldloc.s 4
+			IL_00e4: ldstr "triggerAsyncId"
+			IL_00e9: ldc.i4.0
+			IL_00ea: newarr [System.Runtime]System.Object
+			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_00f4: stloc.s 5
 
-			IL_00f1: ldarg.0
-			IL_00f2: ldfld object Modules.Require_AsyncHooks_AsyncResource/Scope::resource
-			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00fc: ldstr "triggerAsyncId"
-			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0106: stloc.1
-			IL_0107: ldloc.s 5
-			IL_0109: ldloc.1
-			IL_010a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_010f: stloc.2
-			IL_0110: ldloc.2
-			IL_0111: box [System.Runtime]System.Boolean
-			IL_0116: stloc.3
-			IL_0117: ldloc.0
-			IL_0118: ldstr "trigger id:"
-			IL_011d: ldloc.3
-			IL_011e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0123: pop
-			IL_0124: ldarg.2
-			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_012f: ldstr "value"
-			IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0139: stloc.1
-			IL_013a: ldloc.1
-			IL_013b: ldarg.3
-			IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0141: stloc.s 6
-			IL_0143: ldloc.s 6
-			IL_0145: ldarg.s right
-			IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_014c: stloc.s 6
-			IL_014e: ldloc.s 6
-			IL_0150: ret
+			IL_00f6: ldarg.0
+			IL_00f7: ldfld object Modules.Require_AsyncHooks_AsyncResource/Scope::resource
+			IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0101: ldstr "triggerAsyncId"
+			IL_0106: ldstr "Require_AsyncHooks_AsyncResource:<TwoPhaseDummy_M2>:__js_call__:26"
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+			IL_0110: stloc.1
+			IL_0111: ldloc.s 5
+			IL_0113: ldloc.1
+			IL_0114: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0119: stloc.2
+			IL_011a: ldloc.2
+			IL_011b: box [System.Runtime]System.Boolean
+			IL_0120: stloc.3
+			IL_0121: ldloc.0
+			IL_0122: ldstr "trigger id:"
+			IL_0127: ldloc.3
+			IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_012d: pop
+			IL_012e: ldarg.2
+			IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0139: ldstr "value"
+			IL_013e: ldstr "Require_AsyncHooks_AsyncResource:<TwoPhaseDummy_M2>:__js_call__:33"
+			IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_0148: stloc.1
+			IL_0149: ldloc.1
+			IL_014a: ldarg.3
+			IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0150: stloc.s 6
+			IL_0152: ldloc.s 6
+			IL_0154: ldarg.s right
+			IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_015b: stloc.s 6
+			IL_015d: ldloc.s 6
+			IL_015f: ret
 		} // end of method FunctionExpression_result::__js_call__
 
 	} // end of class FunctionExpression_result
@@ -460,7 +463,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 32 (0x20)
+			// Code size: 37 (0x25)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -471,14 +474,15 @@
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_000b: ldstr "value"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: ldarg.2
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_001d: stloc.1
-			IL_001e: ldloc.1
-			IL_001f: ret
+			IL_0010: ldstr "Require_AsyncHooks_AsyncResource:<TwoPhaseDummy_M3>:__js_call__:3"
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: ldarg.2
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: ret
 		} // end of method FunctionExpression_bound::__js_call__
 
 	} // end of class FunctionExpression_bound
@@ -625,7 +629,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 24 (0x18)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -635,10 +639,11 @@
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_000b: ldstr "value"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: ret
+			IL_0010: ldstr "Require_AsyncHooks_AsyncResource:<TwoPhaseDummy_M4>:__js_call__:3"
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: ret
 		} // end of method FunctionExpression_staticBound::__js_call__
 
 	} // end of class FunctionExpression_staticBound
@@ -842,7 +847,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1035 (0x40b)
+		// Code size: 1040 (0x410)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_AsyncResource/Scope,
@@ -1156,7 +1161,7 @@
 			IL_0336: ldloc.s 22
 			IL_0338: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_033d: pop
-			IL_033e: leave IL_039e
+			IL_033e: leave IL_03a3
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
@@ -1187,54 +1192,55 @@
 			IL_037a: stloc.s 16
 			IL_037c: ldloc.s 8
 			IL_037e: ldstr "message"
-			IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0388: stloc.s 15
-			IL_038a: ldloc.s 16
-			IL_038c: ldstr "error:"
-			IL_0391: ldloc.s 15
-			IL_0393: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0398: pop
-			IL_0399: leave IL_039e
+			IL_0383: ldstr "Require_AsyncHooks_AsyncResource:Modules.Require_AsyncHooks_AsyncResource:__js_module_init__:109"
+			IL_0388: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_038d: stloc.s 15
+			IL_038f: ldloc.s 16
+			IL_0391: ldstr "error:"
+			IL_0396: ldloc.s 15
+			IL_0398: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_039d: pop
+			IL_039e: leave IL_03a3
 		} // end handler
 
-		IL_039e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03a3: stloc.s 16
-		IL_03a5: ldloc.0
-		IL_03a6: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule Modules.Require_AsyncHooks_AsyncResource/Scope::asyncHooks
-		IL_03ab: stloc.s 10
-		IL_03ad: ldloc.s 10
-		IL_03af: ldstr "executionAsyncId"
-		IL_03b4: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_03b9: brtrue IL_03d1
+		IL_03a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03a8: stloc.s 16
+		IL_03aa: ldloc.0
+		IL_03ab: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule Modules.Require_AsyncHooks_AsyncResource/Scope::asyncHooks
+		IL_03b0: stloc.s 10
+		IL_03b2: ldloc.s 10
+		IL_03b4: ldstr "executionAsyncId"
+		IL_03b9: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_03be: brtrue IL_03d6
 
-		IL_03be: ldloc.s 10
-		IL_03c0: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule::executionAsyncId()
-		IL_03c5: box [System.Runtime]System.Double
-		IL_03ca: stloc.s 15
-		IL_03cc: br IL_03e5
+		IL_03c3: ldloc.s 10
+		IL_03c5: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule::executionAsyncId()
+		IL_03ca: box [System.Runtime]System.Double
+		IL_03cf: stloc.s 15
+		IL_03d1: br IL_03ea
 
-		IL_03d1: ldloc.s 10
-		IL_03d3: ldstr "executionAsyncId"
-		IL_03d8: ldc.i4.0
-		IL_03d9: newarr [System.Runtime]System.Object
-		IL_03de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-		IL_03e3: stloc.s 15
+		IL_03d6: ldloc.s 10
+		IL_03d8: ldstr "executionAsyncId"
+		IL_03dd: ldc.i4.0
+		IL_03de: newarr [System.Runtime]System.Object
+		IL_03e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_03e8: stloc.s 15
 
-		IL_03e5: ldloc.s 15
-		IL_03e7: ldloc.2
-		IL_03e8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_03ed: stloc.s 17
-		IL_03ef: ldloc.s 17
-		IL_03f1: box [System.Runtime]System.Boolean
-		IL_03f6: stloc.s 18
-		IL_03f8: ldloc.s 16
-		IL_03fa: ldstr "restored:"
-		IL_03ff: ldloc.s 18
-		IL_0401: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0406: pop
-		IL_0407: ldnull
-		IL_0408: stloc.s 9
-		IL_040a: ret
+		IL_03ea: ldloc.s 15
+		IL_03ec: ldloc.2
+		IL_03ed: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_03f2: stloc.s 17
+		IL_03f4: ldloc.s 17
+		IL_03f6: box [System.Runtime]System.Boolean
+		IL_03fb: stloc.s 18
+		IL_03fd: ldloc.s 16
+		IL_03ff: ldstr "restored:"
+		IL_0404: ldloc.s 18
+		IL_0406: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_040b: pop
+		IL_040c: ldnull
+		IL_040d: stloc.s 9
+		IL_040f: ret
 	} // end of method Require_AsyncHooks_AsyncResource::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_AsyncResource

@@ -321,7 +321,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 45 (0x2d)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -338,14 +338,15 @@
 			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_0018: ldstr "type"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0022: stloc.1
-			IL_0023: ldloc.2
-			IL_0024: ldloc.1
-			IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002a: pop
-			IL_002b: ldnull
-			IL_002c: ret
+			IL_001d: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:<TwoPhaseDummy_M3>:__js_call__:7"
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_0027: stloc.1
+			IL_0028: ldloc.2
+			IL_0029: ldloc.1
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method dumpToConsole::__js_call__
 
 	} // end of class dumpToConsole
@@ -388,7 +389,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 190 (0xbe)
+		// Code size: 200 (0xc8)
 		.maxstack 12
 		.locals init (
 			[0] class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/Scope,
@@ -422,56 +423,58 @@
 		IL_0027: ldstr "Object"
 		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0031: ldstr "prototype"
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_003b: stloc.s 4
-		IL_003d: ldc.i4.1
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldloc.0
-		IL_0046: stelem.ref
-		IL_0047: stloc.3
-		IL_0048: newobj instance void Modules.Function_Prototype_ObjectCreate_ObjectPrototype/dumpToConsole/FunctionObject::.ctor()
-		IL_004d: ldc.i4.0
-		IL_004e: conv.r8
-		IL_004f: ldstr "dumpToConsole"
-		IL_0054: ldc.i4.1
-		IL_0055: ldc.i4.1
-		IL_0056: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/dumpToConsole/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_005b: stloc.s 5
-		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0062: dup
-		IL_0063: ldstr "value"
-		IL_0068: ldloc.s 5
-		IL_006a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_006f: stloc.s 6
-		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0076: dup
-		IL_0077: ldstr "dumpToConsole"
-		IL_007c: ldloc.s 6
-		IL_007e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0083: stloc.s 6
-		IL_0085: ldloc.s 4
-		IL_0087: ldloc.s 6
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object, object)
-		IL_008e: stloc.s 4
-		IL_0090: ldloc.1
-		IL_0091: ldstr "prototype"
-		IL_0096: ldloc.s 4
-		IL_0098: ldc.i4.1
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_009e: pop
-		IL_009f: ldloc.1
-		IL_00a0: dup
-		IL_00a1: ldstr "click"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
-		IL_00ab: stloc.2
-		IL_00ac: ldloc.2
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b2: ldstr "dumpToConsole"
-		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00bc: pop
-		IL_00bd: ret
+		IL_0036: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:Modules.Function_Prototype_ObjectCreate_ObjectPrototype:__js_module_init__:11"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0040: stloc.s 4
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldloc.0
+		IL_004b: stelem.ref
+		IL_004c: stloc.3
+		IL_004d: newobj instance void Modules.Function_Prototype_ObjectCreate_ObjectPrototype/dumpToConsole/FunctionObject::.ctor()
+		IL_0052: ldc.i4.0
+		IL_0053: conv.r8
+		IL_0054: ldstr "dumpToConsole"
+		IL_0059: ldc.i4.1
+		IL_005a: ldc.i4.1
+		IL_005b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/dumpToConsole/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0060: stloc.s 5
+		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0067: dup
+		IL_0068: ldstr "value"
+		IL_006d: ldloc.s 5
+		IL_006f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0074: stloc.s 6
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007b: dup
+		IL_007c: ldstr "dumpToConsole"
+		IL_0081: ldloc.s 6
+		IL_0083: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0088: stloc.s 6
+		IL_008a: ldloc.s 4
+		IL_008c: ldloc.s 6
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object, object)
+		IL_0093: stloc.s 4
+		IL_0095: ldloc.1
+		IL_0096: ldstr "prototype"
+		IL_009b: ldloc.s 4
+		IL_009d: ldc.i4.1
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00a3: pop
+		IL_00a4: ldloc.1
+		IL_00a5: dup
+		IL_00a6: ldstr "click"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+		IL_00b0: stloc.2
+		IL_00b1: ldloc.2
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b7: ldstr "dumpToConsole"
+		IL_00bc: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:Modules.Function_Prototype_ObjectCreate_ObjectPrototype:__js_module_init__:25"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+		IL_00c6: pop
+		IL_00c7: ret
 	} // end of method Function_Prototype_ObjectCreate_ObjectPrototype::__js_module_init__
 
 } // end of class Modules.Function_Prototype_ObjectCreate_ObjectPrototype
