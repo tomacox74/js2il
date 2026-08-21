@@ -131,4 +131,18 @@ public sealed class MethodBodyIR
 
     internal Dictionary<int, ReceiverTypeSummary>
         ReceiverTempTypeSummaries { get; } = new();
+
+    /// <summary>
+    /// Fixed-point callable effects keyed by statically known callable ID.
+    /// Guard hoisting uses these summaries instead of treating every direct
+    /// user call as an unknown effect barrier.
+    /// </summary>
+    internal Dictionary<CallableId, IntrinsicGuardEffectSummary>
+        IntrinsicGuardEffectSummaries { get; } = new();
+
+    /// <summary>
+    /// Temps whose values are live across control-flow backedges and therefore
+    /// must retain a dedicated local slot for the full method.
+    /// </summary>
+    internal HashSet<int> PinnedTempIndices { get; } = new();
 }

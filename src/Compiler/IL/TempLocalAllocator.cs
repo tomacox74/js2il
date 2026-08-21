@@ -290,7 +290,8 @@ internal static class TempLocalAllocator
             if (temp.Index < 0
                 || temp.Index >= _tempCount
                 || _lastUse[temp.Index] != _instructionIndex
-                || _releasedAtInstruction[temp.Index] == _instructionIndex)
+                || _releasedAtInstruction[temp.Index] == _instructionIndex
+                || _methodBody.PinnedTempIndices.Contains(temp.Index))
             {
                 return;
             }
@@ -506,9 +507,21 @@ internal static partial class LIRInstructionInfo
             case LIRCallMember5 value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); visitor.Visit(value.A4); break;
             case LIRCallGuardedStringIntrinsic value:
-                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
+                visitor.Visit(value.Receiver);
+                if (value.PrototypeAssumption is { } stringAssumption)
+                {
+                    visitor.Visit(stringAssumption);
+                }
+                VisitList(value.Arguments, ref visitor);
+                break;
             case LIRCallGuardedIntrinsicMember value:
-                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
+                visitor.Visit(value.Receiver);
+                if (value.PrototypeAssumption is { } memberAssumption)
+                {
+                    visitor.Visit(memberAssumption);
+                }
+                VisitList(value.Arguments, ref visitor);
+                break;
             case LIRCallComputedMemberFixed value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.PropertyKey); VisitList(value.Arguments, ref visitor); break;
             case LIRCallNodeModuleContractMember value:
@@ -1017,6 +1030,9 @@ internal static partial class LIRInstructionInfo
                 return true;
             case LIRCallGuardedIntrinsicMember guardedIntrinsic:
                 defined = guardedIntrinsic.Result;
+                return true;
+            case LIRCaptureIntrinsicPrototypeAssumption captureAssumption:
+                defined = captureAssumption.Result;
                 return true;
             case LIRCallComputedMemberFixed callComputedMember:
                 defined = callComputedMember.Result;

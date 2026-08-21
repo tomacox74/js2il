@@ -1111,6 +1111,8 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
+        PopulateIntrinsicGuardEffectSummaries(lirMethod!, scope);
+
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
         var callableReader = _serviceProvider.GetService<ICallableDeclarationReader>();
@@ -1159,6 +1161,7 @@ internal sealed class JsMethodCompiler
         LIRReceiverSpecialization.Normalize(
             lirMethod!,
             receiverDiagnostics);
+        LIRIntrinsicGuardHoisting.Normalize(lirMethod!);
         if (receiverDiagnostics != null)
         {
             var scopeName = scope.GetQualifiedName();
@@ -1171,6 +1174,36 @@ internal sealed class JsMethodCompiler
 
         methodBody = lirMethod!;
         return true;
+    }
+
+    private static void PopulateIntrinsicGuardEffectSummaries(
+        MethodBodyIR methodBody,
+        Scope scope)
+    {
+        var root = scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var pending = new Stack<Scope>();
+        pending.Push(root);
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+            if (current.Callable is { } callable)
+            {
+                methodBody.IntrinsicGuardEffectSummaries[callable] =
+                    current.IntrinsicGuardEffects;
+            }
+
+            for (var index = current.Children.Count - 1;
+                 index >= 0;
+                 index--)
+            {
+                pending.Push(current.Children[index]);
+            }
+        }
     }
 
     // Backward-compatible helper for existing call sites.

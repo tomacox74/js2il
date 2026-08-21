@@ -28,14 +28,13 @@ internal sealed partial class LIRToILCompiler
             : ilEncoder.DefineLabel();
         var doneLabel = ilEncoder.DefineLabel();
 
-        ilEncoder.LoadConstantI4((int)instruction.PrototypeFamily);
-        var isPristine = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.IntrinsicPrototypeEpochs),
-            nameof(JavaScriptRuntime.IntrinsicPrototypeEpochs.IsPristine),
-            [typeof(JavaScriptRuntime.IntrinsicPrototypeFamily)]);
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(isPristine);
-        ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
+        EmitPrototypeAssumptionCheck(
+            instruction.PrototypeFamily,
+            instruction.PrototypeAssumption,
+            fallbackLabel,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
 
         if (!instruction.ReceiverIsProvenType)
         {
@@ -133,6 +132,10 @@ internal sealed partial class LIRToILCompiler
         }
 
         ilEncoder.MarkLabel(fallbackLabel);
+        EmitInvalidatePrototypeAssumption(
+            instruction.PrototypeAssumption,
+            ilEncoder,
+            allocation);
         EmitGuardedIntrinsicMemberFallback(
             instruction,
             ilEncoder,
@@ -215,18 +218,13 @@ internal sealed partial class LIRToILCompiler
             : ilEncoder.DefineLabel();
         var doneLabel = ilEncoder.DefineLabel();
 
-        ilEncoder.LoadConstantI4(
-            (int)JavaScriptRuntime.IntrinsicPrototypeFamily.String);
-        var isPristine = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.IntrinsicPrototypeEpochs),
-            nameof(JavaScriptRuntime.IntrinsicPrototypeEpochs.IsPristine),
-            new[]
-            {
-                typeof(JavaScriptRuntime.IntrinsicPrototypeFamily)
-            });
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(isPristine);
-        ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
+        EmitPrototypeAssumptionCheck(
+            JavaScriptRuntime.IntrinsicPrototypeFamily.String,
+            instruction.PrototypeAssumption,
+            fallbackLabel,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
 
         if (instruction.ReceiverIsProvenString)
         {
@@ -300,6 +298,10 @@ internal sealed partial class LIRToILCompiler
         }
 
         ilEncoder.MarkLabel(fallbackLabel);
+        EmitInvalidatePrototypeAssumption(
+            instruction.PrototypeAssumption,
+            ilEncoder,
+            allocation);
         EmitGuardedStringFallbackCall(
             instruction,
             ilEncoder,
@@ -311,6 +313,71 @@ internal sealed partial class LIRToILCompiler
             allocation);
 
         ilEncoder.MarkLabel(doneLabel);
+    }
+
+    private void EmitCaptureIntrinsicPrototypeAssumption(
+        LIRCaptureIntrinsicPrototypeAssumption instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation)
+    {
+        if (!IsMaterialized(instruction.Result, allocation))
+        {
+            throw new InvalidOperationException(
+                "A hoisted intrinsic prototype assumption must be materialized.");
+        }
+
+        ilEncoder.LoadConstantI4((int)instruction.PrototypeFamily);
+        var isPristine = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.IntrinsicPrototypeEpochs),
+            nameof(JavaScriptRuntime.IntrinsicPrototypeEpochs.IsPristine),
+            [typeof(JavaScriptRuntime.IntrinsicPrototypeFamily)]);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(isPristine);
+        EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+    }
+
+    private void EmitPrototypeAssumptionCheck(
+        JavaScriptRuntime.IntrinsicPrototypeFamily family,
+        TempVariable? assumption,
+        LabelHandle fallbackLabel,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (assumption is { } captured)
+        {
+            EmitLoadTempAsBoolean(
+                captured,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+        }
+        else
+        {
+            ilEncoder.LoadConstantI4((int)family);
+            var isPristine = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.IntrinsicPrototypeEpochs),
+                nameof(JavaScriptRuntime.IntrinsicPrototypeEpochs.IsPristine),
+                [typeof(JavaScriptRuntime.IntrinsicPrototypeFamily)]);
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(isPristine);
+        }
+
+        ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
+    }
+
+    private void EmitInvalidatePrototypeAssumption(
+        TempVariable? assumption,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation)
+    {
+        if (assumption is not { } captured)
+        {
+            return;
+        }
+
+        ilEncoder.LoadConstantI4(0);
+        EmitStoreTemp(captured, ilEncoder, allocation);
     }
 
     private void EmitStoreGuardedStringFastResult(

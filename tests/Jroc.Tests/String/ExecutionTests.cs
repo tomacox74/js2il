@@ -216,6 +216,13 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_IntrinsicGuard_HoistedLoop()
+        {
+            return ExecutionTest(
+                nameof(String_IntrinsicGuard_HoistedLoop));
+        }
+
+        [Fact]
         public Task String_PrototypeMethodOverrides()
         {
             return ExecutionTest(nameof(String_PrototypeMethodOverrides));

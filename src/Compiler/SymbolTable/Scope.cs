@@ -140,6 +140,13 @@ public class Scope
     internal Dictionary<BindingInfo, ReceiverTypeSummary>
         ReceiverCapturedEntryTypeSummaries { get; } = new();
 
+    /// <summary>
+    /// Conservative transitive effects used when deciding whether an
+    /// intrinsic prototype assumption can span a direct call.
+    /// </summary>
+    internal IntrinsicGuardEffectSummary IntrinsicGuardEffects { get; set; } =
+        IntrinsicGuardEffectSummary.None;
+
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>

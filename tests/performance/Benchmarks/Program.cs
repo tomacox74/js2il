@@ -72,9 +72,14 @@ else
     }
     else if (programArgs.Length > 0 && programArgs[0] == "--guarded-string-intrinsics")
     {
-        var summary = BenchmarkRunner.Run<GuardedStringIntrinsicBenchmarks>(
-            args: programArgs.Skip(1).ToArray());
-        SetExitCodeFromSummaries([summary]);
+        var benchmarkArgs = programArgs.Skip(1).ToArray();
+        var hitSummary =
+            BenchmarkRunner.Run<GuardedStringIntrinsicBenchmarks>(
+                args: benchmarkArgs);
+        var missSummary =
+            BenchmarkRunner.Run<HoistedStringIntrinsicMissBenchmarks>(
+                args: benchmarkArgs);
+        SetExitCodeFromSummaries([hitSummary, missSummary]);
     }
 #if SOURCE_JROC_PROJECTS
     else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
