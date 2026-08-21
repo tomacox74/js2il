@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.13 - 2026-08-21
+
 - perf(compiler/runtime): add realm-owned per-call-site inline-cache
   prototypes for ordinary-object string property reads and zero-argument
   member calls (issue #1893). Exact receiver and prototype lookup versions
