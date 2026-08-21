@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): run receiver candidate inference once after core type
+  convergence and skip full receiver-flow solving unless an eligible
+  specialization has a backward-reachable candidate source (issue #1898).
+  This removes an approximately 11% compile-time regression on the 466 KB
+  `ai-astar-data.js` control while preserving broad opt-in diagnostics and
+  byte-identical optimized Dromaeo IL.
 - perf(compiler/runtime): consume String receiver candidates for loop-hot
   numeric element reads with exact generic fallback, and extend guarded String
   method calls to safe same-realm boxed Strings (issue #1898). Five hot reads

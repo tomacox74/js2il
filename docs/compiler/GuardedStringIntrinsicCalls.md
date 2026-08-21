@@ -85,6 +85,13 @@ object coercions, parameter loads/stores, mutable slots, and captured field
 loads/stores, so receiver-relevant dependencies are retained without recording
 unrelated method state.
 
+Normal compilation narrows those roots further to member/index operations that
+the specialization pass can actually consume. A lightweight backward
+reachability check must also find a candidate-producing definition, binding,
+parameter, or callable summary before the compiler builds the CFG and solves
+full flow facts. Verbose and diagnostic-file compilation retains the broader
+dynamic-receiver analysis so diagnostics remain complete.
+
 Each recorded fact distinguishes explicitly observed candidate CLR types from
 non-candidate values and unconstrained values. This preserves uncertainty at
 joins instead of treating a candidate seen on one path as proof for every path.
@@ -239,6 +246,44 @@ change: five hot numeric reads now call
 The generated fixture assembly grew from 22,528 to 23,040 bytes because its 37
 uncertain guarded String method sites now include the safe boxed-receiver arm.
 Per-load allocation was effectively unchanged across these runs.
+
+### Final master-relative validation
+
+The item-9 validation used the repository's branch-comparison workflow, which
+checks out `master` and the PR branch on one GitHub runner, runs the baseline
+first, and uploads both raw BenchmarkDotNet reports. Both candidate checkouts
+were commit `3d07da395` on .NET 10.0.11:
+
+| Workflow | Scenario | Master mean / median | PR mean / median | Mean change | Allocation change |
+| --- | --- | ---: | ---: | ---: | ---: |
+| [32458452258](https://github.com/tomacox74/js2il/actions/runs/32458452258) | `dromaeo-object-string` | 24.282 / 24.380 ms (N=15) | 23.807 / 23.773 ms (N=14) | -1.96% | -0.04% |
+| [32458452751](https://github.com/tomacox74/js2il/actions/runs/32458452751) | `dromaeo-object-regexp` | 148.011 / 148.465 ms (N=39) | 145.743 / 145.870 ms (N=25) | -1.53% | -0.98% |
+
+These are single sequential baseline/candidate runs, so the percentages remain
+noise-sensitive. Generated IL supplies the causal checks:
+
+- `dromaeo-object-string` changes five loop-hot numeric reads from generic
+  `GetItem` to `GetStringElementWithFallback`; its assembly grows 22,528 to
+  23,040 bytes and total method IL grows 9,119 to 9,797 bytes.
+- `dromaeo-object-regexp` adds one loop-hot guarded Array `push`; its assembly
+  remains 47,616 bytes while total method IL grows 16,680 to 16,798 bytes.
+- `dromaeo-object-array` remains byte-identical at 10,752 assembly bytes and
+  2,593 method IL bytes.
+
+The first final-PR compile control exposed a separate regression: three
+interleaved compilations of the 466 KB `ai-astar-data.js` fixture averaged
+4.063 seconds on the PR versus 3.662 seconds on `master`, about 11% slower.
+Receiver candidates had been recomputed inside the unrelated core type
+fixed point, and normal compilation solved broad receiver flow even when no
+eligible specialization had a candidate-producing path.
+
+Item 9 moves candidate inference after core type convergence and gates the
+normal flow solver by specialization eligibility plus backward candidate
+reachability. Two subsequent interleaved five-run batches averaged 3.855
+seconds for the PR and 3.834 seconds for `master` (+0.5%); medians were 3.884
+and 3.816 seconds (+1.8%). The residual difference is within observed
+same-host run-to-run variation. String and RegExp generated IL is
+byte-for-byte unchanged by this compile-time gate.
 
 Array and typed-array facts are consumed by the post-flow specialization pass.
 On a controlled fixture containing one cold Array-candidate call and one call
