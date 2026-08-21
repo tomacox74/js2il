@@ -35,10 +35,80 @@ general use in JavaScript engines.
 
 The compiler routes materialized string-key `LIRGetItem` instructions and
 dynamic `LIRCallMember0` instructions through
-`DynamicLookupInlineCache.GetItem` and `CallMember0`. A site key combines the
-module ID, generated type, method, and original LIR instruction index. Cache
-sites are stored in `RuntimeRealmValueCacheState`, so the same generated site
-executing in another realm receives independent state.
+`DynamicLookupInlineCache.GetItem` and `CallMember0`.
+
+### Key construction and call-site association
+
+During IL emission, the compiler constructs the site key in this format:
+
+```text
+<module-id>:<generated-type-full-name>:<method-name>:<lir-instruction-index>
+```
+
+These components are concatenated with literal `:` separators; the runtime
+treats the result as an opaque string and does not parse it.
+
+The components are:
+
+| Component | Source and purpose |
+| --- | --- |
+| `module-id` | The canonical logical module ID copied from the callable's symbol-table scope into `MethodBodyIR.ModuleId`. It separates equivalent generated type and method names belonging to different JavaScript modules. The fallback text is `<module>` when no module ID is available. |
+| `generated-type-full-name` | The namespace-qualified CLR type name from the current `TypeBuilder`. It separates generated module, function, class, and helper types within a module. |
+| `method-name` | The emitted CLR method name from the current `MethodDescriptor`. It separates methods on the generated type. |
+| `lir-instruction-index` | The zero-based position of the exact `LIRInstruction` object in the final `MethodBodyIR.Instructions` list. It separates multiple dynamic operations in the same method. |
+
+For example, a generated property read currently contains IL equivalent to:
+
+```text
+ldarg.1
+ldstr "value"
+ldstr "Object_DynamicInlineCache_Invalidation:<TwoPhaseDummy_M2>:__js_call__:3"
+call DynamicLookupInlineCache.GetItem(object, string, string)
+```
+
+The compiler builds the instruction-index map with reference equality. Two
+structurally identical LIR instructions at different positions therefore
+receive different keys, while alternate emission paths for the same
+instruction object retain the same logical site. Requesting a key for an
+instruction that is not in the method body is a compilation error rather than
+silently sharing or inventing a site.
+
+The LIR index is not a JavaScript source location, IL byte offset, or durable
+identifier across recompilation. Optimization can reorder or remove LIR, so a
+recompiled assembly may assign different keys. Cache state is ephemeral and
+realm-owned, so keys need only be stable and unique within the executing
+compiled artifact.
+
+The key does not include an assembly identity or method signature. Generated
+cache-bearing methods currently have unique names within their generated
+types, but two separately compiled assemblies with the same logical module,
+type, method, and LIR index can address the same realm-owned site if a host
+executes both in one realm. Entry validation still prevents an incorrect value
+from being returned, but the sites can share transition history and become
+polymorphic or megamorphic earlier than intended. A future key representation
+should remove this performance-level collision as well as string lookup cost.
+
+The property or method name is passed separately and is not part of the site
+key. `CallMember0` has a literal method name, while a string-key `LIRGetItem`
+may produce different names on different executions. Cache entries validate
+the property name in addition to the receiver identity; several names observed
+at one computed-property site can therefore consume separate polymorphic
+entries.
+
+At runtime, the generated key literal is used with ordinal comparison in the
+current realm's
+`ConcurrentDictionary<string, DynamicLookupInlineCacheSite>`. The first
+cacheable observation creates the site; later executions of the same generated
+instruction in that realm reuse it. The identical key literal in another
+realm addresses a different dictionary, preventing cross-realm state sharing.
+Realm disposal clears the dictionary.
+
+The key is created by the compiler and emitted with `ldstr`; it is not
+formatted or allocated on each execution. Runtime lookup still hashes and
+compares the string. Issue #1955 tracks replacing this representation with
+integer site IDs or realm-owned per-module arrays. Any replacement must
+preserve module namespacing, distinct LIR call sites, realm isolation, and
+collectible-assembly lifetime behavior.
 
 The first stage deliberately caches only receivers whose exact CLR type is
 `JsObject` and whose complete prototype chain also consists of exact
