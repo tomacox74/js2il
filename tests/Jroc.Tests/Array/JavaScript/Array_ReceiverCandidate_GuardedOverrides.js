@@ -6,34 +6,38 @@ let receiver = useArray ? [] : {
         return "object:" + value;
     }
 };
-console.log(receiver.push(1));
+console.log(receiver.push(0));
 
-receiver.push = function (value) {
-    return "own:" + value;
-};
-console.log(receiver.push(2));
+for (let iteration = 0; iteration < 1; iteration++) {
+    console.log(receiver.push(1));
 
-delete receiver.push;
-Object.defineProperty(receiver, "push", {
-    configurable: true,
-    get() {
-        return function (value) {
-            return "getter:" + value;
-        };
-    }
-});
-console.log(receiver.push(3));
+    receiver.push = function (value) {
+        return "own:" + value;
+    };
+    console.log(receiver.push(2));
 
-delete receiver.push;
-Object.setPrototypeOf(receiver, {
-    push(value) {
-        return "custom:" + value;
-    }
-});
-console.log(receiver.push(4));
+    delete receiver.push;
+    Object.defineProperty(receiver, "push", {
+        configurable: true,
+        get() {
+            return function (value) {
+                return "getter:" + value;
+            };
+        }
+    });
+    console.log(receiver.push(3));
 
-Object.setPrototypeOf(receiver, Array.prototype);
-Array.prototype.push = function (value) {
-    return "prototype:" + value;
-};
-console.log(receiver.push(5));
+    delete receiver.push;
+    Object.setPrototypeOf(receiver, {
+        push(value) {
+            return "custom:" + value;
+        }
+    });
+    console.log(receiver.push(4));
+
+    Object.setPrototypeOf(receiver, Array.prototype);
+    Array.prototype.push = function (value) {
+        return "prototype:" + value;
+    };
+    console.log(receiver.push(5));
+}

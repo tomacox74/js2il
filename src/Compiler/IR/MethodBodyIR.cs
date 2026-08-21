@@ -117,6 +117,12 @@ public sealed class MethodBodyIR
     /// </summary>
     internal ReceiverTypeFlowFacts? ReceiverTypeFlowFacts { get; set; }
 
+    /// <summary>
+    /// Natural-loop nesting depth for the final LIR instruction sequence.
+    /// Computed lazily when a guarded receiver specialization is eligible.
+    /// </summary>
+    internal LIRLoopNestingFacts? LoopNestingFacts { get; set; }
+
     internal Dictionary<int, ReceiverTypeSummary>
         ReceiverParameterTypeSummaries { get; } = new();
 

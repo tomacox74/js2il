@@ -4,6 +4,8 @@ namespace Jroc.IR;
 
 internal static class LIRReceiverSpecialization
 {
+    private const int MinimumLoopDepth = 1;
+
     public static void Normalize(MethodBodyIR methodBody)
     {
         for (var index = 0; index < methodBody.Instructions.Count; index++)
@@ -23,6 +25,14 @@ internal static class LIRReceiverSpecialization
                     out var receiverType,
                     out var family,
                     out var receiverIsProvenType))
+            {
+                continue;
+            }
+
+            methodBody.LoopNestingFacts ??=
+                LIRLoopNestingAnalysis.Analyze(methodBody);
+            if (methodBody.LoopNestingFacts.GetDepth(index)
+                < MinimumLoopDepth)
             {
                 continue;
             }

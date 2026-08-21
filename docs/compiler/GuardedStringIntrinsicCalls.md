@@ -93,6 +93,26 @@ receiver type because changing an object does not replace the binding value.
 The facts remain representation-neutral. Only the guarded receiver
 specialization pass consumes eligible Array and typed-array facts.
 
+### Loop hotness gate
+
+Post-flow Array and typed-array guards are emitted only for calls inside a
+natural loop. The final-LIR control-flow graph computes dominators and
+back-edge natural loops, then records the nesting depth of every instruction.
+An otherwise eligible site requires depth one or greater; a cold site keeps
+its original `ObjectRuntime.CallMemberN` instruction and therefore adds no
+guard branches or fallback duplication.
+
+Multiple latches for one loop header are merged before depth is counted, while
+nested loop headers increase the depth independently. Exception handlers are
+separate control-flow roots so an unrelated handler edge cannot make a cold
+block appear loop-hot. The analysis is lazy: methods pay its cost only after
+the receiver specialization pass finds an otherwise eligible Array or
+typed-array call.
+
+This gate does not change existing proven-Array direct calls or the guarded
+String contract. It controls the code-size expansion introduced when the
+post-flow receiver specialization selects a guarded fast path.
+
 ### Interprocedural summaries
 
 Statically proven direct-only callables also receive receiver summaries for
@@ -130,7 +150,9 @@ Array specialization currently covers `push`, `unshift`, `pop`, `shift`,
 pristine realm-owned prototype-family epoch, no own member override, the
 receiver's default intrinsic prototype, and—unless the flow fact proves one
 exact type—a successful CLR type test. Failure of any guard performs the
-original `ObjectRuntime.CallMemberN` operation.
+original `ObjectRuntime.CallMemberN` operation. These post-flow fast paths
+are emitted only at loop-nested call sites; eligible calls outside loops remain
+generic to avoid cold-site IL growth.
 
 ## Performance
 
@@ -157,8 +179,19 @@ adds about 0.2 ns while retaining the complete generic fallback.
 The 2026-08-19 local DefaultJob run of `dromaeo-object-string` on .NET
 10.0.11 measured JROC execution at 22.03 ms (N=13) with 44.24 MB allocated
 per module load. Compiling that exact fixture before and after receiver
-candidate tracking produced the same 22,528-byte module assembly. This confirms
-the current candidate analysis is code-generation-neutral.
+candidate tracking produced the same 22,528-byte module assembly. String
+candidate tracking remains code-generation-neutral until a later
+specialization consumes its final-LIR fact.
+
+Array and typed-array facts are consumed by the post-flow specialization pass.
+On a controlled fixture containing one cold Array-candidate call and one call
+inside a loop, the loop-depth gate reduced guarded sites from two to one and
+total method IL from 498 to 413 bytes. The hot call retained its guard while
+the cold call returned to the original generic instruction. Across five
+existing cold typed-array generator fixtures, the gate removed 16 guards and
+reduced total method IL from 4,704 to 3,699 bytes. The controlled assembly file
+remained 4,608 bytes because both method bodies fit in the same PE file-alignment
+bucket.
 
 ## Validation
 
