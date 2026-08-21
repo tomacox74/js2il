@@ -167,6 +167,35 @@ public sealed partial class HIRToLIRLowerer
         _preserveNonClassDoubleReturn = preserveNonClassDoubleReturn;
         _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog ?? new JavaScriptRuntime.RuntimeIntrinsicCatalog();
         InitializeParameters(parameters);
+        InitializeReceiverTypeSummaries();
+    }
+
+    private void InitializeReceiverTypeSummaries()
+    {
+        if (_scope == null)
+        {
+            return;
+        }
+
+        foreach (var (index, summary) in
+                 _scope.ReceiverParameterTypeSummaries)
+        {
+            if (summary.HasCandidates)
+            {
+                _methodBodyIR.ReceiverParameterTypeSummaries[index] =
+                    summary;
+            }
+        }
+
+        foreach (var (binding, summary) in
+                 _scope.ReceiverCapturedEntryTypeSummaries)
+        {
+            if (summary.HasCandidates)
+            {
+                _methodBodyIR.ReceiverCapturedEntryTypeSummaries[binding] =
+                    summary;
+            }
+        }
     }
 
     internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Jroc.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Jroc.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, TwoPhase.GeneratedFunctionObjectRegistry? generatedFunctionObjectRegistry = null, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)

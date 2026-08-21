@@ -133,6 +133,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRCallMember4),
         typeof(LIRCallMember5),
         typeof(LIRCallGuardedStringIntrinsic),
+        typeof(LIRCallGuardedIntrinsicMember),
         typeof(LIRCallNodeModuleContractMember),
         typeof(LIRCallRequire),
         typeof(LIRCallRuntimeServicesStatic),
@@ -283,6 +284,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRAsyncStoreAwaitedResult),
         typeof(LIRAsyncLoadAwaitedResult),
         typeof(LIRCallGuardedStringIntrinsic),
+        typeof(LIRCallGuardedIntrinsicMember),
         typeof(LIRCallNodeModuleContractMember),
         typeof(LIRCreateLeafScopeInstance),
         typeof(LIRCreateScopeInstance)
@@ -512,6 +514,7 @@ internal static partial class LIRInstructionInfo
                     | CallEffects,
 
             LIRCallGuardedStringIntrinsic
+                or LIRCallGuardedIntrinsicMember
                 => LIRInstructionEffects.EmitsInternalControlFlow
                     | CallEffects,
 

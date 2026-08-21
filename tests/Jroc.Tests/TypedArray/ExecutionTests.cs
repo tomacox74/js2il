@@ -100,6 +100,9 @@ namespace Jroc.Tests.TypedArray
         public Task Int32Array_Fill_Reverse_Join_LastIndexOf() { var testName = nameof(Int32Array_Fill_Reverse_Join_LastIndexOf); return ExecutionTest(testName); }
 
         [Fact]
+        public Task TypedArray_ReceiverCandidate_GuardedOverrides() { var testName = nameof(TypedArray_ReceiverCandidate_GuardedOverrides); return ExecutionTest(testName); }
+
+        [Fact]
         public Task TypedArray_ConstructorAndSet_Errors() { var testName = nameof(TypedArray_ConstructorAndSet_Errors); return ExecutionTest(testName); }
 
         [Fact]

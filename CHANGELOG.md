@@ -6,6 +6,37 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): run receiver candidate inference once after core type
+  convergence and skip full receiver-flow solving unless an eligible
+  specialization has a backward-reachable candidate source (issue #1898).
+  This removes an approximately 11% compile-time regression on the 466 KB
+  `ai-astar-data.js` control while preserving broad opt-in diagnostics and
+  byte-identical optimized Dromaeo IL.
+- perf(compiler/runtime): consume String receiver candidates for loop-hot
+  numeric element reads with exact generic fallback, and extend guarded String
+  method calls to safe same-realm boxed Strings (issue #1898). Five hot reads
+  in `dromaeo-object-string` now use the specialized element helper; three
+  local post-change runs averaged about 1.1% faster than the pre-change run,
+  while the focused boxed-String guard improved 183.714 ns / 32 B to
+  34.894 ns / 0 B.
+- compiler: record receiver candidate sets across assignments and
+  captured/deferred closures, then compute per-program-point receiver facts
+  across SSA copies, mutable slots, branches, loop back edges, and captured
+  field writes. Direct-only callable summaries now propagate candidate unions
+  through parameters, stable returns, and ordering-proven captured closure
+  entries (issue #1898). Facts distinguish unknown/non-candidate paths from
+  observed reference types, invalidate across opaque property access and
+  unsupported LIR barriers, and reject host-exposed callable summaries. They
+  now drive guarded Array and typed-array fixed-arity calls with exact generic
+  fallback only at natural-loop sites, avoiding guard/fallback IL expansion at
+  cold calls. Verbose and diagnostic-file output explain receiver fact merges,
+  invalidations, retained candidates, and guarded-versus-cold specialization
+  decisions without tracing overhead in normal compilation. Object-literal
+  shapes and generated user-class metadata keep their existing specialized
+  identity domains.
+- perf(runtime): add realm-owned Array and typed-array prototype mutation
+  epochs. Their compiler guards also reject own member overrides and custom
+  per-instance prototype chains before calling runtime instance methods.
 - perf(compiler): emit realm-epoch-guarded fixed-arity String intrinsic calls
   with exact `CallMember0..5` fallbacks (issue #1891). Proven receivers skip
   the type test, uncertain receivers use `isinst string`, and the guarded

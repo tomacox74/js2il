@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 597 (0x255)
+		// Code size: 673 (0x2a1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Url_File_Helpers/Scope,
@@ -84,174 +84,202 @@
 		IL_005d: stloc.s 5
 		IL_005f: ldc.i4.0
 		IL_0060: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_0065: brfalse IL_008e
+		IL_0065: brfalse IL_00a1
 
 		IL_006a: ldloc.s 5
 		IL_006c: isinst [System.Runtime]System.String
 		IL_0071: dup
-		IL_0072: brfalse IL_008d
+		IL_0072: brtrue IL_008a
 
-		IL_0077: ldstr "file://"
-		IL_007c: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
-		IL_0081: box [System.Runtime]System.Boolean
-		IL_0086: stloc.s 5
-		IL_0088: br IL_00a1
+		IL_0077: pop
+		IL_0078: ldloc.s 5
+		IL_007a: ldstr "startsWith"
+		IL_007f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_0084: dup
+		IL_0085: brfalse IL_00a0
 
-		IL_008d: pop
+		IL_008a: ldstr "file://"
+		IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+		IL_0094: box [System.Runtime]System.Boolean
+		IL_0099: stloc.s 5
+		IL_009b: br IL_00b4
 
-		IL_008e: ldloc.s 5
-		IL_0090: ldstr "startsWith"
-		IL_0095: ldstr "file://"
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_009f: stloc.s 5
+		IL_00a0: pop
 
-		IL_00a1: ldloc.s 4
-		IL_00a3: ldstr "href file:"
-		IL_00a8: ldloc.s 5
-		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00af: pop
-		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b5: stloc.s 4
-		IL_00b7: ldloc.2
-		IL_00b8: ldstr "pathname"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00c2: stloc.s 5
-		IL_00c4: ldloc.s 5
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 5
-		IL_00cd: ldc.i4.0
-		IL_00ce: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_00d3: brfalse IL_00fc
+		IL_00a1: ldloc.s 5
+		IL_00a3: ldstr "startsWith"
+		IL_00a8: ldstr "file://"
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b2: stloc.s 5
 
-		IL_00d8: ldloc.s 5
-		IL_00da: isinst [System.Runtime]System.String
-		IL_00df: dup
-		IL_00e0: brfalse IL_00fb
+		IL_00b4: ldloc.s 4
+		IL_00b6: ldstr "href file:"
+		IL_00bb: ldloc.s 5
+		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00c2: pop
+		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c8: stloc.s 4
+		IL_00ca: ldloc.2
+		IL_00cb: ldstr "pathname"
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d5: stloc.s 5
+		IL_00d7: ldloc.s 5
+		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00de: stloc.s 5
+		IL_00e0: ldc.i4.0
+		IL_00e1: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_00e6: brfalse IL_0122
 
-		IL_00e5: ldstr "folder%20with%20space"
-		IL_00ea: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
-		IL_00ef: box [System.Runtime]System.Double
-		IL_00f4: stloc.s 5
-		IL_00f6: br IL_010f
+		IL_00eb: ldloc.s 5
+		IL_00ed: isinst [System.Runtime]System.String
+		IL_00f2: dup
+		IL_00f3: brtrue IL_010b
 
-		IL_00fb: pop
+		IL_00f8: pop
+		IL_00f9: ldloc.s 5
+		IL_00fb: ldstr "indexOf"
+		IL_0100: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_0105: dup
+		IL_0106: brfalse IL_0121
 
-		IL_00fc: ldloc.s 5
-		IL_00fe: ldstr "indexOf"
-		IL_0103: ldstr "folder%20with%20space"
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010d: stloc.s 5
+		IL_010b: ldstr "folder%20with%20space"
+		IL_0110: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+		IL_0115: box [System.Runtime]System.Double
+		IL_011a: stloc.s 5
+		IL_011c: br IL_0135
 
-		IL_010f: ldloc.s 5
-		IL_0111: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0116: ldc.r8 0.0
-		IL_011f: clt
-		IL_0121: ldc.i4.0
-		IL_0122: ceq
-		IL_0124: stloc.s 6
-		IL_0126: ldloc.s 6
-		IL_0128: box [System.Runtime]System.Boolean
-		IL_012d: stloc.s 7
-		IL_012f: ldloc.s 4
-		IL_0131: ldstr "pathname escaped:"
-		IL_0136: ldloc.s 7
-		IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_013d: pop
-		IL_013e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0143: stloc.s 4
-		IL_0145: ldloc.1
-		IL_0146: ldloc.2
-		IL_0147: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::fileURLToPath(object)
-		IL_014c: stloc.s 5
-		IL_014e: ldloc.s 5
-		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0155: stloc.s 5
-		IL_0157: ldc.i4.0
-		IL_0158: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_015d: brfalse IL_0186
+		IL_0121: pop
 
-		IL_0162: ldloc.s 5
-		IL_0164: isinst [System.Runtime]System.String
-		IL_0169: dup
-		IL_016a: brfalse IL_0185
+		IL_0122: ldloc.s 5
+		IL_0124: ldstr "indexOf"
+		IL_0129: ldstr "folder%20with%20space"
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0133: stloc.s 5
 
-		IL_016f: ldstr "folder with space"
-		IL_0174: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
-		IL_0179: box [System.Runtime]System.Double
-		IL_017e: stloc.s 5
-		IL_0180: br IL_0199
+		IL_0135: ldloc.s 5
+		IL_0137: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_013c: ldc.r8 0.0
+		IL_0145: clt
+		IL_0147: ldc.i4.0
+		IL_0148: ceq
+		IL_014a: stloc.s 6
+		IL_014c: ldloc.s 6
+		IL_014e: box [System.Runtime]System.Boolean
+		IL_0153: stloc.s 7
+		IL_0155: ldloc.s 4
+		IL_0157: ldstr "pathname escaped:"
+		IL_015c: ldloc.s 7
+		IL_015e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0163: pop
+		IL_0164: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0169: stloc.s 4
+		IL_016b: ldloc.1
+		IL_016c: ldloc.2
+		IL_016d: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::fileURLToPath(object)
+		IL_0172: stloc.s 5
+		IL_0174: ldloc.s 5
+		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_017b: stloc.s 5
+		IL_017d: ldc.i4.0
+		IL_017e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0183: brfalse IL_01bf
 
-		IL_0185: pop
+		IL_0188: ldloc.s 5
+		IL_018a: isinst [System.Runtime]System.String
+		IL_018f: dup
+		IL_0190: brtrue IL_01a8
 
-		IL_0186: ldloc.s 5
-		IL_0188: ldstr "indexOf"
-		IL_018d: ldstr "folder with space"
-		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0197: stloc.s 5
+		IL_0195: pop
+		IL_0196: ldloc.s 5
+		IL_0198: ldstr "indexOf"
+		IL_019d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_01a2: dup
+		IL_01a3: brfalse IL_01be
 
-		IL_0199: ldloc.s 5
-		IL_019b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_01a0: ldc.r8 0.0
-		IL_01a9: clt
-		IL_01ab: ldc.i4.0
-		IL_01ac: ceq
-		IL_01ae: stloc.s 6
-		IL_01b0: ldloc.s 6
-		IL_01b2: box [System.Runtime]System.Boolean
-		IL_01b7: stloc.s 7
-		IL_01b9: ldloc.s 4
-		IL_01bb: ldstr "roundtrip contains:"
-		IL_01c0: ldloc.s 7
-		IL_01c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01c7: pop
-		IL_01c8: ldloc.1
-		IL_01c9: ldstr "file:///var/example.txt"
-		IL_01ce: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::fileURLToPath(object)
-		IL_01d3: stloc.3
-		IL_01d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01d9: stloc.s 4
-		IL_01db: ldloc.3
-		IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e1: stloc.s 5
-		IL_01e3: ldc.i4.0
-		IL_01e4: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_01e9: brfalse IL_0212
+		IL_01a8: ldstr "folder with space"
+		IL_01ad: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+		IL_01b2: box [System.Runtime]System.Double
+		IL_01b7: stloc.s 5
+		IL_01b9: br IL_01d2
 
-		IL_01ee: ldloc.s 5
-		IL_01f0: isinst [System.Runtime]System.String
-		IL_01f5: dup
-		IL_01f6: brfalse IL_0211
+		IL_01be: pop
 
-		IL_01fb: ldstr "example.txt"
-		IL_0200: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
-		IL_0205: box [System.Runtime]System.Double
-		IL_020a: stloc.s 5
-		IL_020c: br IL_0225
+		IL_01bf: ldloc.s 5
+		IL_01c1: ldstr "indexOf"
+		IL_01c6: ldstr "folder with space"
+		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01d0: stloc.s 5
 
-		IL_0211: pop
+		IL_01d2: ldloc.s 5
+		IL_01d4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_01d9: ldc.r8 0.0
+		IL_01e2: clt
+		IL_01e4: ldc.i4.0
+		IL_01e5: ceq
+		IL_01e7: stloc.s 6
+		IL_01e9: ldloc.s 6
+		IL_01eb: box [System.Runtime]System.Boolean
+		IL_01f0: stloc.s 7
+		IL_01f2: ldloc.s 4
+		IL_01f4: ldstr "roundtrip contains:"
+		IL_01f9: ldloc.s 7
+		IL_01fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0200: pop
+		IL_0201: ldloc.1
+		IL_0202: ldstr "file:///var/example.txt"
+		IL_0207: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::fileURLToPath(object)
+		IL_020c: stloc.3
+		IL_020d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0212: stloc.s 4
+		IL_0214: ldloc.3
+		IL_0215: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_021a: stloc.s 5
+		IL_021c: ldc.i4.0
+		IL_021d: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0222: brfalse IL_025e
 
-		IL_0212: ldloc.s 5
-		IL_0214: ldstr "indexOf"
-		IL_0219: ldstr "example.txt"
-		IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0223: stloc.s 5
+		IL_0227: ldloc.s 5
+		IL_0229: isinst [System.Runtime]System.String
+		IL_022e: dup
+		IL_022f: brtrue IL_0247
 
-		IL_0225: ldloc.s 5
-		IL_0227: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_022c: ldc.r8 0.0
-		IL_0235: clt
-		IL_0237: ldc.i4.0
-		IL_0238: ceq
-		IL_023a: stloc.s 6
-		IL_023c: ldloc.s 6
-		IL_023e: box [System.Runtime]System.Boolean
-		IL_0243: stloc.s 7
-		IL_0245: ldloc.s 4
-		IL_0247: ldstr "from string suffix:"
-		IL_024c: ldloc.s 7
-		IL_024e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0253: pop
-		IL_0254: ret
+		IL_0234: pop
+		IL_0235: ldloc.s 5
+		IL_0237: ldstr "indexOf"
+		IL_023c: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_0241: dup
+		IL_0242: brfalse IL_025d
+
+		IL_0247: ldstr "example.txt"
+		IL_024c: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+		IL_0251: box [System.Runtime]System.Double
+		IL_0256: stloc.s 5
+		IL_0258: br IL_0271
+
+		IL_025d: pop
+
+		IL_025e: ldloc.s 5
+		IL_0260: ldstr "indexOf"
+		IL_0265: ldstr "example.txt"
+		IL_026a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_026f: stloc.s 5
+
+		IL_0271: ldloc.s 5
+		IL_0273: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0278: ldc.r8 0.0
+		IL_0281: clt
+		IL_0283: ldc.i4.0
+		IL_0284: ceq
+		IL_0286: stloc.s 6
+		IL_0288: ldloc.s 6
+		IL_028a: box [System.Runtime]System.Boolean
+		IL_028f: stloc.s 7
+		IL_0291: ldloc.s 4
+		IL_0293: ldstr "from string suffix:"
+		IL_0298: ldloc.s 7
+		IL_029a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_029f: pop
+		IL_02a0: ret
 	} // end of method Require_Url_File_Helpers::__js_module_init__
 
 } // end of class Modules.Require_Url_File_Helpers

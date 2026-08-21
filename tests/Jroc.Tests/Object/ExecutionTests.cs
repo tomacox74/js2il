@@ -62,6 +62,9 @@ namespace Jroc.Tests.Object
         public Task ObjectLiteral_EarlyBoundAccess_Parity() { var testName = nameof(ObjectLiteral_EarlyBoundAccess_Parity); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ObjectLiteral_Method_DynamicOverride() { var testName = nameof(ObjectLiteral_Method_DynamicOverride); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ObjectLiteral_EarlyBoundCapturedVarFunctionCall() { var testName = nameof(ObjectLiteral_EarlyBoundCapturedVarFunctionCall); return ExecutionTest(testName); }
 
         [Fact]

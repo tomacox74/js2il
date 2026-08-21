@@ -116,6 +116,358 @@ public class SymbolTableTypeInferenceTests
         Assert.Null(secondBinding.ClrType);
     }
 
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_PreserveCapturedStringAcrossDeferredWrites()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var text;
+            function invoke(callback) {
+                callback();
+            }
+            invoke(function () {
+                text = new String('seed');
+            });
+            invoke(function () {
+                text += text;
+            });
+        ");
+
+        var text = symbolTable.GetBindingInfo("text");
+        Assert.NotNull(text);
+        Assert.Contains(typeof(string), text.ReceiverCandidateClrTypes);
+        Assert.NotEqual(typeof(string), text.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotTreatStringObjectAsPrimitiveString()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var text = new String('seed');
+        ");
+
+        var text = symbolTable.GetBindingInfo("text");
+        Assert.NotNull(text);
+        Assert.DoesNotContain(typeof(string), text.ReceiverCandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_IgnoreNonAdditionCompoundAssignmentRhs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var text = 'seed';
+            var value = 1;
+            value -= text;
+        ");
+
+        var value = symbolTable.GetBindingInfo("value");
+        Assert.NotNull(value);
+        Assert.DoesNotContain(typeof(string), value.ReceiverCandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_TrackArrayAndTypedArrayWrites()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var values = [];
+            var typed = new Int32Array(4);
+        ");
+
+        var values = symbolTable.GetBindingInfo("values");
+        var typed = symbolTable.GetBindingInfo("typed");
+        Assert.NotNull(values);
+        Assert.NotNull(typed);
+        Assert.Contains(typeof(JavaScriptRuntime.Array), values.ReceiverCandidateClrTypes);
+        Assert.Contains(typeof(JavaScriptRuntime.Int32Array), typed.ReceiverCandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_PropagateDirectClosureParametersAndReturns()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            const identity = value => value;
+            var first = identity('text');
+            var second = identity([]);
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+        Assert.NotNull(identityScope);
+
+        var parameterSummary =
+            identityScope!.ReceiverParameterTypeSummaries[0];
+        Assert.False(parameterSummary.IncludesUnknown);
+        Assert.False(parameterSummary.IncludesNonCandidate);
+        Assert.Equal(
+            [
+                typeof(JavaScriptRuntime.Array),
+                typeof(string)
+            ],
+            parameterSummary.CandidateClrTypes.OrderBy(
+                static type => type.FullName));
+
+        Assert.False(identityScope.ReceiverReturnTypeSummary.IncludesUnknown);
+        Assert.False(
+            identityScope.ReceiverReturnTypeSummary.IncludesNonCandidate);
+        Assert.Contains(
+            typeof(string),
+            identityScope.ReceiverReturnTypeSummary.CandidateClrTypes);
+        Assert.Contains(
+            typeof(JavaScriptRuntime.Array),
+            identityScope.ReceiverReturnTypeSummary.CandidateClrTypes);
+
+        var first = symbolTable.GetBindingInfo("first");
+        var second = symbolTable.GetBindingInfo("second");
+        Assert.NotNull(first);
+        Assert.NotNull(second);
+        Assert.Contains(typeof(string), first.ReceiverCandidateClrTypes);
+        Assert.Contains(
+            typeof(JavaScriptRuntime.Array),
+            first.ReceiverCandidateClrTypes);
+        Assert.Contains(typeof(string), second.ReceiverCandidateClrTypes);
+        Assert.Contains(
+            typeof(JavaScriptRuntime.Array),
+            second.ReceiverCandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_SeedDirectClosureCaptureAfterProvenWrite()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            let value;
+            const read = () => value.trim();
+            value = 'ready';
+            read();
+        ");
+
+        var value = symbolTable.GetBindingInfo("value");
+        var readScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parent?.Kind == ScopeKind.Global);
+        Assert.NotNull(value);
+        Assert.NotNull(readScope);
+
+        var capturedSummary =
+            readScope!.ReceiverCapturedEntryTypeSummaries[value!];
+        Assert.False(capturedSummary.IncludesUnknown);
+        Assert.False(capturedSummary.IncludesNonCandidate);
+        Assert.Equal(
+            [typeof(string)],
+            capturedSummary.CandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_PreserveUncertainDirectCallInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            const identity = value => value;
+            identity('text');
+            identity(1);
+            identity(getValue());
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+        Assert.NotNull(identityScope);
+
+        var parameterSummary =
+            identityScope!.ReceiverParameterTypeSummaries[0];
+        Assert.True(parameterSummary.IncludesUnknown);
+        Assert.True(parameterSummary.IncludesNonCandidate);
+        Assert.Equal(
+            [typeof(string)],
+            parameterSummary.CandidateClrTypes);
+        Assert.Equal(
+            parameterSummary,
+            identityScope.ReceiverReturnTypeSummary);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotSeedUnprovenOrEscapingClosureCapture()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            let value;
+            const read = () => value.trim();
+            consume(read);
+            value = 'ready';
+            read();
+        ");
+
+        var readScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parent?.Kind == ScopeKind.Global);
+        Assert.NotNull(readScope);
+        Assert.Empty(readScope!.ReceiverCapturedEntryTypeSummaries);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_KeepUnprovenClosureEntryUnknown()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            let value;
+            const read = () => value.trim();
+            value = [];
+            value = 'ready';
+            0;
+            read();
+        ");
+
+        var value = symbolTable.GetBindingInfo("value");
+        var readScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parent?.Kind == ScopeKind.Global);
+        Assert.NotNull(value);
+        Assert.NotNull(readScope);
+
+        Assert.False(
+            readScope!.ReceiverCapturedEntryTypeSummaries.TryGetValue(
+                value!,
+                out var summary)
+            && summary.HasCandidates);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateEscapingCallableArguments()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            const identity = value => value;
+            consume(identity);
+            identity('text');
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+        Assert.NotNull(identityScope);
+        Assert.Empty(identityScope!.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateExportedCallableInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            export const identity = value => value;
+            identity('text');
+        ");
+
+        var identity = symbolTable.GetBindingInfo("identity");
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+
+        Assert.NotNull(identity);
+        Assert.NotNull(identityScope);
+        Assert.NotNull(identity!.CallableMaterialization);
+        Assert.NotEqual(
+            CallableMaterializationKind.DirectOnly,
+            identity.CallableMaterialization!.Kind);
+        Assert.True(
+            identity.CallableMaterialization.Reasons.HasFlag(
+                CallableMaterializationReason.Export));
+        Assert.Empty(identityScope!.StableParameterClrTypes);
+        Assert.Empty(identityScope.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateNamedExportCallableInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            const identity = value => value;
+            const local = number => number;
+            identity('text');
+            local(1);
+            export { identity as local };
+        ");
+
+        var identity = symbolTable.GetBindingInfo("identity");
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+        var localScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("number"));
+
+        Assert.NotNull(identity);
+        Assert.NotNull(identityScope);
+        Assert.NotNull(localScope);
+        Assert.NotNull(identity!.CallableMaterialization);
+        Assert.NotEqual(
+            CallableMaterializationKind.DirectOnly,
+            identity.CallableMaterialization!.Kind);
+        Assert.True(
+            identity.CallableMaterialization.Reasons.HasFlag(
+                CallableMaterializationReason.Export));
+        Assert.Empty(identityScope!.StableParameterClrTypes);
+        Assert.Empty(identityScope.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+        AssertStableParameterType(
+            localScope!,
+            0,
+            "number",
+            typeof(double));
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_PreservePrivateCallableInsideExport()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            export function outer() {
+                const identity = value => value;
+                identity('text');
+            }
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+
+        Assert.NotNull(identityScope);
+        AssertStableParameterType(
+            identityScope!,
+            0,
+            "value",
+            typeof(string));
+        Assert.True(
+            identityScope.ReceiverParameterTypeSummaries.ContainsKey(0));
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DoNotPropagateExportedClassMethodInputs()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            export class Box {
+                identity(value) {
+                    return value;
+                }
+            }
+            const box = new Box();
+            box.identity('text');
+        ");
+
+        var identityScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.Kind == ScopeKind.Function
+                && scope.Parameters.Contains("value"));
+
+        Assert.NotNull(identityScope);
+        Assert.Empty(identityScope!.StableParameterClrTypes);
+        Assert.Empty(identityScope.ReceiverParameterTypeSummaries);
+        Assert.True(identityScope.ReceiverReturnTypeSummary.IsEmpty);
+    }
+
     [Theory]
     [InlineData(typeof(double), "42", "testVar++")]
     [InlineData(typeof(double), "42", "++testVar")]
@@ -1229,6 +1581,21 @@ public class SymbolTableTypeInferenceTests
         Assert.NotNull(tmpBinding);
         Assert.True(tmpBinding!.IsStableType);
         Assert.Equal(typeof(JavaScriptRuntime.Array), tmpBinding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_DromaeoObjectString_StrIncludesString()
+    {
+        const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_String.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var symbolTable = BuildSymbolTable(reader.ReadToEnd());
+
+        var str = symbolTable.GetBindingInfo("str");
+        Assert.NotNull(str);
+        Assert.Contains(typeof(string), str.ReceiverCandidateClrTypes);
     }
 
     [Fact]

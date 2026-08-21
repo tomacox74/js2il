@@ -162,6 +162,77 @@ public sealed class IntrinsicPrototypeEpochTests
     }
 
     [Fact]
+    public void ArrayAndTypedArrayEpochsTrackTheirPrototypeChains()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                Assert.Equal(
+                    0,
+                    IntrinsicPrototypeEpochs.Read(
+                        IntrinsicPrototypeFamily.Array));
+                Assert.Equal(
+                    0,
+                    IntrinsicPrototypeEpochs.Read(
+                        IntrinsicPrototypeFamily.TypedArray));
+
+                AssertAdvances(
+                    IntrinsicPrototypeFamily.Array,
+                    () => ObjectRuntime.SetProperty(
+                        JavaScriptRuntime.Array.Prototype,
+                        "push",
+                        new EpochFunction()));
+                Assert.Equal(
+                    0,
+                    IntrinsicPrototypeEpochs.Read(
+                        IntrinsicPrototypeFamily.TypedArray));
+
+                AssertAdvances(
+                    IntrinsicPrototypeFamily.TypedArray,
+                    () => ObjectRuntime.SetProperty(
+                        RuntimeIntrinsics.Current
+                            .TypedArrayPrototype,
+                        "includes",
+                        new EpochFunction()));
+                AssertAdvances(
+                    IntrinsicPrototypeFamily.TypedArray,
+                    () => ObjectRuntime.SetProperty(
+                        RuntimeIntrinsics.Current
+                            .Int32ArrayPrototype,
+                        "concreteMutation",
+                        true));
+            });
+    }
+
+    [Fact]
+    public void ObjectPrototypeMutationInvalidatesEveryGuardedFamily()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                var before = Enum.GetValues<
+                        IntrinsicPrototypeFamily>()
+                    .ToDictionary(
+                        static family => family,
+                        IntrinsicPrototypeEpochs.Read);
+
+                ObjectRuntime.SetProperty(
+                    GlobalThis.ObjectPrototypeValue,
+                    "sharedMutation",
+                    true);
+
+                foreach (var family in before.Keys)
+                {
+                    Assert.True(
+                        IntrinsicPrototypeEpochs.Read(family)
+                        > before[family]);
+                }
+            });
+    }
+
+    [Fact]
     public void EpochReadAndValidationAllocateNothing()
     {
         WithRealm(
@@ -231,23 +302,219 @@ public sealed class IntrinsicPrototypeEpochTests
             });
     }
 
-    private static void AssertAdvances(Action mutation)
+    [Fact]
+    public void StringObjectUnwrapRequiresDefaultUnshadowedReceiver()
     {
-        var before = IntrinsicPrototypeEpochs.Read(
-            IntrinsicPrototypeFamily.String);
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                var receiver = JsString.Construct(
+                    [" value "],
+                    newTarget: null);
+
+                Assert.Equal(
+                    " value ",
+                    IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            receiver,
+                            "trim"));
+
+                ObjectRuntime.SetProperty(
+                    receiver,
+                    "trim",
+                    new EpochFunction());
+                Assert.Null(
+                    IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            receiver,
+                            "trim"));
+
+                var descriptorReceiver = JsString.Construct(
+                    ["descriptor"],
+                    newTarget: null);
+                JavaScriptRuntime.Object.defineProperty(
+                    descriptorReceiver,
+                    "trim",
+                    DataDescriptor(
+                        new EpochFunction(),
+                        enumerable: false));
+                Assert.Null(
+                    IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            descriptorReceiver,
+                            "trim"));
+
+                var customPrototypeReceiver = JsString.Construct(
+                    ["custom"],
+                    newTarget: null);
+                JavaScriptRuntime.Object.setPrototypeOf(
+                    customPrototypeReceiver,
+                    new JsObject());
+                Assert.Null(
+                    IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            customPrototypeReceiver,
+                            "trim"));
+            });
+    }
+
+    [Fact]
+    public void StringObjectUnwrapRejectsReceiverFromAnotherRealm()
+    {
+        var firstServices = RuntimeServices.BuildServiceProvider();
+        var secondServices = RuntimeServices.BuildServiceProvider();
+        var firstContext =
+            RuntimeExecutionContext.GetOrCreate(firstServices);
+        var secondContext =
+            RuntimeExecutionContext.GetOrCreate(secondServices);
+        object receiver;
+
+        try
+        {
+            using (firstContext.EnterAsRoot())
+            {
+                _ = GlobalThis.globalThis;
+                receiver = JsString.Construct(
+                    ["first"],
+                    newTarget: null);
+            }
+
+            using (secondContext.EnterAsRoot())
+            {
+                _ = GlobalThis.globalThis;
+                Assert.Null(
+                    IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            receiver,
+                            "trim"));
+            }
+        }
+        finally
+        {
+            firstServices.OwningRealm!.Agent.Cluster.Dispose();
+            secondServices.OwningRealm!.Agent.Cluster.Dispose();
+        }
+    }
+
+    [Fact]
+    public void StringObjectUnwrapAllocatesNothing()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                var receiver = JsString.Construct(
+                    ["value"],
+                    newTarget: null);
+                string? result = null;
+                for (var index = 0; index < 32; index++)
+                {
+                    result = IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            receiver,
+                            "trim");
+                }
+
+                var before =
+                    GC.GetAllocatedBytesForCurrentThread();
+                for (var index = 0; index < 10_000; index++)
+                {
+                    result = IntrinsicPrototypeEpochs
+                        .TryUnwrapStringObjectReceiver(
+                            receiver,
+                            "trim");
+                }
+                var allocated =
+                    GC.GetAllocatedBytesForCurrentThread() - before;
+
+                GC.KeepAlive(result);
+                Assert.Equal(0, allocated);
+            });
+    }
+
+    [Fact]
+    public void GuardedStringElementHelperPreservesFallbackSemantics()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+
+                Assert.Equal(
+                    "b",
+                    ObjectRuntime.GetStringElementWithFallback(
+                        "abc",
+                        1d));
+                var receiver = new JsObject();
+                ObjectRuntime.SetProperty(
+                    receiver,
+                    "1",
+                    "fallback-index");
+
+                Assert.Equal(
+                    "fallback-index",
+                    ObjectRuntime.GetStringElementWithFallback(
+                        receiver,
+                        1d));
+            });
+    }
+
+    [Fact]
+    public void GuardedStringElementFastPathAllocatesNothing()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                object? result = null;
+                for (var index = 0; index < 32; index++)
+                {
+                    result =
+                        ObjectRuntime.GetStringElementWithFallback(
+                            "value",
+                            1d);
+                }
+
+                var before =
+                    GC.GetAllocatedBytesForCurrentThread();
+                for (var index = 0; index < 10_000; index++)
+                {
+                    result =
+                        ObjectRuntime.GetStringElementWithFallback(
+                            "value",
+                            1d);
+                }
+                var allocated =
+                    GC.GetAllocatedBytesForCurrentThread() - before;
+
+                GC.KeepAlive(result);
+                Assert.Equal(0, allocated);
+            });
+    }
+
+    private static void AssertAdvances(Action mutation)
+        => AssertAdvances(
+            IntrinsicPrototypeFamily.String,
+            mutation);
+
+    private static void AssertAdvances(
+        IntrinsicPrototypeFamily family,
+        Action mutation)
+    {
+        var before = IntrinsicPrototypeEpochs.Read(family);
 
         mutation();
 
-        var after = IntrinsicPrototypeEpochs.Read(
-            IntrinsicPrototypeFamily.String);
+        var after = IntrinsicPrototypeEpochs.Read(family);
         Assert.True(after > before);
         Assert.False(
             IntrinsicPrototypeEpochs.IsCurrent(
-                IntrinsicPrototypeFamily.String,
+                family,
                 before));
         Assert.False(
             IntrinsicPrototypeEpochs.IsPristine(
-                IntrinsicPrototypeFamily.String));
+                family));
     }
 
     private static JsObject DataDescriptor(

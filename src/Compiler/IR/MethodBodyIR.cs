@@ -1,4 +1,5 @@
 using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 
 namespace Jroc.IR;
 
@@ -109,4 +110,25 @@ public sealed class MethodBodyIR
     /// This enables optimizations like inlining LIRConvertToObject for const variables.
     /// </summary>
     public HashSet<int> SingleAssignmentSlots { get; } = new();
+
+    /// <summary>
+    /// Flow-sensitive receiver facts for the final LIR instruction sequence.
+    /// Populated after all normalization and variable-slot coalescing passes.
+    /// </summary>
+    internal ReceiverTypeFlowFacts? ReceiverTypeFlowFacts { get; set; }
+
+    /// <summary>
+    /// Natural-loop nesting depth for the final LIR instruction sequence.
+    /// Computed lazily when a guarded receiver specialization is eligible.
+    /// </summary>
+    internal LIRLoopNestingFacts? LoopNestingFacts { get; set; }
+
+    internal Dictionary<int, ReceiverTypeSummary>
+        ReceiverParameterTypeSummaries { get; } = new();
+
+    internal Dictionary<BindingInfo, ReceiverTypeSummary>
+        ReceiverCapturedEntryTypeSummaries { get; } = new();
+
+    internal Dictionary<int, ReceiverTypeSummary>
+        ReceiverTempTypeSummaries { get; } = new();
 }

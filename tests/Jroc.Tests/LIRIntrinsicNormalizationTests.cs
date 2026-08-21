@@ -1,5 +1,7 @@
+using Acornima;
 using Jroc.IR;
 using Jroc.Services;
+using Jroc.SymbolTables;
 using Xunit;
 
 namespace Jroc.Tests;
@@ -113,6 +115,45 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_DoesNotRewrite_StringCandidateFieldMemberCall_WithKnownNonStringType()
+    {
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript("var value;", "candidate.js");
+        var scope = new Jroc.SymbolTables.Scope(
+            "GlobalScope",
+            ScopeKind.Global,
+            parent: null,
+            program);
+        var binding = new BindingInfo("value", BindingKind.Var, scope, program)
+        {
+            ClrType = typeof(JavaScriptRuntime.String)
+        };
+        binding.ReceiverCandidateClrTypes.Add(typeof(string));
+
+        var body = new MethodBodyIR();
+        var scopeInstance = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRLoadScopeField(
+            scopeInstance,
+            binding,
+            new FieldId("GlobalScope", "value"),
+            new ScopeId("GlobalScope"),
+            receiver));
+        body.Instructions.Add(new LIRCallMember0(receiver, "trim", result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        Assert.IsType<LIRCallMember0>(body.Instructions[1]);
+    }
+
+    [Fact]
     public void Normalize_DoesNotAddStringGuard_ForKnownNonStringReceiver()
     {
         var body = new MethodBodyIR();
@@ -129,6 +170,399 @@ public sealed class LIRIntrinsicNormalizationTests
         LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
 
         Assert.IsType<LIRCallMember0>(body.Instructions[0]);
+    }
+
+    [Fact]
+    public void Normalize_KeepsProvenArrayMemberCallDirect()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(JavaScriptRuntime.Array)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(
+            new LIRCallMember1(
+                receiver,
+                "push",
+                argument,
+                result));
+
+        LIRIntrinsicNormalization.Normalize(
+            body,
+            new ClassRegistry());
+
+        var direct =
+            Assert.IsType<LIRCallInstanceMethod>(
+                body.Instructions[0]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Array),
+            direct.ReceiverClrType);
+        Assert.Equal(
+            typeof(double),
+            body.TempStorages[result.Index].ClrType);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_ConsumesArrayFlowCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.Array),
+            "Construct",
+            [],
+            receiver));
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(
+            new LIRCallMember0(receiver, "pop", result));
+        body.Instructions.Add(new LIRBranch(100));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        LIRReceiverSpecialization.Normalize(
+            body,
+            diagnostics);
+
+        var guarded =
+            Assert.IsType<LIRCallGuardedIntrinsicMember>(
+                body.Instructions[2]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Array),
+            guarded.ReceiverClrType);
+        Assert.True(guarded.ReceiverIsProvenType);
+        Assert.Contains(
+            diagnostics.Events,
+            item => item.Kind
+                    == ReceiverTypeFlowDiagnosticKind.Specialization
+                && item.Message.Contains(
+                    "loop-depth=1 type-proven=true action=guarded",
+                    StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_ConsumesTypedArrayFlowCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            ReceiverTypeSummary.ForCandidate(
+                typeof(JavaScriptRuntime.Int32Array));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Int32Array",
+            "Construct",
+            [],
+            receiver));
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(
+            new LIRCallMember1(
+                receiver,
+                "includes",
+                argument,
+                result));
+        body.Instructions.Add(new LIRBranch(100));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallGuardedIntrinsicMember>(
+                body.Instructions[2]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Int32Array),
+            guarded.ReceiverClrType);
+        Assert.Equal(
+            JavaScriptRuntime.IntrinsicPrototypeFamily.TypedArray,
+            guarded.PrototypeFamily);
+        Assert.True(guarded.ReceiverIsProvenType);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_KeepsTypeGuardForUncertainArrayCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(JavaScriptRuntime.Array)]);
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Unknown",
+            "Call",
+            [],
+            receiver));
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(
+            new LIRCallMember1(
+                receiver,
+                "push",
+                argument,
+                result));
+        body.Instructions.Add(new LIRBranch(100));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallGuardedIntrinsicMember>(
+                body.Instructions[2]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Array),
+            guarded.ReceiverClrType);
+        Assert.False(guarded.ReceiverIsProvenType);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_KeepsColdCandidateCallGeneric()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.Array),
+            "Construct",
+            [],
+            receiver));
+        body.Instructions.Add(
+            new LIRCallMember0(receiver, "pop", result));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        LIRReceiverSpecialization.Normalize(
+            body,
+            diagnostics);
+
+        Assert.IsType<LIRCallMember0>(body.Instructions[1]);
+        Assert.Equal(
+            0,
+            Assert.IsType<LIRLoopNestingFacts>(
+                    body.LoopNestingFacts)
+                .GetDepth(1));
+        Assert.Contains(
+            diagnostics.Events,
+            item => item.Kind
+                    == ReceiverTypeFlowDiagnosticKind.Specialization
+                && item.Message.Contains(
+                    "loop-depth=0 type-proven=true "
+                    + "action=retained-generic(cold)",
+                    StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_RewritesHotStringElementCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var index = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(string)]);
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(
+            new LIRGetItem(receiver, index, result));
+        body.Instructions.Add(new LIRBranch(100));
+
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        LIRReceiverSpecialization.Normalize(
+            body,
+            diagnostics);
+
+        var call = Assert.IsType<LIRCallIntrinsicStatic>(
+            body.Instructions[1]);
+        Assert.Equal(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            call.IntrinsicName);
+        Assert.Equal(
+            nameof(JavaScriptRuntime.ObjectRuntime
+                .GetStringElementWithFallback),
+            call.MethodName);
+        Assert.Equal([receiver, index], call.Arguments);
+        Assert.Contains(
+            diagnostics.Events,
+            item => item.Kind
+                    == ReceiverTypeFlowDiagnosticKind.Specialization
+                && item.Message.Contains(
+                    "member=[index]",
+                    StringComparison.Ordinal)
+                && item.Message.Contains(
+                    "loop-depth=1",
+                    StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_KeepsColdStringElementCandidateGeneric()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var index = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(string)]);
+        body.Instructions.Add(
+            new LIRGetItem(receiver, index, result));
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        Assert.IsType<LIRGetItem>(
+            Assert.Single(body.Instructions));
+    }
+
+    [Fact]
+    public void LoopNestingAnalysis_ComputesNestedNaturalLoopDepth()
+    {
+        var body = new MethodBodyIR();
+        var condition = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(bool)));
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(new LIRLabel(200));
+        body.Instructions.Add(
+            new LIRCallMember0(receiver, "pop", result));
+        body.Instructions.Add(
+            new LIRBranchIfFalse(condition, 300));
+        body.Instructions.Add(new LIRBranch(200));
+        body.Instructions.Add(new LIRLabel(300));
+        body.Instructions.Add(
+            new LIRBranchIfFalse(condition, 400));
+        body.Instructions.Add(new LIRBranch(100));
+        body.Instructions.Add(new LIRLabel(400));
+
+        var facts = LIRLoopNestingAnalysis.Analyze(body);
+
+        Assert.Equal(2, facts.GetDepth(2));
+        Assert.Equal(1, facts.GetDepth(5));
+        Assert.Equal(0, facts.GetDepth(8));
+    }
+
+    [Fact]
+    public void LoopNestingAnalysis_MergesMultipleLatchesForOneHeader()
+    {
+        var body = new MethodBodyIR();
+        var condition = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(bool)));
+
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(
+            new LIRBranchIfFalse(condition, 200));
+        body.Instructions.Add(new LIRBranch(100));
+        body.Instructions.Add(new LIRLabel(200));
+        body.Instructions.Add(
+            new LIRBranchIfFalse(condition, 300));
+        body.Instructions.Add(new LIRBranch(100));
+        body.Instructions.Add(new LIRLabel(300));
+
+        var facts = LIRLoopNestingAnalysis.Analyze(body);
+
+        Assert.Equal(1, facts.GetDepth(0));
+        Assert.Equal(1, facts.GetDepth(2));
+        Assert.Equal(1, facts.GetDepth(5));
+        Assert.Equal(0, facts.GetDepth(6));
     }
 
     [Fact]

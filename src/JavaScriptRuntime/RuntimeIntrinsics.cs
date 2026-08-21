@@ -139,7 +139,7 @@ internal enum RuntimeIntrinsicSlot
 internal sealed class RuntimeIntrinsics
 {
     private const int MaxWaitChainLength = 64;
-    private const int PrototypeFamilyCount = 1;
+    private const int PrototypeFamilyCount = 3;
 
     private static readonly TimeSpan WaitSlice = TimeSpan.FromMilliseconds(20);
 
@@ -209,21 +209,57 @@ internal sealed class RuntimeIntrinsics
 
     private void NotifyOwnedPrototypeMutation(object target)
     {
+        var objectPrototype = Volatile.Read(
+            ref _published[
+                (int)RuntimeIntrinsicSlot.ObjectPrototype]);
         if (ReferenceEquals(
                 target,
                 Volatile.Read(
                     ref _published[
                         (int)RuntimeIntrinsicSlot.StringPrototype]))
-            || ReferenceEquals(
-                target,
-                Volatile.Read(
-                    ref _published[
-                        (int)RuntimeIntrinsicSlot.ObjectPrototype])))
+            || ReferenceEquals(target, objectPrototype))
         {
             Interlocked.Increment(
                 ref _prototypeMutationEpochs[
                     (int)IntrinsicPrototypeFamily.String]);
         }
+
+        if (ReferenceEquals(
+                target,
+                Volatile.Read(
+                    ref _published[
+                        (int)RuntimeIntrinsicSlot.ArrayPrototype]))
+            || ReferenceEquals(target, objectPrototype))
+        {
+            Interlocked.Increment(
+                ref _prototypeMutationEpochs[
+                    (int)IntrinsicPrototypeFamily.Array]);
+        }
+
+        if (ReferenceEquals(target, objectPrototype)
+            || IsTypedArrayPrototype(target))
+        {
+            Interlocked.Increment(
+                ref _prototypeMutationEpochs[
+                    (int)IntrinsicPrototypeFamily.TypedArray]);
+        }
+    }
+
+    private bool IsTypedArrayPrototype(object target)
+    {
+        for (var slot = RuntimeIntrinsicSlot.TypedArrayPrototype;
+             slot <= RuntimeIntrinsicSlot.Uint8ClampedArrayPrototype;
+             slot++)
+        {
+            if (ReferenceEquals(
+                    target,
+                    Volatile.Read(ref _published[(int)slot])))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

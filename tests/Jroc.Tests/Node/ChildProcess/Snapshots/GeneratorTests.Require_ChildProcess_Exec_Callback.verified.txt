@@ -132,7 +132,7 @@
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
 			// Header size: 12
-			// Code size: 197 (0xc5)
+			// Code size: 215 (0xd7)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -163,57 +163,64 @@
 			IL_0033: stloc.3
 			IL_0034: ldc.i4.0
 			IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_003a: brfalse IL_0057
+			IL_003a: brfalse IL_0069
 
 			IL_003f: ldloc.3
 			IL_0040: isinst [System.Runtime]System.String
 			IL_0045: dup
-			IL_0046: brfalse IL_0056
+			IL_0046: brtrue IL_005d
 
-			IL_004b: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-			IL_0050: stloc.3
-			IL_0051: br IL_0063
+			IL_004b: pop
+			IL_004c: ldloc.3
+			IL_004d: ldstr "trim"
+			IL_0052: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+			IL_0057: dup
+			IL_0058: brfalse IL_0068
 
-			IL_0056: pop
-
-			IL_0057: ldloc.3
-			IL_0058: ldstr "trim"
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_005d: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
 			IL_0062: stloc.3
+			IL_0063: br IL_0075
 
-			IL_0063: ldloc.0
-			IL_0064: ldstr "stdout:"
+			IL_0068: pop
+
 			IL_0069: ldloc.3
-			IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_006f: pop
-			IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0075: stloc.0
-			IL_0076: ldarg.s stderr
-			IL_0078: ldstr "length"
-			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0082: stloc.3
-			IL_0083: ldloc.0
-			IL_0084: ldstr "stderr length:"
-			IL_0089: ldloc.3
-			IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_008f: pop
-			IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0095: stloc.0
-			IL_0096: ldarg.0
-			IL_0097: ldfld object Modules.Require_ChildProcess_Exec_Callback/Scope::child
-			IL_009c: ldstr "Cannot access 'child' before initialization"
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ab: ldstr "kill"
-			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00b5: stloc.3
-			IL_00b6: ldloc.0
-			IL_00b7: ldstr "kill after callback:"
-			IL_00bc: ldloc.3
-			IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00c2: pop
-			IL_00c3: ldnull
-			IL_00c4: ret
+			IL_006a: ldstr "trim"
+			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0074: stloc.3
+
+			IL_0075: ldloc.0
+			IL_0076: ldstr "stdout:"
+			IL_007b: ldloc.3
+			IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0081: pop
+			IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0087: stloc.0
+			IL_0088: ldarg.s stderr
+			IL_008a: ldstr "length"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0094: stloc.3
+			IL_0095: ldloc.0
+			IL_0096: ldstr "stderr length:"
+			IL_009b: ldloc.3
+			IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00a1: pop
+			IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a7: stloc.0
+			IL_00a8: ldarg.0
+			IL_00a9: ldfld object Modules.Require_ChildProcess_Exec_Callback/Scope::child
+			IL_00ae: ldstr "Cannot access 'child' before initialization"
+			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00bd: ldstr "kill"
+			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_00c7: stloc.3
+			IL_00c8: ldloc.0
+			IL_00c9: ldstr "kill after callback:"
+			IL_00ce: ldloc.3
+			IL_00cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00d4: pop
+			IL_00d5: ldnull
+			IL_00d6: ret
 		} // end of method ArrowFunction_L9C42::__js_call__
 
 	} // end of class ArrowFunction_L9C42

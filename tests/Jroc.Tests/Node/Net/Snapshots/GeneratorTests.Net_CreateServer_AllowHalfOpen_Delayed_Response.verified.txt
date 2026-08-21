@@ -350,7 +350,7 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 162 (0xa2)
+					// Code size: 180 (0xb4)
 					.maxstack 8
 					.locals init (
 						[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -393,35 +393,42 @@
 					IL_0057: stloc.3
 					IL_0058: ldc.i4.0
 					IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-					IL_005e: brfalse IL_007b
+					IL_005e: brfalse IL_008d
 
 					IL_0063: ldloc.3
 					IL_0064: isinst [System.Runtime]System.String
 					IL_0069: dup
-					IL_006a: brfalse IL_007a
+					IL_006a: brtrue IL_0081
 
-					IL_006f: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
-					IL_0074: stloc.3
-					IL_0075: br IL_0087
+					IL_006f: pop
+					IL_0070: ldloc.3
+					IL_0071: ldstr "toUpperCase"
+					IL_0076: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+					IL_007b: dup
+					IL_007c: brfalse IL_008c
 
-					IL_007a: pop
-
-					IL_007b: ldloc.3
-					IL_007c: ldstr "toUpperCase"
-					IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+					IL_0081: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
 					IL_0086: stloc.3
+					IL_0087: br IL_0099
 
-					IL_0087: ldstr "delayed:"
-					IL_008c: ldloc.3
-					IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_0092: stloc.2
-					IL_0093: ldloc.1
-					IL_0094: ldstr "end"
-					IL_0099: ldloc.2
-					IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_009f: pop
-					IL_00a0: ldnull
-					IL_00a1: ret
+					IL_008c: pop
+
+					IL_008d: ldloc.3
+					IL_008e: ldstr "toUpperCase"
+					IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+					IL_0098: stloc.3
+
+					IL_0099: ldstr "delayed:"
+					IL_009e: ldloc.3
+					IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_00a4: stloc.2
+					IL_00a5: ldloc.1
+					IL_00a6: ldstr "end"
+					IL_00ab: ldloc.2
+					IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+					IL_00b1: pop
+					IL_00b2: ldnull
+					IL_00b3: ret
 				} // end of method FunctionExpression_server::__js_call__
 
 			} // end of class FunctionExpression_server

@@ -40,6 +40,17 @@ namespace JavaScriptRuntime
                 || PropertyDescriptorStore.GetOwnLookup(target, key, out _) != PropertyDescriptorLookup.None;
         }
 
+        public static bool HasOwnIntrinsicMemberOverride(
+            object target,
+            string key)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+            ArgumentNullException.ThrowIfNull(key);
+
+            return target is JsObject jsObject
+                && jsObject.HasOwnPropertyValue(key);
+        }
+
         internal static bool TrySetOwnValue(object target, string key, object? value)
         {
             if (target is JsObject jsObject)
@@ -881,6 +892,23 @@ namespace JavaScriptRuntime
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static object GetStringElementWithFallback(
+            object receiver,
+            double index)
+        {
+            if (receiver is string value
+                && TryGetCanonicalInt32Index(index, out var intIndex)
+                && (uint)intIndex < (uint)value.Length)
+            {
+                return JavaScriptRuntime.String.CharToStringFast(
+                    value[intIndex]);
+            }
+
+            return GetItem(receiver, index);
         }
 
         /// <summary>

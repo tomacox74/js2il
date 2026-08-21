@@ -194,6 +194,10 @@ namespace Jroc.Tests
                 // Assert
                 Assert.Equal(0, code);
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                Assert.DoesNotContain(
+                    "[ReceiverFlow]",
+                    stdout,
+                    StringComparison.Ordinal);
 
                 var baseName = Path.GetFileNameWithoutExtension(jsFile);
                 var dllPath = Path.Combine(outDir, baseName + ".dll");
@@ -216,7 +220,16 @@ namespace Jroc.Tests
             var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_test_" + Guid.NewGuid().ToString("n"));
             Directory.CreateDirectory(tempRoot);
             var jsFile = Path.Combine(tempRoot, "simple.js");
-            File.WriteAllText(jsFile, "\"use strict\";\nconsole.log('x is', 3);");
+            File.WriteAllText(
+                jsFile,
+                """
+                "use strict";
+                let receiver = true ? [] : { push(value) { return value; } };
+                for (let index = 0; index < 1; index++) {
+                    receiver.push(index);
+                }
+                console.log('x is', 3);
+                """);
             var outDir = Path.Combine(tempRoot, "out");
             var diagnosticFile = Path.Combine(tempRoot, "diagnostics.log");
 
@@ -228,11 +241,14 @@ namespace Jroc.Tests
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
                 Assert.Contains("Compilation succeeded", stdout, StringComparison.OrdinalIgnoreCase);
                 Assert.DoesNotContain("[TwoPhase]", stdout, StringComparison.OrdinalIgnoreCase);
+                Assert.DoesNotContain("[ReceiverFlow]", stdout, StringComparison.Ordinal);
 
                 Assert.True(File.Exists(diagnosticFile), $"Missing diagnostics file: {diagnosticFile}");
                 var diagnostics = File.ReadAllText(diagnosticFile);
                 Assert.Contains("[TwoPhase]", diagnostics, StringComparison.OrdinalIgnoreCase);
                 Assert.Contains("Build the symbol tables", diagnostics, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains("[ReceiverFlow]", diagnostics, StringComparison.Ordinal);
+                Assert.Contains("action=guarded", diagnostics, StringComparison.Ordinal);
             }
             finally
             {
@@ -279,6 +295,67 @@ namespace Jroc.Tests
             finally
             {
                 try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+            }
+        }
+
+        [Fact]
+        public void Convert_Verbose_ExplainsReceiverFlowDecisions()
+        {
+            var tempRoot = Path.Combine(
+                Path.GetTempPath(),
+                "jroc_cli_test_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "receiver-flow.js");
+            File.WriteAllText(
+                jsFile,
+                """
+                let useArray = true;
+                let receiver = useArray ? [] : {
+                    push(value) { return value; }
+                };
+                receiver.push(0);
+                for (let index = 0; index < 1; index++) {
+                    receiver.push(index);
+                }
+                """);
+            var outDir = Path.Combine(tempRoot, "out");
+
+            try
+            {
+                var (code, stdout, stderr) =
+                    RunOutOfProc(jsFile, "-o", outDir, "-v");
+
+                Assert.Equal(0, code);
+                Assert.True(
+                    string.IsNullOrWhiteSpace(stderr),
+                    $"Unexpected stderr: {stderr}");
+                Assert.Contains(
+                    "[ReceiverFlow] scope=receiver_flow",
+                    stdout,
+                    StringComparison.Ordinal);
+                Assert.Contains(
+                    "member=push",
+                    stdout,
+                    StringComparison.Ordinal);
+                Assert.Contains(
+                    "action=retained-generic(cold)",
+                    stdout,
+                    StringComparison.Ordinal);
+                Assert.Contains(
+                    "action=guarded",
+                    stdout,
+                    StringComparison.Ordinal);
+            }
+            finally
+            {
+                try
+                {
+                    Directory.Delete(tempRoot, recursive: true);
+                }
+                catch
+                {
+                    // Best-effort cleanup.
+                }
             }
         }
 

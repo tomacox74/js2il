@@ -175,7 +175,6 @@ internal static class LIRIntrinsicNormalization
             {
                 knownSpecializedReceiverClrTypes[requireObjectCoercible.Result.Index] = coercedReceiverType;
             }
-
             if (instruction is LIRGetLength getLength)
             {
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(getLength.Object.Index, out var receiverType))
@@ -569,6 +568,7 @@ internal static class LIRIntrinsicNormalization
         }
 
         FuseGetItemWithConvertToNumber(methodBody);
+
     }
 
     public static void NormalizeLateNumericMemberCalls(MethodBodyIR methodBody)
