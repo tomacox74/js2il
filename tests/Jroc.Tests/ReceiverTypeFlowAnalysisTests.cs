@@ -719,6 +719,56 @@ public sealed class ReceiverTypeFlowAnalysisTests
             ReceiverTypeFlowAnalysis.RequiresAnalysis(receiverBody));
     }
 
+    [Fact]
+    public void RequiresSpecializationAnalysis_SkipsCandidateFreeReceiver()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(
+            new LIRCallMember0(receiver, "pop", result));
+
+        Assert.False(
+            ReceiverTypeFlowAnalysis
+                .RequiresSpecializationAnalysis(body));
+    }
+
+    [Fact]
+    public void RequiresSpecializationAnalysis_FollowsCandidateProducer()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(
+            new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.Array),
+                "Construct",
+                [],
+                receiver));
+        body.Instructions.Add(
+            new LIRCallMember0(receiver, "pop", result));
+
+        Assert.True(
+            ReceiverTypeFlowAnalysis
+                .RequiresSpecializationAnalysis(body));
+    }
+
     private static TempVariable AddTemp(
         MethodBodyIR body,
         ValueStorage storage,

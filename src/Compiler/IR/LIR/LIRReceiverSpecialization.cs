@@ -317,6 +317,38 @@ internal static class LIRReceiverSpecialization
             } storage
             && storage.ClrType == typeof(double);
 
+    internal static bool TryGetPotentialReceiver(
+        MethodBodyIR methodBody,
+        LIRInstruction instruction,
+        out TempVariable receiver)
+    {
+        if (instruction is LIRGetItem getItem
+            && IsUnboxedDouble(methodBody, getItem.Index))
+        {
+            receiver = getItem.Object;
+            return true;
+        }
+
+        if (TryGetMemberCall(
+                instruction,
+                out receiver,
+                out var memberName,
+                out var arguments,
+                out _)
+            && (IsEligibleArrayMember(
+                    memberName,
+                    arguments.Count)
+                || IsEligibleTypedArrayMember(
+                    memberName,
+                    arguments.Count)))
+        {
+            return true;
+        }
+
+        receiver = default;
+        return false;
+    }
+
     private static void SetObjectResultStorage(
         MethodBodyIR methodBody,
         TempVariable result)

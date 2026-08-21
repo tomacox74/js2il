@@ -1143,12 +1143,17 @@ internal sealed class JsMethodCompiler
         var receiverDiagnostics = _diagnosticsEnabled
             ? new ReceiverTypeFlowDiagnosticTrace()
             : null;
-        if (ReceiverTypeFlowAnalysis.RequiresAnalysis(lirMethod!))
+        var requiresReceiverAnalysis = receiverDiagnostics != null
+            ? ReceiverTypeFlowAnalysis.RequiresAnalysis(lirMethod!)
+            : ReceiverTypeFlowAnalysis
+                .RequiresSpecializationAnalysis(lirMethod!);
+        if (requiresReceiverAnalysis)
         {
             lirMethod!.ReceiverTypeFlowFacts =
                 ReceiverTypeFlowAnalysis.Analyze(
                     lirMethod,
-                    receiverDiagnostics);
+                    receiverDiagnostics,
+                    specializationOnly: receiverDiagnostics == null);
         }
 
         LIRReceiverSpecialization.Normalize(

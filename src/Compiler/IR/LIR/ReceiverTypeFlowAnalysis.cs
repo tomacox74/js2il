@@ -82,25 +82,43 @@ internal static class ReceiverTypeFlowAnalysis
         foreach (var instruction in methodBody.Instructions)
         {
             if (TryGetReceiver(instruction, out var receiver)
-                && receiver.Index >= 0
-                && receiver.Index < methodBody.TempStorages.Count)
+                && IsUncertainReceiver(methodBody, receiver))
             {
-                var storage = methodBody.TempStorages[receiver.Index];
-                if (storage.Kind == ValueStorageKind.Unknown
-                    || storage.ClrType == null
-                    || storage.ClrType == typeof(object))
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
         return false;
     }
 
+    public static bool RequiresSpecializationAnalysis(
+        MethodBodyIR methodBody)
+    {
+        var receiverLocations = new HashSet<int>();
+
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (LIRReceiverSpecialization.TryGetPotentialReceiver(
+                    methodBody,
+                    instruction,
+                    out var receiver)
+                && IsUncertainReceiver(methodBody, receiver))
+            {
+                receiverLocations.Add(
+                    GetLocationKey(methodBody, receiver));
+            }
+        }
+
+        return receiverLocations.Count > 0
+            && HasCandidatePath(
+                methodBody,
+                receiverLocations);
+    }
+
     public static ReceiverTypeFlowFacts Analyze(
         MethodBodyIR methodBody,
-        ReceiverTypeFlowDiagnosticTrace? diagnostics = null)
+        ReceiverTypeFlowDiagnosticTrace? diagnostics = null,
+        bool specializationOnly = false)
     {
         var facts = new ReceiverTypeFlowFacts();
         if (methodBody.Instructions.Count == 0)
@@ -108,7 +126,14 @@ internal static class ReceiverTypeFlowAnalysis
             return facts;
         }
 
-        var slice = BuildAnalysisSlice(methodBody);
+        var slice = BuildAnalysisSlice(
+            methodBody,
+            specializationOnly);
+        if (!HasCandidateSource(methodBody, slice))
+        {
+            return facts;
+        }
+
         var controlFlowGraph = LIRControlFlowGraph.Build(methodBody);
         var blocks = controlFlowGraph.Blocks;
         var hasFinallyRegion = methodBody.ExceptionRegions.Any(
@@ -688,7 +713,9 @@ internal static class ReceiverTypeFlowAnalysis
            }
            && namespaceName.StartsWith("JavaScriptRuntime", StringComparison.Ordinal);
 
-    private static AnalysisSlice BuildAnalysisSlice(MethodBodyIR methodBody)
+    private static AnalysisSlice BuildAnalysisSlice(
+        MethodBodyIR methodBody,
+        bool specializationOnly)
     {
         var slice = new AnalysisSlice();
         var definitions = new Dictionary<int, List<LIRInstruction>>();
@@ -701,7 +728,12 @@ internal static class ReceiverTypeFlowAnalysis
 
         foreach (var instruction in methodBody.Instructions)
         {
-            if (TryGetReceiver(instruction, out var receiver))
+            if ((specializationOnly
+                    ? LIRReceiverSpecialization.TryGetPotentialReceiver(
+                        methodBody,
+                        instruction,
+                        out var receiver)
+                    : TryGetReceiver(instruction, out receiver)))
             {
                 AddTemp(receiver);
             }
@@ -835,12 +867,240 @@ internal static class ReceiverTypeFlowAnalysis
         }
     }
 
+    private static bool HasCandidateSource(
+        MethodBodyIR methodBody,
+        AnalysisSlice slice)
+    {
+        foreach (var binding in slice.Bindings)
+        {
+            if (binding.ReceiverCandidateClrTypes.Count > 0
+                || methodBody.ReceiverCapturedEntryTypeSummaries
+                    .TryGetValue(binding, out var summary)
+                && summary.CandidateClrTypes.Count > 0)
+            {
+                return true;
+            }
+        }
+
+        foreach (var parameter in slice.Parameters)
+        {
+            if (methodBody.ReceiverParameterTypeSummaries.TryGetValue(
+                    parameter,
+                    out var summary)
+                && summary.CandidateClrTypes.Count > 0)
+            {
+                return true;
+            }
+        }
+
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (!LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                || !slice.IsTempRelevant(methodBody, defined))
+            {
+                continue;
+            }
+
+            if (instruction is LIRConstString
+                    or LIRConvertToString
+                    or LIRConcatStrings
+                || instruction is LIRCallIntrinsicStatic
+                {
+                    IntrinsicName:
+                        nameof(JavaScriptRuntime.Array),
+                    MethodName: "Construct"
+                })
+            {
+                return true;
+            }
+        }
+
+        for (var index = 0;
+             index < methodBody.TempStorages.Count;
+             index++)
+        {
+            var temp = new TempVariable(index);
+            if (!slice.IsTempRelevant(methodBody, temp))
+            {
+                continue;
+            }
+
+            if (IsReceiverCandidateType(
+                    methodBody.TempStorages[index].ClrType)
+                || methodBody.ReceiverTempTypeSummaries.TryGetValue(
+                    index,
+                    out var summary)
+                && summary.CandidateClrTypes.Count > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasCandidatePath(
+        MethodBodyIR methodBody,
+        HashSet<int> locations)
+    {
+        var bindings = new HashSet<BindingInfo>();
+        var parameters = new HashSet<int>();
+        bool changed;
+
+        do
+        {
+            changed = false;
+            foreach (var instruction in methodBody.Instructions)
+            {
+                if (LIRInstructionInfo.TryGetDefinedTemp(
+                        instruction,
+                        out var defined)
+                    && locations.Contains(
+                        GetLocationKey(methodBody, defined)))
+                {
+                    if (IsCandidateDefinition(
+                            methodBody,
+                            instruction,
+                            defined))
+                    {
+                        return true;
+                    }
+
+                    switch (instruction)
+                    {
+                        case LIRCopyTemp copy:
+                            changed |= Add(copy.Source);
+                            break;
+                        case LIRConvertToObject convert:
+                            changed |= Add(convert.Source);
+                            break;
+                        case LIRCallIntrinsicStatic
+                        {
+                            IntrinsicName:
+                                nameof(JavaScriptRuntime.ObjectRuntime),
+                            MethodName:
+                                nameof(JavaScriptRuntime.ObjectRuntime
+                                    .RequireObjectCoercible),
+                            Arguments.Count: 1
+                        } requireObjectCoercible:
+                            changed |= Add(
+                                requireObjectCoercible.Arguments[0]);
+                            break;
+                        case LIRLoadScopeField load:
+                            changed |= bindings.Add(load.Binding);
+                            break;
+                        case LIRLoadLeafScopeField load:
+                            changed |= bindings.Add(load.Binding);
+                            break;
+                        case LIRLoadParentScopeField load:
+                            changed |= bindings.Add(load.Binding);
+                            break;
+                        case LIRLoadParameter load:
+                            changed |= parameters.Add(
+                                load.ParameterIndex);
+                            break;
+                    }
+                }
+
+                switch (instruction)
+                {
+                    case LIRStoreScopeField store
+                        when bindings.Contains(store.Binding):
+                        changed |= Add(store.Value);
+                        break;
+                    case LIRStoreLeafScopeField store
+                        when bindings.Contains(store.Binding):
+                        changed |= Add(store.Value);
+                        break;
+                    case LIRStoreParentScopeField store
+                        when bindings.Contains(store.Binding):
+                        changed |= Add(store.Value);
+                        break;
+                    case LIRStoreParameter store
+                        when parameters.Contains(
+                            store.ParameterIndex):
+                        changed |= Add(store.Value);
+                        break;
+                }
+            }
+
+            foreach (var binding in bindings)
+            {
+                if (binding.ReceiverCandidateClrTypes.Count > 0
+                    || methodBody
+                        .ReceiverCapturedEntryTypeSummaries
+                        .TryGetValue(binding, out var summary)
+                    && summary.CandidateClrTypes.Count > 0)
+                {
+                    return true;
+                }
+            }
+
+            foreach (var parameter in parameters)
+            {
+                if (methodBody.ReceiverParameterTypeSummaries
+                    .TryGetValue(parameter, out var summary)
+                    && summary.CandidateClrTypes.Count > 0)
+                {
+                    return true;
+                }
+            }
+        }
+        while (changed);
+
+        return false;
+
+        bool Add(TempVariable temp)
+            => locations.Add(
+                GetLocationKey(methodBody, temp));
+    }
+
+    private static bool IsCandidateDefinition(
+        MethodBodyIR methodBody,
+        LIRInstruction instruction,
+        TempVariable defined)
+        => instruction is LIRConstString
+                or LIRConvertToString
+                or LIRConcatStrings
+            || instruction is LIRCallIntrinsicStatic
+            {
+                IntrinsicName:
+                    nameof(JavaScriptRuntime.Array),
+                MethodName: "Construct"
+            }
+            || defined.Index >= 0
+            && defined.Index < methodBody.TempStorages.Count
+            && IsReceiverCandidateType(
+                methodBody.TempStorages[defined.Index].ClrType)
+            || methodBody.ReceiverTempTypeSummaries.TryGetValue(
+                defined.Index,
+                out var summary)
+            && summary.CandidateClrTypes.Count > 0;
+
     private static int GetLocationKey(
         MethodBodyIR methodBody,
         TempVariable temp)
     {
         var slot = AnalysisSlice.GetVariableSlot(methodBody, temp);
         return slot >= 0 ? -slot - 1 : temp.Index;
+    }
+
+    private static bool IsUncertainReceiver(
+        MethodBodyIR methodBody,
+        TempVariable receiver)
+    {
+        if (receiver.Index < 0
+            || receiver.Index >= methodBody.TempStorages.Count)
+        {
+            return false;
+        }
+
+        var storage = methodBody.TempStorages[receiver.Index];
+        return storage.Kind == ValueStorageKind.Unknown
+            || storage.ClrType == null
+            || storage.ClrType == typeof(object);
     }
 
     private static void AddToList<TKey, TValue>(
