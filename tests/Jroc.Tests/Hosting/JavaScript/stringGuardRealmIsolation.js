@@ -1,7 +1,12 @@
 "use strict";
 
 exports.callTrim = function (value) {
-    return value.trim();
+    let result;
+    for (let index = 0; index < 3; index++) {
+        result = value.trim();
+        result = value.trim();
+    }
+    return result;
 };
 
 exports.createString = function (value) {

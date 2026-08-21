@@ -244,7 +244,7 @@ public class ModuleLoadTests
     }
 
     [Fact]
-    public void JsEngine_GuardedStringIntrinsicsRespectRealmPrototypeIsolation()
+    public void JsEngine_HoistedStringIntrinsicsRespectRealmPrototypeIsolation()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource(
             "stringGuardRealmIsolation",
