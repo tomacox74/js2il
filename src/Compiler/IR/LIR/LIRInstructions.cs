@@ -274,7 +274,8 @@ public record LIRCallGuardedStringIntrinsic(
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result,
     LIRGuardedStringFallbackResultConversion FallbackResultConversion =
-        LIRGuardedStringFallbackResultConversion.None) : LIRInstruction;
+        LIRGuardedStringFallbackResultConversion.None,
+    TempVariable? PrototypeAssumption = null) : LIRInstruction;
 
 /// <summary>
 /// Calls a runtime intrinsic instance method when its prototype family is
@@ -288,6 +289,16 @@ public record LIRCallGuardedIntrinsicMember(
     string MemberName,
     bool ReceiverIsProvenType,
     IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result,
+    TempVariable? PrototypeAssumption = null) : LIRInstruction;
+
+/// <summary>
+/// Captures whether an intrinsic prototype family is pristine at a proven
+/// effect-free region entry. Guarded calls in that region use the captured
+/// value instead of reading the epoch at every call site.
+/// </summary>
+public record LIRCaptureIntrinsicPrototypeAssumption(
+    JavaScriptRuntime.IntrinsicPrototypeFamily PrototypeFamily,
     TempVariable Result) : LIRInstruction;
 
 /// <summary>

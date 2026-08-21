@@ -1,12 +1,25 @@
 namespace Jroc.IR;
 
-internal sealed class LIRLoopNestingFacts(int[] depthByInstruction)
+internal sealed record LIRNaturalLoopRegion(
+    int HeaderInstructionIndex,
+    int PreheaderInsertionIndex,
+    IReadOnlySet<int> InstructionIndices);
+
+internal sealed class LIRLoopNestingFacts(
+    int[] depthByInstruction,
+    IReadOnlyList<LIRNaturalLoopRegion>? naturalLoops = null)
 {
+    private static readonly IReadOnlyList<LIRNaturalLoopRegion> EmptyLoops =
+        Array.Empty<LIRNaturalLoopRegion>();
+
     public int GetDepth(int instructionIndex)
         => instructionIndex >= 0
             && instructionIndex < depthByInstruction.Length
                 ? depthByInstruction[instructionIndex]
                 : 0;
+
+    public IReadOnlyList<LIRNaturalLoopRegion> NaturalLoops =>
+        naturalLoops ?? EmptyLoops;
 }
 
 internal static class LIRLoopNestingAnalysis
@@ -71,8 +84,81 @@ internal static class LIRLoopNestingAnalysis
             }
         }
 
-        return new LIRLoopNestingFacts(depthByInstruction);
+        var naturalLoops = loopBlocksByHeader
+            .Select(pair => CreateNaturalLoopRegion(
+                methodBody,
+                blocks,
+                pair.Key,
+                pair.Value))
+            .Where(static loop => loop != null)
+            .Select(static loop => loop!)
+            .OrderBy(
+                static loop => loop.InstructionIndices.Count)
+            .ThenBy(
+                static loop => loop.HeaderInstructionIndex)
+            .ToArray();
+
+        return new LIRLoopNestingFacts(
+            depthByInstruction,
+            naturalLoops);
     }
+
+    private static LIRNaturalLoopRegion? CreateNaturalLoopRegion(
+        MethodBodyIR methodBody,
+        IReadOnlyList<LIRBasicBlock> blocks,
+        int header,
+        IReadOnlySet<int> loopBlocks)
+    {
+        var externalPredecessors = blocks[header].Predecessors
+            .Where(predecessor => !loopBlocks.Contains(predecessor))
+            .ToArray();
+        if (externalPredecessors.Length != 1)
+        {
+            return null;
+        }
+
+        var preheader = blocks[externalPredecessors[0]];
+        var insertionIndex = preheader.End;
+        if (insertionIndex > preheader.Start
+            && IsTerminator(
+                methodBody.Instructions[insertionIndex - 1]))
+        {
+            insertionIndex--;
+        }
+
+        var instructionIndices = new HashSet<int>();
+        foreach (var blockIndex in loopBlocks)
+        {
+            var block = blocks[blockIndex];
+            for (var index = block.Start; index < block.End; index++)
+            {
+                instructionIndices.Add(index);
+            }
+        }
+
+        return new LIRNaturalLoopRegion(
+            blocks[header].Start,
+            insertionIndex,
+            instructionIndices);
+    }
+
+    private static bool IsTerminator(LIRInstruction instruction)
+        => instruction is
+            LIRBranch
+            or LIRLeave
+            or LIRBranchIfTrue
+            or LIRBranchIfFalse
+            or LIRAsyncStateSwitch
+            or LIRGeneratorStateSwitch
+            or LIRAwait
+            or LIRYield
+            or LIRReturn
+            or LIRReturnUndefinedImmediate
+            or LIRTailCallFunctionReturn
+            or LIRAsyncReturnPromise
+            or LIRThrow
+            or LIRThrowNewTypeError
+            or LIREndFinally;
 
     private static bool HasPotentialBackEdge(
         IReadOnlyList<LIRBasicBlock> blocks)

@@ -1331,6 +1331,15 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCaptureIntrinsicPrototypeAssumption captureAssumption:
+                {
+                    EmitCaptureIntrinsicPrototypeAssumption(
+                        captureAssumption,
+                        ilEncoder,
+                        allocation);
+                    break;
+                }
+
             case LIRCallComputedMemberFixed callComputedMember:
                 {
                     EmitLoadTempAsObject(

@@ -916,6 +916,7 @@ internal sealed partial class LIRToILCompiler
                     Math.Max(3, 2 + guardedString.Arguments.Count),
                 LIRCallGuardedIntrinsicMember guardedIntrinsic =>
                     Math.Max(4, 2 + guardedIntrinsic.Arguments.Count),
+                LIRCaptureIntrinsicPrototypeAssumption => 1,
 
                 // Known CLR instance method calls: receiver + args (no padding)
                 LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,

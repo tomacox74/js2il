@@ -32,6 +32,7 @@ public partial class SymbolTableBuilder
             if (string.Equals(before, after, StringComparison.Ordinal))
             {
                 InferReceiverTypeCandidates(root);
+                InferIntrinsicGuardEffects(root);
                 LogInferredTypes(root, passNumber);
                 return;
             }
