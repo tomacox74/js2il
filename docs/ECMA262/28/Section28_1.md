@@ -4,7 +4,7 @@
 
 [Back to Section28](Section28.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-29T21:23:30Z
+> Last generated (UTC): 2026-08-21T22:59:26Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,55 +37,61 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.apply | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/apply/ExecutionTests.cs` | `test/built-ins/Reflect/apply/call-target.js` | Calls the target with the supplied this value and an argument list built with CreateListFromArrayLike, so array-like sources and holes are read by index and surface as undefined. Non-callable targets throw a TypeError. Argument-list coercion edge cases and abrupt completions from exotic array-likes are not yet covered. |
+| Reflect.apply | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/apply/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/apply/call-target.js` | Calls the target with the supplied this value and an argument list built with CreateListFromArrayLike, so array-like sources and holes are read by index and surface as undefined. Non-callable targets throw a TypeError. PortNext100ExecutionTests also covers successful target invocation and a non-Array array-like argument source. Abrupt completions from exotic array-likes are not yet covered. |
 
 ### 28.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.construct))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.construct | Supported with Limitations |  |  | The runtime exposes Reflect.construct and validates constructor targets/newTarget values, but this surface is documented as limited until broader Reflect and constructor-edge test262 coverage is imported. |
+| Reflect.construct | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/construct/construct.js`<br>`test/built-ins/Reflect/construct/target-is-not-constructor-throws.js`<br>`test/built-ins/Reflect/construct/return-with-newtarget-argument.js`<br>`test/built-ins/Reflect/construct/use-arguments-list.js` | The runtime exposes Reflect.construct and validates constructor targets/newTarget values. PortNext100ExecutionTests covers ordinary construction, custom newTarget, array-like arguments, and non-constructor targets; broader constructor-edge coverage remains limited. |
 
 ### 28.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.defineproperty))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.defineProperty | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/defineProperty/ExecutionTests.cs` |  | Reflect.defineProperty delegates to Object.defineProperty and returns true for successful descriptor definition. Current test262 coverage includes descriptor definition, symbol-keyed properties, length, and name. |
+| Reflect.defineProperty | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/defineProperty/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` |  | Reflect.defineProperty delegates to Object.defineProperty and returns true for successful descriptor definition. Current test262 coverage includes descriptor definition, symbol-keyed properties, length, name, Boolean result, and non-object-target rejection. |
 
 ### 28.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.deleteproperty))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.deleteProperty | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/deleteProperty/ExecutionTests.cs` | `test/built-ins/Reflect/deleteProperty/delete-properties.js` | Performs the target [[Delete]] and reports the Boolean result rather than throwing for non-configurable properties, which is the observable difference from a strict-mode delete. Proxy deleteProperty traps are honored. Abrupt completions from property-key coercion are not yet covered. |
+| Reflect.deleteProperty | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/deleteProperty/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/deleteProperty/delete-properties.js` | Performs the target [[Delete]] and reports the Boolean result rather than throwing for non-configurable properties, which is the observable difference from a strict-mode delete. Proxy deleteProperty traps are honored. PortNext100ExecutionTests covers deletion, Boolean result, and non-object-target rejection. Abrupt completions from property-key coercion are not yet covered. |
 
 ### 28.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.get))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.get | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/get/ExecutionTests.cs` | `test/built-ins/Reflect/get/return-value.js`<br>`test/built-ins/Reflect/get/return-value-from-receiver.js` | Implements OrdinaryGet including prototype-chain lookup and the optional receiver argument, so accessor getters are invoked with the receiver as their this value. Getters that are undefined return undefined. Abrupt completions from property-key coercion are not yet covered. |
+| Reflect.get | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/get/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/get/return-value.js`<br>`test/built-ins/Reflect/get/return-value-from-receiver.js` | Implements OrdinaryGet including prototype-chain lookup and the optional receiver argument, so accessor getters are invoked with the receiver as their this value. Getters that are undefined return undefined. PortNext100ExecutionTests covers ordinary and symbol property keys plus non-object-target rejection. Abrupt completions from property-key coercion are not yet covered. |
 
 ### 28.1.6 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.getownpropertydescriptor))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.getOwnPropertyDescriptor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/getOwnPropertyDescriptor/ExecutionTests.cs` | `test/built-ins/Reflect/getOwnPropertyDescriptor/return-from-data-descriptor.js` | Returns a FromPropertyDescriptor result for own properties with the spec property order (value, writable, enumerable, configurable) and undefined for missing own properties. Accessor-descriptor and symbol-key shapes are not yet covered by checked-in tests. |
+| Reflect.getOwnPropertyDescriptor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/getOwnPropertyDescriptor/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/getOwnPropertyDescriptor/return-from-data-descriptor.js` | Returns a FromPropertyDescriptor result for own properties with the spec property order (value, writable, enumerable, configurable) and undefined for missing own properties. PortNext100ExecutionTests covers accessor descriptors, symbol keys, and undefined own properties. |
 
 ### 28.1.7 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.getprototypeof))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.getPrototypeOf | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/getPrototypeOf/ExecutionTests.cs` | `test/built-ins/Reflect/getPrototypeOf/return-prototype.js` | Returns the target [[Prototype]] and throws a TypeError for non-object targets. Proxy getPrototypeOf traps are honored. Null-prototype and abrupt-completion cases are not yet covered by checked-in tests. |
+| Reflect.getPrototypeOf | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/getPrototypeOf/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/getPrototypeOf/return-prototype.js` | Returns the target [[Prototype]] and throws a TypeError for non-object targets. Proxy getPrototypeOf traps are honored. PortNext100ExecutionTests covers null-prototype and non-object-target behavior. Abrupt-completion cases are not yet covered. |
 
 ### 28.1.8 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.has))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.has | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/has/ExecutionTests.cs` | `test/built-ins/Reflect/has/return-boolean.js` | Performs the target [[HasProperty]] across own and inherited properties, matching the in operator, and throws a TypeError for non-object targets. Abrupt completions from property-key coercion are not yet covered. |
+| Reflect.has | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/has/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/has/return-boolean.js` | Performs the target [[HasProperty]] across own and inherited properties, matching the in operator, and throws a TypeError for non-object targets. PortNext100ExecutionTests verifies symbol-keyed own-property lookup. Abrupt completions from property-key coercion are not yet covered. |
 
 ### 28.1.9 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.isextensible))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reflect.isExtensible | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/isExtensible/ExecutionTests.cs` | `test/built-ins/Reflect/isExtensible/return-boolean.js` | Reports the target [[IsExtensible]] state and throws a TypeError for non-object targets, unlike Object.isExtensible which coerces primitives to false. Proxy isExtensible trap invariants are not yet covered by checked-in tests. |
+| Reflect.isExtensible | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/isExtensible/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/isExtensible/return-boolean.js` | Reports the target [[IsExtensible]] state and throws a TypeError for non-object targets, unlike Object.isExtensible which coerces primitives to false. PortNext100ExecutionTests verifies the non-object case. Proxy isExtensible trap invariants are not yet covered. |
+
+### 28.1.10 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.ownkeys))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Reflect.ownKeys | Supported | [`Array_ObjectDispatch_Reflection.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_ObjectDispatch_Reflection.js)<br>`tests/Jroc.Test262.Tests/built-ins/Reflect/PortNext100ExecutionTests.cs` | `test/built-ins/Reflect/ownKeys/return-empty-array.js` | Returns indexed string keys, other string keys, and symbols in ECMAScript own-key order through the shared object-operation path, including Array and Proxy targets. PortNext100ExecutionTests covers an ordinary empty-object result. |
 
 ### 28.1.11 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.preventextensions))
 

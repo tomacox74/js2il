@@ -204,13 +204,16 @@ public static class BigInt
             case JsNull:
                 throw new TypeError("Cannot convert null to a BigInt");
 
-            case bool:
-                throw new TypeError("Cannot convert a boolean to a BigInt");
+            case bool boolean:
+                return boolean ? BigInteger.One : BigInteger.Zero;
 
             default:
-                // Best-effort: attempt string conversion like JS would for many objects.
-                // This is not spec-complete (missing valueOf/toString precedence rules).
-                return ParseStringToBigInt(DotNet2JSConversions.ToString(value));
+                if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "number", out var primitive))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+
+                return ToBigInteger(primitive);
         }
     }
 
