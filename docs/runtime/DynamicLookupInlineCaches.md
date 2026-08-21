@@ -5,6 +5,32 @@ dynamic property reads and zero-argument member calls that remain after AOT
 specialization. The prototype targets repeated access to ordinary user
 objects without weakening JavaScript lookup semantics.
 
+## Terminology
+
+The terms below describe this implementation and may be narrower than their
+general use in JavaScript engines.
+
+| Term | Meaning in this feature |
+| --- | --- |
+| **AOT specialization** | A compile-time decision that replaces dynamic lookup with a direct or guarded operation. Inline caches apply only after AOT analysis cannot prove such a specialization. |
+| **Call site** | One generated property-read or member-call instruction. Two instructions that read the same property are separate call sites. |
+| **Cache site** | The realm-owned runtime state associated with one generated call site. Its site key identifies the module, generated type, method, and original LIR instruction. |
+| **Receiver** | The JavaScript value to the left of the property access, such as `record` in `record.name` or `record.save()`. |
+| **Dynamic lookup** | Resolving a property or callable at runtime because the compiler cannot determine the result safely in advance. |
+| **Inline cache** | Per-call-site runtime state that reuses a previously resolved data property when its recorded assumptions remain valid. “Inline” refers to association with the generated call site; the cache is stored in the realm rather than embedded as mutable process-global state in generated code. |
+| **Cache entry** | One recorded exact receiver/property identity, resolved value, prototype path, and set of lookup versions. |
+| **Empty** | A cache site that has not recorded a usable receiver/property identity. |
+| **Monomorphic** | A site containing one live cache entry. In this first-stage identity cache, repeated access must use the same receiver object; another object with the same shape is still a distinct identity. |
+| **Polymorphic** | A site containing two through four live cache entries, allowing a small set of exact receiver identities to hit the same generated site. |
+| **Megamorphic** | A site that has observed more receiver identities than its four-entry limit. It permanently stops recording entries and uses generic lookup. |
+| **Cache hit** | The receiver, property name, weak references, and every recorded `LookupVersion` still match, so the cached value can be reused. |
+| **Cache miss** | No valid entry matches. The runtime performs exact generic lookup and may record a new entry when the result is cacheable. |
+| **Invalidation** | A property, descriptor, or prototype change advances a recorded version, making an existing entry stale and therefore unable to hit. |
+| **Generic fallback** | The existing `ObjectRuntime` lookup or call path, which preserves complete JavaScript behavior for misses and cases the cache deliberately excludes. |
+| **Ordinary object** | In this stage, an object whose exact CLR representation is `JsObject` and whose traversed prototype objects are also exact `JsObject` instances. |
+| **Exotic object** | A representation with specialized property behavior, such as a proxy, array, typed array, or host object. These bypass this cache prototype. |
+| **Realm** | The JavaScript execution environment that owns intrinsic objects and this feature’s cache-site dictionary. Cache state is never shared between realms. |
+
 ## Scope and site identity
 
 The compiler routes materialized string-key `LIRGetItem` instructions and
