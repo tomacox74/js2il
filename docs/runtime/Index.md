@@ -23,5 +23,6 @@ These documents describe the JavaScriptRuntime hosting model and its internal ex
 
 ## Performance
 
+- [Dynamic lookup inline caches](DynamicLookupInlineCaches.md)
 - [Intrinsic prototype mutation epochs](IntrinsicPrototypeMutationEpochs.md)
 - [RegExp and string hot-path performance optimizations](RegExpStringPerformanceOptimizations.md)
