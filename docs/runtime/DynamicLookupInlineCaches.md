@@ -89,16 +89,16 @@ The 2026-08-21 local run used BenchmarkDotNet 0.15.8 on Ubuntu 24.04.4,
 
 | Operation | Mean | Allocated |
 | --- | ---: | ---: |
-| Generic ordinary property read | 41.41 ns | 0 B |
-| Monomorphic property hit | 20.70 ns | 0 B |
-| Four-way polymorphic property hit | 23.19 ns | 0 B |
-| Generic zero-argument member call | 62.84 ns | 0 B |
-| Cached zero-argument member call | 30.52 ns | 0 B |
-| Megamorphic generic fallback | 57.64 ns | 0 B |
-| Property mutation and invalidation | 569.28 ns | 520 B |
-| Cold miss with explicit site removal | 572.05 ns | 624 B |
-| String generic / cache-stub fallback | 46.74 / 50.94 ns | 24 / 24 B |
-| Array generic / cache-stub fallback | 29.97 / 28.99 ns | 24 / 24 B |
+| Generic ordinary property read | 39.72 ns | 0 B |
+| Monomorphic property hit | 19.61 ns | 0 B |
+| Four-way polymorphic property hit | 22.87 ns | 0 B |
+| Generic zero-argument member call | 63.26 ns | 0 B |
+| Cached zero-argument member call | 29.40 ns | 0 B |
+| Megamorphic generic fallback | 53.30 ns | 0 B |
+| Property mutation and invalidation | 543.39 ns | 520 B |
+| Cold miss with explicit site removal | 596.01 ns | 624 B |
+| String generic / cache-stub fallback | 50.93 / 51.17 ns | 24 / 24 B |
+| Array generic / cache-stub fallback | 30.33 / 30.56 ns | 24 / 24 B |
 
 The cold-miss control includes removal of the site from the realm dictionary,
 so it is an upper bound rather than pure descriptor-resolution cost. The
