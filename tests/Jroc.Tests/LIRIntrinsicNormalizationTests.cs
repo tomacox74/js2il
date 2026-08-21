@@ -239,7 +239,10 @@ public sealed class LIRIntrinsicNormalizationTests
         body.ReceiverTypeFlowFacts =
             ReceiverTypeFlowAnalysis.Analyze(body);
 
-        LIRReceiverSpecialization.Normalize(body);
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        LIRReceiverSpecialization.Normalize(
+            body,
+            diagnostics);
 
         var guarded =
             Assert.IsType<LIRCallGuardedIntrinsicMember>(
@@ -248,6 +251,13 @@ public sealed class LIRIntrinsicNormalizationTests
             typeof(JavaScriptRuntime.Array),
             guarded.ReceiverClrType);
         Assert.True(guarded.ReceiverIsProvenType);
+        Assert.Contains(
+            diagnostics.Events,
+            item => item.Kind
+                    == ReceiverTypeFlowDiagnosticKind.Specialization
+                && item.Message.Contains(
+                    "loop-depth=1 type-proven=true action=guarded",
+                    StringComparison.Ordinal));
     }
 
     [Fact]
@@ -377,7 +387,10 @@ public sealed class LIRIntrinsicNormalizationTests
         body.ReceiverTypeFlowFacts =
             ReceiverTypeFlowAnalysis.Analyze(body);
 
-        LIRReceiverSpecialization.Normalize(body);
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        LIRReceiverSpecialization.Normalize(
+            body,
+            diagnostics);
 
         Assert.IsType<LIRCallMember0>(body.Instructions[1]);
         Assert.Equal(
@@ -385,6 +398,14 @@ public sealed class LIRIntrinsicNormalizationTests
             Assert.IsType<LIRLoopNestingFacts>(
                     body.LoopNestingFacts)
                 .GetDepth(1));
+        Assert.Contains(
+            diagnostics.Events,
+            item => item.Kind
+                    == ReceiverTypeFlowDiagnosticKind.Specialization
+                && item.Message.Contains(
+                    "loop-depth=0 type-proven=true "
+                    + "action=retained-generic(cold)",
+                    StringComparison.Ordinal));
     }
 
     [Fact]

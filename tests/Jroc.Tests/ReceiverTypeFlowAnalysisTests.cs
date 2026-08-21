@@ -80,12 +80,33 @@ public sealed class ReceiverTypeFlowAnalysisTests
         body.Instructions.Add(new LIRLabel(20));
         body.Instructions.Add(new LIRCallMember0(joined, "toString", result));
 
-        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        var facts = ReceiverTypeFlowAnalysis.Analyze(
+            body,
+            diagnostics);
 
         AssertKnownCandidates(
             facts.GetTempBefore(9, joined),
             typeof(string),
             typeof(JavaScriptRuntime.Array));
+        Assert.Contains(
+            diagnostics.Events,
+            item =>
+                item.Kind == ReceiverTypeFlowDiagnosticKind.Merge
+                && item.Message
+                    == "merge @8 temp:t3: "
+                    + "b1=candidates=[System.String]; unknown=false; non-candidate=false, "
+                    + "b2=candidates=[JavaScriptRuntime.Array]; unknown=false; non-candidate=false "
+                    + "=> candidates=[JavaScriptRuntime.Array, System.String]; "
+                    + "unknown=false; non-candidate=false");
+        Assert.Contains(
+            diagnostics.Events,
+            item =>
+                item.Kind == ReceiverTypeFlowDiagnosticKind.Retained
+                && item.Message
+                    == "retain @9 LIRCallMember0 receiver=t3: "
+                    + "candidates=[JavaScriptRuntime.Array, System.String]; "
+                    + "unknown=false; non-candidate=false");
     }
 
     [Fact]
@@ -293,13 +314,25 @@ public sealed class ReceiverTypeFlowAnalysisTests
             "toString",
             callResult));
 
-        var facts = ReceiverTypeFlowAnalysis.Analyze(body);
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        var facts = ReceiverTypeFlowAnalysis.Analyze(
+            body,
+            diagnostics);
         var readValue = facts.GetTempAfter(3, readAfterCall);
 
         Assert.True(readValue.IncludesUnknown);
         Assert.DoesNotContain(
             typeof(string),
             readValue.CandidateClrTypes);
+        var invalidation = Assert.Single(diagnostics.Events);
+        Assert.Equal(
+            ReceiverTypeFlowDiagnosticKind.Invalidation,
+            invalidation.Kind);
+        Assert.Equal(
+            "invalidate @2 LIRCallMember0 reason=call: "
+            + "binding:GlobalScope/value=candidates=[System.String]; "
+            + "unknown=false; non-candidate=false",
+            invalidation.Message);
     }
 
     [Theory]

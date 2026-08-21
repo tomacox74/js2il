@@ -98,7 +98,9 @@ internal static class ReceiverTypeFlowAnalysis
         return false;
     }
 
-    public static ReceiverTypeFlowFacts Analyze(MethodBodyIR methodBody)
+    public static ReceiverTypeFlowFacts Analyze(
+        MethodBodyIR methodBody,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics = null)
     {
         var facts = new ReceiverTypeFlowFacts();
         if (methodBody.Instructions.Count == 0)
@@ -112,6 +114,9 @@ internal static class ReceiverTypeFlowAnalysis
         var hasFinallyRegion = methodBody.ExceptionRegions.Any(
             static region => region.Kind == ExceptionRegionKind.Finally);
         var blockInputs = new FlowState?[blocks.Count];
+        var blockOutputs = diagnostics != null
+            ? new FlowState?[blocks.Count]
+            : null;
         var worklist = new Queue<int>();
         var queued = new bool[blocks.Count];
 
@@ -143,10 +148,25 @@ internal static class ReceiverTypeFlowAnalysis
                     hasFinallyRegion);
             }
 
+            if (blockOutputs != null)
+            {
+                blockOutputs[blockIndex] = state.Clone();
+            }
             foreach (var successor in block.Successors)
             {
                 EnqueueWithInput(successor, state);
             }
+        }
+
+        if (diagnostics != null)
+        {
+            RecordMergeDiagnostics(
+                methodBody,
+                blocks,
+                blockInputs,
+                blockOutputs!,
+                slice,
+                diagnostics);
         }
 
         for (var blockIndex = 0; blockIndex < blocks.Count; blockIndex++)
@@ -169,13 +189,21 @@ internal static class ReceiverTypeFlowAnalysis
                     instructionIndex);
                 LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
                 RecordBindingBefore(instruction, state, facts, instructionIndex);
+                RecordRetainedReceiverFact(
+                    methodBody,
+                    instruction,
+                    state,
+                    instructionIndex,
+                    diagnostics);
 
                 Transfer(
                     methodBody,
                     instruction,
                     state,
                     slice,
-                    hasFinallyRegion);
+                    hasFinallyRegion,
+                    diagnostics,
+                    instructionIndex);
 
                 if (LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined)
                     && defined.Index >= 0)
@@ -243,11 +271,22 @@ internal static class ReceiverTypeFlowAnalysis
         LIRInstruction instruction,
         FlowState state,
         AnalysisSlice slice,
-        bool hasFinallyRegion = false)
+        bool hasFinallyRegion = false,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics = null,
+        int instructionIndex = -1)
     {
         var effects = LIRInstructionInfo.GetEffectsForScheduling(instruction);
         if ((effects & LIRInstructionEffects.UnsupportedBarrier) != 0)
         {
+            RecordInvalidation(
+                methodBody,
+                state,
+                slice,
+                instruction,
+                instructionIndex,
+                "unsupported-barrier",
+                capturedOnly: false,
+                diagnostics);
             state.InvalidateMutableLocations();
         }
         else if ((effects & (LIRInstructionEffects.Calls
@@ -255,11 +294,34 @@ internal static class ReceiverTypeFlowAnalysis
                      | LIRInstructionEffects.ScopeReplacement)) != 0
                  || MayInvokeDynamicAccessor(instruction))
         {
+            if (diagnostics != null)
+            {
+                RecordInvalidation(
+                    methodBody,
+                    state,
+                    slice,
+                    instruction,
+                    instructionIndex,
+                    FormatCapturedInvalidationReason(
+                        instruction,
+                        effects),
+                    capturedOnly: true,
+                    diagnostics);
+            }
             state.InvalidateCapturedBindings();
         }
 
         if (hasFinallyRegion && instruction is LIRLeave)
         {
+            RecordInvalidation(
+                methodBody,
+                state,
+                slice,
+                instruction,
+                instructionIndex,
+                "finally-leave",
+                capturedOnly: false,
+                diagnostics);
             state.InvalidateMutableLocations();
         }
 
@@ -347,6 +409,233 @@ internal static class ReceiverTypeFlowAnalysis
         };
 
         state.SetTemp(methodBody, defined, value);
+    }
+
+    private static void RecordRetainedReceiverFact(
+        MethodBodyIR methodBody,
+        LIRInstruction instruction,
+        FlowState state,
+        int instructionIndex,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics)
+    {
+        if (diagnostics == null
+            || !TryGetReceiver(instruction, out var receiver))
+        {
+            return;
+        }
+
+        var fact = state.GetTemp(methodBody, receiver);
+        if (fact.HasCandidates)
+        {
+            diagnostics.RecordRetained(
+                instructionIndex,
+                instruction.GetType().Name,
+                receiver,
+                fact.ToDiagnosticText());
+        }
+    }
+
+    private static void RecordInvalidation(
+        MethodBodyIR methodBody,
+        FlowState state,
+        AnalysisSlice slice,
+        LIRInstruction instruction,
+        int instructionIndex,
+        string reason,
+        bool capturedOnly,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics)
+    {
+        if (diagnostics == null)
+        {
+            return;
+        }
+
+        var invalidatedFacts = GetCandidateMutableFacts(
+            methodBody,
+            state,
+            slice,
+            capturedOnly);
+        if (invalidatedFacts.Count == 0)
+        {
+            return;
+        }
+
+        diagnostics.RecordInvalidation(
+            instructionIndex,
+            instruction.GetType().Name,
+            reason,
+            invalidatedFacts);
+    }
+
+    private static string FormatCapturedInvalidationReason(
+        LIRInstruction instruction,
+        LIRInstructionEffects effects)
+    {
+        var reasons = new List<string>(4);
+        if ((effects & LIRInstructionEffects.Calls) != 0)
+        {
+            reasons.Add("call");
+        }
+        if ((effects & LIRInstructionEffects.Suspension) != 0)
+        {
+            reasons.Add("suspension");
+        }
+        if ((effects & LIRInstructionEffects.ScopeReplacement) != 0)
+        {
+            reasons.Add("scope-replacement");
+        }
+        if (MayInvokeDynamicAccessor(instruction))
+        {
+            reasons.Add("dynamic-accessor");
+        }
+
+        return string.Join("+", reasons);
+    }
+
+    private static List<string> GetCandidateMutableFacts(
+        MethodBodyIR methodBody,
+        FlowState state,
+        AnalysisSlice slice,
+        bool capturedOnly)
+    {
+        var facts = new List<string>();
+        if (!capturedOnly)
+        {
+            foreach (var slot in slice.Slots.Order())
+            {
+                Add(
+                    FormatSlot(methodBody, slot),
+                    state.GetSlot(slot));
+            }
+            foreach (var parameter in slice.Parameters.Order())
+            {
+                Add(
+                    $"parameter:{parameter}",
+                    state.GetParameter(parameter));
+            }
+        }
+
+        foreach (var binding in slice.Bindings
+                     .OrderBy(FormatBinding, StringComparer.Ordinal))
+        {
+            Add(
+                FormatBinding(binding),
+                state.GetBinding(binding));
+        }
+
+        return facts;
+
+        void Add(string location, FlowValue value)
+        {
+            if (value.HasCandidates)
+            {
+                facts.Add($"{location}={value.ToDiagnosticText()}");
+            }
+        }
+    }
+
+    private static void RecordMergeDiagnostics(
+        MethodBodyIR methodBody,
+        IReadOnlyList<LIRBasicBlock> blocks,
+        IReadOnlyList<FlowState?> blockInputs,
+        IReadOnlyList<FlowState?> blockOutputs,
+        AnalysisSlice slice,
+        ReceiverTypeFlowDiagnosticTrace diagnostics)
+    {
+        for (var blockIndex = 0;
+             blockIndex < blocks.Count;
+             blockIndex++)
+        {
+            var block = blocks[blockIndex];
+            if (block.Predecessors.Count < 2
+                || blockInputs[blockIndex] == null)
+            {
+                continue;
+            }
+
+            foreach (var temp in slice.Temps.Order())
+            {
+                Record(
+                    $"temp:t{temp}",
+                    state => state.GetTemp(temp));
+            }
+            foreach (var slot in slice.Slots.Order())
+            {
+                Record(
+                    FormatSlot(methodBody, slot),
+                    state => state.GetSlot(slot));
+            }
+            foreach (var parameter in slice.Parameters.Order())
+            {
+                Record(
+                    $"parameter:{parameter}",
+                    state => state.GetParameter(parameter));
+            }
+            foreach (var binding in slice.Bindings
+                         .OrderBy(FormatBinding, StringComparer.Ordinal))
+            {
+                Record(
+                    FormatBinding(binding),
+                    state => state.GetBinding(binding));
+            }
+
+            void Record(
+                string location,
+                Func<FlowState, FlowValue> select)
+            {
+                var inputs = block.Predecessors
+                    .Order()
+                    .Where(predecessor =>
+                        blockOutputs[predecessor] != null)
+                    .Select(predecessor => (
+                        Block: predecessor,
+                        Value: select(blockOutputs[predecessor]!)))
+                    .ToArray();
+                if (inputs.Length < 2
+                    || inputs
+                        .Select(static input => input.Value)
+                        .Distinct()
+                        .Count() < 2)
+                {
+                    return;
+                }
+
+                var result = select(blockInputs[blockIndex]!);
+                if (!result.HasCandidates
+                    && !inputs.Any(
+                        static input => input.Value.HasCandidates))
+                {
+                    return;
+                }
+
+                diagnostics.RecordMerge(
+                    block.Start,
+                    location,
+                    string.Join(
+                        ", ",
+                        inputs.Select(input =>
+                            $"b{input.Block}={input.Value.ToDiagnosticText()}")),
+                    result.ToDiagnosticText());
+            }
+        }
+    }
+
+    private static string FormatSlot(
+        MethodBodyIR methodBody,
+        int slot)
+        => slot >= 0 && slot < methodBody.VariableNames.Count
+            ? $"slot:{slot}({methodBody.VariableNames[slot]})"
+            : $"slot:{slot}";
+
+    private static string FormatBinding(BindingInfo binding)
+    {
+        var scopeName = binding.DeclaringScope?.GetQualifiedName();
+        if (string.IsNullOrEmpty(scopeName))
+        {
+            scopeName = binding.DeclaringScope?.Name ?? "<unknown>";
+        }
+
+        return $"binding:{scopeName}/{binding.Name}";
     }
 
     private static bool MayInvokeDynamicAccessor(LIRInstruction instruction)
@@ -707,6 +996,12 @@ internal static class ReceiverTypeFlowAnalysis
                 : Get(_temps, temp.Index);
         }
 
+        public FlowValue GetTemp(int tempIndex)
+            => Get(_temps, tempIndex);
+
+        public FlowValue GetSlot(int slot)
+            => Get(_slots, slot);
+
         public void SetTemp(MethodBodyIR methodBody, TempVariable temp, FlowValue value)
         {
             var slot = GetVariableSlot(methodBody, temp);
@@ -888,6 +1183,13 @@ internal sealed class FlowValue : IEquatable<FlowValue>
             IncludesUnknown,
             IncludesNonCandidate,
             new HashSet<Type>(_candidateClrTypes));
+
+    public string ToDiagnosticText()
+        => $"candidates=[{string.Join(", ", _candidateClrTypes
+            .OrderBy(static type => type.FullName, StringComparer.Ordinal)
+            .Select(static type => type.FullName))}]; "
+            + $"unknown={IncludesUnknown.ToString().ToLowerInvariant()}; "
+            + $"non-candidate={IncludesNonCandidate.ToString().ToLowerInvariant()}";
 
     public bool Equals(FlowValue? other)
         => other != null

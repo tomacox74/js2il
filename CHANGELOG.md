@@ -16,8 +16,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   unsupported LIR barriers, and reject host-exposed callable summaries. They
   now drive guarded Array and typed-array fixed-arity calls with exact generic
   fallback only at natural-loop sites, avoiding guard/fallback IL expansion at
-  cold calls. Object-literal shapes and generated user-class metadata keep
-  their existing specialized identity domains.
+  cold calls. Verbose and diagnostic-file output explain receiver fact merges,
+  invalidations, retained candidates, and guarded-versus-cold specialization
+  decisions without tracing overhead in normal compilation. Object-literal
+  shapes and generated user-class metadata keep their existing specialized
+  identity domains.
 - perf(runtime): add realm-owned Array and typed-array prototype mutation
   epochs. Their compiler guards also reject own member overrides and custom
   per-instance prototype chains before calling runtime instance methods.

@@ -113,6 +113,23 @@ This gate does not change existing proven-Array direct calls or the guarded
 String contract. It controls the code-size expansion introduced when the
 post-flow receiver specialization selects a guarded fast path.
 
+### Diagnostics
+
+Pass `-v` or `--diagnostic-file <path>` to explain receiver-flow decisions.
+`[ReceiverFlow]` records identify the compiled scope and final-LIR instruction,
+then report:
+
+- branch/loop merges with each predecessor fact and the joined result;
+- mutable facts invalidated by calls, accessors, suspension, scope replacement,
+  `finally` exits, or unsupported barriers;
+- candidate facts retained at dynamic receiver sites;
+- specialization candidates, loop depth, whether the receiver type is proven,
+  and the resulting `guarded` or `retained-generic(cold)` action.
+
+Events are emitted in deterministic instruction/kind/message order. Diagnostics
+are collected only when one of these established channels is enabled, so normal
+compilation does not allocate trace records or format diagnostic messages.
+
 ### Interprocedural summaries
 
 Statically proven direct-only callables also receive receiver summaries for

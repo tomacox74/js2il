@@ -11,6 +11,7 @@ using Jroc.Utilities.Ecma335;
 using Jroc.Services;
 using Jroc.Services.TwoPhaseCompilation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ScopesCallableKind = Jroc.Services.ScopesAbi.CallableKind;
 using Jroc.Utilities;
 
@@ -136,6 +137,8 @@ internal sealed class JsMethodCompiler
     private readonly Services.NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
     private readonly Services.ModuleTypeMetadataRegistry _moduleTypeRegistry;
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
+    private readonly ILogger<JsMethodCompiler> _diagnosticLogger;
+    private readonly bool _diagnosticsEnabled;
 
     public JsMethodCompiler(
         MetadataBuilder metadataBuilder,
@@ -148,6 +151,8 @@ internal sealed class JsMethodCompiler
         Services.NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
         Services.ModuleTypeMetadataRegistry moduleTypeRegistry,
         JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
+        CompilerOptions options,
+        ILogger<JsMethodCompiler> diagnosticLogger,
         IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
@@ -160,6 +165,8 @@ internal sealed class JsMethodCompiler
         _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry;
         _moduleTypeRegistry = moduleTypeRegistry;
         _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog;
+        _diagnosticsEnabled = options.DiagnosticsEnabled;
+        _diagnosticLogger = diagnosticLogger;
         _serviceProvider = serviceProvider;
     }
 
@@ -1133,13 +1140,29 @@ internal sealed class JsMethodCompiler
         // Compute per-program-point receiver facts over the final control-flow
         // graph. These facts are analysis-only until a guarded specialization
         // explicitly consumes them.
+        var receiverDiagnostics = _diagnosticsEnabled
+            ? new ReceiverTypeFlowDiagnosticTrace()
+            : null;
         if (ReceiverTypeFlowAnalysis.RequiresAnalysis(lirMethod!))
         {
             lirMethod!.ReceiverTypeFlowFacts =
-                ReceiverTypeFlowAnalysis.Analyze(lirMethod);
+                ReceiverTypeFlowAnalysis.Analyze(
+                    lirMethod,
+                    receiverDiagnostics);
         }
 
-        LIRReceiverSpecialization.Normalize(lirMethod!);
+        LIRReceiverSpecialization.Normalize(
+            lirMethod!,
+            receiverDiagnostics);
+        if (receiverDiagnostics != null)
+        {
+            var scopeName = scope.GetQualifiedName();
+            receiverDiagnostics.LogTo(
+                _diagnosticLogger,
+                string.IsNullOrEmpty(scopeName)
+                    ? scope.Name
+                    : scopeName);
+        }
 
         methodBody = lirMethod!;
         return true;

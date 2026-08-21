@@ -6,7 +6,9 @@ internal static class LIRReceiverSpecialization
 {
     private const int MinimumLoopDepth = 1;
 
-    public static void Normalize(MethodBodyIR methodBody)
+    public static void Normalize(
+        MethodBodyIR methodBody,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics = null)
     {
         for (var index = 0; index < methodBody.Instructions.Count; index++)
         {
@@ -31,12 +33,29 @@ internal static class LIRReceiverSpecialization
 
             methodBody.LoopNestingFacts ??=
                 LIRLoopNestingAnalysis.Analyze(methodBody);
-            if (methodBody.LoopNestingFacts.GetDepth(index)
-                < MinimumLoopDepth)
+            var loopDepth =
+                methodBody.LoopNestingFacts.GetDepth(index);
+            if (loopDepth < MinimumLoopDepth)
             {
+                diagnostics?.RecordSpecialization(
+                    index,
+                    memberName,
+                    receiver,
+                    receiverType,
+                    loopDepth,
+                    receiverIsProvenType,
+                    "retained-generic(cold)");
                 continue;
             }
 
+            diagnostics?.RecordSpecialization(
+                index,
+                memberName,
+                receiver,
+                receiverType,
+                loopDepth,
+                receiverIsProvenType,
+                "guarded");
             methodBody.Instructions[index] =
                 new LIRCallGuardedIntrinsicMember(
                     receiver,
