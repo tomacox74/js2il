@@ -8,7 +8,9 @@ namespace JavaScriptRuntime;
 /// </summary>
 public enum IntrinsicPrototypeFamily
 {
-    String = 0
+    String = 0,
+    Array = 1,
+    TypedArray = 2
 }
 
 /// <summary>
@@ -32,4 +34,25 @@ public static class IntrinsicPrototypeEpochs
         IntrinsicPrototypeFamily family,
         long expectedEpoch)
         => Read(family) == expectedEpoch;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool HasDefaultPrototype(
+        object receiver,
+        IntrinsicPrototypeFamily family)
+    {
+        var expectedPrototype = family switch
+        {
+            IntrinsicPrototypeFamily.Array
+                when receiver is Array => Array.Prototype,
+            IntrinsicPrototypeFamily.TypedArray
+                when receiver is TypedArrayBase typedArray =>
+                    GlobalThis.GetTypedArrayInstancePrototype(typedArray),
+            _ => null
+        };
+
+        return expectedPrototype != null
+            && ReferenceEquals(
+                PrototypeChain.GetPrototypeOrNull(receiver),
+                expectedPrototype);
+    }
 }

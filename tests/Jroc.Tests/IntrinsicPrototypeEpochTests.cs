@@ -162,6 +162,77 @@ public sealed class IntrinsicPrototypeEpochTests
     }
 
     [Fact]
+    public void ArrayAndTypedArrayEpochsTrackTheirPrototypeChains()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                Assert.Equal(
+                    0,
+                    IntrinsicPrototypeEpochs.Read(
+                        IntrinsicPrototypeFamily.Array));
+                Assert.Equal(
+                    0,
+                    IntrinsicPrototypeEpochs.Read(
+                        IntrinsicPrototypeFamily.TypedArray));
+
+                AssertAdvances(
+                    IntrinsicPrototypeFamily.Array,
+                    () => ObjectRuntime.SetProperty(
+                        JavaScriptRuntime.Array.Prototype,
+                        "push",
+                        new EpochFunction()));
+                Assert.Equal(
+                    0,
+                    IntrinsicPrototypeEpochs.Read(
+                        IntrinsicPrototypeFamily.TypedArray));
+
+                AssertAdvances(
+                    IntrinsicPrototypeFamily.TypedArray,
+                    () => ObjectRuntime.SetProperty(
+                        RuntimeIntrinsics.Current
+                            .TypedArrayPrototype,
+                        "includes",
+                        new EpochFunction()));
+                AssertAdvances(
+                    IntrinsicPrototypeFamily.TypedArray,
+                    () => ObjectRuntime.SetProperty(
+                        RuntimeIntrinsics.Current
+                            .Int32ArrayPrototype,
+                        "concreteMutation",
+                        true));
+            });
+    }
+
+    [Fact]
+    public void ObjectPrototypeMutationInvalidatesEveryGuardedFamily()
+    {
+        WithRealm(
+            () =>
+            {
+                _ = GlobalThis.globalThis;
+                var before = Enum.GetValues<
+                        IntrinsicPrototypeFamily>()
+                    .ToDictionary(
+                        static family => family,
+                        IntrinsicPrototypeEpochs.Read);
+
+                ObjectRuntime.SetProperty(
+                    GlobalThis.ObjectPrototypeValue,
+                    "sharedMutation",
+                    true);
+
+                foreach (var family in before.Keys)
+                {
+                    Assert.True(
+                        IntrinsicPrototypeEpochs.Read(family)
+                        > before[family]);
+                }
+            });
+    }
+
+    [Fact]
     public void EpochReadAndValidationAllocateNothing()
     {
         WithRealm(
@@ -232,22 +303,27 @@ public sealed class IntrinsicPrototypeEpochTests
     }
 
     private static void AssertAdvances(Action mutation)
+        => AssertAdvances(
+            IntrinsicPrototypeFamily.String,
+            mutation);
+
+    private static void AssertAdvances(
+        IntrinsicPrototypeFamily family,
+        Action mutation)
     {
-        var before = IntrinsicPrototypeEpochs.Read(
-            IntrinsicPrototypeFamily.String);
+        var before = IntrinsicPrototypeEpochs.Read(family);
 
         mutation();
 
-        var after = IntrinsicPrototypeEpochs.Read(
-            IntrinsicPrototypeFamily.String);
+        var after = IntrinsicPrototypeEpochs.Read(family);
         Assert.True(after > before);
         Assert.False(
             IntrinsicPrototypeEpochs.IsCurrent(
-                IntrinsicPrototypeFamily.String,
+                family,
                 before));
         Assert.False(
             IntrinsicPrototypeEpochs.IsPristine(
-                IntrinsicPrototypeFamily.String));
+                family));
     }
 
     private static JsObject DataDescriptor(

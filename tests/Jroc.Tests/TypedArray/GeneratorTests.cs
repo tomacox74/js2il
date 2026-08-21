@@ -37,6 +37,9 @@ namespace Jroc.Tests.TypedArray
         public Task Int32Array_Construct_Length() { var testName = nameof(Int32Array_Construct_Length); return GenerateTest(testName); }
 
         [Fact]
+        public Task TypedArray_ReceiverCandidate_GuardedOverrides() { var testName = nameof(TypedArray_ReceiverCandidate_GuardedOverrides); return GenerateTest(testName); }
+
+        [Fact]
         public Task Int32Array_FromArray_CopyAndCoerce() { var testName = nameof(Int32Array_FromArray_CopyAndCoerce); return GenerateTest(testName); }
 
         [Fact]

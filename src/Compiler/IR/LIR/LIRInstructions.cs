@@ -277,6 +277,20 @@ public record LIRCallGuardedStringIntrinsic(
         LIRGuardedStringFallbackResultConversion.None) : LIRInstruction;
 
 /// <summary>
+/// Calls a runtime intrinsic instance method when its prototype family is
+/// pristine and the receiver has no own override, with ordinary member
+/// dispatch as the fallback.
+/// </summary>
+public record LIRCallGuardedIntrinsicMember(
+    TempVariable Receiver,
+    Type ReceiverClrType,
+    JavaScriptRuntime.IntrinsicPrototypeFamily PrototypeFamily,
+    string MemberName,
+    bool ReceiverIsProvenType,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a computed member with inline common-arity arguments.
 /// </summary>
 public record LIRCallComputedMemberFixed(

@@ -40,6 +40,17 @@ namespace JavaScriptRuntime
                 || PropertyDescriptorStore.GetOwnLookup(target, key, out _) != PropertyDescriptorLookup.None;
         }
 
+        public static bool HasOwnIntrinsicMemberOverride(
+            object target,
+            string key)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+            ArgumentNullException.ThrowIfNull(key);
+
+            return target is JsObject jsObject
+                && jsObject.HasOwnPropertyValue(key);
+        }
+
         internal static bool TrySetOwnValue(object target, string key, object? value)
         {
             if (target is JsObject jsObject)

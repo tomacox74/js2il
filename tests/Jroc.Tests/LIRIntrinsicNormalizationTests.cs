@@ -173,6 +173,181 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_KeepsProvenArrayMemberCallDirect()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(JavaScriptRuntime.Array)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(
+            new LIRCallMember1(
+                receiver,
+                "push",
+                argument,
+                result));
+
+        LIRIntrinsicNormalization.Normalize(
+            body,
+            new ClassRegistry());
+
+        var direct =
+            Assert.IsType<LIRCallInstanceMethod>(
+                body.Instructions[0]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Array),
+            direct.ReceiverClrType);
+        Assert.Equal(
+            typeof(double),
+            body.TempStorages[result.Index].ClrType);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_ConsumesArrayFlowCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.Array),
+            "Construct",
+            [],
+            receiver));
+        body.Instructions.Add(
+            new LIRCallMember0(receiver, "pop", result));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallGuardedIntrinsicMember>(
+                body.Instructions[1]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Array),
+            guarded.ReceiverClrType);
+        Assert.True(guarded.ReceiverIsProvenType);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_ConsumesTypedArrayFlowCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            ReceiverTypeSummary.ForCandidate(
+                typeof(JavaScriptRuntime.Int32Array));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Int32Array",
+            "Construct",
+            [],
+            receiver));
+        body.Instructions.Add(
+            new LIRCallMember1(
+                receiver,
+                "includes",
+                argument,
+                result));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallGuardedIntrinsicMember>(
+                body.Instructions[1]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Int32Array),
+            guarded.ReceiverClrType);
+        Assert.Equal(
+            JavaScriptRuntime.IntrinsicPrototypeFamily.TypedArray,
+            guarded.PrototypeFamily);
+        Assert.True(guarded.ReceiverIsProvenType);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_KeepsTypeGuardForUncertainArrayCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var argument = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(JavaScriptRuntime.Array)]);
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Unknown",
+            "Call",
+            [],
+            receiver));
+        body.Instructions.Add(
+            new LIRCallMember1(
+                receiver,
+                "push",
+                argument,
+                result));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallGuardedIntrinsicMember>(
+                body.Instructions[1]);
+        Assert.Equal(
+            typeof(JavaScriptRuntime.Array),
+            guarded.ReceiverClrType);
+        Assert.False(guarded.ReceiverIsProvenType);
+    }
+
+    [Fact]
     public void Normalize_Fuses_CharCodeAtNumberConversion_IntoGuardedIntrinsic()
     {
         var body = new MethodBodyIR();

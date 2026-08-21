@@ -49,16 +49,19 @@ conflicting assignments, captured fields, and deferred callbacks can all make
 the value at a particular read unknown. Candidates therefore never remove a
 runtime check or authorize an unguarded intrinsic call.
 
-Candidate sets are currently analysis and diagnostics facts only. Existing
-guarded String lowering continues to classify receivers from representation-safe
-storage facts; a candidate never overrides a known non-string classification
-or bypasses storage compatibility checks. In particular, `new String(...)`
-produces a boxed String object and is not recorded as a primitive-string
-candidate. A later `+=` can still establish a primitive-string result because
-JavaScript addition coerces that object to a primitive.
+Candidate sets never override representation-safe storage facts or bypass
+runtime compatibility checks. In particular, `new String(...)` produces a
+boxed String object and is not recorded as a primitive-string candidate. A
+later `+=` can still establish a primitive-string result because JavaScript
+addition coerces that object to a primitive.
 
-Candidate sets also retain Array and typed-array observations for future
-guarded specializations, but do not affect their lowering today.
+Final per-program-point Array and concrete typed-array candidates drive
+guarded instance-method specialization. A candidate-only site retains an
+`isinst` check and generic fallback; only a fact containing one candidate and
+no unknown or non-candidate paths can omit the type test. Object-literal shapes
+and generated user-class metadata remain separate identity domains and
+continue through their existing specialized lowering rather than being
+collapsed into CLR receiver candidates.
 
 ### Per-program-point facts
 
@@ -87,7 +90,8 @@ instruction invalidates every mutable location, and control leaving a protected
 region with a `finally` does likewise rather than assuming the handler has no
 relevant writes. Plain heap mutation does not invalidate a local binding's
 receiver type because changing an object does not replace the binding value.
-The facts remain analysis-only and do not change generated IL.
+The facts remain representation-neutral. Only the guarded receiver
+specialization pass consumes eligible Array and typed-array facts.
 
 ### Interprocedural summaries
 
@@ -110,8 +114,7 @@ contains no separate identifier read.
 
 ## Current specialization surface
 
-The initial allowlist matches the previously supported String early-binding
-surface:
+The String allowlist matches the previously supported early-binding surface:
 
 - arity 0: `charAt`, `charCodeAt`, trim aliases, and case conversion;
 - arity 1: character access, substring/slice operations, searches, and prefix
@@ -120,6 +123,14 @@ surface:
 
 A call is specialized only when a fixed-arity helper preserves each argument's
 existing representation. Otherwise the original generic call remains.
+
+Array specialization currently covers `push`, `unshift`, `pop`, `shift`,
+`slice`, and `splice`. Typed-array specialization covers `at`, `includes`,
+`indexOf`, `lastIndexOf`, `join`, and `reverse`. Their fast paths require a
+pristine realm-owned prototype-family epoch, no own member override, the
+receiver's default intrinsic prototype, and—unless the flow fact proves one
+exact type—a successful CLR type test. Failure of any guard performs the
+original `ObjectRuntime.CallMemberN` operation.
 
 ## Performance
 

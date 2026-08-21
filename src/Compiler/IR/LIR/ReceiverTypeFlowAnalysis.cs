@@ -580,6 +580,7 @@ internal static class ReceiverTypeFlowAnalysis
             LIRCallMember4 call => call.Receiver,
             LIRCallMember5 call => call.Receiver,
             LIRCallGuardedStringIntrinsic call => call.Receiver,
+            LIRCallGuardedIntrinsicMember call => call.Receiver,
             LIRGetLength getLength => getLength.Object,
             LIRGetItem getItem => getItem.Object,
             _ => default
@@ -592,6 +593,7 @@ internal static class ReceiverTypeFlowAnalysis
             or LIRCallMember4
             or LIRCallMember5
             or LIRCallGuardedStringIntrinsic
+            or LIRCallGuardedIntrinsicMember
             or LIRGetLength
             or LIRGetItem;
     }

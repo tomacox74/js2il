@@ -1321,6 +1321,16 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallGuardedIntrinsicMember guardedIntrinsic:
+                {
+                    EmitGuardedIntrinsicMemberCall(
+                        guardedIntrinsic,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    break;
+                }
+
             case LIRCallComputedMemberFixed callComputedMember:
                 {
                     EmitLoadTempAsObject(

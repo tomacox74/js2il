@@ -1139,6 +1139,8 @@ internal sealed class JsMethodCompiler
                 ReceiverTypeFlowAnalysis.Analyze(lirMethod);
         }
 
+        LIRReceiverSpecialization.Normalize(lirMethod!);
+
         methodBody = lirMethod!;
         return true;
     }

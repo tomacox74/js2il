@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 326 (0x146)
+		// Code size: 449 (0x1c1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Fill_Reverse_Join_LastIndexOf/Scope,
@@ -71,75 +71,118 @@
 		IL_0050: stloc.1
 		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0056: stloc.3
-		IL_0057: ldloc.1
-		IL_0058: ldstr "lastIndexOf"
-		IL_005d: ldc.r8 2
-		IL_0066: box [System.Runtime]System.Double
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0070: stloc.s 4
-		IL_0072: ldloc.3
-		IL_0073: ldloc.s 4
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007a: pop
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: stloc.3
-		IL_0081: ldloc.1
-		IL_0082: ldstr "fill"
-		IL_0087: ldc.r8 9
-		IL_0090: box [System.Runtime]System.Double
-		IL_0095: ldc.r8 1
-		IL_009e: box [System.Runtime]System.Double
-		IL_00a3: ldc.r8 3
-		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00b6: stloc.s 4
-		IL_00b8: ldloc.s 4
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bf: ldstr "join"
-		IL_00c4: ldstr "|"
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ce: stloc.s 4
-		IL_00d0: ldloc.3
-		IL_00d1: ldloc.s 4
-		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d8: pop
-		IL_00d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00de: stloc.3
-		IL_00df: ldloc.1
-		IL_00e0: ldstr "reverse"
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00ea: stloc.s 4
-		IL_00ec: ldloc.s 4
-		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f3: ldstr "toString"
-		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0057: ldc.i4.2
+		IL_0058: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_005d: brfalse IL_009e
+
+		IL_0062: ldloc.1
+		IL_0063: ldstr "lastIndexOf"
+		IL_0068: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnIntrinsicMemberOverride(object, string)
+		IL_006d: brtrue IL_009e
+
+		IL_0072: ldloc.1
+		IL_0073: ldc.i4.2
+		IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::HasDefaultPrototype(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0079: brfalse IL_009e
+
+		IL_007e: ldloc.1
+		IL_007f: ldc.r8 2
+		IL_0088: box [System.Runtime]System.Double
+		IL_008d: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::lastIndexOf(object)
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: stloc.s 4
+		IL_0099: br IL_00b9
+
+		IL_009e: ldloc.1
+		IL_009f: ldstr "lastIndexOf"
+		IL_00a4: ldc.r8 2
+		IL_00ad: box [System.Runtime]System.Double
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b7: stloc.s 4
+
+		IL_00b9: ldloc.3
+		IL_00ba: ldloc.s 4
+		IL_00bc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c1: pop
+		IL_00c2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c7: stloc.3
+		IL_00c8: ldloc.1
+		IL_00c9: ldstr "fill"
+		IL_00ce: ldc.r8 9
+		IL_00d7: box [System.Runtime]System.Double
+		IL_00dc: ldc.r8 1
+		IL_00e5: box [System.Runtime]System.Double
+		IL_00ea: ldc.r8 3
+		IL_00f3: box [System.Runtime]System.Double
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
 		IL_00fd: stloc.s 4
-		IL_00ff: ldloc.3
-		IL_0100: ldloc.s 4
-		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0107: pop
-		IL_0108: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_010d: stloc.3
-		IL_010e: ldloc.1
-		IL_010f: ldstr "toString"
-		IL_0114: ldstr "|"
-		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011e: stloc.s 4
-		IL_0120: ldloc.3
-		IL_0121: ldloc.s 4
-		IL_0123: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0128: pop
-		IL_0129: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012e: stloc.3
-		IL_012f: ldloc.1
-		IL_0130: ldstr "toLocaleString"
-		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_013a: stloc.s 4
-		IL_013c: ldloc.3
-		IL_013d: ldloc.s 4
-		IL_013f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0144: pop
-		IL_0145: ret
+		IL_00ff: ldloc.s 4
+		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0106: ldstr "join"
+		IL_010b: ldstr "|"
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0115: stloc.s 4
+		IL_0117: ldloc.3
+		IL_0118: ldloc.s 4
+		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_011f: pop
+		IL_0120: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0125: stloc.3
+		IL_0126: ldc.i4.2
+		IL_0127: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_012c: brfalse IL_015a
+
+		IL_0131: ldloc.1
+		IL_0132: ldstr "reverse"
+		IL_0137: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnIntrinsicMemberOverride(object, string)
+		IL_013c: brtrue IL_015a
+
+		IL_0141: ldloc.1
+		IL_0142: ldc.i4.2
+		IL_0143: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::HasDefaultPrototype(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0148: brfalse IL_015a
+
+		IL_014d: ldloc.1
+		IL_014e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.TypedArrayBase [JavaScriptRuntime]JavaScriptRuntime.Int32Array::reverse()
+		IL_0153: stloc.s 4
+		IL_0155: br IL_0167
+
+		IL_015a: ldloc.1
+		IL_015b: ldstr "reverse"
+		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0165: stloc.s 4
+
+		IL_0167: ldloc.s 4
+		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_016e: ldstr "toString"
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0178: stloc.s 4
+		IL_017a: ldloc.3
+		IL_017b: ldloc.s 4
+		IL_017d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0182: pop
+		IL_0183: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0188: stloc.3
+		IL_0189: ldloc.1
+		IL_018a: ldstr "toString"
+		IL_018f: ldstr "|"
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0199: stloc.s 4
+		IL_019b: ldloc.3
+		IL_019c: ldloc.s 4
+		IL_019e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a3: pop
+		IL_01a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01a9: stloc.3
+		IL_01aa: ldloc.1
+		IL_01ab: ldstr "toLocaleString"
+		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01b5: stloc.s 4
+		IL_01b7: ldloc.3
+		IL_01b8: ldloc.s 4
+		IL_01ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01bf: pop
+		IL_01c0: ret
 	} // end of method Int32Array_Fill_Reverse_Join_LastIndexOf::__js_module_init__
 
 } // end of class Modules.Int32Array_Fill_Reverse_Join_LastIndexOf

@@ -14,8 +14,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   entries (issue #1898). Facts distinguish unknown/non-candidate paths from
   observed reference types, invalidate across opaque property access and
   unsupported LIR barriers, and reject host-exposed callable summaries. They
-  remain analysis-only until representation-compatible guarded specialization
-  is available.
+  now drive guarded Array and typed-array fixed-arity calls with exact generic
+  fallback, while object-literal shapes and generated user-class metadata keep
+  their existing specialized identity domains.
+- perf(runtime): add realm-owned Array and typed-array prototype mutation
+  epochs. Their compiler guards also reject own member overrides and custom
+  per-instance prototype chains before calling runtime instance methods.
 - perf(compiler): emit realm-epoch-guarded fixed-arity String intrinsic calls
   with exact `CallMember0..5` fallbacks (issue #1891). Proven receivers skip
   the type test, uncertain receivers use `isinst string`, and the guarded

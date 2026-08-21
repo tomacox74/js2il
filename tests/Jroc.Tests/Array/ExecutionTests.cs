@@ -41,6 +41,9 @@ namespace Jroc.Tests.Array
         public Task Array_Push_Basic() { var testName = nameof(Array_Push_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_ReceiverCandidate_GuardedOverrides() { var testName = nameof(Array_ReceiverCandidate_GuardedOverrides); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return ExecutionTest(testName); }
 
         [Fact]
