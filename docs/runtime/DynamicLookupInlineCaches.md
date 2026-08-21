@@ -163,6 +163,55 @@ megamorphic site executes the existing generic `ObjectRuntime` operation.
 `CallMember0` additionally validates callability before caching or invoking a
 resolved value.
 
+## Cache size and lifetime policy
+
+The cache policy follows the principle that an infinite cache is another name
+for a memory leak. This prototype bounds receiver entries at each site, uses
+weak references for JavaScript object graphs, and gives the realm an explicit
+bulk-disposal boundary. It does not use LRU, LFU, time-to-live, or
+process-global eviction.
+
+| Layer | Size policy | Lifetime and release policy |
+| --- | --- | --- |
+| Realm site dictionary | One site for each distinct generated site key that produces at least one cacheable ordinary-data-property result. Uncacheable-only operations do not create sites. | The dictionary strongly retains each key and site until realm disposal. Individual sites are not currently removed. |
+| Cache site | At most four live monomorphic/polymorphic entries. | A fifth distinct live receiver/property identity changes the site permanently to megamorphic state and releases all entries. The site object and key remain in the realm dictionary so later calls can take generic fallback directly. |
+| Cache entry | One exact receiver/property identity. The entry also has arrays proportional to the traversed prototype-chain depth, so four entries is a count bound rather than a fixed byte bound. | The receiver, non-null resolved value, and prototype objects are weakly referenced. The property-name string, weak-reference arrays, and version array remain strongly held while the entry remains in the current site snapshot. |
+| Published snapshot | One immutable entry array visible to new readers. | A miss update atomically publishes a replacement. An older snapshot remains alive only while an in-flight reader still references it, then becomes collectible. |
+
+A cache entry is created only after exact generic resolution finds a cacheable
+data descriptor. Its subsequent lifetime is:
+
+1. Valid hits reuse the entry without allocation.
+2. A descriptor, value, or prototype mutation makes the recorded versions
+   stale. The entry immediately stops hitting, but it is not removed merely by
+   detecting the stale version.
+3. If the same live receiver/property identity later resolves to a cacheable
+   data property, the miss update replaces that entry. If lookup remains
+   missing, accessor-based, or otherwise uncacheable, generic fallback
+   continues and the stale metadata can remain until replacement for that
+   identity, megamorphic transition, or realm disposal.
+4. If a receiver is collected, its weak entry is removed during the next
+   cacheable miss update at that site. There is no background sweep, so a site
+   that is never touched again can retain the entry's bounded metadata, but
+   not its receiver, value, or prototype graph.
+5. A megamorphic transition drops the complete entry array and is
+   irreversible for the lifetime of that realm-owned site.
+
+The per-site entry limit prevents a highly variable call site from retaining
+an ever-growing receiver history. Weak references prevent even the four
+retained entries from extending JavaScript object lifetimes. Permanent
+megamorphic fallback also avoids repeatedly allocating entries that the site
+would immediately discard.
+
+The realm dictionary itself is not numerically capped. For a realm executing a
+fixed compiled application, its maximum site count is bounded by the number of
+cache-bearing generated instructions that become cacheable. A long-lived host
+that continually executes new compiled assemblies with new site keys can grow
+the dictionary until the realm is disposed. That lifecycle is an explicit
+remaining constraint, not an LRU policy. Future per-module tables considered
+by #1955 should provide a module/assembly release boundary while preserving
+collectible-assembly behavior.
+
 ## Realm lifecycle
 
 Each realm owns its site dictionary. Identical site keys cannot share entries
