@@ -24,12 +24,19 @@ The generated fast path:
 1. validates
    `IntrinsicPrototypeEpochs.IsPristine(IntrinsicPrototypeFamily.String)`;
 2. performs `isinst string` when the receiver type is uncertain;
-3. calls the exact fixed-arity String helper.
+3. if that check fails, accepts a boxed String only when it has the current
+   realm's exact `String.prototype`, no own override for the called member, and
+   an intact string-valued `[[StringData]]` slot;
+4. calls the exact fixed-arity String helper.
 
 The cold path executes the original `ObjectRuntime.CallMember0..5` operation
 with the original receiver and arguments. Argument expressions are evaluated
 before the guard, so both branches preserve JavaScript evaluation order and
 coercion behavior.
+
+Boxed Strings with a custom prototype, own assignment or descriptor override,
+or a prototype from another realm take the exact generic fallback. Prototype
+epoch invalidation also bypasses both primitive and boxed fast paths.
 
 The compiler keeps result storage as `object` when an override can return an
 arbitrary value. The `charCodeAt` plus `ToNumber` fusion is the current
@@ -109,9 +116,10 @@ block appear loop-hot. The analysis is lazy: methods pay its cost only after
 the receiver specialization pass finds an otherwise eligible Array or
 typed-array call.
 
-This gate does not change existing proven-Array direct calls or the guarded
-String contract. It controls the code-size expansion introduced when the
-post-flow receiver specialization selects a guarded fast path.
+This gate does not change existing proven-Array direct calls or guarded String
+method calls. It controls the code-size expansion introduced when post-flow
+receiver specialization selects a guarded method or numeric String-index fast
+path.
 
 ### Diagnostics
 
@@ -161,6 +169,14 @@ The String allowlist matches the previously supported early-binding surface:
 A call is specialized only when a fixed-arity helper preserves each argument's
 existing representation. Otherwise the original generic call remains.
 
+Numeric element reads on String candidates also have a loop-gated fast path.
+For an in-range canonical integer index on a primitive String, it returns the
+cached one-character string directly. A non-String receiver, non-canonical
+index, or out-of-range index executes the original `ObjectRuntime.GetItem`
+operation, preserving inherited numeric properties and other dynamic behavior.
+Candidate evidence authorizes this checked helper but is never treated as
+proof.
+
 Array specialization currently covers `push`, `unshift`, `pop`, `shift`,
 `slice`, and `splice`. Typed-array specialization covers `at`, `includes`,
 `indexOf`, `lastIndexOf`, `join`, and `reverse`. Their fast paths require a
@@ -193,12 +209,36 @@ The guard removes about 96% of the generic dispatch time in this focused case
 and eliminates its steady-state allocation. The uncertain receiver type test
 adds about 0.2 ns while retaining the complete generic fallback.
 
+The 2026-08-21 ShortRun added a focused boxed-String control:
+
+| Path | Mean | Allocated |
+| --- | ---: | ---: |
+| Guarded String-object `trim` | 34.894 ns | 0 B |
+| Generic `CallMember0` String-object `trim` | 183.714 ns | 32 B |
+
+Both rows used N=3. This is causal microbenchmark evidence for the boxed
+receiver arm, not an end-to-end application result.
+
 The 2026-08-19 local DefaultJob run of `dromaeo-object-string` on .NET
 10.0.11 measured JROC execution at 22.03 ms (N=13) with 44.24 MB allocated
 per module load. Compiling that exact fixture before and after receiver
 candidate tracking produced the same 22,528-byte module assembly. String
 candidate tracking remains code-generation-neutral until a later
 specialization consumes its final-LIR fact.
+
+On 2026-08-21, the exact `dromaeo-object-string` fixture provided the
+end-to-end item-8 control. Before the numeric-index specialization, one
+DefaultJob run measured 20.426 ms mean / 20.359 ms median (N=19). Three
+post-change runs measured 20.190, 20.273, and 20.165 ms means (N=18, 15, and
+17), averaging 20.210 ms; their medians averaged 20.255 ms. This is about a
+1.1% mean and 0.5% median improvement, but the single baseline and small effect
+make the end-to-end result noise-sensitive. Generated IL confirms the causal
+change: five hot numeric reads now call
+`GetStringElementWithFallback` instead of generic `GetItem`.
+
+The generated fixture assembly grew from 22,528 to 23,040 bytes because its 37
+uncertain guarded String method sites now include the safe boxed-receiver arm.
+Per-load allocation was effectively unchanged across these runs.
 
 Array and typed-array facts are consumed by the post-flow specialization pass.
 On a controlled fixture containing one cold Array-candidate call and one call
@@ -218,11 +258,16 @@ Coverage includes:
 - replacement, accessor, deletion, inherited override, and aliased-call
   behavior;
 - uncertain receivers that alternate between strings and ordinary objects;
+- same-realm boxed Strings plus own-assignment, descriptor, custom-prototype,
+  and cross-realm boxed-String fallbacks;
 - cross-realm prototype isolation using one compiled module loaded twice;
 - guarded numeric fallback conversion;
 - zero-allocation guard plus `String.trim` fast-path execution;
+- loop-gated numeric String indexing, including generic cold and invalid-index
+  fallback behavior;
 - the `dromaeo-object-string` fixture, including captured writes and deferred
-  callbacks whose hot calls must keep an `isinst string` plus generic fallback;
+  callbacks whose guarded method calls keep an `isinst string` plus exact
+  generic fallback;
 - targeted `built-ins/String/prototype/**` test262 tests.
 
 The realm-owned invalidation contract is documented in

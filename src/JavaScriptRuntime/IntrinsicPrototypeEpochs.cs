@@ -55,4 +55,28 @@ public static class IntrinsicPrototypeEpochs
                 PrototypeChain.GetPrototypeOrNull(receiver),
                 expectedPrototype);
     }
+
+    public static string? TryUnwrapStringObjectReceiver(
+        object receiver,
+        string memberName)
+    {
+        if (receiver is not JsObject
+            || !ReferenceEquals(
+                PrototypeChain.GetPrototypeOrNull(receiver),
+                String.Prototype)
+            || ObjectRuntime.HasOwnIntrinsicMemberOverride(
+                receiver,
+                memberName)
+            || !PropertyDescriptorStore.TryGetOwn(
+                receiver,
+                String.StringDataPropertyName,
+                out var descriptor)
+            || descriptor.Kind != JsPropertyDescriptorKind.Data
+            || descriptor.Value is not string value)
+        {
+            return null;
+        }
+
+        return value;
+    }
 }

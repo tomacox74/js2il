@@ -4,6 +4,33 @@ function callTrim(value) {
     return value.trim();
 }
 
+var boxed = new String("  boxed  ");
+console.log(boxed.trim());
+console.log(typeof boxed);
+
+var own = new String("own-source");
+own.trim = function () {
+    return "own";
+};
+console.log(own.trim());
+
+var defined = new String("defined-source");
+Object.defineProperty(defined, "trim", {
+    value: function () {
+        return "defined";
+    }
+});
+console.log(defined.trim());
+
+var customPrototype = {
+    trim: function () {
+        return "custom-prototype";
+    }
+};
+var custom = new String("custom-source");
+Object.setPrototypeOf(custom, customPrototype);
+console.log(custom.trim());
+
 console.log(callTrim("  uncertain  "));
 console.log(callTrim({
     trim: function () {

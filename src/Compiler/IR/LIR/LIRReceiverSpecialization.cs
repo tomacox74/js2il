@@ -10,8 +10,19 @@ internal static class LIRReceiverSpecialization
         MethodBodyIR methodBody,
         ReceiverTypeFlowDiagnosticTrace? diagnostics = null)
     {
+        Dictionary<int, HashSet<Type>>? staticCandidates = null;
+
         for (var index = 0; index < methodBody.Instructions.Count; index++)
         {
+            if (TryNormalizeStringPropertyAccess(
+                    methodBody,
+                    index,
+                    ref staticCandidates,
+                    diagnostics))
+            {
+                continue;
+            }
+
             if (!TryGetMemberCall(
                     methodBody.Instructions[index],
                     out var receiver,
@@ -68,6 +79,243 @@ internal static class LIRReceiverSpecialization
             SetObjectResultStorage(methodBody, result);
         }
     }
+
+    private static bool TryNormalizeStringPropertyAccess(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        ref Dictionary<int, HashSet<Type>>? staticCandidates,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics)
+    {
+        TempVariable receiver;
+        TempVariable result;
+        IReadOnlyList<TempVariable> arguments;
+        string memberName;
+        string helperName;
+
+        switch (methodBody.Instructions[instructionIndex])
+        {
+            case LIRGetItem getItem
+                when IsUnboxedDouble(methodBody, getItem.Index):
+                receiver = getItem.Object;
+                result = getItem.Result;
+                arguments = [receiver, getItem.Index];
+                memberName = "[index]";
+                helperName = nameof(
+                    JavaScriptRuntime.ObjectRuntime
+                        .GetStringElementWithFallback);
+                break;
+            default:
+                return false;
+        }
+
+        if (!TryClassifyStringReceiver(
+                methodBody,
+                instructionIndex,
+                receiver,
+                ref staticCandidates,
+                out var receiverIsProvenString))
+        {
+            return false;
+        }
+
+        methodBody.LoopNestingFacts ??=
+            LIRLoopNestingAnalysis.Analyze(methodBody);
+        var loopDepth =
+            methodBody.LoopNestingFacts.GetDepth(instructionIndex);
+        if (loopDepth < MinimumLoopDepth)
+        {
+            diagnostics?.RecordSpecialization(
+                instructionIndex,
+                memberName,
+                receiver,
+                typeof(string),
+                loopDepth,
+                receiverIsProvenString,
+                "retained-generic(cold)");
+            return false;
+        }
+
+        diagnostics?.RecordSpecialization(
+            instructionIndex,
+            memberName,
+            receiver,
+            typeof(string),
+            loopDepth,
+            receiverIsProvenString,
+            "guarded");
+        methodBody.Instructions[instructionIndex] =
+            new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                helperName,
+                arguments,
+                result);
+        SetObjectResultStorage(methodBody, result);
+        return true;
+    }
+
+    private static bool TryClassifyStringReceiver(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        TempVariable receiver,
+        ref Dictionary<int, HashSet<Type>>? staticCandidates,
+        out bool receiverIsProvenString)
+    {
+        receiverIsProvenString = false;
+        if (TryGetStorageReceiverType(
+                methodBody,
+                receiver,
+                out var storageType))
+        {
+            if (storageType == typeof(string))
+            {
+                receiverIsProvenString = true;
+                return true;
+            }
+
+            if (storageType != typeof(object))
+            {
+                return false;
+            }
+        }
+
+        var fact = methodBody.ReceiverTypeFlowFacts?
+            .GetTempBefore(instructionIndex, receiver);
+        if (fact?.Contains(typeof(string)) == true)
+        {
+            receiverIsProvenString =
+                !fact.IncludesUnknown
+                && !fact.IncludesNonCandidate
+                && fact.CandidateClrTypes.Count == 1;
+            return true;
+        }
+
+        staticCandidates ??=
+            BuildStaticReceiverCandidates(methodBody);
+        return staticCandidates.TryGetValue(
+                receiver.Index,
+                out var candidates)
+            && candidates.Contains(typeof(string));
+    }
+
+    private static Dictionary<int, HashSet<Type>>
+        BuildStaticReceiverCandidates(MethodBodyIR methodBody)
+    {
+        var candidates = new Dictionary<int, HashSet<Type>>();
+        foreach (var (tempIndex, summary) in
+                 methodBody.ReceiverTempTypeSummaries)
+        {
+            Add(
+                new TempVariable(tempIndex),
+                summary.CandidateClrTypes);
+        }
+
+        bool changed;
+        do
+        {
+            changed = false;
+            foreach (var instruction in methodBody.Instructions)
+            {
+                if (!LIRInstructionInfo.TryGetDefinedTemp(
+                        instruction,
+                        out var result)
+                    || result.Index < 0)
+                {
+                    continue;
+                }
+
+                if (methodBody.ReceiverTempTypeSummaries.TryGetValue(
+                        result.Index,
+                        out var summary))
+                {
+                    changed |= Add(
+                        result,
+                        summary.CandidateClrTypes);
+                }
+
+                switch (instruction)
+                {
+                    case LIRLoadScopeField load:
+                        changed |= Add(
+                            result,
+                            load.Binding.ReceiverCandidateClrTypes);
+                        break;
+                    case LIRLoadLeafScopeField load:
+                        changed |= Add(
+                            result,
+                            load.Binding.ReceiverCandidateClrTypes);
+                        break;
+                    case LIRLoadParentScopeField load:
+                        changed |= Add(
+                            result,
+                            load.Binding.ReceiverCandidateClrTypes);
+                        break;
+                    case LIRCopyTemp copy:
+                        changed |= Copy(copy.Source, result);
+                        break;
+                    case LIRConvertToObject convert:
+                        changed |= Copy(convert.Source, result);
+                        break;
+                    case LIRCallIntrinsicStatic
+                    {
+                        IntrinsicName:
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                        MethodName:
+                            nameof(JavaScriptRuntime.ObjectRuntime
+                                .RequireObjectCoercible),
+                        Arguments: [var source]
+                    }:
+                        changed |= Copy(source, result);
+                        break;
+                }
+            }
+        }
+        while (changed);
+
+        return candidates;
+
+        bool Add(TempVariable temp, IEnumerable<Type> types)
+        {
+            var added = false;
+            foreach (var type in types)
+            {
+                if (!candidates.TryGetValue(
+                        temp.Index,
+                        out var target))
+                {
+                    target = [];
+                    candidates.Add(temp.Index, target);
+                }
+
+                added |= target.Add(type);
+            }
+
+            return added;
+        }
+
+        bool Copy(TempVariable source, TempVariable target)
+        {
+            if (candidates.TryGetValue(
+                    source.Index,
+                    out var sourceCandidates))
+            {
+                return Add(target, sourceCandidates);
+            }
+
+            return false;
+        }
+    }
+
+    private static bool IsUnboxedDouble(
+        MethodBodyIR methodBody,
+        TempVariable temp)
+        => temp.Index >= 0
+            && temp.Index < methodBody.TempStorages.Count
+            && methodBody.TempStorages[temp.Index] is
+            {
+                Kind: ValueStorageKind.UnboxedValue,
+                ClrType: not null
+            } storage
+            && storage.ClrType == typeof(double);
 
     private static void SetObjectResultStorage(
         MethodBodyIR methodBody,
@@ -316,4 +564,5 @@ internal static class LIRReceiverSpecialization
                 return false;
         }
     }
+
 }

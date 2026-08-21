@@ -260,12 +260,20 @@ public class ModuleLoadTests
 
         Assert.Equal("first", (string)firstExports.callTrim("  first  "));
         Assert.Equal("second", (string)secondExports.callTrim("  second  "));
+        object firstStringObject =
+            firstExports.createString("  first-object  ");
+        Assert.Equal(
+            "first-object",
+            (string)firstExports.callTrim(firstStringObject));
 
         firstExports.overrideTrim("first-override");
 
         Assert.Equal(
             "first-override",
             (string)firstExports.callTrim("  first  "));
+        Assert.Equal(
+            "first-override",
+            (string)firstExports.callTrim(firstStringObject));
         Assert.Equal("second", (string)secondExports.callTrim("  second  "));
     }
 

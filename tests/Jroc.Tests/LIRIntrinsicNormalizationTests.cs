@@ -409,6 +409,95 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void ReceiverSpecialization_RewritesHotStringElementCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var index = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(string)]);
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(
+            new LIRGetItem(receiver, index, result));
+        body.Instructions.Add(new LIRBranch(100));
+
+        var diagnostics = new ReceiverTypeFlowDiagnosticTrace();
+        LIRReceiverSpecialization.Normalize(
+            body,
+            diagnostics);
+
+        var call = Assert.IsType<LIRCallIntrinsicStatic>(
+            body.Instructions[1]);
+        Assert.Equal(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            call.IntrinsicName);
+        Assert.Equal(
+            nameof(JavaScriptRuntime.ObjectRuntime
+                .GetStringElementWithFallback),
+            call.MethodName);
+        Assert.Equal([receiver, index], call.Arguments);
+        Assert.Contains(
+            diagnostics.Events,
+            item => item.Kind
+                    == ReceiverTypeFlowDiagnosticKind.Specialization
+                && item.Message.Contains(
+                    "member=[index]",
+                    StringComparison.Ordinal)
+                && item.Message.Contains(
+                    "loop-depth=1",
+                    StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_KeepsColdStringElementCandidateGeneric()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var index = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(string)]);
+        body.Instructions.Add(
+            new LIRGetItem(receiver, index, result));
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        Assert.IsType<LIRGetItem>(
+            Assert.Single(body.Instructions));
+    }
+
+    [Fact]
     public void LoopNestingAnalysis_ComputesNestedNaturalLoopDepth()
     {
         var body = new MethodBodyIR();

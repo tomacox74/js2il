@@ -894,6 +894,23 @@ namespace JavaScriptRuntime
             }
         }
 
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static object GetStringElementWithFallback(
+            object receiver,
+            double index)
+        {
+            if (receiver is string value
+                && TryGetCanonicalInt32Index(index, out var intIndex)
+                && (uint)intIndex < (uint)value.Length)
+            {
+                return JavaScriptRuntime.String.CharToStringFast(
+                    value[intIndex]);
+            }
+
+            return GetItem(receiver, index);
+        }
+
         /// <summary>
         /// Fast-path overload for string key reads.
         /// Avoids boxing at the call site when the compiler has proven the key is a string.

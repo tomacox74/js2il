@@ -16,6 +16,7 @@ public class GuardedStringIntrinsicBenchmarks
     private const string Receiver = "value";
     private const string MethodName = "trim";
     private readonly object _uncertainReceiver = Receiver;
+    private object _stringObjectReceiver = null!;
     private RuntimeAgentCluster? _cluster;
     private IDisposable? _scope;
 
@@ -27,6 +28,10 @@ public class GuardedStringIntrinsicBenchmarks
         var context = RuntimeExecutionContext.GetOrCreate(services);
         _scope = context.EnterAsRoot();
         _ = GlobalThis.globalThis;
+        _stringObjectReceiver =
+            JavaScriptRuntime.String.Construct(
+                [Receiver],
+                newTarget: null);
     }
 
     [GlobalCleanup]
@@ -66,6 +71,38 @@ public class GuardedStringIntrinsicBenchmarks
 
         return ObjectRuntime.CallMember0(
             _uncertainReceiver,
+            MethodName);
+    }
+
+    [Benchmark(Description = "CallMember0 String-object.trim")]
+    public object? GenericStringObjectCallMember()
+        => ObjectRuntime.CallMember0(
+            _stringObjectReceiver,
+            MethodName);
+
+    [Benchmark(Description = "Guarded String-object.trim")]
+    public object? GuardedStringObjectReceiver()
+    {
+        if (IntrinsicPrototypeEpochs.IsPristine(
+                IntrinsicPrototypeFamily.String))
+        {
+            if (_stringObjectReceiver is string input)
+            {
+                return JavaScriptRuntime.String.Trim(input);
+            }
+
+            var unwrapped = IntrinsicPrototypeEpochs
+                .TryUnwrapStringObjectReceiver(
+                    _stringObjectReceiver,
+                    MethodName);
+            if (unwrapped != null)
+            {
+                return JavaScriptRuntime.String.Trim(unwrapped);
+            }
+        }
+
+        return ObjectRuntime.CallMember0(
+            _stringObjectReceiver,
             MethodName);
     }
 }

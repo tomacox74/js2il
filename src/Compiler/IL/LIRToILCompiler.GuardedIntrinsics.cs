@@ -207,7 +207,10 @@ internal sealed partial class LIRToILCompiler
         }
 
         var fallbackLabel = ilEncoder.DefineLabel();
-        var typeFallbackLabel = instruction.ReceiverIsProvenString
+        var stringObjectFallbackLabel = instruction.ReceiverIsProvenString
+            ? default
+            : ilEncoder.DefineLabel();
+        var fastPathLabel = instruction.ReceiverIsProvenString
             ? default
             : ilEncoder.DefineLabel();
         var doneLabel = ilEncoder.DefineLabel();
@@ -243,7 +246,29 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Isinst);
             ilEncoder.Token(_bclReferences.StringType);
             ilEncoder.OpCode(ILOpCode.Dup);
-            ilEncoder.Branch(ILOpCode.Brfalse, typeFallbackLabel);
+            ilEncoder.Branch(ILOpCode.Brtrue, fastPathLabel);
+            ilEncoder.OpCode(ILOpCode.Pop);
+
+            EmitLoadTempAsObject(
+                instruction.Receiver,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.Ldstr(
+                _metadataBuilder,
+                instruction.MemberName);
+            var tryUnwrap = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.IntrinsicPrototypeEpochs),
+                nameof(JavaScriptRuntime.IntrinsicPrototypeEpochs
+                    .TryUnwrapStringObjectReceiver),
+                [typeof(object), typeof(string)]);
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(tryUnwrap);
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.Branch(
+                ILOpCode.Brfalse,
+                stringObjectFallbackLabel);
+            ilEncoder.MarkLabel(fastPathLabel);
         }
 
         for (var i = 0; i < instruction.Arguments.Count; i++)
@@ -270,7 +295,7 @@ internal sealed partial class LIRToILCompiler
 
         if (!instruction.ReceiverIsProvenString)
         {
-            ilEncoder.MarkLabel(typeFallbackLabel);
+            ilEncoder.MarkLabel(stringObjectFallbackLabel);
             ilEncoder.OpCode(ILOpCode.Pop);
         }
 

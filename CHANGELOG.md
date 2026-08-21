@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): consume String receiver candidates for loop-hot
+  numeric element reads with exact generic fallback, and extend guarded String
+  method calls to safe same-realm boxed Strings (issue #1898). Five hot reads
+  in `dromaeo-object-string` now use the specialized element helper; three
+  local post-change runs averaged about 1.1% faster than the pre-change run,
+  while the focused boxed-String guard improved 183.714 ns / 32 B to
+  34.894 ns / 0 B.
 - compiler: record receiver candidate sets across assignments and
   captured/deferred closures, then compute per-program-point receiver facts
   across SSA copies, mutable slots, branches, loop back edges, and captured
