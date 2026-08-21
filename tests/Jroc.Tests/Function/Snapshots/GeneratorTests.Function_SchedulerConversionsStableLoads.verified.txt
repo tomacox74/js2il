@@ -734,7 +734,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 38 (0x26)
+			// Code size: 43 (0x2b)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -748,14 +748,15 @@
 			IL_000f: stloc.0
 			IL_0010: ldarg.1
 			IL_0011: ldstr "length"
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001b: stloc.1
-			IL_001c: ldloc.0
-			IL_001d: ldloc.1
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0023: stloc.2
-			IL_0024: ldloc.2
-			IL_0025: ret
+			IL_0016: ldstr "Function_SchedulerConversionsStableLoads:<TwoPhaseDummy_M6>:__js_call__:6"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_0020: stloc.1
+			IL_0021: ldloc.0
+			IL_0022: ldloc.1
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.2
+			IL_0029: ldloc.2
+			IL_002a: ret
 		} // end of method typedArray::__js_call__
 
 	} // end of class typedArray
@@ -1151,7 +1152,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 978 (0x3d2)
+		// Code size: 988 (0x3dc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_SchedulerConversionsStableLoads/Scope,
@@ -1439,105 +1440,107 @@
 		IL_02cf: stloc.s 17
 		IL_02d1: ldloc.s 7
 		IL_02d3: ldstr "x"
-		IL_02d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02dd: stloc.s 16
-		IL_02df: ldloc.s 7
-		IL_02e1: ldstr "x"
-		IL_02e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02eb: stloc.s 20
-		IL_02ed: ldloc.s 16
-		IL_02ef: ldloc.s 20
-		IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_02f6: stloc.s 21
-		IL_02f8: ldloc.0
-		IL_02f9: ldfld object Modules.Function_SchedulerConversionsStableLoads/Scope::getterCount
-		IL_02fe: stloc.s 20
-		IL_0300: ldloc.s 17
-		IL_0302: ldloc.s 21
-		IL_0304: ldloc.s 20
-		IL_0306: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_030b: pop
+		IL_02d8: ldstr "Function_SchedulerConversionsStableLoads:Modules.Function_SchedulerConversionsStableLoads:__js_module_init__:92"
+		IL_02dd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_02e2: stloc.s 16
+		IL_02e4: ldloc.s 7
+		IL_02e6: ldstr "x"
+		IL_02eb: ldstr "Function_SchedulerConversionsStableLoads:Modules.Function_SchedulerConversionsStableLoads:__js_module_init__:94"
+		IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_02f5: stloc.s 20
+		IL_02f7: ldloc.s 16
+		IL_02f9: ldloc.s 20
+		IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0300: stloc.s 21
+		IL_0302: ldloc.0
+		IL_0303: ldfld object Modules.Function_SchedulerConversionsStableLoads/Scope::getterCount
+		IL_0308: stloc.s 20
+		IL_030a: ldloc.s 17
+		IL_030c: ldloc.s 21
+		IL_030e: ldloc.s 20
+		IL_0310: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0315: pop
 		.try
 		{
-			IL_030c: nop
-			IL_030d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0312: stloc.s 17
-			IL_0314: ldstr "Cannot access 'tdzValue' before initialization"
-			IL_0319: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_031e: stloc.s 22
-			IL_0320: ldloc.s 22
-			IL_0322: isinst [System.Runtime]System.Exception
-			IL_0327: dup
-			IL_0328: brtrue IL_0336
+			IL_0316: nop
+			IL_0317: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_031c: stloc.s 17
+			IL_031e: ldstr "Cannot access 'tdzValue' before initialization"
+			IL_0323: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0328: stloc.s 22
+			IL_032a: ldloc.s 22
+			IL_032c: isinst [System.Runtime]System.Exception
+			IL_0331: dup
+			IL_0332: brtrue IL_0340
 
-			IL_032d: pop
-			IL_032e: ldloc.s 22
-			IL_0330: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0335: throw
+			IL_0337: pop
+			IL_0338: ldloc.s 22
+			IL_033a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_033f: throw
 
-			IL_0336: throw
+			IL_0340: throw
 
-			IL_0337: ldnull
-			IL_0338: ldc.r8 1
-			IL_0341: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0346: stloc.s 21
-			IL_0348: ldloc.s 17
-			IL_034a: ldloc.s 21
-			IL_034c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0351: pop
-			IL_0352: leave IL_03c3
+			IL_0341: ldnull
+			IL_0342: ldc.r8 1
+			IL_034b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0350: stloc.s 21
+			IL_0352: ldloc.s 17
+			IL_0354: ldloc.s 21
+			IL_0356: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_035b: pop
+			IL_035c: leave IL_03cd
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0357: stloc.s 8
-			IL_0359: ldloc.s 8
-			IL_035b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0360: dup
-			IL_0361: brtrue IL_0377
+			IL_0361: stloc.s 8
+			IL_0363: ldloc.s 8
+			IL_0365: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_036a: dup
+			IL_036b: brtrue IL_0381
 
-			IL_0366: pop
-			IL_0367: ldloc.s 8
-			IL_0369: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_036e: dup
-			IL_036f: brtrue IL_0383
+			IL_0370: pop
+			IL_0371: ldloc.s 8
+			IL_0373: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0378: dup
+			IL_0379: brtrue IL_038d
 
-			IL_0374: pop
-			IL_0375: rethrow
+			IL_037e: pop
+			IL_037f: rethrow
 
-			IL_0377: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_037c: stloc.s 9
-			IL_037e: br IL_0385
+			IL_0381: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0386: stloc.s 9
+			IL_0388: br IL_038f
 
-			IL_0383: stloc.s 9
+			IL_038d: stloc.s 9
 
-			IL_0385: ldloc.s 9
-			IL_0387: stloc.s 10
-			IL_0389: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_038e: stloc.s 17
-			IL_0390: ldloc.s 10
-			IL_0392: stloc.s 20
-			IL_0394: ldstr "ReferenceError"
-			IL_0399: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_039e: stloc.s 16
-			IL_03a0: ldloc.s 20
-			IL_03a2: ldloc.s 16
-			IL_03a4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_03a9: stloc.s 23
-			IL_03ab: ldloc.s 23
-			IL_03ad: box [System.Runtime]System.Boolean
-			IL_03b2: stloc.s 24
-			IL_03b4: ldloc.s 17
-			IL_03b6: ldloc.s 24
-			IL_03b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03bd: pop
-			IL_03be: leave IL_03c3
+			IL_038f: ldloc.s 9
+			IL_0391: stloc.s 10
+			IL_0393: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0398: stloc.s 17
+			IL_039a: ldloc.s 10
+			IL_039c: stloc.s 20
+			IL_039e: ldstr "ReferenceError"
+			IL_03a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_03a8: stloc.s 16
+			IL_03aa: ldloc.s 20
+			IL_03ac: ldloc.s 16
+			IL_03ae: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_03b3: stloc.s 23
+			IL_03b5: ldloc.s 23
+			IL_03b7: box [System.Runtime]System.Boolean
+			IL_03bc: stloc.s 24
+			IL_03be: ldloc.s 17
+			IL_03c0: ldloc.s 24
+			IL_03c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03c7: pop
+			IL_03c8: leave IL_03cd
 		} // end handler
 
-		IL_03c3: ldc.r8 2
-		IL_03cc: stloc.s 11
-		IL_03ce: ldnull
-		IL_03cf: stloc.s 12
-		IL_03d1: ret
+		IL_03cd: ldc.r8 2
+		IL_03d6: stloc.s 11
+		IL_03d8: ldnull
+		IL_03d9: stloc.s 12
+		IL_03db: ret
 	} // end of method Function_SchedulerConversionsStableLoads::__js_module_init__
 
 } // end of class Modules.Function_SchedulerConversionsStableLoads

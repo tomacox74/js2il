@@ -83,6 +83,9 @@ namespace Jroc.Tests.Object
         public Task ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor() { var testName = nameof(ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Object_DynamicInlineCache_Invalidation() { var testName = nameof(Object_DynamicInlineCache_Invalidation); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ObjectDefineProperty_Accessor() { var testName = nameof(ObjectDefineProperty_Accessor); return ExecutionTest(testName); }
 
         [Fact]

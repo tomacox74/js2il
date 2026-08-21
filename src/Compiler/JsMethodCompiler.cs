@@ -1111,6 +1111,7 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
+        lirMethod!.ModuleId = scope.ModuleId;
         PopulateIntrinsicGuardEffectSummaries(lirMethod!, scope);
 
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.

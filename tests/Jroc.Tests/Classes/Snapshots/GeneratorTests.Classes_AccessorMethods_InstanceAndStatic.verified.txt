@@ -639,7 +639,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 31 (0x1f)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -648,14 +648,15 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldstr "count"
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_000b: stloc.0
-			IL_000c: ldstr "count="
-			IL_0011: ldloc.0
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
+			IL_0006: ldstr "Classes_AccessorMethods_InstanceAndStatic:<TwoPhaseDummy_M5>:get_label:4"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_0010: stloc.0
+			IL_0011: ldstr "count="
+			IL_0016: ldloc.0
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001c: stloc.1
+			IL_001d: ldloc.1
+			IL_001e: ret
 		} // end of method Counter::get_label
 
 		.method public hidebysig static 
@@ -780,7 +781,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 712 (0x2c8)
+		// Code size: 752 (0x2f0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_AccessorMethods_InstanceAndStatic/Scope,
@@ -831,203 +832,211 @@
 		IL_006a: stloc.s 4
 		IL_006c: ldloc.s 4
 		IL_006e: ldstr "prototype"
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0078: stloc.s 6
-		IL_007a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007f: stloc.3
-		IL_0080: ldloc.s 6
-		IL_0082: ldstr "count"
-		IL_0087: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject::.ctor()
-		IL_008c: ldc.i4.0
-		IL_008d: conv.r8
-		IL_008e: ldstr "get count"
-		IL_0093: ldc.i4.1
-		IL_0094: ldc.i4.1
-		IL_0095: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_009a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject>(!!0)
-		IL_009f: ldnull
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_00a5: pop
-		IL_00a6: ldloc.s 4
-		IL_00a8: ldstr "prototype"
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00b2: stloc.s 6
-		IL_00b4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00b9: stloc.3
-		IL_00ba: ldloc.s 6
-		IL_00bc: ldstr "count"
-		IL_00c1: ldnull
-		IL_00c2: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject::.ctor()
-		IL_00c7: ldc.i4.1
-		IL_00c8: conv.r8
-		IL_00c9: ldstr "set count"
-		IL_00ce: ldc.i4.1
-		IL_00cf: ldc.i4.1
-		IL_00d0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject>(!!0)
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_00df: pop
-		IL_00e0: ldloc.s 4
-		IL_00e2: ldstr "prototype"
-		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ec: stloc.s 6
-		IL_00ee: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00f3: stloc.3
-		IL_00f4: ldloc.s 6
-		IL_00f6: ldstr "label"
-		IL_00fb: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject::.ctor()
-		IL_0100: ldc.i4.0
-		IL_0101: conv.r8
-		IL_0102: ldstr "get label"
-		IL_0107: ldc.i4.1
-		IL_0108: ldc.i4.1
-		IL_0109: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_010e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject>(!!0)
-		IL_0113: ldnull
-		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_0119: pop
-		IL_011a: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
-		IL_011f: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0124: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
-		IL_0129: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_012e: stloc.s 7
-		IL_0130: ldc.i4.1
-		IL_0131: newarr [System.Runtime]System.Object
-		IL_0136: dup
-		IL_0137: ldc.i4.0
-		IL_0138: ldloc.0
-		IL_0139: stelem.ref
-		IL_013a: stloc.3
-		IL_013b: ldloc.s 7
-		IL_013d: ldstr "total"
-		IL_0142: ldloc.3
-		IL_0143: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject::.ctor(object[])
-		IL_0148: ldc.i4.0
-		IL_0149: conv.r8
-		IL_014a: ldstr "get total"
-		IL_014f: ldc.i4.0
-		IL_0150: ldc.i4.1
-		IL_0151: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0156: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject>(!!0)
-		IL_015b: ldnull
-		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_0161: pop
-		IL_0162: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
-		IL_0167: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_016c: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
-		IL_0171: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0176: stloc.s 7
-		IL_0178: ldc.i4.1
-		IL_0179: newarr [System.Runtime]System.Object
-		IL_017e: dup
-		IL_017f: ldc.i4.0
-		IL_0180: ldloc.0
-		IL_0181: stelem.ref
-		IL_0182: stloc.3
-		IL_0183: ldloc.s 7
-		IL_0185: ldstr "total"
-		IL_018a: ldnull
-		IL_018b: ldloc.3
-		IL_018c: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject::.ctor(object[])
-		IL_0191: ldc.i4.1
-		IL_0192: conv.r8
-		IL_0193: ldstr "set total"
-		IL_0198: ldc.i4.0
-		IL_0199: ldc.i4.1
-		IL_019a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_019f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject>(!!0)
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_01a9: pop
-		IL_01aa: ldc.i4.1
-		IL_01ab: newarr [System.Runtime]System.Object
-		IL_01b0: dup
-		IL_01b1: ldc.i4.0
-		IL_01b2: ldloc.0
-		IL_01b3: stelem.ref
-		IL_01b4: stloc.3
-		IL_01b5: ldloc.3
-		IL_01b6: ldc.i4.1
-		IL_01b7: newarr [System.Runtime]System.Object
-		IL_01bc: dup
-		IL_01bd: ldc.i4.0
-		IL_01be: ldc.r8 4
-		IL_01c7: box [System.Runtime]System.Double
-		IL_01cc: stelem.ref
-		IL_01cd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_01d2: ldc.r8 4
-		IL_01db: box [System.Runtime]System.Double
-		IL_01e0: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter::.ctor(object[], object)
-		IL_01e5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_01ea: stloc.2
-		IL_01eb: ldloc.2
-		IL_01ec: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
-		IL_01f1: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_01f6: ldstr "prototype"
-		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0200: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0205: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_020a: stloc.s 8
-		IL_020c: ldloc.2
-		IL_020d: ldstr "count"
-		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0217: stloc.s 6
-		IL_0219: ldloc.s 8
-		IL_021b: ldloc.s 6
-		IL_021d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0222: pop
-		IL_0223: ldloc.2
-		IL_0224: ldstr "count"
-		IL_0229: ldc.r8 10
-		IL_0232: ldc.i4.1
-		IL_0233: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_0238: pop
-		IL_0239: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_023e: stloc.s 8
-		IL_0240: ldloc.2
-		IL_0241: ldstr "count"
-		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_024b: stloc.s 6
-		IL_024d: ldloc.s 8
-		IL_024f: ldloc.s 6
-		IL_0251: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0256: pop
-		IL_0257: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_025c: stloc.s 8
-		IL_025e: ldloc.2
-		IL_025f: ldstr "label"
-		IL_0264: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0269: stloc.s 6
-		IL_026b: ldloc.s 8
-		IL_026d: ldloc.s 6
-		IL_026f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0274: pop
-		IL_0275: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_027a: stloc.s 8
-		IL_027c: ldloc.1
-		IL_027d: ldstr "total"
-		IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0073: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:14"
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_007d: stloc.s 6
+		IL_007f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0084: stloc.3
+		IL_0085: ldloc.s 6
+		IL_0087: ldstr "count"
+		IL_008c: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject::.ctor()
+		IL_0091: ldc.i4.0
+		IL_0092: conv.r8
+		IL_0093: ldstr "get count"
+		IL_0098: ldc.i4.1
+		IL_0099: ldc.i4.1
+		IL_009a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_009f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject>(!!0)
+		IL_00a4: ldnull
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_00aa: pop
+		IL_00ab: ldloc.s 4
+		IL_00ad: ldstr "prototype"
+		IL_00b2: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:21"
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_00bc: stloc.s 6
+		IL_00be: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00c3: stloc.3
+		IL_00c4: ldloc.s 6
+		IL_00c6: ldstr "count"
+		IL_00cb: ldnull
+		IL_00cc: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject::.ctor()
+		IL_00d1: ldc.i4.1
+		IL_00d2: conv.r8
+		IL_00d3: ldstr "set count"
+		IL_00d8: ldc.i4.1
+		IL_00d9: ldc.i4.1
+		IL_00da: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00df: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject>(!!0)
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_00e9: pop
+		IL_00ea: ldloc.s 4
+		IL_00ec: ldstr "prototype"
+		IL_00f1: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:28"
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_00fb: stloc.s 6
+		IL_00fd: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0102: stloc.3
+		IL_0103: ldloc.s 6
+		IL_0105: ldstr "label"
+		IL_010a: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject::.ctor()
+		IL_010f: ldc.i4.0
+		IL_0110: conv.r8
+		IL_0111: ldstr "get label"
+		IL_0116: ldc.i4.1
+		IL_0117: ldc.i4.1
+		IL_0118: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_011d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject>(!!0)
+		IL_0122: ldnull
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_0128: pop
+		IL_0129: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
+		IL_012e: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0133: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
+		IL_0138: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_013d: stloc.s 7
+		IL_013f: ldc.i4.1
+		IL_0140: newarr [System.Runtime]System.Object
+		IL_0145: dup
+		IL_0146: ldc.i4.0
+		IL_0147: ldloc.0
+		IL_0148: stelem.ref
+		IL_0149: stloc.3
+		IL_014a: ldloc.s 7
+		IL_014c: ldstr "total"
+		IL_0151: ldloc.3
+		IL_0152: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject::.ctor(object[])
+		IL_0157: ldc.i4.0
+		IL_0158: conv.r8
+		IL_0159: ldstr "get total"
+		IL_015e: ldc.i4.0
+		IL_015f: ldc.i4.1
+		IL_0160: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0165: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject>(!!0)
+		IL_016a: ldnull
+		IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_0170: pop
+		IL_0171: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
+		IL_0176: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_017b: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
+		IL_0180: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0185: stloc.s 7
+		IL_0187: ldc.i4.1
+		IL_0188: newarr [System.Runtime]System.Object
+		IL_018d: dup
+		IL_018e: ldc.i4.0
+		IL_018f: ldloc.0
+		IL_0190: stelem.ref
+		IL_0191: stloc.3
+		IL_0192: ldloc.s 7
+		IL_0194: ldstr "total"
+		IL_0199: ldnull
+		IL_019a: ldloc.3
+		IL_019b: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject::.ctor(object[])
+		IL_01a0: ldc.i4.1
+		IL_01a1: conv.r8
+		IL_01a2: ldstr "set total"
+		IL_01a7: ldc.i4.0
+		IL_01a8: ldc.i4.1
+		IL_01a9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01ae: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject>(!!0)
+		IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_01b8: pop
+		IL_01b9: ldc.i4.1
+		IL_01ba: newarr [System.Runtime]System.Object
+		IL_01bf: dup
+		IL_01c0: ldc.i4.0
+		IL_01c1: ldloc.0
+		IL_01c2: stelem.ref
+		IL_01c3: stloc.3
+		IL_01c4: ldloc.3
+		IL_01c5: ldc.i4.1
+		IL_01c6: newarr [System.Runtime]System.Object
+		IL_01cb: dup
+		IL_01cc: ldc.i4.0
+		IL_01cd: ldc.r8 4
+		IL_01d6: box [System.Runtime]System.Double
+		IL_01db: stelem.ref
+		IL_01dc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_01e1: ldc.r8 4
+		IL_01ea: box [System.Runtime]System.Double
+		IL_01ef: newobj instance void Modules.Classes_AccessorMethods_InstanceAndStatic/Counter::.ctor(object[], object)
+		IL_01f4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_01f9: stloc.2
+		IL_01fa: ldloc.2
+		IL_01fb: ldtoken Modules.Classes_AccessorMethods_InstanceAndStatic/Counter
+		IL_0200: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0205: ldstr "prototype"
+		IL_020a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_020f: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0214: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0219: stloc.s 8
+		IL_021b: ldloc.2
+		IL_021c: ldstr "count"
+		IL_0221: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:55"
+		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_022b: stloc.s 6
+		IL_022d: ldloc.s 8
+		IL_022f: ldloc.s 6
+		IL_0231: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0236: pop
+		IL_0237: ldloc.2
+		IL_0238: ldstr "count"
+		IL_023d: ldc.r8 10
+		IL_0246: ldc.i4.1
+		IL_0247: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_024c: pop
+		IL_024d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0252: stloc.s 8
+		IL_0254: ldloc.2
+		IL_0255: ldstr "count"
+		IL_025a: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:64"
+		IL_025f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0264: stloc.s 6
+		IL_0266: ldloc.s 8
+		IL_0268: ldloc.s 6
+		IL_026a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_026f: pop
+		IL_0270: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0275: stloc.s 8
+		IL_0277: ldloc.2
+		IL_0278: ldstr "label"
+		IL_027d: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:69"
+		IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
 		IL_0287: stloc.s 6
 		IL_0289: ldloc.s 8
 		IL_028b: ldloc.s 6
 		IL_028d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0292: pop
-		IL_0293: ldloc.1
-		IL_0294: ldstr "total"
-		IL_0299: ldc.r8 5
-		IL_02a2: ldc.i4.1
-		IL_02a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_02a8: pop
-		IL_02a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02ae: stloc.s 8
-		IL_02b0: ldloc.1
-		IL_02b1: ldstr "total"
-		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02bb: stloc.s 6
-		IL_02bd: ldloc.s 8
-		IL_02bf: ldloc.s 6
-		IL_02c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02c6: pop
-		IL_02c7: ret
+		IL_0293: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0298: stloc.s 8
+		IL_029a: ldloc.1
+		IL_029b: ldstr "total"
+		IL_02a0: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:74"
+		IL_02a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_02aa: stloc.s 6
+		IL_02ac: ldloc.s 8
+		IL_02ae: ldloc.s 6
+		IL_02b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02b5: pop
+		IL_02b6: ldloc.1
+		IL_02b7: ldstr "total"
+		IL_02bc: ldc.r8 5
+		IL_02c5: ldc.i4.1
+		IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_02cb: pop
+		IL_02cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d1: stloc.s 8
+		IL_02d3: ldloc.1
+		IL_02d4: ldstr "total"
+		IL_02d9: ldstr "Classes_AccessorMethods_InstanceAndStatic:Modules.Classes_AccessorMethods_InstanceAndStatic:__js_module_init__:83"
+		IL_02de: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_02e3: stloc.s 6
+		IL_02e5: ldloc.s 8
+		IL_02e7: ldloc.s 6
+		IL_02e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02ee: pop
+		IL_02ef: ret
 	} // end of method Classes_AccessorMethods_InstanceAndStatic::__js_module_init__
 
 } // end of class Modules.Classes_AccessorMethods_InstanceAndStatic

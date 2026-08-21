@@ -52,6 +52,8 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.Date.LocalDateTimeRegex", "immutable regex metadata"),
         new("JavaScriptRuntime.Date.MonthNames", "immutable primitive lookup"),
         new("JavaScriptRuntime.DotNet2JSConversions.SmallIntStrings", "immutable primitive lookup"),
+        new("JavaScriptRuntime.DynamicLookupInlineCacheSite+Snapshot.Empty", "immutable empty cache snapshot"),
+        new("JavaScriptRuntime.DynamicLookupInlineCacheSite+Snapshot.Megamorphic", "immutable megamorphic cache snapshot"),
         new("JavaScriptRuntime.Engine._serviceProviderOverride", "ambient override handle"),
         new("JavaScriptRuntime.EngineCore.NodeEventLoopPump+NoOpFinalizationRegistryHost.Instance", "stateless host singleton"),
         new("JavaScriptRuntime.GeneratorObject+DynamicGeneratorIterator.NoYield", "immutable ABI sentinel"),

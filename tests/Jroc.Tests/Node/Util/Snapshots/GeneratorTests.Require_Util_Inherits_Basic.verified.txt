@@ -315,7 +315,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 36 (0x24)
+			// Code size: 41 (0x29)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -326,14 +326,15 @@
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_000b: ldstr "name"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: ldstr " makes a sound"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0021: stloc.1
-			IL_0022: ldloc.1
-			IL_0023: ret
+			IL_0010: ldstr "Require_Util_Inherits_Basic:<TwoPhaseDummy_M3>:__js_call__:3"
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: ldstr " makes a sound"
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0026: stloc.1
+			IL_0027: ldloc.1
+			IL_0028: ret
 		} // end of method FunctionExpression_L10C25::__js_call__
 
 	} // end of class FunctionExpression_L10C25
@@ -559,7 +560,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 312 (0x138)
+		// Code size: 332 (0x14c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inherits_Basic/Scope,
@@ -615,86 +616,90 @@
 		IL_0053: nop
 		IL_0054: ldloc.1
 		IL_0055: ldstr "prototype"
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005f: stloc.s 6
-		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldloc.0
-		IL_006a: stelem.ref
-		IL_006b: stloc.s 5
-		IL_006d: newobj instance void Modules.Require_Util_Inherits_Basic/FunctionExpression_L10C25/FunctionObject::.ctor()
-		IL_0072: ldc.i4.0
-		IL_0073: conv.r8
-		IL_0074: ldstr ""
-		IL_0079: ldc.i4.0
-		IL_007a: ldc.i4.1
-		IL_007b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Util_Inherits_Basic/FunctionExpression_L10C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0080: stloc.s 7
-		IL_0082: ldloc.s 6
-		IL_0084: ldstr "speak"
-		IL_0089: ldloc.s 7
-		IL_008b: ldc.i4.1
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0091: pop
-		IL_0092: nop
-		IL_0093: ldloc.3
-		IL_0094: ldstr "inherits"
-		IL_0099: ldloc.2
-		IL_009a: ldloc.1
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00a0: pop
-		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a6: stloc.s 8
-		IL_00a8: ldloc.s 8
-		IL_00aa: ldstr "inherits completed"
-		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b4: pop
-		IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ba: stloc.s 8
-		IL_00bc: ldloc.2
-		IL_00bd: ldstr "super_"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00c7: stloc.s 6
-		IL_00c9: ldloc.s 6
-		IL_00cb: ldloc.1
-		IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00d1: stloc.s 9
-		IL_00d3: ldloc.s 9
-		IL_00d5: box [System.Runtime]System.Boolean
-		IL_00da: stloc.s 10
-		IL_00dc: ldloc.s 8
-		IL_00de: ldloc.s 10
-		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e5: pop
-		IL_00e6: ldloc.2
-		IL_00e7: dup
-		IL_00e8: ldstr "Buddy"
-		IL_00ed: ldstr "Golden Retriever"
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct2(object, object, object, object)
-		IL_00f7: stloc.s 4
-		IL_00f9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00fe: stloc.s 8
-		IL_0100: ldloc.s 4
-		IL_0102: ldstr "name"
-		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_010c: stloc.s 6
-		IL_010e: ldloc.s 8
-		IL_0110: ldloc.s 6
-		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0117: pop
-		IL_0118: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011d: stloc.s 8
-		IL_011f: ldloc.s 4
-		IL_0121: ldstr "breed"
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_012b: stloc.s 6
-		IL_012d: ldloc.s 8
-		IL_012f: ldloc.s 6
-		IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0136: pop
-		IL_0137: ret
+		IL_005a: ldstr "Require_Util_Inherits_Basic:Modules.Require_Util_Inherits_Basic:__js_module_init__:17"
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0064: stloc.s 6
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.0
+		IL_006f: stelem.ref
+		IL_0070: stloc.s 5
+		IL_0072: newobj instance void Modules.Require_Util_Inherits_Basic/FunctionExpression_L10C25/FunctionObject::.ctor()
+		IL_0077: ldc.i4.0
+		IL_0078: conv.r8
+		IL_0079: ldstr ""
+		IL_007e: ldc.i4.0
+		IL_007f: ldc.i4.1
+		IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Util_Inherits_Basic/FunctionExpression_L10C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0085: stloc.s 7
+		IL_0087: ldloc.s 6
+		IL_0089: ldstr "speak"
+		IL_008e: ldloc.s 7
+		IL_0090: ldc.i4.1
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0096: pop
+		IL_0097: nop
+		IL_0098: ldloc.3
+		IL_0099: ldstr "inherits"
+		IL_009e: ldloc.2
+		IL_009f: ldloc.1
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00a5: pop
+		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ab: stloc.s 8
+		IL_00ad: ldloc.s 8
+		IL_00af: ldstr "inherits completed"
+		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b9: pop
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bf: stloc.s 8
+		IL_00c1: ldloc.2
+		IL_00c2: ldstr "super_"
+		IL_00c7: ldstr "Require_Util_Inherits_Basic:Modules.Require_Util_Inherits_Basic:__js_module_init__:32"
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_00d1: stloc.s 6
+		IL_00d3: ldloc.s 6
+		IL_00d5: ldloc.1
+		IL_00d6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00db: stloc.s 9
+		IL_00dd: ldloc.s 9
+		IL_00df: box [System.Runtime]System.Boolean
+		IL_00e4: stloc.s 10
+		IL_00e6: ldloc.s 8
+		IL_00e8: ldloc.s 10
+		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ef: pop
+		IL_00f0: ldloc.2
+		IL_00f1: dup
+		IL_00f2: ldstr "Buddy"
+		IL_00f7: ldstr "Golden Retriever"
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct2(object, object, object, object)
+		IL_0101: stloc.s 4
+		IL_0103: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0108: stloc.s 8
+		IL_010a: ldloc.s 4
+		IL_010c: ldstr "name"
+		IL_0111: ldstr "Require_Util_Inherits_Basic:Modules.Require_Util_Inherits_Basic:__js_module_init__:44"
+		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_011b: stloc.s 6
+		IL_011d: ldloc.s 8
+		IL_011f: ldloc.s 6
+		IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0126: pop
+		IL_0127: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012c: stloc.s 8
+		IL_012e: ldloc.s 4
+		IL_0130: ldstr "breed"
+		IL_0135: ldstr "Require_Util_Inherits_Basic:Modules.Require_Util_Inherits_Basic:__js_module_init__:49"
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_013f: stloc.s 6
+		IL_0141: ldloc.s 8
+		IL_0143: ldloc.s 6
+		IL_0145: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_014a: pop
+		IL_014b: ret
 	} // end of method Require_Util_Inherits_Basic::__js_module_init__
 
 } // end of class Modules.Require_Util_Inherits_Basic

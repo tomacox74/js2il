@@ -715,13 +715,24 @@ internal sealed partial class LIRToILCompiler
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
                     {
-                        // Emit inline: call JavaScriptRuntime.ObjectRuntime.GetItem(object, string)
+                        // Emit inline through the realm-owned per-call-site
+                        // cache prototype.
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.Ldstr(
+                            _metadataBuilder,
+                            GetDynamicLookupInlineCacheSiteKey(
+                                methodDescriptor,
+                                getItem));
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
-                            parameterTypes: new[] { typeof(object), typeof(string) });
+                            typeof(JavaScriptRuntime.DynamicLookupInlineCache),
+                            nameof(JavaScriptRuntime.DynamicLookupInlineCache.GetItem),
+                            parameterTypes:
+                            [
+                                typeof(object),
+                                typeof(string),
+                                typeof(string)
+                            ]);
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
 
@@ -1243,11 +1254,21 @@ internal sealed partial class LIRToILCompiler
                 {
                     EmitLoadTempAsObject(callMember0.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
+                    ilEncoder.Ldstr(
+                        _metadataBuilder,
+                        GetDynamicLookupInlineCacheSiteKey(
+                            methodDescriptor,
+                            callMember0));
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.ObjectRuntime),
-                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember0),
-                        new[] { typeof(object), typeof(string) });
+                        typeof(JavaScriptRuntime.DynamicLookupInlineCache),
+                        nameof(JavaScriptRuntime.DynamicLookupInlineCache.CallMember0),
+                        new[]
+                        {
+                            typeof(object),
+                            typeof(string),
+                            typeof(string)
+                        });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
                     break;

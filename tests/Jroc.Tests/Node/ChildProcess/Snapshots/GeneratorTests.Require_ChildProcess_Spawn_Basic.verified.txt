@@ -511,7 +511,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 194 (0xc2)
+			// Code size: 204 (0xcc)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -568,28 +568,30 @@
 			IL_0079: ldarg.0
 			IL_007a: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stderr
 			IL_007f: ldstr "length"
-			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0089: stloc.1
-			IL_008a: ldloc.0
-			IL_008b: ldstr "stderr length:"
-			IL_0090: ldloc.1
-			IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0096: pop
-			IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_009c: stloc.0
-			IL_009d: ldarg.0
-			IL_009e: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a8: ldstr "kill"
-			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00b2: stloc.1
-			IL_00b3: ldloc.0
-			IL_00b4: ldstr "kill after close:"
-			IL_00b9: ldloc.1
-			IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00bf: pop
-			IL_00c0: ldnull
-			IL_00c1: ret
+			IL_0084: ldstr "Require_ChildProcess_Spawn_Basic:<TwoPhaseDummy_M5>:__js_call__:17"
+			IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_008e: stloc.1
+			IL_008f: ldloc.0
+			IL_0090: ldstr "stderr length:"
+			IL_0095: ldloc.1
+			IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_009b: pop
+			IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a1: stloc.0
+			IL_00a2: ldarg.0
+			IL_00a3: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ad: ldstr "kill"
+			IL_00b2: ldstr "Require_ChildProcess_Spawn_Basic:<TwoPhaseDummy_M5>:__js_call__:24"
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+			IL_00bc: stloc.1
+			IL_00bd: ldloc.0
+			IL_00be: ldstr "kill after close:"
+			IL_00c3: ldloc.1
+			IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00c9: pop
+			IL_00ca: ldnull
+			IL_00cb: ret
 		} // end of method ArrowFunction_L29C19::__js_call__
 
 	} // end of class ArrowFunction_L29C19
@@ -636,7 +638,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 729 (0x2d9)
+		// Code size: 759 (0x2f7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Spawn_Basic/Scope,
@@ -666,245 +668,251 @@
 		IL_0013: ldstr "process"
 		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_001d: ldstr "platform"
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0027: stloc.s 4
-		IL_0029: ldloc.s 4
-		IL_002b: ldstr "win32"
-		IL_0030: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0035: stloc.2
-		IL_0036: ldloc.2
-		IL_0037: brfalse IL_0087
+		IL_0022: ldstr "Require_ChildProcess_Spawn_Basic:Modules.Require_ChildProcess_Spawn_Basic:__js_module_init__:12"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_002c: stloc.s 4
+		IL_002e: ldloc.s 4
+		IL_0030: ldstr "win32"
+		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_003a: stloc.2
+		IL_003b: ldloc.2
+		IL_003c: brfalse IL_008c
 
-		IL_003c: ldc.i4.4
-		IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0042: dup
-		IL_0043: ldstr "/d"
-		IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_004d: dup
-		IL_004e: ldstr "/s"
-		IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0058: dup
-		IL_0059: ldstr "/c"
-		IL_005e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0063: dup
-		IL_0064: ldstr "echo spawn-basic"
-		IL_0069: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_006e: stloc.s 5
-		IL_0070: ldloc.1
-		IL_0071: ldstr "cmd.exe"
-		IL_0076: ldloc.s 5
-		IL_0078: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object)
-		IL_007d: stloc.s 4
-		IL_007f: ldloc.s 4
-		IL_0081: stloc.3
-		IL_0082: br IL_00b7
+		IL_0041: ldc.i4.4
+		IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0047: dup
+		IL_0048: ldstr "/d"
+		IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0052: dup
+		IL_0053: ldstr "/s"
+		IL_0058: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_005d: dup
+		IL_005e: ldstr "/c"
+		IL_0063: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0068: dup
+		IL_0069: ldstr "echo spawn-basic"
+		IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0073: stloc.s 5
+		IL_0075: ldloc.1
+		IL_0076: ldstr "cmd.exe"
+		IL_007b: ldloc.s 5
+		IL_007d: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object)
+		IL_0082: stloc.s 4
+		IL_0084: ldloc.s 4
+		IL_0086: stloc.3
+		IL_0087: br IL_00bc
 
-		IL_0087: ldc.i4.2
-		IL_0088: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_008d: dup
-		IL_008e: ldstr "-c"
-		IL_0093: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0098: dup
-		IL_0099: ldstr "printf spawn-basic"
-		IL_009e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00a3: stloc.s 5
-		IL_00a5: ldloc.1
-		IL_00a6: ldstr "/bin/sh"
-		IL_00ab: ldloc.s 5
-		IL_00ad: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object)
-		IL_00b2: stloc.s 4
-		IL_00b4: ldloc.s 4
-		IL_00b6: stloc.3
+		IL_008c: ldc.i4.2
+		IL_008d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0092: dup
+		IL_0093: ldstr "-c"
+		IL_0098: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_009d: dup
+		IL_009e: ldstr "printf spawn-basic"
+		IL_00a3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00a8: stloc.s 5
+		IL_00aa: ldloc.1
+		IL_00ab: ldstr "/bin/sh"
+		IL_00b0: ldloc.s 5
+		IL_00b2: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object)
+		IL_00b7: stloc.s 4
+		IL_00b9: ldloc.s 4
+		IL_00bb: stloc.3
 
-		IL_00b7: ldloc.0
-		IL_00b8: ldloc.3
-		IL_00b9: stfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c3: stloc.s 6
-		IL_00c5: ldloc.0
-		IL_00c6: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_00cb: ldstr "pid"
-		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d5: stloc.s 4
-		IL_00d7: ldloc.s 4
-		IL_00d9: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00de: stloc.s 7
-		IL_00e0: ldloc.s 6
-		IL_00e2: ldstr "pid type:"
-		IL_00e7: ldloc.s 7
-		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00ee: pop
-		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f4: stloc.s 6
-		IL_00f6: ldloc.0
-		IL_00f7: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_00fc: ldstr "stdout"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0106: stloc.s 4
-		IL_0108: ldloc.s 4
-		IL_010a: ldc.i4.0
-		IL_010b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0110: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_0115: stloc.s 8
-		IL_0117: ldloc.s 8
-		IL_0119: box [System.Runtime]System.Boolean
-		IL_011e: stloc.s 9
-		IL_0120: ldloc.s 6
-		IL_0122: ldstr "stdout piped:"
-		IL_0127: ldloc.s 9
-		IL_0129: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_012e: pop
-		IL_012f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0134: stloc.s 6
-		IL_0136: ldloc.0
-		IL_0137: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_013c: ldstr "stderr"
-		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0146: stloc.s 4
-		IL_0148: ldloc.s 4
-		IL_014a: ldc.i4.0
-		IL_014b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0150: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_0155: stloc.s 8
-		IL_0157: ldloc.s 8
-		IL_0159: box [System.Runtime]System.Boolean
-		IL_015e: stloc.s 9
-		IL_0160: ldloc.s 6
-		IL_0162: ldstr "stderr piped:"
-		IL_0167: ldloc.s 9
-		IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_016e: pop
-		IL_016f: ldloc.0
-		IL_0170: ldstr ""
-		IL_0175: stfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stdout
-		IL_017a: ldloc.0
-		IL_017b: ldstr ""
-		IL_0180: stfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stderr
-		IL_0185: ldloc.0
-		IL_0186: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_018b: ldstr "stdout"
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0195: stloc.s 4
-		IL_0197: ldloc.s 4
-		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_019e: stloc.s 4
-		IL_01a0: ldc.i4.1
-		IL_01a1: newarr [System.Runtime]System.Object
-		IL_01a6: dup
-		IL_01a7: ldc.i4.0
-		IL_01a8: ldloc.0
-		IL_01a9: stelem.ref
-		IL_01aa: stloc.s 10
-		IL_01ac: ldloc.s 10
-		IL_01ae: ldc.i4.0
-		IL_01af: ldelem.ref
-		IL_01b0: castclass Modules.Require_ChildProcess_Spawn_Basic/Scope
-		IL_01b5: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L17C25/FunctionObject::.ctor(class Modules.Require_ChildProcess_Spawn_Basic/Scope)
-		IL_01ba: ldc.i4.1
-		IL_01bb: conv.r8
-		IL_01bc: ldstr ""
-		IL_01c1: ldc.i4.0
-		IL_01c2: ldc.i4.0
-		IL_01c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L17C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L17C25/FunctionObject>(!!0)
-		IL_01cd: stloc.s 11
-		IL_01cf: ldloc.s 4
-		IL_01d1: ldstr "on"
-		IL_01d6: ldstr "data"
-		IL_01db: ldloc.s 11
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01e2: pop
-		IL_01e3: ldloc.0
-		IL_01e4: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_01e9: ldstr "stderr"
-		IL_01ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01f3: stloc.s 4
-		IL_01f5: ldloc.s 4
-		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01fc: stloc.s 4
-		IL_01fe: ldc.i4.1
-		IL_01ff: newarr [System.Runtime]System.Object
-		IL_0204: dup
-		IL_0205: ldc.i4.0
-		IL_0206: ldloc.0
-		IL_0207: stelem.ref
-		IL_0208: stloc.s 10
-		IL_020a: ldloc.s 10
-		IL_020c: ldc.i4.0
-		IL_020d: ldelem.ref
-		IL_020e: castclass Modules.Require_ChildProcess_Spawn_Basic/Scope
-		IL_0213: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L21C25/FunctionObject::.ctor(class Modules.Require_ChildProcess_Spawn_Basic/Scope)
-		IL_0218: ldc.i4.1
-		IL_0219: conv.r8
-		IL_021a: ldstr ""
-		IL_021f: ldc.i4.0
-		IL_0220: ldc.i4.0
-		IL_0221: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L21C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0226: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L21C25/FunctionObject>(!!0)
-		IL_022b: stloc.s 12
-		IL_022d: ldloc.s 4
-		IL_022f: ldstr "on"
-		IL_0234: ldstr "data"
-		IL_0239: ldloc.s 12
-		IL_023b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0240: pop
-		IL_0241: ldloc.0
-		IL_0242: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_0247: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_024c: stloc.s 4
-		IL_024e: ldc.i4.1
-		IL_024f: newarr [System.Runtime]System.Object
-		IL_0254: dup
-		IL_0255: ldc.i4.0
-		IL_0256: ldloc.0
-		IL_0257: stelem.ref
-		IL_0258: stloc.s 10
-		IL_025a: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L25C18/FunctionObject::.ctor()
-		IL_025f: ldc.i4.1
-		IL_0260: conv.r8
-		IL_0261: ldstr ""
-		IL_0266: ldc.i4.0
-		IL_0267: ldc.i4.0
-		IL_0268: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L25C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_026d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L25C18/FunctionObject>(!!0)
-		IL_0272: stloc.s 13
-		IL_0274: ldloc.s 4
-		IL_0276: ldstr "on"
-		IL_027b: ldstr "exit"
-		IL_0280: ldloc.s 13
-		IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0287: pop
-		IL_0288: ldloc.0
-		IL_0289: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
-		IL_028e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0293: stloc.s 4
-		IL_0295: ldc.i4.1
-		IL_0296: newarr [System.Runtime]System.Object
-		IL_029b: dup
-		IL_029c: ldc.i4.0
-		IL_029d: ldloc.0
-		IL_029e: stelem.ref
-		IL_029f: stloc.s 10
-		IL_02a1: ldloc.s 10
-		IL_02a3: ldc.i4.0
-		IL_02a4: ldelem.ref
-		IL_02a5: castclass Modules.Require_ChildProcess_Spawn_Basic/Scope
-		IL_02aa: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L29C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Spawn_Basic/Scope)
-		IL_02af: ldc.i4.1
-		IL_02b0: conv.r8
-		IL_02b1: ldstr ""
-		IL_02b6: ldc.i4.0
-		IL_02b7: ldc.i4.0
-		IL_02b8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L29C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02bd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L29C19/FunctionObject>(!!0)
-		IL_02c2: stloc.s 14
-		IL_02c4: ldloc.s 4
-		IL_02c6: ldstr "on"
-		IL_02cb: ldstr "close"
-		IL_02d0: ldloc.s 14
-		IL_02d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02d7: pop
-		IL_02d8: ret
+		IL_00bc: ldloc.0
+		IL_00bd: ldloc.3
+		IL_00be: stfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c8: stloc.s 6
+		IL_00ca: ldloc.0
+		IL_00cb: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_00d0: ldstr "pid"
+		IL_00d5: ldstr "Require_ChildProcess_Spawn_Basic:Modules.Require_ChildProcess_Spawn_Basic:__js_module_init__:41"
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_00df: stloc.s 4
+		IL_00e1: ldloc.s 4
+		IL_00e3: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00e8: stloc.s 7
+		IL_00ea: ldloc.s 6
+		IL_00ec: ldstr "pid type:"
+		IL_00f1: ldloc.s 7
+		IL_00f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00f8: pop
+		IL_00f9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fe: stloc.s 6
+		IL_0100: ldloc.0
+		IL_0101: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_0106: ldstr "stdout"
+		IL_010b: ldstr "Require_ChildProcess_Spawn_Basic:Modules.Require_ChildProcess_Spawn_Basic:__js_module_init__:49"
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0115: stloc.s 4
+		IL_0117: ldloc.s 4
+		IL_0119: ldc.i4.0
+		IL_011a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_011f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_0124: stloc.s 8
+		IL_0126: ldloc.s 8
+		IL_0128: box [System.Runtime]System.Boolean
+		IL_012d: stloc.s 9
+		IL_012f: ldloc.s 6
+		IL_0131: ldstr "stdout piped:"
+		IL_0136: ldloc.s 9
+		IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_013d: pop
+		IL_013e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0143: stloc.s 6
+		IL_0145: ldloc.0
+		IL_0146: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_014b: ldstr "stderr"
+		IL_0150: ldstr "Require_ChildProcess_Spawn_Basic:Modules.Require_ChildProcess_Spawn_Basic:__js_module_init__:60"
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_015a: stloc.s 4
+		IL_015c: ldloc.s 4
+		IL_015e: ldc.i4.0
+		IL_015f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0164: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_0169: stloc.s 8
+		IL_016b: ldloc.s 8
+		IL_016d: box [System.Runtime]System.Boolean
+		IL_0172: stloc.s 9
+		IL_0174: ldloc.s 6
+		IL_0176: ldstr "stderr piped:"
+		IL_017b: ldloc.s 9
+		IL_017d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0182: pop
+		IL_0183: ldloc.0
+		IL_0184: ldstr ""
+		IL_0189: stfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stdout
+		IL_018e: ldloc.0
+		IL_018f: ldstr ""
+		IL_0194: stfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::stderr
+		IL_0199: ldloc.0
+		IL_019a: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_019f: ldstr "stdout"
+		IL_01a4: ldstr "Require_ChildProcess_Spawn_Basic:Modules.Require_ChildProcess_Spawn_Basic:__js_module_init__:75"
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_01ae: stloc.s 4
+		IL_01b0: ldloc.s 4
+		IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b7: stloc.s 4
+		IL_01b9: ldc.i4.1
+		IL_01ba: newarr [System.Runtime]System.Object
+		IL_01bf: dup
+		IL_01c0: ldc.i4.0
+		IL_01c1: ldloc.0
+		IL_01c2: stelem.ref
+		IL_01c3: stloc.s 10
+		IL_01c5: ldloc.s 10
+		IL_01c7: ldc.i4.0
+		IL_01c8: ldelem.ref
+		IL_01c9: castclass Modules.Require_ChildProcess_Spawn_Basic/Scope
+		IL_01ce: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L17C25/FunctionObject::.ctor(class Modules.Require_ChildProcess_Spawn_Basic/Scope)
+		IL_01d3: ldc.i4.1
+		IL_01d4: conv.r8
+		IL_01d5: ldstr ""
+		IL_01da: ldc.i4.0
+		IL_01db: ldc.i4.0
+		IL_01dc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L17C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L17C25/FunctionObject>(!!0)
+		IL_01e6: stloc.s 11
+		IL_01e8: ldloc.s 4
+		IL_01ea: ldstr "on"
+		IL_01ef: ldstr "data"
+		IL_01f4: ldloc.s 11
+		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01fb: pop
+		IL_01fc: ldloc.0
+		IL_01fd: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_0202: ldstr "stderr"
+		IL_0207: ldstr "Require_ChildProcess_Spawn_Basic:Modules.Require_ChildProcess_Spawn_Basic:__js_module_init__:84"
+		IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0211: stloc.s 4
+		IL_0213: ldloc.s 4
+		IL_0215: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_021a: stloc.s 4
+		IL_021c: ldc.i4.1
+		IL_021d: newarr [System.Runtime]System.Object
+		IL_0222: dup
+		IL_0223: ldc.i4.0
+		IL_0224: ldloc.0
+		IL_0225: stelem.ref
+		IL_0226: stloc.s 10
+		IL_0228: ldloc.s 10
+		IL_022a: ldc.i4.0
+		IL_022b: ldelem.ref
+		IL_022c: castclass Modules.Require_ChildProcess_Spawn_Basic/Scope
+		IL_0231: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L21C25/FunctionObject::.ctor(class Modules.Require_ChildProcess_Spawn_Basic/Scope)
+		IL_0236: ldc.i4.1
+		IL_0237: conv.r8
+		IL_0238: ldstr ""
+		IL_023d: ldc.i4.0
+		IL_023e: ldc.i4.0
+		IL_023f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L21C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0244: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L21C25/FunctionObject>(!!0)
+		IL_0249: stloc.s 12
+		IL_024b: ldloc.s 4
+		IL_024d: ldstr "on"
+		IL_0252: ldstr "data"
+		IL_0257: ldloc.s 12
+		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_025e: pop
+		IL_025f: ldloc.0
+		IL_0260: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_0265: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_026a: stloc.s 4
+		IL_026c: ldc.i4.1
+		IL_026d: newarr [System.Runtime]System.Object
+		IL_0272: dup
+		IL_0273: ldc.i4.0
+		IL_0274: ldloc.0
+		IL_0275: stelem.ref
+		IL_0276: stloc.s 10
+		IL_0278: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L25C18/FunctionObject::.ctor()
+		IL_027d: ldc.i4.1
+		IL_027e: conv.r8
+		IL_027f: ldstr ""
+		IL_0284: ldc.i4.0
+		IL_0285: ldc.i4.0
+		IL_0286: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L25C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_028b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L25C18/FunctionObject>(!!0)
+		IL_0290: stloc.s 13
+		IL_0292: ldloc.s 4
+		IL_0294: ldstr "on"
+		IL_0299: ldstr "exit"
+		IL_029e: ldloc.s 13
+		IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02a5: pop
+		IL_02a6: ldloc.0
+		IL_02a7: ldfld object Modules.Require_ChildProcess_Spawn_Basic/Scope::child
+		IL_02ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02b1: stloc.s 4
+		IL_02b3: ldc.i4.1
+		IL_02b4: newarr [System.Runtime]System.Object
+		IL_02b9: dup
+		IL_02ba: ldc.i4.0
+		IL_02bb: ldloc.0
+		IL_02bc: stelem.ref
+		IL_02bd: stloc.s 10
+		IL_02bf: ldloc.s 10
+		IL_02c1: ldc.i4.0
+		IL_02c2: ldelem.ref
+		IL_02c3: castclass Modules.Require_ChildProcess_Spawn_Basic/Scope
+		IL_02c8: newobj instance void Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L29C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Spawn_Basic/Scope)
+		IL_02cd: ldc.i4.1
+		IL_02ce: conv.r8
+		IL_02cf: ldstr ""
+		IL_02d4: ldc.i4.0
+		IL_02d5: ldc.i4.0
+		IL_02d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L29C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02db: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Basic/ArrowFunction_L29C19/FunctionObject>(!!0)
+		IL_02e0: stloc.s 14
+		IL_02e2: ldloc.s 4
+		IL_02e4: ldstr "on"
+		IL_02e9: ldstr "close"
+		IL_02ee: ldloc.s 14
+		IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02f5: pop
+		IL_02f6: ret
 	} // end of method Require_ChildProcess_Spawn_Basic::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Spawn_Basic

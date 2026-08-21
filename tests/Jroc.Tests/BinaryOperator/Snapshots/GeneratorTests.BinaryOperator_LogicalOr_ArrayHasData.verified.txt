@@ -158,7 +158,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 98 (0x62)
+			// Code size: 103 (0x67)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -181,40 +181,41 @@
 			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0017: stloc.0
 			IL_0018: ldloc.0
-			IL_0019: brtrue IL_0043
+			IL_0019: brtrue IL_0048
 
 			IL_001e: ldarg.1
 			IL_001f: ldstr "length"
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0029: stloc.2
-			IL_002a: ldloc.2
-			IL_002b: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0030: ldc.i4.0
-			IL_0031: ceq
-			IL_0033: stloc.0
-			IL_0034: ldloc.0
-			IL_0035: box [System.Runtime]System.Boolean
-			IL_003a: stloc.3
-			IL_003b: ldloc.3
-			IL_003c: stloc.s 5
-			IL_003e: br IL_0046
+			IL_0024: ldstr "BinaryOperator_LogicalOr_ArrayHasData:<TwoPhaseDummy_M2>:__js_call__:8"
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_002e: stloc.2
+			IL_002f: ldloc.2
+			IL_0030: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0035: ldc.i4.0
+			IL_0036: ceq
+			IL_0038: stloc.0
+			IL_0039: ldloc.0
+			IL_003a: box [System.Runtime]System.Boolean
+			IL_003f: stloc.3
+			IL_0040: ldloc.3
+			IL_0041: stloc.s 5
+			IL_0043: br IL_004b
 
-			IL_0043: ldloc.1
-			IL_0044: stloc.s 5
+			IL_0048: ldloc.1
+			IL_0049: stloc.s 5
 
-			IL_0046: ldloc.s 5
-			IL_0048: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_004d: stloc.0
-			IL_004e: ldloc.0
-			IL_004f: brfalse IL_005b
+			IL_004b: ldloc.s 5
+			IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0052: stloc.0
+			IL_0053: ldloc.0
+			IL_0054: brfalse IL_0060
 
-			IL_0054: ldc.i4.0
-			IL_0055: box [System.Runtime]System.Boolean
-			IL_005a: ret
+			IL_0059: ldc.i4.0
+			IL_005a: box [System.Runtime]System.Boolean
+			IL_005f: ret
 
-			IL_005b: ldc.i4.1
-			IL_005c: box [System.Runtime]System.Boolean
-			IL_0061: ret
+			IL_0060: ldc.i4.1
+			IL_0061: box [System.Runtime]System.Boolean
+			IL_0066: ret
 		} // end of method arrayHasData::__js_call__
 
 	} // end of class arrayHasData

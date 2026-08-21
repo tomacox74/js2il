@@ -35,6 +35,40 @@ internal sealed partial class LIRToILCompiler
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
+    private Dictionary<LIRInstruction, int>? _lirInstructionIndices;
+
+    private string GetDynamicLookupInlineCacheSiteKey(
+        MethodDescriptor methodDescriptor,
+        LIRInstruction instruction)
+    {
+        if (_lirInstructionIndices == null)
+        {
+            _lirInstructionIndices =
+                new Dictionary<LIRInstruction, int>(
+                    ReferenceEqualityComparer.Instance);
+            for (var index = 0;
+                 index < MethodBody.Instructions.Count;
+                 index++)
+            {
+                _lirInstructionIndices[
+                    MethodBody.Instructions[index]] = index;
+            }
+        }
+
+        if (!_lirInstructionIndices.TryGetValue(
+                instruction,
+                out var instructionIndex))
+        {
+            throw new InvalidOperationException(
+                "Dynamic lookup cache instruction is not part of the current method body.");
+        }
+
+        return
+            $"{MethodBody.ModuleId ?? "<module>"}:"
+            + $"{methodDescriptor.TypeBuilder.FullName}:"
+            + $"{methodDescriptor.Name}:"
+            + $"{instructionIndex}";
+    }
 
     private void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType, EntityHandle returnTypeHandle = default)
     {

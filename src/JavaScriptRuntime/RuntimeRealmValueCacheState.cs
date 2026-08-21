@@ -15,6 +15,10 @@ internal sealed class RuntimeRealmValueCacheState : IDisposable
         RuntimeServices.ClassConstructorCacheKey,
         JsClassConstructorObject> MaterializedClassConstructors { get; } = new();
 
+    internal ConcurrentDictionary<string, DynamicLookupInlineCacheSite>
+        DynamicLookupInlineCaches { get; } =
+            new(StringComparer.Ordinal);
+
     internal ConditionalWeakTable<Type, RuntimeServices.LazyClassMetadataSlot>
         LazyClassMetadata { get; } = new();
 
@@ -22,6 +26,7 @@ internal sealed class RuntimeRealmValueCacheState : IDisposable
     {
         TemplateObjects.Clear();
         MaterializedClassConstructors.Clear();
+        DynamicLookupInlineCaches.Clear();
         LazyClassMetadata.Clear();
     }
 }

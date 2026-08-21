@@ -469,6 +469,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             {
                 ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
                     .DefineOrUpdate(target, key, descriptor);
+                jsObject.BumpLookupVersion();
             }
             else
             {
@@ -537,6 +538,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             {
                 inlineDeleted = ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
                     .Delete(target, key);
+                if (inlineDeleted)
+                {
+                    jsObject.BumpLookupVersion();
+                }
             }
             else
             {
@@ -570,6 +575,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             if (jsObject.HasSharedIntrinsicBaseline)
             {
                 ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore).Clear(target);
+                jsObject.BumpLookupVersion();
             }
             else
             {

@@ -108,7 +108,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 24 (0x18)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -118,10 +118,11 @@
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_000b: ldstr "x"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: ret
+			IL_0010: ldstr "ObjectLiteral_ShorthandAndMethod:<TwoPhaseDummy_M2>:__js_call__:3"
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: ret
 		} // end of method FunctionExpression_o::__js_call__
 
 	} // end of class FunctionExpression_o
@@ -157,7 +158,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 189 (0xbd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_ShorthandAndMethod/Scope,
@@ -185,53 +186,55 @@
 		IL_0028: stloc.s 4
 		IL_002a: ldloc.s 4
 		IL_002c: ldstr "a"
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0036: stloc.s 5
-		IL_0038: ldloc.3
-		IL_0039: ldloc.s 5
-		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0040: pop
-		IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0046: stloc.s 4
-		IL_0048: ldloc.s 4
-		IL_004a: ldstr "x"
-		IL_004f: ldc.r8 7
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, float64)
-		IL_005d: pop
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldloc.0
-		IL_0067: stelem.ref
-		IL_0068: stloc.s 6
-		IL_006a: newobj instance void Modules.ObjectLiteral_ShorthandAndMethod/FunctionExpression_o/FunctionObject::.ctor()
-		IL_006f: ldc.i4.0
-		IL_0070: conv.r8
-		IL_0071: ldstr ""
-		IL_0076: ldc.i4.0
-		IL_0077: ldc.i4.1
-		IL_0078: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_ShorthandAndMethod/FunctionExpression_o/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_007d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ObjectLiteral_ShorthandAndMethod/FunctionExpression_o/FunctionObject>(!!0)
-		IL_0082: stloc.s 7
-		IL_0084: ldloc.s 4
-		IL_0086: ldstr "m"
-		IL_008b: ldloc.s 7
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_0092: pop
-		IL_0093: ldloc.s 4
-		IL_0095: stloc.2
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009b: stloc.3
-		IL_009c: ldloc.2
-		IL_009d: ldstr "m"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00a7: stloc.s 5
-		IL_00a9: ldloc.3
-		IL_00aa: ldloc.s 5
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b1: pop
-		IL_00b2: ret
+		IL_0031: ldstr "ObjectLiteral_ShorthandAndMethod:Modules.ObjectLiteral_ShorthandAndMethod:__js_module_init__:10"
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_003b: stloc.s 5
+		IL_003d: ldloc.3
+		IL_003e: ldloc.s 5
+		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0045: pop
+		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_004b: stloc.s 4
+		IL_004d: ldloc.s 4
+		IL_004f: ldstr "x"
+		IL_0054: ldc.r8 7
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, float64)
+		IL_0062: pop
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.0
+		IL_006c: stelem.ref
+		IL_006d: stloc.s 6
+		IL_006f: newobj instance void Modules.ObjectLiteral_ShorthandAndMethod/FunctionExpression_o/FunctionObject::.ctor()
+		IL_0074: ldc.i4.0
+		IL_0075: conv.r8
+		IL_0076: ldstr ""
+		IL_007b: ldc.i4.0
+		IL_007c: ldc.i4.1
+		IL_007d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_ShorthandAndMethod/FunctionExpression_o/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0082: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ObjectLiteral_ShorthandAndMethod/FunctionExpression_o/FunctionObject>(!!0)
+		IL_0087: stloc.s 7
+		IL_0089: ldloc.s 4
+		IL_008b: ldstr "m"
+		IL_0090: ldloc.s 7
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0097: pop
+		IL_0098: ldloc.s 4
+		IL_009a: stloc.2
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: stloc.3
+		IL_00a1: ldloc.2
+		IL_00a2: ldstr "m"
+		IL_00a7: ldstr "ObjectLiteral_ShorthandAndMethod:Modules.ObjectLiteral_ShorthandAndMethod:__js_module_init__:24"
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+		IL_00b1: stloc.s 5
+		IL_00b3: ldloc.3
+		IL_00b4: ldloc.s 5
+		IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bb: pop
+		IL_00bc: ret
 	} // end of method ObjectLiteral_ShorthandAndMethod::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_ShorthandAndMethod

@@ -246,13 +246,24 @@ internal sealed partial class LIRToILCompiler
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.GetItem(object, string)
+                        // Emit the realm-owned per-call-site cache prototype for
+                        // dynamic string-key reads.
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.Ldstr(
+                            _metadataBuilder,
+                            GetDynamicLookupInlineCacheSiteKey(
+                                methodDescriptor,
+                                getItem));
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
-                            parameterTypes: new[] { typeof(object), typeof(string) });
+                            typeof(JavaScriptRuntime.DynamicLookupInlineCache),
+                            nameof(JavaScriptRuntime.DynamicLookupInlineCache.GetItem),
+                            parameterTypes:
+                            [
+                                typeof(object),
+                                typeof(string),
+                                typeof(string)
+                            ]);
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
 
