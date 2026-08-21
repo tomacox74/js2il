@@ -6,7 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(compiler): hoist realm-owned String and typed-array prototype epoch
+  checks out of conservative hot-loop/straight-line regions (issue #1897).
+  Deterministic callable effects propagate through known calls and lexical
+  scopes; unknown calls, accessors, mutation, suspension, exception regions,
+  and coercion-capable arguments retain per-call guards. The
+  `dromaeo-object-string` control reduces dynamic epoch checks from 37 to 11
+  and improved 9.95% in one same-runner comparison while preserving exact
+  generic fallback semantics.
 
 ## v0.12.12 - 2026-08-21
 

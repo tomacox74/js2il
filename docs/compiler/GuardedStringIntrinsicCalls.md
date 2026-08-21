@@ -128,6 +128,42 @@ method calls. It controls the code-size expansion introduced when post-flow
 receiver specialization selects a guarded method or numeric String-index fast
 path.
 
+### Guard hoisting
+
+The symbol-table pass computes a deterministic effect summary for every
+callable and lexical block/class scope. Summaries record intrinsic-prototype
+mutation, property definition/deletion/reconfiguration, unknown calls,
+suspension, and escaping values. Known direct-call and lexical-scope edges
+propagate those effects to a monotone fixed point before lowering.
+
+After final LIR normalization, a natural loop with one external preheader can
+capture its prototype-family epoch assumption once when the complete loop is
+free of invalidating effects. Otherwise, a straight-line region can share one
+capture across at least two eligible calls until the next effect barrier.
+Captured assumptions use pinned locals because textual last-use allocation is
+not sufficient across CFG back edges.
+
+The hoisted value represents only the realm-owned pristine-epoch check. Every
+call still validates its receiver type, own member override, and exact default
+prototype where those checks are required. A failed receiver guard clears the
+captured assumption before generic dispatch, so user code reached by the
+fallback cannot leave later calls on a stale fast path. Methods with exception
+regions retain per-call guards.
+
+Unknown or escaped calls, observable property access, property/prototype
+mutation, suspension, unsupported LIR, mutable-scope replacement, unsafe
+argument coercion, and calls guarded by another prototype family terminate a
+sharing region. String and typed-array calls are eligible only when every
+argument is proven primitive or boxed primitive. Array calls are deliberately
+excluded: even a successful native Array operation can invoke user code through
+indexed accessors and invalidate an assumption.
+
+Function multi-versioning was evaluated but not selected. The epoch comparison
+is the repeated cost this change can safely remove; cloning complete generic
+and specialized function bodies would duplicate receiver/fallback control flow
+and increase code size without removing the checks that JavaScript semantics
+still require.
+
 ### Diagnostics
 
 Pass `-v` or `--diagnostic-file <path>` to explain receiver-flow decisions.
@@ -226,6 +262,19 @@ The 2026-08-21 ShortRun added a focused boxed-String control:
 Both rows used N=3. This is causal microbenchmark evidence for the boxed
 receiver arm, not an end-to-end application result.
 
+The 2026-08-21 .NET 10 ShortRun isolated the epoch comparison inside a
+256-iteration String loop on an Intel Xeon 6975P-C:
+
+| Guard state | Per-call mean / median | Hoisted mean / median | Allocated |
+| --- | ---: | ---: | ---: |
+| Pristine hit | 6.790 / 6.791 ns | 3.449 / 3.432 ns | 0 B |
+| Invalidated miss | 201.915 / 201.941 ns | 183.354 / 182.689 ns | 88 B |
+
+Each row used N=3 and reports per-operation time through
+`OperationsPerInvoke=256`. Hoisting removes about 49% of the pristine guard
+cost and about 9% of the miss-path cost without changing allocation. The miss
+path still performs ordinary member lookup and dispatch.
+
 The 2026-08-19 local DefaultJob run of `dromaeo-object-string` on .NET
 10.0.11 measured JROC execution at 22.03 ms (N=13) with 44.24 MB allocated
 per module load. Compiling that exact fixture before and after receiver
@@ -295,6 +344,28 @@ reduced total method IL from 4,704 to 3,699 bytes. The controlled assembly file
 remained 4,608 bytes because both method bodies fit in the same PE file-alignment
 bucket.
 
+### Hoisting validation
+
+The issue-1897 branch-comparison workflows checked `master` commit
+`264edb8ad` against candidate commit `8f44bde92`. Each workflow ran its
+baseline and candidate sequentially on the same GitHub runner with .NET
+10.0.11:
+
+| Workflow | Scenario / host | Master mean / median | Candidate mean / median | Mean change | Allocation change |
+| --- | --- | ---: | ---: | ---: | ---: |
+| [32466258013](https://github.com/tomacox74/js2il/actions/runs/32466258013) | `dromaeo-object-string` / AMD EPYC 7763 | 30.549 / 30.644 ms (N=17) | 27.511 / 27.227 ms (N=61) | -9.95% | +2,027 B (+0.004%) |
+| [32466257837](https://github.com/tomacox74/js2il/actions/runs/32466257837) | `dromaeo-object-array` / AMD EPYC 9V74 | 6.064 / 6.134 ms (N=28) | 5.846 / 5.847 ms (N=13) | -3.60% | -3 B |
+
+These are single sequential comparisons, so the percentages remain
+noise-sensitive. Generated IL establishes the causal limit:
+
+- `dromaeo-object-string` reduces dynamic `IsPristine` sites from 37 to 11.
+  Total method IL grows only from 9,797 to 9,820 bytes, and both generated
+  assemblies remain 23,040 bytes.
+- `dromaeo-object-array` has zero `IsPristine` sites on both revisions and
+  byte-for-byte identical decompiled IL: 2,593 method bytes in a 10,752-byte
+  assembly. Its measured change is therefore not attributed to guard hoisting.
+
 ## Validation
 
 Coverage includes:
@@ -310,6 +381,11 @@ Coverage includes:
 - zero-allocation guard plus `String.trim` fast-path execution;
 - loop-gated numeric String indexing, including generic cold and invalid-index
   fallback behavior;
+- whole-loop and barrier-delimited guard sharing, pinned assumption locals,
+  exact fallback invalidation, exception-region exclusion, and unsafe
+  coercion/accessor barriers;
+- deterministic fixed-point effect propagation through direct calls, blocks,
+  class static blocks, unknown calls, mutation, property reads, and suspension;
 - the `dromaeo-object-string` fixture, including captured writes and deferred
   callbacks whose guarded method calls keep an `isinst string` plus exact
   generic fallback;
