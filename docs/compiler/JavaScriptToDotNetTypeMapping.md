@@ -186,6 +186,13 @@ Examples of the kinds of rewrites this enables:
 - `GetItem(obj, index)` → `GetInt32ArrayElement(arr, index)` when `obj` is proven to be `JavaScriptRuntime.Int32Array` and `index` is a numeric index
 - `GetItem(arr, index)` → `GetJsArrayElement(arr, index)` when `arr` is `JavaScriptRuntime.Array`
 - `GetLength(obj)` → `GetJsArrayLength(arr)` / `GetInt32ArrayLength(arr)` when receiver type is known
+- loop-hot candidate `this.length` numeric reads →
+  `ObjectRuntime.GetArrayLengthWithFallback(object)`, preserving an unboxed
+  `double` for Arrays and generic property semantics otherwise
+- loop-hot candidate Array numeric index reads →
+  `ObjectRuntime.GetArrayElementWithFallback(object, double)`, preserving
+  holes, descriptors, prototype-visible misses, proxies, and non-Array
+  fallback
 
 This typically also updates temp storage so downstream codegen can treat results as unboxed `double` where appropriate.
 
@@ -451,4 +458,3 @@ A typical shape of emitted artifacts:
 - Class emission + `_scopes`: [src/Compiler/Services/ILGenerators/ClassesGenerator.cs](../../src/Compiler/Services/ILGenerators/ClassesGenerator.cs)
 - Value sentinels (`undefined` vs `null`): [src/JavaScriptRuntime/TypeUtilities.cs](../../src/JavaScriptRuntime/TypeUtilities.cs), [src/JavaScriptRuntime/JsNull.cs](../../src/JavaScriptRuntime/JsNull.cs)
 - Scope naming behavior: [tests/Jroc.Tests/ScopeNamingTests.cs](../../tests/Jroc.Tests/ScopeNamingTests.cs)
-

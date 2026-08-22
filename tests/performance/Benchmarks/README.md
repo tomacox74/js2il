@@ -165,7 +165,8 @@ This command:
 - preserves the benchmark boundary by compiling, loading, and initializing the
   fixture in `GlobalSetup`, then measuring only the registered A* workload;
 - runs focused monomorphic, polymorphic, post-megamorphic, generic-property,
-  boxed Array-length, and direct numeric Array-length controls;
+  boxed Array-length, guarded candidate Array-length, and direct numeric
+  Array-length controls;
 - compiles the exact composed fixture and reports counters from the generated
   `Array.prototype.findGraphNode` method.
 
@@ -269,6 +270,30 @@ Phase 1 candidate recorded on the same Intel host on 2026-08-21:
 These are separate non-Dry runs on the same host, not simultaneous paired
 measurements. Preserve and compare the raw reports with the guardrail helper
 when making a regression decision.
+
+Phase 2 Array specialization candidate recorded on the same Intel host on
+2026-08-21:
+
+- source: Phase 1 merge `13a74806cc9aad7aad5ae2b774e6dcd85969d9a4`
+  plus the Phase 2 working-tree changes;
+- exact non-Dry `kracken-ai-astar` JROC result: 4.984 s mean, 4.954 s
+  median, N=19, 57,534,240 B/op;
+- compared with the same-host Phase 1 result, the mean is 33.0% lower and
+  managed allocation is 97.5% lower;
+- this was a JROC-only rerun. Competitors were intentionally not repeated;
+  their same-host Phase 1 measurements remain above;
+- the guarded candidate Array-length allocation control reports 0 B/op,
+  matching direct Array length and avoiding the boxed path's 24 B/op;
+- generated `findGraphNode`: 217 IL bytes, 2 dynamic-cache property reads,
+  3 generic item/property reads, 0 generic numeric `Array.length` reads,
+  and 1 explicit `box`. The loop-hot index read uses the guarded Array helper;
+  the return-only index read remains generic because it is outside the natural
+  loop and executes at most once.
+
+The Phase 2 comparison uses separate non-Dry runs with matching host, OS,
+runtime, benchmark version, scenario, and benchmark boundary. The raw reports,
+sample counts, and allocation values are the comparison evidence; the focused
+Dry control is used only to verify allocation shape, not timing.
 
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:

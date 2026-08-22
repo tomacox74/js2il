@@ -177,6 +177,9 @@ public sealed partial class HIRToLIRLowerer
             return;
         }
 
+        _methodBodyIR.ReceiverThisTypeSummary =
+            _scope.ReceiverThisTypeSummary;
+
         foreach (var (index, summary) in
                  _scope.ReceiverParameterTypeSummaries)
         {

@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): implement issue #1958 Phase 2 by propagating an
+  uncertain Array receiver candidate into ordinary functions assigned to the
+  intrinsic `Array.prototype`. Loop-hot numeric `length` and indexed reads now
+  use guarded helpers with generic fallback, keep `length` unboxed through
+  comparisons, and preserve the original per-iteration evaluation point.
 - perf(compiler/runtime): recover the identity-cache megamorphic regression
   from issue #1958 Phase 1. Generated property-read and zero-argument member
   call sites now publish a bounded terminal deoptimization flag and branch

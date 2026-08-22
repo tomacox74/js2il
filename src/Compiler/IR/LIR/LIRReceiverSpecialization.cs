@@ -14,6 +14,15 @@ internal static class LIRReceiverSpecialization
 
         for (var index = 0; index < methodBody.Instructions.Count; index++)
         {
+            if (TryNormalizeArrayPropertyAccess(
+                    methodBody,
+                    index,
+                    ref staticCandidates,
+                    diagnostics))
+            {
+                continue;
+            }
+
             if (TryNormalizeStringPropertyAccess(
                     methodBody,
                     index,
@@ -78,6 +87,217 @@ internal static class LIRReceiverSpecialization
                     result);
             SetObjectResultStorage(methodBody, result);
         }
+    }
+
+    private static bool TryNormalizeArrayPropertyAccess(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        ref Dictionary<int, HashSet<Type>>? staticCandidates,
+        ReceiverTypeFlowDiagnosticTrace? diagnostics)
+    {
+        TempVariable receiver;
+        TempVariable result;
+        IReadOnlyList<TempVariable> arguments;
+        string memberName;
+        string helperName;
+
+        switch (methodBody.Instructions[instructionIndex])
+        {
+            case LIRGetItem getItem
+                when IsUnboxedDouble(
+                    methodBody,
+                    getItem.Index):
+                receiver = getItem.Object;
+                result = getItem.Result;
+                arguments = [receiver, getItem.Index];
+                memberName = "[index]";
+                helperName = nameof(
+                    JavaScriptRuntime.ObjectRuntime
+                        .GetArrayElementWithFallback);
+                break;
+            case LIRGetItemAsNumber getItemAsNumber
+                when TryGetConstantString(
+                        methodBody,
+                        instructionIndex,
+                        getItemAsNumber.Index,
+                        out var objectKey)
+                    && string.Equals(
+                        objectKey,
+                        "length",
+                        StringComparison.Ordinal):
+                receiver = getItemAsNumber.Object;
+                result = getItemAsNumber.Result;
+                arguments = [receiver];
+                memberName = "length";
+                helperName = nameof(
+                    JavaScriptRuntime.ObjectRuntime
+                        .GetArrayLengthWithFallback);
+                break;
+            case LIRGetItemAsNumberString getItemAsNumber
+                when TryGetConstantString(
+                        methodBody,
+                        instructionIndex,
+                        getItemAsNumber.Index,
+                        out var stringKey)
+                    && string.Equals(
+                        stringKey,
+                        "length",
+                        StringComparison.Ordinal):
+                receiver = getItemAsNumber.Object;
+                result = getItemAsNumber.Result;
+                arguments = [receiver];
+                memberName = "length";
+                helperName = nameof(
+                    JavaScriptRuntime.ObjectRuntime
+                        .GetArrayLengthWithFallback);
+                break;
+            default:
+                return false;
+        }
+
+        if (!TryClassifyArrayReceiver(
+                methodBody,
+                instructionIndex,
+                receiver,
+                ref staticCandidates,
+                out var receiverIsProvenArray))
+        {
+            return false;
+        }
+
+        methodBody.LoopNestingFacts ??=
+            LIRLoopNestingAnalysis.Analyze(methodBody);
+        var loopDepth =
+            methodBody.LoopNestingFacts.GetDepth(instructionIndex);
+        if (loopDepth < MinimumLoopDepth)
+        {
+            diagnostics?.RecordSpecialization(
+                instructionIndex,
+                memberName,
+                receiver,
+                typeof(JavaScriptRuntime.Array),
+                loopDepth,
+                receiverIsProvenArray,
+                "retained-generic(cold)");
+            return false;
+        }
+
+        diagnostics?.RecordSpecialization(
+            instructionIndex,
+            memberName,
+            receiver,
+            typeof(JavaScriptRuntime.Array),
+            loopDepth,
+            receiverIsProvenArray,
+            "guarded");
+        methodBody.Instructions[instructionIndex] =
+            new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                helperName,
+                arguments,
+                result);
+        if (string.Equals(
+                helperName,
+                nameof(JavaScriptRuntime.ObjectRuntime
+                    .GetArrayLengthWithFallback),
+                StringComparison.Ordinal))
+        {
+            methodBody.TempStorages[result.Index] =
+                new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(double));
+        }
+        else
+        {
+            SetObjectResultStorage(methodBody, result);
+        }
+        return true;
+    }
+
+    private static bool TryClassifyArrayReceiver(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        TempVariable receiver,
+        ref Dictionary<int, HashSet<Type>>? staticCandidates,
+        out bool receiverIsProvenArray)
+    {
+        receiverIsProvenArray = false;
+        if (TryGetStorageReceiverType(
+                methodBody,
+                receiver,
+                out var storageType))
+        {
+            if (storageType == typeof(JavaScriptRuntime.Array))
+            {
+                receiverIsProvenArray = true;
+                return true;
+            }
+
+            if (storageType != typeof(object))
+            {
+                return false;
+            }
+        }
+
+        var fact = methodBody.ReceiverTypeFlowFacts?
+            .GetTempBefore(instructionIndex, receiver);
+        if (fact?.Contains(
+                typeof(JavaScriptRuntime.Array)) == true)
+        {
+            receiverIsProvenArray =
+                !fact.IncludesUnknown
+                && !fact.IncludesNonCandidate
+                && fact.CandidateClrTypes.Count == 1;
+            return true;
+        }
+
+        staticCandidates ??=
+            BuildStaticReceiverCandidates(methodBody);
+        return staticCandidates.TryGetValue(
+                receiver.Index,
+                out var candidates)
+            && candidates.Contains(
+                typeof(JavaScriptRuntime.Array));
+    }
+
+    private static bool TryGetConstantString(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        TempVariable temp,
+        out string value)
+    {
+        value = string.Empty;
+        var current = temp;
+        for (var index = instructionIndex - 1;
+             index >= 0;
+             index--)
+        {
+            var instruction = methodBody.Instructions[index];
+            if (!LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                || defined.Index != current.Index)
+            {
+                continue;
+            }
+
+            switch (instruction)
+            {
+                case LIRConstString constant:
+                    value = constant.Value;
+                    return true;
+                case LIRCopyTemp copy:
+                    current = copy.Source;
+                    continue;
+                case LIRConvertToObject convert:
+                    current = convert.Source;
+                    continue;
+                default:
+                    return false;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryNormalizeStringPropertyAccess(
@@ -234,6 +454,12 @@ internal static class LIRReceiverSpecialization
 
                 switch (instruction)
                 {
+                    case LIRLoadThis:
+                        changed |= Add(
+                            result,
+                            methodBody.ReceiverThisTypeSummary
+                                .CandidateClrTypes);
+                        break;
                     case LIRLoadScopeField load:
                         changed |= Add(
                             result,
@@ -326,6 +552,20 @@ internal static class LIRReceiverSpecialization
             && IsUnboxedDouble(methodBody, getItem.Index))
         {
             receiver = getItem.Object;
+            return true;
+        }
+
+        if (instruction is LIRGetItemAsNumber
+                or LIRGetItemAsNumberString)
+        {
+            receiver = instruction switch
+            {
+                LIRGetItemAsNumber numericGetItem =>
+                    numericGetItem.Object,
+                LIRGetItemAsNumberString stringGetItem =>
+                    stringGetItem.Object,
+                _ => default
+            };
             return true;
         }
 
