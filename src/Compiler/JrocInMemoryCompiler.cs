@@ -83,6 +83,7 @@ public static class JrocInMemoryCompiler
 
         var options = new CompilerOptions
         {
+            AssemblyName = request.AssemblyName,
             EmitPdb = request.EmitPdb,
             Verbose = request.Verbose,
             DiagnosticFilePath = request.DiagnosticFilePath,
@@ -185,21 +186,14 @@ public static class JrocInMemoryCompiler
             return matchedExplicitModuleId;
         }
 
-        if (artifact.ModuleIds.Count == 1)
+        if (!string.IsNullOrWhiteSpace(artifact.EntryModuleId))
         {
-            return artifact.ModuleIds[0];
-        }
-
-        var matchedRootOverrideModuleId = MatchPublishedModuleId(artifact, request.RootModuleIdOverride);
-        if (!string.IsNullOrWhiteSpace(matchedRootOverrideModuleId))
-        {
-            return matchedRootOverrideModuleId;
+            return artifact.EntryModuleId;
         }
 
         throw new InvalidOperationException(
-            "Unable to infer the module id for compile-and-load. " +
-            "Pass moduleId explicitly, set RootModuleIdOverride on the compile request, " +
-            $"or compile an artifact with a single module id. Available module ids: {string.Join(", ", artifact.ModuleIds)}");
+            "The compiled artifact does not identify an entry module. " +
+            "Pass moduleId explicitly when loading an artifact emitted by an older compiler.");
     }
 
     private static string? MatchPublishedModuleId(JrocCompiledAssemblyArtifact artifact, string? candidate)

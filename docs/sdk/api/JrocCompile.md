@@ -24,6 +24,7 @@ The target runs before `ResolveAssemblyReferences`, writes generated files under
 | `OutputDirectory` | `JrocOutputRoot` | `$(IntermediateOutputPath)\jroc` | Output root for generated DLL, PDB, runtime config, and runtime assembly files. |
 | `ModuleResolutionBaseDirectory` | `JrocModuleResolutionBaseDirectory` | `$(MSBuildProjectDirectory)` | Base directory for resolving package/module-id entrypoints. |
 | `RootModuleId` | `JrocRootModuleId` | empty | Overrides the root module id embedded in the compiled assembly. |
+| `AssemblyName` | `JrocAssemblyName` | source filename, or a package-derived name | Sets the authoritative PE identity and DLL/PDB/runtime-config basename. |
 | `ReferenceOutputAssembly` | `JrocReferenceOutputAssembly` | `true` | Adds the generated module assembly as a normal project reference. |
 | `CopyToOutputDirectory` | `JrocCopyToOutputDirectory` | `false` | Copies generated outputs to `$(TargetDir)` after build. |
 | `EmitPdb` | `JrocEmitPdb` | `true` in Debug, otherwise `false` | Emits a Portable PDB for the compiled module. |
@@ -45,6 +46,14 @@ Per-item metadata wins over the matching project property.
 ```
 
 When `RootModuleId` is not set for a package-style entrypoint, the SDK preserves the item specifier as the root module id.
+
+The SDK derives a portable assembly identity for package ids (for example,
+`@mixmark-io/domino` becomes `mixmark-io.domino`). Set `AssemblyName` when the
+consumer-facing assembly identity must differ. The SDK passes this identity
+into compilation; it does not rename artifacts after the PE is generated.
+Two items in one build cannot share an assembly identity, even when their
+output directories differ, because both would become references in the same
+consumer compilation.
 
 ## Outputs
 

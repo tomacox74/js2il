@@ -50,16 +50,20 @@ When `SourceText` is not set, JROC reads the entry file and any imported modules
 var artifact = JrocInMemoryCompiler.Compile(
     new JrocInMemoryCompileRequest(@"C:\virtual\math.js")
     {
+        AssemblyName = "HostedMath",
         SourceText = "exports.answer = 42;",
         EmitPdb = true
     });
 
 Console.WriteLine(artifact.AssemblyName);
+Console.WriteLine(artifact.EntryModuleId);
 Console.WriteLine(artifact.PeBytes.Length);
 Console.WriteLine(artifact.PdbBytes?.Length ?? 0);
 ```
 
 Use artifact-only compilation when the host wants to cache, inspect, or persist PE/PDB bytes itself.
+The configured assembly name is also used for materialized DLL, PDB, and
+runtime-config filenames. If it is omitted, JROC uses `math` in this example.
 
 ## 5) Dispose the module
 

@@ -16,6 +16,8 @@
         <ResolvedDiagnosticFilePath Condition="'%(JrocCompile.DiagnosticFilePath)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(JrocCompile.DiagnosticFilePath)'))))</ResolvedDiagnosticFilePath>
         <RootModuleId Condition="'%(JrocCompile.RootModuleId)' == '' and '$(JrocRootModuleId)' != ''">$(JrocRootModuleId)</RootModuleId>
         <RootModuleId Condition="'%(JrocCompile.RootModuleId)' != ''">%(JrocCompile.RootModuleId)</RootModuleId>
+        <AssemblyName Condition="'%(JrocCompile.AssemblyName)' == '' and '$(JrocAssemblyName)' != ''">$(JrocAssemblyName)</AssemblyName>
+        <AssemblyName Condition="'%(JrocCompile.AssemblyName)' != ''">%(JrocCompile.AssemblyName)</AssemblyName>
         <ReferenceOutputAssembly Condition="'%(JrocCompile.ReferenceOutputAssembly)' == ''">$(JrocReferenceOutputAssembly)</ReferenceOutputAssembly>
         <ReferenceOutputAssembly Condition="'%(JrocCompile.ReferenceOutputAssembly)' != ''">%(JrocCompile.ReferenceOutputAssembly)</ReferenceOutputAssembly>
         <CopyToOutputDirectory Condition="'%(JrocCompile.CopyToOutputDirectory)' == ''">$(JrocCopyToOutputDirectory)</CopyToOutputDirectory>

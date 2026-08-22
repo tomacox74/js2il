@@ -215,6 +215,37 @@ namespace Jroc.Tests
         }
 
         [Fact]
+        public void Convert_WithAssemblyName_UsesIdentityForAllArtifacts()
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_identity_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "source.js");
+            var outDir = Path.Combine(tempRoot, "out");
+            File.WriteAllText(jsFile, "console.log('identity');");
+
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc(
+                    jsFile,
+                    "-o",
+                    outDir,
+                    "--assemblyname",
+                    "Configured.Identity");
+
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                var assemblyPath = Path.Combine(outDir, "Configured.Identity.dll");
+                Assert.True(File.Exists(assemblyPath));
+                Assert.True(File.Exists(Path.Combine(outDir, "Configured.Identity.runtimeconfig.json")));
+                Assert.Equal("Configured.Identity", AssemblyName.GetAssemblyName(assemblyPath).Name);
+            }
+            finally
+            {
+                try { Directory.Delete(tempRoot, recursive: true); } catch { }
+            }
+        }
+
+        [Fact]
         public void Convert_WithDiagnosticFile_WritesDiagnosticsToFile()
         {
             var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_test_" + Guid.NewGuid().ToString("n"));
