@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(tooling): add the exact `kracken-ai-astar` Phase 0 guardrail for issue
+  #1958, including same-host raw-artifact comparison with provenance, focused
+  cache-state and boxed Array-length controls, and generated `findGraphNode`
+  IL counters.
 - runtime/test262/docs: port 200 test262 fixtures across Number, WeakMap,
   WeakSet, and ArrayBuffer views. Number now accepts BigInt arguments with
   correctly rounded IEEE-754 conversion, exposes `Number.isSafeInteger`, and

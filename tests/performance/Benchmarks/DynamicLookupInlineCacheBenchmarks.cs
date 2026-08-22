@@ -194,6 +194,17 @@ public class DynamicLookupInlineCacheBenchmarks
             "length");
 
     [Benchmark]
+    public double ArrayLengthBoxedThenConsumed()
+        => TypeUtilities.ToNumber(
+            ObjectRuntime.GetItem(
+                _array,
+                "length"));
+
+    [Benchmark]
+    public double ArrayLengthDirectNumber()
+        => _array.length;
+
+    [Benchmark]
     public object ArrayCacheStubFallback()
         => DynamicLookupInlineCache.GetItem(
             _array,

@@ -151,6 +151,107 @@ To compare the Kraken `ai-astar` scenario:
 node scripts/dispatchBenchmarkBranchComparisonWorkflow.js feat/scheduler-general-regions ai-astar --benchmark kracken --baseline v0.11.40 --watch
 ```
 
+#### Kraken ai-astar phased guardrails
+
+Run the complete Phase 0 guardrail for issue #1958:
+
+```powershell
+npm run perf:phased:kracken-ai-astar
+```
+
+This command:
+
+- selects only `kracken-ai-astar` from `KrackenExecutionBenchmarks`;
+- preserves the benchmark boundary by compiling, loading, and initializing the
+  fixture in `GlobalSetup`, then measuring only the registered A* workload;
+- runs focused monomorphic, polymorphic, post-megamorphic, generic-property,
+  boxed Array-length, and direct numeric Array-length controls;
+- compiles the exact composed fixture and reports counters from the generated
+  `Array.prototype.findGraphNode` method.
+
+Use the Dry job to validate selection, report parsing, and IL analysis without
+treating the timing as production evidence:
+
+```powershell
+npm run perf:phased:kracken-ai-astar:dry
+```
+
+Run only the deterministic IL counters when a Kraken report is not needed:
+
+```powershell
+npm run perf:phased:kracken-ai-astar:il
+```
+
+The IL report records method size, dynamic-cache property reads, generic
+item/property reads, generic numeric `Array.length` reads, explicit boxing,
+arity-1 dispatch inside `findGraphNode`, and arity-1 calls to `findGraphNode`
+from other generated callables. These are method/path counters rather than
+whole-assembly totals.
+
+Write a machine-readable result, including SHA and raw BenchmarkDotNet
+provenance. The command writes
+`BenchmarkDotNet.Artifacts/results/KrackenAiAStarGuardrails-summary.json` by
+default; override it with:
+
+```powershell
+node scripts/runKrackenAStarGuardrails.js --il --output-json artifacts/kracken-ai-astar.json
+```
+
+Compare a candidate raw report with a parent report from the same host:
+
+```powershell
+node scripts/runKrackenAStarGuardrails.js \
+  --no-run --no-microbenchmarks \
+  --results-file artifacts/candidate/Benchmarks.KrackenExecutionBenchmarks-report-full-compressed.json \
+  --candidate-sha <candidate-sha> \
+  --baseline-report artifacts/baseline/Benchmarks.KrackenExecutionBenchmarks-report-full-compressed.json \
+  --baseline-sha <baseline-sha> \
+  --tolerance-percent 5
+```
+
+The comparison refuses different CPU, OS, architecture, .NET runtime, logical
+core count, or BenchmarkDotNet versions. On compatible reports it exits with
+code 2 when the JROC mean regresses beyond the tolerance; use
+`--allow-regression` only for exploratory reporting. `--no-run` never assigns
+the current HEAD to an existing report: pass `--candidate-sha` explicitly or
+the summary records `unknown`. Executed runs record both HEAD and whether the
+source tree was dirty.
+
+Timing policy:
+
+- use non-Dry BenchmarkDotNet runs for performance claims;
+- compare candidate and parent on the same host and runtime, preferably in one
+  workflow run;
+- retain mean, median, sample count, allocation, SHA, host, runtime, and the raw
+  reports;
+- treat the 5% default as a regression flag, not a claim that smaller changes
+  are statistically significant;
+- repeat noisy timing results, while treating stable allocation and generated
+  IL counters as separate evidence;
+- never compare a modified fixture as if it were the production scenario.
+
+Phase 0 baseline recorded on 2026-08-21:
+
+- source: master `4678366be0372faaf48c3fca2144f0f4efa62197`
+  plus guardrail-only working-tree changes;
+- host: Intel Xeon 6975P-C, Ubuntu 24.04.4, 8 logical / 4 physical cores;
+- runtime: .NET 10.0.11; BenchmarkDotNet 0.15.8;
+- exact `kracken-ai-astar` JROC result: 10.361 s mean, 10.395 s median,
+  N=17, 2,314,852,736 B/op;
+- competitors in the same run: Jint 4.507 s, Okojo 5.268 s, YantraJS
+  6.887 s;
+- focused controls: generic property read 43.249 ns, post-megamorphic
+  fallback 56.630 ns (1.31x), boxed numeric Array length 29.962 ns / 24 B,
+  direct numeric Array length 0.562 ns / 0 B;
+- generated `findGraphNode`: 159 IL bytes, 2 dynamic-cache property reads,
+  2 generic item/property reads, 1 generic numeric `Array.length` read,
+  1 explicit `box`, and 2 external arity-1 `findGraphNode` call sites.
+
+The full benchmark and microbenchmark rows used their normal BenchmarkDotNet
+jobs. The runtime sources match master; the recorded dirty state consists of
+this Phase 0 benchmark/tooling implementation and does not modify compiler or
+runtime execution behavior.
+
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:
 
