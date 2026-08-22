@@ -582,7 +582,16 @@ namespace Jroc.Utilities.Ecma335
                     {
                         foreach (var param in parameters)
                         {
-                            EncodeSignatureType(parametersEncoder.AddParameter().Type(), param.ParameterType);
+                            var parameterType = param.ParameterType;
+                            EncodeSignatureType(
+                                parametersEncoder
+                                    .AddParameter()
+                                    .Type(parameterType.IsByRef),
+                                parameterType.IsByRef
+                                    ? parameterType.GetElementType()
+                                        ?? throw new InvalidOperationException(
+                                            $"By-reference type '{parameterType}' has no element type.")
+                                    : parameterType);
                         }
                     });
 
@@ -617,7 +626,16 @@ namespace Jroc.Utilities.Ecma335
                     {
                         foreach (var param in parameters)
                         {
-                            EncodeSignatureType(parametersEncoder.AddParameter().Type(), param.ParameterType);
+                            var parameterType = param.ParameterType;
+                            EncodeSignatureType(
+                                parametersEncoder
+                                    .AddParameter()
+                                    .Type(parameterType.IsByRef),
+                                parameterType.IsByRef
+                                    ? parameterType.GetElementType()
+                                        ?? throw new InvalidOperationException(
+                                            $"By-reference type '{parameterType}' has no element type.")
+                                    : parameterType);
                         }
                     });
 

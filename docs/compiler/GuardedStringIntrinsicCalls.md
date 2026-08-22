@@ -70,6 +70,34 @@ and generated user-class metadata remain separate identity domains and
 continue through their existing specialized lowering rather than being
 collapsed into CLR receiver candidates.
 
+An ordinary function expression assigned directly to a property of the
+unshadowed intrinsic `Array.prototype` also receives an Array candidate for
+its dynamic `this` value. The summary deliberately includes unknown and
+non-candidate inputs: the function can be extracted, invoked with `call`, or
+used as a constructor. It therefore authorizes only guarded specialization,
+never an Array-typed callable ABI or an unconditional cast.
+
+### Array length and indexed reads
+
+Loop-hot numeric consumption of `.length` on an Array candidate lowers to
+`ObjectRuntime.GetArrayLengthWithFallback`. The helper returns `double`
+directly for an actual `JavaScriptRuntime.Array`, avoiding the generic
+property result box and preserving an unboxed value through the loop
+comparison. A non-Array receiver executes `GetItem(receiver, "length")`
+followed by ordinary numeric conversion.
+
+Loop-hot numeric index reads use
+`ObjectRuntime.GetArrayElementWithFallback`. An actual Array enters the
+existing exotic Array indexer; every other receiver uses the generic numeric
+`GetItem` algorithm. The Array indexer itself still handles descriptor-backed
+indices, holes, sparse and out-of-range reads, and prototype-visible misses.
+Proxies do not satisfy the Array type check and therefore remain on the
+generic path.
+
+These rewrites do not hoist either operation. A source-level `this.length`
+inside a loop is still evaluated at its original point on every iteration, so
+length changes made by the loop body remain observable.
+
 ### Per-program-point facts
 
 After final LIR normalization and variable-slot coalescing, the compiler runs a
@@ -125,8 +153,8 @@ typed-array call.
 
 This gate does not change existing proven-Array direct calls or guarded String
 method calls. It controls the code-size expansion introduced when post-flow
-receiver specialization selects a guarded method or numeric String-index fast
-path.
+receiver specialization selects a guarded method, candidate Array
+length/index helper, or numeric String-index fast path.
 
 ### Guard hoisting
 

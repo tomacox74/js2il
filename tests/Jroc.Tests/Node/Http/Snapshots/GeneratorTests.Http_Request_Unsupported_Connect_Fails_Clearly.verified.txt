@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 285 (0x11d)
+		// Code size: 351 (0x15f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Http_Request_Unsupported_Connect_Fails_Clearly/Scope,
@@ -194,72 +194,93 @@
 			IL_0067: stloc.2
 			IL_0068: ldloc.2
 			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_006e: ldstr "end"
-			IL_0073: ldstr "Http_Request_Unsupported_Connect_Fails_Clearly:Modules.Http_Request_Unsupported_Connect_Fails_Clearly:__js_module_init__:21"
-			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-			IL_007d: pop
-			IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0083: stloc.s 8
-			IL_0085: ldloc.s 8
-			IL_0087: ldstr "unexpected"
-			IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0091: pop
-			IL_0092: leave IL_0119
+			IL_006e: volatile.
+			IL_0070: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+			IL_0075: brfalse IL_0089
+
+			IL_007a: ldstr "end"
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0084: br IL_009d
+
+			IL_0089: ldstr "end"
+			IL_008e: ldstr "Http_Request_Unsupported_Connect_Fails_Clearly:Modules.Http_Request_Unsupported_Connect_Fails_Clearly:__js_module_init__:21"
+			IL_0093: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+			IL_009d: pop
+			IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a3: stloc.s 8
+			IL_00a5: ldloc.s 8
+			IL_00a7: ldstr "unexpected"
+			IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b1: pop
+			IL_00b2: leave IL_015b
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0097: stloc.3
-			IL_0098: ldloc.3
-			IL_0099: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_009e: dup
-			IL_009f: brtrue IL_00b4
+			IL_00b7: stloc.3
+			IL_00b8: ldloc.3
+			IL_00b9: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00be: dup
+			IL_00bf: brtrue IL_00d4
 
-			IL_00a4: pop
-			IL_00a5: ldloc.3
-			IL_00a6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00ab: dup
-			IL_00ac: brtrue IL_00c0
+			IL_00c4: pop
+			IL_00c5: ldloc.3
+			IL_00c6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00cb: dup
+			IL_00cc: brtrue IL_00e0
 
-			IL_00b1: pop
-			IL_00b2: rethrow
+			IL_00d1: pop
+			IL_00d2: rethrow
 
-			IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00b9: stloc.s 4
-			IL_00bb: br IL_00c2
+			IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00d9: stloc.s 4
+			IL_00db: br IL_00e2
 
-			IL_00c0: stloc.s 4
+			IL_00e0: stloc.s 4
 
-			IL_00c2: ldloc.s 4
-			IL_00c4: stloc.s 5
-			IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00cb: stloc.s 8
-			IL_00cd: ldstr "CONNECT requests are not supported"
-			IL_00d2: ldstr ""
-			IL_00d7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_00dc: stloc.s 9
-			IL_00de: ldloc.s 5
-			IL_00e0: ldstr "message"
-			IL_00e5: ldstr "Http_Request_Unsupported_Connect_Fails_Clearly:Modules.Http_Request_Unsupported_Connect_Fails_Clearly:__js_module_init__:40"
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00ef: stloc.s 10
-			IL_00f1: ldloc.s 9
-			IL_00f3: ldloc.s 10
-			IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_00fa: stloc.s 10
-			IL_00fc: ldstr "connect unsupported:"
-			IL_0101: ldloc.s 10
-			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0108: stloc.s 11
-			IL_010a: ldloc.s 8
-			IL_010c: ldloc.s 11
-			IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0113: pop
-			IL_0114: leave IL_0119
+			IL_00e2: ldloc.s 4
+			IL_00e4: stloc.s 5
+			IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00eb: stloc.s 8
+			IL_00ed: ldstr "CONNECT requests are not supported"
+			IL_00f2: ldstr ""
+			IL_00f7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_00fc: stloc.s 9
+			IL_00fe: volatile.
+			IL_0100: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0105: brfalse IL_011b
+
+			IL_010a: ldloc.s 5
+			IL_010c: ldstr "message"
+			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0116: br IL_0131
+
+			IL_011b: ldloc.s 5
+			IL_011d: ldstr "message"
+			IL_0122: ldstr "Http_Request_Unsupported_Connect_Fails_Clearly:Modules.Http_Request_Unsupported_Connect_Fails_Clearly:__js_module_init__:40"
+			IL_0127: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0131: stloc.s 10
+			IL_0133: ldloc.s 9
+			IL_0135: ldloc.s 10
+			IL_0137: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_013c: stloc.s 10
+			IL_013e: ldstr "connect unsupported:"
+			IL_0143: ldloc.s 10
+			IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_014a: stloc.s 11
+			IL_014c: ldloc.s 8
+			IL_014e: ldloc.s 11
+			IL_0150: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0155: pop
+			IL_0156: leave IL_015b
 		} // end handler
 
-		IL_0119: ldnull
-		IL_011a: stloc.s 6
-		IL_011c: ret
+		IL_015b: ldnull
+		IL_015c: stloc.s 6
+		IL_015e: ret
 	} // end of method Http_Request_Unsupported_Connect_Fails_Clearly::__js_module_init__
 
 } // end of class Modules.Http_Request_Unsupported_Connect_Fails_Clearly
@@ -284,4 +305,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

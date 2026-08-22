@@ -119,6 +119,26 @@ public sealed class GeneratedFacadePhaseOneTests
     }
 
     [Fact]
+    public void RepeatedModulePathSegments_CompileAndRunFromCSharp()
+    {
+        using var harness = new GeneratedAssemblyConsumerHarness(
+            "require('./api/api.js');",
+            "RepeatedPathAssembly",
+            new Dictionary<string, string>
+            {
+                ["api/api.js"] =
+                    "if (require.main === module) console.log('repeated');"
+            });
+
+        var result = harness.Build(
+            "RepeatedPathAssembly.Scripts.api.api.Run();",
+            run: true);
+
+        AssertConsumerSucceeded(result);
+        Assert.Equal(["repeated"], OutputLines(result.RunStandardOutput));
+    }
+
+    [Fact]
     public void ScopedPackageFacade_UsesPackageRelativeNestedPaths()
     {
         using var harness = new GeneratedAssemblyConsumerHarness(
@@ -541,7 +561,6 @@ public sealed class GeneratedFacadePhaseOneTests
     [InlineData("RunAssembly", "Run.js", "RunAssembly.Scripts.Run")]
     [InlineData("ImportAssembly", "Import.js", "ImportAssembly.Scripts.Import")]
     [InlineData("ScriptsAssembly", "Scripts.js", "ScriptsAssembly.Scripts.Scripts")]
-    [InlineData("RepeatedAssembly", "api/api.js", "RepeatedAssembly.Scripts.api.api")]
     public void NamingPlanner_RejectsCSharpTypeMemberNameCollisions(
         string assemblyName,
         string moduleId,

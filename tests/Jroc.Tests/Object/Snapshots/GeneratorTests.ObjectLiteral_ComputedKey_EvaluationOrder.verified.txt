@@ -602,7 +602,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 314 (0x13a)
+		// Code size: 382 (0x17e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope,
@@ -719,27 +719,49 @@
 		IL_00f0: pop
 		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00f6: stloc.s 9
-		IL_00f8: ldloc.s 4
-		IL_00fa: ldstr "k"
-		IL_00ff: ldstr "ObjectLiteral_ComputedKey_EvaluationOrder:Modules.ObjectLiteral_ComputedKey_EvaluationOrder:__js_module_init__:36"
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0109: stloc.s 7
-		IL_010b: ldloc.s 9
-		IL_010d: ldloc.s 7
-		IL_010f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0114: pop
-		IL_0115: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011a: stloc.s 9
-		IL_011c: ldloc.s 4
-		IL_011e: ldstr "a"
-		IL_0123: ldstr "ObjectLiteral_ComputedKey_EvaluationOrder:Modules.ObjectLiteral_ComputedKey_EvaluationOrder:__js_module_init__:41"
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_012d: stloc.s 7
-		IL_012f: ldloc.s 9
-		IL_0131: ldloc.s 7
-		IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0138: pop
-		IL_0139: ret
+		IL_00f8: volatile.
+		IL_00fa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_00ff: brfalse IL_0115
+
+		IL_0104: ldloc.s 4
+		IL_0106: ldstr "k"
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0110: br IL_012b
+
+		IL_0115: ldloc.s 4
+		IL_0117: ldstr "k"
+		IL_011c: ldstr "ObjectLiteral_ComputedKey_EvaluationOrder:Modules.ObjectLiteral_ComputedKey_EvaluationOrder:__js_module_init__:36"
+		IL_0121: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_012b: stloc.s 7
+		IL_012d: ldloc.s 9
+		IL_012f: ldloc.s 7
+		IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0136: pop
+		IL_0137: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013c: stloc.s 9
+		IL_013e: volatile.
+		IL_0140: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0145: brfalse IL_015b
+
+		IL_014a: ldloc.s 4
+		IL_014c: ldstr "a"
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0156: br IL_0171
+
+		IL_015b: ldloc.s 4
+		IL_015d: ldstr "a"
+		IL_0162: ldstr "ObjectLiteral_ComputedKey_EvaluationOrder:Modules.ObjectLiteral_ComputedKey_EvaluationOrder:__js_module_init__:41"
+		IL_0167: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0171: stloc.s 7
+		IL_0173: ldloc.s 9
+		IL_0175: ldloc.s 7
+		IL_0177: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_017c: pop
+		IL_017d: ret
 	} // end of method ObjectLiteral_ComputedKey_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_ComputedKey_EvaluationOrder
@@ -764,4 +786,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

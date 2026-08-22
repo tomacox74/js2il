@@ -519,7 +519,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 308 (0x134)
+			// Code size: 374 (0x176)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -548,7 +548,7 @@
 				IL_001f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
 				IL_0024: throw
 
-				IL_0025: leave IL_00e8
+				IL_0025: leave IL_012a
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
@@ -577,78 +577,100 @@
 				IL_0054: stloc.2
 				IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 				IL_005a: stloc.s 4
-				IL_005c: ldloc.2
-				IL_005d: ldstr "name"
-				IL_0062: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:<TwoPhaseDummy_M7>:log:21"
-				IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_006c: stloc.s 6
-				IL_006e: ldloc.s 4
-				IL_0070: ldloc.s 6
-				IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0077: pop
-				IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_007d: stloc.s 4
-				IL_007f: ldloc.2
-				IL_0080: ldstr "message"
-				IL_0085: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:<TwoPhaseDummy_M7>:log:26"
-				IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_008f: stloc.s 6
+				IL_005c: volatile.
+				IL_005e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_0063: brfalse IL_0078
+
+				IL_0068: ldloc.2
+				IL_0069: ldstr "name"
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0073: br IL_008d
+
+				IL_0078: ldloc.2
+				IL_0079: ldstr "name"
+				IL_007e: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:<TwoPhaseDummy_M7>:log:21"
+				IL_0083: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_008d: stloc.s 6
+				IL_008f: ldloc.s 4
 				IL_0091: ldloc.s 6
-				IL_0093: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_0098: stloc.s 5
-				IL_009a: ldloc.s 5
-				IL_009c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
-				IL_00a1: stloc.s 5
-				IL_00a3: ldc.i4.0
-				IL_00a4: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_00a9: brfalse IL_00c6
+				IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0098: pop
+				IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_009e: stloc.s 4
+				IL_00a0: volatile.
+				IL_00a2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+				IL_00a7: brfalse IL_00bc
 
-				IL_00ae: ldloc.s 5
-				IL_00b0: ldstr "without a setter"
-				IL_00b5: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-				IL_00ba: box [System.Runtime]System.Boolean
-				IL_00bf: stloc.s 6
-				IL_00c1: br IL_00d9
+				IL_00ac: ldloc.2
+				IL_00ad: ldstr "message"
+				IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00b7: br IL_00d1
 
-				IL_00c6: ldloc.s 5
-				IL_00c8: ldstr "includes"
-				IL_00cd: ldstr "without a setter"
-				IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00d7: stloc.s 6
+				IL_00bc: ldloc.2
+				IL_00bd: ldstr "message"
+				IL_00c2: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:<TwoPhaseDummy_M7>:log:26"
+				IL_00c7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+				IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_00d9: ldloc.s 4
-				IL_00db: ldloc.s 6
-				IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00e2: pop
-				IL_00e3: leave IL_00e8
+				IL_00d1: stloc.s 6
+				IL_00d3: ldloc.s 6
+				IL_00d5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_00da: stloc.s 5
+				IL_00dc: ldloc.s 5
+				IL_00de: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
+				IL_00e3: stloc.s 5
+				IL_00e5: ldc.i4.0
+				IL_00e6: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_00eb: brfalse IL_0108
+
+				IL_00f0: ldloc.s 5
+				IL_00f2: ldstr "without a setter"
+				IL_00f7: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+				IL_00fc: box [System.Runtime]System.Boolean
+				IL_0101: stloc.s 6
+				IL_0103: br IL_011b
+
+				IL_0108: ldloc.s 5
+				IL_010a: ldstr "includes"
+				IL_010f: ldstr "without a setter"
+				IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0119: stloc.s 6
+
+				IL_011b: ldloc.s 4
+				IL_011d: ldloc.s 6
+				IL_011f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0124: pop
+				IL_0125: leave IL_012a
 			} // end handler
 
-			IL_00e8: ldarg.0
-			IL_00e9: ldc.r8 7
-			IL_00f2: box [System.Runtime]System.Double
-			IL_00f7: callvirt instance object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_set_writeOnly(object)
-			IL_00fc: pop
-			IL_00fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0102: stloc.s 4
-			IL_0104: ldloc.s 4
-			IL_0106: ldarg.0
-			IL_0107: ldfld object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::saved
-			IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0111: pop
-			IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0117: stloc.s 4
-			IL_0119: ldarg.0
-			IL_011a: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_get_readOnly()
-			IL_011f: box [System.Runtime]System.Double
-			IL_0124: stloc.s 7
-			IL_0126: ldloc.s 4
-			IL_0128: ldloc.s 7
-			IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_012f: pop
-			IL_0130: ldnull
-			IL_0131: stloc.3
-			IL_0132: ldloc.3
-			IL_0133: ret
+			IL_012a: ldarg.0
+			IL_012b: ldc.r8 7
+			IL_0134: box [System.Runtime]System.Double
+			IL_0139: callvirt instance object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_set_writeOnly(object)
+			IL_013e: pop
+			IL_013f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0144: stloc.s 4
+			IL_0146: ldloc.s 4
+			IL_0148: ldarg.0
+			IL_0149: ldfld object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::saved
+			IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0153: pop
+			IL_0154: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0159: stloc.s 4
+			IL_015b: ldarg.0
+			IL_015c: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_get_readOnly()
+			IL_0161: box [System.Runtime]System.Double
+			IL_0166: stloc.s 7
+			IL_0168: ldloc.s 4
+			IL_016a: ldloc.s 7
+			IL_016c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0171: pop
+			IL_0172: ldnull
+			IL_0173: stloc.3
+			IL_0174: ldloc.3
+			IL_0175: ret
 		} // end of method AccessorEdges::log
 
 	} // end of class AccessorEdges
@@ -684,7 +706,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 347 (0x15b)
+		// Code size: 446 (0x1be)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/Scope,
@@ -704,117 +726,150 @@
 		IL_0011: ldtoken Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges
 		IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_001b: stloc.2
-		IL_001c: ldloc.2
-		IL_001d: ldstr "prototype"
-		IL_0022: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:Modules.Classes_ClassPrivateAccessor_EdgeCases_Log:__js_module_init__:6"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002c: stloc.3
-		IL_002d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0032: stloc.s 4
-		IL_0034: ldloc.3
-		IL_0035: ldstr "readOnly"
-		IL_003a: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_get_Method_L4C2/FunctionObject::.ctor()
-		IL_003f: ldc.i4.0
-		IL_0040: conv.r8
-		IL_0041: ldstr "get readOnly"
-		IL_0046: ldc.i4.0
-		IL_0047: ldc.i4.1
-		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_get_Method_L4C2/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_get_Method_L4C2/FunctionObject>(!!0)
-		IL_0052: ldnull
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_0058: pop
-		IL_0059: ldloc.2
-		IL_005a: ldstr "prototype"
-		IL_005f: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:Modules.Classes_ClassPrivateAccessor_EdgeCases_Log:__js_module_init__:13"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0069: stloc.3
-		IL_006a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_006f: stloc.s 4
-		IL_0071: ldloc.3
-		IL_0072: ldstr "writeOnly"
-		IL_0077: ldnull
-		IL_0078: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_set_Method_L8C2/FunctionObject::.ctor()
-		IL_007d: ldc.i4.1
-		IL_007e: conv.r8
-		IL_007f: ldstr "set writeOnly"
-		IL_0084: ldc.i4.1
-		IL_0085: ldc.i4.1
-		IL_0086: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_set_Method_L8C2/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_008b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_set_Method_L8C2/FunctionObject>(!!0)
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
-		IL_0095: pop
+		IL_001c: volatile.
+		IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0023: brfalse IL_0038
+
+		IL_0028: ldloc.2
+		IL_0029: ldstr "prototype"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: br IL_004d
+
+		IL_0038: ldloc.2
+		IL_0039: ldstr "prototype"
+		IL_003e: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:Modules.Classes_ClassPrivateAccessor_EdgeCases_Log:__js_module_init__:6"
+		IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_004d: stloc.3
+		IL_004e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.3
+		IL_0056: ldstr "readOnly"
+		IL_005b: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_get_Method_L4C2/FunctionObject::.ctor()
+		IL_0060: ldc.i4.0
+		IL_0061: conv.r8
+		IL_0062: ldstr "get readOnly"
+		IL_0067: ldc.i4.0
+		IL_0068: ldc.i4.1
+		IL_0069: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_get_Method_L4C2/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_get_Method_L4C2/FunctionObject>(!!0)
+		IL_0073: ldnull
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_0079: pop
+		IL_007a: volatile.
+		IL_007c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0081: brfalse IL_0096
+
+		IL_0086: ldloc.2
+		IL_0087: ldstr "prototype"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0091: br IL_00ab
+
 		IL_0096: ldloc.2
 		IL_0097: ldstr "prototype"
-		IL_009c: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:Modules.Classes_ClassPrivateAccessor_EdgeCases_Log:__js_module_init__:20"
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00a6: stloc.3
-		IL_00a7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00ac: stloc.s 4
-		IL_00ae: ldloc.3
-		IL_00af: ldstr "log"
-		IL_00b4: ldloc.2
-		IL_00b5: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/FunctionObject::.ctor(class [System.Runtime]System.Object)
-		IL_00ba: ldc.i4.0
-		IL_00bb: conv.r8
-		IL_00bc: ldstr "log"
-		IL_00c1: ldc.i4.1
-		IL_00c2: ldc.i4.1
-		IL_00c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/FunctionObject>(!!0)
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_00d2: pop
-		IL_00d3: ldc.i4.1
-		IL_00d4: newarr [System.Runtime]System.Object
-		IL_00d9: dup
-		IL_00da: ldc.i4.0
-		IL_00db: ldloc.0
-		IL_00dc: stelem.ref
-		IL_00dd: stloc.s 4
-		IL_00df: ldloc.s 4
-		IL_00e1: ldnull
-		IL_00e2: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/FunctionObject::.ctor(object[], class [System.Runtime]System.Object)
-		IL_00e7: ldloc.2
-		IL_00e8: ldloc.s 4
-		IL_00ea: ldc.i4.0
-		IL_00eb: conv.r8
-		IL_00ec: ldc.i4.0
-		IL_00ed: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00f2: castclass Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/FunctionObject
-		IL_00f7: stloc.s 5
-		IL_00f9: ldloc.s 5
-		IL_00fb: stloc.1
-		IL_00fc: ldc.i4.0
-		IL_00fd: newarr [System.Runtime]System.Object
-		IL_0102: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0107: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::.ctor()
-		IL_010c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0111: stloc.s 6
-		IL_0113: ldloc.s 6
-		IL_0115: ldtoken Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges
-		IL_011a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_011f: ldstr "prototype"
-		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0129: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_012e: ldloc.s 6
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0135: stloc.3
-		IL_0136: ldloc.3
-		IL_0137: isinst Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges
+		IL_009c: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:Modules.Classes_ClassPrivateAccessor_EdgeCases_Log:__js_module_init__:13"
+		IL_00a1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00ab: stloc.3
+		IL_00ac: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00b1: stloc.s 4
+		IL_00b3: ldloc.3
+		IL_00b4: ldstr "writeOnly"
+		IL_00b9: ldnull
+		IL_00ba: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_set_Method_L8C2/FunctionObject::.ctor()
+		IL_00bf: ldc.i4.1
+		IL_00c0: conv.r8
+		IL_00c1: ldstr "set writeOnly"
+		IL_00c6: ldc.i4.1
+		IL_00c7: ldc.i4.1
+		IL_00c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_set_Method_L8C2/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00cd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_set_Method_L8C2/FunctionObject>(!!0)
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
+		IL_00d7: pop
+		IL_00d8: volatile.
+		IL_00da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_00df: brfalse IL_00f4
+
+		IL_00e4: ldloc.2
+		IL_00e5: ldstr "prototype"
+		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ef: br IL_0109
+
+		IL_00f4: ldloc.2
+		IL_00f5: ldstr "prototype"
+		IL_00fa: ldstr "Classes_ClassPrivateAccessor_EdgeCases_Log:Modules.Classes_ClassPrivateAccessor_EdgeCases_Log:__js_module_init__:20"
+		IL_00ff: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0109: stloc.3
+		IL_010a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_010f: stloc.s 4
+		IL_0111: ldloc.3
+		IL_0112: ldstr "log"
+		IL_0117: ldloc.2
+		IL_0118: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/FunctionObject::.ctor(class [System.Runtime]System.Object)
+		IL_011d: ldc.i4.0
+		IL_011e: conv.r8
+		IL_011f: ldstr "log"
+		IL_0124: ldc.i4.1
+		IL_0125: ldc.i4.1
+		IL_0126: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_012b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/FunctionObject>(!!0)
+		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0135: pop
+		IL_0136: ldc.i4.1
+		IL_0137: newarr [System.Runtime]System.Object
 		IL_013c: dup
-		IL_013d: brfalse IL_014d
+		IL_013d: ldc.i4.0
+		IL_013e: ldloc.0
+		IL_013f: stelem.ref
+		IL_0140: stloc.s 4
+		IL_0142: ldloc.s 4
+		IL_0144: ldnull
+		IL_0145: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/FunctionObject::.ctor(object[], class [System.Runtime]System.Object)
+		IL_014a: ldloc.2
+		IL_014b: ldloc.s 4
+		IL_014d: ldc.i4.0
+		IL_014e: conv.r8
+		IL_014f: ldc.i4.0
+		IL_0150: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0155: castclass Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/FunctionObject
+		IL_015a: stloc.s 5
+		IL_015c: ldloc.s 5
+		IL_015e: stloc.1
+		IL_015f: ldc.i4.0
+		IL_0160: newarr [System.Runtime]System.Object
+		IL_0165: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_016a: newobj instance void Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::.ctor()
+		IL_016f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0174: stloc.s 6
+		IL_0176: ldloc.s 6
+		IL_0178: ldtoken Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges
+		IL_017d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0182: ldstr "prototype"
+		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_018c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0191: ldloc.s 6
+		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0198: stloc.3
+		IL_0199: ldloc.3
+		IL_019a: isinst Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges
+		IL_019f: dup
+		IL_01a0: brfalse IL_01b0
 
-		IL_0142: callvirt instance object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::log()
-		IL_0147: pop
-		IL_0148: br IL_015a
+		IL_01a5: callvirt instance object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::log()
+		IL_01aa: pop
+		IL_01ab: br IL_01bd
 
-		IL_014d: pop
-		IL_014e: ldloc.3
-		IL_014f: ldstr "log"
-		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0159: pop
+		IL_01b0: pop
+		IL_01b1: ldloc.3
+		IL_01b2: ldstr "log"
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01bc: pop
 
-		IL_015a: ret
+		IL_01bd: ret
 	} // end of method Classes_ClassPrivateAccessor_EdgeCases_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log
@@ -839,4 +894,16 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

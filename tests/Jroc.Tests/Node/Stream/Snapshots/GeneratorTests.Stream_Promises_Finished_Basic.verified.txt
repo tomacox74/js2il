@@ -317,7 +317,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 572 (0x23c)
+			// Code size: 638 (0x27e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Stream_Promises_Finished_Basic/main/Scope,
@@ -538,49 +538,71 @@
 			IL_01ae: pop
 			IL_01af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_01b4: stloc.s 8
-			IL_01b6: ldloc.1
-			IL_01b7: ldstr "destroyed"
-			IL_01bc: ldstr "Stream_Promises_Finished_Basic:<TwoPhaseDummy_M4>:__js_call__:25"
-			IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_01c6: stloc.s 4
-			IL_01c8: ldstr "destroyed:"
-			IL_01cd: ldloc.s 4
-			IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_01d4: stloc.s 9
-			IL_01d6: ldloc.s 8
-			IL_01d8: ldloc.s 9
-			IL_01da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_01df: pop
-			IL_01e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01e5: stloc.s 8
-			IL_01e7: ldloc.1
-			IL_01e8: ldstr "writable"
-			IL_01ed: ldstr "Stream_Promises_Finished_Basic:<TwoPhaseDummy_M4>:__js_call__:32"
-			IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_01f7: stloc.s 4
-			IL_01f9: ldstr "writable:"
-			IL_01fe: ldloc.s 4
-			IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0205: stloc.s 9
-			IL_0207: ldloc.s 8
-			IL_0209: ldloc.s 9
-			IL_020b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0210: pop
-			IL_0211: ldloc.0
-			IL_0212: ldc.i4.m1
-			IL_0213: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0218: ldloc.0
-			IL_0219: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_021e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_0223: ldarg.0
-			IL_0224: ldc.i4.1
-			IL_0225: newarr [System.Runtime]System.Object
-			IL_022a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_022f: pop
-			IL_0230: ldloc.0
-			IL_0231: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0236: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_023b: ret
+			IL_01b6: volatile.
+			IL_01b8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_01bd: brfalse IL_01d2
+
+			IL_01c2: ldloc.1
+			IL_01c3: ldstr "destroyed"
+			IL_01c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01cd: br IL_01e7
+
+			IL_01d2: ldloc.1
+			IL_01d3: ldstr "destroyed"
+			IL_01d8: ldstr "Stream_Promises_Finished_Basic:<TwoPhaseDummy_M4>:__js_call__:25"
+			IL_01dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_01e7: stloc.s 4
+			IL_01e9: ldstr "destroyed:"
+			IL_01ee: ldloc.s 4
+			IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_01f5: stloc.s 9
+			IL_01f7: ldloc.s 8
+			IL_01f9: ldloc.s 9
+			IL_01fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0200: pop
+			IL_0201: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0206: stloc.s 8
+			IL_0208: volatile.
+			IL_020a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_020f: brfalse IL_0224
+
+			IL_0214: ldloc.1
+			IL_0215: ldstr "writable"
+			IL_021a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_021f: br IL_0239
+
+			IL_0224: ldloc.1
+			IL_0225: ldstr "writable"
+			IL_022a: ldstr "Stream_Promises_Finished_Basic:<TwoPhaseDummy_M4>:__js_call__:32"
+			IL_022f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0234: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0239: stloc.s 4
+			IL_023b: ldstr "writable:"
+			IL_0240: ldloc.s 4
+			IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0247: stloc.s 9
+			IL_0249: ldloc.s 8
+			IL_024b: ldloc.s 9
+			IL_024d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0252: pop
+			IL_0253: ldloc.0
+			IL_0254: ldc.i4.m1
+			IL_0255: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_025a: ldloc.0
+			IL_025b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0260: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_0265: ldarg.0
+			IL_0266: ldc.i4.1
+			IL_0267: newarr [System.Runtime]System.Object
+			IL_026c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0271: pop
+			IL_0272: ldloc.0
+			IL_0273: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0278: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_027d: ret
 		} // end of method main::__js_call__
 
 	} // end of class main
@@ -706,4 +728,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

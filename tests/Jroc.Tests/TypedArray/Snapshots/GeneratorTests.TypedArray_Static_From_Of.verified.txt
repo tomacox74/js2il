@@ -228,7 +228,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 45 (0x2d)
+			// Code size: 88 (0x58)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -239,19 +239,32 @@
 			IL_0001: ldarg.3
 			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0007: stloc.0
-			IL_0008: ldarg.1
-			IL_0009: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0013: ldstr "bump"
-			IL_0018: ldstr "TypedArray_Static_From_Of:<TwoPhaseDummy_M4>:__js_call__:6"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0022: stloc.1
-			IL_0023: ldloc.0
-			IL_0024: ldloc.1
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002a: stloc.0
-			IL_002b: ldloc.0
-			IL_002c: ret
+			IL_0008: volatile.
+			IL_000a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+			IL_000f: brfalse IL_002e
+
+			IL_0014: ldarg.1
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_001f: ldstr "bump"
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0029: br IL_004d
+
+			IL_002e: ldarg.1
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0039: ldstr "bump"
+			IL_003e: ldstr "TypedArray_Static_From_Of:<TwoPhaseDummy_M4>:__js_call__:6"
+			IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_004d: stloc.1
+			IL_004e: ldloc.0
+			IL_004f: ldloc.1
+			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0055: stloc.0
+			IL_0056: ldloc.0
+			IL_0057: ret
 		} // end of method FunctionExpression_mapped::__js_call__
 
 	} // end of class FunctionExpression_mapped
@@ -641,4 +654,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

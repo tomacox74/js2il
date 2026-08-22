@@ -165,7 +165,8 @@ This command:
 - preserves the benchmark boundary by compiling, loading, and initializing the
   fixture in `GlobalSetup`, then measuring only the registered A* workload;
 - runs focused monomorphic, polymorphic, post-megamorphic, generic-property,
-  boxed Array-length, and direct numeric Array-length controls;
+  boxed Array-length, guarded candidate Array-length, and direct numeric
+  Array-length controls;
 - compiles the exact composed fixture and reports counters from the generated
   `Array.prototype.findGraphNode` method.
 
@@ -251,6 +252,48 @@ The full benchmark and microbenchmark rows used their normal BenchmarkDotNet
 jobs. The runtime sources match master; the recorded dirty state consists of
 this Phase 0 benchmark/tooling implementation and does not modify compiler or
 runtime execution behavior.
+
+Phase 1 candidate recorded on the same Intel host on 2026-08-21:
+
+- exact `kracken-ai-astar` JROC result: 7.434 s mean, 7.452 s median,
+  N=16, 2,314,930,320 B/op, 28.2% faster than the recorded Phase 0 mean;
+- competitors in the same run: Jint 4.543 s, Okojo 5.228 s, YantraJS
+  7.292 s;
+- focused controls: generic property read 28.41 ns, generated terminal
+  fallback 25.39 ns, monomorphic hit 10.01 ns, and four-way polymorphic hit
+  13.89 ns, all at 0 B/op;
+- the active-frame descriptor benchmark measured direct descriptor lookup at
+  15.10 ns / 24 B and descriptor-aware property read at 34.72 ns / 24 B. The
+  companion pre-change descriptor lookup was 20.77 ns / 24 B; Phase 1 does
+  not claim to remove that remaining allocation.
+
+These are separate non-Dry runs on the same host, not simultaneous paired
+measurements. Preserve and compare the raw reports with the guardrail helper
+when making a regression decision.
+
+Phase 2 Array specialization candidate recorded on the same Intel host on
+2026-08-21:
+
+- source: Phase 1 merge `13a74806cc9aad7aad5ae2b774e6dcd85969d9a4`
+  plus the Phase 2 working-tree changes;
+- exact non-Dry `kracken-ai-astar` JROC result: 4.984 s mean, 4.954 s
+  median, N=19, 57,534,240 B/op;
+- compared with the same-host Phase 1 result, the mean is 33.0% lower and
+  managed allocation is 97.5% lower;
+- this was a JROC-only rerun. Competitors were intentionally not repeated;
+  their same-host Phase 1 measurements remain above;
+- the guarded candidate Array-length allocation control reports 0 B/op,
+  matching direct Array length and avoiding the boxed path's 24 B/op;
+- generated `findGraphNode`: 217 IL bytes, 2 dynamic-cache property reads,
+  3 generic item/property reads, 0 generic numeric `Array.length` reads,
+  and 1 explicit `box`. The loop-hot index read uses the guarded Array helper;
+  the return-only index read remains generic because it is outside the natural
+  loop and executes at most once.
+
+The Phase 2 comparison uses separate non-Dry runs with matching host, OS,
+runtime, benchmark version, scenario, and benchmark boundary. The raw reports,
+sample counts, and allocation values are the comparison evidence; the focused
+Dry control is used only to verify allocation shape, not timing.
 
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:

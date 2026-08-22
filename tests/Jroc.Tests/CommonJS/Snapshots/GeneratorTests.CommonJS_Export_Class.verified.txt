@@ -574,7 +574,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 186 (0xba)
+		// Code size: 219 (0xdb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_Class_Lib/Scope,
@@ -593,65 +593,76 @@
 		IL_0011: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
 		IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_001b: stloc.2
-		IL_001c: ldloc.2
-		IL_001d: ldstr "prototype"
-		IL_0022: ldstr "CommonJS_Export_Class_Lib:Modules.CommonJS_Export_Class_Lib:__js_module_init__:6"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002c: stloc.3
-		IL_002d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0032: stloc.s 4
-		IL_0034: ldloc.3
-		IL_0035: ldstr "add"
-		IL_003a: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject::.ctor()
-		IL_003f: ldc.i4.2
-		IL_0040: conv.r8
-		IL_0041: ldstr "add"
-		IL_0046: ldc.i4.0
-		IL_0047: ldc.i4.1
-		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject>(!!0)
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0057: pop
-		IL_0058: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_005d: stloc.s 4
-		IL_005f: ldloc.3
-		IL_0060: ldstr "multiply"
-		IL_0065: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject::.ctor()
-		IL_006a: ldc.i4.2
-		IL_006b: conv.r8
-		IL_006c: ldstr "multiply"
-		IL_0071: ldc.i4.0
-		IL_0072: ldc.i4.1
-		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0078: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject>(!!0)
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0082: pop
-		IL_0083: ldc.i4.1
-		IL_0084: newarr [System.Runtime]System.Object
-		IL_0089: dup
-		IL_008a: ldc.i4.0
-		IL_008b: ldloc.0
-		IL_008c: stelem.ref
-		IL_008d: stloc.s 4
-		IL_008f: ldloc.s 4
-		IL_0091: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject::.ctor(object[])
-		IL_0096: ldloc.2
-		IL_0097: ldloc.s 4
-		IL_0099: ldc.i4.0
-		IL_009a: conv.r8
-		IL_009b: ldc.i4.0
-		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00a1: castclass Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject
-		IL_00a6: stloc.s 5
-		IL_00a8: ldloc.s 5
-		IL_00aa: stloc.1
-		IL_00ab: ldarg.2
-		IL_00ac: ldstr "exports"
-		IL_00b1: ldloc.1
-		IL_00b2: ldc.i4.1
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00b8: pop
-		IL_00b9: ret
+		IL_001c: volatile.
+		IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0023: brfalse IL_0038
+
+		IL_0028: ldloc.2
+		IL_0029: ldstr "prototype"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: br IL_004d
+
+		IL_0038: ldloc.2
+		IL_0039: ldstr "prototype"
+		IL_003e: ldstr "CommonJS_Export_Class_Lib:Modules.CommonJS_Export_Class_Lib:__js_module_init__:6"
+		IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_004d: stloc.3
+		IL_004e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.3
+		IL_0056: ldstr "add"
+		IL_005b: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject::.ctor()
+		IL_0060: ldc.i4.2
+		IL_0061: conv.r8
+		IL_0062: ldstr "add"
+		IL_0067: ldc.i4.0
+		IL_0068: ldc.i4.1
+		IL_0069: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_add/FunctionObject>(!!0)
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0078: pop
+		IL_0079: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007e: stloc.s 4
+		IL_0080: ldloc.3
+		IL_0081: ldstr "multiply"
+		IL_0086: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject::.ctor()
+		IL_008b: ldc.i4.2
+		IL_008c: conv.r8
+		IL_008d: ldstr "multiply"
+		IL_0092: ldc.i4.0
+		IL_0093: ldc.i4.1
+		IL_0094: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0099: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Export_Class_Lib/Calculator/Scope_multiply/FunctionObject>(!!0)
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00a3: pop
+		IL_00a4: ldc.i4.1
+		IL_00a5: newarr [System.Runtime]System.Object
+		IL_00aa: dup
+		IL_00ab: ldc.i4.0
+		IL_00ac: ldloc.0
+		IL_00ad: stelem.ref
+		IL_00ae: stloc.s 4
+		IL_00b0: ldloc.s 4
+		IL_00b2: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject::.ctor(object[])
+		IL_00b7: ldloc.2
+		IL_00b8: ldloc.s 4
+		IL_00ba: ldc.i4.0
+		IL_00bb: conv.r8
+		IL_00bc: ldc.i4.0
+		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00c2: castclass Modules.CommonJS_Export_Class_Lib/Calculator/FunctionObject
+		IL_00c7: stloc.s 5
+		IL_00c9: ldloc.s 5
+		IL_00cb: stloc.1
+		IL_00cc: ldarg.2
+		IL_00cd: ldstr "exports"
+		IL_00d2: ldloc.1
+		IL_00d3: ldc.i4.1
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00d9: pop
+		IL_00da: ret
 	} // end of method CommonJS_Export_Class_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Class_Lib
@@ -676,4 +687,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

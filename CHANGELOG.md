@@ -12,6 +12,18 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   methods, share entry execution with `Program.Main`, map arguments to isolated
   Node-compatible `process.argv`, drain asynchronous work, translate failures,
   and keep `process.exit` from terminating the host.
+- perf(compiler/runtime): implement issue #1958 Phase 2 by propagating an
+  uncertain Array receiver candidate into ordinary functions assigned to the
+  intrinsic `Array.prototype`. Loop-hot numeric `length` and indexed reads now
+  use guarded helpers with generic fallback, keep `length` unboxed through
+  comparisons, and preserve the original per-iteration evaluation point.
+- perf(compiler/runtime): recover the identity-cache megamorphic regression
+  from issue #1958 Phase 1. Generated property-read and zero-argument member
+  call sites now publish a bounded terminal deoptimization flag and branch
+  directly to the generic operation after the fifth receiver, while
+  realm-owned entries remain isolated and weak. Runtime context mirroring,
+  recent-site lookup, and intrinsic prototype markers also remove ambient
+  realm and `%Function.prototype%` discovery from active property-read paths.
 - compiler/sdk/hosting: establish the Phase 0 generated-host-API contracts for
   #1917. Explicit assembly identities now drive PE and artifact names, compiled
   manifests identify one canonical entry module separately from aliases,

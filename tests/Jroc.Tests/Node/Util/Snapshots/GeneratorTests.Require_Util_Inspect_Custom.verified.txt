@@ -235,7 +235,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 130 (0x82)
+			// Code size: 173 (0xad)
 			.maxstack 8
 			.locals init (
 				[0] string,
@@ -270,19 +270,32 @@
 			IL_004a: call string [System.Runtime]System.String::Concat(string, string)
 			IL_004f: ldstr ":"
 			IL_0054: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0059: ldarg.1
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0064: ldstr "a"
-			IL_0069: ldstr "Require_Util_Inspect_Custom:<TwoPhaseDummy_M4>:__js_call__:21"
-			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0073: stloc.1
-			IL_0074: ldloc.1
-			IL_0075: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_007a: stloc.0
-			IL_007b: ldloc.0
-			IL_007c: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0081: ret
+			IL_0059: volatile.
+			IL_005b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0060: brfalse IL_007f
+
+			IL_0065: ldarg.1
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0070: ldstr "a"
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_007a: br IL_009e
+
+			IL_007f: ldarg.1
+			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_008a: ldstr "a"
+			IL_008f: ldstr "Require_Util_Inspect_Custom:<TwoPhaseDummy_M4>:__js_call__:21"
+			IL_0094: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_009e: stloc.1
+			IL_009f: ldloc.1
+			IL_00a0: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_00a5: stloc.0
+			IL_00a6: ldloc.0
+			IL_00a7: call string [System.Runtime]System.String::Concat(string, string)
+			IL_00ac: ret
 		} // end of method FunctionExpression_L9C14::__js_call__
 
 	} // end of class FunctionExpression_L9C14
@@ -318,7 +331,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 229 (0xe5)
+		// Code size: 296 (0x128)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inspect_Custom/Scope,
@@ -346,72 +359,94 @@
 		IL_001d: stloc.2
 		IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0023: stloc.s 4
-		IL_0025: ldloc.1
-		IL_0026: ldstr "inspect"
-		IL_002b: ldstr "Require_Util_Inspect_Custom:Modules.Require_Util_Inspect_Custom:__js_module_init__:15"
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0035: stloc.s 5
-		IL_0037: ldloc.s 5
-		IL_0039: ldstr "custom"
-		IL_003e: ldstr "Require_Util_Inspect_Custom:Modules.Require_Util_Inspect_Custom:__js_module_init__:17"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0048: stloc.s 5
-		IL_004a: ldloc.s 5
-		IL_004c: ldloc.2
-		IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0052: stloc.s 6
-		IL_0054: ldloc.s 6
-		IL_0056: box [System.Runtime]System.Boolean
-		IL_005b: stloc.s 7
-		IL_005d: ldloc.s 4
-		IL_005f: ldloc.s 7
-		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0066: pop
-		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_006c: dup
-		IL_006d: ldstr "a"
-		IL_0072: ldc.r8 1
-		IL_007b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0080: stloc.3
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.0
-		IL_008a: stelem.ref
-		IL_008b: stloc.s 8
-		IL_008d: newobj instance void Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject::.ctor()
-		IL_0092: ldc.i4.3
-		IL_0093: conv.r8
-		IL_0094: ldstr ""
-		IL_0099: ldc.i4.0
-		IL_009a: ldc.i4.1
-		IL_009b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00a0: stloc.s 9
-		IL_00a2: ldloc.3
-		IL_00a3: ldloc.2
-		IL_00a4: ldloc.s 9
-		IL_00a6: ldc.i4.1
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-		IL_00ac: pop
-		IL_00ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b2: stloc.s 4
-		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00b9: dup
-		IL_00ba: ldstr "depth"
-		IL_00bf: ldc.r8 2
-		IL_00c8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00cd: stloc.s 10
-		IL_00cf: ldloc.1
-		IL_00d0: ldloc.3
-		IL_00d1: ldloc.s 10
-		IL_00d3: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object, object)
-		IL_00d8: stloc.s 5
-		IL_00da: ldloc.s 4
-		IL_00dc: ldloc.s 5
-		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e3: pop
-		IL_00e4: ret
+		IL_0025: volatile.
+		IL_0027: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_002c: brfalse IL_0041
+
+		IL_0031: ldloc.1
+		IL_0032: ldstr "inspect"
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_003c: br IL_0056
+
+		IL_0041: ldloc.1
+		IL_0042: ldstr "inspect"
+		IL_0047: ldstr "Require_Util_Inspect_Custom:Modules.Require_Util_Inspect_Custom:__js_module_init__:15"
+		IL_004c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0056: stloc.s 5
+		IL_0058: volatile.
+		IL_005a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_005f: brfalse IL_0075
+
+		IL_0064: ldloc.s 5
+		IL_0066: ldstr "custom"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0070: br IL_008b
+
+		IL_0075: ldloc.s 5
+		IL_0077: ldstr "custom"
+		IL_007c: ldstr "Require_Util_Inspect_Custom:Modules.Require_Util_Inspect_Custom:__js_module_init__:17"
+		IL_0081: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_008b: stloc.s 5
+		IL_008d: ldloc.s 5
+		IL_008f: ldloc.2
+		IL_0090: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0095: stloc.s 6
+		IL_0097: ldloc.s 6
+		IL_0099: box [System.Runtime]System.Boolean
+		IL_009e: stloc.s 7
+		IL_00a0: ldloc.s 4
+		IL_00a2: ldloc.s 7
+		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a9: pop
+		IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00af: dup
+		IL_00b0: ldstr "a"
+		IL_00b5: ldc.r8 1
+		IL_00be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00c3: stloc.3
+		IL_00c4: ldc.i4.1
+		IL_00c5: newarr [System.Runtime]System.Object
+		IL_00ca: dup
+		IL_00cb: ldc.i4.0
+		IL_00cc: ldloc.0
+		IL_00cd: stelem.ref
+		IL_00ce: stloc.s 8
+		IL_00d0: newobj instance void Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject::.ctor()
+		IL_00d5: ldc.i4.3
+		IL_00d6: conv.r8
+		IL_00d7: ldstr ""
+		IL_00dc: ldc.i4.0
+		IL_00dd: ldc.i4.1
+		IL_00de: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00e3: stloc.s 9
+		IL_00e5: ldloc.3
+		IL_00e6: ldloc.2
+		IL_00e7: ldloc.s 9
+		IL_00e9: ldc.i4.1
+		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+		IL_00ef: pop
+		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f5: stloc.s 4
+		IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00fc: dup
+		IL_00fd: ldstr "depth"
+		IL_0102: ldc.r8 2
+		IL_010b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0110: stloc.s 10
+		IL_0112: ldloc.1
+		IL_0113: ldloc.3
+		IL_0114: ldloc.s 10
+		IL_0116: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object, object)
+		IL_011b: stloc.s 5
+		IL_011d: ldloc.s 4
+		IL_011f: ldloc.s 5
+		IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0126: pop
+		IL_0127: ret
 	} // end of method Require_Util_Inspect_Custom::__js_module_init__
 
 } // end of class Modules.Require_Util_Inspect_Custom
@@ -436,4 +471,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

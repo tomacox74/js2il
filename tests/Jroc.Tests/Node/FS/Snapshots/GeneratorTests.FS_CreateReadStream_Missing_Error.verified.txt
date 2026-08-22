@@ -172,7 +172,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 87 (0x57)
+			// Code size: 120 (0x78)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -193,31 +193,42 @@
 			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_001c: stloc.2
 			IL_001d: ldloc.2
-			IL_001e: brfalse IL_003c
+			IL_001e: brfalse IL_005d
 
-			IL_0023: ldarg.1
-			IL_0024: ldstr "message"
-			IL_0029: ldstr "FS_CreateReadStream_Missing_Error:<TwoPhaseDummy_M4>:__js_call__:11"
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0033: stloc.3
-			IL_0034: ldloc.3
-			IL_0035: stloc.s 5
-			IL_0037: br IL_003f
+			IL_0023: volatile.
+			IL_0025: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_002a: brfalse IL_003f
 
-			IL_003c: ldarg.1
-			IL_003d: stloc.s 5
+			IL_002f: ldarg.1
+			IL_0030: ldstr "message"
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003a: br IL_0054
 
-			IL_003f: ldloc.1
-			IL_0040: ldloc.s 5
-			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_0047: stloc.3
-			IL_0048: ldloc.0
-			IL_0049: ldstr "ErrorStartsWithENOENT:"
-			IL_004e: ldloc.3
-			IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0054: pop
-			IL_0055: ldnull
-			IL_0056: ret
+			IL_003f: ldarg.1
+			IL_0040: ldstr "message"
+			IL_0045: ldstr "FS_CreateReadStream_Missing_Error:<TwoPhaseDummy_M4>:__js_call__:11"
+			IL_004a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0054: stloc.3
+			IL_0055: ldloc.3
+			IL_0056: stloc.s 5
+			IL_0058: br IL_0060
+
+			IL_005d: ldarg.1
+			IL_005e: stloc.s 5
+
+			IL_0060: ldloc.1
+			IL_0061: ldloc.s 5
+			IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_0068: stloc.3
+			IL_0069: ldloc.0
+			IL_006a: ldstr "ErrorStartsWithENOENT:"
+			IL_006f: ldloc.3
+			IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0075: pop
+			IL_0076: ldnull
+			IL_0077: ret
 		} // end of method ArrowFunction_L13C20::__js_call__
 
 	} // end of class ArrowFunction_L13C20
@@ -540,4 +551,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

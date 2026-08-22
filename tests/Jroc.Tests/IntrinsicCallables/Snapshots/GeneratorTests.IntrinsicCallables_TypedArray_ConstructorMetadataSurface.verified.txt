@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 242 (0xf2)
+		// Code size: 341 (0x155)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface/Scope,
@@ -163,21 +163,21 @@
 		IL_008d: pop
 		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0093: stloc.3
-		IL_0094: ldloc.2
-		IL_0095: ldstr "writable"
-		IL_009a: ldstr "IntrinsicCallables_TypedArray_ConstructorMetadataSurface:Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface:__js_module_init__:31"
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00a4: stloc.s 4
-		IL_00a6: ldloc.3
-		IL_00a7: ldloc.s 4
-		IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ae: pop
-		IL_00af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b4: stloc.3
-		IL_00b5: ldloc.2
-		IL_00b6: ldstr "enumerable"
-		IL_00bb: ldstr "IntrinsicCallables_TypedArray_ConstructorMetadataSurface:Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface:__js_module_init__:36"
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_0094: volatile.
+		IL_0096: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_009b: brfalse IL_00b0
+
+		IL_00a0: ldloc.2
+		IL_00a1: ldstr "writable"
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ab: br IL_00c5
+
+		IL_00b0: ldloc.2
+		IL_00b1: ldstr "writable"
+		IL_00b6: ldstr "IntrinsicCallables_TypedArray_ConstructorMetadataSurface:Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface:__js_module_init__:31"
+		IL_00bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
 		IL_00c5: stloc.s 4
 		IL_00c7: ldloc.3
 		IL_00c8: ldloc.s 4
@@ -185,16 +185,49 @@
 		IL_00cf: pop
 		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00d5: stloc.3
-		IL_00d6: ldloc.2
-		IL_00d7: ldstr "configurable"
-		IL_00dc: ldstr "IntrinsicCallables_TypedArray_ConstructorMetadataSurface:Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface:__js_module_init__:41"
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00e6: stloc.s 4
-		IL_00e8: ldloc.3
-		IL_00e9: ldloc.s 4
-		IL_00eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f0: pop
-		IL_00f1: ret
+		IL_00d6: volatile.
+		IL_00d8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00dd: brfalse IL_00f2
+
+		IL_00e2: ldloc.2
+		IL_00e3: ldstr "enumerable"
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ed: br IL_0107
+
+		IL_00f2: ldloc.2
+		IL_00f3: ldstr "enumerable"
+		IL_00f8: ldstr "IntrinsicCallables_TypedArray_ConstructorMetadataSurface:Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface:__js_module_init__:36"
+		IL_00fd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0107: stloc.s 4
+		IL_0109: ldloc.3
+		IL_010a: ldloc.s 4
+		IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0111: pop
+		IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0117: stloc.3
+		IL_0118: volatile.
+		IL_011a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_011f: brfalse IL_0134
+
+		IL_0124: ldloc.2
+		IL_0125: ldstr "configurable"
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012f: br IL_0149
+
+		IL_0134: ldloc.2
+		IL_0135: ldstr "configurable"
+		IL_013a: ldstr "IntrinsicCallables_TypedArray_ConstructorMetadataSurface:Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface:__js_module_init__:41"
+		IL_013f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0149: stloc.s 4
+		IL_014b: ldloc.3
+		IL_014c: ldloc.s 4
+		IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0153: pop
+		IL_0154: ret
 	} // end of method IntrinsicCallables_TypedArray_ConstructorMetadataSurface::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_TypedArray_ConstructorMetadataSurface
@@ -219,4 +252,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -82,7 +82,6 @@ public static class JrocFacadeNamePlanner
             root,
             rootTypeName,
             entryModuleId,
-            parentTypeName: "Scripts",
             parentPath: []);
 
         if (!modules.Any(module => string.Equals(module.ModuleId, entryModuleId, StringComparison.Ordinal)))
@@ -234,7 +233,6 @@ public static class JrocFacadeNamePlanner
         NameNode node,
         string rootTypeName,
         string entryModuleId,
-        string parentTypeName,
         IReadOnlyList<string> parentPath)
     {
         if (parentPath.Count == 0
@@ -249,7 +247,11 @@ public static class JrocFacadeNamePlanner
         foreach (var child in node.Children.Values)
         {
             var childPath = parentPath.Concat([child.TypeSegment]).ToArray();
-            if (string.Equals(child.TypeSegment, parentTypeName, StringComparison.OrdinalIgnoreCase)
+            if ((parentPath.Count == 0
+                    && string.Equals(
+                        child.TypeSegment,
+                        "Scripts",
+                        StringComparison.OrdinalIgnoreCase))
                 || (child.ModuleId is not null
                     && IsReservedFacadeMemberName(child.TypeSegment, includeScripts: false))
                 || (node.ModuleId is not null
@@ -267,7 +269,6 @@ public static class JrocFacadeNamePlanner
                 child,
                 rootTypeName,
                 entryModuleId,
-                child.TypeSegment,
                 childPath);
         }
     }

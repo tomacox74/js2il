@@ -932,7 +932,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 152 (0x98)
+			// Code size: 219 (0xdb)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -966,9 +966,9 @@
 				IL_0025: stloc.0
 				IL_0026: ldnull
 				IL_0027: stloc.0
-				IL_0028: leave IL_0096
+				IL_0028: leave IL_00d9
 
-				IL_002d: leave IL_008b
+				IL_002d: leave IL_00ce
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
@@ -995,26 +995,48 @@
 
 				IL_005b: ldloc.2
 				IL_005c: stloc.3
-				IL_005d: ldloc.3
-				IL_005e: ldstr "constructor"
-				IL_0063: ldstr "Variable_NumericLetLocalSpecialization:<TwoPhaseDummy_M6>:__js_call__:20"
-				IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_006d: stloc.s 6
-				IL_006f: ldloc.s 6
-				IL_0071: ldstr "name"
-				IL_0076: ldstr "Variable_NumericLetLocalSpecialization:<TwoPhaseDummy_M6>:__js_call__:22"
-				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0080: stloc.0
-				IL_0081: leave IL_0096
+				IL_005d: volatile.
+				IL_005f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+				IL_0064: brfalse IL_0079
 
-				IL_0086: leave IL_008b
+				IL_0069: ldloc.3
+				IL_006a: ldstr "constructor"
+				IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0074: br IL_008e
+
+				IL_0079: ldloc.3
+				IL_007a: ldstr "constructor"
+				IL_007f: ldstr "Variable_NumericLetLocalSpecialization:<TwoPhaseDummy_M6>:__js_call__:20"
+				IL_0084: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+				IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_008e: stloc.s 6
+				IL_0090: volatile.
+				IL_0092: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+				IL_0097: brfalse IL_00ad
+
+				IL_009c: ldloc.s 6
+				IL_009e: ldstr "name"
+				IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00a8: br IL_00c3
+
+				IL_00ad: ldloc.s 6
+				IL_00af: ldstr "name"
+				IL_00b4: ldstr "Variable_NumericLetLocalSpecialization:<TwoPhaseDummy_M6>:__js_call__:22"
+				IL_00b9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+				IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_00c3: stloc.0
+				IL_00c4: leave IL_00d9
+
+				IL_00c9: leave IL_00ce
 			} // end handler
 
-			IL_008b: ldc.r8 1
-			IL_0094: stloc.s 4
+			IL_00ce: ldc.r8 1
+			IL_00d7: stloc.s 4
 
-			IL_0096: ldloc.0
-			IL_0097: ret
+			IL_00d9: ldloc.0
+			IL_00da: ret
 		} // end of method temporalDeadZoneRead::__js_call__
 
 	} // end of class temporalDeadZoneRead
@@ -2657,4 +2679,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_17
+	.field assembly static int32 __jroc_dynamicLookup_18
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

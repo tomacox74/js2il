@@ -134,6 +134,14 @@ public class Scope
         ReceiverTypeSummary.Empty;
 
     /// <summary>
+    /// Candidate receiver facts for the callable's dynamic <c>this</c> value.
+    /// These facts never change the callable ABI and always require a runtime
+    /// guard when ordinary JavaScript invocation can supply another receiver.
+    /// </summary>
+    internal ReceiverTypeSummary ReceiverThisTypeSummary { get; set; } =
+        ReceiverTypeSummary.Empty;
+
+    /// <summary>
     /// Captured receiver facts proven at entry to a non-escaping direct-only
     /// closure.
     /// </summary>

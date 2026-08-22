@@ -10,6 +10,67 @@ namespace Jroc.Tests;
 /// </summary>
 public sealed class RuntimeIntrinsicIsolationTests
 {
+    [Fact]
+    public void PlainObjectRead_DoesNotMaterializeFunctionPrototype()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        var realm = services.OwningRealm!;
+        var context = RuntimeExecutionContext.GetOrCreate(services);
+
+        try
+        {
+            using (context.EnterAsRoot())
+            {
+                var target = new JsObject();
+                target.SetValue("value", "plain");
+
+                Assert.False(
+                    realm.Intrinsics.IsPublishedForTests(
+                        RuntimeIntrinsicSlot.FunctionPrototype));
+                Assert.Equal(
+                    "plain",
+                    ObjectRuntime.GetProperty(target, "value"));
+                Assert.False(
+                    realm.Intrinsics.IsPublishedForTests(
+                        RuntimeIntrinsicSlot.FunctionPrototype));
+            }
+
+        }
+        finally
+        {
+            realm.Agent.Cluster.Dispose();
+        }
+    }
+
+    [Fact]
+    public void FunctionPrototypeRestrictedProperties_StillThrow()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        var realm = services.OwningRealm!;
+        var context = RuntimeExecutionContext.GetOrCreate(services);
+
+        try
+        {
+            using (context.EnterAsRoot())
+            {
+                var prototype = JavaScriptRuntime.Function.Prototype;
+
+                Assert.Throws<TypeError>(
+                    () => ObjectRuntime.GetProperty(
+                        prototype,
+                        "caller"));
+                Assert.Throws<TypeError>(
+                    () => ObjectRuntime.GetItem(
+                        prototype,
+                        "arguments"));
+            }
+        }
+        finally
+        {
+            realm.Agent.Cluster.Dispose();
+        }
+    }
+
     /// <summary>
     /// Global bindings whose JavaScript-visible identity must differ between realms.
     /// </summary>

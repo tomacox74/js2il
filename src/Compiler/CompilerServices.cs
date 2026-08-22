@@ -89,6 +89,7 @@ public static class CompilerServices
         // VariableRegistry wraps ScopeMetadataRegistry and adds variable metadata
         services.AddSingleton<ScopeMetadataRegistry>();
         services.AddSingleton<VariableRegistry>();
+        services.AddSingleton<Services.DynamicLookupTerminalFieldRegistry>();
 
         services.AddSingleton<ModuleLoader>();
         services.AddSingleton<Services.NodeModuleResolver>();

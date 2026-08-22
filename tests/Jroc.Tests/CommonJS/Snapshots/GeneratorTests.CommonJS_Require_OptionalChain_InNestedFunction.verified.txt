@@ -299,7 +299,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 157 (0x9d)
+			// Code size: 191 (0xbf)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -324,69 +324,80 @@
 				IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 				IL_0017: stloc.s 5
 				IL_0019: ldloc.s 5
-				IL_001b: brfalse IL_0044
+				IL_001b: brfalse IL_0066
 
 				IL_0020: ldloc.s 5
 				IL_0022: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-				IL_0027: brtrue IL_0044
+				IL_0027: brtrue IL_0066
 
-				IL_002c: ldloc.s 5
-				IL_002e: ldstr "value"
-				IL_0033: ldstr "CommonJS_Require_OptionalChain_InNestedFunction:<TwoPhaseDummy_M6>:__js_call__:14"
-				IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_003d: stloc.s 5
-				IL_003f: br IL_0047
+				IL_002c: volatile.
+				IL_002e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+				IL_0033: brfalse IL_0049
 
-				IL_0044: ldnull
-				IL_0045: stloc.s 5
+				IL_0038: ldloc.s 5
+				IL_003a: ldstr "value"
+				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0044: br IL_005f
 
-				IL_0047: ldloc.s 5
-				IL_0049: stloc.0
-				IL_004a: ldloc.0
-				IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0050: stloc.s 6
-				IL_0052: ldloc.s 6
-				IL_0054: brfalse IL_0062
+				IL_0049: ldloc.s 5
+				IL_004b: ldstr "value"
+				IL_0050: ldstr "CommonJS_Require_OptionalChain_InNestedFunction:<TwoPhaseDummy_M6>:__js_call__:14"
+				IL_0055: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0059: ldnull
-				IL_005a: stloc.1
-				IL_005b: ldloc.0
-				IL_005c: stloc.1
-				IL_005d: leave IL_009b
+				IL_005f: stloc.s 5
+				IL_0061: br IL_0069
 
-				IL_0062: leave IL_0095
+				IL_0066: ldnull
+				IL_0067: stloc.s 5
+
+				IL_0069: ldloc.s 5
+				IL_006b: stloc.0
+				IL_006c: ldloc.0
+				IL_006d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0072: stloc.s 6
+				IL_0074: ldloc.s 6
+				IL_0076: brfalse IL_0084
+
+				IL_007b: ldnull
+				IL_007c: stloc.1
+				IL_007d: ldloc.0
+				IL_007e: stloc.1
+				IL_007f: leave IL_00bd
+
+				IL_0084: leave IL_00b7
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0067: stloc.2
-				IL_0068: ldloc.2
-				IL_0069: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_006e: dup
-				IL_006f: brtrue IL_0084
+				IL_0089: stloc.2
+				IL_008a: ldloc.2
+				IL_008b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0090: dup
+				IL_0091: brtrue IL_00a6
 
-				IL_0074: pop
-				IL_0075: ldloc.2
-				IL_0076: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_007b: dup
-				IL_007c: brtrue IL_008f
+				IL_0096: pop
+				IL_0097: ldloc.2
+				IL_0098: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_009d: dup
+				IL_009e: brtrue IL_00b1
 
-				IL_0081: pop
-				IL_0082: rethrow
+				IL_00a3: pop
+				IL_00a4: rethrow
 
-				IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0089: stloc.3
-				IL_008a: br IL_0090
+				IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_00ab: stloc.3
+				IL_00ac: br IL_00b2
 
-				IL_008f: stloc.3
+				IL_00b1: stloc.3
 
-				IL_0090: leave IL_0095
+				IL_00b2: leave IL_00b7
 			} // end handler
 
-			IL_0095: ldstr "missing"
-			IL_009a: ret
+			IL_00b7: ldstr "missing"
+			IL_00bc: ret
 
-			IL_009b: ldloc.1
-			IL_009c: ret
+			IL_00bd: ldloc.1
+			IL_00be: ret
 		} // end of method loadValue::__js_call__
 
 	} // end of class loadValue
@@ -566,6 +577,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 
 .class interface public auto ansi abstract Jroc.CommonJS_Require_OptionalChain_InNestedFunction.ICommonJSRequireOptionalChainLibExports
 	implements [System.Runtime]System.IDisposable

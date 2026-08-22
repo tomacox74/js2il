@@ -49,6 +49,13 @@ namespace Jroc.Tests.Array
         public Task Array_ReceiverCandidate_GuardedOverrides() { var testName = nameof(Array_ReceiverCandidate_GuardedOverrides); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_PrototypeMethod_InferredThisLengthAndIndex()
+        {
+            return GenerateTest(
+                nameof(Array_PrototypeMethod_InferredThisLengthAndIndex));
+        }
+
+        [Fact]
         public Task Array_IntrinsicGuard_HoistedLoop()
         {
             return GenerateTest(

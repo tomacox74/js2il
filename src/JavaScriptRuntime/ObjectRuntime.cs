@@ -693,8 +693,7 @@ namespace JavaScriptRuntime
 
             var propName = ToPropertyKeyString(index);
 
-            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
-                && (string.Equals(propName, "caller", StringComparison.Ordinal) || string.Equals(propName, "arguments", StringComparison.Ordinal)))
+            if (IsRestrictedFunctionPrototypeProperty(obj, propName))
             {
                 throw new TypeError($"Cannot access restricted function property '{propName}'");
             }
@@ -911,6 +910,34 @@ namespace JavaScriptRuntime
             return GetItem(receiver, index);
         }
 
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static double GetArrayLengthWithFallback(
+            object receiver)
+        {
+            if (receiver is Array array)
+            {
+                return array.length;
+            }
+
+            return TypeUtilities.ToNumber(
+                GetItem(receiver, "length"));
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static object GetArrayElementWithFallback(
+            object receiver,
+            double index)
+        {
+            if (receiver is Array array)
+            {
+                return array[index]!;
+            }
+
+            return GetItem(receiver, index);
+        }
+
         /// <summary>
         /// Fast-path overload for string key reads.
         /// Avoids boxing at the call site when the compiler has proven the key is a string.
@@ -923,8 +950,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot read properties of null or undefined");
             }
 
-            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
-                && (string.Equals(key, "caller", StringComparison.Ordinal) || string.Equals(key, "arguments", StringComparison.Ordinal)))
+            if (IsRestrictedFunctionPrototypeProperty(obj, key))
             {
                 throw new TypeError($"Cannot access restricted function property '{key}'");
             }

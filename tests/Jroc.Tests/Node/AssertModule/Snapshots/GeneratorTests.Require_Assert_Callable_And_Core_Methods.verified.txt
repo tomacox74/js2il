@@ -705,7 +705,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1227 (0x4cb)
+		// Code size: 1259 (0x4eb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Assert_Callable_And_Core_Methods/Scope,
@@ -1115,54 +1115,64 @@
 		IL_0438: stloc.s 13
 		IL_043a: ldloc.0
 		IL_043b: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule Modules.Require_Assert_Callable_And_Core_Methods/Scope::'assert'
-		IL_0440: ldstr "ok"
-		IL_0445: ldstr "Require_Assert_Callable_And_Core_Methods:Modules.Require_Assert_Callable_And_Core_Methods:__js_module_init__:104"
-		IL_044a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_044f: stloc.s 9
-		IL_0451: ldloc.0
-		IL_0452: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule Modules.Require_Assert_Callable_And_Core_Methods/Scope::'assert'
-		IL_0457: stloc.2
-		IL_0458: ldloc.s 9
-		IL_045a: ldloc.2
-		IL_045b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0460: stloc.s 15
-		IL_0462: ldloc.s 15
-		IL_0464: box [System.Runtime]System.Boolean
-		IL_0469: stloc.s 16
-		IL_046b: ldloc.s 13
-		IL_046d: ldstr "ok identity:"
-		IL_0472: ldloc.s 16
-		IL_0474: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0479: pop
-		IL_047a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_047f: stloc.s 13
-		IL_0481: ldloc.0
-		IL_0482: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule Modules.Require_Assert_Callable_And_Core_Methods/Scope::'assert'
-		IL_0487: stloc.2
-		IL_0488: ldloc.2
-		IL_0489: ldstr "strict"
-		IL_048e: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_0493: brtrue IL_04a5
+		IL_0440: volatile.
+		IL_0442: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0447: brfalse IL_045b
 
-		IL_0498: ldloc.2
-		IL_0499: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule::get_strict()
-		IL_049e: stloc.s 9
-		IL_04a0: br IL_04b2
+		IL_044c: ldstr "ok"
+		IL_0451: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0456: br IL_046f
 
-		IL_04a5: ldloc.2
-		IL_04a6: ldstr "strict"
-		IL_04ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_04b0: stloc.s 9
+		IL_045b: ldstr "ok"
+		IL_0460: ldstr "Require_Assert_Callable_And_Core_Methods:Modules.Require_Assert_Callable_And_Core_Methods:__js_module_init__:104"
+		IL_0465: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_04b2: ldloc.s 9
-		IL_04b4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_04b9: stloc.s 14
-		IL_04bb: ldloc.s 13
-		IL_04bd: ldstr "strict callable:"
-		IL_04c2: ldloc.s 14
-		IL_04c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_04c9: pop
-		IL_04ca: ret
+		IL_046f: stloc.s 9
+		IL_0471: ldloc.0
+		IL_0472: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule Modules.Require_Assert_Callable_And_Core_Methods/Scope::'assert'
+		IL_0477: stloc.2
+		IL_0478: ldloc.s 9
+		IL_047a: ldloc.2
+		IL_047b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0480: stloc.s 15
+		IL_0482: ldloc.s 15
+		IL_0484: box [System.Runtime]System.Boolean
+		IL_0489: stloc.s 16
+		IL_048b: ldloc.s 13
+		IL_048d: ldstr "ok identity:"
+		IL_0492: ldloc.s 16
+		IL_0494: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0499: pop
+		IL_049a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_049f: stloc.s 13
+		IL_04a1: ldloc.0
+		IL_04a2: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule Modules.Require_Assert_Callable_And_Core_Methods/Scope::'assert'
+		IL_04a7: stloc.2
+		IL_04a8: ldloc.2
+		IL_04a9: ldstr "strict"
+		IL_04ae: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_04b3: brtrue IL_04c5
+
+		IL_04b8: ldloc.2
+		IL_04b9: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAssertModule::get_strict()
+		IL_04be: stloc.s 9
+		IL_04c0: br IL_04d2
+
+		IL_04c5: ldloc.2
+		IL_04c6: ldstr "strict"
+		IL_04cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_04d0: stloc.s 9
+
+		IL_04d2: ldloc.s 9
+		IL_04d4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_04d9: stloc.s 14
+		IL_04db: ldloc.s 13
+		IL_04dd: ldstr "strict callable:"
+		IL_04e2: ldloc.s 14
+		IL_04e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_04e9: pop
+		IL_04ea: ret
 	} // end of method Require_Assert_Callable_And_Core_Methods::__js_module_init__
 
 } // end of class Modules.Require_Assert_Callable_And_Core_Methods
@@ -1187,4 +1197,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -654,7 +654,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 299 (0x12b)
+		// Code size: 331 (0x14b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Basic/Scope,
@@ -769,15 +769,25 @@
 		IL_0102: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_0107: ldloc.s 7
 		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010e: ldstr "Log"
-		IL_0113: ldstr "CommonJS_Require_Basic:Modules.CommonJS_Require_Basic:__js_module_init__:32"
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_011d: pop
-		IL_011e: ldloc.1
-		IL_011f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0129: pop
-		IL_012a: ret
+		IL_010e: volatile.
+		IL_0110: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0115: brfalse IL_0129
+
+		IL_011a: ldstr "Log"
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0124: br IL_013d
+
+		IL_0129: ldstr "Log"
+		IL_012e: ldstr "CommonJS_Require_Basic:Modules.CommonJS_Require_Basic:__js_module_init__:32"
+		IL_0133: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_013d: pop
+		IL_013e: ldloc.1
+		IL_013f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0149: pop
+		IL_014a: ret
 	} // end of method CommonJS_Require_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Basic
@@ -1340,7 +1350,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 267 (0x10b)
+		// Code size: 299 (0x12b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Dependency/Scope,
@@ -1444,15 +1454,25 @@
 		IL_00e2: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_00e7: ldloc.s 6
 		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ee: ldstr "Log"
-		IL_00f3: ldstr "CommonJS_Require_Dependency:Modules.CommonJS_Require_Dependency:__js_module_init__:24"
-		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_00fd: pop
-		IL_00fe: ldloc.1
-		IL_00ff: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0109: pop
-		IL_010a: ret
+		IL_00ee: volatile.
+		IL_00f0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_00f5: brfalse IL_0109
+
+		IL_00fa: ldstr "Log"
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0104: br IL_011d
+
+		IL_0109: ldstr "Log"
+		IL_010e: ldstr "CommonJS_Require_Dependency:Modules.CommonJS_Require_Dependency:__js_module_init__:24"
+		IL_0113: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_011d: pop
+		IL_011e: ldloc.1
+		IL_011f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0129: pop
+		IL_012a: ret
 	} // end of method CommonJS_Require_Dependency::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Dependency
@@ -1477,4 +1497,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_15
+	.field assembly static int32 __jroc_dynamicLookup_16
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

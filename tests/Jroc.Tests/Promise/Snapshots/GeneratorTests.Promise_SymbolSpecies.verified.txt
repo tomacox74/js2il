@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 291 (0x123)
+		// Code size: 423 (0x1a7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_SymbolSpecies/Scope,
@@ -151,66 +151,110 @@
 		IL_006a: stloc.1
 		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0070: stloc.2
-		IL_0071: ldloc.1
-		IL_0072: ldstr "get"
-		IL_0077: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:25"
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0081: stloc.s 4
-		IL_0083: ldloc.s 4
-		IL_0085: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_008a: stloc.s 7
-		IL_008c: ldloc.s 7
-		IL_008e: ldstr "function"
-		IL_0093: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0098: stloc.s 5
-		IL_009a: ldloc.s 5
-		IL_009c: box [System.Runtime]System.Boolean
-		IL_00a1: stloc.s 6
-		IL_00a3: ldloc.2
-		IL_00a4: ldloc.s 6
-		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ab: pop
-		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b1: stloc.2
-		IL_00b2: ldloc.1
-		IL_00b3: ldstr "set"
-		IL_00b8: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:34"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00c2: stloc.s 4
-		IL_00c4: ldloc.s 4
-		IL_00c6: ldnull
-		IL_00c7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00cc: stloc.s 5
-		IL_00ce: ldloc.s 5
-		IL_00d0: box [System.Runtime]System.Boolean
-		IL_00d5: stloc.s 6
-		IL_00d7: ldloc.2
-		IL_00d8: ldloc.s 6
-		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00df: pop
-		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e5: stloc.2
-		IL_00e6: ldloc.1
-		IL_00e7: ldstr "enumerable"
-		IL_00ec: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:42"
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00f6: stloc.s 4
-		IL_00f8: ldloc.2
-		IL_00f9: ldloc.s 4
-		IL_00fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0100: pop
-		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0106: stloc.2
-		IL_0107: ldloc.1
-		IL_0108: ldstr "configurable"
-		IL_010d: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:47"
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0117: stloc.s 4
+		IL_0071: volatile.
+		IL_0073: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0078: brfalse IL_008d
+
+		IL_007d: ldloc.1
+		IL_007e: ldstr "get"
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0088: br IL_00a2
+
+		IL_008d: ldloc.1
+		IL_008e: ldstr "get"
+		IL_0093: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:25"
+		IL_0098: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00a2: stloc.s 4
+		IL_00a4: ldloc.s 4
+		IL_00a6: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00ab: stloc.s 7
+		IL_00ad: ldloc.s 7
+		IL_00af: ldstr "function"
+		IL_00b4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00b9: stloc.s 5
+		IL_00bb: ldloc.s 5
+		IL_00bd: box [System.Runtime]System.Boolean
+		IL_00c2: stloc.s 6
+		IL_00c4: ldloc.2
+		IL_00c5: ldloc.s 6
+		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00cc: pop
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: stloc.2
+		IL_00d3: volatile.
+		IL_00d5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00da: brfalse IL_00ef
+
+		IL_00df: ldloc.1
+		IL_00e0: ldstr "set"
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ea: br IL_0104
+
+		IL_00ef: ldloc.1
+		IL_00f0: ldstr "set"
+		IL_00f5: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:34"
+		IL_00fa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0104: stloc.s 4
+		IL_0106: ldloc.s 4
+		IL_0108: ldnull
+		IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_010e: stloc.s 5
+		IL_0110: ldloc.s 5
+		IL_0112: box [System.Runtime]System.Boolean
+		IL_0117: stloc.s 6
 		IL_0119: ldloc.2
-		IL_011a: ldloc.s 4
+		IL_011a: ldloc.s 6
 		IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0121: pop
-		IL_0122: ret
+		IL_0122: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0127: stloc.2
+		IL_0128: volatile.
+		IL_012a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_012f: brfalse IL_0144
+
+		IL_0134: ldloc.1
+		IL_0135: ldstr "enumerable"
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_013f: br IL_0159
+
+		IL_0144: ldloc.1
+		IL_0145: ldstr "enumerable"
+		IL_014a: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:42"
+		IL_014f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0159: stloc.s 4
+		IL_015b: ldloc.2
+		IL_015c: ldloc.s 4
+		IL_015e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0163: pop
+		IL_0164: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0169: stloc.2
+		IL_016a: volatile.
+		IL_016c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0171: brfalse IL_0186
+
+		IL_0176: ldloc.1
+		IL_0177: ldstr "configurable"
+		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0181: br IL_019b
+
+		IL_0186: ldloc.1
+		IL_0187: ldstr "configurable"
+		IL_018c: ldstr "Promise_SymbolSpecies:Modules.Promise_SymbolSpecies:__js_module_init__:47"
+		IL_0191: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0196: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_019b: stloc.s 4
+		IL_019d: ldloc.2
+		IL_019e: ldloc.s 4
+		IL_01a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a5: pop
+		IL_01a6: ret
 	} // end of method Promise_SymbolSpecies::__js_module_init__
 
 } // end of class Modules.Promise_SymbolSpecies
@@ -235,4 +279,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

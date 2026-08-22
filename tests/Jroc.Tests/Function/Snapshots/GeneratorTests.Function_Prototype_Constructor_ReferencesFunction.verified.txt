@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 95 (0x5f)
+		// Code size: 160 (0xa0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Prototype_Constructor_ReferencesFunction/Scope,
@@ -121,30 +121,51 @@
 		IL_000c: stloc.1
 		IL_000d: ldstr "Function"
 		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0017: ldstr "prototype"
-		IL_001c: ldstr "Function_Prototype_Constructor_ReferencesFunction:Modules.Function_Prototype_Constructor_ReferencesFunction:__js_module_init__:8"
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0026: stloc.2
-		IL_0027: ldloc.2
-		IL_0028: ldstr "constructor"
-		IL_002d: ldstr "Function_Prototype_Constructor_ReferencesFunction:Modules.Function_Prototype_Constructor_ReferencesFunction:__js_module_init__:10"
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0037: stloc.2
-		IL_0038: ldstr "Function"
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0042: stloc.3
-		IL_0043: ldloc.2
-		IL_0044: ldloc.3
-		IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_004a: stloc.s 4
-		IL_004c: ldloc.s 4
-		IL_004e: box [System.Runtime]System.Boolean
-		IL_0053: stloc.s 5
-		IL_0055: ldloc.1
-		IL_0056: ldloc.s 5
-		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005d: pop
-		IL_005e: ret
+		IL_0017: volatile.
+		IL_0019: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_001e: brfalse IL_0032
+
+		IL_0023: ldstr "prototype"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_002d: br IL_0046
+
+		IL_0032: ldstr "prototype"
+		IL_0037: ldstr "Function_Prototype_Constructor_ReferencesFunction:Modules.Function_Prototype_Constructor_ReferencesFunction:__js_module_init__:8"
+		IL_003c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0046: stloc.2
+		IL_0047: volatile.
+		IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_004e: brfalse IL_0063
+
+		IL_0053: ldloc.2
+		IL_0054: ldstr "constructor"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005e: br IL_0078
+
+		IL_0063: ldloc.2
+		IL_0064: ldstr "constructor"
+		IL_0069: ldstr "Function_Prototype_Constructor_ReferencesFunction:Modules.Function_Prototype_Constructor_ReferencesFunction:__js_module_init__:10"
+		IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0078: stloc.2
+		IL_0079: ldstr "Function"
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0083: stloc.3
+		IL_0084: ldloc.2
+		IL_0085: ldloc.3
+		IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_008b: stloc.s 4
+		IL_008d: ldloc.s 4
+		IL_008f: box [System.Runtime]System.Boolean
+		IL_0094: stloc.s 5
+		IL_0096: ldloc.1
+		IL_0097: ldloc.s 5
+		IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009e: pop
+		IL_009f: ret
 	} // end of method Function_Prototype_Constructor_ReferencesFunction::__js_module_init__
 
 } // end of class Modules.Function_Prototype_Constructor_ReferencesFunction
@@ -169,4 +190,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

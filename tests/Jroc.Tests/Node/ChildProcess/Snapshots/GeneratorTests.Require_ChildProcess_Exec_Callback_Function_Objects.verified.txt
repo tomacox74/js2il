@@ -471,7 +471,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 211 (0xd3)
+			// Code size: 245 (0xf5)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -546,22 +546,33 @@
 			IL_009d: pop
 			IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_00a3: stloc.2
-			IL_00a4: ldarg.s stderr
-			IL_00a6: ldstr "length"
-			IL_00ab: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:<TwoPhaseDummy_M5>:__js_call__:26"
-			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00b5: stloc.1
-			IL_00b6: ldstr "async-stderr:"
-			IL_00bb: ldloc.1
-			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00c1: stloc.s 5
-			IL_00c3: ldloc.2
-			IL_00c4: ldloc.s 5
-			IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00cb: pop
-			IL_00cc: ldnull
-			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_00d2: ret
+			IL_00a4: volatile.
+			IL_00a6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_00ab: brfalse IL_00c1
+
+			IL_00b0: ldarg.s stderr
+			IL_00b2: ldstr "length"
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00bc: br IL_00d7
+
+			IL_00c1: ldarg.s stderr
+			IL_00c3: ldstr "length"
+			IL_00c8: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:<TwoPhaseDummy_M5>:__js_call__:26"
+			IL_00cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00d7: stloc.1
+			IL_00d8: ldstr "async-stderr:"
+			IL_00dd: ldloc.1
+			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00e3: stloc.s 5
+			IL_00e5: ldloc.2
+			IL_00e6: ldloc.s 5
+			IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00ed: pop
+			IL_00ee: ldnull
+			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_00f4: ret
 		} // end of method asyncCallback::__js_call__
 
 	} // end of class asyncCallback
@@ -597,7 +608,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 262 (0x106)
+		// Code size: 328 (0x148)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/Scope,
@@ -623,92 +634,113 @@
 		IL_0012: stloc.1
 		IL_0013: ldstr "process"
 		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001d: ldstr "platform"
-		IL_0022: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:Modules.Require_ChildProcess_Exec_Callback_Function_Objects:__js_module_init__:12"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002c: stloc.s 5
-		IL_002e: ldloc.s 5
-		IL_0030: ldstr "win32"
-		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_003a: stloc.s 6
-		IL_003c: ldloc.s 6
-		IL_003e: brfalse IL_004e
+		IL_001d: volatile.
+		IL_001f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0024: brfalse IL_0038
 
-		IL_0043: ldstr "echo callback-functions"
-		IL_0048: stloc.2
-		IL_0049: br IL_0054
+		IL_0029: ldstr "platform"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: br IL_004c
 
-		IL_004e: ldstr "printf callback-functions"
-		IL_0053: stloc.2
+		IL_0038: ldstr "platform"
+		IL_003d: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:Modules.Require_ChildProcess_Exec_Callback_Function_Objects:__js_module_init__:12"
+		IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0054: ldloc.2
-		IL_0055: stloc.3
-		IL_0056: ldc.i4.1
-		IL_0057: newarr [System.Runtime]System.Object
-		IL_005c: dup
-		IL_005d: ldc.i4.0
-		IL_005e: ldloc.0
-		IL_005f: stelem.ref
-		IL_0060: stloc.s 7
-		IL_0062: ldloc.s 7
-		IL_0064: newobj instance void Modules.Require_ChildProcess_Exec_Callback_Function_Objects/generatorCallback/FunctionObject::.ctor(object[])
-		IL_0069: ldc.i4.0
-		IL_006a: conv.r8
-		IL_006b: ldstr "generatorCallback"
-		IL_0070: ldc.i4.1
-		IL_0071: ldc.i4.1
-		IL_0072: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/generatorCallback/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
-		IL_007c: castclass Modules.Require_ChildProcess_Exec_Callback_Function_Objects/generatorCallback/FunctionObject
-		IL_0081: stloc.s 8
-		IL_0083: ldloc.1
-		IL_0084: ldstr "exec"
-		IL_0089: ldloc.3
-		IL_008a: ldloc.s 8
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0091: stloc.s 4
-		IL_0093: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0098: stloc.s 9
-		IL_009a: ldloc.s 4
-		IL_009c: ldstr "pid"
-		IL_00a1: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:Modules.Require_ChildProcess_Exec_Callback_Function_Objects:__js_module_init__:33"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00ab: stloc.s 5
-		IL_00ad: ldloc.s 5
-		IL_00af: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00b4: stloc.s 10
-		IL_00b6: ldstr "generator-pid:"
-		IL_00bb: ldloc.s 10
-		IL_00bd: call string [System.Runtime]System.String::Concat(string, string)
-		IL_00c2: stloc.s 10
-		IL_00c4: ldloc.s 9
-		IL_00c6: ldloc.s 10
-		IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cd: pop
-		IL_00ce: ldc.i4.1
-		IL_00cf: newarr [System.Runtime]System.Object
-		IL_00d4: dup
-		IL_00d5: ldc.i4.0
-		IL_00d6: ldloc.0
-		IL_00d7: stelem.ref
-		IL_00d8: stloc.s 7
-		IL_00da: ldloc.s 7
-		IL_00dc: newobj instance void Modules.Require_ChildProcess_Exec_Callback_Function_Objects/asyncCallback/FunctionObject::.ctor(object[])
-		IL_00e1: ldc.i4.3
-		IL_00e2: conv.r8
-		IL_00e3: ldstr "asyncCallback"
-		IL_00e8: ldc.i4.1
-		IL_00e9: ldc.i4.1
-		IL_00ea: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/asyncCallback/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/asyncCallback/FunctionObject>(!!0)
-		IL_00f4: stloc.s 11
-		IL_00f6: ldloc.1
-		IL_00f7: ldstr "exec"
-		IL_00fc: ldloc.3
-		IL_00fd: ldloc.s 11
-		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0104: pop
-		IL_0105: ret
+		IL_004c: stloc.s 5
+		IL_004e: ldloc.s 5
+		IL_0050: ldstr "win32"
+		IL_0055: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_005a: stloc.s 6
+		IL_005c: ldloc.s 6
+		IL_005e: brfalse IL_006e
+
+		IL_0063: ldstr "echo callback-functions"
+		IL_0068: stloc.2
+		IL_0069: br IL_0074
+
+		IL_006e: ldstr "printf callback-functions"
+		IL_0073: stloc.2
+
+		IL_0074: ldloc.2
+		IL_0075: stloc.3
+		IL_0076: ldc.i4.1
+		IL_0077: newarr [System.Runtime]System.Object
+		IL_007c: dup
+		IL_007d: ldc.i4.0
+		IL_007e: ldloc.0
+		IL_007f: stelem.ref
+		IL_0080: stloc.s 7
+		IL_0082: ldloc.s 7
+		IL_0084: newobj instance void Modules.Require_ChildProcess_Exec_Callback_Function_Objects/generatorCallback/FunctionObject::.ctor(object[])
+		IL_0089: ldc.i4.0
+		IL_008a: conv.r8
+		IL_008b: ldstr "generatorCallback"
+		IL_0090: ldc.i4.1
+		IL_0091: ldc.i4.1
+		IL_0092: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/generatorCallback/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
+		IL_009c: castclass Modules.Require_ChildProcess_Exec_Callback_Function_Objects/generatorCallback/FunctionObject
+		IL_00a1: stloc.s 8
+		IL_00a3: ldloc.1
+		IL_00a4: ldstr "exec"
+		IL_00a9: ldloc.3
+		IL_00aa: ldloc.s 8
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00b1: stloc.s 4
+		IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b8: stloc.s 9
+		IL_00ba: volatile.
+		IL_00bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00c1: brfalse IL_00d7
+
+		IL_00c6: ldloc.s 4
+		IL_00c8: ldstr "pid"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d2: br IL_00ed
+
+		IL_00d7: ldloc.s 4
+		IL_00d9: ldstr "pid"
+		IL_00de: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:Modules.Require_ChildProcess_Exec_Callback_Function_Objects:__js_module_init__:33"
+		IL_00e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00ed: stloc.s 5
+		IL_00ef: ldloc.s 5
+		IL_00f1: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00f6: stloc.s 10
+		IL_00f8: ldstr "generator-pid:"
+		IL_00fd: ldloc.s 10
+		IL_00ff: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0104: stloc.s 10
+		IL_0106: ldloc.s 9
+		IL_0108: ldloc.s 10
+		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_010f: pop
+		IL_0110: ldc.i4.1
+		IL_0111: newarr [System.Runtime]System.Object
+		IL_0116: dup
+		IL_0117: ldc.i4.0
+		IL_0118: ldloc.0
+		IL_0119: stelem.ref
+		IL_011a: stloc.s 7
+		IL_011c: ldloc.s 7
+		IL_011e: newobj instance void Modules.Require_ChildProcess_Exec_Callback_Function_Objects/asyncCallback/FunctionObject::.ctor(object[])
+		IL_0123: ldc.i4.3
+		IL_0124: conv.r8
+		IL_0125: ldstr "asyncCallback"
+		IL_012a: ldc.i4.1
+		IL_012b: ldc.i4.1
+		IL_012c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/asyncCallback/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0131: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Exec_Callback_Function_Objects/asyncCallback/FunctionObject>(!!0)
+		IL_0136: stloc.s 11
+		IL_0138: ldloc.1
+		IL_0139: ldstr "exec"
+		IL_013e: ldloc.3
+		IL_013f: ldloc.s 11
+		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0146: pop
+		IL_0147: ret
 	} // end of method Require_ChildProcess_Exec_Callback_Function_Objects::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Exec_Callback_Function_Objects
@@ -733,4 +765,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

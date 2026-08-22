@@ -463,7 +463,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 299 (0x12b)
+			// Code size: 332 (0x14c)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/Scope,
@@ -482,114 +482,125 @@
 			IL_0010: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
 			IL_0015: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 			IL_001a: stloc.2
-			IL_001b: ldloc.2
-			IL_001c: ldstr "prototype"
-			IL_0021: ldstr "Classes_Inheritance_NestedClassExtendsGlobal:<TwoPhaseDummy_M4>:__js_call__:4"
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_002b: stloc.3
-			IL_002c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0031: stloc.s 4
-			IL_0033: ldloc.3
-			IL_0034: ldstr "n"
-			IL_0039: ldloc.3
-			IL_003a: ldloc.s 4
-			IL_003c: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::.ctor(class [System.Runtime]System.Object, object[])
-			IL_0041: ldc.i4.0
-			IL_0042: conv.r8
-			IL_0043: ldstr "n"
-			IL_0048: ldc.i4.1
-			IL_0049: ldc.i4.1
-			IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject>(!!0)
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-			IL_0059: pop
-			IL_005a: ldc.i4.2
-			IL_005b: newarr [System.Runtime]System.Object
-			IL_0060: dup
-			IL_0061: ldc.i4.0
-			IL_0062: ldarg.0
-			IL_0063: stelem.ref
-			IL_0064: dup
-			IL_0065: ldc.i4.1
-			IL_0066: ldloc.0
-			IL_0067: stelem.ref
-			IL_0068: stloc.s 4
-			IL_006a: ldloc.s 4
-			IL_006c: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject::.ctor(object[])
-			IL_0071: ldloc.2
-			IL_0072: ldloc.s 4
-			IL_0074: ldc.i4.0
-			IL_0075: conv.r8
-			IL_0076: ldc.i4.0
-			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-			IL_007c: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject
-			IL_0081: stloc.s 5
+			IL_001b: volatile.
+			IL_001d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0022: brfalse IL_0037
+
+			IL_0027: ldloc.2
+			IL_0028: ldstr "prototype"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0032: br IL_004c
+
+			IL_0037: ldloc.2
+			IL_0038: ldstr "prototype"
+			IL_003d: ldstr "Classes_Inheritance_NestedClassExtendsGlobal:<TwoPhaseDummy_M4>:__js_call__:4"
+			IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_004c: stloc.3
+			IL_004d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0052: stloc.s 4
+			IL_0054: ldloc.3
+			IL_0055: ldstr "n"
+			IL_005a: ldloc.3
+			IL_005b: ldloc.s 4
+			IL_005d: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject::.ctor(class [System.Runtime]System.Object, object[])
+			IL_0062: ldc.i4.0
+			IL_0063: conv.r8
+			IL_0064: ldstr "n"
+			IL_0069: ldc.i4.1
+			IL_006a: ldc.i4.1
+			IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/Scope_n/FunctionObject>(!!0)
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+			IL_007a: pop
+			IL_007b: ldc.i4.2
+			IL_007c: newarr [System.Runtime]System.Object
+			IL_0081: dup
+			IL_0082: ldc.i4.0
 			IL_0083: ldarg.0
-			IL_0084: ldfld object Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::GlobalBase
-			IL_0089: stloc.3
-			IL_008a: ldloc.s 5
-			IL_008c: ldloc.3
-			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
-			IL_0092: stloc.3
-			IL_0093: ldloc.3
-			IL_0094: stloc.1
-			IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_009a: stloc.s 6
-			IL_009c: ldc.i4.2
-			IL_009d: newarr [System.Runtime]System.Object
-			IL_00a2: dup
-			IL_00a3: ldc.i4.0
+			IL_0084: stelem.ref
+			IL_0085: dup
+			IL_0086: ldc.i4.1
+			IL_0087: ldloc.0
+			IL_0088: stelem.ref
+			IL_0089: stloc.s 4
+			IL_008b: ldloc.s 4
+			IL_008d: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject::.ctor(object[])
+			IL_0092: ldloc.2
+			IL_0093: ldloc.s 4
+			IL_0095: ldc.i4.0
+			IL_0096: conv.r8
+			IL_0097: ldc.i4.0
+			IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+			IL_009d: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived/FunctionObject
+			IL_00a2: stloc.s 5
 			IL_00a4: ldarg.0
-			IL_00a5: stelem.ref
-			IL_00a6: dup
-			IL_00a7: ldc.i4.1
-			IL_00a8: ldloc.0
-			IL_00a9: stelem.ref
-			IL_00aa: stloc.s 4
-			IL_00ac: ldloc.s 4
-			IL_00ae: ldc.i4.0
-			IL_00af: newarr [System.Runtime]System.Object
-			IL_00b4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_00b9: ldloc.1
-			IL_00ba: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-			IL_00bf: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-			IL_00c4: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::.ctor(object[])
-			IL_00c9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-			IL_00ce: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_00d3: dup
-			IL_00d4: ldloc.1
-			IL_00d5: ldstr "prototype"
-			IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_00df: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_00e4: stloc.3
-			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_00ef: stloc.3
-			IL_00f0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-			IL_00f5: ldloc.3
-			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00fb: stloc.3
-			IL_00fc: ldloc.3
-			IL_00fd: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-			IL_0102: dup
-			IL_0103: brfalse IL_0113
+			IL_00a5: ldfld object Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::GlobalBase
+			IL_00aa: stloc.3
+			IL_00ab: ldloc.s 5
+			IL_00ad: ldloc.3
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
+			IL_00b3: stloc.3
+			IL_00b4: ldloc.3
+			IL_00b5: stloc.1
+			IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00bb: stloc.s 6
+			IL_00bd: ldc.i4.2
+			IL_00be: newarr [System.Runtime]System.Object
+			IL_00c3: dup
+			IL_00c4: ldc.i4.0
+			IL_00c5: ldarg.0
+			IL_00c6: stelem.ref
+			IL_00c7: dup
+			IL_00c8: ldc.i4.1
+			IL_00c9: ldloc.0
+			IL_00ca: stelem.ref
+			IL_00cb: stloc.s 4
+			IL_00cd: ldloc.s 4
+			IL_00cf: ldc.i4.0
+			IL_00d0: newarr [System.Runtime]System.Object
+			IL_00d5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_00da: ldloc.1
+			IL_00db: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_00e0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+			IL_00e5: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::.ctor(object[])
+			IL_00ea: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_00ef: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_00f4: dup
+			IL_00f5: ldloc.1
+			IL_00f6: ldstr "prototype"
+			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0100: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0105: stloc.3
+			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0110: stloc.3
+			IL_0111: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_0116: ldloc.3
+			IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_011c: stloc.3
+			IL_011d: ldloc.3
+			IL_011e: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_0123: dup
+			IL_0124: brfalse IL_0134
 
-			IL_0108: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
-			IL_010d: stloc.3
-			IL_010e: br IL_0120
+			IL_0129: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
+			IL_012e: stloc.3
+			IL_012f: br IL_0141
 
-			IL_0113: pop
-			IL_0114: ldloc.3
-			IL_0115: ldstr "n"
-			IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_011f: stloc.3
+			IL_0134: pop
+			IL_0135: ldloc.3
+			IL_0136: ldstr "n"
+			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0140: stloc.3
 
-			IL_0120: ldloc.s 6
-			IL_0122: ldloc.3
-			IL_0123: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0128: pop
-			IL_0129: ldnull
-			IL_012a: ret
+			IL_0141: ldloc.s 6
+			IL_0143: ldloc.3
+			IL_0144: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0149: pop
+			IL_014a: ldnull
+			IL_014b: ret
 		} // end of method makeAndRun::__js_call__
 
 	} // end of class makeAndRun
@@ -824,7 +835,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 184 (0xb8)
+		// Code size: 217 (0xd9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope,
@@ -862,51 +873,62 @@
 		IL_0038: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
 		IL_003d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0042: stloc.3
-		IL_0043: ldloc.3
-		IL_0044: ldstr "prototype"
-		IL_0049: ldstr "Classes_Inheritance_NestedClassExtendsGlobal:Modules.Classes_Inheritance_NestedClassExtendsGlobal:__js_module_init__:9"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0053: stloc.s 4
-		IL_0055: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_005a: stloc.2
-		IL_005b: ldloc.s 4
-		IL_005d: ldstr "m"
-		IL_0062: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject::.ctor()
-		IL_0067: ldc.i4.0
-		IL_0068: conv.r8
-		IL_0069: ldstr "m"
-		IL_006e: ldc.i4.0
-		IL_006f: ldc.i4.1
-		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0075: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject>(!!0)
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_007f: pop
-		IL_0080: ldc.i4.1
-		IL_0081: newarr [System.Runtime]System.Object
-		IL_0086: dup
-		IL_0087: ldc.i4.0
-		IL_0088: ldloc.0
-		IL_0089: stelem.ref
-		IL_008a: stloc.2
-		IL_008b: ldloc.2
-		IL_008c: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject::.ctor(object[])
-		IL_0091: ldloc.3
-		IL_0092: ldloc.2
-		IL_0093: ldc.i4.0
-		IL_0094: conv.r8
-		IL_0095: ldc.i4.0
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_009b: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject
-		IL_00a0: stloc.s 5
-		IL_00a2: ldloc.0
-		IL_00a3: ldloc.s 5
-		IL_00a5: stfld object Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::GlobalBase
-		IL_00aa: nop
-		IL_00ab: ldloc.1
-		IL_00ac: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00b6: pop
-		IL_00b7: ret
+		IL_0043: volatile.
+		IL_0045: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_004a: brfalse IL_005f
+
+		IL_004f: ldloc.3
+		IL_0050: ldstr "prototype"
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005a: br IL_0074
+
+		IL_005f: ldloc.3
+		IL_0060: ldstr "prototype"
+		IL_0065: ldstr "Classes_Inheritance_NestedClassExtendsGlobal:Modules.Classes_Inheritance_NestedClassExtendsGlobal:__js_module_init__:9"
+		IL_006a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0074: stloc.s 4
+		IL_0076: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007b: stloc.2
+		IL_007c: ldloc.s 4
+		IL_007e: ldstr "m"
+		IL_0083: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject::.ctor()
+		IL_0088: ldc.i4.0
+		IL_0089: conv.r8
+		IL_008a: ldstr "m"
+		IL_008f: ldc.i4.0
+		IL_0090: ldc.i4.1
+		IL_0091: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/Scope_m/FunctionObject>(!!0)
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00a0: pop
+		IL_00a1: ldc.i4.1
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: dup
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldloc.0
+		IL_00aa: stelem.ref
+		IL_00ab: stloc.2
+		IL_00ac: ldloc.2
+		IL_00ad: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject::.ctor(object[])
+		IL_00b2: ldloc.3
+		IL_00b3: ldloc.2
+		IL_00b4: ldc.i4.0
+		IL_00b5: conv.r8
+		IL_00b6: ldc.i4.0
+		IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00bc: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase/FunctionObject
+		IL_00c1: stloc.s 5
+		IL_00c3: ldloc.0
+		IL_00c4: ldloc.s 5
+		IL_00c6: stfld object Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::GlobalBase
+		IL_00cb: nop
+		IL_00cc: ldloc.1
+		IL_00cd: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00d7: pop
+		IL_00d8: ret
 	} // end of method Classes_Inheritance_NestedClassExtendsGlobal::__js_module_init__
 
 } // end of class Modules.Classes_Inheritance_NestedClassExtendsGlobal
@@ -931,4 +953,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_9
+	.field assembly static int32 __jroc_dynamicLookup_10
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

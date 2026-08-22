@@ -353,19 +353,30 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 19 (0x13)
+			// Code size: 52 (0x34)
 			.maxstack 8
 			.locals init (
 				[0] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldstr "greet"
-			IL_0006: ldstr "Classes_ClassMethod_MethodValueRequiresMetadata:<TwoPhaseDummy_M6>:getGreet:3"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0007: brfalse IL_001c
+
+			IL_000c: ldarg.0
+			IL_000d: ldstr "greet"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0017: br IL_0031
+
+			IL_001c: ldarg.0
+			IL_001d: ldstr "greet"
+			IL_0022: ldstr "Classes_ClassMethod_MethodValueRequiresMetadata:<TwoPhaseDummy_M6>:getGreet:3"
+			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0031: stloc.0
+			IL_0032: ldloc.0
+			IL_0033: ret
 		} // end of method Greeter::getGreet
 
 	} // end of class Greeter
@@ -401,7 +412,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 265 (0x109)
+		// Code size: 298 (0x12a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Scope,
@@ -423,86 +434,97 @@
 		IL_0010: ldtoken Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
 		IL_0015: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_001a: stloc.3
-		IL_001b: ldloc.3
-		IL_001c: ldstr "prototype"
-		IL_0021: ldstr "Classes_ClassMethod_MethodValueRequiresMetadata:Modules.Classes_ClassMethod_MethodValueRequiresMetadata:__js_module_init__:4"
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002b: stloc.s 4
-		IL_002d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0032: stloc.s 5
-		IL_0034: ldloc.s 4
-		IL_0036: ldstr "greet"
-		IL_003b: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject::.ctor()
-		IL_0040: ldc.i4.0
-		IL_0041: conv.r8
-		IL_0042: ldstr "greet"
-		IL_0047: ldc.i4.0
-		IL_0048: ldc.i4.1
-		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject>(!!0)
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0058: pop
-		IL_0059: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_005e: stloc.s 5
-		IL_0060: ldloc.s 4
-		IL_0062: ldstr "getGreet"
-		IL_0067: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject::.ctor()
-		IL_006c: ldc.i4.0
-		IL_006d: conv.r8
-		IL_006e: ldstr "getGreet"
-		IL_0073: ldc.i4.1
-		IL_0074: ldc.i4.1
-		IL_0075: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_007a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject>(!!0)
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0084: pop
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.0
-		IL_008e: stelem.ref
-		IL_008f: stloc.s 5
-		IL_0091: ldloc.s 5
-		IL_0093: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject::.ctor(object[])
-		IL_0098: ldloc.3
-		IL_0099: ldloc.s 5
-		IL_009b: ldc.i4.0
-		IL_009c: conv.r8
-		IL_009d: ldc.i4.0
-		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00a3: castclass Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject
-		IL_00a8: stloc.s 6
-		IL_00aa: ldloc.s 6
-		IL_00ac: stloc.1
+		IL_001b: volatile.
+		IL_001d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0022: brfalse IL_0037
+
+		IL_0027: ldloc.3
+		IL_0028: ldstr "prototype"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0032: br IL_004c
+
+		IL_0037: ldloc.3
+		IL_0038: ldstr "prototype"
+		IL_003d: ldstr "Classes_ClassMethod_MethodValueRequiresMetadata:Modules.Classes_ClassMethod_MethodValueRequiresMetadata:__js_module_init__:4"
+		IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_004c: stloc.s 4
+		IL_004e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0053: stloc.s 5
+		IL_0055: ldloc.s 4
+		IL_0057: ldstr "greet"
+		IL_005c: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject::.ctor()
+		IL_0061: ldc.i4.0
+		IL_0062: conv.r8
+		IL_0063: ldstr "greet"
+		IL_0068: ldc.i4.0
+		IL_0069: ldc.i4.1
+		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject>(!!0)
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0079: pop
+		IL_007a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007f: stloc.s 5
+		IL_0081: ldloc.s 4
+		IL_0083: ldstr "getGreet"
+		IL_0088: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject::.ctor()
+		IL_008d: ldc.i4.0
+		IL_008e: conv.r8
+		IL_008f: ldstr "getGreet"
+		IL_0094: ldc.i4.1
+		IL_0095: ldc.i4.1
+		IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_009b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject>(!!0)
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00a5: pop
+		IL_00a6: ldc.i4.1
+		IL_00a7: newarr [System.Runtime]System.Object
+		IL_00ac: dup
 		IL_00ad: ldc.i4.0
-		IL_00ae: newarr [System.Runtime]System.Object
-		IL_00b3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00b8: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::.ctor()
-		IL_00bd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00c2: stloc.2
-		IL_00c3: ldloc.2
-		IL_00c4: ldtoken Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
-		IL_00c9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00ce: ldstr "prototype"
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00d8: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e2: stloc.s 7
+		IL_00ae: ldloc.0
+		IL_00af: stelem.ref
+		IL_00b0: stloc.s 5
+		IL_00b2: ldloc.s 5
+		IL_00b4: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject::.ctor(object[])
+		IL_00b9: ldloc.3
+		IL_00ba: ldloc.s 5
+		IL_00bc: ldc.i4.0
+		IL_00bd: conv.r8
+		IL_00be: ldc.i4.0
+		IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00c4: castclass Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject
+		IL_00c9: stloc.s 6
+		IL_00cb: ldloc.s 6
+		IL_00cd: stloc.1
+		IL_00ce: ldc.i4.0
+		IL_00cf: newarr [System.Runtime]System.Object
+		IL_00d4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00d9: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::.ctor()
+		IL_00de: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00e3: stloc.2
 		IL_00e4: ldloc.2
-		IL_00e5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter>(!!0)
-		IL_00ea: stloc.s 8
-		IL_00ec: ldloc.s 8
-		IL_00ee: callvirt instance object Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::getGreet()
-		IL_00f3: stloc.s 4
-		IL_00f5: ldloc.s 4
-		IL_00f7: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00fc: stloc.s 9
-		IL_00fe: ldloc.s 7
-		IL_0100: ldloc.s 9
-		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0107: pop
-		IL_0108: ret
+		IL_00e5: ldtoken Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
+		IL_00ea: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00ef: ldstr "prototype"
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00f9: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0103: stloc.s 7
+		IL_0105: ldloc.2
+		IL_0106: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter>(!!0)
+		IL_010b: stloc.s 8
+		IL_010d: ldloc.s 8
+		IL_010f: callvirt instance object Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::getGreet()
+		IL_0114: stloc.s 4
+		IL_0116: ldloc.s 4
+		IL_0118: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_011d: stloc.s 9
+		IL_011f: ldloc.s 7
+		IL_0121: ldloc.s 9
+		IL_0123: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0128: pop
+		IL_0129: ret
 	} // end of method Classes_ClassMethod_MethodValueRequiresMetadata::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_MethodValueRequiresMetadata
@@ -527,4 +549,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

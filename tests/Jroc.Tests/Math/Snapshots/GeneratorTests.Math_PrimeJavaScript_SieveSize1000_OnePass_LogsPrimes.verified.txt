@@ -456,7 +456,7 @@
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 416 (0x1a0)
+			// Code size: 516 (0x204)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -496,121 +496,154 @@
 			IL_002e: ldstr "timeLimitSeconds"
 			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
 			IL_0038: stloc.1
-			IL_0039: ldarg.2
-			IL_003a: ldstr "verbose"
-			IL_003f: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:<TwoPhaseDummy_M5>:__js_call__:14"
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0049: stloc.2
-			IL_004a: ldarg.2
-			IL_004b: ldstr "runtime"
-			IL_0050: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:<TwoPhaseDummy_M5>:__js_call__:16"
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_005a: stloc.3
-			IL_005b: ldc.i4.1
-			IL_005c: newarr [System.Runtime]System.Object
-			IL_0061: dup
-			IL_0062: ldc.i4.0
-			IL_0063: ldarg.0
-			IL_0064: stelem.ref
-			IL_0065: stloc.s 7
-			IL_0067: ldloc.0
-			IL_0068: box [System.Runtime]System.Double
-			IL_006d: stloc.s 8
-			IL_006f: ldloc.s 7
-			IL_0071: ldc.i4.1
-			IL_0072: newarr [System.Runtime]System.Object
-			IL_0077: dup
-			IL_0078: ldc.i4.0
-			IL_0079: ldloc.s 8
-			IL_007b: stelem.ref
-			IL_007c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_0081: ldloc.s 8
-			IL_0083: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::.ctor(object[], object)
-			IL_0088: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_008d: stloc.s 4
-			IL_008f: ldloc.s 4
-			IL_0091: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
-			IL_0096: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_009b: ldstr "prototype"
-			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_00a5: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_00aa: ldloc.s 4
-			IL_00ac: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
-			IL_00b1: stloc.s 9
-			IL_00b3: ldloc.s 9
-			IL_00b5: callvirt instance class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::runSieve()
-			IL_00ba: pop
-			IL_00bb: ldloc.s 4
-			IL_00bd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
-			IL_00c2: stloc.s 9
-			IL_00c4: ldloc.s 9
-			IL_00c6: ldloc.2
-			IL_00c7: callvirt instance bool Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::validatePrimeCount(object)
-			IL_00cc: stloc.s 10
-			IL_00ce: ldloc.s 10
-			IL_00d0: box [System.Runtime]System.Boolean
-			IL_00d5: stloc.s 5
-			IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00dc: stloc.s 11
-			IL_00de: ldloc.0
-			IL_00df: box [System.Runtime]System.Double
-			IL_00e4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_00e9: stloc.s 12
-			IL_00eb: ldstr "prime-sieve;size="
-			IL_00f0: ldloc.s 12
-			IL_00f2: call string [System.Runtime]System.String::Concat(string, string)
-			IL_00f7: ldstr ";count="
-			IL_00fc: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0101: ldloc.s 4
-			IL_0103: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
-			IL_0108: stloc.s 9
-			IL_010a: ldloc.s 9
-			IL_010c: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::countPrimes()
-			IL_0111: stloc.s 13
-			IL_0113: ldloc.s 13
-			IL_0115: box [System.Runtime]System.Double
-			IL_011a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_011f: stloc.s 12
-			IL_0121: ldloc.s 12
-			IL_0123: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0128: ldstr ";valid="
-			IL_012d: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0132: ldloc.s 5
-			IL_0134: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0139: stloc.s 12
-			IL_013b: ldloc.s 12
-			IL_013d: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0142: stloc.s 12
-			IL_0144: ldloc.s 11
-			IL_0146: ldloc.s 12
-			IL_0148: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_014d: pop
-			IL_014e: ldloc.s 4
-			IL_0150: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
-			IL_0155: stloc.s 9
-			IL_0157: ldloc.s 4
-			IL_0159: ldstr "sieveSizeInBits"
-			IL_015e: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:<TwoPhaseDummy_M5>:__js_call__:49"
-			IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0168: stloc.s 14
-			IL_016a: ldloc.s 9
-			IL_016c: ldloc.s 14
-			IL_016e: callvirt instance object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::getPrimes(object)
-			IL_0173: stloc.s 6
-			IL_0175: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_017a: stloc.s 11
-			IL_017c: ldloc.s 6
-			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0183: ldstr "join"
-			IL_0188: ldstr ","
-			IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0192: stloc.s 14
-			IL_0194: ldloc.s 11
-			IL_0196: ldloc.s 14
-			IL_0198: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_019d: pop
-			IL_019e: ldnull
-			IL_019f: ret
+			IL_0039: volatile.
+			IL_003b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+			IL_0040: brfalse IL_0055
+
+			IL_0045: ldarg.2
+			IL_0046: ldstr "verbose"
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0050: br IL_006a
+
+			IL_0055: ldarg.2
+			IL_0056: ldstr "verbose"
+			IL_005b: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:<TwoPhaseDummy_M5>:__js_call__:14"
+			IL_0060: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_006a: stloc.2
+			IL_006b: volatile.
+			IL_006d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
+			IL_0072: brfalse IL_0087
+
+			IL_0077: ldarg.2
+			IL_0078: ldstr "runtime"
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0082: br IL_009c
+
+			IL_0087: ldarg.2
+			IL_0088: ldstr "runtime"
+			IL_008d: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:<TwoPhaseDummy_M5>:__js_call__:16"
+			IL_0092: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_009c: stloc.3
+			IL_009d: ldc.i4.1
+			IL_009e: newarr [System.Runtime]System.Object
+			IL_00a3: dup
+			IL_00a4: ldc.i4.0
+			IL_00a5: ldarg.0
+			IL_00a6: stelem.ref
+			IL_00a7: stloc.s 7
+			IL_00a9: ldloc.0
+			IL_00aa: box [System.Runtime]System.Double
+			IL_00af: stloc.s 8
+			IL_00b1: ldloc.s 7
+			IL_00b3: ldc.i4.1
+			IL_00b4: newarr [System.Runtime]System.Object
+			IL_00b9: dup
+			IL_00ba: ldc.i4.0
+			IL_00bb: ldloc.s 8
+			IL_00bd: stelem.ref
+			IL_00be: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_00c3: ldloc.s 8
+			IL_00c5: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::.ctor(object[], object)
+			IL_00ca: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_00cf: stloc.s 4
+			IL_00d1: ldloc.s 4
+			IL_00d3: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
+			IL_00d8: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_00dd: ldstr "prototype"
+			IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_00e7: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_00ec: ldloc.s 4
+			IL_00ee: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
+			IL_00f3: stloc.s 9
+			IL_00f5: ldloc.s 9
+			IL_00f7: callvirt instance class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::runSieve()
+			IL_00fc: pop
+			IL_00fd: ldloc.s 4
+			IL_00ff: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
+			IL_0104: stloc.s 9
+			IL_0106: ldloc.s 9
+			IL_0108: ldloc.2
+			IL_0109: callvirt instance bool Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::validatePrimeCount(object)
+			IL_010e: stloc.s 10
+			IL_0110: ldloc.s 10
+			IL_0112: box [System.Runtime]System.Boolean
+			IL_0117: stloc.s 5
+			IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_011e: stloc.s 11
+			IL_0120: ldloc.0
+			IL_0121: box [System.Runtime]System.Double
+			IL_0126: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_012b: stloc.s 12
+			IL_012d: ldstr "prime-sieve;size="
+			IL_0132: ldloc.s 12
+			IL_0134: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0139: ldstr ";count="
+			IL_013e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0143: ldloc.s 4
+			IL_0145: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
+			IL_014a: stloc.s 9
+			IL_014c: ldloc.s 9
+			IL_014e: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::countPrimes()
+			IL_0153: stloc.s 13
+			IL_0155: ldloc.s 13
+			IL_0157: box [System.Runtime]System.Double
+			IL_015c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0161: stloc.s 12
+			IL_0163: ldloc.s 12
+			IL_0165: call string [System.Runtime]System.String::Concat(string, string)
+			IL_016a: ldstr ";valid="
+			IL_016f: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0174: ldloc.s 5
+			IL_0176: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_017b: stloc.s 12
+			IL_017d: ldloc.s 12
+			IL_017f: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0184: stloc.s 12
+			IL_0186: ldloc.s 11
+			IL_0188: ldloc.s 12
+			IL_018a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_018f: pop
+			IL_0190: ldloc.s 4
+			IL_0192: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
+			IL_0197: stloc.s 9
+			IL_0199: volatile.
+			IL_019b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
+			IL_01a0: brfalse IL_01b6
+
+			IL_01a5: ldloc.s 4
+			IL_01a7: ldstr "sieveSizeInBits"
+			IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01b1: br IL_01cc
+
+			IL_01b6: ldloc.s 4
+			IL_01b8: ldstr "sieveSizeInBits"
+			IL_01bd: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:<TwoPhaseDummy_M5>:__js_call__:49"
+			IL_01c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
+			IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_01cc: stloc.s 14
+			IL_01ce: ldloc.s 9
+			IL_01d0: ldloc.s 14
+			IL_01d2: callvirt instance object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::getPrimes(object)
+			IL_01d7: stloc.s 6
+			IL_01d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01de: stloc.s 11
+			IL_01e0: ldloc.s 6
+			IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01e7: ldstr "join"
+			IL_01ec: ldstr ","
+			IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_01f6: stloc.s 14
+			IL_01f8: ldloc.s 11
+			IL_01fa: ldloc.s 14
+			IL_01fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0201: pop
+			IL_0202: ldnull
+			IL_0203: ret
 		} // end of method ArrowFunction_L232C14::__js_call__
 
 	} // end of class ArrowFunction_L232C14
@@ -3159,7 +3192,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 994 (0x3e2)
+		// Code size: 1159 (0x487)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope,
@@ -3218,302 +3251,355 @@
 		IL_007a: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::performance
 		IL_007f: ldstr "process"
 		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0089: ldstr "argv"
-		IL_008e: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:31"
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0098: stloc.s 5
-		IL_009a: ldloc.s 5
-		IL_009c: ldc.r8 0.0
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00aa: stloc.s 5
-		IL_00ac: ldloc.s 5
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b3: stloc.s 5
-		IL_00b5: ldstr "[\\\\/]"
-		IL_00ba: ldstr ""
-		IL_00bf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_00c4: stloc.s 6
-		IL_00c6: ldloc.s 5
-		IL_00c8: ldstr "split"
-		IL_00cd: ldloc.s 6
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d4: stloc.2
-		IL_00d5: ldloc.2
-		IL_00d6: ldstr "length"
-		IL_00db: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:42"
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00e5: stloc.s 5
-		IL_00e7: ldloc.s 5
-		IL_00e9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00ee: ldc.r8 1
-		IL_00f7: sub
-		IL_00f8: stloc.s 7
-		IL_00fa: ldloc.2
-		IL_00fb: ldloc.s 7
-		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0102: stloc.s 5
-		IL_0104: ldloc.1
-		IL_0105: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config
-		IL_010a: ldloc.s 5
-		IL_010c: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_runtime(object)
-		IL_0111: ldstr "process"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_011b: ldstr "argv"
-		IL_0120: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:52"
-		IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_012a: stloc.s 5
-		IL_012c: ldloc.s 5
-		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0133: stloc.s 5
-		IL_0135: ldc.i4.0
-		IL_0136: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_013b: brfalse IL_0177
+		IL_0089: volatile.
+		IL_008b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_0090: brfalse IL_00a4
 
-		IL_0140: ldloc.s 5
-		IL_0142: isinst [System.Runtime]System.String
-		IL_0147: dup
-		IL_0148: brtrue IL_0160
+		IL_0095: ldstr "argv"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009f: br IL_00b8
 
-		IL_014d: pop
-		IL_014e: ldloc.s 5
-		IL_0150: ldstr "includes"
-		IL_0155: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_015a: dup
-		IL_015b: brfalse IL_0176
+		IL_00a4: ldstr "argv"
+		IL_00a9: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:31"
+		IL_00ae: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0160: ldstr "verbose"
-		IL_0165: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-		IL_016a: box [System.Runtime]System.Boolean
-		IL_016f: stloc.s 5
-		IL_0171: br IL_018a
+		IL_00b8: stloc.s 5
+		IL_00ba: ldloc.s 5
+		IL_00bc: ldc.r8 0.0
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00ca: stloc.s 5
+		IL_00cc: ldloc.s 5
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d3: stloc.s 5
+		IL_00d5: ldstr "[\\\\/]"
+		IL_00da: ldstr ""
+		IL_00df: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_00e4: stloc.s 6
+		IL_00e6: ldloc.s 5
+		IL_00e8: ldstr "split"
+		IL_00ed: ldloc.s 6
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f4: stloc.2
+		IL_00f5: volatile.
+		IL_00f7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+		IL_00fc: brfalse IL_0111
 
-		IL_0176: pop
+		IL_0101: ldloc.2
+		IL_0102: ldstr "length"
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010c: br IL_0126
 
-		IL_0177: ldloc.s 5
-		IL_0179: ldstr "includes"
-		IL_017e: ldstr "verbose"
-		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0188: stloc.s 5
+		IL_0111: ldloc.2
+		IL_0112: ldstr "length"
+		IL_0117: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:42"
+		IL_011c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_018a: ldloc.1
-		IL_018b: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config
-		IL_0190: ldloc.s 5
-		IL_0192: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_verbose(object)
-		IL_0197: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
-		IL_019c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_01a1: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
-		IL_01a6: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_01ab: stloc.s 8
-		IL_01ad: ldloc.s 8
-		IL_01af: ldstr "prototype"
-		IL_01b4: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:60"
-		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_01be: stloc.s 5
-		IL_01c0: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01c5: stloc.s 9
-		IL_01c7: ldloc.s 5
-		IL_01c9: ldstr "setBitTrue"
-		IL_01ce: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitTrue/FunctionObject::.ctor()
-		IL_01d3: ldc.i4.1
-		IL_01d4: conv.r8
-		IL_01d5: ldstr "setBitTrue"
-		IL_01da: ldc.i4.1
-		IL_01db: ldc.i4.1
-		IL_01dc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitTrue/FunctionObject>(!!0)
-		IL_01e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_01eb: pop
-		IL_01ec: ldc.i4.1
-		IL_01ed: newarr [System.Runtime]System.Object
-		IL_01f2: dup
-		IL_01f3: ldc.i4.0
-		IL_01f4: ldloc.0
-		IL_01f5: stelem.ref
-		IL_01f6: stloc.s 9
-		IL_01f8: ldloc.s 5
-		IL_01fa: ldstr "setBitsTrue"
-		IL_01ff: ldloc.s 9
-		IL_0201: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitsTrue/FunctionObject::.ctor(object[])
-		IL_0206: ldc.i4.3
-		IL_0207: conv.r8
-		IL_0208: ldstr "setBitsTrue"
-		IL_020d: ldc.i4.1
-		IL_020e: ldc.i4.1
-		IL_020f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitsTrue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitsTrue/FunctionObject>(!!0)
-		IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_021e: pop
-		IL_021f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0224: stloc.s 9
-		IL_0226: ldloc.s 5
-		IL_0228: ldstr "testBitTrue"
-		IL_022d: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_testBitTrue/FunctionObject::.ctor()
-		IL_0232: ldc.i4.1
-		IL_0233: conv.r8
-		IL_0234: ldstr "testBitTrue"
-		IL_0239: ldc.i4.1
-		IL_023a: ldc.i4.1
-		IL_023b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_testBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0240: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_testBitTrue/FunctionObject>(!!0)
-		IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_024a: pop
-		IL_024b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0250: stloc.s 9
-		IL_0252: ldloc.s 5
-		IL_0254: ldstr "searchBitFalse"
-		IL_0259: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_searchBitFalse/FunctionObject::.ctor()
+		IL_0126: stloc.s 5
+		IL_0128: ldloc.s 5
+		IL_012a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_012f: ldc.r8 1
+		IL_0138: sub
+		IL_0139: stloc.s 7
+		IL_013b: ldloc.2
+		IL_013c: ldloc.s 7
+		IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0143: stloc.s 5
+		IL_0145: ldloc.1
+		IL_0146: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config
+		IL_014b: ldloc.s 5
+		IL_014d: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_runtime(object)
+		IL_0152: ldstr "process"
+		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_015c: volatile.
+		IL_015e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+		IL_0163: brfalse IL_0177
+
+		IL_0168: ldstr "argv"
+		IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0172: br IL_018b
+
+		IL_0177: ldstr "argv"
+		IL_017c: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:52"
+		IL_0181: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_018b: stloc.s 5
+		IL_018d: ldloc.s 5
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0194: stloc.s 5
+		IL_0196: ldc.i4.0
+		IL_0197: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_019c: brfalse IL_01d8
+
+		IL_01a1: ldloc.s 5
+		IL_01a3: isinst [System.Runtime]System.String
+		IL_01a8: dup
+		IL_01a9: brtrue IL_01c1
+
+		IL_01ae: pop
+		IL_01af: ldloc.s 5
+		IL_01b1: ldstr "includes"
+		IL_01b6: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_01bb: dup
+		IL_01bc: brfalse IL_01d7
+
+		IL_01c1: ldstr "verbose"
+		IL_01c6: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+		IL_01cb: box [System.Runtime]System.Boolean
+		IL_01d0: stloc.s 5
+		IL_01d2: br IL_01eb
+
+		IL_01d7: pop
+
+		IL_01d8: ldloc.s 5
+		IL_01da: ldstr "includes"
+		IL_01df: ldstr "verbose"
+		IL_01e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01e9: stloc.s 5
+
+		IL_01eb: ldloc.1
+		IL_01ec: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config
+		IL_01f1: ldloc.s 5
+		IL_01f3: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_verbose(object)
+		IL_01f8: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
+		IL_01fd: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0202: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
+		IL_0207: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_020c: stloc.s 8
+		IL_020e: volatile.
+		IL_0210: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+		IL_0215: brfalse IL_022b
+
+		IL_021a: ldloc.s 8
+		IL_021c: ldstr "prototype"
+		IL_0221: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0226: br IL_0241
+
+		IL_022b: ldloc.s 8
+		IL_022d: ldstr "prototype"
+		IL_0232: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:60"
+		IL_0237: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+		IL_023c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0241: stloc.s 5
+		IL_0243: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0248: stloc.s 9
+		IL_024a: ldloc.s 5
+		IL_024c: ldstr "setBitTrue"
+		IL_0251: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitTrue/FunctionObject::.ctor()
+		IL_0256: ldc.i4.1
+		IL_0257: conv.r8
+		IL_0258: ldstr "setBitTrue"
+		IL_025d: ldc.i4.1
 		IL_025e: ldc.i4.1
-		IL_025f: conv.r8
-		IL_0260: ldstr "searchBitFalse"
-		IL_0265: ldc.i4.1
-		IL_0266: ldc.i4.1
-		IL_0267: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_searchBitFalse/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_026c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_searchBitFalse/FunctionObject>(!!0)
-		IL_0271: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0276: pop
-		IL_0277: ldc.i4.1
-		IL_0278: newarr [System.Runtime]System.Object
-		IL_027d: dup
-		IL_027e: ldc.i4.0
-		IL_027f: ldloc.0
-		IL_0280: stelem.ref
-		IL_0281: stloc.s 9
-		IL_0283: ldloc.s 9
-		IL_0285: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_ctor/FunctionObject::.ctor(object[])
-		IL_028a: ldloc.s 8
-		IL_028c: ldloc.s 9
-		IL_028e: ldc.i4.1
-		IL_028f: conv.r8
-		IL_0290: ldc.i4.0
-		IL_0291: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0296: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_ctor/FunctionObject
-		IL_029b: stloc.s 10
-		IL_029d: ldloc.0
-		IL_029e: ldloc.s 10
-		IL_02a0: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::BitArray
-		IL_02a5: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
-		IL_02aa: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_02af: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
-		IL_02b4: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_02b9: stloc.s 8
-		IL_02bb: ldloc.s 8
-		IL_02bd: ldstr "prototype"
-		IL_02c2: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:83"
-		IL_02c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_02cc: stloc.s 5
-		IL_02ce: ldc.i4.1
-		IL_02cf: newarr [System.Runtime]System.Object
-		IL_02d4: dup
-		IL_02d5: ldc.i4.0
-		IL_02d6: ldloc.0
-		IL_02d7: stelem.ref
-		IL_02d8: stloc.s 9
-		IL_02da: ldloc.s 5
-		IL_02dc: ldstr "runSieve"
-		IL_02e1: ldloc.s 9
-		IL_02e3: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_runSieve/FunctionObject::.ctor(object[])
-		IL_02e8: ldc.i4.0
-		IL_02e9: conv.r8
-		IL_02ea: ldstr "runSieve"
-		IL_02ef: ldc.i4.1
-		IL_02f0: ldc.i4.1
-		IL_02f1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_runSieve/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02f6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_runSieve/FunctionObject>(!!0)
-		IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0300: pop
-		IL_0301: ldc.i4.1
-		IL_0302: newarr [System.Runtime]System.Object
-		IL_0307: dup
-		IL_0308: ldc.i4.0
-		IL_0309: ldloc.0
-		IL_030a: stelem.ref
-		IL_030b: stloc.s 9
-		IL_030d: ldloc.s 5
-		IL_030f: ldstr "countPrimes"
-		IL_0314: ldloc.s 9
-		IL_0316: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_countPrimes/FunctionObject::.ctor(object[])
-		IL_031b: ldc.i4.0
-		IL_031c: conv.r8
-		IL_031d: ldstr "countPrimes"
-		IL_0322: ldc.i4.1
-		IL_0323: ldc.i4.1
-		IL_0324: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_countPrimes/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0329: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_countPrimes/FunctionObject>(!!0)
-		IL_032e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0333: pop
-		IL_0334: ldc.i4.1
-		IL_0335: newarr [System.Runtime]System.Object
-		IL_033a: dup
-		IL_033b: ldc.i4.0
-		IL_033c: ldloc.0
-		IL_033d: stelem.ref
-		IL_033e: stloc.s 9
-		IL_0340: ldloc.s 5
-		IL_0342: ldstr "getPrimes"
-		IL_0347: ldloc.s 9
-		IL_0349: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_getPrimes/FunctionObject::.ctor(object[])
-		IL_034e: ldc.i4.0
-		IL_034f: conv.r8
-		IL_0350: ldstr "getPrimes"
-		IL_0355: ldc.i4.1
-		IL_0356: ldc.i4.1
-		IL_0357: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_getPrimes/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_035c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_getPrimes/FunctionObject>(!!0)
-		IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0366: pop
-		IL_0367: ldc.i4.1
-		IL_0368: newarr [System.Runtime]System.Object
-		IL_036d: dup
-		IL_036e: ldc.i4.0
-		IL_036f: ldloc.0
-		IL_0370: stelem.ref
-		IL_0371: stloc.s 9
-		IL_0373: ldloc.s 5
-		IL_0375: ldstr "validatePrimeCount"
-		IL_037a: ldloc.s 9
-		IL_037c: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_validatePrimeCount/FunctionObject::.ctor(object[])
-		IL_0381: ldc.i4.1
-		IL_0382: conv.r8
-		IL_0383: ldstr "validatePrimeCount"
-		IL_0388: ldc.i4.1
-		IL_0389: ldc.i4.1
-		IL_038a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_validatePrimeCount/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_038f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_validatePrimeCount/FunctionObject>(!!0)
-		IL_0394: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0399: pop
-		IL_039a: ldc.i4.1
-		IL_039b: newarr [System.Runtime]System.Object
-		IL_03a0: dup
-		IL_03a1: ldc.i4.0
-		IL_03a2: ldloc.0
-		IL_03a3: stelem.ref
-		IL_03a4: stloc.s 9
-		IL_03a6: ldloc.s 9
-		IL_03a8: ldc.i4.0
-		IL_03a9: ldelem.ref
-		IL_03aa: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope
-		IL_03af: ldloc.s 9
-		IL_03b1: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_ctor/FunctionObject::.ctor(class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope, object[])
-		IL_03b6: ldloc.s 8
-		IL_03b8: ldloc.s 9
-		IL_03ba: ldc.i4.1
-		IL_03bb: conv.r8
-		IL_03bc: ldc.i4.0
-		IL_03bd: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_03c2: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_ctor/FunctionObject
-		IL_03c7: stloc.s 11
-		IL_03c9: ldloc.0
-		IL_03ca: ldloc.s 11
-		IL_03cc: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::PrimeSieve
-		IL_03d1: nop
-		IL_03d2: nop
-		IL_03d3: ldloc.0
-		IL_03d4: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope
-		IL_03d9: ldnull
-		IL_03da: ldloc.1
-		IL_03db: call object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ArrowFunction_L232C14::__js_call__(class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope, object, object)
-		IL_03e0: pop
-		IL_03e1: ret
+		IL_025f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0264: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitTrue/FunctionObject>(!!0)
+		IL_0269: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_026e: pop
+		IL_026f: ldc.i4.1
+		IL_0270: newarr [System.Runtime]System.Object
+		IL_0275: dup
+		IL_0276: ldc.i4.0
+		IL_0277: ldloc.0
+		IL_0278: stelem.ref
+		IL_0279: stloc.s 9
+		IL_027b: ldloc.s 5
+		IL_027d: ldstr "setBitsTrue"
+		IL_0282: ldloc.s 9
+		IL_0284: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitsTrue/FunctionObject::.ctor(object[])
+		IL_0289: ldc.i4.3
+		IL_028a: conv.r8
+		IL_028b: ldstr "setBitsTrue"
+		IL_0290: ldc.i4.1
+		IL_0291: ldc.i4.1
+		IL_0292: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitsTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0297: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_setBitsTrue/FunctionObject>(!!0)
+		IL_029c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_02a1: pop
+		IL_02a2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02a7: stloc.s 9
+		IL_02a9: ldloc.s 5
+		IL_02ab: ldstr "testBitTrue"
+		IL_02b0: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_testBitTrue/FunctionObject::.ctor()
+		IL_02b5: ldc.i4.1
+		IL_02b6: conv.r8
+		IL_02b7: ldstr "testBitTrue"
+		IL_02bc: ldc.i4.1
+		IL_02bd: ldc.i4.1
+		IL_02be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_testBitTrue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_testBitTrue/FunctionObject>(!!0)
+		IL_02c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_02cd: pop
+		IL_02ce: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02d3: stloc.s 9
+		IL_02d5: ldloc.s 5
+		IL_02d7: ldstr "searchBitFalse"
+		IL_02dc: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_searchBitFalse/FunctionObject::.ctor()
+		IL_02e1: ldc.i4.1
+		IL_02e2: conv.r8
+		IL_02e3: ldstr "searchBitFalse"
+		IL_02e8: ldc.i4.1
+		IL_02e9: ldc.i4.1
+		IL_02ea: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_searchBitFalse/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_searchBitFalse/FunctionObject>(!!0)
+		IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_02f9: pop
+		IL_02fa: ldc.i4.1
+		IL_02fb: newarr [System.Runtime]System.Object
+		IL_0300: dup
+		IL_0301: ldc.i4.0
+		IL_0302: ldloc.0
+		IL_0303: stelem.ref
+		IL_0304: stloc.s 9
+		IL_0306: ldloc.s 9
+		IL_0308: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_030d: ldloc.s 8
+		IL_030f: ldloc.s 9
+		IL_0311: ldc.i4.1
+		IL_0312: conv.r8
+		IL_0313: ldc.i4.0
+		IL_0314: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0319: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray/Scope_ctor/FunctionObject
+		IL_031e: stloc.s 10
+		IL_0320: ldloc.0
+		IL_0321: ldloc.s 10
+		IL_0323: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::BitArray
+		IL_0328: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
+		IL_032d: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0332: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
+		IL_0337: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_033c: stloc.s 8
+		IL_033e: volatile.
+		IL_0340: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+		IL_0345: brfalse IL_035b
+
+		IL_034a: ldloc.s 8
+		IL_034c: ldstr "prototype"
+		IL_0351: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0356: br IL_0371
+
+		IL_035b: ldloc.s 8
+		IL_035d: ldstr "prototype"
+		IL_0362: ldstr "Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes:__js_module_init__:83"
+		IL_0367: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+		IL_036c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0371: stloc.s 5
+		IL_0373: ldc.i4.1
+		IL_0374: newarr [System.Runtime]System.Object
+		IL_0379: dup
+		IL_037a: ldc.i4.0
+		IL_037b: ldloc.0
+		IL_037c: stelem.ref
+		IL_037d: stloc.s 9
+		IL_037f: ldloc.s 5
+		IL_0381: ldstr "runSieve"
+		IL_0386: ldloc.s 9
+		IL_0388: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_runSieve/FunctionObject::.ctor(object[])
+		IL_038d: ldc.i4.0
+		IL_038e: conv.r8
+		IL_038f: ldstr "runSieve"
+		IL_0394: ldc.i4.1
+		IL_0395: ldc.i4.1
+		IL_0396: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_runSieve/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_039b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_runSieve/FunctionObject>(!!0)
+		IL_03a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_03a5: pop
+		IL_03a6: ldc.i4.1
+		IL_03a7: newarr [System.Runtime]System.Object
+		IL_03ac: dup
+		IL_03ad: ldc.i4.0
+		IL_03ae: ldloc.0
+		IL_03af: stelem.ref
+		IL_03b0: stloc.s 9
+		IL_03b2: ldloc.s 5
+		IL_03b4: ldstr "countPrimes"
+		IL_03b9: ldloc.s 9
+		IL_03bb: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_countPrimes/FunctionObject::.ctor(object[])
+		IL_03c0: ldc.i4.0
+		IL_03c1: conv.r8
+		IL_03c2: ldstr "countPrimes"
+		IL_03c7: ldc.i4.1
+		IL_03c8: ldc.i4.1
+		IL_03c9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_countPrimes/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03ce: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_countPrimes/FunctionObject>(!!0)
+		IL_03d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_03d8: pop
+		IL_03d9: ldc.i4.1
+		IL_03da: newarr [System.Runtime]System.Object
+		IL_03df: dup
+		IL_03e0: ldc.i4.0
+		IL_03e1: ldloc.0
+		IL_03e2: stelem.ref
+		IL_03e3: stloc.s 9
+		IL_03e5: ldloc.s 5
+		IL_03e7: ldstr "getPrimes"
+		IL_03ec: ldloc.s 9
+		IL_03ee: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_getPrimes/FunctionObject::.ctor(object[])
+		IL_03f3: ldc.i4.0
+		IL_03f4: conv.r8
+		IL_03f5: ldstr "getPrimes"
+		IL_03fa: ldc.i4.1
+		IL_03fb: ldc.i4.1
+		IL_03fc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_getPrimes/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0401: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_getPrimes/FunctionObject>(!!0)
+		IL_0406: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_040b: pop
+		IL_040c: ldc.i4.1
+		IL_040d: newarr [System.Runtime]System.Object
+		IL_0412: dup
+		IL_0413: ldc.i4.0
+		IL_0414: ldloc.0
+		IL_0415: stelem.ref
+		IL_0416: stloc.s 9
+		IL_0418: ldloc.s 5
+		IL_041a: ldstr "validatePrimeCount"
+		IL_041f: ldloc.s 9
+		IL_0421: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_validatePrimeCount/FunctionObject::.ctor(object[])
+		IL_0426: ldc.i4.1
+		IL_0427: conv.r8
+		IL_0428: ldstr "validatePrimeCount"
+		IL_042d: ldc.i4.1
+		IL_042e: ldc.i4.1
+		IL_042f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_validatePrimeCount/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0434: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_validatePrimeCount/FunctionObject>(!!0)
+		IL_0439: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_043e: pop
+		IL_043f: ldc.i4.1
+		IL_0440: newarr [System.Runtime]System.Object
+		IL_0445: dup
+		IL_0446: ldc.i4.0
+		IL_0447: ldloc.0
+		IL_0448: stelem.ref
+		IL_0449: stloc.s 9
+		IL_044b: ldloc.s 9
+		IL_044d: ldc.i4.0
+		IL_044e: ldelem.ref
+		IL_044f: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope
+		IL_0454: ldloc.s 9
+		IL_0456: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_ctor/FunctionObject::.ctor(class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope, object[])
+		IL_045b: ldloc.s 8
+		IL_045d: ldloc.s 9
+		IL_045f: ldc.i4.1
+		IL_0460: conv.r8
+		IL_0461: ldc.i4.0
+		IL_0462: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0467: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve/Scope_ctor/FunctionObject
+		IL_046c: stloc.s 11
+		IL_046e: ldloc.0
+		IL_046f: ldloc.s 11
+		IL_0471: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::PrimeSieve
+		IL_0476: nop
+		IL_0477: nop
+		IL_0478: ldloc.0
+		IL_0479: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope
+		IL_047e: ldnull
+		IL_047f: ldloc.1
+		IL_0480: call object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ArrowFunction_L232C14::__js_call__(class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope, object, object)
+		IL_0485: pop
+		IL_0486: ret
 	} // end of method Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes::__js_module_init__
 
 } // end of class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes
@@ -3538,4 +3624,19 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_30
+	.field assembly static int32 __jroc_dynamicLookup_31
+	.field assembly static int32 __jroc_dynamicLookup_32
+	.field assembly static int32 __jroc_dynamicLookup_33
+	.field assembly static int32 __jroc_dynamicLookup_34
+	.field assembly static int32 __jroc_dynamicLookup_35
+	.field assembly static int32 __jroc_dynamicLookup_36
+	.field assembly static int32 __jroc_dynamicLookup_37
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

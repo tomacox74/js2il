@@ -216,30 +216,41 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 49 (0x31)
+			// Code size: 82 (0x52)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: ldstr "total"
-			IL_0006: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:<TwoPhaseDummy_M4>:__js_call__:3"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 5
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0020: stloc.1
-			IL_0021: ldarg.1
-			IL_0022: ldstr "total"
-			IL_0027: ldloc.1
-			IL_0028: ldc.i4.0
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_002e: pop
-			IL_002f: ldnull
-			IL_0030: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_0007: brfalse IL_001c
+
+			IL_000c: ldarg.1
+			IL_000d: ldstr "total"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0017: br IL_0031
+
+			IL_001c: ldarg.1
+			IL_001d: ldstr "total"
+			IL_0022: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:<TwoPhaseDummy_M4>:__js_call__:3"
+			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0031: stloc.0
+			IL_0032: ldloc.0
+			IL_0033: ldc.r8 5
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0041: stloc.1
+			IL_0042: ldarg.1
+			IL_0043: ldstr "total"
+			IL_0048: ldloc.1
+			IL_0049: ldc.i4.0
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_004f: pop
+			IL_0050: ldnull
+			IL_0051: ret
 		} // end of method addFive::__js_call__
 
 	} // end of class addFive
@@ -1258,7 +1269,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 875 (0x36b)
+		// Code size: 977 (0x3d1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope,
@@ -1368,221 +1379,254 @@
 		IL_00df: pop
 		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00e5: stloc.s 8
-		IL_00e7: ldloc.s 4
-		IL_00e9: ldstr "count"
-		IL_00ee: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity:__js_module_init__:28"
-		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00f8: stloc.s 9
-		IL_00fa: ldloc.s 5
-		IL_00fc: ldstr "label"
-		IL_0101: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity:__js_module_init__:30"
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_010b: stloc.s 10
-		IL_010d: ldloc.s 5
-		IL_010f: ldloc.s 4
-		IL_0111: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0116: stloc.s 11
-		IL_0118: ldloc.s 11
-		IL_011a: box [System.Runtime]System.Boolean
-		IL_011f: stloc.s 12
-		IL_0121: ldloc.s 8
-		IL_0123: ldloc.s 9
-		IL_0125: ldloc.s 10
-		IL_0127: ldloc.s 12
-		IL_0129: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_012e: pop
-		IL_012f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0134: dup
-		IL_0135: ldstr "total"
-		IL_013a: ldc.r8 10
-		IL_0143: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0148: stloc.s 6
-		IL_014a: ldnull
-		IL_014b: ldloc.s 6
-		IL_014d: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/addFive::__js_call__(object, object)
-		IL_0152: pop
-		IL_0153: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0158: stloc.s 8
-		IL_015a: ldloc.s 6
-		IL_015c: ldstr "total"
-		IL_0161: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity:__js_module_init__:44"
-		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_016b: stloc.s 10
-		IL_016d: ldloc.s 8
-		IL_016f: ldloc.s 10
-		IL_0171: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0176: pop
-		IL_0177: nop
-		IL_0178: newobj instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::.ctor()
-		IL_017d: stloc.s 13
-		IL_017f: ldloc.s 13
-		IL_0181: ldc.r8 0.0
-		IL_018a: box [System.Runtime]System.Double
-		IL_018f: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::set_hits(object)
-		IL_0194: ldloc.s 13
-		IL_0196: ldstr "counter"
-		IL_019b: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::set_name(string)
-		IL_01a0: ldloc.0
-		IL_01a1: ldloc.s 13
-		IL_01a3: stfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::captured
-		IL_01a8: nop
-		IL_01a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01ae: stloc.s 8
-		IL_01b0: ldloc.0
-		IL_01b1: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
-		IL_01b6: ldnull
-		IL_01b7: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/bump::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
-		IL_01bc: stloc.s 10
-		IL_01be: ldloc.0
-		IL_01bf: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
-		IL_01c4: ldnull
-		IL_01c5: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/bump::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
-		IL_01ca: stloc.s 9
-		IL_01cc: ldloc.0
-		IL_01cd: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::captured
-		IL_01d2: stloc.s 14
-		IL_01d4: ldloc.s 14
-		IL_01d6: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured
-		IL_01db: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::get_hits()
-		IL_01e0: stloc.s 14
-		IL_01e2: ldloc.0
-		IL_01e3: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::captured
-		IL_01e8: stloc.s 15
-		IL_01ea: ldloc.s 15
-		IL_01ec: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured
-		IL_01f1: callvirt instance string Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::get_name()
-		IL_01f6: stloc.s 16
-		IL_01f8: ldloc.s 8
-		IL_01fa: ldc.i4.4
-		IL_01fb: newarr [System.Runtime]System.Object
-		IL_0200: dup
-		IL_0201: ldc.i4.0
-		IL_0202: ldloc.s 10
-		IL_0204: stelem.ref
-		IL_0205: dup
-		IL_0206: ldc.i4.1
-		IL_0207: ldloc.s 9
-		IL_0209: stelem.ref
-		IL_020a: dup
-		IL_020b: ldc.i4.2
-		IL_020c: ldloc.s 14
-		IL_020e: stelem.ref
-		IL_020f: dup
-		IL_0210: ldc.i4.3
-		IL_0211: ldloc.s 16
-		IL_0213: stelem.ref
-		IL_0214: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0219: pop
-		IL_021a: newobj instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box::.ctor()
-		IL_021f: stloc.s 17
-		IL_0221: ldloc.s 17
-		IL_0223: ldc.r8 5
-		IL_022c: box [System.Runtime]System.Double
-		IL_0231: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box::set_value(object)
-		IL_0236: ldloc.0
-		IL_0237: ldloc.s 17
-		IL_0239: stfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::'box'
-		IL_023e: nop
-		IL_023f: nop
-		IL_0240: ldloc.0
-		IL_0241: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::'box'
+		IL_00e7: volatile.
+		IL_00e9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_00ee: brfalse IL_0104
+
+		IL_00f3: ldloc.s 4
+		IL_00f5: ldstr "count"
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ff: br IL_011a
+
+		IL_0104: ldloc.s 4
+		IL_0106: ldstr "count"
+		IL_010b: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity:__js_module_init__:28"
+		IL_0110: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_011a: stloc.s 9
+		IL_011c: volatile.
+		IL_011e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_0123: brfalse IL_0139
+
+		IL_0128: ldloc.s 5
+		IL_012a: ldstr "label"
+		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0134: br IL_014f
+
+		IL_0139: ldloc.s 5
+		IL_013b: ldstr "label"
+		IL_0140: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity:__js_module_init__:30"
+		IL_0145: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_014f: stloc.s 10
+		IL_0151: ldloc.s 5
+		IL_0153: ldloc.s 4
+		IL_0155: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_015a: stloc.s 11
+		IL_015c: ldloc.s 11
+		IL_015e: box [System.Runtime]System.Boolean
+		IL_0163: stloc.s 12
+		IL_0165: ldloc.s 8
+		IL_0167: ldloc.s 9
+		IL_0169: ldloc.s 10
+		IL_016b: ldloc.s 12
+		IL_016d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0172: pop
+		IL_0173: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0178: dup
+		IL_0179: ldstr "total"
+		IL_017e: ldc.r8 10
+		IL_0187: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_018c: stloc.s 6
+		IL_018e: ldnull
+		IL_018f: ldloc.s 6
+		IL_0191: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/addFive::__js_call__(object, object)
+		IL_0196: pop
+		IL_0197: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_019c: stloc.s 8
+		IL_019e: volatile.
+		IL_01a0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_01a5: brfalse IL_01bb
+
+		IL_01aa: ldloc.s 6
+		IL_01ac: ldstr "total"
+		IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01b6: br IL_01d1
+
+		IL_01bb: ldloc.s 6
+		IL_01bd: ldstr "total"
+		IL_01c2: ldstr "ObjectLiteral_Inference_ClosureAndAliasing_Parity:Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity:__js_module_init__:44"
+		IL_01c7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01d1: stloc.s 10
+		IL_01d3: ldloc.s 8
+		IL_01d5: ldloc.s 10
+		IL_01d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01dc: pop
+		IL_01dd: nop
+		IL_01de: newobj instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::.ctor()
+		IL_01e3: stloc.s 13
+		IL_01e5: ldloc.s 13
+		IL_01e7: ldc.r8 0.0
+		IL_01f0: box [System.Runtime]System.Double
+		IL_01f5: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::set_hits(object)
+		IL_01fa: ldloc.s 13
+		IL_01fc: ldstr "counter"
+		IL_0201: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::set_name(string)
+		IL_0206: ldloc.0
+		IL_0207: ldloc.s 13
+		IL_0209: stfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::captured
+		IL_020e: nop
+		IL_020f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0214: stloc.s 8
+		IL_0216: ldloc.0
+		IL_0217: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
+		IL_021c: ldnull
+		IL_021d: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/bump::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
+		IL_0222: stloc.s 10
+		IL_0224: ldloc.0
+		IL_0225: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
+		IL_022a: ldnull
+		IL_022b: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/bump::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
+		IL_0230: stloc.s 9
+		IL_0232: ldloc.0
+		IL_0233: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::captured
+		IL_0238: stloc.s 14
+		IL_023a: ldloc.s 14
+		IL_023c: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured
+		IL_0241: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::get_hits()
 		IL_0246: stloc.s 14
-		IL_0248: ldloc.s 14
-		IL_024a: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box
-		IL_024f: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box::get_value()
-		IL_0254: stloc.s 14
-		IL_0256: ldloc.s 14
-		IL_0258: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_025d: ldc.r8 2
-		IL_0266: mul
-		IL_0267: stloc.s 18
-		IL_0269: ldloc.s 18
-		IL_026b: box [System.Runtime]System.Double
-		IL_0270: stloc.s 19
-		IL_0272: ldloc.0
-		IL_0273: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
-		IL_0278: ldnull
-		IL_0279: ldloc.s 19
-		IL_027b: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/FunctionExpression_setValue::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object, object)
-		IL_0280: pop
-		IL_0281: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0286: stloc.s 8
-		IL_0288: ldloc.0
-		IL_0289: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
-		IL_028e: ldnull
-		IL_028f: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/FunctionExpression_getValue::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
-		IL_0294: stloc.s 14
-		IL_0296: ldloc.s 8
-		IL_0298: ldloc.s 14
-		IL_029a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_029f: pop
-		IL_02a0: newobj instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::.ctor()
-		IL_02a5: stloc.s 20
-		IL_02a7: ldloc.s 20
-		IL_02a9: ldc.i4.0
-		IL_02aa: box [System.Runtime]System.Boolean
-		IL_02af: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::set_on(object)
-		IL_02b4: ldloc.s 20
-		IL_02b6: ldc.r8 0.0
-		IL_02bf: box [System.Runtime]System.Double
-		IL_02c4: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::set_flips(object)
-		IL_02c9: ldloc.0
-		IL_02ca: ldloc.s 20
-		IL_02cc: stfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
-		IL_02d1: nop
-		IL_02d2: ldloc.0
-		IL_02d3: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
-		IL_02d8: ldnull
-		IL_02d9: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/flip::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
-		IL_02de: pop
-		IL_02df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02e4: stloc.s 8
-		IL_02e6: ldloc.0
-		IL_02e7: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
-		IL_02ec: stloc.s 14
-		IL_02ee: ldloc.s 14
-		IL_02f0: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
-		IL_02f5: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_on()
+		IL_0248: ldloc.0
+		IL_0249: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::captured
+		IL_024e: stloc.s 15
+		IL_0250: ldloc.s 15
+		IL_0252: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured
+		IL_0257: callvirt instance string Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L23C18_captured::get_name()
+		IL_025c: stloc.s 16
+		IL_025e: ldloc.s 8
+		IL_0260: ldc.i4.4
+		IL_0261: newarr [System.Runtime]System.Object
+		IL_0266: dup
+		IL_0267: ldc.i4.0
+		IL_0268: ldloc.s 10
+		IL_026a: stelem.ref
+		IL_026b: dup
+		IL_026c: ldc.i4.1
+		IL_026d: ldloc.s 9
+		IL_026f: stelem.ref
+		IL_0270: dup
+		IL_0271: ldc.i4.2
+		IL_0272: ldloc.s 14
+		IL_0274: stelem.ref
+		IL_0275: dup
+		IL_0276: ldc.i4.3
+		IL_0277: ldloc.s 16
+		IL_0279: stelem.ref
+		IL_027a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_027f: pop
+		IL_0280: newobj instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box::.ctor()
+		IL_0285: stloc.s 17
+		IL_0287: ldloc.s 17
+		IL_0289: ldc.r8 5
+		IL_0292: box [System.Runtime]System.Double
+		IL_0297: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box::set_value(object)
+		IL_029c: ldloc.0
+		IL_029d: ldloc.s 17
+		IL_029f: stfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::'box'
+		IL_02a4: nop
+		IL_02a5: nop
+		IL_02a6: ldloc.0
+		IL_02a7: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::'box'
+		IL_02ac: stloc.s 14
+		IL_02ae: ldloc.s 14
+		IL_02b0: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box
+		IL_02b5: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L31C13_box::get_value()
+		IL_02ba: stloc.s 14
+		IL_02bc: ldloc.s 14
+		IL_02be: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_02c3: ldc.r8 2
+		IL_02cc: mul
+		IL_02cd: stloc.s 18
+		IL_02cf: ldloc.s 18
+		IL_02d1: box [System.Runtime]System.Double
+		IL_02d6: stloc.s 19
+		IL_02d8: ldloc.0
+		IL_02d9: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
+		IL_02de: ldnull
+		IL_02df: ldloc.s 19
+		IL_02e1: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/FunctionExpression_setValue::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object, object)
+		IL_02e6: pop
+		IL_02e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02ec: stloc.s 8
+		IL_02ee: ldloc.0
+		IL_02ef: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
+		IL_02f4: ldnull
+		IL_02f5: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/FunctionExpression_getValue::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
 		IL_02fa: stloc.s 14
-		IL_02fc: ldloc.0
-		IL_02fd: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
-		IL_0302: stloc.s 9
-		IL_0304: ldloc.s 9
-		IL_0306: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
-		IL_030b: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_flips()
-		IL_0310: stloc.s 9
-		IL_0312: ldloc.s 8
-		IL_0314: ldloc.s 14
-		IL_0316: ldloc.s 9
-		IL_0318: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_031d: pop
-		IL_031e: ldloc.0
-		IL_031f: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
-		IL_0324: ldnull
-		IL_0325: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/flip::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
-		IL_032a: pop
-		IL_032b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0330: stloc.s 8
-		IL_0332: ldloc.0
-		IL_0333: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
-		IL_0338: stloc.s 9
-		IL_033a: ldloc.s 9
-		IL_033c: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
-		IL_0341: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_on()
-		IL_0346: stloc.s 9
-		IL_0348: ldloc.0
-		IL_0349: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
-		IL_034e: stloc.s 14
-		IL_0350: ldloc.s 14
-		IL_0352: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
-		IL_0357: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_flips()
-		IL_035c: stloc.s 14
-		IL_035e: ldloc.s 8
-		IL_0360: ldloc.s 9
-		IL_0362: ldloc.s 14
-		IL_0364: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0369: pop
-		IL_036a: ret
+		IL_02fc: ldloc.s 8
+		IL_02fe: ldloc.s 14
+		IL_0300: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0305: pop
+		IL_0306: newobj instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::.ctor()
+		IL_030b: stloc.s 20
+		IL_030d: ldloc.s 20
+		IL_030f: ldc.i4.0
+		IL_0310: box [System.Runtime]System.Boolean
+		IL_0315: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::set_on(object)
+		IL_031a: ldloc.s 20
+		IL_031c: ldc.r8 0.0
+		IL_0325: box [System.Runtime]System.Double
+		IL_032a: callvirt instance void Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::set_flips(object)
+		IL_032f: ldloc.0
+		IL_0330: ldloc.s 20
+		IL_0332: stfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
+		IL_0337: nop
+		IL_0338: ldloc.0
+		IL_0339: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
+		IL_033e: ldnull
+		IL_033f: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/flip::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
+		IL_0344: pop
+		IL_0345: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_034a: stloc.s 8
+		IL_034c: ldloc.0
+		IL_034d: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
+		IL_0352: stloc.s 14
+		IL_0354: ldloc.s 14
+		IL_0356: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
+		IL_035b: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_on()
+		IL_0360: stloc.s 14
+		IL_0362: ldloc.0
+		IL_0363: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
+		IL_0368: stloc.s 9
+		IL_036a: ldloc.s 9
+		IL_036c: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
+		IL_0371: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_flips()
+		IL_0376: stloc.s 9
+		IL_0378: ldloc.s 8
+		IL_037a: ldloc.s 14
+		IL_037c: ldloc.s 9
+		IL_037e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0383: pop
+		IL_0384: ldloc.0
+		IL_0385: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope
+		IL_038a: ldnull
+		IL_038b: call object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/flip::__js_call__(class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope, object)
+		IL_0390: pop
+		IL_0391: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0396: stloc.s 8
+		IL_0398: ldloc.0
+		IL_0399: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
+		IL_039e: stloc.s 9
+		IL_03a0: ldloc.s 9
+		IL_03a2: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
+		IL_03a7: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_on()
+		IL_03ac: stloc.s 9
+		IL_03ae: ldloc.0
+		IL_03af: ldfld class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/Scope::toggleState
+		IL_03b4: stloc.s 14
+		IL_03b6: ldloc.s 14
+		IL_03b8: castclass Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState
+		IL_03bd: callvirt instance object Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity/ObjectLiterals/L38C19_toggleState::get_flips()
+		IL_03c2: stloc.s 14
+		IL_03c4: ldloc.s 8
+		IL_03c6: ldloc.s 9
+		IL_03c8: ldloc.s 14
+		IL_03ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03cf: pop
+		IL_03d0: ret
 	} // end of method ObjectLiteral_Inference_ClosureAndAliasing_Parity::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_Inference_ClosureAndAliasing_Parity
@@ -1607,4 +1651,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_16
+	.field assembly static int32 __jroc_dynamicLookup_17
+	.field assembly static int32 __jroc_dynamicLookup_18
+	.field assembly static int32 __jroc_dynamicLookup_19
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

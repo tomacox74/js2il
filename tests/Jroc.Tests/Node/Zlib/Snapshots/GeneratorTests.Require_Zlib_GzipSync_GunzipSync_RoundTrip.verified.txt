@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 222 (0xde)
+		// Code size: 255 (0xff)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_GzipSync_GunzipSync_RoundTrip/Scope,
@@ -161,32 +161,43 @@
 		IL_0081: pop
 		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0087: stloc.s 7
-		IL_0089: ldloc.3
-		IL_008a: ldstr "length"
-		IL_008f: ldstr "Require_Zlib_GzipSync_GunzipSync_RoundTrip:Modules.Require_Zlib_GzipSync_GunzipSync_RoundTrip:__js_module_init__:32"
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0099: stloc.s 6
-		IL_009b: ldloc.s 6
-		IL_009d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00a2: ldc.r8 0.0
-		IL_00ab: cgt
-		IL_00ad: stloc.s 9
-		IL_00af: ldloc.s 9
-		IL_00b1: box [System.Runtime]System.Boolean
-		IL_00b6: stloc.s 8
-		IL_00b8: ldloc.s 7
-		IL_00ba: ldstr "compressed length > 0:"
-		IL_00bf: ldloc.s 8
-		IL_00c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c6: pop
-		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cc: stloc.s 7
-		IL_00ce: ldloc.s 7
-		IL_00d0: ldstr "roundtrip:"
-		IL_00d5: ldloc.s 4
-		IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00dc: pop
-		IL_00dd: ret
+		IL_0089: volatile.
+		IL_008b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0090: brfalse IL_00a5
+
+		IL_0095: ldloc.3
+		IL_0096: ldstr "length"
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a0: br IL_00ba
+
+		IL_00a5: ldloc.3
+		IL_00a6: ldstr "length"
+		IL_00ab: ldstr "Require_Zlib_GzipSync_GunzipSync_RoundTrip:Modules.Require_Zlib_GzipSync_GunzipSync_RoundTrip:__js_module_init__:32"
+		IL_00b0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00ba: stloc.s 6
+		IL_00bc: ldloc.s 6
+		IL_00be: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00c3: ldc.r8 0.0
+		IL_00cc: cgt
+		IL_00ce: stloc.s 9
+		IL_00d0: ldloc.s 9
+		IL_00d2: box [System.Runtime]System.Boolean
+		IL_00d7: stloc.s 8
+		IL_00d9: ldloc.s 7
+		IL_00db: ldstr "compressed length > 0:"
+		IL_00e0: ldloc.s 8
+		IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00e7: pop
+		IL_00e8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ed: stloc.s 7
+		IL_00ef: ldloc.s 7
+		IL_00f1: ldstr "roundtrip:"
+		IL_00f6: ldloc.s 4
+		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00fd: pop
+		IL_00fe: ret
 	} // end of method Require_Zlib_GzipSync_GunzipSync_RoundTrip::__js_module_init__
 
 } // end of class Modules.Require_Zlib_GzipSync_GunzipSync_RoundTrip
@@ -211,4 +222,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

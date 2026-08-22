@@ -191,7 +191,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 212 (0xd4)
+			// Code size: 278 (0x116)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -240,43 +240,65 @@
 			IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
 			IL_005e: box [System.Runtime]System.Boolean
 			IL_0063: stloc.3
-			IL_0064: ldarg.3
-			IL_0065: ldstr "length"
-			IL_006a: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:24"
-			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0074: stloc.1
-			IL_0075: ldloc.1
-			IL_0076: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_007b: ldc.r8 0.0
-			IL_0084: cgt
-			IL_0086: stloc.2
-			IL_0087: ldloc.2
-			IL_0088: box [System.Runtime]System.Boolean
-			IL_008d: stloc.s 4
-			IL_008f: ldloc.0
-			IL_0090: ldstr "addresses:"
-			IL_0095: ldloc.3
-			IL_0096: ldloc.s 4
-			IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_009d: pop
-			IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a3: stloc.0
-			IL_00a4: ldarg.3
-			IL_00a5: ldc.r8 0.0
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00b3: stloc.1
-			IL_00b4: ldloc.1
-			IL_00b5: ldstr "family"
-			IL_00ba: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:37"
-			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00c4: stloc.1
-			IL_00c5: ldloc.0
-			IL_00c6: ldstr "family:"
-			IL_00cb: ldloc.1
-			IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00d1: pop
-			IL_00d2: ldnull
-			IL_00d3: ret
+			IL_0064: volatile.
+			IL_0066: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_006b: brfalse IL_0080
+
+			IL_0070: ldarg.3
+			IL_0071: ldstr "length"
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_007b: br IL_0095
+
+			IL_0080: ldarg.3
+			IL_0081: ldstr "length"
+			IL_0086: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:24"
+			IL_008b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0095: stloc.1
+			IL_0096: ldloc.1
+			IL_0097: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_009c: ldc.r8 0.0
+			IL_00a5: cgt
+			IL_00a7: stloc.2
+			IL_00a8: ldloc.2
+			IL_00a9: box [System.Runtime]System.Boolean
+			IL_00ae: stloc.s 4
+			IL_00b0: ldloc.0
+			IL_00b1: ldstr "addresses:"
+			IL_00b6: ldloc.3
+			IL_00b7: ldloc.s 4
+			IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_00be: pop
+			IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c4: stloc.0
+			IL_00c5: ldarg.3
+			IL_00c6: ldc.r8 0.0
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00d4: stloc.1
+			IL_00d5: volatile.
+			IL_00d7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_00dc: brfalse IL_00f1
+
+			IL_00e1: ldloc.1
+			IL_00e2: ldstr "family"
+			IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ec: br IL_0106
+
+			IL_00f1: ldloc.1
+			IL_00f2: ldstr "family"
+			IL_00f7: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:37"
+			IL_00fc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0106: stloc.1
+			IL_0107: ldloc.0
+			IL_0108: ldstr "family:"
+			IL_010d: ldloc.1
+			IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0113: pop
+			IL_0114: ldnull
+			IL_0115: ret
 		} // end of method ArrowFunction_L11C71::__js_call__
 
 	} // end of class ArrowFunction_L11C71
@@ -730,4 +752,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -185,7 +185,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 114 (0x72)
+			// Code size: 147 (0x93)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -196,49 +196,60 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
-			IL_0006: ldarg.2
-			IL_0007: ldstr "size"
-			IL_000c: ldstr "FSPromises_Stat_FileSize:<TwoPhaseDummy_M4>:__js_call__:5"
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0016: stloc.1
-			IL_0017: ldloc.0
-			IL_0018: ldstr "File size:"
-			IL_001d: ldloc.1
-			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0023: pop
-			IL_0024: ldarg.0
-			IL_0025: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-			IL_002a: stloc.2
-			IL_002b: ldloc.2
-			IL_002c: ldstr "fs"
-			IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object)
-			IL_0036: stloc.3
-			IL_0037: ldarg.0
-			IL_0038: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-			IL_003d: stloc.1
-			IL_003e: ldloc.3
-			IL_003f: ldstr "rmSync"
-			IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-			IL_0049: brtrue IL_005a
+			IL_0006: volatile.
+			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_000d: brfalse IL_0022
 
-			IL_004e: ldloc.3
-			IL_004f: ldloc.1
-			IL_0050: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
-			IL_0055: br IL_0070
+			IL_0012: ldarg.2
+			IL_0013: ldstr "size"
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001d: br IL_0037
 
-			IL_005a: ldloc.3
-			IL_005b: ldstr "rmSync"
-			IL_0060: ldc.i4.1
-			IL_0061: newarr [System.Runtime]System.Object
-			IL_0066: dup
-			IL_0067: ldc.i4.0
-			IL_0068: ldloc.1
-			IL_0069: stelem.ref
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-			IL_006f: pop
+			IL_0022: ldarg.2
+			IL_0023: ldstr "size"
+			IL_0028: ldstr "FSPromises_Stat_FileSize:<TwoPhaseDummy_M4>:__js_call__:5"
+			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0070: ldnull
-			IL_0071: ret
+			IL_0037: stloc.1
+			IL_0038: ldloc.0
+			IL_0039: ldstr "File size:"
+			IL_003e: ldloc.1
+			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0044: pop
+			IL_0045: ldarg.0
+			IL_0046: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+			IL_004b: stloc.2
+			IL_004c: ldloc.2
+			IL_004d: ldstr "fs"
+			IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object)
+			IL_0057: stloc.3
+			IL_0058: ldarg.0
+			IL_0059: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+			IL_005e: stloc.1
+			IL_005f: ldloc.3
+			IL_0060: ldstr "rmSync"
+			IL_0065: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_006a: brtrue IL_007b
+
+			IL_006f: ldloc.3
+			IL_0070: ldloc.1
+			IL_0071: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
+			IL_0076: br IL_0091
+
+			IL_007b: ldloc.3
+			IL_007c: ldstr "rmSync"
+			IL_0081: ldc.i4.1
+			IL_0082: newarr [System.Runtime]System.Object
+			IL_0087: dup
+			IL_0088: ldc.i4.0
+			IL_0089: ldloc.1
+			IL_008a: stelem.ref
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_0090: pop
+
+			IL_0091: ldnull
+			IL_0092: ret
 		} // end of method ArrowFunction_L9C24::__js_call__
 
 	} // end of class ArrowFunction_L9C24
@@ -343,7 +354,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 53 (0x35)
+			// Code size: 86 (0x56)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -354,19 +365,30 @@
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: ldstr "message"
-			IL_0016: ldstr "FSPromises_Stat_FileSize:<TwoPhaseDummy_M5>:__js_call__:7"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0020: stloc.1
-			IL_0021: ldloc.0
-			IL_0022: ldstr "error"
-			IL_0027: ldstr "Error:"
-			IL_002c: ldloc.1
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0032: pop
-			IL_0033: ldnull
-			IL_0034: ret
+			IL_0010: volatile.
+			IL_0012: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0017: brfalse IL_002c
+
+			IL_001c: ldarg.1
+			IL_001d: ldstr "message"
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0027: br IL_0041
+
+			IL_002c: ldarg.1
+			IL_002d: ldstr "message"
+			IL_0032: ldstr "FSPromises_Stat_FileSize:<TwoPhaseDummy_M5>:__js_call__:7"
+			IL_0037: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0041: stloc.1
+			IL_0042: ldloc.0
+			IL_0043: ldstr "error"
+			IL_0048: ldstr "Error:"
+			IL_004d: ldloc.1
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0053: pop
+			IL_0054: ldnull
+			IL_0055: ret
 		} // end of method ArrowFunction_L12C10::__js_call__
 
 	} // end of class ArrowFunction_L12C10
@@ -615,4 +637,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -12,6 +12,14 @@ function readLength(receiver) {
     return receiver.length;
 }
 
+function readMegamorphic(receiver) {
+    return receiver.value;
+}
+
+function callMegamorphic(receiver) {
+    return receiver.method();
+}
+
 const firstPrototype = {
     value: "prototype:first",
     method() {
@@ -95,6 +103,31 @@ console.log(proxyGetCalls);
 
 console.log(readLength("abc"));
 console.log(readLength([1, 2]));
+
+const megamorphicReceivers = [];
+for (let index = 0; index < 5; index++) {
+    const item = {
+        value: "mega:value:" + index,
+        method() {
+            return "mega:method:" + index;
+        }
+    };
+    megamorphicReceivers.push(item);
+    console.log(readMegamorphic(item));
+    console.log(callMegamorphic(item));
+}
+
+Object.defineProperty(megamorphicReceivers[0], "value", {
+    configurable: true,
+    get() {
+        return "mega:accessor";
+    }
+});
+megamorphicReceivers[0].method = function () {
+    return "mega:method:updated";
+};
+console.log(readMegamorphic(megamorphicReceivers[0]));
+console.log(callMegamorphic(megamorphicReceivers[0]));
 
 const initiallyMissing = {};
 console.log(read(initiallyMissing));

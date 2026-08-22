@@ -292,6 +292,11 @@ namespace Jroc.Services
             // create the entry point for spining up the execution engine
             createEntryPoint(methodBodyStream);
 
+            _serviceProvider
+                .GetRequiredService<
+                    DynamicLookupTerminalFieldRegistry>()
+                .Emit(_metadataBuilder, _bclReferences);
+
             // Emit strongly-typed hosting contracts for module.exports (interfaces) if enabled.
             var options = _serviceProvider.GetRequiredService<CompilerOptions>();
             if (options.GenerateModuleExportContracts)

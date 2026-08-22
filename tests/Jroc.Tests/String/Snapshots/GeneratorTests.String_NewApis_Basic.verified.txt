@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 973 (0x3cd)
+		// Code size: 1084 (0x43c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_NewApis_Basic/Scope,
@@ -324,21 +324,21 @@
 		IL_02ec: pop
 		IL_02ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_02f2: stloc.1
-		IL_02f3: ldstr "\ud83d\ude00"
-		IL_02f8: ldstr "isWellFormed"
-		IL_02fd: ldstr "String_NewApis_Basic:Modules.String_NewApis_Basic:__js_module_init__:113"
-		IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_0307: stloc.s 4
-		IL_0309: ldloc.1
-		IL_030a: ldloc.s 4
-		IL_030c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0311: pop
-		IL_0312: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0317: stloc.1
-		IL_0318: ldstr "\ud83d"
-		IL_031d: ldstr "isWellFormed"
-		IL_0322: ldstr "String_NewApis_Basic:Modules.String_NewApis_Basic:__js_module_init__:118"
-		IL_0327: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
+		IL_02f3: volatile.
+		IL_02f5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_02fa: brfalse IL_0313
+
+		IL_02ff: ldstr "\ud83d\ude00"
+		IL_0304: ldstr "isWellFormed"
+		IL_0309: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_030e: br IL_032c
+
+		IL_0313: ldstr "\ud83d\ude00"
+		IL_0318: ldstr "isWellFormed"
+		IL_031d: ldstr "String_NewApis_Basic:Modules.String_NewApis_Basic:__js_module_init__:113"
+		IL_0322: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0327: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
 		IL_032c: stloc.s 4
 		IL_032e: ldloc.1
 		IL_032f: ldloc.s 4
@@ -346,51 +346,84 @@
 		IL_0336: pop
 		IL_0337: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_033c: stloc.1
-		IL_033d: ldstr "A\ud83d"
-		IL_0342: ldstr "toWellFormed"
-		IL_0347: ldstr "String_NewApis_Basic:Modules.String_NewApis_Basic:__js_module_init__:123"
-		IL_034c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_0351: stloc.s 4
-		IL_0353: ldloc.s 4
-		IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_035a: stloc.s 4
-		IL_035c: ldc.i4.0
-		IL_035d: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_0362: brfalse IL_03a7
+		IL_033d: volatile.
+		IL_033f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0344: brfalse IL_035d
 
-		IL_0367: ldloc.s 4
-		IL_0369: isinst [System.Runtime]System.String
-		IL_036e: dup
-		IL_036f: brtrue IL_0387
+		IL_0349: ldstr "\ud83d"
+		IL_034e: ldstr "isWellFormed"
+		IL_0353: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0358: br IL_0376
 
-		IL_0374: pop
-		IL_0375: ldloc.s 4
-		IL_0377: ldstr "charCodeAt"
-		IL_037c: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_0381: dup
-		IL_0382: brfalse IL_03a6
+		IL_035d: ldstr "\ud83d"
+		IL_0362: ldstr "isWellFormed"
+		IL_0367: ldstr "String_NewApis_Basic:Modules.String_NewApis_Basic:__js_module_init__:118"
+		IL_036c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0387: ldc.r8 1
-		IL_0390: box [System.Runtime]System.Double
-		IL_0395: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-		IL_039a: box [System.Runtime]System.Double
-		IL_039f: stloc.s 4
-		IL_03a1: br IL_03c3
+		IL_0376: stloc.s 4
+		IL_0378: ldloc.1
+		IL_0379: ldloc.s 4
+		IL_037b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0380: pop
+		IL_0381: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0386: stloc.1
+		IL_0387: volatile.
+		IL_0389: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_038e: brfalse IL_03a7
 
-		IL_03a6: pop
+		IL_0393: ldstr "A\ud83d"
+		IL_0398: ldstr "toWellFormed"
+		IL_039d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_03a2: br IL_03c0
 
-		IL_03a7: ldloc.s 4
-		IL_03a9: ldstr "charCodeAt"
-		IL_03ae: ldc.r8 1
-		IL_03b7: box [System.Runtime]System.Double
-		IL_03bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03c1: stloc.s 4
+		IL_03a7: ldstr "A\ud83d"
+		IL_03ac: ldstr "toWellFormed"
+		IL_03b1: ldstr "String_NewApis_Basic:Modules.String_NewApis_Basic:__js_module_init__:123"
+		IL_03b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_03bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_03c3: ldloc.1
-		IL_03c4: ldloc.s 4
-		IL_03c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_03cb: pop
-		IL_03cc: ret
+		IL_03c0: stloc.s 4
+		IL_03c2: ldloc.s 4
+		IL_03c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03c9: stloc.s 4
+		IL_03cb: ldc.i4.0
+		IL_03cc: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_03d1: brfalse IL_0416
+
+		IL_03d6: ldloc.s 4
+		IL_03d8: isinst [System.Runtime]System.String
+		IL_03dd: dup
+		IL_03de: brtrue IL_03f6
+
+		IL_03e3: pop
+		IL_03e4: ldloc.s 4
+		IL_03e6: ldstr "charCodeAt"
+		IL_03eb: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_03f0: dup
+		IL_03f1: brfalse IL_0415
+
+		IL_03f6: ldc.r8 1
+		IL_03ff: box [System.Runtime]System.Double
+		IL_0404: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
+		IL_0409: box [System.Runtime]System.Double
+		IL_040e: stloc.s 4
+		IL_0410: br IL_0432
+
+		IL_0415: pop
+
+		IL_0416: ldloc.s 4
+		IL_0418: ldstr "charCodeAt"
+		IL_041d: ldc.r8 1
+		IL_0426: box [System.Runtime]System.Double
+		IL_042b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0430: stloc.s 4
+
+		IL_0432: ldloc.1
+		IL_0433: ldloc.s 4
+		IL_0435: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_043a: pop
+		IL_043b: ret
 	} // end of method String_NewApis_Basic::__js_module_init__
 
 } // end of class Modules.String_NewApis_Basic
@@ -415,4 +448,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

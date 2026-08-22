@@ -385,7 +385,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 334 (0x14e)
+		// Code size: 400 (0x190)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_Basic/Scope,
@@ -415,106 +415,128 @@
 		IL_0021: stloc.3
 		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0027: stloc.s 4
-		IL_0029: ldloc.3
-		IL_002a: ldstr "writable"
-		IL_002f: ldstr "Stream_Writable_Basic:Modules.Stream_Writable_Basic:__js_module_init__:17"
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0039: stloc.s 5
-		IL_003b: ldloc.s 4
-		IL_003d: ldloc.s 5
-		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0044: pop
+		IL_0029: volatile.
+		IL_002b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0030: brfalse IL_0045
+
+		IL_0035: ldloc.3
+		IL_0036: ldstr "writable"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0040: br IL_005a
+
 		IL_0045: ldloc.3
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004b: stloc.s 5
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldloc.0
-		IL_0056: stelem.ref
-		IL_0057: stloc.s 6
-		IL_0059: newobj instance void Modules.Stream_Writable_Basic/FunctionExpression_L12C21/FunctionObject::.ctor()
-		IL_005e: ldc.i4.0
-		IL_005f: conv.r8
-		IL_0060: ldstr ""
-		IL_0065: ldc.i4.0
-		IL_0066: ldc.i4.1
-		IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Stream_Writable_Basic/FunctionExpression_L12C21/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_006c: stloc.s 7
-		IL_006e: ldloc.s 5
-		IL_0070: ldstr "on"
-		IL_0075: ldstr "drain"
-		IL_007a: ldloc.s 7
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0081: pop
-		IL_0082: ldloc.3
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0088: stloc.s 5
-		IL_008a: ldc.i4.1
-		IL_008b: newarr [System.Runtime]System.Object
-		IL_0090: dup
-		IL_0091: ldc.i4.0
-		IL_0092: ldloc.0
-		IL_0093: stelem.ref
-		IL_0094: stloc.s 6
-		IL_0096: newobj instance void Modules.Stream_Writable_Basic/FunctionExpression_L17C22/FunctionObject::.ctor()
-		IL_009b: ldc.i4.0
-		IL_009c: conv.r8
-		IL_009d: ldstr ""
-		IL_00a2: ldc.i4.0
-		IL_00a3: ldc.i4.1
-		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Stream_Writable_Basic/FunctionExpression_L17C22/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00a9: stloc.s 8
-		IL_00ab: ldloc.s 5
-		IL_00ad: ldstr "on"
-		IL_00b2: ldstr "finish"
-		IL_00b7: ldloc.s 8
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00be: pop
-		IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c4: stloc.s 4
-		IL_00c6: ldloc.3
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cc: ldstr "write"
-		IL_00d1: ldstr "chunk1"
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00db: stloc.s 5
-		IL_00dd: ldloc.s 4
-		IL_00df: ldloc.s 5
-		IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e6: pop
-		IL_00e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ec: stloc.s 4
-		IL_00ee: ldloc.3
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f4: ldstr "write"
-		IL_00f9: ldstr "chunk2"
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0103: stloc.s 5
-		IL_0105: ldloc.s 4
-		IL_0107: ldloc.s 5
-		IL_0109: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_010e: pop
+		IL_0046: ldstr "writable"
+		IL_004b: ldstr "Stream_Writable_Basic:Modules.Stream_Writable_Basic:__js_module_init__:17"
+		IL_0050: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_005a: stloc.s 5
+		IL_005c: ldloc.s 4
+		IL_005e: ldloc.s 5
+		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0065: pop
+		IL_0066: ldloc.3
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006c: stloc.s 5
+		IL_006e: ldc.i4.1
+		IL_006f: newarr [System.Runtime]System.Object
+		IL_0074: dup
+		IL_0075: ldc.i4.0
+		IL_0076: ldloc.0
+		IL_0077: stelem.ref
+		IL_0078: stloc.s 6
+		IL_007a: newobj instance void Modules.Stream_Writable_Basic/FunctionExpression_L12C21/FunctionObject::.ctor()
+		IL_007f: ldc.i4.0
+		IL_0080: conv.r8
+		IL_0081: ldstr ""
+		IL_0086: ldc.i4.0
+		IL_0087: ldc.i4.1
+		IL_0088: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Stream_Writable_Basic/FunctionExpression_L12C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_008d: stloc.s 7
+		IL_008f: ldloc.s 5
+		IL_0091: ldstr "on"
+		IL_0096: ldstr "drain"
+		IL_009b: ldloc.s 7
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00a2: pop
+		IL_00a3: ldloc.3
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a9: stloc.s 5
+		IL_00ab: ldc.i4.1
+		IL_00ac: newarr [System.Runtime]System.Object
+		IL_00b1: dup
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldloc.0
+		IL_00b4: stelem.ref
+		IL_00b5: stloc.s 6
+		IL_00b7: newobj instance void Modules.Stream_Writable_Basic/FunctionExpression_L17C22/FunctionObject::.ctor()
+		IL_00bc: ldc.i4.0
+		IL_00bd: conv.r8
+		IL_00be: ldstr ""
+		IL_00c3: ldc.i4.0
+		IL_00c4: ldc.i4.1
+		IL_00c5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Stream_Writable_Basic/FunctionExpression_L17C22/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00ca: stloc.s 8
+		IL_00cc: ldloc.s 5
+		IL_00ce: ldstr "on"
+		IL_00d3: ldstr "finish"
+		IL_00d8: ldloc.s 8
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00df: pop
+		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e5: stloc.s 4
+		IL_00e7: ldloc.3
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ed: ldstr "write"
+		IL_00f2: ldstr "chunk1"
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00fc: stloc.s 5
+		IL_00fe: ldloc.s 4
+		IL_0100: ldloc.s 5
+		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0107: pop
+		IL_0108: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010d: stloc.s 4
 		IL_010f: ldloc.3
 		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0115: ldstr "end"
-		IL_011a: ldstr "final chunk"
+		IL_0115: ldstr "write"
+		IL_011a: ldstr "chunk2"
 		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0124: pop
-		IL_0125: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012a: stloc.s 4
-		IL_012c: ldloc.3
-		IL_012d: ldstr "writable"
-		IL_0132: ldstr "Stream_Writable_Basic:Modules.Stream_Writable_Basic:__js_module_init__:51"
-		IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_013c: stloc.s 5
-		IL_013e: ldloc.s 4
-		IL_0140: ldstr "Writable after end:"
-		IL_0145: ldloc.s 5
-		IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_014c: pop
-		IL_014d: ret
+		IL_0124: stloc.s 5
+		IL_0126: ldloc.s 4
+		IL_0128: ldloc.s 5
+		IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_012f: pop
+		IL_0130: ldloc.3
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0136: ldstr "end"
+		IL_013b: ldstr "final chunk"
+		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0145: pop
+		IL_0146: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_014b: stloc.s 4
+		IL_014d: volatile.
+		IL_014f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0154: brfalse IL_0169
+
+		IL_0159: ldloc.3
+		IL_015a: ldstr "writable"
+		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0164: br IL_017e
+
+		IL_0169: ldloc.3
+		IL_016a: ldstr "writable"
+		IL_016f: ldstr "Stream_Writable_Basic:Modules.Stream_Writable_Basic:__js_module_init__:51"
+		IL_0174: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_017e: stloc.s 5
+		IL_0180: ldloc.s 4
+		IL_0182: ldstr "Writable after end:"
+		IL_0187: ldloc.s 5
+		IL_0189: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_018e: pop
+		IL_018f: ret
 	} // end of method Stream_Writable_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Writable_Basic
@@ -539,4 +561,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

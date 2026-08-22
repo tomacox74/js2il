@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 157 (0x9d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_VoidOperator/Scope,
@@ -149,16 +149,27 @@
 		IL_0059: pop
 		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_005f: stloc.2
-		IL_0060: ldarg.0
-		IL_0061: ldstr "a"
-		IL_0066: ldstr "UnaryOperator_VoidOperator:Modules.UnaryOperator_VoidOperator:__js_module_init__:32"
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0070: stloc.s 4
-		IL_0072: ldloc.2
-		IL_0073: ldloc.s 4
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007a: pop
-		IL_007b: ret
+		IL_0060: volatile.
+		IL_0062: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0067: brfalse IL_007c
+
+		IL_006c: ldarg.0
+		IL_006d: ldstr "a"
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0077: br IL_0091
+
+		IL_007c: ldarg.0
+		IL_007d: ldstr "a"
+		IL_0082: ldstr "UnaryOperator_VoidOperator:Modules.UnaryOperator_VoidOperator:__js_module_init__:32"
+		IL_0087: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0091: stloc.s 4
+		IL_0093: ldloc.2
+		IL_0094: ldloc.s 4
+		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009b: pop
+		IL_009c: ret
 	} // end of method UnaryOperator_VoidOperator::__js_module_init__
 
 } // end of class Modules.UnaryOperator_VoidOperator
@@ -183,4 +194,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

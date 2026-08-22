@@ -131,6 +131,9 @@ public sealed class MethodBodyIR
     internal Dictionary<int, ReceiverTypeSummary>
         ReceiverParameterTypeSummaries { get; } = new();
 
+    internal ReceiverTypeSummary ReceiverThisTypeSummary { get; set; } =
+        ReceiverTypeSummary.Empty;
+
     internal Dictionary<BindingInfo, ReceiverTypeSummary>
         ReceiverCapturedEntryTypeSummaries { get; } = new();
 

@@ -26,6 +26,14 @@ public class DynamicLookupInlineCacheBenchmarks
     private const string MegamorphicSite = "benchmark:megamorphic";
     private const string StringSite = "benchmark:string";
     private const string ArraySite = "benchmark:array";
+    private static int _propertyHitTerminal;
+    private static int _propertyMissTerminal;
+    private static int _propertyInvalidationTerminal;
+    private static int _callHitTerminal;
+    private static int _polymorphicTerminal;
+    private static int _megamorphicTerminal;
+    private static int _stringTerminal;
+    private static int _arrayTerminal;
 
     private readonly JsObject _receiver = new();
     private readonly JsObject[] _polymorphicReceivers =
@@ -66,18 +74,21 @@ public class DynamicLookupInlineCacheBenchmarks
         _ = DynamicLookupInlineCache.GetItem(
             _receiver,
             PropertyName,
-            PropertyHitSite);
+            PropertyHitSite,
+            ref _propertyHitTerminal);
         _ = DynamicLookupInlineCache.CallMember0(
             _receiver,
             MethodName,
-            CallHitSite);
+            CallHitSite,
+            ref _callHitTerminal);
 
         foreach (var receiver in _polymorphicReceivers)
         {
             _ = DynamicLookupInlineCache.GetItem(
                 receiver,
                 PropertyName,
-                PolymorphicSite);
+                PolymorphicSite,
+                ref _polymorphicTerminal);
         }
 
         foreach (var receiver in _megamorphicReceivers)
@@ -85,7 +96,8 @@ public class DynamicLookupInlineCacheBenchmarks
             _ = DynamicLookupInlineCache.GetItem(
                 receiver,
                 PropertyName,
-                MegamorphicSite);
+                MegamorphicSite,
+                ref _megamorphicTerminal);
         }
     }
 
@@ -107,7 +119,8 @@ public class DynamicLookupInlineCacheBenchmarks
         => DynamicLookupInlineCache.GetItem(
             _receiver,
             PropertyName,
-            PropertyHitSite);
+            PropertyHitSite,
+            ref _propertyHitTerminal);
 
     [Benchmark]
     public object CachedPropertyMissWithReset()
@@ -117,7 +130,8 @@ public class DynamicLookupInlineCacheBenchmarks
         return DynamicLookupInlineCache.GetItem(
             _receiver,
             PropertyName,
-            PropertyMissSite);
+            PropertyMissSite,
+            ref _propertyMissTerminal);
     }
 
     [Benchmark]
@@ -132,7 +146,8 @@ public class DynamicLookupInlineCacheBenchmarks
         return DynamicLookupInlineCache.GetItem(
             _receiver,
             PropertyName,
-            PropertyInvalidationSite);
+            PropertyInvalidationSite,
+            ref _propertyInvalidationTerminal);
     }
 
     [Benchmark]
@@ -146,7 +161,8 @@ public class DynamicLookupInlineCacheBenchmarks
         => DynamicLookupInlineCache.CallMember0(
             _receiver,
             MethodName,
-            CallHitSite);
+            CallHitSite,
+            ref _callHitTerminal);
 
     [Benchmark]
     public object CachedPolymorphicHit()
@@ -158,7 +174,8 @@ public class DynamicLookupInlineCacheBenchmarks
         return DynamicLookupInlineCache.GetItem(
             receiver,
             PropertyName,
-            PolymorphicSite);
+            PolymorphicSite,
+            ref _polymorphicTerminal);
     }
 
     [Benchmark]
@@ -168,10 +185,18 @@ public class DynamicLookupInlineCacheBenchmarks
             _megamorphicReceivers[
                 _megamorphicIndex++
                 % _megamorphicReceivers.Length];
+        if (Volatile.Read(ref _megamorphicTerminal) != 0)
+        {
+            return ObjectRuntime.GetItem(
+                receiver,
+                PropertyName);
+        }
+
         return DynamicLookupInlineCache.GetItem(
             receiver,
             PropertyName,
-            MegamorphicSite);
+            MegamorphicSite,
+            ref _megamorphicTerminal);
     }
 
     [Benchmark]
@@ -185,7 +210,8 @@ public class DynamicLookupInlineCacheBenchmarks
         => DynamicLookupInlineCache.GetItem(
             "value",
             "length",
-            StringSite);
+            StringSite,
+            ref _stringTerminal);
 
     [Benchmark]
     public object ArrayGenericLength()
@@ -205,11 +231,17 @@ public class DynamicLookupInlineCacheBenchmarks
         => _array.length;
 
     [Benchmark]
+    public double ArrayLengthGuardedCandidate()
+        => ObjectRuntime.GetArrayLengthWithFallback(
+            _array);
+
+    [Benchmark]
     public object ArrayCacheStubFallback()
         => DynamicLookupInlineCache.GetItem(
             _array,
             "length",
-            ArraySite);
+            ArraySite,
+            ref _arrayTerminal);
 
     private static JsObject[] CreateReceivers(
         int count)

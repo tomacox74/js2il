@@ -260,7 +260,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 162 (0xa2)
+		// Code size: 228 (0xe4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_Function/Scope,
@@ -299,39 +299,61 @@
 		IL_0034: pop
 		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_003a: stloc.s 4
-		IL_003c: ldarg.2
-		IL_003d: ldstr "exports"
-		IL_0042: ldstr "CommonJS_Module_Exports_Function:Modules.CommonJS_Module_Exports_Function:__js_module_init__:16"
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_004c: stloc.s 5
-		IL_004e: ldloc.s 5
-		IL_0050: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0055: stloc.s 6
-		IL_0057: ldloc.s 4
-		IL_0059: ldstr "typeof module.exports:"
-		IL_005e: ldloc.s 6
-		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0065: pop
-		IL_0066: ldarg.2
-		IL_0067: ldstr "exports"
-		IL_006c: ldstr "CommonJS_Module_Exports_Function:Modules.CommonJS_Module_Exports_Function:__js_module_init__:22"
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0076: stloc.2
-		IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007c: stloc.s 4
-		IL_007e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0083: stloc.3
-		IL_0084: ldloc.2
-		IL_0085: ldloc.3
-		IL_0086: ldstr "World"
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0090: stloc.s 5
-		IL_0092: ldloc.s 4
-		IL_0094: ldstr "result:"
-		IL_0099: ldloc.s 5
-		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00a0: pop
-		IL_00a1: ret
+		IL_003c: volatile.
+		IL_003e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0043: brfalse IL_0058
+
+		IL_0048: ldarg.2
+		IL_0049: ldstr "exports"
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0053: br IL_006d
+
+		IL_0058: ldarg.2
+		IL_0059: ldstr "exports"
+		IL_005e: ldstr "CommonJS_Module_Exports_Function:Modules.CommonJS_Module_Exports_Function:__js_module_init__:16"
+		IL_0063: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_006d: stloc.s 5
+		IL_006f: ldloc.s 5
+		IL_0071: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0076: stloc.s 6
+		IL_0078: ldloc.s 4
+		IL_007a: ldstr "typeof module.exports:"
+		IL_007f: ldloc.s 6
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0086: pop
+		IL_0087: volatile.
+		IL_0089: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_008e: brfalse IL_00a3
+
+		IL_0093: ldarg.2
+		IL_0094: ldstr "exports"
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009e: br IL_00b8
+
+		IL_00a3: ldarg.2
+		IL_00a4: ldstr "exports"
+		IL_00a9: ldstr "CommonJS_Module_Exports_Function:Modules.CommonJS_Module_Exports_Function:__js_module_init__:22"
+		IL_00ae: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00b8: stloc.2
+		IL_00b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00be: stloc.s 4
+		IL_00c0: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00c5: stloc.3
+		IL_00c6: ldloc.2
+		IL_00c7: ldloc.3
+		IL_00c8: ldstr "World"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00d2: stloc.s 5
+		IL_00d4: ldloc.s 4
+		IL_00d6: ldstr "result:"
+		IL_00db: ldloc.s 5
+		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00e2: pop
+		IL_00e3: ret
 	} // end of method CommonJS_Module_Exports_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Function
@@ -356,4 +378,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

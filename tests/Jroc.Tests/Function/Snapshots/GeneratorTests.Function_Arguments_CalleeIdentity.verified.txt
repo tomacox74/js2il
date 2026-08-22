@@ -273,7 +273,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 160 (0xa0)
+			// Code size: 224 (0xe0)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_CalleeIdentity/inspect/Scope,
@@ -300,45 +300,65 @@
 			IL_0024: stloc.1
 			IL_0025: ldloc.0
 			IL_0026: ldfld object Modules.Function_Arguments_CalleeIdentity/inspect/Scope::arguments
-			IL_002b: ldstr "callee"
-			IL_0030: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M4>:__js_call__:7"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_003a: stloc.2
-			IL_003b: ldarg.0
-			IL_003c: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::inspect
-			IL_0041: stloc.3
-			IL_0042: ldloc.2
-			IL_0043: ldloc.3
-			IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0049: stloc.s 4
-			IL_004b: ldloc.s 4
-			IL_004d: box [System.Runtime]System.Boolean
-			IL_0052: stloc.s 5
-			IL_0054: ldloc.1
-			IL_0055: ldstr "log"
-			IL_005a: ldloc.s 5
-			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0061: pop
-			IL_0062: ldstr "console"
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0071: stloc.1
-			IL_0072: ldloc.0
-			IL_0073: ldfld object Modules.Function_Arguments_CalleeIdentity/inspect/Scope::arguments
-			IL_0078: ldstr "callee"
-			IL_007d: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M4>:__js_call__:18"
-			IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0087: stloc.3
-			IL_0088: ldloc.3
-			IL_0089: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_008e: stloc.s 6
-			IL_0090: ldloc.1
-			IL_0091: ldstr "log"
-			IL_0096: ldloc.s 6
-			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_009d: pop
-			IL_009e: ldnull
-			IL_009f: ret
+			IL_002b: volatile.
+			IL_002d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0032: brfalse IL_0046
+
+			IL_0037: ldstr "callee"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0041: br IL_005a
+
+			IL_0046: ldstr "callee"
+			IL_004b: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M4>:__js_call__:7"
+			IL_0050: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_005a: stloc.2
+			IL_005b: ldarg.0
+			IL_005c: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::inspect
+			IL_0061: stloc.3
+			IL_0062: ldloc.2
+			IL_0063: ldloc.3
+			IL_0064: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0069: stloc.s 4
+			IL_006b: ldloc.s 4
+			IL_006d: box [System.Runtime]System.Boolean
+			IL_0072: stloc.s 5
+			IL_0074: ldloc.1
+			IL_0075: ldstr "log"
+			IL_007a: ldloc.s 5
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0081: pop
+			IL_0082: ldstr "console"
+			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0091: stloc.1
+			IL_0092: ldloc.0
+			IL_0093: ldfld object Modules.Function_Arguments_CalleeIdentity/inspect/Scope::arguments
+			IL_0098: volatile.
+			IL_009a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_009f: brfalse IL_00b3
+
+			IL_00a4: ldstr "callee"
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ae: br IL_00c7
+
+			IL_00b3: ldstr "callee"
+			IL_00b8: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M4>:__js_call__:18"
+			IL_00bd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00c7: stloc.3
+			IL_00c8: ldloc.3
+			IL_00c9: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_00ce: stloc.s 6
+			IL_00d0: ldloc.1
+			IL_00d1: ldstr "log"
+			IL_00d6: ldloc.s 6
+			IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00dd: pop
+			IL_00de: ldnull
+			IL_00df: ret
 		} // end of method inspect::__js_call__
 
 	} // end of class inspect
@@ -780,7 +800,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 287 (0x11f)
+			// Code size: 351 (0x15f)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_CalleeIdentity/outer/Scope,
@@ -809,87 +829,107 @@
 			IL_0024: stloc.1
 			IL_0025: ldloc.0
 			IL_0026: ldfld object Modules.Function_Arguments_CalleeIdentity/outer/Scope::arguments
-			IL_002b: ldstr "callee"
-			IL_0030: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M6>:__js_call__:7"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_003a: stloc.2
-			IL_003b: ldarg.0
-			IL_003c: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::outer
-			IL_0041: stloc.3
-			IL_0042: ldloc.2
-			IL_0043: ldloc.3
-			IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0049: stloc.s 4
-			IL_004b: ldloc.s 4
-			IL_004d: box [System.Runtime]System.Boolean
-			IL_0052: stloc.s 5
-			IL_0054: ldloc.1
-			IL_0055: ldstr "log"
-			IL_005a: ldloc.s 5
-			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0061: pop
-			IL_0062: ldarg.0
-			IL_0063: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::inspect
-			IL_0068: stloc.1
-			IL_0069: ldc.i4.0
-			IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_006f: stloc.s 6
-			IL_0071: ldc.i4.3
-			IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0077: dup
-			IL_0078: ldc.r8 1
-			IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0086: dup
-			IL_0087: ldc.r8 2
-			IL_0090: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0095: dup
-			IL_0096: ldc.r8 3
-			IL_009f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_00a4: stloc.s 7
-			IL_00a6: ldloc.s 6
-			IL_00a8: ldloc.s 7
-			IL_00aa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-			IL_00af: ldloc.s 6
-			IL_00b1: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-			IL_00b6: stloc.s 8
-			IL_00b8: ldloc.1
-			IL_00b9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-			IL_00be: ldc.i4.1
-			IL_00bf: newarr [System.Runtime]System.Object
-			IL_00c4: dup
-			IL_00c5: ldc.i4.0
-			IL_00c6: ldarg.0
-			IL_00c7: stelem.ref
-			IL_00c8: ldloc.s 8
-			IL_00ca: call object Modules.Function_Arguments_CalleeIdentity/inspect/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
-			IL_00cf: pop
-			IL_00d0: ldstr "console"
-			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00df: stloc.1
-			IL_00e0: ldloc.0
-			IL_00e1: ldfld object Modules.Function_Arguments_CalleeIdentity/outer/Scope::arguments
-			IL_00e6: ldstr "callee"
-			IL_00eb: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M6>:__js_call__:29"
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00f5: stloc.3
-			IL_00f6: ldarg.0
-			IL_00f7: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::outer
-			IL_00fc: stloc.2
-			IL_00fd: ldloc.3
-			IL_00fe: ldloc.2
-			IL_00ff: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0104: stloc.s 4
-			IL_0106: ldloc.s 4
-			IL_0108: box [System.Runtime]System.Boolean
-			IL_010d: stloc.s 5
-			IL_010f: ldloc.1
-			IL_0110: ldstr "log"
-			IL_0115: ldloc.s 5
-			IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_011c: pop
-			IL_011d: ldnull
-			IL_011e: ret
+			IL_002b: volatile.
+			IL_002d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0032: brfalse IL_0046
+
+			IL_0037: ldstr "callee"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0041: br IL_005a
+
+			IL_0046: ldstr "callee"
+			IL_004b: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M6>:__js_call__:7"
+			IL_0050: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_005a: stloc.2
+			IL_005b: ldarg.0
+			IL_005c: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::outer
+			IL_0061: stloc.3
+			IL_0062: ldloc.2
+			IL_0063: ldloc.3
+			IL_0064: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0069: stloc.s 4
+			IL_006b: ldloc.s 4
+			IL_006d: box [System.Runtime]System.Boolean
+			IL_0072: stloc.s 5
+			IL_0074: ldloc.1
+			IL_0075: ldstr "log"
+			IL_007a: ldloc.s 5
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0081: pop
+			IL_0082: ldarg.0
+			IL_0083: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::inspect
+			IL_0088: stloc.1
+			IL_0089: ldc.i4.0
+			IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_008f: stloc.s 6
+			IL_0091: ldc.i4.3
+			IL_0092: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0097: dup
+			IL_0098: ldc.r8 1
+			IL_00a1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_00a6: dup
+			IL_00a7: ldc.r8 2
+			IL_00b0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_00b5: dup
+			IL_00b6: ldc.r8 3
+			IL_00bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_00c4: stloc.s 7
+			IL_00c6: ldloc.s 6
+			IL_00c8: ldloc.s 7
+			IL_00ca: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+			IL_00cf: ldloc.s 6
+			IL_00d1: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+			IL_00d6: stloc.s 8
+			IL_00d8: ldloc.1
+			IL_00d9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			IL_00de: ldc.i4.1
+			IL_00df: newarr [System.Runtime]System.Object
+			IL_00e4: dup
+			IL_00e5: ldc.i4.0
+			IL_00e6: ldarg.0
+			IL_00e7: stelem.ref
+			IL_00e8: ldloc.s 8
+			IL_00ea: call object Modules.Function_Arguments_CalleeIdentity/inspect/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+			IL_00ef: pop
+			IL_00f0: ldstr "console"
+			IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ff: stloc.1
+			IL_0100: ldloc.0
+			IL_0101: ldfld object Modules.Function_Arguments_CalleeIdentity/outer/Scope::arguments
+			IL_0106: volatile.
+			IL_0108: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_010d: brfalse IL_0121
+
+			IL_0112: ldstr "callee"
+			IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_011c: br IL_0135
+
+			IL_0121: ldstr "callee"
+			IL_0126: ldstr "Function_Arguments_CalleeIdentity:<TwoPhaseDummy_M6>:__js_call__:29"
+			IL_012b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0135: stloc.3
+			IL_0136: ldarg.0
+			IL_0137: ldfld object Modules.Function_Arguments_CalleeIdentity/Scope::outer
+			IL_013c: stloc.2
+			IL_013d: ldloc.3
+			IL_013e: ldloc.2
+			IL_013f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0144: stloc.s 4
+			IL_0146: ldloc.s 4
+			IL_0148: box [System.Runtime]System.Boolean
+			IL_014d: stloc.s 5
+			IL_014f: ldloc.1
+			IL_0150: ldstr "log"
+			IL_0155: ldloc.s 5
+			IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_015c: pop
+			IL_015d: ldnull
+			IL_015e: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -1110,4 +1150,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_10
+	.field assembly static int32 __jroc_dynamicLookup_11
+	.field assembly static int32 __jroc_dynamicLookup_12
+	.field assembly static int32 __jroc_dynamicLookup_13
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

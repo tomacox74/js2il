@@ -291,7 +291,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 142 (0x8e)
+		// Code size: 208 (0xd0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassWithStaticMethod_HelloWorld/Scope,
@@ -309,50 +309,72 @@
 		IL_0011: ldtoken Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter
 		IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_001b: stloc.2
-		IL_001c: ldloc.2
-		IL_001d: ldstr "prototype"
-		IL_0022: ldstr "Classes_ClassWithStaticMethod_HelloWorld:Modules.Classes_ClassWithStaticMethod_HelloWorld:__js_module_init__:6"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002c: pop
-		IL_002d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0032: stloc.3
-		IL_0033: ldloc.2
-		IL_0034: ldstr "helloWorld"
-		IL_0039: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject::.ctor()
-		IL_003e: ldc.i4.0
-		IL_003f: conv.r8
-		IL_0040: ldstr "helloWorld"
-		IL_0045: ldc.i4.0
-		IL_0046: ldc.i4.1
-		IL_0047: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_004c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject>(!!0)
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0056: pop
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.0
-		IL_0060: stelem.ref
-		IL_0061: stloc.3
-		IL_0062: ldloc.3
-		IL_0063: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject::.ctor(object[])
-		IL_0068: ldloc.2
-		IL_0069: ldloc.3
-		IL_006a: ldc.i4.0
-		IL_006b: conv.r8
-		IL_006c: ldc.i4.0
-		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0072: castclass Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject
-		IL_0077: stloc.s 4
-		IL_0079: ldloc.s 4
-		IL_007b: stloc.1
-		IL_007c: ldloc.1
-		IL_007d: ldstr "helloWorld"
-		IL_0082: ldstr "Classes_ClassWithStaticMethod_HelloWorld:Modules.Classes_ClassWithStaticMethod_HelloWorld:__js_module_init__:16"
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_008c: pop
-		IL_008d: ret
+		IL_001c: volatile.
+		IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0023: brfalse IL_0038
+
+		IL_0028: ldloc.2
+		IL_0029: ldstr "prototype"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: br IL_004d
+
+		IL_0038: ldloc.2
+		IL_0039: ldstr "prototype"
+		IL_003e: ldstr "Classes_ClassWithStaticMethod_HelloWorld:Modules.Classes_ClassWithStaticMethod_HelloWorld:__js_module_init__:6"
+		IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_004d: pop
+		IL_004e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0053: stloc.3
+		IL_0054: ldloc.2
+		IL_0055: ldstr "helloWorld"
+		IL_005a: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject::.ctor()
+		IL_005f: ldc.i4.0
+		IL_0060: conv.r8
+		IL_0061: ldstr "helloWorld"
+		IL_0066: ldc.i4.0
+		IL_0067: ldc.i4.1
+		IL_0068: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/Scope_helloWorld/FunctionObject>(!!0)
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0077: pop
+		IL_0078: ldc.i4.1
+		IL_0079: newarr [System.Runtime]System.Object
+		IL_007e: dup
+		IL_007f: ldc.i4.0
+		IL_0080: ldloc.0
+		IL_0081: stelem.ref
+		IL_0082: stloc.3
+		IL_0083: ldloc.3
+		IL_0084: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject::.ctor(object[])
+		IL_0089: ldloc.2
+		IL_008a: ldloc.3
+		IL_008b: ldc.i4.0
+		IL_008c: conv.r8
+		IL_008d: ldc.i4.0
+		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0093: castclass Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject
+		IL_0098: stloc.s 4
+		IL_009a: ldloc.s 4
+		IL_009c: stloc.1
+		IL_009d: volatile.
+		IL_009f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00a4: brfalse IL_00b9
+
+		IL_00a9: ldloc.1
+		IL_00aa: ldstr "helloWorld"
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00b4: br IL_00ce
+
+		IL_00b9: ldloc.1
+		IL_00ba: ldstr "helloWorld"
+		IL_00bf: ldstr "Classes_ClassWithStaticMethod_HelloWorld:Modules.Classes_ClassWithStaticMethod_HelloWorld:__js_module_init__:16"
+		IL_00c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_00ce: pop
+		IL_00cf: ret
 	} // end of method Classes_ClassWithStaticMethod_HelloWorld::__js_module_init__
 
 } // end of class Modules.Classes_ClassWithStaticMethod_HelloWorld
@@ -377,4 +399,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -700,7 +700,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 851 (0x353)
+		// Code size: 883 (0x373)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Events_EventEmitter_On_Off_Once/Scope,
@@ -979,23 +979,33 @@
 		IL_0311: pop
 		IL_0312: ldloc.s 4
 		IL_0314: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0319: ldstr "removeAllListeners"
-		IL_031e: ldstr "Events_EventEmitter_On_Off_Once:Modules.Events_EventEmitter_On_Off_Once:__js_module_init__:118"
-		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_0328: pop
-		IL_0329: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_032e: stloc.s 6
-		IL_0330: ldloc.s 4
-		IL_0332: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0337: ldstr "listenerCount"
-		IL_033c: ldstr "beta"
-		IL_0341: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0346: stloc.s 7
-		IL_0348: ldloc.s 6
-		IL_034a: ldloc.s 7
-		IL_034c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0351: pop
-		IL_0352: ret
+		IL_0319: volatile.
+		IL_031b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0320: brfalse IL_0334
+
+		IL_0325: ldstr "removeAllListeners"
+		IL_032a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_032f: br IL_0348
+
+		IL_0334: ldstr "removeAllListeners"
+		IL_0339: ldstr "Events_EventEmitter_On_Off_Once:Modules.Events_EventEmitter_On_Off_Once:__js_module_init__:118"
+		IL_033e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0343: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_0348: pop
+		IL_0349: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_034e: stloc.s 6
+		IL_0350: ldloc.s 4
+		IL_0352: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0357: ldstr "listenerCount"
+		IL_035c: ldstr "beta"
+		IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0366: stloc.s 7
+		IL_0368: ldloc.s 6
+		IL_036a: ldloc.s 7
+		IL_036c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0371: pop
+		IL_0372: ret
 	} // end of method Events_EventEmitter_On_Off_Once::__js_module_init__
 
 } // end of class Modules.Events_EventEmitter_On_Off_Once
@@ -1020,4 +1030,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_6
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

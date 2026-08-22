@@ -277,7 +277,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 278 (0x116)
+			// Code size: 342 (0x156)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope,
@@ -321,78 +321,98 @@
 			IL_004b: stloc.1
 			IL_004c: ldloc.0
 			IL_004d: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
-			IL_0052: ldstr "length"
-			IL_0057: ldstr "Function_Arguments_Length_Delete:<TwoPhaseDummy_M4>:__js_call__:9"
-			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0061: stloc.2
-			IL_0062: ldloc.1
-			IL_0063: ldloc.2
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0069: pop
-			IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006f: stloc.1
-			IL_0070: ldloc.0
-			IL_0071: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
-			IL_0076: stloc.2
-			IL_0077: ldloc.2
-			IL_0078: ldstr "length"
-			IL_007d: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeletePropertyNonStrict(object, object)
-			IL_0082: stloc.3
-			IL_0083: ldloc.3
-			IL_0084: box [System.Runtime]System.Boolean
-			IL_0089: stloc.s 4
-			IL_008b: ldloc.1
-			IL_008c: ldloc.s 4
-			IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0093: pop
-			IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0099: stloc.1
-			IL_009a: ldloc.0
-			IL_009b: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
-			IL_00a0: stloc.2
-			IL_00a1: ldstr "length"
-			IL_00a6: ldloc.2
-			IL_00a7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-			IL_00ac: stloc.3
-			IL_00ad: ldloc.3
-			IL_00ae: box [System.Runtime]System.Boolean
-			IL_00b3: stloc.s 4
-			IL_00b5: ldloc.1
-			IL_00b6: ldloc.s 4
-			IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00bd: pop
-			IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c3: stloc.1
-			IL_00c4: ldloc.0
-			IL_00c5: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
-			IL_00ca: ldstr "length"
-			IL_00cf: ldstr "Function_Arguments_Length_Delete:<TwoPhaseDummy_M4>:__js_call__:30"
-			IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00d9: stloc.2
-			IL_00da: ldloc.1
-			IL_00db: ldloc.2
-			IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00e1: pop
-			IL_00e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00e7: stloc.1
-			IL_00e8: ldloc.0
-			IL_00e9: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
-			IL_00ee: stloc.2
-			IL_00ef: ldloc.2
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-			IL_00f5: stloc.2
-			IL_00f6: ldloc.2
-			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00fc: ldstr "join"
-			IL_0101: ldstr ","
-			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_010b: stloc.2
-			IL_010c: ldloc.1
-			IL_010d: ldloc.2
-			IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0113: pop
-			IL_0114: ldnull
-			IL_0115: ret
+			IL_0052: volatile.
+			IL_0054: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0059: brfalse IL_006d
+
+			IL_005e: ldstr "length"
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0068: br IL_0081
+
+			IL_006d: ldstr "length"
+			IL_0072: ldstr "Function_Arguments_Length_Delete:<TwoPhaseDummy_M4>:__js_call__:9"
+			IL_0077: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0081: stloc.2
+			IL_0082: ldloc.1
+			IL_0083: ldloc.2
+			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0089: pop
+			IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008f: stloc.1
+			IL_0090: ldloc.0
+			IL_0091: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
+			IL_0096: stloc.2
+			IL_0097: ldloc.2
+			IL_0098: ldstr "length"
+			IL_009d: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeletePropertyNonStrict(object, object)
+			IL_00a2: stloc.3
+			IL_00a3: ldloc.3
+			IL_00a4: box [System.Runtime]System.Boolean
+			IL_00a9: stloc.s 4
+			IL_00ab: ldloc.1
+			IL_00ac: ldloc.s 4
+			IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b3: pop
+			IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b9: stloc.1
+			IL_00ba: ldloc.0
+			IL_00bb: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
+			IL_00c0: stloc.2
+			IL_00c1: ldstr "length"
+			IL_00c6: ldloc.2
+			IL_00c7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+			IL_00cc: stloc.3
+			IL_00cd: ldloc.3
+			IL_00ce: box [System.Runtime]System.Boolean
+			IL_00d3: stloc.s 4
+			IL_00d5: ldloc.1
+			IL_00d6: ldloc.s 4
+			IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00dd: pop
+			IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e3: stloc.1
+			IL_00e4: ldloc.0
+			IL_00e5: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
+			IL_00ea: volatile.
+			IL_00ec: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_00f1: brfalse IL_0105
+
+			IL_00f6: ldstr "length"
+			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0100: br IL_0119
+
+			IL_0105: ldstr "length"
+			IL_010a: ldstr "Function_Arguments_Length_Delete:<TwoPhaseDummy_M4>:__js_call__:30"
+			IL_010f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0119: stloc.2
+			IL_011a: ldloc.1
+			IL_011b: ldloc.2
+			IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0121: pop
+			IL_0122: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0127: stloc.1
+			IL_0128: ldloc.0
+			IL_0129: ldfld object Modules.Function_Arguments_Length_Delete/'<>DynamicFunction_L3C16'/Scope::arguments
+			IL_012e: stloc.2
+			IL_012f: ldloc.2
+			IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+			IL_0135: stloc.2
+			IL_0136: ldloc.2
+			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_013c: ldstr "join"
+			IL_0141: ldstr ","
+			IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_014b: stloc.2
+			IL_014c: ldloc.1
+			IL_014d: ldloc.2
+			IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0153: pop
+			IL_0154: ldnull
+			IL_0155: ret
 		} // end of method '<>DynamicFunction_L3C16'::__js_call__
 
 	} // end of class <>DynamicFunction_L3C16
@@ -632,7 +652,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 363 (0x16b)
+		// Code size: 429 (0x1ad)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Arguments_Length_Delete/Scope,
@@ -703,66 +723,88 @@
 		IL_00a8: stloc.3
 		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00ae: stloc.s 5
-		IL_00b0: ldloc.3
-		IL_00b1: ldstr "length"
-		IL_00b6: ldstr "Function_Arguments_Length_Delete:Modules.Function_Arguments_Length_Delete:__js_module_init__:29"
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00c0: stloc.s 6
-		IL_00c2: ldloc.s 5
-		IL_00c4: ldloc.s 6
-		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cb: pop
-		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d1: stloc.s 5
-		IL_00d3: ldloc.3
-		IL_00d4: ldstr "length"
-		IL_00d9: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_00de: stloc.s 7
-		IL_00e0: ldloc.s 7
-		IL_00e2: box [System.Runtime]System.Boolean
-		IL_00e7: stloc.s 8
-		IL_00e9: ldloc.s 5
-		IL_00eb: ldloc.s 8
-		IL_00ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f2: pop
-		IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f8: stloc.s 5
-		IL_00fa: ldstr "length"
-		IL_00ff: ldloc.3
-		IL_0100: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_0105: stloc.s 7
-		IL_0107: ldloc.s 7
-		IL_0109: box [System.Runtime]System.Boolean
-		IL_010e: stloc.s 8
-		IL_0110: ldloc.s 5
-		IL_0112: ldloc.s 8
-		IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0119: pop
-		IL_011a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011f: stloc.s 5
-		IL_0121: ldloc.3
-		IL_0122: ldstr "length"
-		IL_0127: ldstr "Function_Arguments_Length_Delete:Modules.Function_Arguments_Length_Delete:__js_module_init__:47"
-		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0131: stloc.s 6
-		IL_0133: ldloc.s 5
-		IL_0135: ldloc.s 6
-		IL_0137: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_013c: pop
-		IL_013d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0142: stloc.s 5
-		IL_0144: ldloc.3
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_014f: ldstr "join"
-		IL_0154: ldstr ","
-		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_015e: stloc.s 6
-		IL_0160: ldloc.s 5
-		IL_0162: ldloc.s 6
-		IL_0164: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0169: pop
-		IL_016a: ret
+		IL_00b0: volatile.
+		IL_00b2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00b7: brfalse IL_00cc
+
+		IL_00bc: ldloc.3
+		IL_00bd: ldstr "length"
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c7: br IL_00e1
+
+		IL_00cc: ldloc.3
+		IL_00cd: ldstr "length"
+		IL_00d2: ldstr "Function_Arguments_Length_Delete:Modules.Function_Arguments_Length_Delete:__js_module_init__:29"
+		IL_00d7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00e1: stloc.s 6
+		IL_00e3: ldloc.s 5
+		IL_00e5: ldloc.s 6
+		IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ec: pop
+		IL_00ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f2: stloc.s 5
+		IL_00f4: ldloc.3
+		IL_00f5: ldstr "length"
+		IL_00fa: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_00ff: stloc.s 7
+		IL_0101: ldloc.s 7
+		IL_0103: box [System.Runtime]System.Boolean
+		IL_0108: stloc.s 8
+		IL_010a: ldloc.s 5
+		IL_010c: ldloc.s 8
+		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0113: pop
+		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0119: stloc.s 5
+		IL_011b: ldstr "length"
+		IL_0120: ldloc.3
+		IL_0121: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_0126: stloc.s 7
+		IL_0128: ldloc.s 7
+		IL_012a: box [System.Runtime]System.Boolean
+		IL_012f: stloc.s 8
+		IL_0131: ldloc.s 5
+		IL_0133: ldloc.s 8
+		IL_0135: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_013a: pop
+		IL_013b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0140: stloc.s 5
+		IL_0142: volatile.
+		IL_0144: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0149: brfalse IL_015e
+
+		IL_014e: ldloc.3
+		IL_014f: ldstr "length"
+		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0159: br IL_0173
+
+		IL_015e: ldloc.3
+		IL_015f: ldstr "length"
+		IL_0164: ldstr "Function_Arguments_Length_Delete:Modules.Function_Arguments_Length_Delete:__js_module_init__:47"
+		IL_0169: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0173: stloc.s 6
+		IL_0175: ldloc.s 5
+		IL_0177: ldloc.s 6
+		IL_0179: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_017e: pop
+		IL_017f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0184: stloc.s 5
+		IL_0186: ldloc.3
+		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0191: ldstr "join"
+		IL_0196: ldstr ","
+		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01a0: stloc.s 6
+		IL_01a2: ldloc.s 5
+		IL_01a4: ldloc.s 6
+		IL_01a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ab: pop
+		IL_01ac: ret
 	} // end of method Function_Arguments_Length_Delete::__js_module_init__
 
 } // end of class Modules.Function_Arguments_Length_Delete
@@ -787,4 +829,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

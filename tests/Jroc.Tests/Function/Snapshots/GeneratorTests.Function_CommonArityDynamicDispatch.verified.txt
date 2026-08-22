@@ -246,7 +246,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 190 (0xbe)
+			// Code size: 286 (0x11e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_CommonArityDynamicDispatch/collect/Scope,
@@ -270,59 +270,89 @@
 			IL_0011: stfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
 			IL_0016: ldloc.0
 			IL_0017: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
-			IL_001c: ldstr "length"
-			IL_0021: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:4"
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_002b: stloc.3
-			IL_002c: ldloc.3
-			IL_002d: ldc.r8 0.0
-			IL_0036: box [System.Runtime]System.Double
-			IL_003b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0040: stloc.s 4
-			IL_0042: ldloc.s 4
-			IL_0044: brfalse IL_0054
+			IL_001c: volatile.
+			IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_0023: brfalse IL_0037
 
-			IL_0049: ldstr ""
-			IL_004e: stloc.1
-			IL_004f: br IL_008c
+			IL_0028: ldstr "length"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0032: br IL_004b
 
-			IL_0054: ldloc.0
-			IL_0055: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
-			IL_005a: ldloc.0
-			IL_005b: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
-			IL_0060: ldstr "length"
-			IL_0065: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:16"
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_006f: stloc.3
-			IL_0070: ldloc.3
-			IL_0071: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0076: ldc.r8 1
-			IL_007f: sub
-			IL_0080: stloc.s 5
-			IL_0082: ldloc.s 5
-			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0089: stloc.3
-			IL_008a: ldloc.3
-			IL_008b: stloc.1
+			IL_0037: ldstr "length"
+			IL_003c: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:4"
+			IL_0041: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_008c: ldloc.1
-			IL_008d: stloc.2
-			IL_008e: ldloc.0
-			IL_008f: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
-			IL_0094: ldstr "length"
-			IL_0099: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:27"
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00a3: stloc.3
-			IL_00a4: ldloc.3
-			IL_00a5: ldstr ":"
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00af: stloc.s 6
-			IL_00b1: ldloc.s 6
-			IL_00b3: ldloc.2
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00b9: stloc.s 6
-			IL_00bb: ldloc.s 6
-			IL_00bd: ret
+			IL_004b: stloc.3
+			IL_004c: ldloc.3
+			IL_004d: ldc.r8 0.0
+			IL_0056: box [System.Runtime]System.Double
+			IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0060: stloc.s 4
+			IL_0062: ldloc.s 4
+			IL_0064: brfalse IL_0074
+
+			IL_0069: ldstr ""
+			IL_006e: stloc.1
+			IL_006f: br IL_00cc
+
+			IL_0074: ldloc.0
+			IL_0075: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
+			IL_007a: ldloc.0
+			IL_007b: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
+			IL_0080: volatile.
+			IL_0082: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0087: brfalse IL_009b
+
+			IL_008c: ldstr "length"
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0096: br IL_00af
+
+			IL_009b: ldstr "length"
+			IL_00a0: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:16"
+			IL_00a5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00af: stloc.3
+			IL_00b0: ldloc.3
+			IL_00b1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00b6: ldc.r8 1
+			IL_00bf: sub
+			IL_00c0: stloc.s 5
+			IL_00c2: ldloc.s 5
+			IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00c9: stloc.3
+			IL_00ca: ldloc.3
+			IL_00cb: stloc.1
+
+			IL_00cc: ldloc.1
+			IL_00cd: stloc.2
+			IL_00ce: ldloc.0
+			IL_00cf: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
+			IL_00d4: volatile.
+			IL_00d6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_00db: brfalse IL_00ef
+
+			IL_00e0: ldstr "length"
+			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ea: br IL_0103
+
+			IL_00ef: ldstr "length"
+			IL_00f4: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:27"
+			IL_00f9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0103: stloc.3
+			IL_0104: ldloc.3
+			IL_0105: ldstr ":"
+			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_010f: stloc.s 6
+			IL_0111: ldloc.s 6
+			IL_0113: ldloc.2
+			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0119: stloc.s 6
+			IL_011b: ldloc.s 6
+			IL_011d: ret
 		} // end of method collect::__js_call__
 
 	} // end of class collect
@@ -649,7 +679,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 146 (0x92)
+			// Code size: 210 (0xd2)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_CommonArityDynamicDispatch/Box/Scope,
@@ -669,44 +699,64 @@
 			IL_0011: stfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
 			IL_0016: ldloc.0
 			IL_0017: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
-			IL_001c: ldstr "length"
-			IL_0021: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M6>:__js_call__:5"
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_002b: stloc.1
-			IL_002c: ldarg.1
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0037: ldstr "count"
-			IL_003c: ldloc.1
-			IL_003d: ldc.i4.1
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0043: pop
-			IL_0044: ldloc.0
-			IL_0045: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
-			IL_004a: ldloc.0
-			IL_004b: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
-			IL_0050: ldstr "length"
-			IL_0055: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M6>:__js_call__:13"
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_005f: stloc.1
-			IL_0060: ldloc.1
-			IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0066: ldc.r8 1
-			IL_006f: sub
-			IL_0070: stloc.2
-			IL_0071: ldloc.2
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0077: stloc.1
-			IL_0078: ldarg.1
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0083: ldstr "last"
-			IL_0088: ldloc.1
-			IL_0089: ldc.i4.1
-			IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_008f: pop
-			IL_0090: ldnull
-			IL_0091: ret
+			IL_001c: volatile.
+			IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_0023: brfalse IL_0037
+
+			IL_0028: ldstr "length"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0032: br IL_004b
+
+			IL_0037: ldstr "length"
+			IL_003c: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M6>:__js_call__:5"
+			IL_0041: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_004b: stloc.1
+			IL_004c: ldarg.1
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0057: ldstr "count"
+			IL_005c: ldloc.1
+			IL_005d: ldc.i4.1
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0063: pop
+			IL_0064: ldloc.0
+			IL_0065: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
+			IL_006a: ldloc.0
+			IL_006b: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
+			IL_0070: volatile.
+			IL_0072: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_0077: brfalse IL_008b
+
+			IL_007c: ldstr "length"
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0086: br IL_009f
+
+			IL_008b: ldstr "length"
+			IL_0090: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M6>:__js_call__:13"
+			IL_0095: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_009f: stloc.1
+			IL_00a0: ldloc.1
+			IL_00a1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00a6: ldc.r8 1
+			IL_00af: sub
+			IL_00b0: stloc.2
+			IL_00b1: ldloc.2
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00b7: stloc.1
+			IL_00b8: ldarg.1
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_00c3: ldstr "last"
+			IL_00c8: ldloc.1
+			IL_00c9: ldc.i4.1
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_00cf: pop
+			IL_00d0: ldnull
+			IL_00d1: ret
 		} // end of method Box::__js_call__
 
 	} // end of class Box
@@ -752,7 +802,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1885 (0x75d)
+		// Code size: 2021 (0x7e5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_CommonArityDynamicDispatch/Scope,
@@ -1180,93 +1230,137 @@
 		IL_0625: stloc.s 10
 		IL_0627: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_062c: stloc.s 13
-		IL_062e: ldloc.s 7
-		IL_0630: ldstr "count"
-		IL_0635: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:240"
-		IL_063a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_063f: stloc.s 14
-		IL_0641: ldloc.s 13
-		IL_0643: ldloc.s 14
-		IL_0645: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_064a: pop
-		IL_064b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0650: stloc.s 13
-		IL_0652: ldloc.s 8
-		IL_0654: ldstr "last"
-		IL_0659: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:245"
-		IL_065e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0663: stloc.s 14
-		IL_0665: ldloc.s 13
-		IL_0667: ldloc.s 14
-		IL_0669: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_066e: pop
-		IL_066f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0674: stloc.s 13
-		IL_0676: ldloc.s 9
-		IL_0678: ldstr "last"
-		IL_067d: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:250"
-		IL_0682: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0687: stloc.s 14
-		IL_0689: ldloc.s 13
-		IL_068b: ldloc.s 14
-		IL_068d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0692: pop
-		IL_0693: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0698: stloc.s 13
-		IL_069a: ldloc.s 10
-		IL_069c: ldstr "count"
-		IL_06a1: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:255"
-		IL_06a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_06ab: stloc.s 14
-		IL_06ad: ldloc.s 13
-		IL_06af: ldloc.s 14
-		IL_06b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_06b6: pop
-		IL_06b7: ldc.i4.6
-		IL_06b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_06bd: dup
-		IL_06be: ldc.r8 31
-		IL_06c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_06cc: dup
-		IL_06cd: ldc.r8 32
-		IL_06d6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_06db: dup
-		IL_06dc: ldc.r8 33
-		IL_06e5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_06ea: dup
-		IL_06eb: ldc.r8 34
-		IL_06f4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_06f9: dup
-		IL_06fa: ldc.r8 35
-		IL_0703: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0708: dup
-		IL_0709: ldc.r8 36
-		IL_0712: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0717: stloc.s 11
-		IL_0719: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_071e: stloc.s 13
-		IL_0720: ldloc.0
-		IL_0721: ldfld object Modules.Function_CommonArityDynamicDispatch/Scope::fn
-		IL_0726: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_072b: stloc.s 12
-		IL_072d: ldc.i4.0
-		IL_072e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0733: stloc.s 17
-		IL_0735: ldloc.s 17
-		IL_0737: ldloc.s 11
-		IL_0739: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_073e: ldloc.s 17
-		IL_0740: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-		IL_0745: stloc.s 18
-		IL_0747: ldloc.s 12
-		IL_0749: ldloc.s 18
-		IL_074b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0750: stloc.s 14
-		IL_0752: ldloc.s 13
-		IL_0754: ldloc.s 14
-		IL_0756: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_075b: pop
-		IL_075c: ret
+		IL_062e: volatile.
+		IL_0630: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0635: brfalse IL_064b
+
+		IL_063a: ldloc.s 7
+		IL_063c: ldstr "count"
+		IL_0641: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0646: br IL_0661
+
+		IL_064b: ldloc.s 7
+		IL_064d: ldstr "count"
+		IL_0652: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:240"
+		IL_0657: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_065c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0661: stloc.s 14
+		IL_0663: ldloc.s 13
+		IL_0665: ldloc.s 14
+		IL_0667: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_066c: pop
+		IL_066d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0672: stloc.s 13
+		IL_0674: volatile.
+		IL_0676: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_067b: brfalse IL_0691
+
+		IL_0680: ldloc.s 8
+		IL_0682: ldstr "last"
+		IL_0687: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_068c: br IL_06a7
+
+		IL_0691: ldloc.s 8
+		IL_0693: ldstr "last"
+		IL_0698: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:245"
+		IL_069d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_06a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_06a7: stloc.s 14
+		IL_06a9: ldloc.s 13
+		IL_06ab: ldloc.s 14
+		IL_06ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_06b2: pop
+		IL_06b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_06b8: stloc.s 13
+		IL_06ba: volatile.
+		IL_06bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_06c1: brfalse IL_06d7
+
+		IL_06c6: ldloc.s 9
+		IL_06c8: ldstr "last"
+		IL_06cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_06d2: br IL_06ed
+
+		IL_06d7: ldloc.s 9
+		IL_06d9: ldstr "last"
+		IL_06de: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:250"
+		IL_06e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_06e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_06ed: stloc.s 14
+		IL_06ef: ldloc.s 13
+		IL_06f1: ldloc.s 14
+		IL_06f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_06f8: pop
+		IL_06f9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_06fe: stloc.s 13
+		IL_0700: volatile.
+		IL_0702: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_0707: brfalse IL_071d
+
+		IL_070c: ldloc.s 10
+		IL_070e: ldstr "count"
+		IL_0713: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0718: br IL_0733
+
+		IL_071d: ldloc.s 10
+		IL_071f: ldstr "count"
+		IL_0724: ldstr "Function_CommonArityDynamicDispatch:Modules.Function_CommonArityDynamicDispatch:__js_module_init__:255"
+		IL_0729: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_072e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0733: stloc.s 14
+		IL_0735: ldloc.s 13
+		IL_0737: ldloc.s 14
+		IL_0739: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_073e: pop
+		IL_073f: ldc.i4.6
+		IL_0740: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0745: dup
+		IL_0746: ldc.r8 31
+		IL_074f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0754: dup
+		IL_0755: ldc.r8 32
+		IL_075e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0763: dup
+		IL_0764: ldc.r8 33
+		IL_076d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0772: dup
+		IL_0773: ldc.r8 34
+		IL_077c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0781: dup
+		IL_0782: ldc.r8 35
+		IL_078b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0790: dup
+		IL_0791: ldc.r8 36
+		IL_079a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_079f: stloc.s 11
+		IL_07a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_07a6: stloc.s 13
+		IL_07a8: ldloc.0
+		IL_07a9: ldfld object Modules.Function_CommonArityDynamicDispatch/Scope::fn
+		IL_07ae: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_07b3: stloc.s 12
+		IL_07b5: ldc.i4.0
+		IL_07b6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_07bb: stloc.s 17
+		IL_07bd: ldloc.s 17
+		IL_07bf: ldloc.s 11
+		IL_07c1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_07c6: ldloc.s 17
+		IL_07c8: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+		IL_07cd: stloc.s 18
+		IL_07cf: ldloc.s 12
+		IL_07d1: ldloc.s 18
+		IL_07d3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_07d8: stloc.s 14
+		IL_07da: ldloc.s 13
+		IL_07dc: ldloc.s 14
+		IL_07de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_07e3: pop
+		IL_07e4: ret
 	} // end of method Function_CommonArityDynamicDispatch::__js_module_init__
 
 } // end of class Modules.Function_CommonArityDynamicDispatch
@@ -1291,4 +1385,20 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+	.field assembly static int32 __jroc_dynamicLookup_10
+	.field assembly static int32 __jroc_dynamicLookup_11
+	.field assembly static int32 __jroc_dynamicLookup_12
+	.field assembly static int32 __jroc_dynamicLookup_13
+	.field assembly static int32 __jroc_dynamicLookup_14
+	.field assembly static int32 __jroc_dynamicLookup_15
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

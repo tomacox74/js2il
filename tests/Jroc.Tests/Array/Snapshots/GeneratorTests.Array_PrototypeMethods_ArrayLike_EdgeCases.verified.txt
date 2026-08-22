@@ -1298,7 +1298,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2116 (0x844)
+		// Code size: 3044 (0xbe4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope,
@@ -1350,684 +1350,980 @@
 			IL_0021: nop
 			IL_0022: ldstr "Array"
 			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_002c: ldstr "prototype"
-			IL_0031: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:14"
-			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_003b: stloc.s 22
-			IL_003d: ldloc.s 22
-			IL_003f: ldstr "reduce"
-			IL_0044: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:16"
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_004e: stloc.s 22
-			IL_0050: ldloc.s 22
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0057: ldstr "call"
-			IL_005c: ldloc.1
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0062: pop
-			IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0068: stloc.s 23
-			IL_006a: ldloc.s 23
-			IL_006c: ldstr "no-throw"
-			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0076: pop
-			IL_0077: leave IL_00d1
+			IL_002c: volatile.
+			IL_002e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0033: brfalse IL_0047
+
+			IL_0038: ldstr "prototype"
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0042: br IL_005b
+
+			IL_0047: ldstr "prototype"
+			IL_004c: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:14"
+			IL_0051: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_005b: stloc.s 22
+			IL_005d: volatile.
+			IL_005f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0064: brfalse IL_007a
+
+			IL_0069: ldloc.s 22
+			IL_006b: ldstr "reduce"
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0075: br IL_0090
+
+			IL_007a: ldloc.s 22
+			IL_007c: ldstr "reduce"
+			IL_0081: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:16"
+			IL_0086: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0090: stloc.s 22
+			IL_0092: ldloc.s 22
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0099: ldstr "call"
+			IL_009e: ldloc.1
+			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00a4: pop
+			IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00aa: stloc.s 23
+			IL_00ac: ldloc.s 23
+			IL_00ae: ldstr "no-throw"
+			IL_00b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b8: pop
+			IL_00b9: leave IL_0135
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_007c: stloc.2
-			IL_007d: ldloc.2
-			IL_007e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0083: dup
-			IL_0084: brtrue IL_0099
+			IL_00be: stloc.2
+			IL_00bf: ldloc.2
+			IL_00c0: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00c5: dup
+			IL_00c6: brtrue IL_00db
 
-			IL_0089: pop
-			IL_008a: ldloc.2
-			IL_008b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0090: dup
-			IL_0091: brtrue IL_00a4
-
-			IL_0096: pop
-			IL_0097: rethrow
-
-			IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_009e: stloc.3
-			IL_009f: br IL_00a5
-
-			IL_00a4: stloc.3
-
-			IL_00a5: ldloc.3
-			IL_00a6: stloc.s 4
-			IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ad: stloc.s 23
-			IL_00af: ldloc.s 4
-			IL_00b1: ldstr "name"
-			IL_00b6: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:33"
-			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00c0: stloc.s 22
-			IL_00c2: ldloc.s 23
-			IL_00c4: ldloc.s 22
-			IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_00cb: pop
-			IL_00cc: leave IL_00d1
+			IL_00cc: ldloc.2
+			IL_00cd: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00d2: dup
+			IL_00d3: brtrue IL_00e6
+
+			IL_00d8: pop
+			IL_00d9: rethrow
+
+			IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00e0: stloc.3
+			IL_00e1: br IL_00e7
+
+			IL_00e6: stloc.3
+
+			IL_00e7: ldloc.3
+			IL_00e8: stloc.s 4
+			IL_00ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00ef: stloc.s 23
+			IL_00f1: volatile.
+			IL_00f3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_00f8: brfalse IL_010e
+
+			IL_00fd: ldloc.s 4
+			IL_00ff: ldstr "name"
+			IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0109: br IL_0124
+
+			IL_010e: ldloc.s 4
+			IL_0110: ldstr "name"
+			IL_0115: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:33"
+			IL_011a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0124: stloc.s 22
+			IL_0126: ldloc.s 23
+			IL_0128: ldloc.s 22
+			IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_012f: pop
+			IL_0130: leave IL_0135
 		} // end handler
 		.try
 		{
-			IL_00d1: nop
-			IL_00d2: ldstr "Array"
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00dc: ldstr "prototype"
-			IL_00e1: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:46"
-			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00eb: stloc.s 22
-			IL_00ed: ldloc.s 22
-			IL_00ef: ldstr "reduceRight"
-			IL_00f4: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:48"
-			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00fe: stloc.s 22
-			IL_0100: ldloc.s 22
-			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0107: ldstr "call"
-			IL_010c: ldloc.1
-			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0112: pop
-			IL_0113: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0118: stloc.s 23
-			IL_011a: ldloc.s 23
-			IL_011c: ldstr "no-throw"
-			IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0126: pop
-			IL_0127: leave IL_0187
+			IL_0135: nop
+			IL_0136: ldstr "Array"
+			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0140: volatile.
+			IL_0142: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_0147: brfalse IL_015b
+
+			IL_014c: ldstr "prototype"
+			IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0156: br IL_016f
+
+			IL_015b: ldstr "prototype"
+			IL_0160: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:46"
+			IL_0165: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_016f: stloc.s 22
+			IL_0171: volatile.
+			IL_0173: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0178: brfalse IL_018e
+
+			IL_017d: ldloc.s 22
+			IL_017f: ldstr "reduceRight"
+			IL_0184: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0189: br IL_01a4
+
+			IL_018e: ldloc.s 22
+			IL_0190: ldstr "reduceRight"
+			IL_0195: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:48"
+			IL_019a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_01a4: stloc.s 22
+			IL_01a6: ldloc.s 22
+			IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01ad: ldstr "call"
+			IL_01b2: ldloc.1
+			IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_01b8: pop
+			IL_01b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01be: stloc.s 23
+			IL_01c0: ldloc.s 23
+			IL_01c2: ldstr "no-throw"
+			IL_01c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01cc: pop
+			IL_01cd: leave IL_024f
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_012c: stloc.s 5
-			IL_012e: ldloc.s 5
-			IL_0130: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0135: dup
-			IL_0136: brtrue IL_014c
+			IL_01d2: stloc.s 5
+			IL_01d4: ldloc.s 5
+			IL_01d6: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_01db: dup
+			IL_01dc: brtrue IL_01f2
 
-			IL_013b: pop
-			IL_013c: ldloc.s 5
-			IL_013e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0143: dup
-			IL_0144: brtrue IL_0158
+			IL_01e1: pop
+			IL_01e2: ldloc.s 5
+			IL_01e4: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_01e9: dup
+			IL_01ea: brtrue IL_01fe
 
-			IL_0149: pop
-			IL_014a: rethrow
+			IL_01ef: pop
+			IL_01f0: rethrow
 
-			IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0151: stloc.s 6
-			IL_0153: br IL_015a
+			IL_01f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_01f7: stloc.s 6
+			IL_01f9: br IL_0200
 
-			IL_0158: stloc.s 6
+			IL_01fe: stloc.s 6
 
-			IL_015a: ldloc.s 6
-			IL_015c: stloc.s 7
-			IL_015e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0163: stloc.s 23
-			IL_0165: ldloc.s 7
-			IL_0167: ldstr "name"
-			IL_016c: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:65"
-			IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0176: stloc.s 22
-			IL_0178: ldloc.s 23
-			IL_017a: ldloc.s 22
-			IL_017c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0181: pop
-			IL_0182: leave IL_0187
+			IL_0200: ldloc.s 6
+			IL_0202: stloc.s 7
+			IL_0204: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0209: stloc.s 23
+			IL_020b: volatile.
+			IL_020d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_0212: brfalse IL_0228
+
+			IL_0217: ldloc.s 7
+			IL_0219: ldstr "name"
+			IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0223: br IL_023e
+
+			IL_0228: ldloc.s 7
+			IL_022a: ldstr "name"
+			IL_022f: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:65"
+			IL_0234: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_023e: stloc.s 22
+			IL_0240: ldloc.s 23
+			IL_0242: ldloc.s 22
+			IL_0244: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0249: pop
+			IL_024a: leave IL_024f
 		} // end handler
 
-		IL_0187: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_018c: dup
-		IL_018d: ldstr "length"
-		IL_0192: ldc.r8 3
-		IL_019b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_01a0: dup
-		IL_01a1: ldstr "1"
-		IL_01a6: ldstr "b"
-		IL_01ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_01b0: stloc.s 8
-		IL_01b2: ldloc.0
-		IL_01b3: ldc.r8 0.0
-		IL_01bc: box [System.Runtime]System.Double
-		IL_01c1: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_01c6: ldstr "Array"
-		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01d0: ldstr "prototype"
-		IL_01d5: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:84"
-		IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_01df: stloc.s 22
-		IL_01e1: ldloc.s 22
-		IL_01e3: ldstr "reduce"
-		IL_01e8: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:86"
-		IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_01f2: stloc.s 22
-		IL_01f4: ldloc.s 22
-		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01fb: stloc.s 22
-		IL_01fd: ldc.i4.1
-		IL_01fe: newarr [System.Runtime]System.Object
-		IL_0203: dup
-		IL_0204: ldc.i4.0
-		IL_0205: ldloc.0
-		IL_0206: stelem.ref
-		IL_0207: stloc.s 24
-		IL_0209: ldloc.s 24
-		IL_020b: ldc.i4.0
-		IL_020c: ldelem.ref
-		IL_020d: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
-		IL_0212: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r1/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
-		IL_0217: ldc.i4.2
-		IL_0218: conv.r8
-		IL_0219: ldstr ""
-		IL_021e: ldc.i4.0
-		IL_021f: ldc.i4.1
-		IL_0220: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r1/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0225: stloc.s 25
-		IL_0227: ldloc.s 22
-		IL_0229: ldstr "call"
-		IL_022e: ldloc.s 8
-		IL_0230: ldloc.s 25
-		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0237: stloc.s 9
-		IL_0239: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_023e: stloc.s 23
-		IL_0240: ldloc.s 23
-		IL_0242: ldloc.s 9
-		IL_0244: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0249: pop
-		IL_024a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_024f: stloc.s 23
-		IL_0251: ldloc.0
-		IL_0252: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_0257: stloc.s 22
-		IL_0259: ldloc.s 23
-		IL_025b: ldloc.s 22
-		IL_025d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0262: pop
-		IL_0263: ldloc.0
-		IL_0264: ldc.r8 0.0
-		IL_026d: box [System.Runtime]System.Double
-		IL_0272: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_0277: ldstr "Array"
-		IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0281: ldstr "prototype"
-		IL_0286: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:107"
-		IL_028b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0290: stloc.s 22
-		IL_0292: ldloc.s 22
-		IL_0294: ldstr "reduce"
-		IL_0299: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:109"
-		IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_02a3: stloc.s 22
-		IL_02a5: ldloc.s 22
-		IL_02a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02ac: stloc.s 22
-		IL_02ae: ldc.i4.1
-		IL_02af: newarr [System.Runtime]System.Object
-		IL_02b4: dup
-		IL_02b5: ldc.i4.0
-		IL_02b6: ldloc.0
-		IL_02b7: stelem.ref
-		IL_02b8: stloc.s 24
-		IL_02ba: ldloc.s 24
-		IL_02bc: ldc.i4.0
-		IL_02bd: ldelem.ref
-		IL_02be: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
-		IL_02c3: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r2/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
-		IL_02c8: ldc.i4.2
-		IL_02c9: conv.r8
-		IL_02ca: ldstr ""
-		IL_02cf: ldc.i4.0
-		IL_02d0: ldc.i4.1
-		IL_02d1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r2/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02d6: stloc.s 26
-		IL_02d8: ldloc.s 22
-		IL_02da: ldstr "call"
-		IL_02df: ldloc.s 8
-		IL_02e1: ldloc.s 26
-		IL_02e3: ldstr ""
-		IL_02e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_02ed: stloc.s 10
-		IL_02ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02f4: stloc.s 23
-		IL_02f6: ldloc.s 23
-		IL_02f8: ldloc.s 10
-		IL_02fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02ff: pop
-		IL_0300: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0305: stloc.s 23
-		IL_0307: ldloc.0
-		IL_0308: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_030d: stloc.s 22
-		IL_030f: ldloc.s 23
-		IL_0311: ldloc.s 22
-		IL_0313: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0318: pop
-		IL_0319: ldloc.0
-		IL_031a: ldc.r8 0.0
-		IL_0323: box [System.Runtime]System.Double
-		IL_0328: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_032d: ldstr "Array"
-		IL_0332: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0337: ldstr "prototype"
-		IL_033c: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:131"
-		IL_0341: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0346: stloc.s 22
-		IL_0348: ldloc.s 22
-		IL_034a: ldstr "reduceRight"
-		IL_034f: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:133"
-		IL_0354: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0359: stloc.s 22
-		IL_035b: ldloc.s 22
-		IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0362: stloc.s 22
-		IL_0364: ldc.i4.1
-		IL_0365: newarr [System.Runtime]System.Object
-		IL_036a: dup
-		IL_036b: ldc.i4.0
-		IL_036c: ldloc.0
-		IL_036d: stelem.ref
-		IL_036e: stloc.s 24
-		IL_0370: ldloc.s 24
-		IL_0372: ldc.i4.0
-		IL_0373: ldelem.ref
-		IL_0374: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
-		IL_0379: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r3/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
-		IL_037e: ldc.i4.2
-		IL_037f: conv.r8
-		IL_0380: ldstr ""
-		IL_0385: ldc.i4.0
-		IL_0386: ldc.i4.1
-		IL_0387: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r3/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_038c: stloc.s 27
-		IL_038e: ldloc.s 22
-		IL_0390: ldstr "call"
-		IL_0395: ldloc.s 8
-		IL_0397: ldloc.s 27
-		IL_0399: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_039e: stloc.s 11
-		IL_03a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03a5: stloc.s 23
-		IL_03a7: ldloc.s 23
-		IL_03a9: ldloc.s 11
-		IL_03ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_03b0: pop
-		IL_03b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03b6: stloc.s 23
-		IL_03b8: ldloc.0
-		IL_03b9: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_03be: stloc.s 22
-		IL_03c0: ldloc.s 23
-		IL_03c2: ldloc.s 22
-		IL_03c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_03c9: pop
-		IL_03ca: ldloc.0
-		IL_03cb: ldc.r8 0.0
-		IL_03d4: box [System.Runtime]System.Double
-		IL_03d9: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_03de: ldstr "Array"
-		IL_03e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03e8: ldstr "prototype"
-		IL_03ed: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:154"
-		IL_03f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_03f7: stloc.s 22
-		IL_03f9: ldloc.s 22
-		IL_03fb: ldstr "reduceRight"
-		IL_0400: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:156"
-		IL_0405: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_040a: stloc.s 22
-		IL_040c: ldloc.s 22
-		IL_040e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0413: stloc.s 22
-		IL_0415: ldc.i4.1
-		IL_0416: newarr [System.Runtime]System.Object
-		IL_041b: dup
-		IL_041c: ldc.i4.0
-		IL_041d: ldloc.0
-		IL_041e: stelem.ref
-		IL_041f: stloc.s 24
-		IL_0421: ldloc.s 24
-		IL_0423: ldc.i4.0
-		IL_0424: ldelem.ref
-		IL_0425: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
-		IL_042a: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r4/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
-		IL_042f: ldc.i4.2
-		IL_0430: conv.r8
-		IL_0431: ldstr ""
-		IL_0436: ldc.i4.0
-		IL_0437: ldc.i4.1
-		IL_0438: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r4/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_043d: stloc.s 28
-		IL_043f: ldloc.s 22
-		IL_0441: ldstr "call"
-		IL_0446: ldloc.s 8
-		IL_0448: ldloc.s 28
-		IL_044a: ldstr ""
-		IL_044f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0454: stloc.s 12
-		IL_0456: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_045b: stloc.s 23
-		IL_045d: ldloc.s 23
-		IL_045f: ldloc.s 12
-		IL_0461: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0466: pop
-		IL_0467: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_046c: stloc.s 23
-		IL_046e: ldloc.0
-		IL_046f: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
-		IL_0474: stloc.s 22
-		IL_0476: ldloc.s 23
-		IL_0478: ldloc.s 22
-		IL_047a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_047f: pop
-		IL_0480: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0485: dup
-		IL_0486: ldstr "length"
-		IL_048b: ldc.r8 2
-		IL_0494: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0499: stloc.s 13
+		IL_024f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0254: dup
+		IL_0255: ldstr "length"
+		IL_025a: ldc.r8 3
+		IL_0263: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0268: dup
+		IL_0269: ldstr "1"
+		IL_026e: ldstr "b"
+		IL_0273: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0278: stloc.s 8
+		IL_027a: ldloc.0
+		IL_027b: ldc.r8 0.0
+		IL_0284: box [System.Runtime]System.Double
+		IL_0289: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_028e: ldstr "Array"
+		IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0298: volatile.
+		IL_029a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_029f: brfalse IL_02b3
+
+		IL_02a4: ldstr "prototype"
+		IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02ae: br IL_02c7
+
+		IL_02b3: ldstr "prototype"
+		IL_02b8: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:84"
+		IL_02bd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_02c7: stloc.s 22
+		IL_02c9: volatile.
+		IL_02cb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_02d0: brfalse IL_02e6
+
+		IL_02d5: ldloc.s 22
+		IL_02d7: ldstr "reduce"
+		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02e1: br IL_02fc
+
+		IL_02e6: ldloc.s 22
+		IL_02e8: ldstr "reduce"
+		IL_02ed: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:86"
+		IL_02f2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_02f7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_02fc: stloc.s 22
+		IL_02fe: ldloc.s 22
+		IL_0300: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0305: stloc.s 22
+		IL_0307: ldc.i4.1
+		IL_0308: newarr [System.Runtime]System.Object
+		IL_030d: dup
+		IL_030e: ldc.i4.0
+		IL_030f: ldloc.0
+		IL_0310: stelem.ref
+		IL_0311: stloc.s 24
+		IL_0313: ldloc.s 24
+		IL_0315: ldc.i4.0
+		IL_0316: ldelem.ref
+		IL_0317: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
+		IL_031c: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r1/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
+		IL_0321: ldc.i4.2
+		IL_0322: conv.r8
+		IL_0323: ldstr ""
+		IL_0328: ldc.i4.0
+		IL_0329: ldc.i4.1
+		IL_032a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r1/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_032f: stloc.s 25
+		IL_0331: ldloc.s 22
+		IL_0333: ldstr "call"
+		IL_0338: ldloc.s 8
+		IL_033a: ldloc.s 25
+		IL_033c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0341: stloc.s 9
+		IL_0343: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0348: stloc.s 23
+		IL_034a: ldloc.s 23
+		IL_034c: ldloc.s 9
+		IL_034e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0353: pop
+		IL_0354: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0359: stloc.s 23
+		IL_035b: ldloc.0
+		IL_035c: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_0361: stloc.s 22
+		IL_0363: ldloc.s 23
+		IL_0365: ldloc.s 22
+		IL_0367: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_036c: pop
+		IL_036d: ldloc.0
+		IL_036e: ldc.r8 0.0
+		IL_0377: box [System.Runtime]System.Double
+		IL_037c: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_0381: ldstr "Array"
+		IL_0386: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_038b: volatile.
+		IL_038d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_0392: brfalse IL_03a6
+
+		IL_0397: ldstr "prototype"
+		IL_039c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03a1: br IL_03ba
+
+		IL_03a6: ldstr "prototype"
+		IL_03ab: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:107"
+		IL_03b0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_03b5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_03ba: stloc.s 22
+		IL_03bc: volatile.
+		IL_03be: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_03c3: brfalse IL_03d9
+
+		IL_03c8: ldloc.s 22
+		IL_03ca: ldstr "reduce"
+		IL_03cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03d4: br IL_03ef
+
+		IL_03d9: ldloc.s 22
+		IL_03db: ldstr "reduce"
+		IL_03e0: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:109"
+		IL_03e5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_03ea: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_03ef: stloc.s 22
+		IL_03f1: ldloc.s 22
+		IL_03f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03f8: stloc.s 22
+		IL_03fa: ldc.i4.1
+		IL_03fb: newarr [System.Runtime]System.Object
+		IL_0400: dup
+		IL_0401: ldc.i4.0
+		IL_0402: ldloc.0
+		IL_0403: stelem.ref
+		IL_0404: stloc.s 24
+		IL_0406: ldloc.s 24
+		IL_0408: ldc.i4.0
+		IL_0409: ldelem.ref
+		IL_040a: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
+		IL_040f: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r2/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
+		IL_0414: ldc.i4.2
+		IL_0415: conv.r8
+		IL_0416: ldstr ""
+		IL_041b: ldc.i4.0
+		IL_041c: ldc.i4.1
+		IL_041d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r2/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0422: stloc.s 26
+		IL_0424: ldloc.s 22
+		IL_0426: ldstr "call"
+		IL_042b: ldloc.s 8
+		IL_042d: ldloc.s 26
+		IL_042f: ldstr ""
+		IL_0434: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0439: stloc.s 10
+		IL_043b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0440: stloc.s 23
+		IL_0442: ldloc.s 23
+		IL_0444: ldloc.s 10
+		IL_0446: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_044b: pop
+		IL_044c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0451: stloc.s 23
+		IL_0453: ldloc.0
+		IL_0454: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_0459: stloc.s 22
+		IL_045b: ldloc.s 23
+		IL_045d: ldloc.s 22
+		IL_045f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0464: pop
+		IL_0465: ldloc.0
+		IL_0466: ldc.r8 0.0
+		IL_046f: box [System.Runtime]System.Double
+		IL_0474: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_0479: ldstr "Array"
+		IL_047e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0483: volatile.
+		IL_0485: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_048a: brfalse IL_049e
+
+		IL_048f: ldstr "prototype"
+		IL_0494: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0499: br IL_04b2
+
+		IL_049e: ldstr "prototype"
+		IL_04a3: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:131"
+		IL_04a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_04ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_04b2: stloc.s 22
+		IL_04b4: volatile.
+		IL_04b6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_04bb: brfalse IL_04d1
+
+		IL_04c0: ldloc.s 22
+		IL_04c2: ldstr "reduceRight"
+		IL_04c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04cc: br IL_04e7
+
+		IL_04d1: ldloc.s 22
+		IL_04d3: ldstr "reduceRight"
+		IL_04d8: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:133"
+		IL_04dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_04e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_04e7: stloc.s 22
+		IL_04e9: ldloc.s 22
+		IL_04eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04f0: stloc.s 22
+		IL_04f2: ldc.i4.1
+		IL_04f3: newarr [System.Runtime]System.Object
+		IL_04f8: dup
+		IL_04f9: ldc.i4.0
+		IL_04fa: ldloc.0
+		IL_04fb: stelem.ref
+		IL_04fc: stloc.s 24
+		IL_04fe: ldloc.s 24
+		IL_0500: ldc.i4.0
+		IL_0501: ldelem.ref
+		IL_0502: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
+		IL_0507: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r3/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
+		IL_050c: ldc.i4.2
+		IL_050d: conv.r8
+		IL_050e: ldstr ""
+		IL_0513: ldc.i4.0
+		IL_0514: ldc.i4.1
+		IL_0515: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r3/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_051a: stloc.s 27
+		IL_051c: ldloc.s 22
+		IL_051e: ldstr "call"
+		IL_0523: ldloc.s 8
+		IL_0525: ldloc.s 27
+		IL_0527: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_052c: stloc.s 11
+		IL_052e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0533: stloc.s 23
+		IL_0535: ldloc.s 23
+		IL_0537: ldloc.s 11
+		IL_0539: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_053e: pop
+		IL_053f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0544: stloc.s 23
+		IL_0546: ldloc.0
+		IL_0547: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_054c: stloc.s 22
+		IL_054e: ldloc.s 23
+		IL_0550: ldloc.s 22
+		IL_0552: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0557: pop
+		IL_0558: ldloc.0
+		IL_0559: ldc.r8 0.0
+		IL_0562: box [System.Runtime]System.Double
+		IL_0567: stfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_056c: ldstr "Array"
+		IL_0571: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0576: volatile.
+		IL_0578: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_057d: brfalse IL_0591
+
+		IL_0582: ldstr "prototype"
+		IL_0587: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_058c: br IL_05a5
+
+		IL_0591: ldstr "prototype"
+		IL_0596: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:154"
+		IL_059b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_05a0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_05a5: stloc.s 22
+		IL_05a7: volatile.
+		IL_05a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_05ae: brfalse IL_05c4
+
+		IL_05b3: ldloc.s 22
+		IL_05b5: ldstr "reduceRight"
+		IL_05ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_05bf: br IL_05da
+
+		IL_05c4: ldloc.s 22
+		IL_05c6: ldstr "reduceRight"
+		IL_05cb: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:156"
+		IL_05d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_05d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_05da: stloc.s 22
+		IL_05dc: ldloc.s 22
+		IL_05de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05e3: stloc.s 22
+		IL_05e5: ldc.i4.1
+		IL_05e6: newarr [System.Runtime]System.Object
+		IL_05eb: dup
+		IL_05ec: ldc.i4.0
+		IL_05ed: ldloc.0
+		IL_05ee: stelem.ref
+		IL_05ef: stloc.s 24
+		IL_05f1: ldloc.s 24
+		IL_05f3: ldc.i4.0
+		IL_05f4: ldelem.ref
+		IL_05f5: castclass Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope
+		IL_05fa: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r4/FunctionObject::.ctor(class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope)
+		IL_05ff: ldc.i4.2
+		IL_0600: conv.r8
+		IL_0601: ldstr ""
+		IL_0606: ldc.i4.0
+		IL_0607: ldc.i4.1
+		IL_0608: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_r4/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_060d: stloc.s 28
+		IL_060f: ldloc.s 22
+		IL_0611: ldstr "call"
+		IL_0616: ldloc.s 8
+		IL_0618: ldloc.s 28
+		IL_061a: ldstr ""
+		IL_061f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0624: stloc.s 12
+		IL_0626: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_062b: stloc.s 23
+		IL_062d: ldloc.s 23
+		IL_062f: ldloc.s 12
+		IL_0631: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0636: pop
+		IL_0637: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_063c: stloc.s 23
+		IL_063e: ldloc.0
+		IL_063f: ldfld object Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::calls
+		IL_0644: stloc.s 22
+		IL_0646: ldloc.s 23
+		IL_0648: ldloc.s 22
+		IL_064a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_064f: pop
+		IL_0650: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0655: dup
+		IL_0656: ldstr "length"
+		IL_065b: ldc.r8 2
+		IL_0664: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0669: stloc.s 13
 		.try
 		{
-			IL_049b: nop
-			IL_049c: ldstr "Array"
-			IL_04a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_04a6: ldstr "prototype"
-			IL_04ab: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:181"
-			IL_04b0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_04b5: stloc.s 22
-			IL_04b7: ldloc.s 22
-			IL_04b9: ldstr "reduce"
-			IL_04be: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:183"
-			IL_04c3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_04c8: stloc.s 22
-			IL_04ca: ldloc.s 22
-			IL_04cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_04d1: stloc.s 22
-			IL_04d3: ldc.i4.1
-			IL_04d4: newarr [System.Runtime]System.Object
-			IL_04d9: dup
-			IL_04da: ldc.i4.0
-			IL_04db: ldloc.0
-			IL_04dc: stelem.ref
-			IL_04dd: stloc.s 24
-			IL_04df: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L57C37/FunctionObject::.ctor()
-			IL_04e4: ldc.i4.2
-			IL_04e5: conv.r8
-			IL_04e6: ldstr ""
-			IL_04eb: ldc.i4.0
-			IL_04ec: ldc.i4.1
-			IL_04ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L57C37/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_04f2: stloc.s 29
-			IL_04f4: ldloc.s 22
-			IL_04f6: ldstr "call"
-			IL_04fb: ldloc.s 13
-			IL_04fd: ldloc.s 29
-			IL_04ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0504: pop
-			IL_0505: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_050a: stloc.s 23
-			IL_050c: ldloc.s 23
-			IL_050e: ldstr "no-throw"
-			IL_0513: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0518: pop
-			IL_0519: leave IL_0579
+			IL_066b: nop
+			IL_066c: ldstr "Array"
+			IL_0671: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0676: volatile.
+			IL_0678: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_067d: brfalse IL_0691
+
+			IL_0682: ldstr "prototype"
+			IL_0687: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_068c: br IL_06a5
+
+			IL_0691: ldstr "prototype"
+			IL_0696: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:181"
+			IL_069b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_06a0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_06a5: stloc.s 22
+			IL_06a7: volatile.
+			IL_06a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_06ae: brfalse IL_06c4
+
+			IL_06b3: ldloc.s 22
+			IL_06b5: ldstr "reduce"
+			IL_06ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_06bf: br IL_06da
+
+			IL_06c4: ldloc.s 22
+			IL_06c6: ldstr "reduce"
+			IL_06cb: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:183"
+			IL_06d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_06d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_06da: stloc.s 22
+			IL_06dc: ldloc.s 22
+			IL_06de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_06e3: stloc.s 22
+			IL_06e5: ldc.i4.1
+			IL_06e6: newarr [System.Runtime]System.Object
+			IL_06eb: dup
+			IL_06ec: ldc.i4.0
+			IL_06ed: ldloc.0
+			IL_06ee: stelem.ref
+			IL_06ef: stloc.s 24
+			IL_06f1: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L57C37/FunctionObject::.ctor()
+			IL_06f6: ldc.i4.2
+			IL_06f7: conv.r8
+			IL_06f8: ldstr ""
+			IL_06fd: ldc.i4.0
+			IL_06fe: ldc.i4.1
+			IL_06ff: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L57C37/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0704: stloc.s 29
+			IL_0706: ldloc.s 22
+			IL_0708: ldstr "call"
+			IL_070d: ldloc.s 13
+			IL_070f: ldloc.s 29
+			IL_0711: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0716: pop
+			IL_0717: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_071c: stloc.s 23
+			IL_071e: ldloc.s 23
+			IL_0720: ldstr "no-throw"
+			IL_0725: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_072a: pop
+			IL_072b: leave IL_07ad
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_051e: stloc.s 14
-			IL_0520: ldloc.s 14
-			IL_0522: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0527: dup
-			IL_0528: brtrue IL_053e
+			IL_0730: stloc.s 14
+			IL_0732: ldloc.s 14
+			IL_0734: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0739: dup
+			IL_073a: brtrue IL_0750
 
-			IL_052d: pop
-			IL_052e: ldloc.s 14
-			IL_0530: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0535: dup
-			IL_0536: brtrue IL_054a
+			IL_073f: pop
+			IL_0740: ldloc.s 14
+			IL_0742: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0747: dup
+			IL_0748: brtrue IL_075c
 
-			IL_053b: pop
-			IL_053c: rethrow
+			IL_074d: pop
+			IL_074e: rethrow
 
-			IL_053e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0543: stloc.s 15
-			IL_0545: br IL_054c
+			IL_0750: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0755: stloc.s 15
+			IL_0757: br IL_075e
 
-			IL_054a: stloc.s 15
+			IL_075c: stloc.s 15
 
-			IL_054c: ldloc.s 15
-			IL_054e: stloc.s 16
-			IL_0550: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0555: stloc.s 23
-			IL_0557: ldloc.s 16
-			IL_0559: ldstr "name"
-			IL_055e: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:202"
-			IL_0563: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0568: stloc.s 22
-			IL_056a: ldloc.s 23
-			IL_056c: ldloc.s 22
-			IL_056e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0573: pop
-			IL_0574: leave IL_0579
+			IL_075e: ldloc.s 15
+			IL_0760: stloc.s 16
+			IL_0762: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0767: stloc.s 23
+			IL_0769: volatile.
+			IL_076b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_0770: brfalse IL_0786
+
+			IL_0775: ldloc.s 16
+			IL_0777: ldstr "name"
+			IL_077c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0781: br IL_079c
+
+			IL_0786: ldloc.s 16
+			IL_0788: ldstr "name"
+			IL_078d: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:202"
+			IL_0792: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_0797: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_079c: stloc.s 22
+			IL_079e: ldloc.s 23
+			IL_07a0: ldloc.s 22
+			IL_07a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_07a7: pop
+			IL_07a8: leave IL_07ad
 		} // end handler
 		.try
 		{
-			IL_0579: nop
-			IL_057a: ldstr "Array"
-			IL_057f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0584: ldstr "prototype"
-			IL_0589: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:215"
-			IL_058e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0593: stloc.s 22
-			IL_0595: ldloc.s 22
-			IL_0597: ldstr "reduceRight"
-			IL_059c: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:217"
-			IL_05a1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_05a6: stloc.s 22
-			IL_05a8: ldloc.s 22
-			IL_05aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_05af: stloc.s 22
-			IL_05b1: ldc.i4.1
-			IL_05b2: newarr [System.Runtime]System.Object
-			IL_05b7: dup
-			IL_05b8: ldc.i4.0
-			IL_05b9: ldloc.0
-			IL_05ba: stelem.ref
-			IL_05bb: stloc.s 24
-			IL_05bd: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L66C42/FunctionObject::.ctor()
-			IL_05c2: ldc.i4.2
-			IL_05c3: conv.r8
-			IL_05c4: ldstr ""
-			IL_05c9: ldc.i4.0
-			IL_05ca: ldc.i4.1
-			IL_05cb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L66C42/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_05d0: stloc.s 30
-			IL_05d2: ldloc.s 22
-			IL_05d4: ldstr "call"
-			IL_05d9: ldloc.s 13
-			IL_05db: ldloc.s 30
-			IL_05dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_05e2: pop
-			IL_05e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_05e8: stloc.s 23
-			IL_05ea: ldloc.s 23
-			IL_05ec: ldstr "no-throw"
-			IL_05f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_05f6: pop
-			IL_05f7: leave IL_0657
+			IL_07ad: nop
+			IL_07ae: ldstr "Array"
+			IL_07b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_07b8: volatile.
+			IL_07ba: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_07bf: brfalse IL_07d3
+
+			IL_07c4: ldstr "prototype"
+			IL_07c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_07ce: br IL_07e7
+
+			IL_07d3: ldstr "prototype"
+			IL_07d8: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:215"
+			IL_07dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_07e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_07e7: stloc.s 22
+			IL_07e9: volatile.
+			IL_07eb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_07f0: brfalse IL_0806
+
+			IL_07f5: ldloc.s 22
+			IL_07f7: ldstr "reduceRight"
+			IL_07fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0801: br IL_081c
+
+			IL_0806: ldloc.s 22
+			IL_0808: ldstr "reduceRight"
+			IL_080d: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:217"
+			IL_0812: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_0817: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_081c: stloc.s 22
+			IL_081e: ldloc.s 22
+			IL_0820: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0825: stloc.s 22
+			IL_0827: ldc.i4.1
+			IL_0828: newarr [System.Runtime]System.Object
+			IL_082d: dup
+			IL_082e: ldc.i4.0
+			IL_082f: ldloc.0
+			IL_0830: stelem.ref
+			IL_0831: stloc.s 24
+			IL_0833: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L66C42/FunctionObject::.ctor()
+			IL_0838: ldc.i4.2
+			IL_0839: conv.r8
+			IL_083a: ldstr ""
+			IL_083f: ldc.i4.0
+			IL_0840: ldc.i4.1
+			IL_0841: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/FunctionExpression_L66C42/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0846: stloc.s 30
+			IL_0848: ldloc.s 22
+			IL_084a: ldstr "call"
+			IL_084f: ldloc.s 13
+			IL_0851: ldloc.s 30
+			IL_0853: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0858: pop
+			IL_0859: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_085e: stloc.s 23
+			IL_0860: ldloc.s 23
+			IL_0862: ldstr "no-throw"
+			IL_0867: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_086c: pop
+			IL_086d: leave IL_08ef
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_05fc: stloc.s 17
-			IL_05fe: ldloc.s 17
-			IL_0600: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0605: dup
-			IL_0606: brtrue IL_061c
+			IL_0872: stloc.s 17
+			IL_0874: ldloc.s 17
+			IL_0876: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_087b: dup
+			IL_087c: brtrue IL_0892
 
-			IL_060b: pop
-			IL_060c: ldloc.s 17
-			IL_060e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0613: dup
-			IL_0614: brtrue IL_0628
+			IL_0881: pop
+			IL_0882: ldloc.s 17
+			IL_0884: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0889: dup
+			IL_088a: brtrue IL_089e
 
-			IL_0619: pop
-			IL_061a: rethrow
+			IL_088f: pop
+			IL_0890: rethrow
 
-			IL_061c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0621: stloc.s 18
-			IL_0623: br IL_062a
+			IL_0892: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0897: stloc.s 18
+			IL_0899: br IL_08a0
 
-			IL_0628: stloc.s 18
+			IL_089e: stloc.s 18
 
-			IL_062a: ldloc.s 18
-			IL_062c: stloc.s 19
-			IL_062e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0633: stloc.s 23
-			IL_0635: ldloc.s 19
-			IL_0637: ldstr "name"
-			IL_063c: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:236"
-			IL_0641: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0646: stloc.s 22
-			IL_0648: ldloc.s 23
-			IL_064a: ldloc.s 22
-			IL_064c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0651: pop
-			IL_0652: leave IL_0657
+			IL_08a0: ldloc.s 18
+			IL_08a2: stloc.s 19
+			IL_08a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_08a9: stloc.s 23
+			IL_08ab: volatile.
+			IL_08ad: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_08b2: brfalse IL_08c8
+
+			IL_08b7: ldloc.s 19
+			IL_08b9: ldstr "name"
+			IL_08be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_08c3: br IL_08de
+
+			IL_08c8: ldloc.s 19
+			IL_08ca: ldstr "name"
+			IL_08cf: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:236"
+			IL_08d4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_08d9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_08de: stloc.s 22
+			IL_08e0: ldloc.s 23
+			IL_08e2: ldloc.s 22
+			IL_08e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_08e9: pop
+			IL_08ea: leave IL_08ef
 		} // end handler
 
-		IL_0657: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_065c: dup
-		IL_065d: ldstr "0"
-		IL_0662: ldstr "a"
-		IL_0667: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_066c: dup
-		IL_066d: ldstr "1"
-		IL_0672: ldstr "b"
-		IL_0677: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_067c: dup
-		IL_067d: ldstr "length"
-		IL_0682: ldc.r8 2
-		IL_068b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0690: stloc.s 20
-		IL_0692: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0697: stloc.s 23
-		IL_0699: ldstr "Array"
-		IL_069e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_06a3: ldstr "prototype"
-		IL_06a8: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:253"
-		IL_06ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_06b2: stloc.s 22
-		IL_06b4: ldloc.s 22
-		IL_06b6: ldstr "indexOf"
-		IL_06bb: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:255"
-		IL_06c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_06c5: stloc.s 22
-		IL_06c7: ldloc.s 22
-		IL_06c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_06ce: ldstr "call"
-		IL_06d3: ldloc.s 20
-		IL_06d5: ldstr "b"
-		IL_06da: ldc.r8 (00 00 00 00 00 00 F0 7F)
-		IL_06e3: box [System.Runtime]System.Double
-		IL_06e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_06ed: stloc.s 22
-		IL_06ef: ldloc.s 23
-		IL_06f1: ldloc.s 22
-		IL_06f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_06f8: pop
-		IL_06f9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_06fe: stloc.s 23
-		IL_0700: ldstr "Array"
-		IL_0705: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_070a: ldstr "prototype"
-		IL_070f: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:267"
-		IL_0714: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0719: stloc.s 22
-		IL_071b: ldloc.s 22
-		IL_071d: ldstr "indexOf"
-		IL_0722: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:269"
-		IL_0727: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_072c: stloc.s 22
-		IL_072e: ldloc.s 22
-		IL_0730: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0735: ldc.r8 (00 00 00 00 00 00 F0 7F)
-		IL_073e: neg
-		IL_073f: stloc.s 31
-		IL_0741: ldloc.s 31
-		IL_0743: box [System.Runtime]System.Double
-		IL_0748: stloc.s 32
-		IL_074a: ldstr "call"
-		IL_074f: ldloc.s 20
-		IL_0751: ldstr "b"
-		IL_0756: ldloc.s 32
-		IL_0758: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_075d: stloc.s 22
-		IL_075f: ldloc.s 23
-		IL_0761: ldloc.s 22
-		IL_0763: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0768: pop
-		IL_0769: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_076e: stloc.s 23
-		IL_0770: ldstr "Array"
-		IL_0775: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_077a: ldstr "prototype"
-		IL_077f: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:282"
-		IL_0784: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0789: stloc.s 22
-		IL_078b: ldloc.s 22
-		IL_078d: ldstr "indexOf"
-		IL_0792: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:284"
-		IL_0797: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_079c: stloc.s 22
-		IL_079e: ldloc.s 22
-		IL_07a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_07a5: ldstr "call"
-		IL_07aa: ldloc.s 20
-		IL_07ac: ldstr "b"
-		IL_07b1: ldc.r8 9999999999
-		IL_07ba: box [System.Runtime]System.Double
-		IL_07bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_07c4: stloc.s 22
-		IL_07c6: ldloc.s 23
-		IL_07c8: ldloc.s 22
-		IL_07ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_07cf: pop
-		IL_07d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_07d5: stloc.s 23
-		IL_07d7: ldstr "Array"
-		IL_07dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_07e1: ldstr "prototype"
-		IL_07e6: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:296"
-		IL_07eb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_07f0: stloc.s 22
-		IL_07f2: ldloc.s 22
-		IL_07f4: ldstr "indexOf"
-		IL_07f9: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:298"
-		IL_07fe: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0803: stloc.s 22
-		IL_0805: ldloc.s 22
-		IL_0807: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_080c: ldc.r8 9999999999
-		IL_0815: neg
-		IL_0816: stloc.s 31
-		IL_0818: ldloc.s 31
-		IL_081a: box [System.Runtime]System.Double
-		IL_081f: stloc.s 32
-		IL_0821: ldstr "call"
-		IL_0826: ldloc.s 20
-		IL_0828: ldstr "b"
-		IL_082d: ldloc.s 32
-		IL_082f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0834: stloc.s 22
-		IL_0836: ldloc.s 23
-		IL_0838: ldloc.s 22
-		IL_083a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_083f: pop
-		IL_0840: ldnull
-		IL_0841: stloc.s 21
-		IL_0843: ret
+		IL_08ef: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_08f4: dup
+		IL_08f5: ldstr "0"
+		IL_08fa: ldstr "a"
+		IL_08ff: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0904: dup
+		IL_0905: ldstr "1"
+		IL_090a: ldstr "b"
+		IL_090f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0914: dup
+		IL_0915: ldstr "length"
+		IL_091a: ldc.r8 2
+		IL_0923: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0928: stloc.s 20
+		IL_092a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_092f: stloc.s 23
+		IL_0931: ldstr "Array"
+		IL_0936: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_093b: volatile.
+		IL_093d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+		IL_0942: brfalse IL_0956
+
+		IL_0947: ldstr "prototype"
+		IL_094c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0951: br IL_096a
+
+		IL_0956: ldstr "prototype"
+		IL_095b: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:253"
+		IL_0960: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+		IL_0965: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_096a: stloc.s 22
+		IL_096c: volatile.
+		IL_096e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+		IL_0973: brfalse IL_0989
+
+		IL_0978: ldloc.s 22
+		IL_097a: ldstr "indexOf"
+		IL_097f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0984: br IL_099f
+
+		IL_0989: ldloc.s 22
+		IL_098b: ldstr "indexOf"
+		IL_0990: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:255"
+		IL_0995: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+		IL_099a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_099f: stloc.s 22
+		IL_09a1: ldloc.s 22
+		IL_09a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_09a8: ldstr "call"
+		IL_09ad: ldloc.s 20
+		IL_09af: ldstr "b"
+		IL_09b4: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_09bd: box [System.Runtime]System.Double
+		IL_09c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_09c7: stloc.s 22
+		IL_09c9: ldloc.s 23
+		IL_09cb: ldloc.s 22
+		IL_09cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_09d2: pop
+		IL_09d3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_09d8: stloc.s 23
+		IL_09da: ldstr "Array"
+		IL_09df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_09e4: volatile.
+		IL_09e6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_09eb: brfalse IL_09ff
+
+		IL_09f0: ldstr "prototype"
+		IL_09f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_09fa: br IL_0a13
+
+		IL_09ff: ldstr "prototype"
+		IL_0a04: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:267"
+		IL_0a09: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_0a0e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0a13: stloc.s 22
+		IL_0a15: volatile.
+		IL_0a17: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+		IL_0a1c: brfalse IL_0a32
+
+		IL_0a21: ldloc.s 22
+		IL_0a23: ldstr "indexOf"
+		IL_0a28: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0a2d: br IL_0a48
+
+		IL_0a32: ldloc.s 22
+		IL_0a34: ldstr "indexOf"
+		IL_0a39: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:269"
+		IL_0a3e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+		IL_0a43: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0a48: stloc.s 22
+		IL_0a4a: ldloc.s 22
+		IL_0a4c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0a51: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_0a5a: neg
+		IL_0a5b: stloc.s 31
+		IL_0a5d: ldloc.s 31
+		IL_0a5f: box [System.Runtime]System.Double
+		IL_0a64: stloc.s 32
+		IL_0a66: ldstr "call"
+		IL_0a6b: ldloc.s 20
+		IL_0a6d: ldstr "b"
+		IL_0a72: ldloc.s 32
+		IL_0a74: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0a79: stloc.s 22
+		IL_0a7b: ldloc.s 23
+		IL_0a7d: ldloc.s 22
+		IL_0a7f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0a84: pop
+		IL_0a85: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0a8a: stloc.s 23
+		IL_0a8c: ldstr "Array"
+		IL_0a91: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0a96: volatile.
+		IL_0a98: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_0a9d: brfalse IL_0ab1
+
+		IL_0aa2: ldstr "prototype"
+		IL_0aa7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0aac: br IL_0ac5
+
+		IL_0ab1: ldstr "prototype"
+		IL_0ab6: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:282"
+		IL_0abb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_0ac0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0ac5: stloc.s 22
+		IL_0ac7: volatile.
+		IL_0ac9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+		IL_0ace: brfalse IL_0ae4
+
+		IL_0ad3: ldloc.s 22
+		IL_0ad5: ldstr "indexOf"
+		IL_0ada: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0adf: br IL_0afa
+
+		IL_0ae4: ldloc.s 22
+		IL_0ae6: ldstr "indexOf"
+		IL_0aeb: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:284"
+		IL_0af0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+		IL_0af5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0afa: stloc.s 22
+		IL_0afc: ldloc.s 22
+		IL_0afe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0b03: ldstr "call"
+		IL_0b08: ldloc.s 20
+		IL_0b0a: ldstr "b"
+		IL_0b0f: ldc.r8 9999999999
+		IL_0b18: box [System.Runtime]System.Double
+		IL_0b1d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0b22: stloc.s 22
+		IL_0b24: ldloc.s 23
+		IL_0b26: ldloc.s 22
+		IL_0b28: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0b2d: pop
+		IL_0b2e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0b33: stloc.s 23
+		IL_0b35: ldstr "Array"
+		IL_0b3a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0b3f: volatile.
+		IL_0b41: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+		IL_0b46: brfalse IL_0b5a
+
+		IL_0b4b: ldstr "prototype"
+		IL_0b50: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0b55: br IL_0b6e
+
+		IL_0b5a: ldstr "prototype"
+		IL_0b5f: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:296"
+		IL_0b64: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+		IL_0b69: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0b6e: stloc.s 22
+		IL_0b70: volatile.
+		IL_0b72: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+		IL_0b77: brfalse IL_0b8d
+
+		IL_0b7c: ldloc.s 22
+		IL_0b7e: ldstr "indexOf"
+		IL_0b83: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0b88: br IL_0ba3
+
+		IL_0b8d: ldloc.s 22
+		IL_0b8f: ldstr "indexOf"
+		IL_0b94: ldstr "Array_PrototypeMethods_ArrayLike_EdgeCases:Modules.Array_PrototypeMethods_ArrayLike_EdgeCases:__js_module_init__:298"
+		IL_0b99: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+		IL_0b9e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0ba3: stloc.s 22
+		IL_0ba5: ldloc.s 22
+		IL_0ba7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0bac: ldc.r8 9999999999
+		IL_0bb5: neg
+		IL_0bb6: stloc.s 31
+		IL_0bb8: ldloc.s 31
+		IL_0bba: box [System.Runtime]System.Double
+		IL_0bbf: stloc.s 32
+		IL_0bc1: ldstr "call"
+		IL_0bc6: ldloc.s 20
+		IL_0bc8: ldstr "b"
+		IL_0bcd: ldloc.s 32
+		IL_0bcf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0bd4: stloc.s 22
+		IL_0bd6: ldloc.s 23
+		IL_0bd8: ldloc.s 22
+		IL_0bda: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0bdf: pop
+		IL_0be0: ldnull
+		IL_0be1: stloc.s 21
+		IL_0be3: ret
 	} // end of method Array_PrototypeMethods_ArrayLike_EdgeCases::__js_module_init__
 
 } // end of class Modules.Array_PrototypeMethods_ArrayLike_EdgeCases
@@ -2052,4 +2348,39 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+	.field assembly static int32 __jroc_dynamicLookup_10
+	.field assembly static int32 __jroc_dynamicLookup_11
+	.field assembly static int32 __jroc_dynamicLookup_12
+	.field assembly static int32 __jroc_dynamicLookup_13
+	.field assembly static int32 __jroc_dynamicLookup_14
+	.field assembly static int32 __jroc_dynamicLookup_15
+	.field assembly static int32 __jroc_dynamicLookup_16
+	.field assembly static int32 __jroc_dynamicLookup_17
+	.field assembly static int32 __jroc_dynamicLookup_18
+	.field assembly static int32 __jroc_dynamicLookup_19
+	.field assembly static int32 __jroc_dynamicLookup_20
+	.field assembly static int32 __jroc_dynamicLookup_21
+	.field assembly static int32 __jroc_dynamicLookup_22
+	.field assembly static int32 __jroc_dynamicLookup_23
+	.field assembly static int32 __jroc_dynamicLookup_24
+	.field assembly static int32 __jroc_dynamicLookup_25
+	.field assembly static int32 __jroc_dynamicLookup_26
+	.field assembly static int32 __jroc_dynamicLookup_27
+	.field assembly static int32 __jroc_dynamicLookup_28
+	.field assembly static int32 __jroc_dynamicLookup_29
+	.field assembly static int32 __jroc_dynamicLookup_30
+	.field assembly static int32 __jroc_dynamicLookup_31
+	.field assembly static int32 __jroc_dynamicLookup_32
+	.field assembly static int32 __jroc_dynamicLookup_33
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

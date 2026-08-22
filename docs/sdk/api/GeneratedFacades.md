@@ -16,8 +16,8 @@ The root `Run` method executes the manifest entry module. Types nested below
 A module can also contain nested module types, so `api.js` and `api/css.js`
 produce one `Scripts.api` type with both `Run` and nested `css`.
 Compilation reports a facade-name collision when identifier normalization,
-case-insensitive paths, repeated containing-type names, or reserved members
-such as `Run` and `Import` would make the C# surface ambiguous.
+case-insensitive paths, or reserved members such as `Run` and `Import` would
+make the C# surface ambiguous.
 
 Each script method has this C# shape:
 

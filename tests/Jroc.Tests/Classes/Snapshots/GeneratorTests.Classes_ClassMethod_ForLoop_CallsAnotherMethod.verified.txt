@@ -531,30 +531,41 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 74 (0x4a)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldstr "total"
-			IL_0006: ldstr "Classes_ClassMethod_ForLoop_CallsAnotherMethod:<TwoPhaseDummy_M5>:add:3"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldarg.1
-			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0018: stloc.1
-			IL_0019: ldarg.0
-			IL_001a: ldstr "total"
-			IL_001f: ldloc.1
-			IL_0020: ldc.i4.1
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0026: pop
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0007: brfalse IL_001c
+
+			IL_000c: ldarg.0
+			IL_000d: ldstr "total"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0017: br IL_0031
+
+			IL_001c: ldarg.0
+			IL_001d: ldstr "total"
+			IL_0022: ldstr "Classes_ClassMethod_ForLoop_CallsAnotherMethod:<TwoPhaseDummy_M5>:add:3"
+			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0031: stloc.0
+			IL_0032: ldloc.0
+			IL_0033: ldarg.1
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0039: stloc.1
+			IL_003a: ldarg.0
+			IL_003b: ldstr "total"
+			IL_0040: ldloc.1
+			IL_0041: ldc.i4.1
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0047: pop
+			IL_0048: ldnull
+			IL_0049: ret
 		} // end of method Accumulator::'add'
 
 		.method public hidebysig 
@@ -753,4 +764,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

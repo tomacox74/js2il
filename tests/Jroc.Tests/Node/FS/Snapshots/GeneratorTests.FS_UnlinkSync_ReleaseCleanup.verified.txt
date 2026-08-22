@@ -183,7 +183,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 847 (0x34f)
+		// Code size: 915 (0x393)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_UnlinkSync_ReleaseCleanup/Scope,
@@ -379,7 +379,7 @@
 				IL_01d9: ldloc.1
 				IL_01da: ldloc.s 6
 				IL_01dc: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::unlinkSync(object)
-				IL_01e1: leave IL_0317
+				IL_01e1: leave IL_035b
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
@@ -408,116 +408,138 @@
 				IL_0216: stloc.s 10
 				IL_0218: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 				IL_021d: stloc.s 16
-				IL_021f: ldloc.s 10
-				IL_0221: ldstr "message"
-				IL_0226: ldstr "FS_UnlinkSync_ReleaseCleanup:Modules.FS_UnlinkSync_ReleaseCleanup:__js_module_init__:99"
-				IL_022b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0230: stloc.s 12
-				IL_0232: ldloc.s 12
-				IL_0234: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0239: stloc.s 12
-				IL_023b: ldc.i4.0
-				IL_023c: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_0241: brfalse IL_027d
+				IL_021f: volatile.
+				IL_0221: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+				IL_0226: brfalse IL_023c
 
-				IL_0246: ldloc.s 12
-				IL_0248: isinst [System.Runtime]System.String
-				IL_024d: dup
-				IL_024e: brtrue IL_0266
+				IL_022b: ldloc.s 10
+				IL_022d: ldstr "message"
+				IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0237: br IL_0252
 
-				IL_0253: pop
+				IL_023c: ldloc.s 10
+				IL_023e: ldstr "message"
+				IL_0243: ldstr "FS_UnlinkSync_ReleaseCleanup:Modules.FS_UnlinkSync_ReleaseCleanup:__js_module_init__:99"
+				IL_0248: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+				IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_0252: stloc.s 12
 				IL_0254: ldloc.s 12
-				IL_0256: ldstr "includes"
-				IL_025b: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0260: dup
-				IL_0261: brfalse IL_027c
+				IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_025b: stloc.s 12
+				IL_025d: ldc.i4.0
+				IL_025e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_0263: brfalse IL_029f
 
-				IL_0266: ldstr "ENOENT:"
-				IL_026b: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-				IL_0270: box [System.Runtime]System.Boolean
-				IL_0275: stloc.s 12
-				IL_0277: br IL_0290
+				IL_0268: ldloc.s 12
+				IL_026a: isinst [System.Runtime]System.String
+				IL_026f: dup
+				IL_0270: brtrue IL_0288
 
-				IL_027c: pop
+				IL_0275: pop
+				IL_0276: ldloc.s 12
+				IL_0278: ldstr "includes"
+				IL_027d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0282: dup
+				IL_0283: brfalse IL_029e
 
-				IL_027d: ldloc.s 12
-				IL_027f: ldstr "includes"
-				IL_0284: ldstr "ENOENT:"
-				IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_028e: stloc.s 12
+				IL_0288: ldstr "ENOENT:"
+				IL_028d: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+				IL_0292: box [System.Runtime]System.Boolean
+				IL_0297: stloc.s 12
+				IL_0299: br IL_02b2
 
-				IL_0290: ldloc.s 10
-				IL_0292: ldstr "message"
-				IL_0297: ldstr "FS_UnlinkSync_ReleaseCleanup:Modules.FS_UnlinkSync_ReleaseCleanup:__js_module_init__:104"
-				IL_029c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_02a1: stloc.s 17
-				IL_02a3: ldloc.s 17
-				IL_02a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_02aa: stloc.s 17
-				IL_02ac: ldc.i4.0
-				IL_02ad: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_02b2: brfalse IL_02ee
+				IL_029e: pop
 
-				IL_02b7: ldloc.s 17
-				IL_02b9: isinst [System.Runtime]System.String
-				IL_02be: dup
-				IL_02bf: brtrue IL_02d7
+				IL_029f: ldloc.s 12
+				IL_02a1: ldstr "includes"
+				IL_02a6: ldstr "ENOENT:"
+				IL_02ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_02b0: stloc.s 12
 
-				IL_02c4: pop
-				IL_02c5: ldloc.s 17
-				IL_02c7: ldstr "includes"
-				IL_02cc: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_02d1: dup
-				IL_02d2: brfalse IL_02ed
+				IL_02b2: volatile.
+				IL_02b4: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+				IL_02b9: brfalse IL_02cf
 
-				IL_02d7: ldstr "pr-body.md"
-				IL_02dc: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-				IL_02e1: box [System.Runtime]System.Boolean
-				IL_02e6: stloc.s 17
-				IL_02e8: br IL_0301
+				IL_02be: ldloc.s 10
+				IL_02c0: ldstr "message"
+				IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_02ca: br IL_02e5
 
-				IL_02ed: pop
+				IL_02cf: ldloc.s 10
+				IL_02d1: ldstr "message"
+				IL_02d6: ldstr "FS_UnlinkSync_ReleaseCleanup:Modules.FS_UnlinkSync_ReleaseCleanup:__js_module_init__:104"
+				IL_02db: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+				IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_02ee: ldloc.s 17
-				IL_02f0: ldstr "includes"
-				IL_02f5: ldstr "pr-body.md"
-				IL_02fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_02ff: stloc.s 17
+				IL_02e5: stloc.s 17
+				IL_02e7: ldloc.s 17
+				IL_02e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_02ee: stloc.s 17
+				IL_02f0: ldc.i4.0
+				IL_02f1: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_02f6: brfalse IL_0332
 
-				IL_0301: ldloc.s 16
-				IL_0303: ldstr "MissingError:"
-				IL_0308: ldloc.s 12
-				IL_030a: ldloc.s 17
-				IL_030c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-				IL_0311: pop
-				IL_0312: leave IL_0317
+				IL_02fb: ldloc.s 17
+				IL_02fd: isinst [System.Runtime]System.String
+				IL_0302: dup
+				IL_0303: brtrue IL_031b
+
+				IL_0308: pop
+				IL_0309: ldloc.s 17
+				IL_030b: ldstr "includes"
+				IL_0310: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0315: dup
+				IL_0316: brfalse IL_0331
+
+				IL_031b: ldstr "pr-body.md"
+				IL_0320: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+				IL_0325: box [System.Runtime]System.Boolean
+				IL_032a: stloc.s 17
+				IL_032c: br IL_0345
+
+				IL_0331: pop
+
+				IL_0332: ldloc.s 17
+				IL_0334: ldstr "includes"
+				IL_0339: ldstr "pr-body.md"
+				IL_033e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0343: stloc.s 17
+
+				IL_0345: ldloc.s 16
+				IL_0347: ldstr "MissingError:"
+				IL_034c: ldloc.s 12
+				IL_034e: ldloc.s 17
+				IL_0350: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+				IL_0355: pop
+				IL_0356: leave IL_035b
 			} // end handler
 
-			IL_0317: leave IL_034b
+			IL_035b: leave IL_038f
 		} // end .try
 		finally
 		{
-			IL_031c: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
-			IL_0321: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0326: dup
-			IL_0327: ldstr "recursive"
-			IL_032c: ldc.i4.1
-			IL_032d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0332: dup
-			IL_0333: ldstr "force"
-			IL_0338: ldc.i4.1
-			IL_0339: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_033e: stloc.s 15
-			IL_0340: ldloc.1
-			IL_0341: ldloc.s 5
-			IL_0343: ldloc.s 15
-			IL_0345: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_034a: endfinally
+			IL_0360: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
+			IL_0365: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_036a: dup
+			IL_036b: ldstr "recursive"
+			IL_0370: ldc.i4.1
+			IL_0371: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0376: dup
+			IL_0377: ldstr "force"
+			IL_037c: ldc.i4.1
+			IL_037d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0382: stloc.s 15
+			IL_0384: ldloc.1
+			IL_0385: ldloc.s 5
+			IL_0387: ldloc.s 15
+			IL_0389: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_038e: endfinally
 		} // end handler
 
-		IL_034b: ldnull
-		IL_034c: stloc.s 11
-		IL_034e: ret
+		IL_038f: ldnull
+		IL_0390: stloc.s 11
+		IL_0392: ret
 	} // end of method FS_UnlinkSync_ReleaseCleanup::__js_module_init__
 
 } // end of class Modules.FS_UnlinkSync_ReleaseCleanup
@@ -542,4 +564,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

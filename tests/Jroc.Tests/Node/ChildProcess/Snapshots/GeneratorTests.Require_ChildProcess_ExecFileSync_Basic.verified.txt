@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 842 (0x34a)
+		// Code size: 976 (0x3d0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_ExecFileSync_Basic/Scope,
@@ -177,291 +177,334 @@
 		IL_0012: stloc.1
 		IL_0013: ldstr "process"
 		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001d: ldstr "platform"
-		IL_0022: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:12"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002c: stloc.s 14
-		IL_002e: ldloc.s 14
-		IL_0030: ldstr "win32"
-		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: brfalse IL_004c
+		IL_001d: volatile.
+		IL_001f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0024: brfalse IL_0038
 
-		IL_0041: ldstr "cmd.exe"
-		IL_0046: stloc.3
-		IL_0047: br IL_0052
+		IL_0029: ldstr "platform"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: br IL_004c
 
-		IL_004c: ldstr "/bin/sh"
-		IL_0051: stloc.3
+		IL_0038: ldstr "platform"
+		IL_003d: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:12"
+		IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0052: ldloc.3
-		IL_0053: stloc.s 4
-		IL_0055: ldloc.2
-		IL_0056: brfalse IL_0082
+		IL_004c: stloc.s 14
+		IL_004e: ldloc.s 14
+		IL_0050: ldstr "win32"
+		IL_0055: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_005a: stloc.2
+		IL_005b: ldloc.2
+		IL_005c: brfalse IL_006c
 
-		IL_005b: ldc.i4.2
-		IL_005c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0061: dup
-		IL_0062: ldstr "/c"
-		IL_0067: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_006c: dup
-		IL_006d: ldstr "echo hello"
-		IL_0072: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0077: stloc.s 15
-		IL_0079: ldloc.s 15
-		IL_007b: stloc.s 5
-		IL_007d: br IL_00a4
+		IL_0061: ldstr "cmd.exe"
+		IL_0066: stloc.3
+		IL_0067: br IL_0072
 
-		IL_0082: ldc.i4.2
-		IL_0083: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0088: dup
-		IL_0089: ldstr "-c"
-		IL_008e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0093: dup
-		IL_0094: ldstr "printf hello"
-		IL_0099: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_009e: stloc.s 15
-		IL_00a0: ldloc.s 15
-		IL_00a2: stloc.s 5
+		IL_006c: ldstr "/bin/sh"
+		IL_0071: stloc.3
 
-		IL_00a4: ldloc.s 5
-		IL_00a6: stloc.s 6
-		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00ad: dup
-		IL_00ae: ldstr "encoding"
-		IL_00b3: ldstr "utf8"
-		IL_00b8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00bd: stloc.s 16
-		IL_00bf: ldloc.1
-		IL_00c0: ldstr "execFileSync"
-		IL_00c5: ldloc.s 4
-		IL_00c7: ldloc.s 6
-		IL_00c9: ldloc.s 16
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00d0: stloc.s 7
-		IL_00d2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d7: stloc.s 17
-		IL_00d9: ldloc.s 7
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e0: stloc.s 14
-		IL_00e2: ldc.i4.0
-		IL_00e3: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_00e8: brfalse IL_0124
+		IL_0072: ldloc.3
+		IL_0073: stloc.s 4
+		IL_0075: ldloc.2
+		IL_0076: brfalse IL_00a2
 
-		IL_00ed: ldloc.s 14
-		IL_00ef: isinst [System.Runtime]System.String
-		IL_00f4: dup
-		IL_00f5: brtrue IL_010d
+		IL_007b: ldc.i4.2
+		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0081: dup
+		IL_0082: ldstr "/c"
+		IL_0087: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_008c: dup
+		IL_008d: ldstr "echo hello"
+		IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0097: stloc.s 15
+		IL_0099: ldloc.s 15
+		IL_009b: stloc.s 5
+		IL_009d: br IL_00c4
 
-		IL_00fa: pop
-		IL_00fb: ldloc.s 14
-		IL_00fd: ldstr "indexOf"
-		IL_0102: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_0107: dup
-		IL_0108: brfalse IL_0123
+		IL_00a2: ldc.i4.2
+		IL_00a3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00a8: dup
+		IL_00a9: ldstr "-c"
+		IL_00ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00b3: dup
+		IL_00b4: ldstr "printf hello"
+		IL_00b9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00be: stloc.s 15
+		IL_00c0: ldloc.s 15
+		IL_00c2: stloc.s 5
 
-		IL_010d: ldstr "hello"
-		IL_0112: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
-		IL_0117: box [System.Runtime]System.Double
-		IL_011c: stloc.s 14
-		IL_011e: br IL_0137
+		IL_00c4: ldloc.s 5
+		IL_00c6: stloc.s 6
+		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00cd: dup
+		IL_00ce: ldstr "encoding"
+		IL_00d3: ldstr "utf8"
+		IL_00d8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00dd: stloc.s 16
+		IL_00df: ldloc.1
+		IL_00e0: ldstr "execFileSync"
+		IL_00e5: ldloc.s 4
+		IL_00e7: ldloc.s 6
+		IL_00e9: ldloc.s 16
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_00f0: stloc.s 7
+		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f7: stloc.s 17
+		IL_00f9: ldloc.s 7
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0100: stloc.s 14
+		IL_0102: ldc.i4.0
+		IL_0103: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0108: brfalse IL_0144
 
-		IL_0123: pop
+		IL_010d: ldloc.s 14
+		IL_010f: isinst [System.Runtime]System.String
+		IL_0114: dup
+		IL_0115: brtrue IL_012d
 
-		IL_0124: ldloc.s 14
-		IL_0126: ldstr "indexOf"
-		IL_012b: ldstr "hello"
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0135: stloc.s 14
+		IL_011a: pop
+		IL_011b: ldloc.s 14
+		IL_011d: ldstr "indexOf"
+		IL_0122: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_0127: dup
+		IL_0128: brfalse IL_0143
 
-		IL_0137: ldloc.s 14
-		IL_0139: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_013e: ldc.r8 0.0
-		IL_0147: clt
-		IL_0149: ldc.i4.0
-		IL_014a: ceq
-		IL_014c: stloc.s 18
-		IL_014e: ldloc.s 18
-		IL_0150: box [System.Runtime]System.Boolean
-		IL_0155: stloc.s 19
-		IL_0157: ldloc.s 17
-		IL_0159: ldstr "stdout contains hello:"
-		IL_015e: ldloc.s 19
-		IL_0160: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0165: pop
+		IL_012d: ldstr "hello"
+		IL_0132: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+		IL_0137: box [System.Runtime]System.Double
+		IL_013c: stloc.s 14
+		IL_013e: br IL_0157
+
+		IL_0143: pop
+
+		IL_0144: ldloc.s 14
+		IL_0146: ldstr "indexOf"
+		IL_014b: ldstr "hello"
+		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0155: stloc.s 14
+
+		IL_0157: ldloc.s 14
+		IL_0159: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_015e: ldc.r8 0.0
+		IL_0167: clt
+		IL_0169: ldc.i4.0
+		IL_016a: ceq
+		IL_016c: stloc.s 18
+		IL_016e: ldloc.s 18
+		IL_0170: box [System.Runtime]System.Boolean
+		IL_0175: stloc.s 19
+		IL_0177: ldloc.s 17
+		IL_0179: ldstr "stdout contains hello:"
+		IL_017e: ldloc.s 19
+		IL_0180: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0185: pop
 		.try
 		{
-			IL_0166: nop
-			IL_0167: ldloc.2
-			IL_0168: brfalse IL_0194
+			IL_0186: nop
+			IL_0187: ldloc.2
+			IL_0188: brfalse IL_01b4
 
-			IL_016d: ldc.i4.2
-			IL_016e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0173: dup
-			IL_0174: ldstr "/c"
-			IL_0179: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_017e: dup
-			IL_017f: ldstr "exit 5"
-			IL_0184: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0189: stloc.s 15
-			IL_018b: ldloc.s 15
-			IL_018d: stloc.s 8
-			IL_018f: br IL_01b6
+			IL_018d: ldc.i4.2
+			IL_018e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0193: dup
+			IL_0194: ldstr "/c"
+			IL_0199: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_019e: dup
+			IL_019f: ldstr "exit 5"
+			IL_01a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_01a9: stloc.s 15
+			IL_01ab: ldloc.s 15
+			IL_01ad: stloc.s 8
+			IL_01af: br IL_01d6
 
-			IL_0194: ldc.i4.2
-			IL_0195: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_019a: dup
-			IL_019b: ldstr "-c"
-			IL_01a0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_01a5: dup
-			IL_01a6: ldstr "exit 5"
-			IL_01ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_01b0: stloc.s 15
-			IL_01b2: ldloc.s 15
-			IL_01b4: stloc.s 8
+			IL_01b4: ldc.i4.2
+			IL_01b5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_01ba: dup
+			IL_01bb: ldstr "-c"
+			IL_01c0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_01c5: dup
+			IL_01c6: ldstr "exit 5"
+			IL_01cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_01d0: stloc.s 15
+			IL_01d2: ldloc.s 15
+			IL_01d4: stloc.s 8
 
-			IL_01b6: ldloc.s 8
-			IL_01b8: stloc.s 9
-			IL_01ba: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_01bf: dup
-			IL_01c0: ldstr "encoding"
-			IL_01c5: ldstr "utf8"
-			IL_01ca: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_01cf: stloc.s 16
-			IL_01d1: ldloc.1
-			IL_01d2: ldstr "execFileSync"
-			IL_01d7: ldloc.s 4
-			IL_01d9: ldloc.s 9
-			IL_01db: ldloc.s 16
-			IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_01e2: pop
-			IL_01e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01e8: stloc.s 17
-			IL_01ea: ldloc.s 17
-			IL_01ec: ldstr "expected error not thrown"
-			IL_01f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_01f6: pop
-			IL_01f7: leave IL_0346
+			IL_01d6: ldloc.s 8
+			IL_01d8: stloc.s 9
+			IL_01da: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01df: dup
+			IL_01e0: ldstr "encoding"
+			IL_01e5: ldstr "utf8"
+			IL_01ea: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_01ef: stloc.s 16
+			IL_01f1: ldloc.1
+			IL_01f2: ldstr "execFileSync"
+			IL_01f7: ldloc.s 4
+			IL_01f9: ldloc.s 9
+			IL_01fb: ldloc.s 16
+			IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_0202: pop
+			IL_0203: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0208: stloc.s 17
+			IL_020a: ldloc.s 17
+			IL_020c: ldstr "expected error not thrown"
+			IL_0211: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0216: pop
+			IL_0217: leave IL_03cc
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_01fc: stloc.s 10
-			IL_01fe: ldloc.s 10
-			IL_0200: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0205: dup
-			IL_0206: brtrue IL_021c
+			IL_021c: stloc.s 10
+			IL_021e: ldloc.s 10
+			IL_0220: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0225: dup
+			IL_0226: brtrue IL_023c
 
-			IL_020b: pop
-			IL_020c: ldloc.s 10
-			IL_020e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0213: dup
-			IL_0214: brtrue IL_0228
+			IL_022b: pop
+			IL_022c: ldloc.s 10
+			IL_022e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0233: dup
+			IL_0234: brtrue IL_0248
 
-			IL_0219: pop
-			IL_021a: rethrow
+			IL_0239: pop
+			IL_023a: rethrow
 
-			IL_021c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0221: stloc.s 11
-			IL_0223: br IL_022a
+			IL_023c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0241: stloc.s 11
+			IL_0243: br IL_024a
 
-			IL_0228: stloc.s 11
+			IL_0248: stloc.s 11
 
-			IL_022a: ldloc.s 11
-			IL_022c: stloc.s 12
-			IL_022e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0233: stloc.s 17
-			IL_0235: ldloc.s 17
-			IL_0237: ldstr "throws on non-zero:"
-			IL_023c: ldc.i4.1
-			IL_023d: box [System.Runtime]System.Boolean
-			IL_0242: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0247: pop
-			IL_0248: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_024d: stloc.s 17
-			IL_024f: ldloc.s 12
-			IL_0251: ldstr "status"
-			IL_0256: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:98"
-			IL_025b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0260: stloc.s 14
-			IL_0262: ldloc.s 17
-			IL_0264: ldstr "status:"
-			IL_0269: ldloc.s 14
-			IL_026b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0270: pop
-			IL_0271: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0276: stloc.s 17
-			IL_0278: ldloc.s 12
-			IL_027a: ldstr "code"
-			IL_027f: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:104"
-			IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0289: stloc.s 14
-			IL_028b: ldloc.s 17
-			IL_028d: ldstr "code:"
-			IL_0292: ldloc.s 14
-			IL_0294: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0299: pop
-			IL_029a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_029f: stloc.s 17
-			IL_02a1: ldloc.s 12
-			IL_02a3: ldstr "message"
-			IL_02a8: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:110"
-			IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_02b2: stloc.s 14
-			IL_02b4: ldloc.s 14
-			IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_02bb: stloc.s 14
-			IL_02bd: ldc.i4.0
-			IL_02be: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_02c3: brfalse IL_02ff
+			IL_024a: ldloc.s 11
+			IL_024c: stloc.s 12
+			IL_024e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0253: stloc.s 17
+			IL_0255: ldloc.s 17
+			IL_0257: ldstr "throws on non-zero:"
+			IL_025c: ldc.i4.1
+			IL_025d: box [System.Runtime]System.Boolean
+			IL_0262: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0267: pop
+			IL_0268: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_026d: stloc.s 17
+			IL_026f: volatile.
+			IL_0271: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0276: brfalse IL_028c
 
-			IL_02c8: ldloc.s 14
-			IL_02ca: isinst [System.Runtime]System.String
-			IL_02cf: dup
-			IL_02d0: brtrue IL_02e8
+			IL_027b: ldloc.s 12
+			IL_027d: ldstr "status"
+			IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0287: br IL_02a2
 
-			IL_02d5: pop
-			IL_02d6: ldloc.s 14
-			IL_02d8: ldstr "indexOf"
-			IL_02dd: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_02e2: dup
-			IL_02e3: brfalse IL_02fe
+			IL_028c: ldloc.s 12
+			IL_028e: ldstr "status"
+			IL_0293: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:98"
+			IL_0298: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_029d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_02e8: ldstr "exit code 5"
-			IL_02ed: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
-			IL_02f2: box [System.Runtime]System.Double
-			IL_02f7: stloc.s 14
-			IL_02f9: br IL_0312
+			IL_02a2: stloc.s 14
+			IL_02a4: ldloc.s 17
+			IL_02a6: ldstr "status:"
+			IL_02ab: ldloc.s 14
+			IL_02ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_02b2: pop
+			IL_02b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02b8: stloc.s 17
+			IL_02ba: volatile.
+			IL_02bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_02c1: brfalse IL_02d7
 
-			IL_02fe: pop
+			IL_02c6: ldloc.s 12
+			IL_02c8: ldstr "code"
+			IL_02cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02d2: br IL_02ed
 
-			IL_02ff: ldloc.s 14
-			IL_0301: ldstr "indexOf"
-			IL_0306: ldstr "exit code 5"
-			IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0310: stloc.s 14
+			IL_02d7: ldloc.s 12
+			IL_02d9: ldstr "code"
+			IL_02de: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:104"
+			IL_02e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_02e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0312: ldloc.s 14
-			IL_0314: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0319: ldc.r8 0.0
-			IL_0322: clt
-			IL_0324: ldc.i4.0
-			IL_0325: ceq
-			IL_0327: stloc.s 18
-			IL_0329: ldloc.s 18
-			IL_032b: box [System.Runtime]System.Boolean
-			IL_0330: stloc.s 19
-			IL_0332: ldloc.s 17
-			IL_0334: ldstr "message has exit code:"
-			IL_0339: ldloc.s 19
-			IL_033b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0340: pop
-			IL_0341: leave IL_0346
+			IL_02ed: stloc.s 14
+			IL_02ef: ldloc.s 17
+			IL_02f1: ldstr "code:"
+			IL_02f6: ldloc.s 14
+			IL_02f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_02fd: pop
+			IL_02fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0303: stloc.s 17
+			IL_0305: volatile.
+			IL_0307: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_030c: brfalse IL_0322
+
+			IL_0311: ldloc.s 12
+			IL_0313: ldstr "message"
+			IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_031d: br IL_0338
+
+			IL_0322: ldloc.s 12
+			IL_0324: ldstr "message"
+			IL_0329: ldstr "Require_ChildProcess_ExecFileSync_Basic:Modules.Require_ChildProcess_ExecFileSync_Basic:__js_module_init__:110"
+			IL_032e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_0333: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0338: stloc.s 14
+			IL_033a: ldloc.s 14
+			IL_033c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0341: stloc.s 14
+			IL_0343: ldc.i4.0
+			IL_0344: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_0349: brfalse IL_0385
+
+			IL_034e: ldloc.s 14
+			IL_0350: isinst [System.Runtime]System.String
+			IL_0355: dup
+			IL_0356: brtrue IL_036e
+
+			IL_035b: pop
+			IL_035c: ldloc.s 14
+			IL_035e: ldstr "indexOf"
+			IL_0363: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+			IL_0368: dup
+			IL_0369: brfalse IL_0384
+
+			IL_036e: ldstr "exit code 5"
+			IL_0373: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+			IL_0378: box [System.Runtime]System.Double
+			IL_037d: stloc.s 14
+			IL_037f: br IL_0398
+
+			IL_0384: pop
+
+			IL_0385: ldloc.s 14
+			IL_0387: ldstr "indexOf"
+			IL_038c: ldstr "exit code 5"
+			IL_0391: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0396: stloc.s 14
+
+			IL_0398: ldloc.s 14
+			IL_039a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_039f: ldc.r8 0.0
+			IL_03a8: clt
+			IL_03aa: ldc.i4.0
+			IL_03ab: ceq
+			IL_03ad: stloc.s 18
+			IL_03af: ldloc.s 18
+			IL_03b1: box [System.Runtime]System.Boolean
+			IL_03b6: stloc.s 19
+			IL_03b8: ldloc.s 17
+			IL_03ba: ldstr "message has exit code:"
+			IL_03bf: ldloc.s 19
+			IL_03c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_03c6: pop
+			IL_03c7: leave IL_03cc
 		} // end handler
 
-		IL_0346: ldnull
-		IL_0347: stloc.s 13
-		IL_0349: ret
+		IL_03cc: ldnull
+		IL_03cd: stloc.s 13
+		IL_03cf: ret
 	} // end of method Require_ChildProcess_ExecFileSync_Basic::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_ExecFileSync_Basic
@@ -486,4 +529,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

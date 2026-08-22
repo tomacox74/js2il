@@ -222,7 +222,7 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 206 (0xce)
+					// Code size: 239 (0xef)
 					.maxstack 8
 					.locals init (
 						[0] bool,
@@ -235,86 +235,97 @@
 					IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 					IL_0006: stloc.0
 					IL_0007: ldloc.0
-					IL_0008: brfalse IL_0033
+					IL_0008: brfalse IL_0054
 
 					IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 					IL_0012: stloc.1
-					IL_0013: ldarg.2
-					IL_0014: ldstr "message"
-					IL_0019: ldstr "FS_Append_Rename_Unlink_Callback:<TwoPhaseDummy_M6>:__js_call__:9"
-					IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-					IL_0023: stloc.2
-					IL_0024: ldloc.1
-					IL_0025: ldstr "UnlinkError:"
-					IL_002a: ldloc.2
-					IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_0030: pop
-					IL_0031: ldnull
-					IL_0032: ret
+					IL_0013: volatile.
+					IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+					IL_001a: brfalse IL_002f
 
-					IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_0038: stloc.1
-					IL_0039: ldarg.0
-					IL_003a: ldc.i4.2
-					IL_003b: ldelem.ref
-					IL_003c: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
-					IL_0041: ldfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
-					IL_0046: stloc.2
-					IL_0047: ldloc.1
-					IL_0048: ldstr "RenamedText:"
-					IL_004d: ldloc.2
-					IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_0053: pop
+					IL_001f: ldarg.2
+					IL_0020: ldstr "message"
+					IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_002a: br IL_0044
+
+					IL_002f: ldarg.2
+					IL_0030: ldstr "message"
+					IL_0035: ldstr "FS_Append_Rename_Unlink_Callback:<TwoPhaseDummy_M6>:__js_call__:9"
+					IL_003a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+					IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+					IL_0044: stloc.2
+					IL_0045: ldloc.1
+					IL_0046: ldstr "UnlinkError:"
+					IL_004b: ldloc.2
+					IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_0051: pop
+					IL_0052: ldnull
+					IL_0053: ret
+
 					IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 					IL_0059: stloc.1
 					IL_005a: ldarg.0
-					IL_005b: ldc.i4.0
+					IL_005b: ldc.i4.2
 					IL_005c: ldelem.ref
-					IL_005d: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_0062: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-					IL_0067: stloc.3
-					IL_0068: ldarg.0
-					IL_0069: ldc.i4.0
-					IL_006a: ldelem.ref
-					IL_006b: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_0070: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-					IL_0075: stloc.2
-					IL_0076: ldloc.3
-					IL_0077: ldloc.2
-					IL_0078: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
-					IL_007d: box [System.Runtime]System.Boolean
-					IL_0082: stloc.2
-					IL_0083: ldloc.1
-					IL_0084: ldstr "SourceExists:"
-					IL_0089: ldloc.2
-					IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_008f: pop
-					IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_0095: stloc.1
-					IL_0096: ldarg.0
-					IL_0097: ldc.i4.0
-					IL_0098: ldelem.ref
-					IL_0099: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_009e: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-					IL_00a3: stloc.3
-					IL_00a4: ldarg.0
-					IL_00a5: ldc.i4.0
-					IL_00a6: ldelem.ref
-					IL_00a7: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_00ac: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-					IL_00b1: stloc.2
-					IL_00b2: ldloc.3
-					IL_00b3: ldloc.2
-					IL_00b4: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
-					IL_00b9: box [System.Runtime]System.Boolean
-					IL_00be: stloc.2
-					IL_00bf: ldloc.1
-					IL_00c0: ldstr "RenamedExists:"
-					IL_00c5: ldloc.2
-					IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_00cb: pop
-					IL_00cc: ldnull
-					IL_00cd: ret
+					IL_005d: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
+					IL_0062: ldfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+					IL_0067: stloc.2
+					IL_0068: ldloc.1
+					IL_0069: ldstr "RenamedText:"
+					IL_006e: ldloc.2
+					IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_0074: pop
+					IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_007a: stloc.1
+					IL_007b: ldarg.0
+					IL_007c: ldc.i4.0
+					IL_007d: ldelem.ref
+					IL_007e: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_0083: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+					IL_0088: stloc.3
+					IL_0089: ldarg.0
+					IL_008a: ldc.i4.0
+					IL_008b: ldelem.ref
+					IL_008c: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_0091: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+					IL_0096: stloc.2
+					IL_0097: ldloc.3
+					IL_0098: ldloc.2
+					IL_0099: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+					IL_009e: box [System.Runtime]System.Boolean
+					IL_00a3: stloc.2
+					IL_00a4: ldloc.1
+					IL_00a5: ldstr "SourceExists:"
+					IL_00aa: ldloc.2
+					IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_00b0: pop
+					IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_00b6: stloc.1
+					IL_00b7: ldarg.0
+					IL_00b8: ldc.i4.0
+					IL_00b9: ldelem.ref
+					IL_00ba: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_00bf: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+					IL_00c4: stloc.3
+					IL_00c5: ldarg.0
+					IL_00c6: ldc.i4.0
+					IL_00c7: ldelem.ref
+					IL_00c8: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_00cd: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+					IL_00d2: stloc.2
+					IL_00d3: ldloc.3
+					IL_00d4: ldloc.2
+					IL_00d5: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+					IL_00da: box [System.Runtime]System.Boolean
+					IL_00df: stloc.2
+					IL_00e0: ldloc.1
+					IL_00e1: ldstr "RenamedExists:"
+					IL_00e6: ldloc.2
+					IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_00ec: pop
+					IL_00ed: ldnull
+					IL_00ee: ret
 				} // end of method ArrowFunction_L28C28::__js_call__
 
 			} // end of class ArrowFunction_L28C28
@@ -454,7 +465,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 224 (0xe0)
+				// Code size: 257 (0x101)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope,
@@ -472,100 +483,111 @@
 				IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_000c: stloc.1
 				IL_000d: ldloc.1
-				IL_000e: brfalse IL_0039
+				IL_000e: brfalse IL_005a
 
 				IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 				IL_0018: stloc.2
-				IL_0019: ldarg.2
-				IL_001a: ldstr "message"
-				IL_001f: ldstr "FS_Append_Rename_Unlink_Callback:<TwoPhaseDummy_M5>:__js_call__:10"
-				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0029: stloc.3
-				IL_002a: ldloc.2
-				IL_002b: ldstr "RenameError:"
-				IL_0030: ldloc.3
-				IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0036: pop
-				IL_0037: ldnull
-				IL_0038: ret
+				IL_0019: volatile.
+				IL_001b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+				IL_0020: brfalse IL_0035
 
-				IL_0039: ldarg.0
-				IL_003a: ldc.i4.0
-				IL_003b: ldelem.ref
-				IL_003c: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_0041: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-				IL_0046: stloc.s 4
-				IL_0048: ldarg.0
-				IL_0049: ldc.i4.0
-				IL_004a: ldelem.ref
-				IL_004b: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_0050: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-				IL_0055: stloc.3
-				IL_0056: ldloc.s 4
-				IL_0058: ldloc.3
-				IL_0059: ldstr "utf8"
-				IL_005e: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
-				IL_0063: stloc.3
-				IL_0064: ldloc.0
-				IL_0065: ldloc.3
-				IL_0066: stfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
-				IL_006b: ldarg.0
-				IL_006c: ldc.i4.0
-				IL_006d: ldelem.ref
-				IL_006e: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_0073: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-				IL_0078: stloc.s 4
-				IL_007a: ldarg.0
-				IL_007b: ldc.i4.0
-				IL_007c: ldelem.ref
-				IL_007d: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_0082: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-				IL_0087: stloc.3
-				IL_0088: ldc.i4.3
-				IL_0089: newarr [System.Runtime]System.Object
-				IL_008e: dup
-				IL_008f: ldc.i4.0
-				IL_0090: ldarg.0
-				IL_0091: ldc.i4.0
-				IL_0092: ldelem.ref
-				IL_0093: stelem.ref
-				IL_0094: dup
-				IL_0095: ldc.i4.1
-				IL_0096: ldarg.0
-				IL_0097: ldc.i4.1
-				IL_0098: ldelem.ref
-				IL_0099: stelem.ref
-				IL_009a: dup
-				IL_009b: ldc.i4.2
-				IL_009c: ldloc.0
-				IL_009d: stelem.ref
-				IL_009e: stloc.s 5
-				IL_00a0: ldloc.s 5
-				IL_00a2: ldc.i4.0
-				IL_00a3: ldelem.ref
-				IL_00a4: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_00a9: ldloc.s 5
-				IL_00ab: ldc.i4.2
-				IL_00ac: ldelem.ref
-				IL_00ad: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
-				IL_00b2: ldloc.s 5
-				IL_00b4: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/FunctionObject::.ctor(class Modules.FS_Append_Rename_Unlink_Callback/Scope, class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope, object[])
-				IL_00b9: ldc.i4.1
-				IL_00ba: conv.r8
-				IL_00bb: ldstr ""
-				IL_00c0: ldc.i4.0
-				IL_00c1: ldc.i4.0
-				IL_00c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/FunctionObject>(!!0, float64, string, bool, bool)
-				IL_00c7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/FunctionObject>(!!0)
-				IL_00cc: stloc.s 6
-				IL_00ce: ldloc.s 4
-				IL_00d0: ldstr "unlink"
-				IL_00d5: ldloc.3
-				IL_00d6: ldloc.s 6
-				IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00dd: pop
-				IL_00de: ldnull
-				IL_00df: ret
+				IL_0025: ldarg.2
+				IL_0026: ldstr "message"
+				IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0030: br IL_004a
+
+				IL_0035: ldarg.2
+				IL_0036: ldstr "message"
+				IL_003b: ldstr "FS_Append_Rename_Unlink_Callback:<TwoPhaseDummy_M5>:__js_call__:10"
+				IL_0040: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_004a: stloc.3
+				IL_004b: ldloc.2
+				IL_004c: ldstr "RenameError:"
+				IL_0051: ldloc.3
+				IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0057: pop
+				IL_0058: ldnull
+				IL_0059: ret
+
+				IL_005a: ldarg.0
+				IL_005b: ldc.i4.0
+				IL_005c: ldelem.ref
+				IL_005d: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_0062: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+				IL_0067: stloc.s 4
+				IL_0069: ldarg.0
+				IL_006a: ldc.i4.0
+				IL_006b: ldelem.ref
+				IL_006c: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_0071: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+				IL_0076: stloc.3
+				IL_0077: ldloc.s 4
+				IL_0079: ldloc.3
+				IL_007a: ldstr "utf8"
+				IL_007f: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
+				IL_0084: stloc.3
+				IL_0085: ldloc.0
+				IL_0086: ldloc.3
+				IL_0087: stfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+				IL_008c: ldarg.0
+				IL_008d: ldc.i4.0
+				IL_008e: ldelem.ref
+				IL_008f: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_0094: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+				IL_0099: stloc.s 4
+				IL_009b: ldarg.0
+				IL_009c: ldc.i4.0
+				IL_009d: ldelem.ref
+				IL_009e: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_00a3: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+				IL_00a8: stloc.3
+				IL_00a9: ldc.i4.3
+				IL_00aa: newarr [System.Runtime]System.Object
+				IL_00af: dup
+				IL_00b0: ldc.i4.0
+				IL_00b1: ldarg.0
+				IL_00b2: ldc.i4.0
+				IL_00b3: ldelem.ref
+				IL_00b4: stelem.ref
+				IL_00b5: dup
+				IL_00b6: ldc.i4.1
+				IL_00b7: ldarg.0
+				IL_00b8: ldc.i4.1
+				IL_00b9: ldelem.ref
+				IL_00ba: stelem.ref
+				IL_00bb: dup
+				IL_00bc: ldc.i4.2
+				IL_00bd: ldloc.0
+				IL_00be: stelem.ref
+				IL_00bf: stloc.s 5
+				IL_00c1: ldloc.s 5
+				IL_00c3: ldc.i4.0
+				IL_00c4: ldelem.ref
+				IL_00c5: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_00ca: ldloc.s 5
+				IL_00cc: ldc.i4.2
+				IL_00cd: ldelem.ref
+				IL_00ce: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
+				IL_00d3: ldloc.s 5
+				IL_00d5: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/FunctionObject::.ctor(class Modules.FS_Append_Rename_Unlink_Callback/Scope, class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope, object[])
+				IL_00da: ldc.i4.1
+				IL_00db: conv.r8
+				IL_00dc: ldstr ""
+				IL_00e1: ldc.i4.0
+				IL_00e2: ldc.i4.0
+				IL_00e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_00e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/FunctionObject>(!!0)
+				IL_00ed: stloc.s 6
+				IL_00ef: ldloc.s 4
+				IL_00f1: ldstr "unlink"
+				IL_00f6: ldloc.3
+				IL_00f7: ldloc.s 6
+				IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00fe: pop
+				IL_00ff: ldnull
+				IL_0100: ret
 			} // end of method ArrowFunction_L21C32::__js_call__
 
 		} // end of class ArrowFunction_L21C32
@@ -700,7 +722,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 153 (0x99)
+			// Code size: 186 (0xba)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope,
@@ -719,66 +741,77 @@
 			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_000c: stloc.1
 			IL_000d: ldloc.1
-			IL_000e: brfalse IL_0039
+			IL_000e: brfalse IL_005a
 
 			IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0018: stloc.2
-			IL_0019: ldarg.2
-			IL_001a: ldstr "message"
-			IL_001f: ldstr "FS_Append_Rename_Unlink_Callback:<TwoPhaseDummy_M4>:__js_call__:10"
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0029: stloc.3
-			IL_002a: ldloc.2
-			IL_002b: ldstr "AppendError:"
-			IL_0030: ldloc.3
-			IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0036: pop
-			IL_0037: ldnull
-			IL_0038: ret
+			IL_0019: volatile.
+			IL_001b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_0020: brfalse IL_0035
 
-			IL_0039: ldarg.0
-			IL_003a: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-			IL_003f: stloc.s 4
-			IL_0041: ldarg.0
-			IL_0042: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-			IL_0047: stloc.3
-			IL_0048: ldarg.0
-			IL_0049: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-			IL_004e: stloc.s 5
-			IL_0050: ldc.i4.2
-			IL_0051: newarr [System.Runtime]System.Object
-			IL_0056: dup
-			IL_0057: ldc.i4.0
-			IL_0058: ldarg.0
-			IL_0059: stelem.ref
-			IL_005a: dup
-			IL_005b: ldc.i4.1
-			IL_005c: ldloc.0
-			IL_005d: stelem.ref
-			IL_005e: stloc.s 6
-			IL_0060: ldloc.s 6
-			IL_0062: ldc.i4.0
-			IL_0063: ldelem.ref
-			IL_0064: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-			IL_0069: ldloc.s 6
-			IL_006b: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/FunctionObject::.ctor(class Modules.FS_Append_Rename_Unlink_Callback/Scope, object[])
-			IL_0070: ldc.i4.1
-			IL_0071: conv.r8
-			IL_0072: ldstr ""
-			IL_0077: ldc.i4.0
+			IL_0025: ldarg.2
+			IL_0026: ldstr "message"
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0030: br IL_004a
+
+			IL_0035: ldarg.2
+			IL_0036: ldstr "message"
+			IL_003b: ldstr "FS_Append_Rename_Unlink_Callback:<TwoPhaseDummy_M4>:__js_call__:10"
+			IL_0040: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_004a: stloc.3
+			IL_004b: ldloc.2
+			IL_004c: ldstr "AppendError:"
+			IL_0051: ldloc.3
+			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0057: pop
+			IL_0058: ldnull
+			IL_0059: ret
+
+			IL_005a: ldarg.0
+			IL_005b: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+			IL_0060: stloc.s 4
+			IL_0062: ldarg.0
+			IL_0063: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+			IL_0068: stloc.3
+			IL_0069: ldarg.0
+			IL_006a: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+			IL_006f: stloc.s 5
+			IL_0071: ldc.i4.2
+			IL_0072: newarr [System.Runtime]System.Object
+			IL_0077: dup
 			IL_0078: ldc.i4.0
-			IL_0079: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_007e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/FunctionObject>(!!0)
-			IL_0083: stloc.s 7
-			IL_0085: ldloc.s 4
-			IL_0087: ldstr "rename"
-			IL_008c: ldloc.3
-			IL_008d: ldloc.s 5
-			IL_008f: ldloc.s 7
-			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_0096: pop
-			IL_0097: ldnull
-			IL_0098: ret
+			IL_0079: ldarg.0
+			IL_007a: stelem.ref
+			IL_007b: dup
+			IL_007c: ldc.i4.1
+			IL_007d: ldloc.0
+			IL_007e: stelem.ref
+			IL_007f: stloc.s 6
+			IL_0081: ldloc.s 6
+			IL_0083: ldc.i4.0
+			IL_0084: ldelem.ref
+			IL_0085: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+			IL_008a: ldloc.s 6
+			IL_008c: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/FunctionObject::.ctor(class Modules.FS_Append_Rename_Unlink_Callback/Scope, object[])
+			IL_0091: ldc.i4.1
+			IL_0092: conv.r8
+			IL_0093: ldstr ""
+			IL_0098: ldc.i4.0
+			IL_0099: ldc.i4.0
+			IL_009a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_009f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/FunctionObject>(!!0)
+			IL_00a4: stloc.s 7
+			IL_00a6: ldloc.s 4
+			IL_00a8: ldstr "rename"
+			IL_00ad: ldloc.3
+			IL_00ae: ldloc.s 5
+			IL_00b0: ldloc.s 7
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_00b7: pop
+			IL_00b8: ldnull
+			IL_00b9: ret
 		} // end of method ArrowFunction_L15C36::__js_call__
 
 	} // end of class ArrowFunction_L15C36
@@ -1040,4 +1073,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_14
+	.field assembly static int32 __jroc_dynamicLookup_15
+	.field assembly static int32 __jroc_dynamicLookup_16
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

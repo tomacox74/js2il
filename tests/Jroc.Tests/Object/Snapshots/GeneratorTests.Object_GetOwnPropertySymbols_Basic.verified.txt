@@ -124,7 +124,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 395 (0x18b)
+		// Code size: 429 (0x1ad)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_GetOwnPropertySymbols_Basic/Scope,
@@ -244,40 +244,51 @@
 
 		IL_011a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_011f: stloc.s 12
-		IL_0121: ldloc.s 4
-		IL_0123: ldstr "length"
-		IL_0128: ldstr "Object_GetOwnPropertySymbols_Basic:Modules.Object_GetOwnPropertySymbols_Basic:__js_module_init__:75"
-		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0132: stloc.s 10
-		IL_0134: ldstr "len="
-		IL_0139: ldloc.s 10
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0140: stloc.s 13
-		IL_0142: ldloc.s 12
-		IL_0144: ldloc.s 13
-		IL_0146: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_014b: pop
-		IL_014c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0151: stloc.s 12
-		IL_0153: ldstr "has_s1="
-		IL_0158: ldloc.s 5
-		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_015f: stloc.s 13
-		IL_0161: ldloc.s 12
-		IL_0163: ldloc.s 13
-		IL_0165: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_016a: pop
-		IL_016b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0170: stloc.s 12
-		IL_0172: ldstr "has_s2="
-		IL_0177: ldloc.s 6
-		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_017e: stloc.s 13
-		IL_0180: ldloc.s 12
-		IL_0182: ldloc.s 13
-		IL_0184: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0189: pop
-		IL_018a: ret
+		IL_0121: volatile.
+		IL_0123: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0128: brfalse IL_013e
+
+		IL_012d: ldloc.s 4
+		IL_012f: ldstr "length"
+		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0139: br IL_0154
+
+		IL_013e: ldloc.s 4
+		IL_0140: ldstr "length"
+		IL_0145: ldstr "Object_GetOwnPropertySymbols_Basic:Modules.Object_GetOwnPropertySymbols_Basic:__js_module_init__:75"
+		IL_014a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0154: stloc.s 10
+		IL_0156: ldstr "len="
+		IL_015b: ldloc.s 10
+		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0162: stloc.s 13
+		IL_0164: ldloc.s 12
+		IL_0166: ldloc.s 13
+		IL_0168: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_016d: pop
+		IL_016e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0173: stloc.s 12
+		IL_0175: ldstr "has_s1="
+		IL_017a: ldloc.s 5
+		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0181: stloc.s 13
+		IL_0183: ldloc.s 12
+		IL_0185: ldloc.s 13
+		IL_0187: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_018c: pop
+		IL_018d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0192: stloc.s 12
+		IL_0194: ldstr "has_s2="
+		IL_0199: ldloc.s 6
+		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01a0: stloc.s 13
+		IL_01a2: ldloc.s 12
+		IL_01a4: ldloc.s 13
+		IL_01a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ab: pop
+		IL_01ac: ret
 	} // end of method Object_GetOwnPropertySymbols_Basic::__js_module_init__
 
 } // end of class Modules.Object_GetOwnPropertySymbols_Basic
@@ -302,4 +313,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 
