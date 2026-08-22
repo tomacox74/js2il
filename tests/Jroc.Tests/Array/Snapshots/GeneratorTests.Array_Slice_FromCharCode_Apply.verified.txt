@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 257 (0x101)
+		// Code size: 289 (0x121)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Slice_FromCharCode_Apply/Scope,
@@ -91,35 +91,45 @@
 		IL_009d: stloc.3
 		IL_009e: ldstr "String"
 		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a8: ldstr "fromCharCode"
-		IL_00ad: ldstr "Array_Slice_FromCharCode_Apply:Modules.Array_Slice_FromCharCode_Apply:__js_module_init__:28"
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00b7: stloc.s 5
-		IL_00b9: ldloc.s 5
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c0: ldstr "String"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ca: stloc.s 5
-		IL_00cc: ldstr "apply"
-		IL_00d1: ldloc.s 5
-		IL_00d3: ldloc.2
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00d9: stloc.s 5
-		IL_00db: ldloc.3
-		IL_00dc: ldloc.s 5
-		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e3: pop
-		IL_00e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e9: stloc.3
-		IL_00ea: ldloc.1
-		IL_00eb: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_00f0: box [System.Runtime]System.Double
-		IL_00f5: stloc.s 4
-		IL_00f7: ldloc.3
-		IL_00f8: ldloc.s 4
-		IL_00fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ff: pop
-		IL_0100: ret
+		IL_00a8: volatile.
+		IL_00aa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00af: brfalse IL_00c3
+
+		IL_00b4: ldstr "fromCharCode"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00be: br IL_00d7
+
+		IL_00c3: ldstr "fromCharCode"
+		IL_00c8: ldstr "Array_Slice_FromCharCode_Apply:Modules.Array_Slice_FromCharCode_Apply:__js_module_init__:28"
+		IL_00cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00d7: stloc.s 5
+		IL_00d9: ldloc.s 5
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e0: ldstr "String"
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ea: stloc.s 5
+		IL_00ec: ldstr "apply"
+		IL_00f1: ldloc.s 5
+		IL_00f3: ldloc.2
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00f9: stloc.s 5
+		IL_00fb: ldloc.3
+		IL_00fc: ldloc.s 5
+		IL_00fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0103: pop
+		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0109: stloc.3
+		IL_010a: ldloc.1
+		IL_010b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_0110: box [System.Runtime]System.Double
+		IL_0115: stloc.s 4
+		IL_0117: ldloc.3
+		IL_0118: ldloc.s 4
+		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_011f: pop
+		IL_0120: ret
 	} // end of method Array_Slice_FromCharCode_Apply::__js_module_init__
 
 } // end of class Modules.Array_Slice_FromCharCode_Apply
@@ -145,4 +155,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

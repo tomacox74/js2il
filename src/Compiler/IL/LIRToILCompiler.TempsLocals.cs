@@ -715,15 +715,38 @@ internal sealed partial class LIRToILCompiler
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
                     {
-                        // Emit inline through the realm-owned per-call-site
-                        // cache prototype.
+                        var cachedPath = ilEncoder.DefineLabel();
+                        var done = ilEncoder.DefineLabel();
+                        ilEncoder.OpCode(ILOpCode.Volatile);
+                        ilEncoder.OpCode(ILOpCode.Ldsfld);
+                        ilEncoder.Token(
+                            GetDynamicLookupTerminalField(getItem));
+                        ilEncoder.Branch(
+                            ILOpCode.Brfalse,
+                            cachedPath);
+
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.Ldstr(
-                            _metadataBuilder,
-                            GetDynamicLookupInlineCacheSiteKey(
-                                methodDescriptor,
-                                getItem));
+                        var genericGetItemMethod =
+                            _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                                parameterTypes:
+                                [
+                                    typeof(object),
+                                    typeof(string)
+                                ]);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(genericGetItemMethod);
+                        ilEncoder.Branch(ILOpCode.Br, done);
+
+                        ilEncoder.MarkLabel(cachedPath);
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitDynamicLookupInlineCacheSite(
+                            ilEncoder,
+                            methodDescriptor,
+                            getItem);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.DynamicLookupInlineCache),
                             nameof(JavaScriptRuntime.DynamicLookupInlineCache.GetItem),
@@ -731,10 +754,12 @@ internal sealed partial class LIRToILCompiler
                             [
                                 typeof(object),
                                 typeof(string),
-                                typeof(string)
+                                typeof(string),
+                                typeof(int).MakeByRefType()
                             ]);
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
+                        ilEncoder.MarkLabel(done);
 
                         // If the temp storage expects an unboxed double, coerce the object result to a number.
                         if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
@@ -1252,13 +1277,38 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallMember0 callMember0:
                 {
+                    var cachedPath = ilEncoder.DefineLabel();
+                    var done = ilEncoder.DefineLabel();
+                    ilEncoder.OpCode(ILOpCode.Volatile);
+                    ilEncoder.OpCode(ILOpCode.Ldsfld);
+                    ilEncoder.Token(
+                        GetDynamicLookupTerminalField(callMember0));
+                    ilEncoder.Branch(
+                        ILOpCode.Brfalse,
+                        cachedPath);
+
                     EmitLoadTempAsObject(callMember0.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
-                    ilEncoder.Ldstr(
-                        _metadataBuilder,
-                        GetDynamicLookupInlineCacheSiteKey(
-                            methodDescriptor,
-                            callMember0));
+                    var genericCallMemberRef =
+                        _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.CallMember0),
+                            new[]
+                            {
+                                typeof(object),
+                                typeof(string)
+                            });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(genericCallMemberRef);
+                    ilEncoder.Branch(ILOpCode.Br, done);
+
+                    ilEncoder.MarkLabel(cachedPath);
+                    EmitLoadTempAsObject(callMember0.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
+                    EmitDynamicLookupInlineCacheSite(
+                        ilEncoder,
+                        methodDescriptor,
+                        callMember0);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.DynamicLookupInlineCache),
@@ -1267,10 +1317,12 @@ internal sealed partial class LIRToILCompiler
                         {
                             typeof(object),
                             typeof(string),
-                            typeof(string)
+                            typeof(string),
+                            typeof(int).MakeByRefType()
                         });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
+                    ilEncoder.MarkLabel(done);
                     break;
                 }
 

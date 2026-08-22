@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 246 (0xf6)
+		// Code size: 347 (0x15b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_NestedDestructuring_Defaults/Scope,
@@ -74,59 +74,92 @@
 		IL_0048: ldstr "a"
 		IL_004d: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0052: ldloc.1
-		IL_0053: ldstr "a"
-		IL_0058: ldstr "Variable_NestedDestructuring_Defaults:Modules.Variable_NestedDestructuring_Defaults:__js_module_init__:18"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0062: stloc.s 4
-		IL_0064: ldloc.s 4
-		IL_0066: brfalse IL_0077
+		IL_0052: volatile.
+		IL_0054: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0059: brfalse IL_006e
 
-		IL_006b: ldloc.s 4
-		IL_006d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0072: brfalse IL_0088
+		IL_005e: ldloc.1
+		IL_005f: ldstr "a"
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0069: br IL_0083
 
-		IL_0077: ldloc.s 4
-		IL_0079: ldstr "a"
-		IL_007e: ldstr "b"
-		IL_0083: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_006e: ldloc.1
+		IL_006f: ldstr "a"
+		IL_0074: ldstr "Variable_NestedDestructuring_Defaults:Modules.Variable_NestedDestructuring_Defaults:__js_module_init__:18"
+		IL_0079: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0088: ldloc.s 4
-		IL_008a: ldstr "b"
-		IL_008f: ldstr "Variable_NestedDestructuring_Defaults:Modules.Variable_NestedDestructuring_Defaults:__js_module_init__:28"
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0099: stloc.2
-		IL_009a: ldloc.s 4
-		IL_009c: ldstr "c"
-		IL_00a1: ldstr "Variable_NestedDestructuring_Defaults:Modules.Variable_NestedDestructuring_Defaults:__js_module_init__:30"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00ab: stloc.s 4
-		IL_00ad: ldloc.s 4
-		IL_00af: brtrue IL_00c8
+		IL_0083: stloc.s 4
+		IL_0085: ldloc.s 4
+		IL_0087: brfalse IL_0098
 
-		IL_00b4: ldc.r8 99
-		IL_00bd: box [System.Runtime]System.Double
-		IL_00c2: stloc.3
-		IL_00c3: br IL_00cb
+		IL_008c: ldloc.s 4
+		IL_008e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0093: brfalse IL_00a9
 
-		IL_00c8: ldloc.s 4
-		IL_00ca: stloc.3
+		IL_0098: ldloc.s 4
+		IL_009a: ldstr "a"
+		IL_009f: ldstr "b"
+		IL_00a4: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_00cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d0: stloc.s 5
-		IL_00d2: ldloc.s 5
-		IL_00d4: ldstr "b="
-		IL_00d9: ldloc.2
-		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00df: pop
-		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e5: stloc.s 5
-		IL_00e7: ldloc.s 5
-		IL_00e9: ldstr "c="
-		IL_00ee: ldloc.3
-		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00f4: pop
-		IL_00f5: ret
+		IL_00a9: volatile.
+		IL_00ab: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00b0: brfalse IL_00c6
+
+		IL_00b5: ldloc.s 4
+		IL_00b7: ldstr "b"
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c1: br IL_00dc
+
+		IL_00c6: ldloc.s 4
+		IL_00c8: ldstr "b"
+		IL_00cd: ldstr "Variable_NestedDestructuring_Defaults:Modules.Variable_NestedDestructuring_Defaults:__js_module_init__:28"
+		IL_00d2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00dc: stloc.2
+		IL_00dd: volatile.
+		IL_00df: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00e4: brfalse IL_00fa
+
+		IL_00e9: ldloc.s 4
+		IL_00eb: ldstr "c"
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f5: br IL_0110
+
+		IL_00fa: ldloc.s 4
+		IL_00fc: ldstr "c"
+		IL_0101: ldstr "Variable_NestedDestructuring_Defaults:Modules.Variable_NestedDestructuring_Defaults:__js_module_init__:30"
+		IL_0106: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0110: stloc.s 4
+		IL_0112: ldloc.s 4
+		IL_0114: brtrue IL_012d
+
+		IL_0119: ldc.r8 99
+		IL_0122: box [System.Runtime]System.Double
+		IL_0127: stloc.3
+		IL_0128: br IL_0130
+
+		IL_012d: ldloc.s 4
+		IL_012f: stloc.3
+
+		IL_0130: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0135: stloc.s 5
+		IL_0137: ldloc.s 5
+		IL_0139: ldstr "b="
+		IL_013e: ldloc.2
+		IL_013f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0144: pop
+		IL_0145: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_014a: stloc.s 5
+		IL_014c: ldloc.s 5
+		IL_014e: ldstr "c="
+		IL_0153: ldloc.3
+		IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0159: pop
+		IL_015a: ret
 	} // end of method Variable_NestedDestructuring_Defaults::__js_module_init__
 
 } // end of class Modules.Variable_NestedDestructuring_Defaults
@@ -152,4 +185,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 189 (0xbd)
+		// Code size: 221 (0xdd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ObjectWithFunctions/Scope,
@@ -90,16 +90,26 @@
 		IL_0098: stloc.2
 		IL_0099: ldloc.1
 		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009f: ldstr "foo"
-		IL_00a4: ldstr "CommonJS_Export_ObjectWithFunctions:Modules.CommonJS_Export_ObjectWithFunctions:__js_module_init__:32"
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_00ae: stloc.3
-		IL_00af: ldloc.2
-		IL_00b0: ldstr "foo:"
-		IL_00b5: ldloc.3
-		IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00bb: pop
-		IL_00bc: ret
+		IL_009f: volatile.
+		IL_00a1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00a6: brfalse IL_00ba
+
+		IL_00ab: ldstr "foo"
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00b5: br IL_00ce
+
+		IL_00ba: ldstr "foo"
+		IL_00bf: ldstr "CommonJS_Export_ObjectWithFunctions:Modules.CommonJS_Export_ObjectWithFunctions:__js_module_init__:32"
+		IL_00c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_00ce: stloc.3
+		IL_00cf: ldloc.2
+		IL_00d0: ldstr "foo:"
+		IL_00d5: ldloc.3
+		IL_00d6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00db: pop
+		IL_00dc: ret
 	} // end of method CommonJS_Export_ObjectWithFunctions::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithFunctions
@@ -694,6 +704,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 
 .class interface public auto ansi abstract Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
 	implements [System.Runtime]System.IDisposable

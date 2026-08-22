@@ -185,7 +185,7 @@
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
 			// Header size: 12
-			// Code size: 140 (0x8c)
+			// Code size: 183 (0xb7)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -199,54 +199,67 @@
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Set_ForEach_Basic/Scope::seen
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldarg.2
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0017: ldstr "label"
-			IL_001c: ldstr "Set_ForEach_Basic:<TwoPhaseDummy_M2>:__js_call__:5"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0026: stloc.1
-			IL_0027: ldloc.1
-			IL_0028: ldstr ":"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0032: stloc.2
-			IL_0033: ldloc.2
-			IL_0034: ldarg.3
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003a: stloc.2
-			IL_003b: ldloc.2
-			IL_003c: ldstr ":"
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0046: stloc.2
-			IL_0047: ldloc.2
-			IL_0048: ldarg.s key
-			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_004f: stloc.2
-			IL_0050: ldloc.2
-			IL_0051: ldstr ":"
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_005b: stloc.2
-			IL_005c: ldarg.0
-			IL_005d: ldfld object Modules.Set_ForEach_Basic/Scope::set
-			IL_0062: stloc.1
-			IL_0063: ldarg.s receiver
-			IL_0065: ldloc.1
-			IL_0066: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_006b: stloc.3
-			IL_006c: ldloc.3
-			IL_006d: box [System.Runtime]System.Boolean
-			IL_0072: stloc.s 4
-			IL_0074: ldloc.2
-			IL_0075: ldloc.s 4
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_007c: stloc.2
-			IL_007d: ldloc.0
-			IL_007e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0083: ldloc.2
-			IL_0084: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0089: pop
-			IL_008a: ldnull
-			IL_008b: ret
+			IL_000c: volatile.
+			IL_000e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_0013: brfalse IL_0032
+
+			IL_0018: ldarg.2
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0023: ldstr "label"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002d: br IL_0051
+
+			IL_0032: ldarg.2
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_003d: ldstr "label"
+			IL_0042: ldstr "Set_ForEach_Basic:<TwoPhaseDummy_M2>:__js_call__:5"
+			IL_0047: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0051: stloc.1
+			IL_0052: ldloc.1
+			IL_0053: ldstr ":"
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_005d: stloc.2
+			IL_005e: ldloc.2
+			IL_005f: ldarg.3
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0065: stloc.2
+			IL_0066: ldloc.2
+			IL_0067: ldstr ":"
+			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0071: stloc.2
+			IL_0072: ldloc.2
+			IL_0073: ldarg.s key
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_007a: stloc.2
+			IL_007b: ldloc.2
+			IL_007c: ldstr ":"
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0086: stloc.2
+			IL_0087: ldarg.0
+			IL_0088: ldfld object Modules.Set_ForEach_Basic/Scope::set
+			IL_008d: stloc.1
+			IL_008e: ldarg.s receiver
+			IL_0090: ldloc.1
+			IL_0091: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0096: stloc.3
+			IL_0097: ldloc.3
+			IL_0098: box [System.Runtime]System.Boolean
+			IL_009d: stloc.s 4
+			IL_009f: ldloc.2
+			IL_00a0: ldloc.s 4
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00a7: stloc.2
+			IL_00a8: ldloc.0
+			IL_00a9: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_00ae: ldloc.2
+			IL_00af: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_00b4: pop
+			IL_00b5: ldnull
+			IL_00b6: ret
 		} // end of method FunctionExpression_L7C12::__js_call__
 
 	} // end of class FunctionExpression_L7C12
@@ -425,4 +438,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

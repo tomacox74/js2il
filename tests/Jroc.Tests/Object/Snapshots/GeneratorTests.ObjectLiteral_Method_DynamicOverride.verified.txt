@@ -268,7 +268,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 184 (0xb8)
+		// Code size: 250 (0xfa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_Method_DynamicOverride/Scope,
@@ -311,48 +311,70 @@
 		IL_0041: stloc.1
 		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0047: stloc.s 5
-		IL_0049: ldloc.1
-		IL_004a: ldstr "value"
-		IL_004f: ldstr "ObjectLiteral_Method_DynamicOverride:Modules.ObjectLiteral_Method_DynamicOverride:__js_module_init__:12"
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_0059: stloc.s 6
-		IL_005b: ldloc.s 5
-		IL_005d: ldloc.s 6
-		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0064: pop
-		IL_0065: ldc.i4.1
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldloc.0
-		IL_006e: stelem.ref
-		IL_006f: stloc.3
-		IL_0070: newobj instance void Modules.ObjectLiteral_Method_DynamicOverride/FunctionExpression_L10C17/FunctionObject::.ctor()
-		IL_0075: ldc.i4.0
-		IL_0076: conv.r8
-		IL_0077: ldstr ""
-		IL_007c: ldc.i4.0
-		IL_007d: ldc.i4.1
-		IL_007e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_Method_DynamicOverride/FunctionExpression_L10C17/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0083: stloc.s 7
-		IL_0085: ldloc.1
-		IL_0086: ldstr "value"
-		IL_008b: ldloc.s 7
-		IL_008d: ldc.i4.1
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0093: pop
-		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0099: stloc.s 5
-		IL_009b: ldloc.1
-		IL_009c: ldstr "value"
-		IL_00a1: ldstr "ObjectLiteral_Method_DynamicOverride:Modules.ObjectLiteral_Method_DynamicOverride:__js_module_init__:21"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_00ab: stloc.s 6
-		IL_00ad: ldloc.s 5
-		IL_00af: ldloc.s 6
-		IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b6: pop
-		IL_00b7: ret
+		IL_0049: volatile.
+		IL_004b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0050: brfalse IL_0065
+
+		IL_0055: ldloc.1
+		IL_0056: ldstr "value"
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0060: br IL_007a
+
+		IL_0065: ldloc.1
+		IL_0066: ldstr "value"
+		IL_006b: ldstr "ObjectLiteral_Method_DynamicOverride:Modules.ObjectLiteral_Method_DynamicOverride:__js_module_init__:12"
+		IL_0070: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_007a: stloc.s 6
+		IL_007c: ldloc.s 5
+		IL_007e: ldloc.s 6
+		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0085: pop
+		IL_0086: ldc.i4.1
+		IL_0087: newarr [System.Runtime]System.Object
+		IL_008c: dup
+		IL_008d: ldc.i4.0
+		IL_008e: ldloc.0
+		IL_008f: stelem.ref
+		IL_0090: stloc.3
+		IL_0091: newobj instance void Modules.ObjectLiteral_Method_DynamicOverride/FunctionExpression_L10C17/FunctionObject::.ctor()
+		IL_0096: ldc.i4.0
+		IL_0097: conv.r8
+		IL_0098: ldstr ""
+		IL_009d: ldc.i4.0
+		IL_009e: ldc.i4.1
+		IL_009f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_Method_DynamicOverride/FunctionExpression_L10C17/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00a4: stloc.s 7
+		IL_00a6: ldloc.1
+		IL_00a7: ldstr "value"
+		IL_00ac: ldloc.s 7
+		IL_00ae: ldc.i4.1
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00b4: pop
+		IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ba: stloc.s 5
+		IL_00bc: volatile.
+		IL_00be: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00c3: brfalse IL_00d8
+
+		IL_00c8: ldloc.1
+		IL_00c9: ldstr "value"
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00d3: br IL_00ed
+
+		IL_00d8: ldloc.1
+		IL_00d9: ldstr "value"
+		IL_00de: ldstr "ObjectLiteral_Method_DynamicOverride:Modules.ObjectLiteral_Method_DynamicOverride:__js_module_init__:21"
+		IL_00e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_00ed: stloc.s 6
+		IL_00ef: ldloc.s 5
+		IL_00f1: ldloc.s 6
+		IL_00f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f8: pop
+		IL_00f9: ret
 	} // end of method ObjectLiteral_Method_DynamicOverride::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_Method_DynamicOverride
@@ -378,4 +400,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

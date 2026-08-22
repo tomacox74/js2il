@@ -252,6 +252,24 @@ jobs. The runtime sources match master; the recorded dirty state consists of
 this Phase 0 benchmark/tooling implementation and does not modify compiler or
 runtime execution behavior.
 
+Phase 1 candidate recorded on the same Intel host on 2026-08-21:
+
+- exact `kracken-ai-astar` JROC result: 7.434 s mean, 7.452 s median,
+  N=16, 2,314,930,320 B/op, 28.2% faster than the recorded Phase 0 mean;
+- competitors in the same run: Jint 4.543 s, Okojo 5.228 s, YantraJS
+  7.292 s;
+- focused controls: generic property read 28.41 ns, generated terminal
+  fallback 25.39 ns, monomorphic hit 10.01 ns, and four-way polymorphic hit
+  13.89 ns, all at 0 B/op;
+- the active-frame descriptor benchmark measured direct descriptor lookup at
+  15.10 ns / 24 B and descriptor-aware property read at 34.72 ns / 24 B. The
+  companion pre-change descriptor lookup was 20.77 ns / 24 B; Phase 1 does
+  not claim to remove that remaining allocation.
+
+These are separate non-Dry runs on the same host, not simultaneous paired
+measurements. Preserve and compare the raw reports with the guardrail helper
+when making a regression decision.
+
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:
 

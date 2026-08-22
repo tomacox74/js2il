@@ -323,7 +323,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 357 (0x165)
+		// Code size: 389 (0x185)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_StableLoadReceiver_EvaluationOrder/Scope,
@@ -432,36 +432,46 @@
 		IL_00f9: ldloc.1
 		IL_00fa: ldc.r8 0.0
 		IL_0103: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_0108: ldstr "value"
-		IL_010d: ldstr "Array_StableLoadReceiver_EvaluationOrder:Modules.Array_StableLoadReceiver_EvaluationOrder:__js_module_init__:40"
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0117: stloc.s 6
-		IL_0119: ldloc.s 8
-		IL_011b: ldloc.s 6
-		IL_011d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0122: pop
-		IL_0123: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0128: stloc.s 8
-		IL_012a: ldloc.0
-		IL_012b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::order
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0135: ldstr "join"
-		IL_013a: ldstr ","
-		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0144: stloc.s 6
-		IL_0146: ldloc.0
-		IL_0147: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::innerReadCount
-		IL_014c: stloc.s 9
-		IL_014e: ldloc.0
-		IL_014f: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::outerReadCount
-		IL_0154: stloc.s 10
-		IL_0156: ldloc.s 8
-		IL_0158: ldloc.s 6
-		IL_015a: ldloc.s 9
-		IL_015c: ldloc.s 10
-		IL_015e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0163: pop
-		IL_0164: ret
+		IL_0108: volatile.
+		IL_010a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_010f: brfalse IL_0123
+
+		IL_0114: ldstr "value"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_011e: br IL_0137
+
+		IL_0123: ldstr "value"
+		IL_0128: ldstr "Array_StableLoadReceiver_EvaluationOrder:Modules.Array_StableLoadReceiver_EvaluationOrder:__js_module_init__:40"
+		IL_012d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0137: stloc.s 6
+		IL_0139: ldloc.s 8
+		IL_013b: ldloc.s 6
+		IL_013d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0142: pop
+		IL_0143: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0148: stloc.s 8
+		IL_014a: ldloc.0
+		IL_014b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::order
+		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0155: ldstr "join"
+		IL_015a: ldstr ","
+		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0164: stloc.s 6
+		IL_0166: ldloc.0
+		IL_0167: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::innerReadCount
+		IL_016c: stloc.s 9
+		IL_016e: ldloc.0
+		IL_016f: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::outerReadCount
+		IL_0174: stloc.s 10
+		IL_0176: ldloc.s 8
+		IL_0178: ldloc.s 6
+		IL_017a: ldloc.s 9
+		IL_017c: ldloc.s 10
+		IL_017e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0183: pop
+		IL_0184: ret
 	} // end of method Array_StableLoadReceiver_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.Array_StableLoadReceiver_EvaluationOrder
@@ -487,4 +497,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

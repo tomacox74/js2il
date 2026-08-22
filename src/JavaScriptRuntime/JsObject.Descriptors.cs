@@ -31,6 +31,7 @@ public partial class JsObject
         public Dictionary<string, JsPropertyDescriptor>? ExoticOverrides;
         public HashSet<string>? DeletedLazyClassMethods;
         public bool HasSharedIntrinsicBaseline;
+        public bool IsFunctionPrototype;
     }
 
     private JsObjectDescriptorState? _descriptorState;
@@ -49,6 +50,7 @@ public partial class JsObject
     internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
     internal bool HasInlineDescriptorState => _descriptorState is not null;
     internal bool HasSharedIntrinsicBaseline => _descriptorState?.HasSharedIntrinsicBaseline == true;
+    internal bool IsFunctionPrototype => _descriptorState?.IsFunctionPrototype == true;
     internal bool HasInlineDescriptors => _shape.PropertyCount != 0 || _descriptorState?.ExoticOverrides?.Count > 0;
     internal bool HasInlineExoticDescriptors => _descriptorState?.ExoticOverrides?.Count > 0;
 
@@ -60,6 +62,11 @@ public partial class JsObject
         state.HasSharedIntrinsicBaseline = true;
         MarkNonDataDescriptors();
         AssertInlineInvariants();
+    }
+
+    internal void MarkFunctionPrototype()
+    {
+        EnsureDescriptorState().IsFunctionPrototype = true;
     }
 
     internal bool GetInlineOwnDescriptor(string key, out JsPropertyDescriptor descriptor)

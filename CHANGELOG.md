@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): recover the identity-cache megamorphic regression
+  from issue #1958 Phase 1. Generated property-read and zero-argument member
+  call sites now publish a bounded terminal deoptimization flag and branch
+  directly to the generic operation after the fifth receiver, while
+  realm-owned entries remain isolated and weak. Runtime context mirroring,
+  recent-site lookup, and intrinsic prototype markers also remove ambient
+  realm and `%Function.prototype%` discovery from active property-read paths.
 - compiler/sdk/hosting: establish the Phase 0 generated-host-API contracts for
   #1917. Explicit assembly identities now drive PE and artifact names, compiled
   manifests identify one canonical entry module separately from aliases,

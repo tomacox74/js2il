@@ -246,15 +246,38 @@ internal sealed partial class LIRToILCompiler
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
                     {
-                        // Emit the realm-owned per-call-site cache prototype for
-                        // dynamic string-key reads.
+                        var cachedPath = ilEncoder.DefineLabel();
+                        var done = ilEncoder.DefineLabel();
+                        ilEncoder.OpCode(ILOpCode.Volatile);
+                        ilEncoder.OpCode(ILOpCode.Ldsfld);
+                        ilEncoder.Token(
+                            GetDynamicLookupTerminalField(getItem));
+                        ilEncoder.Branch(
+                            ILOpCode.Brfalse,
+                            cachedPath);
+
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.Ldstr(
-                            _metadataBuilder,
-                            GetDynamicLookupInlineCacheSiteKey(
-                                methodDescriptor,
-                                getItem));
+                        var genericGetItemMethod =
+                            _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                                parameterTypes:
+                                [
+                                    typeof(object),
+                                    typeof(string)
+                                ]);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(genericGetItemMethod);
+                        ilEncoder.Branch(ILOpCode.Br, done);
+
+                        ilEncoder.MarkLabel(cachedPath);
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitDynamicLookupInlineCacheSite(
+                            ilEncoder,
+                            methodDescriptor,
+                            getItem);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.DynamicLookupInlineCache),
                             nameof(JavaScriptRuntime.DynamicLookupInlineCache.GetItem),
@@ -262,10 +285,12 @@ internal sealed partial class LIRToILCompiler
                             [
                                 typeof(object),
                                 typeof(string),
-                                typeof(string)
+                                typeof(string),
+                                typeof(int).MakeByRefType()
                             ]);
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
+                        ilEncoder.MarkLabel(done);
 
                         // If the temp is typed as an unboxed double, coerce the object result to a number.
                         if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))

@@ -77,6 +77,7 @@ internal sealed partial class LIRToILCompiler
             materializationPlan,
             stackSchedule);
         materializationPlan.ValidateAgainstSchedule(MethodBody, stackSchedule);
+        PrepareDynamicLookupTerminalFields();
 
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();

@@ -15,21 +15,22 @@ general use in JavaScript engines.
 | **AOT specialization** | A compile-time decision that replaces dynamic lookup with a direct or guarded operation. Inline caches apply only after AOT analysis cannot prove such a specialization. |
 | **Call site** | One generated property-read or member-call instruction. Two instructions that read the same property are separate call sites. |
 | **Cache site** | The realm-owned runtime state associated with one generated call site. Its site key identifies the module, generated type, method, and original LIR instruction. |
+| **Terminal bypass** | A compiler-emitted static flag for one generated call site. After any realm transitions that site to megamorphic, generated code tests the flag and calls the generic operation without entering the runtime cache helper. The flag is only a conservative deoptimization hint: it contains no JavaScript value or realm reference. |
 | **Receiver** | The JavaScript value to the left of the property access, such as `record` in `record.name` or `record.save()`. |
 | **Dynamic lookup** | Resolving a property or callable at runtime because the compiler cannot determine the result safely in advance. |
-| **Inline cache** | Per-call-site runtime state that reuses a previously resolved data property when its recorded assumptions remain valid. “Inline” refers to association with the generated call site; the cache is stored in the realm rather than embedded as mutable process-global state in generated code. |
+| **Inline cache** | Per-call-site runtime state that reuses a previously resolved data property when its recorded assumptions remain valid. Entries and transition state are stored in the realm. Generated code contains only the terminal bypass flag, which can select the full generic algorithm but can never supply a cached value. |
 | **Cache entry** | One recorded exact receiver/property identity, resolved value, prototype path, and set of lookup versions. |
 | **Empty** | A cache site that has not recorded a usable receiver/property identity. |
 | **Monomorphic** | A site containing one live cache entry. In this first-stage identity cache, repeated access must use the same receiver object; another object with the same shape is still a distinct identity. |
 | **Polymorphic** | A site containing two through four live cache entries, allowing a small set of exact receiver identities to hit the same generated site. |
-| **Megamorphic** | A site that has observed more receiver identities than its four-entry limit. It permanently stops recording entries and uses generic lookup. |
+| **Megamorphic** | A site that has observed more receiver identities than its four-entry limit. It permanently stops recording entries, publishes its generated terminal bypass flag, and uses generic lookup. |
 | **Cache hit** | The receiver, property name, weak references, and every recorded `LookupVersion` still match, so the cached value can be reused. |
 | **Cache miss** | No valid entry matches. The runtime performs exact generic lookup and may record a new entry when the result is cacheable. |
 | **Invalidation** | A property, descriptor, or prototype change advances a recorded version, making an existing entry stale and therefore unable to hit. |
 | **Generic fallback** | The existing `ObjectRuntime` lookup or call path, which preserves complete JavaScript behavior for misses and cases the cache deliberately excludes. |
 | **Ordinary object** | In this stage, an object whose exact CLR representation is `JsObject` and whose traversed prototype objects are also exact `JsObject` instances. |
 | **Exotic object** | A representation with specialized property behavior, such as a proxy, array, typed array, or host object. These bypass this cache prototype. |
-| **Realm** | The JavaScript execution environment that owns intrinsic objects and this feature’s cache-site dictionary. Cache state is never shared between realms. |
+| **Realm** | The JavaScript execution environment that owns intrinsic objects and this feature’s cache-site dictionary. Cache entries and site snapshots are never shared between realms. A generated terminal bypass may conservatively deoptimize the same compiled call site in another realm, but it never exposes or reuses another realm's values or lookup state. |
 
 ## Scope and site identity
 
@@ -57,14 +58,31 @@ The components are:
 | `method-name` | The emitted CLR method name from the current `MethodDescriptor`. It separates methods on the generated type. |
 | `lir-instruction-index` | The zero-based position of the exact `LIRInstruction` object in the final `MethodBodyIR.Instructions` list. It separates multiple dynamic operations in the same method. |
 
-For example, a generated property read currently contains IL equivalent to:
+For example, a generated property read contains IL equivalent to:
 
 ```text
+ldsfld int32 <generated-owner>::__jroc_dynamicLookup_42
+brfalse cachedPath
+ldarg.1
+ldstr "value"
+call ObjectRuntime.GetItem(object, string)
+br done
+cachedPath:
 ldarg.1
 ldstr "value"
 ldstr "Object_DynamicInlineCache_Invalidation:<TwoPhaseDummy_M2>:__js_call__:3"
-call DynamicLookupInlineCache.GetItem(object, string, string)
+ldsflda int32 <generated-owner>::__jroc_dynamicLookup_42
+call DynamicLookupInlineCache.GetItem(object, string, string, int32&)
+done:
 ```
+
+The compiler appends one assembly-private static `Int32` field for every
+cache-bearing instruction to the generated
+`Jroc.Generated.DynamicLookupSites` type. Field names use the deterministic
+metadata field row and are implementation details; the string site key remains
+the identity of the realm-owned dictionary entry. Assembly visibility permits
+access from every generated method without exposing these fields as a public
+runtime contract.
 
 The compiler builds the instruction-index map with reference equality. Two
 structurally identical LIR instructions at different positions therefore
@@ -95,13 +113,37 @@ the property name in addition to the receiver identity; several names observed
 at one computed-property site can therefore consume separate polymorphic
 entries.
 
-At runtime, the generated key literal is used with ordinal comparison in the
-current realm's
+While the generated terminal field is zero, the key literal is used with
+ordinal comparison in the current realm's
 `ConcurrentDictionary<string, DynamicLookupInlineCacheSite>`. The first
 cacheable observation creates the site; later executions of the same generated
 instruction in that realm reuse it. The identical key literal in another
 realm addresses a different dictionary, preventing cross-realm state sharing.
 Realm disposal clears the dictionary.
+
+To avoid a concurrent-dictionary probe on every nonterminal hit, each runtime
+thread keeps the two most recently used `(realm cache state, site key, site)`
+tuples plus an eight-entry recent-site ring. Reference identity is checked
+before ordinal key comparison. The realm dictionary remains authoritative;
+the front cache only retains already-published site objects and is cleared
+whenever the ambient execution context changes. Benchmark-only site removal
+also removes matching recent entries; generated terminal fields remain
+monotonic.
+
+When a fifth live receiver/property identity makes a site megamorphic, the
+runtime publishes `1` to the generated field with `Volatile.Write`. Generated
+code tests the field before loading the site key or entering the cache helper.
+A nonzero field branches directly to the same `ObjectRuntime.GetItem` or
+`ObjectRuntime.CallMember0` operation used by an uncached dynamic lookup.
+
+The field is monotonic for the lifetime of the loaded compiled assembly. It is
+intentionally not realm-tagged: a transition in one realm can cause another
+realm executing the same compiled artifact to choose generic lookup, but
+generic lookup is always semantically valid and the second realm neither reads
+nor mutates the first realm's cache site. This bounded, value-free
+cross-realm deoptimization hint avoids retaining a realm and makes the terminal
+path equivalent to generated generic lookup. Realm-owned entries, snapshots,
+invalidation versions, and transition history remain isolated.
 
 The key is created by the compiler and emitted with `ldstr`; it is not
 formatted or allocated on each execution. Runtime lookup still hashes and
@@ -148,15 +190,20 @@ a site into megamorphic state.
 
 ## State transitions and concurrency
 
-A new site starts empty, becomes monomorphic after one observed identity, and
+A new realm-owned site starts empty, becomes monomorphic after one observed identity, and
 supports up to four identities as a small polymorphic cache. A fifth distinct
 identity permanently transitions the site to megamorphic state and releases
-its entries. Megamorphic sites dispatch directly to generic lookup without
+its entries. The transition also publishes the generated terminal flag.
+Subsequent executions dispatch directly to generic lookup without discovering
+the ambient realm, hashing the site key, reading the site snapshot, or
 constructing discarded cache entries.
 
 Readers use an immutable published snapshot and do not lock. Miss updates are
 serialized by a site-local lock and publish a replacement snapshot. Monomorphic
-and polymorphic hits allocate no memory.
+and polymorphic hits allocate no memory. The generated flag uses volatile
+publication. A racing execution can enter the cache helper once more, but it
+will observe the realm site's terminal snapshot and still execute generic
+lookup; no race can return a stale cached value.
 
 Every miss, stale entry, accessor, proxy, primitive, exotic receiver, and
 megamorphic site executes the existing generic `ObjectRuntime` operation.
@@ -173,6 +220,8 @@ process-global eviction.
 
 | Layer | Size policy | Lifetime and release policy |
 | --- | --- | --- |
+| Generated terminal fields | Exactly one four-byte logical flag per emitted cache-bearing property read or zero-argument member call, plus normal CLR metadata/alignment overhead. | The zero-initialized flag changes monotonically to one after a megamorphic transition and remains for the loaded assembly's lifetime. It contains no receiver, value, site key, cache object, or realm reference. |
+| Thread-local recent sites | Two MRU slots plus an eight-entry ring per thread. Entries are keyed by realm-cache identity and ordinal site key. | All slots are discarded on every ambient execution-context transition. They are a lookup front end only; the realm dictionary remains authoritative. |
 | Realm site dictionary | One site for each distinct generated site key that produces at least one cacheable ordinary-data-property result. Uncacheable-only operations do not create sites. | The dictionary strongly retains each key and site until realm disposal. Individual sites are not currently removed. |
 | Cache site | At most four live monomorphic/polymorphic entries. | A fifth distinct live receiver/property identity changes the site permanently to megamorphic state and releases all entries. The site object and key remain in the realm dictionary so later calls can take generic fallback directly. |
 | Cache entry | One exact receiver/property identity. The entry also has arrays proportional to the traversed prototype-chain depth, so four entries is a count bound rather than a fixed byte bound. | The receiver, non-null resolved value, and prototype objects are weakly referenced. The property-name string, weak-reference arrays, and version array remain strongly held while the entry remains in the current site snapshot. |
@@ -217,7 +266,14 @@ collectible-assembly behavior.
 Each realm owns its site dictionary. Identical site keys cannot share entries
 across realms, and disposing a realm clears the dictionary. The weak entry
 references also allow receivers and values to collect while their realm
-remains active.
+remains active. Thread-local recent-site references are cleared on every
+ambient execution-context transition, so they cannot keep a departed realm
+alive or carry a site into another realm.
+
+The terminal field follows compiled-assembly lifetime rather than realm
+lifetime. It is safe after realm disposal because it stores only an integer
+deoptimization marker. A later realm can take generic fallback immediately;
+it cannot observe any disposed realm object or value through that marker.
 
 ## Benchmark
 
@@ -229,27 +285,35 @@ dotnet run -c Release \
   --dynamic-inline-caches --filter "*"
 ```
 
-The 2026-08-21 local run used BenchmarkDotNet 0.15.8 on Ubuntu 24.04.4,
+The 2026-08-21 Phase 1 local run used BenchmarkDotNet 0.15.8 on Ubuntu 24.04.4,
 .NET 10.0.11, and an Intel Xeon 6975P-C. Each row has three measurements.
 
 | Operation | Mean | Allocated |
 | --- | ---: | ---: |
-| Generic ordinary property read | 39.72 ns | 0 B |
-| Monomorphic property hit | 19.61 ns | 0 B |
-| Four-way polymorphic property hit | 22.87 ns | 0 B |
-| Generic zero-argument member call | 63.26 ns | 0 B |
-| Cached zero-argument member call | 29.40 ns | 0 B |
-| Megamorphic generic fallback | 53.30 ns | 0 B |
-| Property mutation and invalidation | 543.39 ns | 520 B |
-| Cold miss with explicit site removal | 596.01 ns | 624 B |
-| String generic / cache-stub fallback | 50.93 / 51.17 ns | 24 / 24 B |
-| Array generic / cache-stub fallback | 30.33 / 30.56 ns | 24 / 24 B |
+| Generic ordinary property read | 28.41 ns | 0 B |
+| Monomorphic property hit | 10.01 ns | 0 B |
+| Four-way polymorphic property hit | 13.89 ns | 0 B |
+| Generic zero-argument member call | 51.83 ns | 0 B |
+| Cached zero-argument member call | 18.87 ns | 0 B |
+| Generated terminal generic fallback | 25.39 ns | 0 B |
+| Property mutation and invalidation | 680.05 ns | 520 B |
+| Cold miss with explicit site removal | 1,039.10 ns | 624 B |
+| String generic / cache-stub fallback | 29.10 / 30.08 ns | 24 / 24 B |
+| Array generic / cache-stub fallback | 14.38 / 14.96 ns | 24 / 24 B |
+| Boxed-then-consumed / direct numeric Array length | 14.68 / 0.65 ns | 24 / 0 B |
 
-The Phase 0 guardrail for #1958 adds two explicit numeric Array-length controls:
+The Phase 0 guardrail for #1958 added two explicit numeric Array-length controls:
 `ArrayLengthBoxedThenConsumed` performs the current generic property read before
 numeric conversion, while `ArrayLengthDirectNumber` reads the runtime Array's
 numeric length directly. The pair makes the generic path's 24 B/op boxing
 visible even though both benchmark methods return `double`.
+
+Compared with the Phase 0 run on the same host, monomorphic and four-way
+polymorphic hits improved from 21.00 ns and 24.53 ns respectively. The
+generated terminal path was no slower than the direct generic property-read
+control in this run. The allocation profile is unchanged: steady hits and
+terminal fallback allocate zero bytes, while descriptor-aware primitive reads
+still expose the existing 24 B allocation.
 
 The cold-miss control includes removal of the site from the realm dictionary,
 so it is an upper bound rather than pure descriptor-resolution cost. The

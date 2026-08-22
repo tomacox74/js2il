@@ -275,6 +275,152 @@ public sealed class DynamicLookupInlineCacheTests
     }
 
     [Fact]
+    public void GeneratedTerminalFlag_BypassesMegamorphicSite()
+    {
+        WithRealm(
+            () =>
+            {
+                var terminal = 0;
+                var receivers = Enumerable
+                    .Range(
+                        0,
+                        DynamicLookupInlineCacheSite
+                            .MaxPolymorphicEntries + 1)
+                    .Select(
+                        index =>
+                        {
+                            var receiver = new JsObject();
+                            receiver.SetValue(
+                                "value",
+                                $"value:{index}");
+                            return receiver;
+                        })
+                    .ToArray();
+
+                foreach (var receiver in receivers)
+                {
+                    _ = DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "generated-terminal",
+                        ref terminal);
+                }
+
+                Assert.Equal(1, terminal);
+                receivers[0].SetValue(
+                    "value",
+                    "updated");
+                Assert.Equal(
+                    "updated",
+                    DynamicLookupInlineCache.GetItem(
+                        receivers[0],
+                        "value",
+                        "generated-terminal",
+                        ref terminal));
+            });
+    }
+
+    [Fact]
+    public void GeneratedTerminalFlag_DoesNotShareRealmCacheState()
+    {
+        var firstServices =
+            RuntimeServices.BuildServiceProvider();
+        var secondServices =
+            RuntimeServices.BuildServiceProvider();
+        var firstContext =
+            RuntimeExecutionContext.GetOrCreate(firstServices);
+        var secondContext =
+            RuntimeExecutionContext.GetOrCreate(secondServices);
+        var terminal = 0;
+
+        try
+        {
+            using (firstContext.EnterAsRoot())
+            {
+                foreach (var index in Enumerable.Range(
+                    0,
+                    DynamicLookupInlineCacheSite
+                        .MaxPolymorphicEntries + 1))
+                {
+                    var receiver = new JsObject();
+                    receiver.SetValue("value", index);
+                    _ = DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "generated-realms",
+                        ref terminal);
+                }
+
+                Assert.Equal(1, terminal);
+                var firstSite = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "generated-realms"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Megamorphic,
+                    firstSite.State);
+            }
+
+            using (secondContext.EnterAsRoot())
+            {
+                var receiver = new JsObject();
+                receiver.SetValue("value", "second");
+                Assert.Equal(
+                    "second",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "generated-realms",
+                        ref terminal));
+                Assert.Null(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "generated-realms"));
+            }
+        }
+        finally
+        {
+            firstServices.OwningRealm!.Agent.Cluster.Dispose();
+            secondServices.OwningRealm!.Agent.Cluster.Dispose();
+        }
+    }
+
+    [Fact]
+    public void RemovedSite_IsNotServedFromRecentSiteCache()
+    {
+        WithRealm(
+            () =>
+            {
+                var receiver = new JsObject();
+                receiver.SetValue("value", "first");
+                Assert.Equal(
+                    "first",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "remove-recent"));
+
+                Assert.True(
+                    DynamicLookupInlineCache.RemoveSiteForBenchmarks(
+                        "remove-recent"));
+                receiver.SetValue("value", "second");
+                Assert.Equal(
+                    "second",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "remove-recent"));
+
+                var replacement = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "remove-recent"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    replacement.State);
+            });
+    }
+
+    [Fact]
     public void Sites_AreRealmOwnedAndClearedAtDisposal()
     {
         var firstServices =

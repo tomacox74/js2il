@@ -1057,7 +1057,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 69 (0x45)
+				// Code size: 112 (0x70)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -1080,15 +1080,28 @@
 				IL_001d: castclass Modules.Function_SchedulerGeneralRegions/Scope
 				IL_0022: ldloc.1
 				IL_0023: stfld object Modules.Function_SchedulerGeneralRegions/Scope::order
-				IL_0028: ldarg.2
-				IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-				IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-				IL_0033: ldstr "_x"
-				IL_0038: ldstr "Function_SchedulerGeneralRegions:<TwoPhaseDummy_M9>:__js_call__:8"
-				IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0042: stloc.0
-				IL_0043: ldloc.0
-				IL_0044: ret
+				IL_0028: volatile.
+				IL_002a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+				IL_002f: brfalse IL_004e
+
+				IL_0034: ldarg.2
+				IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+				IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+				IL_003f: ldstr "_x"
+				IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0049: br IL_006d
+
+				IL_004e: ldarg.2
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+				IL_0059: ldstr "_x"
+				IL_005e: ldstr "Function_SchedulerGeneralRegions:<TwoPhaseDummy_M9>:__js_call__:8"
+				IL_0063: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+				IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_006d: stloc.0
+				IL_006e: ldloc.0
+				IL_006f: ret
 			} // end of method FunctionExpression_object::__js_call__
 
 		} // end of class FunctionExpression_object
@@ -1394,7 +1407,7 @@
 				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
 			// Header size: 12
-			// Code size: 319 (0x13f)
+			// Code size: 385 (0x181)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_SchedulerGeneralRegions/getter/Scope,
@@ -1490,43 +1503,65 @@
 			IL_00c9: pop
 			IL_00ca: ldloc.3
 			IL_00cb: stloc.1
-			IL_00cc: ldloc.1
-			IL_00cd: ldstr "x"
-			IL_00d2: ldstr "Function_SchedulerGeneralRegions:<TwoPhaseDummy_M7>:__js_call__:26"
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00dc: stloc.s 6
-			IL_00de: ldloc.1
-			IL_00df: ldstr "x"
-			IL_00e4: ldc.r8 2
-			IL_00ed: ldc.i4.1
-			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_00f3: stloc.s 7
-			IL_00f5: ldloc.s 6
-			IL_00f7: ldloc.s 7
-			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00fe: stloc.s 8
-			IL_0100: ldloc.1
-			IL_0101: ldstr "x"
-			IL_0106: ldstr "Function_SchedulerGeneralRegions:<TwoPhaseDummy_M7>:__js_call__:32"
-			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0110: stloc.s 7
-			IL_0112: ldloc.s 8
-			IL_0114: ldloc.s 7
-			IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_011b: stloc.2
-			IL_011c: ldloc.2
-			IL_011d: ldstr ","
-			IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0127: stloc.s 8
-			IL_0129: ldarg.0
-			IL_012a: ldfld object Modules.Function_SchedulerGeneralRegions/Scope::order
-			IL_012f: stloc.s 7
-			IL_0131: ldloc.s 8
-			IL_0133: ldloc.s 7
-			IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_013a: stloc.s 8
-			IL_013c: ldloc.s 8
-			IL_013e: ret
+			IL_00cc: volatile.
+			IL_00ce: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_00d3: brfalse IL_00e8
+
+			IL_00d8: ldloc.1
+			IL_00d9: ldstr "x"
+			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00e3: br IL_00fd
+
+			IL_00e8: ldloc.1
+			IL_00e9: ldstr "x"
+			IL_00ee: ldstr "Function_SchedulerGeneralRegions:<TwoPhaseDummy_M7>:__js_call__:26"
+			IL_00f3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00fd: stloc.s 6
+			IL_00ff: ldloc.1
+			IL_0100: ldstr "x"
+			IL_0105: ldc.r8 2
+			IL_010e: ldc.i4.1
+			IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_0114: stloc.s 7
+			IL_0116: ldloc.s 6
+			IL_0118: ldloc.s 7
+			IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_011f: stloc.s 8
+			IL_0121: volatile.
+			IL_0123: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_0128: brfalse IL_013d
+
+			IL_012d: ldloc.1
+			IL_012e: ldstr "x"
+			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0138: br IL_0152
+
+			IL_013d: ldloc.1
+			IL_013e: ldstr "x"
+			IL_0143: ldstr "Function_SchedulerGeneralRegions:<TwoPhaseDummy_M7>:__js_call__:32"
+			IL_0148: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0152: stloc.s 7
+			IL_0154: ldloc.s 8
+			IL_0156: ldloc.s 7
+			IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_015d: stloc.2
+			IL_015e: ldloc.2
+			IL_015f: ldstr ","
+			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0169: stloc.s 8
+			IL_016b: ldarg.0
+			IL_016c: ldfld object Modules.Function_SchedulerGeneralRegions/Scope::order
+			IL_0171: stloc.s 7
+			IL_0173: ldloc.s 8
+			IL_0175: ldloc.s 7
+			IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_017c: stloc.s 8
+			IL_017e: ldloc.s 8
+			IL_0180: ret
 		} // end of method getter::__js_call__
 
 	} // end of class getter
@@ -1872,7 +1907,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 693 (0x2b5)
+		// Code size: 761 (0x2f9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_SchedulerGeneralRegions/Scope,
@@ -2074,69 +2109,91 @@
 		IL_01dc: stloc.s 6
 		IL_01de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_01e3: stloc.s 10
-		IL_01e5: ldloc.s 6
-		IL_01e7: ldstr "x"
-		IL_01ec: ldstr "Function_SchedulerGeneralRegions:Modules.Function_SchedulerGeneralRegions:__js_module_init__:62"
-		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_01f6: stloc.s 11
-		IL_01f8: ldloc.s 11
-		IL_01fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ff: ldstr "join"
-		IL_0204: ldstr ","
-		IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_020e: stloc.s 11
-		IL_0210: ldloc.s 11
-		IL_0212: ldstr ":"
-		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_021c: stloc.s 12
-		IL_021e: ldloc.s 6
-		IL_0220: ldstr "y"
-		IL_0225: ldstr "Function_SchedulerGeneralRegions:Modules.Function_SchedulerGeneralRegions:__js_module_init__:69"
-		IL_022a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_022f: stloc.s 11
-		IL_0231: ldloc.s 12
-		IL_0233: ldloc.s 11
-		IL_0235: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_023a: stloc.s 12
-		IL_023c: ldloc.s 10
-		IL_023e: ldloc.s 12
-		IL_0240: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0245: pop
-		IL_0246: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_024b: stloc.s 10
-		IL_024d: ldloc.3
-		IL_024e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0258: stloc.s 11
-		IL_025a: ldloc.s 10
-		IL_025c: ldloc.s 11
-		IL_025e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0263: pop
-		IL_0264: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0269: stloc.s 10
-		IL_026b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0270: stloc.s 7
-		IL_0272: ldloc.s 4
-		IL_0274: ldloc.s 7
-		IL_0276: ldc.r8 1
-		IL_027f: box [System.Runtime]System.Double
-		IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0289: stloc.s 11
-		IL_028b: ldloc.s 10
-		IL_028d: ldloc.s 11
-		IL_028f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0294: pop
-		IL_0295: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_029a: stloc.s 10
-		IL_029c: ldloc.s 5
-		IL_029e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02a3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_02a8: stloc.s 11
-		IL_02aa: ldloc.s 10
-		IL_02ac: ldloc.s 11
-		IL_02ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02b3: pop
-		IL_02b4: ret
+		IL_01e5: volatile.
+		IL_01e7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_01ec: brfalse IL_0202
+
+		IL_01f1: ldloc.s 6
+		IL_01f3: ldstr "x"
+		IL_01f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01fd: br IL_0218
+
+		IL_0202: ldloc.s 6
+		IL_0204: ldstr "x"
+		IL_0209: ldstr "Function_SchedulerGeneralRegions:Modules.Function_SchedulerGeneralRegions:__js_module_init__:62"
+		IL_020e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0218: stloc.s 11
+		IL_021a: ldloc.s 11
+		IL_021c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0221: ldstr "join"
+		IL_0226: ldstr ","
+		IL_022b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0230: stloc.s 11
+		IL_0232: ldloc.s 11
+		IL_0234: ldstr ":"
+		IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_023e: stloc.s 12
+		IL_0240: volatile.
+		IL_0242: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_0247: brfalse IL_025d
+
+		IL_024c: ldloc.s 6
+		IL_024e: ldstr "y"
+		IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0258: br IL_0273
+
+		IL_025d: ldloc.s 6
+		IL_025f: ldstr "y"
+		IL_0264: ldstr "Function_SchedulerGeneralRegions:Modules.Function_SchedulerGeneralRegions:__js_module_init__:69"
+		IL_0269: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_026e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0273: stloc.s 11
+		IL_0275: ldloc.s 12
+		IL_0277: ldloc.s 11
+		IL_0279: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_027e: stloc.s 12
+		IL_0280: ldloc.s 10
+		IL_0282: ldloc.s 12
+		IL_0284: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0289: pop
+		IL_028a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_028f: stloc.s 10
+		IL_0291: ldloc.3
+		IL_0292: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0297: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_029c: stloc.s 11
+		IL_029e: ldloc.s 10
+		IL_02a0: ldloc.s 11
+		IL_02a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02a7: pop
+		IL_02a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02ad: stloc.s 10
+		IL_02af: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02b4: stloc.s 7
+		IL_02b6: ldloc.s 4
+		IL_02b8: ldloc.s 7
+		IL_02ba: ldc.r8 1
+		IL_02c3: box [System.Runtime]System.Double
+		IL_02c8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_02cd: stloc.s 11
+		IL_02cf: ldloc.s 10
+		IL_02d1: ldloc.s 11
+		IL_02d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02d8: pop
+		IL_02d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02de: stloc.s 10
+		IL_02e0: ldloc.s 5
+		IL_02e2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02e7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_02ec: stloc.s 11
+		IL_02ee: ldloc.s 10
+		IL_02f0: ldloc.s 11
+		IL_02f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02f7: pop
+		IL_02f8: ret
 	} // end of method Function_SchedulerGeneralRegions::__js_module_init__
 
 } // end of class Modules.Function_SchedulerGeneralRegions
@@ -2162,4 +2219,16 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_20
+	.field assembly static int32 __jroc_dynamicLookup_21
+	.field assembly static int32 __jroc_dynamicLookup_22
+	.field assembly static int32 __jroc_dynamicLookup_23
+	.field assembly static int32 __jroc_dynamicLookup_24
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -1027,7 +1027,7 @@
 				74 61 54 6f 6b 65 6e 0b 00 00 02
 			)
 			// Header size: 12
-			// Code size: 134 (0x86)
+			// Code size: 166 (0xa6)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -1043,51 +1043,61 @@
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: ldstr "disable"
-			IL_0016: ldstr "Require_AsyncHooks_CreateHook:<TwoPhaseDummy_M9>:__js_call__:5"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-			IL_0020: stloc.1
-			IL_0021: ldarg.0
-			IL_0022: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
-			IL_0027: stloc.2
-			IL_0028: ldloc.1
-			IL_0029: ldloc.2
-			IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_002f: stloc.3
-			IL_0030: ldloc.3
-			IL_0031: box [System.Runtime]System.Boolean
-			IL_0036: stloc.s 4
-			IL_0038: ldloc.0
-			IL_0039: ldstr "chain disable:"
-			IL_003e: ldloc.s 4
-			IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0045: pop
-			IL_0046: ldarg.0
-			IL_0047: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
-			IL_004c: stloc.2
-			IL_004d: ldloc.2
-			IL_004e: dup
-			IL_004f: ldstr "DISABLED"
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
-			IL_0059: pop
-			IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005f: stloc.0
-			IL_0060: ldarg.0
-			IL_0061: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_AsyncHooks_CreateHook/Scope::events
-			IL_0066: ldc.i4.1
-			IL_0067: newarr [System.Runtime]System.Object
-			IL_006c: dup
-			IL_006d: ldc.i4.0
-			IL_006e: ldstr ","
-			IL_0073: stelem.ref
-			IL_0074: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_0079: stloc.s 5
-			IL_007b: ldloc.0
-			IL_007c: ldloc.s 5
-			IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0083: pop
-			IL_0084: ldnull
-			IL_0085: ret
+			IL_0011: volatile.
+			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_0018: brfalse IL_002c
+
+			IL_001d: ldstr "disable"
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0027: br IL_0040
+
+			IL_002c: ldstr "disable"
+			IL_0031: ldstr "Require_AsyncHooks_CreateHook:<TwoPhaseDummy_M9>:__js_call__:5"
+			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+			IL_0040: stloc.1
+			IL_0041: ldarg.0
+			IL_0042: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
+			IL_0047: stloc.2
+			IL_0048: ldloc.1
+			IL_0049: ldloc.2
+			IL_004a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_004f: stloc.3
+			IL_0050: ldloc.3
+			IL_0051: box [System.Runtime]System.Boolean
+			IL_0056: stloc.s 4
+			IL_0058: ldloc.0
+			IL_0059: ldstr "chain disable:"
+			IL_005e: ldloc.s 4
+			IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0065: pop
+			IL_0066: ldarg.0
+			IL_0067: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
+			IL_006c: stloc.2
+			IL_006d: ldloc.2
+			IL_006e: dup
+			IL_006f: ldstr "DISABLED"
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+			IL_0079: pop
+			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007f: stloc.0
+			IL_0080: ldarg.0
+			IL_0081: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_AsyncHooks_CreateHook/Scope::events
+			IL_0086: ldc.i4.1
+			IL_0087: newarr [System.Runtime]System.Object
+			IL_008c: dup
+			IL_008d: ldc.i4.0
+			IL_008e: ldstr ","
+			IL_0093: stelem.ref
+			IL_0094: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0099: stloc.s 5
+			IL_009b: ldloc.0
+			IL_009c: ldloc.s 5
+			IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a3: pop
+			IL_00a4: ldnull
+			IL_00a5: ret
 		} // end of method ArrowFunction_L37C14::__js_call__
 
 	} // end of class ArrowFunction_L37C14
@@ -1141,7 +1151,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 846 (0x34e)
+		// Code size: 1009 (0x3f1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_CreateHook/Scope,
@@ -1185,303 +1195,356 @@
 		IL_002a: ldstr "AsyncResource"
 		IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0034: ldloc.2
-		IL_0035: ldstr "AsyncResource"
-		IL_003a: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:16"
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0044: stloc.3
-		IL_0045: ldloc.0
-		IL_0046: ldloc.3
-		IL_0047: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
-		IL_004c: ldloc.2
-		IL_004d: ldstr "createHook"
-		IL_0052: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:19"
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_005c: stloc.1
-		IL_005d: ldloc.2
-		IL_005e: ldstr "executionAsyncResource"
-		IL_0063: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:21"
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_006d: stloc.3
-		IL_006e: ldloc.0
-		IL_006f: ldloc.3
-		IL_0070: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::executionAsyncResource
-		IL_0075: ldc.i4.0
-		IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_007b: stloc.s 4
-		IL_007d: ldloc.0
-		IL_007e: ldloc.s 4
-		IL_0080: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_AsyncHooks_CreateHook/Scope::events
-		IL_0085: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_008a: stloc.s 5
-		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0091: stloc.s 6
-		IL_0093: ldc.i4.1
-		IL_0094: newarr [System.Runtime]System.Object
-		IL_0099: dup
-		IL_009a: ldc.i4.0
-		IL_009b: ldloc.0
-		IL_009c: stelem.ref
-		IL_009d: stloc.s 7
-		IL_009f: ldloc.s 7
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldelem.ref
-		IL_00a3: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_00a8: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_00ad: ldc.i4.4
-		IL_00ae: conv.r8
-		IL_00af: ldstr ""
-		IL_00b4: ldc.i4.0
-		IL_00b5: ldc.i4.1
-		IL_00b6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00bb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook/FunctionObject>(!!0)
-		IL_00c0: stloc.s 8
-		IL_00c2: ldloc.s 6
-		IL_00c4: ldstr "init"
-		IL_00c9: ldloc.s 8
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_00d0: pop
-		IL_00d1: ldc.i4.1
-		IL_00d2: newarr [System.Runtime]System.Object
-		IL_00d7: dup
+		IL_0034: volatile.
+		IL_0036: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_003b: brfalse IL_0050
+
+		IL_0040: ldloc.2
+		IL_0041: ldstr "AsyncResource"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_004b: br IL_0065
+
+		IL_0050: ldloc.2
+		IL_0051: ldstr "AsyncResource"
+		IL_0056: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:16"
+		IL_005b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0065: stloc.3
+		IL_0066: ldloc.0
+		IL_0067: ldloc.3
+		IL_0068: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
+		IL_006d: volatile.
+		IL_006f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0074: brfalse IL_0089
+
+		IL_0079: ldloc.2
+		IL_007a: ldstr "createHook"
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0084: br IL_009e
+
+		IL_0089: ldloc.2
+		IL_008a: ldstr "createHook"
+		IL_008f: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:19"
+		IL_0094: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_009e: stloc.1
+		IL_009f: volatile.
+		IL_00a1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_00a6: brfalse IL_00bb
+
+		IL_00ab: ldloc.2
+		IL_00ac: ldstr "executionAsyncResource"
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b6: br IL_00d0
+
+		IL_00bb: ldloc.2
+		IL_00bc: ldstr "executionAsyncResource"
+		IL_00c1: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:21"
+		IL_00c6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00d0: stloc.3
+		IL_00d1: ldloc.0
+		IL_00d2: ldloc.3
+		IL_00d3: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::executionAsyncResource
 		IL_00d8: ldc.i4.0
-		IL_00d9: ldloc.0
-		IL_00da: stelem.ref
-		IL_00db: stloc.s 7
-		IL_00dd: ldloc.s 7
-		IL_00df: ldc.i4.0
-		IL_00e0: ldelem.ref
-		IL_00e1: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_00e6: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L14C10/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_00eb: ldc.i4.0
-		IL_00ec: conv.r8
-		IL_00ed: ldstr ""
-		IL_00f2: ldc.i4.0
-		IL_00f3: ldc.i4.1
-		IL_00f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L14C10/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00f9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L14C10/FunctionObject>(!!0)
-		IL_00fe: stloc.s 9
-		IL_0100: ldloc.s 6
-		IL_0102: ldstr "before"
-		IL_0107: ldloc.s 9
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_010e: pop
-		IL_010f: ldc.i4.1
-		IL_0110: newarr [System.Runtime]System.Object
-		IL_0115: dup
-		IL_0116: ldc.i4.0
-		IL_0117: ldloc.0
-		IL_0118: stelem.ref
-		IL_0119: stloc.s 7
-		IL_011b: ldloc.s 7
-		IL_011d: ldc.i4.0
-		IL_011e: ldelem.ref
-		IL_011f: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_0124: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L17C9/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_0129: ldc.i4.0
-		IL_012a: conv.r8
-		IL_012b: ldstr ""
-		IL_0130: ldc.i4.0
-		IL_0131: ldc.i4.1
-		IL_0132: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L17C9/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0137: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L17C9/FunctionObject>(!!0)
-		IL_013c: stloc.s 10
-		IL_013e: ldloc.s 6
-		IL_0140: ldstr "after"
-		IL_0145: ldloc.s 10
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_014c: pop
-		IL_014d: ldc.i4.1
-		IL_014e: newarr [System.Runtime]System.Object
-		IL_0153: dup
-		IL_0154: ldc.i4.0
-		IL_0155: ldloc.0
-		IL_0156: stelem.ref
-		IL_0157: stloc.s 7
-		IL_0159: ldloc.s 7
-		IL_015b: ldc.i4.0
-		IL_015c: ldelem.ref
-		IL_015d: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_0162: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L20C11/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_0167: ldc.i4.0
-		IL_0168: conv.r8
-		IL_0169: ldstr ""
-		IL_016e: ldc.i4.0
-		IL_016f: ldc.i4.1
-		IL_0170: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L20C11/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0175: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L20C11/FunctionObject>(!!0)
-		IL_017a: stloc.s 11
-		IL_017c: ldloc.s 6
-		IL_017e: ldstr "destroy"
-		IL_0183: ldloc.s 11
-		IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_018a: pop
-		IL_018b: ldc.i4.1
-		IL_018c: newarr [System.Runtime]System.Object
-		IL_0191: dup
-		IL_0192: ldc.i4.0
-		IL_0193: ldloc.0
-		IL_0194: stelem.ref
-		IL_0195: stloc.s 7
-		IL_0197: ldloc.s 7
-		IL_0199: ldc.i4.0
-		IL_019a: ldelem.ref
-		IL_019b: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_01a0: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L23C18/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_01a5: ldc.i4.0
-		IL_01a6: conv.r8
-		IL_01a7: ldstr ""
-		IL_01ac: ldc.i4.0
-		IL_01ad: ldc.i4.1
-		IL_01ae: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L23C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01b3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L23C18/FunctionObject>(!!0)
-		IL_01b8: stloc.s 12
-		IL_01ba: ldloc.s 6
-		IL_01bc: ldstr "promiseResolve"
-		IL_01c1: ldloc.s 12
-		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_01c8: pop
-		IL_01c9: ldloc.1
-		IL_01ca: ldloc.s 5
-		IL_01cc: ldloc.s 6
-		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_01d3: stloc.3
-		IL_01d4: ldloc.0
-		IL_01d5: ldloc.3
-		IL_01d6: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
-		IL_01db: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01e0: stloc.s 13
-		IL_01e2: ldloc.0
-		IL_01e3: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
-		IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ed: ldstr "enable"
-		IL_01f2: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:56"
-		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_01fc: stloc.3
-		IL_01fd: ldloc.0
-		IL_01fe: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
-		IL_0203: stloc.s 14
-		IL_0205: ldloc.3
-		IL_0206: ldloc.s 14
-		IL_0208: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_020d: stloc.s 15
-		IL_020f: ldloc.s 15
-		IL_0211: box [System.Runtime]System.Boolean
-		IL_0216: stloc.s 16
-		IL_0218: ldloc.s 13
-		IL_021a: ldstr "chain enable:"
-		IL_021f: ldloc.s 16
-		IL_0221: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0226: pop
-		IL_0227: ldloc.0
-		IL_0228: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
-		IL_022d: stloc.s 14
-		IL_022f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0234: dup
-		IL_0235: ldstr "requireManualDestroy"
-		IL_023a: ldc.i4.1
-		IL_023b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0240: stloc.s 6
-		IL_0242: ldloc.s 14
-		IL_0244: dup
-		IL_0245: ldstr "HOOKED"
-		IL_024a: ldloc.s 6
-		IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct2(object, object, object, object)
-		IL_0251: stloc.s 14
-		IL_0253: ldloc.0
-		IL_0254: ldloc.s 14
-		IL_0256: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
-		IL_025b: ldloc.0
-		IL_025c: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
-		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0266: stloc.s 14
-		IL_0268: ldc.i4.1
-		IL_0269: newarr [System.Runtime]System.Object
-		IL_026e: dup
-		IL_026f: ldc.i4.0
-		IL_0270: ldloc.0
-		IL_0271: stelem.ref
-		IL_0272: stloc.s 5
-		IL_0274: ldloc.s 5
-		IL_0276: ldc.i4.0
-		IL_0277: ldelem.ref
-		IL_0278: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_027d: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_0282: ldc.i4.0
-		IL_0283: conv.r8
-		IL_0284: ldstr ""
-		IL_0289: ldc.i4.0
-		IL_028a: ldc.i4.0
-		IL_028b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0290: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0)
-		IL_0295: stloc.s 17
-		IL_0297: ldloc.s 14
-		IL_0299: ldstr "runInAsyncScope"
-		IL_029e: ldloc.s 17
-		IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02a5: pop
-		IL_02a6: ldloc.0
-		IL_02a7: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
-		IL_02ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02b1: ldstr "emitDestroy"
-		IL_02b6: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:77"
-		IL_02bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_02c0: pop
-		IL_02c1: ldstr "done"
-		IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02d0: stloc.s 14
-		IL_02d2: ldc.i4.1
-		IL_02d3: newarr [System.Runtime]System.Object
-		IL_02d8: dup
-		IL_02d9: ldc.i4.0
-		IL_02da: ldloc.0
-		IL_02db: stelem.ref
-		IL_02dc: stloc.s 5
-		IL_02de: ldloc.s 5
-		IL_02e0: ldc.i4.0
-		IL_02e1: ldelem.ref
-		IL_02e2: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_02e7: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_02ec: ldc.i4.0
-		IL_02ed: conv.r8
-		IL_02ee: ldstr ""
-		IL_02f3: ldc.i4.0
-		IL_02f4: ldc.i4.0
-		IL_02f5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02fa: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0)
-		IL_02ff: stloc.s 18
-		IL_0301: ldloc.s 14
-		IL_0303: ldstr "then"
-		IL_0308: ldloc.s 18
-		IL_030a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_030f: pop
-		IL_0310: ldc.i4.1
-		IL_0311: newarr [System.Runtime]System.Object
-		IL_0316: dup
-		IL_0317: ldc.i4.0
-		IL_0318: ldloc.0
-		IL_0319: stelem.ref
-		IL_031a: stloc.s 5
-		IL_031c: ldloc.s 5
-		IL_031e: ldc.i4.0
-		IL_031f: ldelem.ref
-		IL_0320: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_0325: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
-		IL_032a: ldc.i4.0
-		IL_032b: conv.r8
-		IL_032c: ldstr ""
-		IL_0331: ldc.i4.0
-		IL_0332: ldc.i4.0
-		IL_0333: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0338: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0)
-		IL_033d: stloc.s 19
-		IL_033f: ldloc.s 19
-		IL_0341: ldc.i4.0
-		IL_0342: newarr [System.Runtime]System.Object
-		IL_0347: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_034c: pop
-		IL_034d: ret
+		IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00de: stloc.s 4
+		IL_00e0: ldloc.0
+		IL_00e1: ldloc.s 4
+		IL_00e3: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_AsyncHooks_CreateHook/Scope::events
+		IL_00e8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00ed: stloc.s 5
+		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00f4: stloc.s 6
+		IL_00f6: ldc.i4.1
+		IL_00f7: newarr [System.Runtime]System.Object
+		IL_00fc: dup
+		IL_00fd: ldc.i4.0
+		IL_00fe: ldloc.0
+		IL_00ff: stelem.ref
+		IL_0100: stloc.s 7
+		IL_0102: ldloc.s 7
+		IL_0104: ldc.i4.0
+		IL_0105: ldelem.ref
+		IL_0106: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_010b: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_0110: ldc.i4.4
+		IL_0111: conv.r8
+		IL_0112: ldstr ""
+		IL_0117: ldc.i4.0
+		IL_0118: ldc.i4.1
+		IL_0119: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_011e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook/FunctionObject>(!!0)
+		IL_0123: stloc.s 8
+		IL_0125: ldloc.s 6
+		IL_0127: ldstr "init"
+		IL_012c: ldloc.s 8
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0133: pop
+		IL_0134: ldc.i4.1
+		IL_0135: newarr [System.Runtime]System.Object
+		IL_013a: dup
+		IL_013b: ldc.i4.0
+		IL_013c: ldloc.0
+		IL_013d: stelem.ref
+		IL_013e: stloc.s 7
+		IL_0140: ldloc.s 7
+		IL_0142: ldc.i4.0
+		IL_0143: ldelem.ref
+		IL_0144: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_0149: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L14C10/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_014e: ldc.i4.0
+		IL_014f: conv.r8
+		IL_0150: ldstr ""
+		IL_0155: ldc.i4.0
+		IL_0156: ldc.i4.1
+		IL_0157: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L14C10/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_015c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L14C10/FunctionObject>(!!0)
+		IL_0161: stloc.s 9
+		IL_0163: ldloc.s 6
+		IL_0165: ldstr "before"
+		IL_016a: ldloc.s 9
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0171: pop
+		IL_0172: ldc.i4.1
+		IL_0173: newarr [System.Runtime]System.Object
+		IL_0178: dup
+		IL_0179: ldc.i4.0
+		IL_017a: ldloc.0
+		IL_017b: stelem.ref
+		IL_017c: stloc.s 7
+		IL_017e: ldloc.s 7
+		IL_0180: ldc.i4.0
+		IL_0181: ldelem.ref
+		IL_0182: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_0187: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L17C9/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_018c: ldc.i4.0
+		IL_018d: conv.r8
+		IL_018e: ldstr ""
+		IL_0193: ldc.i4.0
+		IL_0194: ldc.i4.1
+		IL_0195: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L17C9/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_019a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L17C9/FunctionObject>(!!0)
+		IL_019f: stloc.s 10
+		IL_01a1: ldloc.s 6
+		IL_01a3: ldstr "after"
+		IL_01a8: ldloc.s 10
+		IL_01aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_01af: pop
+		IL_01b0: ldc.i4.1
+		IL_01b1: newarr [System.Runtime]System.Object
+		IL_01b6: dup
+		IL_01b7: ldc.i4.0
+		IL_01b8: ldloc.0
+		IL_01b9: stelem.ref
+		IL_01ba: stloc.s 7
+		IL_01bc: ldloc.s 7
+		IL_01be: ldc.i4.0
+		IL_01bf: ldelem.ref
+		IL_01c0: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_01c5: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L20C11/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_01ca: ldc.i4.0
+		IL_01cb: conv.r8
+		IL_01cc: ldstr ""
+		IL_01d1: ldc.i4.0
+		IL_01d2: ldc.i4.1
+		IL_01d3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L20C11/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01d8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L20C11/FunctionObject>(!!0)
+		IL_01dd: stloc.s 11
+		IL_01df: ldloc.s 6
+		IL_01e1: ldstr "destroy"
+		IL_01e6: ldloc.s 11
+		IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_01ed: pop
+		IL_01ee: ldc.i4.1
+		IL_01ef: newarr [System.Runtime]System.Object
+		IL_01f4: dup
+		IL_01f5: ldc.i4.0
+		IL_01f6: ldloc.0
+		IL_01f7: stelem.ref
+		IL_01f8: stloc.s 7
+		IL_01fa: ldloc.s 7
+		IL_01fc: ldc.i4.0
+		IL_01fd: ldelem.ref
+		IL_01fe: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_0203: newobj instance void Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L23C18/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_0208: ldc.i4.0
+		IL_0209: conv.r8
+		IL_020a: ldstr ""
+		IL_020f: ldc.i4.0
+		IL_0210: ldc.i4.1
+		IL_0211: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L23C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0216: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/FunctionExpression_hook_L23C18/FunctionObject>(!!0)
+		IL_021b: stloc.s 12
+		IL_021d: ldloc.s 6
+		IL_021f: ldstr "promiseResolve"
+		IL_0224: ldloc.s 12
+		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_022b: pop
+		IL_022c: ldloc.1
+		IL_022d: ldloc.s 5
+		IL_022f: ldloc.s 6
+		IL_0231: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0236: stloc.3
+		IL_0237: ldloc.0
+		IL_0238: ldloc.3
+		IL_0239: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
+		IL_023e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0243: stloc.s 13
+		IL_0245: ldloc.0
+		IL_0246: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
+		IL_024b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0250: volatile.
+		IL_0252: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_0257: brfalse IL_026b
+
+		IL_025c: ldstr "enable"
+		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0266: br IL_027f
+
+		IL_026b: ldstr "enable"
+		IL_0270: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:56"
+		IL_0275: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_027a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_027f: stloc.3
+		IL_0280: ldloc.0
+		IL_0281: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::hook
+		IL_0286: stloc.s 14
+		IL_0288: ldloc.3
+		IL_0289: ldloc.s 14
+		IL_028b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0290: stloc.s 15
+		IL_0292: ldloc.s 15
+		IL_0294: box [System.Runtime]System.Boolean
+		IL_0299: stloc.s 16
+		IL_029b: ldloc.s 13
+		IL_029d: ldstr "chain enable:"
+		IL_02a2: ldloc.s 16
+		IL_02a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02a9: pop
+		IL_02aa: ldloc.0
+		IL_02ab: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
+		IL_02b0: stloc.s 14
+		IL_02b2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_02b7: dup
+		IL_02b8: ldstr "requireManualDestroy"
+		IL_02bd: ldc.i4.1
+		IL_02be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_02c3: stloc.s 6
+		IL_02c5: ldloc.s 14
+		IL_02c7: dup
+		IL_02c8: ldstr "HOOKED"
+		IL_02cd: ldloc.s 6
+		IL_02cf: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct2(object, object, object, object)
+		IL_02d4: stloc.s 14
+		IL_02d6: ldloc.0
+		IL_02d7: ldloc.s 14
+		IL_02d9: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
+		IL_02de: ldloc.0
+		IL_02df: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
+		IL_02e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02e9: stloc.s 14
+		IL_02eb: ldc.i4.1
+		IL_02ec: newarr [System.Runtime]System.Object
+		IL_02f1: dup
+		IL_02f2: ldc.i4.0
+		IL_02f3: ldloc.0
+		IL_02f4: stelem.ref
+		IL_02f5: stloc.s 5
+		IL_02f7: ldloc.s 5
+		IL_02f9: ldc.i4.0
+		IL_02fa: ldelem.ref
+		IL_02fb: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_0300: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_0305: ldc.i4.0
+		IL_0306: conv.r8
+		IL_0307: ldstr ""
+		IL_030c: ldc.i4.0
+		IL_030d: ldc.i4.0
+		IL_030e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0313: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0)
+		IL_0318: stloc.s 17
+		IL_031a: ldloc.s 14
+		IL_031c: ldstr "runInAsyncScope"
+		IL_0321: ldloc.s 17
+		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0328: pop
+		IL_0329: ldloc.0
+		IL_032a: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
+		IL_032f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0334: volatile.
+		IL_0336: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_033b: brfalse IL_034f
+
+		IL_0340: ldstr "emitDestroy"
+		IL_0345: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_034a: br IL_0363
+
+		IL_034f: ldstr "emitDestroy"
+		IL_0354: ldstr "Require_AsyncHooks_CreateHook:Modules.Require_AsyncHooks_CreateHook:__js_module_init__:77"
+		IL_0359: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_035e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_0363: pop
+		IL_0364: ldstr "done"
+		IL_0369: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_036e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0373: stloc.s 14
+		IL_0375: ldc.i4.1
+		IL_0376: newarr [System.Runtime]System.Object
+		IL_037b: dup
+		IL_037c: ldc.i4.0
+		IL_037d: ldloc.0
+		IL_037e: stelem.ref
+		IL_037f: stloc.s 5
+		IL_0381: ldloc.s 5
+		IL_0383: ldc.i4.0
+		IL_0384: ldelem.ref
+		IL_0385: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_038a: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_038f: ldc.i4.0
+		IL_0390: conv.r8
+		IL_0391: ldstr ""
+		IL_0396: ldc.i4.0
+		IL_0397: ldc.i4.0
+		IL_0398: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_039d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0)
+		IL_03a2: stloc.s 18
+		IL_03a4: ldloc.s 14
+		IL_03a6: ldstr "then"
+		IL_03ab: ldloc.s 18
+		IL_03ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03b2: pop
+		IL_03b3: ldc.i4.1
+		IL_03b4: newarr [System.Runtime]System.Object
+		IL_03b9: dup
+		IL_03ba: ldc.i4.0
+		IL_03bb: ldloc.0
+		IL_03bc: stelem.ref
+		IL_03bd: stloc.s 5
+		IL_03bf: ldloc.s 5
+		IL_03c1: ldc.i4.0
+		IL_03c2: ldelem.ref
+		IL_03c3: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_03c8: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_03cd: ldc.i4.0
+		IL_03ce: conv.r8
+		IL_03cf: ldstr ""
+		IL_03d4: ldc.i4.0
+		IL_03d5: ldc.i4.0
+		IL_03d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03db: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0)
+		IL_03e0: stloc.s 19
+		IL_03e2: ldloc.s 19
+		IL_03e4: ldc.i4.0
+		IL_03e5: newarr [System.Runtime]System.Object
+		IL_03ea: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_03ef: pop
+		IL_03f0: ret
 	} // end of method Require_AsyncHooks_CreateHook::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_CreateHook
@@ -1507,4 +1570,17 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_14
+	.field assembly static int32 __jroc_dynamicLookup_15
+	.field assembly static int32 __jroc_dynamicLookup_16
+	.field assembly static int32 __jroc_dynamicLookup_17
+	.field assembly static int32 __jroc_dynamicLookup_18
+	.field assembly static int32 __jroc_dynamicLookup_19
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

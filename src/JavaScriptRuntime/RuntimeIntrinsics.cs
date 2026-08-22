@@ -315,6 +315,9 @@ internal sealed class RuntimeIntrinsics
         => Volatile.Read(ref _published[(int)RuntimeIntrinsicSlot.RealmBootstrap]) != null
             || IsInitializingSlotOnCurrentThread(RuntimeIntrinsicSlot.RealmBootstrap);
 
+    internal bool IsPublishedForTests(RuntimeIntrinsicSlot slot)
+        => Volatile.Read(ref _published[(int)slot]) is not null;
+
     /// <summary>
     /// True while the calling thread is inside an intrinsic factory/initializer. Such a
     /// thread must never block on a bootstrap gate: it is already part of the graph

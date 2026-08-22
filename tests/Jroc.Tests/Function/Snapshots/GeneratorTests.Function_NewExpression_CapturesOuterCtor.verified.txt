@@ -311,7 +311,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 41 (0x29)
+				// Code size: 74 (0x4a)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -328,13 +328,24 @@
 				IL_000f: dup
 				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
 				IL_0015: stloc.0
-				IL_0016: ldloc.0
-				IL_0017: ldstr "value"
-				IL_001c: ldstr "Function_NewExpression_CapturesOuterCtor:<TwoPhaseDummy_M4>:__js_call__:6"
-				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0026: stloc.1
-				IL_0027: ldloc.1
-				IL_0028: ret
+				IL_0016: volatile.
+				IL_0018: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+				IL_001d: brfalse IL_0032
+
+				IL_0022: ldloc.0
+				IL_0023: ldstr "value"
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_002d: br IL_0047
+
+				IL_0032: ldloc.0
+				IL_0033: ldstr "value"
+				IL_0038: ldstr "Function_NewExpression_CapturesOuterCtor:<TwoPhaseDummy_M4>:__js_call__:6"
+				IL_003d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_0047: stloc.1
+				IL_0048: ldloc.1
+				IL_0049: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -671,4 +682,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

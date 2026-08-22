@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 295 (0x127)
+		// Code size: 427 (0x1ab)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_Prototype_HasOwnProperty_Basic/Scope,
@@ -72,71 +72,113 @@
 		IL_0043: stloc.3
 		IL_0044: ldstr "Object"
 		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004e: ldstr "prototype"
-		IL_0053: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:20"
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_005d: stloc.s 4
-		IL_005f: ldloc.s 4
-		IL_0061: ldstr "hasOwnProperty"
-		IL_0066: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:22"
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0070: stloc.s 4
-		IL_0072: ldloc.s 4
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0079: ldc.i4.1
-		IL_007a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_007f: dup
-		IL_0080: ldstr "own"
-		IL_0085: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_008a: stloc.s 5
-		IL_008c: ldstr "apply"
-		IL_0091: ldloc.2
-		IL_0092: ldloc.s 5
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0099: stloc.s 4
-		IL_009b: ldstr "own="
-		IL_00a0: ldloc.s 4
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00a7: stloc.s 6
-		IL_00a9: ldloc.3
-		IL_00aa: ldloc.s 6
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b1: pop
-		IL_00b2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b7: stloc.3
-		IL_00b8: ldstr "Object"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c2: ldstr "prototype"
-		IL_00c7: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:35"
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00d1: stloc.s 4
-		IL_00d3: ldloc.s 4
-		IL_00d5: ldstr "hasOwnProperty"
-		IL_00da: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:37"
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00e4: stloc.s 4
-		IL_00e6: ldloc.s 4
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ed: ldc.i4.1
-		IL_00ee: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00f3: dup
-		IL_00f4: ldstr "p"
-		IL_00f9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00fe: stloc.s 5
-		IL_0100: ldstr "apply"
-		IL_0105: ldloc.2
-		IL_0106: ldloc.s 5
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_010d: stloc.s 4
-		IL_010f: ldstr "p="
-		IL_0114: ldloc.s 4
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_011b: stloc.s 6
-		IL_011d: ldloc.3
-		IL_011e: ldloc.s 6
-		IL_0120: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0125: pop
-		IL_0126: ret
+		IL_004e: volatile.
+		IL_0050: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0055: brfalse IL_0069
+
+		IL_005a: ldstr "prototype"
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0064: br IL_007d
+
+		IL_0069: ldstr "prototype"
+		IL_006e: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:20"
+		IL_0073: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_007d: stloc.s 4
+		IL_007f: volatile.
+		IL_0081: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0086: brfalse IL_009c
+
+		IL_008b: ldloc.s 4
+		IL_008d: ldstr "hasOwnProperty"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0097: br IL_00b2
+
+		IL_009c: ldloc.s 4
+		IL_009e: ldstr "hasOwnProperty"
+		IL_00a3: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:22"
+		IL_00a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00b2: stloc.s 4
+		IL_00b4: ldloc.s 4
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00bb: ldc.i4.1
+		IL_00bc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00c1: dup
+		IL_00c2: ldstr "own"
+		IL_00c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00cc: stloc.s 5
+		IL_00ce: ldstr "apply"
+		IL_00d3: ldloc.2
+		IL_00d4: ldloc.s 5
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00db: stloc.s 4
+		IL_00dd: ldstr "own="
+		IL_00e2: ldloc.s 4
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e9: stloc.s 6
+		IL_00eb: ldloc.3
+		IL_00ec: ldloc.s 6
+		IL_00ee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f3: pop
+		IL_00f4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f9: stloc.3
+		IL_00fa: ldstr "Object"
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0104: volatile.
+		IL_0106: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_010b: brfalse IL_011f
+
+		IL_0110: ldstr "prototype"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_011a: br IL_0133
+
+		IL_011f: ldstr "prototype"
+		IL_0124: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:35"
+		IL_0129: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0133: stloc.s 4
+		IL_0135: volatile.
+		IL_0137: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_013c: brfalse IL_0152
+
+		IL_0141: ldloc.s 4
+		IL_0143: ldstr "hasOwnProperty"
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_014d: br IL_0168
+
+		IL_0152: ldloc.s 4
+		IL_0154: ldstr "hasOwnProperty"
+		IL_0159: ldstr "Object_Prototype_HasOwnProperty_Basic:Modules.Object_Prototype_HasOwnProperty_Basic:__js_module_init__:37"
+		IL_015e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0168: stloc.s 4
+		IL_016a: ldloc.s 4
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0171: ldc.i4.1
+		IL_0172: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0177: dup
+		IL_0178: ldstr "p"
+		IL_017d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0182: stloc.s 5
+		IL_0184: ldstr "apply"
+		IL_0189: ldloc.2
+		IL_018a: ldloc.s 5
+		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0191: stloc.s 4
+		IL_0193: ldstr "p="
+		IL_0198: ldloc.s 4
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_019f: stloc.s 6
+		IL_01a1: ldloc.3
+		IL_01a2: ldloc.s 6
+		IL_01a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a9: pop
+		IL_01aa: ret
 	} // end of method Object_Prototype_HasOwnProperty_Basic::__js_module_init__
 
 } // end of class Modules.Object_Prototype_HasOwnProperty_Basic
@@ -162,4 +204,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -434,26 +434,37 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 38 (0x26)
+			// Code size: 71 (0x47)
 			.maxstack 8
 			.locals init (
 				[0] object
 			)
 
-			IL_0000: ldarg.2
-			IL_0001: ldstr "marker"
-			IL_0006: ldstr "Proxy_OwnKeys_And_PrototypeTraps_WithFallback:<TwoPhaseDummy_M4>:__js_call__:4"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0010: stloc.0
-			IL_0011: ldarg.1
-			IL_0012: ldstr "protoMarker"
-			IL_0017: ldloc.0
-			IL_0018: ldc.i4.1
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_001e: pop
-			IL_001f: ldc.i4.1
-			IL_0020: box [System.Runtime]System.Boolean
-			IL_0025: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0007: brfalse IL_001c
+
+			IL_000c: ldarg.2
+			IL_000d: ldstr "marker"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0017: br IL_0031
+
+			IL_001c: ldarg.2
+			IL_001d: ldstr "marker"
+			IL_0022: ldstr "Proxy_OwnKeys_And_PrototypeTraps_WithFallback:<TwoPhaseDummy_M4>:__js_call__:4"
+			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0031: stloc.0
+			IL_0032: ldarg.1
+			IL_0033: ldstr "protoMarker"
+			IL_0038: ldloc.0
+			IL_0039: ldc.i4.1
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_003f: pop
+			IL_0040: ldc.i4.1
+			IL_0041: box [System.Runtime]System.Boolean
+			IL_0046: ret
 		} // end of method FunctionExpression_prototypeProxy_L17C18::__js_call__
 
 	} // end of class FunctionExpression_prototypeProxy_L17C18
@@ -497,7 +508,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 683 (0x2ab)
+		// Code size: 748 (0x2ec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback/Scope,
@@ -630,120 +641,141 @@
 		IL_012a: stloc.s 11
 		IL_012c: ldloc.3
 		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_0132: ldstr "marker"
-		IL_0137: ldstr "Proxy_OwnKeys_And_PrototypeTraps_WithFallback:Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback:__js_module_init__:37"
-		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0141: stloc.s 12
-		IL_0143: ldloc.s 11
-		IL_0145: ldloc.s 12
-		IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_014c: pop
-		IL_014d: ldloc.3
-		IL_014e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0153: dup
-		IL_0154: ldstr "marker"
-		IL_0159: ldstr "setTrap"
-		IL_015e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
-		IL_0168: pop
-		IL_0169: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_016e: stloc.s 11
-		IL_0170: ldloc.2
-		IL_0171: ldstr "protoMarker"
-		IL_0176: ldstr "Proxy_OwnKeys_And_PrototypeTraps_WithFallback:Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback:__js_module_init__:46"
-		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0180: stloc.s 12
-		IL_0182: ldloc.s 11
-		IL_0184: ldloc.s 12
-		IL_0186: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_018b: pop
-		IL_018c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0191: stloc.s 4
-		IL_0193: ldloc.s 4
-		IL_0195: ldstr "b"
-		IL_019a: ldc.r8 2
-		IL_01a3: ldc.i4.1
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_01a9: pop
-		IL_01aa: ldloc.s 4
-		IL_01ac: ldstr "a"
-		IL_01b1: ldc.r8 1
-		IL_01ba: ldc.i4.1
-		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_01c0: pop
-		IL_01c1: ldloc.s 4
-		IL_01c3: ldc.r8 0.0
-		IL_01cc: ldc.r8 0.0
-		IL_01d5: ldc.i4.1
-		IL_01d6: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-		IL_01db: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01e0: dup
-		IL_01e1: ldstr "from"
-		IL_01e6: ldstr "fallbackProto"
-		IL_01eb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_01f0: stloc.s 5
-		IL_01f2: ldloc.s 4
-		IL_01f4: ldloc.s 5
-		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
-		IL_01fb: pop
-		IL_01fc: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0201: stloc.s 10
-		IL_0203: ldloc.s 4
-		IL_0205: ldloc.s 10
-		IL_0207: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_020c: stloc.s 6
-		IL_020e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0213: stloc.s 11
-		IL_0215: ldloc.s 6
-		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-		IL_021c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0221: ldstr "join"
-		IL_0226: ldstr ","
-		IL_022b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0230: stloc.s 12
-		IL_0232: ldloc.s 11
-		IL_0234: ldloc.s 12
-		IL_0236: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_023b: pop
-		IL_023c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0241: stloc.s 11
-		IL_0243: ldloc.s 6
-		IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_024a: stloc.s 12
-		IL_024c: ldloc.s 12
-		IL_024e: ldloc.s 5
-		IL_0250: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0255: stloc.s 15
-		IL_0257: ldloc.s 15
-		IL_0259: box [System.Runtime]System.Boolean
-		IL_025e: stloc.s 16
-		IL_0260: ldloc.s 11
-		IL_0262: ldloc.s 16
-		IL_0264: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0269: pop
-		IL_026a: ldloc.s 6
-		IL_026c: ldc.i4.0
-		IL_026d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0272: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
-		IL_0277: pop
-		IL_0278: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_027d: stloc.s 11
-		IL_027f: ldloc.s 4
-		IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_0286: stloc.s 12
-		IL_0288: ldloc.s 12
-		IL_028a: ldc.i4.0
-		IL_028b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0290: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0295: stloc.s 15
-		IL_0297: ldloc.s 15
-		IL_0299: box [System.Runtime]System.Boolean
-		IL_029e: stloc.s 16
-		IL_02a0: ldloc.s 11
-		IL_02a2: ldloc.s 16
-		IL_02a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02a9: pop
-		IL_02aa: ret
+		IL_0132: volatile.
+		IL_0134: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0139: brfalse IL_014d
+
+		IL_013e: ldstr "marker"
+		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0148: br IL_0161
+
+		IL_014d: ldstr "marker"
+		IL_0152: ldstr "Proxy_OwnKeys_And_PrototypeTraps_WithFallback:Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback:__js_module_init__:37"
+		IL_0157: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0161: stloc.s 12
+		IL_0163: ldloc.s 11
+		IL_0165: ldloc.s 12
+		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_016c: pop
+		IL_016d: ldloc.3
+		IL_016e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0173: dup
+		IL_0174: ldstr "marker"
+		IL_0179: ldstr "setTrap"
+		IL_017e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_0188: pop
+		IL_0189: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_018e: stloc.s 11
+		IL_0190: volatile.
+		IL_0192: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0197: brfalse IL_01ac
+
+		IL_019c: ldloc.2
+		IL_019d: ldstr "protoMarker"
+		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a7: br IL_01c1
+
+		IL_01ac: ldloc.2
+		IL_01ad: ldstr "protoMarker"
+		IL_01b2: ldstr "Proxy_OwnKeys_And_PrototypeTraps_WithFallback:Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback:__js_module_init__:46"
+		IL_01b7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01c1: stloc.s 12
+		IL_01c3: ldloc.s 11
+		IL_01c5: ldloc.s 12
+		IL_01c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01cc: pop
+		IL_01cd: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01d2: stloc.s 4
+		IL_01d4: ldloc.s 4
+		IL_01d6: ldstr "b"
+		IL_01db: ldc.r8 2
+		IL_01e4: ldc.i4.1
+		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_01ea: pop
+		IL_01eb: ldloc.s 4
+		IL_01ed: ldstr "a"
+		IL_01f2: ldc.r8 1
+		IL_01fb: ldc.i4.1
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0201: pop
+		IL_0202: ldloc.s 4
+		IL_0204: ldc.r8 0.0
+		IL_020d: ldc.r8 0.0
+		IL_0216: ldc.i4.1
+		IL_0217: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+		IL_021c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0221: dup
+		IL_0222: ldstr "from"
+		IL_0227: ldstr "fallbackProto"
+		IL_022c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0231: stloc.s 5
+		IL_0233: ldloc.s 4
+		IL_0235: ldloc.s 5
+		IL_0237: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_023c: pop
+		IL_023d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0242: stloc.s 10
+		IL_0244: ldloc.s 4
+		IL_0246: ldloc.s 10
+		IL_0248: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_024d: stloc.s 6
+		IL_024f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0254: stloc.s 11
+		IL_0256: ldloc.s 6
+		IL_0258: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0262: ldstr "join"
+		IL_0267: ldstr ","
+		IL_026c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0271: stloc.s 12
+		IL_0273: ldloc.s 11
+		IL_0275: ldloc.s 12
+		IL_0277: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_027c: pop
+		IL_027d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0282: stloc.s 11
+		IL_0284: ldloc.s 6
+		IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_028b: stloc.s 12
+		IL_028d: ldloc.s 12
+		IL_028f: ldloc.s 5
+		IL_0291: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0296: stloc.s 15
+		IL_0298: ldloc.s 15
+		IL_029a: box [System.Runtime]System.Boolean
+		IL_029f: stloc.s 16
+		IL_02a1: ldloc.s 11
+		IL_02a3: ldloc.s 16
+		IL_02a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02aa: pop
+		IL_02ab: ldloc.s 6
+		IL_02ad: ldc.i4.0
+		IL_02ae: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_02b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_02b8: pop
+		IL_02b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02be: stloc.s 11
+		IL_02c0: ldloc.s 4
+		IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_02c7: stloc.s 12
+		IL_02c9: ldloc.s 12
+		IL_02cb: ldc.i4.0
+		IL_02cc: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_02d1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_02d6: stloc.s 15
+		IL_02d8: ldloc.s 15
+		IL_02da: box [System.Runtime]System.Boolean
+		IL_02df: stloc.s 16
+		IL_02e1: ldloc.s 11
+		IL_02e3: ldloc.s 16
+		IL_02e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02ea: pop
+		IL_02eb: ret
 	} // end of method Proxy_OwnKeys_And_PrototypeTraps_WithFallback::__js_module_init__
 
 } // end of class Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback
@@ -769,4 +801,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

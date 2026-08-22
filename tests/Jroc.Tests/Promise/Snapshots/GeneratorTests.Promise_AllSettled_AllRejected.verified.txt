@@ -107,7 +107,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 220 (0xdc)
+			// Code size: 352 (0x160)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -121,84 +121,128 @@
 			IL_0007: ldc.r8 0.0
 			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
 			IL_0015: stloc.1
-			IL_0016: ldloc.1
-			IL_0017: ldstr "status"
-			IL_001c: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:7"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0026: stloc.1
-			IL_0027: ldarg.1
-			IL_0028: ldc.r8 0.0
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0036: stloc.2
-			IL_0037: ldloc.2
-			IL_0038: ldstr "reason"
-			IL_003d: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:13"
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0047: stloc.2
-			IL_0048: ldloc.0
-			IL_0049: ldc.i4.4
-			IL_004a: newarr [System.Runtime]System.Object
-			IL_004f: dup
-			IL_0050: ldc.i4.0
-			IL_0051: ldstr "Result 0 status:"
-			IL_0056: stelem.ref
-			IL_0057: dup
-			IL_0058: ldc.i4.1
-			IL_0059: ldloc.1
-			IL_005a: stelem.ref
-			IL_005b: dup
-			IL_005c: ldc.i4.2
-			IL_005d: ldstr "reason:"
-			IL_0062: stelem.ref
-			IL_0063: dup
-			IL_0064: ldc.i4.3
-			IL_0065: ldloc.2
-			IL_0066: stelem.ref
-			IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_006c: pop
-			IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0072: stloc.0
-			IL_0073: ldarg.1
-			IL_0074: ldc.r8 1
-			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0082: stloc.2
-			IL_0083: ldloc.2
-			IL_0084: ldstr "status"
-			IL_0089: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:22"
-			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0093: stloc.2
-			IL_0094: ldarg.1
-			IL_0095: ldc.r8 1
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00a3: stloc.1
-			IL_00a4: ldloc.1
-			IL_00a5: ldstr "reason"
-			IL_00aa: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:28"
-			IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_00b4: stloc.1
-			IL_00b5: ldloc.0
-			IL_00b6: ldc.i4.4
-			IL_00b7: newarr [System.Runtime]System.Object
-			IL_00bc: dup
-			IL_00bd: ldc.i4.0
-			IL_00be: ldstr "Result 1 status:"
-			IL_00c3: stelem.ref
-			IL_00c4: dup
-			IL_00c5: ldc.i4.1
-			IL_00c6: ldloc.2
-			IL_00c7: stelem.ref
-			IL_00c8: dup
-			IL_00c9: ldc.i4.2
-			IL_00ca: ldstr "reason:"
-			IL_00cf: stelem.ref
-			IL_00d0: dup
-			IL_00d1: ldc.i4.3
-			IL_00d2: ldloc.1
-			IL_00d3: stelem.ref
-			IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00d9: pop
-			IL_00da: ldnull
-			IL_00db: ret
+			IL_0016: volatile.
+			IL_0018: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_001d: brfalse IL_0032
+
+			IL_0022: ldloc.1
+			IL_0023: ldstr "status"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002d: br IL_0047
+
+			IL_0032: ldloc.1
+			IL_0033: ldstr "status"
+			IL_0038: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:7"
+			IL_003d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0047: stloc.1
+			IL_0048: ldarg.1
+			IL_0049: ldc.r8 0.0
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0057: stloc.2
+			IL_0058: volatile.
+			IL_005a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_005f: brfalse IL_0074
+
+			IL_0064: ldloc.2
+			IL_0065: ldstr "reason"
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_006f: br IL_0089
+
+			IL_0074: ldloc.2
+			IL_0075: ldstr "reason"
+			IL_007a: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:13"
+			IL_007f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0089: stloc.2
+			IL_008a: ldloc.0
+			IL_008b: ldc.i4.4
+			IL_008c: newarr [System.Runtime]System.Object
+			IL_0091: dup
+			IL_0092: ldc.i4.0
+			IL_0093: ldstr "Result 0 status:"
+			IL_0098: stelem.ref
+			IL_0099: dup
+			IL_009a: ldc.i4.1
+			IL_009b: ldloc.1
+			IL_009c: stelem.ref
+			IL_009d: dup
+			IL_009e: ldc.i4.2
+			IL_009f: ldstr "reason:"
+			IL_00a4: stelem.ref
+			IL_00a5: dup
+			IL_00a6: ldc.i4.3
+			IL_00a7: ldloc.2
+			IL_00a8: stelem.ref
+			IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00ae: pop
+			IL_00af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b4: stloc.0
+			IL_00b5: ldarg.1
+			IL_00b6: ldc.r8 1
+			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00c4: stloc.2
+			IL_00c5: volatile.
+			IL_00c7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_00cc: brfalse IL_00e1
+
+			IL_00d1: ldloc.2
+			IL_00d2: ldstr "status"
+			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00dc: br IL_00f6
+
+			IL_00e1: ldloc.2
+			IL_00e2: ldstr "status"
+			IL_00e7: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:22"
+			IL_00ec: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00f6: stloc.2
+			IL_00f7: ldarg.1
+			IL_00f8: ldc.r8 1
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0106: stloc.1
+			IL_0107: volatile.
+			IL_0109: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_010e: brfalse IL_0123
+
+			IL_0113: ldloc.1
+			IL_0114: ldstr "reason"
+			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_011e: br IL_0138
+
+			IL_0123: ldloc.1
+			IL_0124: ldstr "reason"
+			IL_0129: ldstr "Promise_AllSettled_AllRejected:<TwoPhaseDummy_M2>:__js_call__:28"
+			IL_012e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0138: stloc.1
+			IL_0139: ldloc.0
+			IL_013a: ldc.i4.4
+			IL_013b: newarr [System.Runtime]System.Object
+			IL_0140: dup
+			IL_0141: ldc.i4.0
+			IL_0142: ldstr "Result 1 status:"
+			IL_0147: stelem.ref
+			IL_0148: dup
+			IL_0149: ldc.i4.1
+			IL_014a: ldloc.2
+			IL_014b: stelem.ref
+			IL_014c: dup
+			IL_014d: ldc.i4.2
+			IL_014e: ldstr "reason:"
+			IL_0153: stelem.ref
+			IL_0154: dup
+			IL_0155: ldc.i4.3
+			IL_0156: ldloc.1
+			IL_0157: stelem.ref
+			IL_0158: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_015d: pop
+			IL_015e: ldnull
+			IL_015f: ret
 		} // end of method ArrowFunction_L6C35::__js_call__
 
 	} // end of class ArrowFunction_L6C35
@@ -312,4 +356,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

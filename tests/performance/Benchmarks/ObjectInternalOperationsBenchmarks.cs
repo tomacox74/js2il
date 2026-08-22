@@ -3,6 +3,7 @@ using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Order;
+using BenchmarkDotNet.Exporters.Json;
 using Jroc;
 
 namespace Benchmarks;
@@ -99,6 +100,73 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
     [Benchmark(Description = "Resolve custom iterator")]
     public object GetIterator()
         => JavaScriptRuntime.ObjectRuntime.GetIterator(_iterableTarget);
+}
+
+/// <summary>
+/// Measures descriptor-aware and plain-object reads under an active realm frame.
+/// </summary>
+[MemoryDiagnoser]
+[JsonExporterAttribute.FullCompressed]
+[ShortRunJob]
+[RankColumn]
+[Orderer(SummaryOrderPolicy.FastestToSlowest)]
+[HideColumns("Error", "StdDev")]
+public class DescriptorLookupExecutionFrameBenchmarks
+{
+    private readonly JavaScriptRuntime.JsObject _plainTarget = new();
+    private readonly JavaScriptRuntime.JsObject _descriptorTarget = new();
+    private JavaScriptRuntime.RuntimeAgentCluster? _cluster;
+    private IDisposable? _scope;
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        var services =
+            JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
+        _cluster = services.OwningRealm!.Agent.Cluster;
+        var context =
+            JavaScriptRuntime.RuntimeExecutionContext.GetOrCreate(services);
+        _scope = context.EnterAsRoot();
+        _ = JavaScriptRuntime.GlobalThis.globalThis;
+
+        _plainTarget.SetValue("value", 42d);
+        _descriptorTarget.DefineOwnProperty(
+            "value",
+            new JavaScriptRuntime.JsPropertyDescriptor
+            {
+                Kind = JavaScriptRuntime.JsPropertyDescriptorKind.Data,
+                Value = 42d,
+                Writable = false,
+                Enumerable = false,
+                Configurable = true
+            });
+    }
+
+    [GlobalCleanup]
+    public void Cleanup()
+    {
+        _scope?.Dispose();
+        _cluster?.Dispose();
+    }
+
+    [Benchmark(Baseline = true)]
+    public object? PlainObjectRead()
+        => JavaScriptRuntime.ObjectRuntime.GetProperty(
+            _plainTarget,
+            "value");
+
+    [Benchmark]
+    public object? DescriptorAwarePropertyRead()
+        => JavaScriptRuntime.ObjectRuntime.GetProperty(
+            _descriptorTarget,
+            "value");
+
+    [Benchmark]
+    public bool DescriptorLookup()
+        => JavaScriptRuntime.PropertyDescriptorStore.TryGetOwn(
+            _descriptorTarget,
+            "value",
+            out _);
 }
 
 /// <summary>

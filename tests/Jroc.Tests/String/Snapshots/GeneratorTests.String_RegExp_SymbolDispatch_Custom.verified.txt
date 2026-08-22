@@ -932,7 +932,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 823 (0x337)
+		// Code size: 925 (0x39d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_RegExp_SymbolDispatch_Custom/Scope,
@@ -1175,90 +1175,123 @@
 		IL_024b: pop
 		IL_024c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0251: stloc.s 18
-		IL_0253: ldloc.s 4
-		IL_0255: ldstr "marker"
-		IL_025a: ldstr "String_RegExp_SymbolDispatch_Custom:Modules.String_RegExp_SymbolDispatch_Custom:__js_module_init__:83"
-		IL_025f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0264: stloc.s 11
-		IL_0266: ldloc.s 18
-		IL_0268: ldloc.s 11
-		IL_026a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_026f: pop
-		IL_0270: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0275: stloc.s 5
-		IL_0277: ldstr "match"
-		IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0281: stloc.s 11
-		IL_0283: ldloc.s 5
-		IL_0285: ldloc.s 11
-		IL_0287: ldc.r8 1
-		IL_0290: box [System.Runtime]System.Double
-		IL_0295: ldc.i4.1
-		IL_0296: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-		IL_029b: pop
+		IL_0253: volatile.
+		IL_0255: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_025a: brfalse IL_0270
+
+		IL_025f: ldloc.s 4
+		IL_0261: ldstr "marker"
+		IL_0266: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_026b: br IL_0286
+
+		IL_0270: ldloc.s 4
+		IL_0272: ldstr "marker"
+		IL_0277: ldstr "String_RegExp_SymbolDispatch_Custom:Modules.String_RegExp_SymbolDispatch_Custom:__js_module_init__:83"
+		IL_027c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0286: stloc.s 11
+		IL_0288: ldloc.s 18
+		IL_028a: ldloc.s 11
+		IL_028c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0291: pop
+		IL_0292: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0297: stloc.s 5
+		IL_0299: ldstr "match"
+		IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_02a3: stloc.s 11
+		IL_02a5: ldloc.s 5
+		IL_02a7: ldloc.s 11
+		IL_02a9: ldc.r8 1
+		IL_02b2: box [System.Runtime]System.Double
+		IL_02b7: ldc.i4.1
+		IL_02b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+		IL_02bd: pop
 		.try
 		{
-			IL_029c: nop
-			IL_029d: ldstr "abc"
-			IL_02a2: ldstr "match"
-			IL_02a7: ldloc.s 5
-			IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_02ae: pop
-			IL_02af: leave IL_0333
+			IL_02be: nop
+			IL_02bf: ldstr "abc"
+			IL_02c4: ldstr "match"
+			IL_02c9: ldloc.s 5
+			IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_02d0: pop
+			IL_02d1: leave IL_0399
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_02b4: stloc.s 6
-			IL_02b6: ldloc.s 6
-			IL_02b8: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02bd: dup
-			IL_02be: brtrue IL_02d4
+			IL_02d6: stloc.s 6
+			IL_02d8: ldloc.s 6
+			IL_02da: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_02df: dup
+			IL_02e0: brtrue IL_02f6
 
-			IL_02c3: pop
-			IL_02c4: ldloc.s 6
-			IL_02c6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_02cb: dup
-			IL_02cc: brtrue IL_02e0
+			IL_02e5: pop
+			IL_02e6: ldloc.s 6
+			IL_02e8: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_02ed: dup
+			IL_02ee: brtrue IL_0302
 
-			IL_02d1: pop
-			IL_02d2: rethrow
+			IL_02f3: pop
+			IL_02f4: rethrow
 
-			IL_02d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02d9: stloc.s 7
-			IL_02db: br IL_02e2
+			IL_02f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02fb: stloc.s 7
+			IL_02fd: br IL_0304
 
-			IL_02e0: stloc.s 7
+			IL_0302: stloc.s 7
 
-			IL_02e2: ldloc.s 7
-			IL_02e4: stloc.s 8
-			IL_02e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02eb: stloc.s 18
-			IL_02ed: ldloc.s 8
-			IL_02ef: ldstr "name"
-			IL_02f4: ldstr "String_RegExp_SymbolDispatch_Custom:Modules.String_RegExp_SymbolDispatch_Custom:__js_module_init__:110"
-			IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_02fe: stloc.s 11
-			IL_0300: ldloc.s 18
-			IL_0302: ldloc.s 11
-			IL_0304: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0309: pop
-			IL_030a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_030f: stloc.s 18
-			IL_0311: ldloc.s 8
-			IL_0313: ldstr "message"
-			IL_0318: ldstr "String_RegExp_SymbolDispatch_Custom:Modules.String_RegExp_SymbolDispatch_Custom:__js_module_init__:115"
-			IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0322: stloc.s 11
-			IL_0324: ldloc.s 18
-			IL_0326: ldloc.s 11
-			IL_0328: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_032d: pop
-			IL_032e: leave IL_0333
+			IL_0304: ldloc.s 7
+			IL_0306: stloc.s 8
+			IL_0308: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_030d: stloc.s 18
+			IL_030f: volatile.
+			IL_0311: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0316: brfalse IL_032c
+
+			IL_031b: ldloc.s 8
+			IL_031d: ldstr "name"
+			IL_0322: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0327: br IL_0342
+
+			IL_032c: ldloc.s 8
+			IL_032e: ldstr "name"
+			IL_0333: ldstr "String_RegExp_SymbolDispatch_Custom:Modules.String_RegExp_SymbolDispatch_Custom:__js_module_init__:110"
+			IL_0338: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_033d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0342: stloc.s 11
+			IL_0344: ldloc.s 18
+			IL_0346: ldloc.s 11
+			IL_0348: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_034d: pop
+			IL_034e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0353: stloc.s 18
+			IL_0355: volatile.
+			IL_0357: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_035c: brfalse IL_0372
+
+			IL_0361: ldloc.s 8
+			IL_0363: ldstr "message"
+			IL_0368: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_036d: br IL_0388
+
+			IL_0372: ldloc.s 8
+			IL_0374: ldstr "message"
+			IL_0379: ldstr "String_RegExp_SymbolDispatch_Custom:Modules.String_RegExp_SymbolDispatch_Custom:__js_module_init__:115"
+			IL_037e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0388: stloc.s 11
+			IL_038a: ldloc.s 18
+			IL_038c: ldloc.s 11
+			IL_038e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0393: pop
+			IL_0394: leave IL_0399
 		} // end handler
 
-		IL_0333: ldnull
-		IL_0334: stloc.s 9
-		IL_0336: ret
+		IL_0399: ldnull
+		IL_039a: stloc.s 9
+		IL_039c: ret
 	} // end of method String_RegExp_SymbolDispatch_Custom::__js_module_init__
 
 } // end of class Modules.String_RegExp_SymbolDispatch_Custom
@@ -1284,4 +1317,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -200,7 +200,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 1713 (0x6b1)
+			// Code size: 1747 (0x6d3)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.FSPromises_Rename_ExistingDirectory_Rejects/ArrowFunction_L7C2/Scope,
@@ -373,7 +373,7 @@
 
 			IL_012a: ldloc.0
 			IL_012b: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0130: switch (IL_0149, IL_0595, IL_05e5, IL_0473, IL_044e)
+			IL_0130: switch (IL_0149, IL_05b7, IL_0607, IL_0473, IL_044e)
 
 			IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.Date::now()
 			IL_014e: stloc.s 9
@@ -715,7 +715,7 @@
 			IL_0463: ldstr "success"
 			IL_0468: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_046d: pop
-			IL_046e: br IL_04f2
+			IL_046e: br IL_0514
 
 			IL_0473: ldloc.0
 			IL_0474: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
@@ -736,198 +736,209 @@
 			IL_04a5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_04aa: stloc.s 19
 			IL_04ac: ldloc.s 19
-			IL_04ae: brfalse IL_04cf
+			IL_04ae: brfalse IL_04f1
 
-			IL_04b3: ldloc.s 6
-			IL_04b5: ldstr "message"
-			IL_04ba: ldstr "FSPromises_Rename_ExistingDirectory_Rejects:<TwoPhaseDummy_M2>:__js_call__:98"
-			IL_04bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_04c4: stloc.s 9
-			IL_04c6: ldloc.s 9
-			IL_04c8: stloc.s 21
-			IL_04ca: br IL_04d3
+			IL_04b3: volatile.
+			IL_04b5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_04ba: brfalse IL_04d0
 
-			IL_04cf: ldloc.s 6
-			IL_04d1: stloc.s 21
+			IL_04bf: ldloc.s 6
+			IL_04c1: ldstr "message"
+			IL_04c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_04cb: br IL_04e6
 
-			IL_04d3: ldloc.s 18
-			IL_04d5: ldloc.s 21
-			IL_04d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_04dc: stloc.s 9
-			IL_04de: ldloc.s 17
-			IL_04e0: ldstr "RenameStartsWithEPERM:"
-			IL_04e5: ldloc.s 9
-			IL_04e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_04ec: pop
-			IL_04ed: br IL_04f2
+			IL_04d0: ldloc.s 6
+			IL_04d2: ldstr "message"
+			IL_04d7: ldstr "FSPromises_Rename_ExistingDirectory_Rejects:<TwoPhaseDummy_M2>:__js_call__:98"
+			IL_04dc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_04e1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_04f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_04f7: stloc.s 17
-			IL_04f9: ldarg.0
-			IL_04fa: ldc.i4.1
-			IL_04fb: ldelem.ref
-			IL_04fc: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
-			IL_0501: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
-			IL_0506: stloc.s 15
-			IL_0508: ldloc.s 15
-			IL_050a: ldloc.3
-			IL_050b: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
-			IL_0510: box [System.Runtime]System.Boolean
-			IL_0515: stloc.s 9
-			IL_0517: ldloc.s 17
-			IL_0519: ldstr "SourceExists:"
-			IL_051e: ldloc.s 9
-			IL_0520: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0525: pop
-			IL_0526: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_052b: stloc.s 17
-			IL_052d: ldarg.0
-			IL_052e: ldc.i4.1
-			IL_052f: ldelem.ref
-			IL_0530: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
-			IL_0535: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
-			IL_053a: stloc.s 15
-			IL_053c: ldloc.s 15
-			IL_053e: ldloc.s 4
-			IL_0540: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
-			IL_0545: box [System.Runtime]System.Boolean
-			IL_054a: stloc.s 9
-			IL_054c: ldloc.s 17
-			IL_054e: ldstr "DestinationExists:"
-			IL_0553: ldloc.s 9
-			IL_0555: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_055a: pop
-			IL_055b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0560: stloc.s 17
-			IL_0562: ldarg.0
-			IL_0563: ldc.i4.1
-			IL_0564: ldelem.ref
-			IL_0565: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
-			IL_056a: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
-			IL_056f: stloc.s 15
-			IL_0571: ldloc.s 15
-			IL_0573: ldloc.s 5
-			IL_0575: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
-			IL_057a: box [System.Runtime]System.Boolean
-			IL_057f: stloc.s 9
-			IL_0581: ldloc.s 17
-			IL_0583: ldstr "SentinelExists:"
-			IL_0588: ldloc.s 9
-			IL_058a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_058f: pop
-			IL_0590: br IL_05a8
+			IL_04e6: stloc.s 9
+			IL_04e8: ldloc.s 9
+			IL_04ea: stloc.s 21
+			IL_04ec: br IL_04f5
 
-			IL_0595: ldloc.0
-			IL_0596: ldc.i4.1
-			IL_0597: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_059c: ldloc.0
-			IL_059d: ldc.i4.0
-			IL_059e: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
-			IL_05a3: br IL_05a8
+			IL_04f1: ldloc.s 6
+			IL_04f3: stloc.s 21
 
-			IL_05a8: ldarg.0
-			IL_05a9: ldc.i4.1
-			IL_05aa: ldelem.ref
-			IL_05ab: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
-			IL_05b0: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
-			IL_05b5: stloc.s 15
-			IL_05b7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_05bc: dup
-			IL_05bd: ldstr "recursive"
-			IL_05c2: ldc.i4.1
-			IL_05c3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_05c8: dup
-			IL_05c9: ldstr "force"
-			IL_05ce: ldc.i4.1
-			IL_05cf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_05d4: stloc.s 16
-			IL_05d6: ldloc.s 15
-			IL_05d8: ldloc.2
-			IL_05d9: ldloc.s 16
-			IL_05db: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_05e0: br IL_05f8
+			IL_04f5: ldloc.s 18
+			IL_04f7: ldloc.s 21
+			IL_04f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_04fe: stloc.s 9
+			IL_0500: ldloc.s 17
+			IL_0502: ldstr "RenameStartsWithEPERM:"
+			IL_0507: ldloc.s 9
+			IL_0509: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_050e: pop
+			IL_050f: br IL_0514
 
-			IL_05e5: ldloc.0
-			IL_05e6: ldc.i4.1
-			IL_05e7: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_05ec: ldloc.0
-			IL_05ed: ldc.i4.0
-			IL_05ee: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
-			IL_05f3: br IL_05f8
+			IL_0514: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0519: stloc.s 17
+			IL_051b: ldarg.0
+			IL_051c: ldc.i4.1
+			IL_051d: ldelem.ref
+			IL_051e: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
+			IL_0523: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
+			IL_0528: stloc.s 15
+			IL_052a: ldloc.s 15
+			IL_052c: ldloc.3
+			IL_052d: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_0532: box [System.Runtime]System.Boolean
+			IL_0537: stloc.s 9
+			IL_0539: ldloc.s 17
+			IL_053b: ldstr "SourceExists:"
+			IL_0540: ldloc.s 9
+			IL_0542: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0547: pop
+			IL_0548: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_054d: stloc.s 17
+			IL_054f: ldarg.0
+			IL_0550: ldc.i4.1
+			IL_0551: ldelem.ref
+			IL_0552: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
+			IL_0557: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
+			IL_055c: stloc.s 15
+			IL_055e: ldloc.s 15
+			IL_0560: ldloc.s 4
+			IL_0562: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_0567: box [System.Runtime]System.Boolean
+			IL_056c: stloc.s 9
+			IL_056e: ldloc.s 17
+			IL_0570: ldstr "DestinationExists:"
+			IL_0575: ldloc.s 9
+			IL_0577: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_057c: pop
+			IL_057d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0582: stloc.s 17
+			IL_0584: ldarg.0
+			IL_0585: ldc.i4.1
+			IL_0586: ldelem.ref
+			IL_0587: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
+			IL_058c: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
+			IL_0591: stloc.s 15
+			IL_0593: ldloc.s 15
+			IL_0595: ldloc.s 5
+			IL_0597: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_059c: box [System.Runtime]System.Boolean
+			IL_05a1: stloc.s 9
+			IL_05a3: ldloc.s 17
+			IL_05a5: ldstr "SentinelExists:"
+			IL_05aa: ldloc.s 9
+			IL_05ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_05b1: pop
+			IL_05b2: br IL_05ca
 
-			IL_05f8: ldloc.0
-			IL_05f9: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_05fe: stloc.s 7
-			IL_0600: ldloc.s 7
-			IL_0602: brfalse IL_063f
+			IL_05b7: ldloc.0
+			IL_05b8: ldc.i4.1
+			IL_05b9: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_05be: ldloc.0
+			IL_05bf: ldc.i4.0
+			IL_05c0: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_05c5: br IL_05ca
+
+			IL_05ca: ldarg.0
+			IL_05cb: ldc.i4.1
+			IL_05cc: ldelem.ref
+			IL_05cd: castclass Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope
+			IL_05d2: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope::fs
+			IL_05d7: stloc.s 15
+			IL_05d9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_05de: dup
+			IL_05df: ldstr "recursive"
+			IL_05e4: ldc.i4.1
+			IL_05e5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_05ea: dup
+			IL_05eb: ldstr "force"
+			IL_05f0: ldc.i4.1
+			IL_05f1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_05f6: stloc.s 16
+			IL_05f8: ldloc.s 15
+			IL_05fa: ldloc.2
+			IL_05fb: ldloc.s 16
+			IL_05fd: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_0602: br IL_061a
 
 			IL_0607: ldloc.0
-			IL_0608: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
-			IL_060d: stloc.s 9
-			IL_060f: ldloc.0
-			IL_0610: ldc.i4.m1
-			IL_0611: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0616: ldloc.0
-			IL_0617: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_061c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_reject()
-			IL_0621: ldarg.0
-			IL_0622: ldc.i4.1
-			IL_0623: newarr [System.Runtime]System.Object
-			IL_0628: dup
-			IL_0629: ldc.i4.0
-			IL_062a: ldloc.s 9
-			IL_062c: stelem.ref
-			IL_062d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0632: pop
-			IL_0633: ldloc.0
-			IL_0634: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0639: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_063e: ret
+			IL_0608: ldc.i4.1
+			IL_0609: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_060e: ldloc.0
+			IL_060f: ldc.i4.0
+			IL_0610: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_0615: br IL_061a
 
-			IL_063f: ldloc.0
-			IL_0640: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
-			IL_0645: stloc.s 8
-			IL_0647: ldloc.s 8
-			IL_0649: brfalse IL_0686
+			IL_061a: ldloc.0
+			IL_061b: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_0620: stloc.s 7
+			IL_0622: ldloc.s 7
+			IL_0624: brfalse IL_0661
 
-			IL_064e: ldloc.0
-			IL_064f: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingReturnValue
-			IL_0654: stloc.s 9
-			IL_0656: ldloc.0
-			IL_0657: ldc.i4.m1
-			IL_0658: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_065d: ldloc.0
-			IL_065e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0663: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_0668: ldarg.0
-			IL_0669: ldc.i4.1
-			IL_066a: newarr [System.Runtime]System.Object
-			IL_066f: dup
-			IL_0670: ldc.i4.0
-			IL_0671: ldloc.s 9
-			IL_0673: stelem.ref
-			IL_0674: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0679: pop
-			IL_067a: ldloc.0
-			IL_067b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0680: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0685: ret
+			IL_0629: ldloc.0
+			IL_062a: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
+			IL_062f: stloc.s 9
+			IL_0631: ldloc.0
+			IL_0632: ldc.i4.m1
+			IL_0633: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0638: ldloc.0
+			IL_0639: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_063e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_reject()
+			IL_0643: ldarg.0
+			IL_0644: ldc.i4.1
+			IL_0645: newarr [System.Runtime]System.Object
+			IL_064a: dup
+			IL_064b: ldc.i4.0
+			IL_064c: ldloc.s 9
+			IL_064e: stelem.ref
+			IL_064f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0654: pop
+			IL_0655: ldloc.0
+			IL_0656: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_065b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0660: ret
 
-			IL_0686: ldloc.0
-			IL_0687: ldc.i4.m1
-			IL_0688: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_068d: ldloc.0
-			IL_068e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0693: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_0698: ldarg.0
-			IL_0699: ldc.i4.1
-			IL_069a: newarr [System.Runtime]System.Object
-			IL_069f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_06a4: pop
-			IL_06a5: ldloc.0
-			IL_06a6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_06ab: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_06b0: ret
+			IL_0661: ldloc.0
+			IL_0662: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_0667: stloc.s 8
+			IL_0669: ldloc.s 8
+			IL_066b: brfalse IL_06a8
+
+			IL_0670: ldloc.0
+			IL_0671: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingReturnValue
+			IL_0676: stloc.s 9
+			IL_0678: ldloc.0
+			IL_0679: ldc.i4.m1
+			IL_067a: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_067f: ldloc.0
+			IL_0680: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0685: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_068a: ldarg.0
+			IL_068b: ldc.i4.1
+			IL_068c: newarr [System.Runtime]System.Object
+			IL_0691: dup
+			IL_0692: ldc.i4.0
+			IL_0693: ldloc.s 9
+			IL_0695: stelem.ref
+			IL_0696: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_069b: pop
+			IL_069c: ldloc.0
+			IL_069d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_06a2: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_06a7: ret
+
+			IL_06a8: ldloc.0
+			IL_06a9: ldc.i4.m1
+			IL_06aa: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_06af: ldloc.0
+			IL_06b0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_06b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_06ba: ldarg.0
+			IL_06bb: ldc.i4.1
+			IL_06bc: newarr [System.Runtime]System.Object
+			IL_06c1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_06c6: pop
+			IL_06c7: ldloc.0
+			IL_06c8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_06cd: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_06d2: ret
 		} // end of method ArrowFunction_L7C2::__js_call__
 
 	} // end of class ArrowFunction_L7C2
@@ -1059,4 +1070,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

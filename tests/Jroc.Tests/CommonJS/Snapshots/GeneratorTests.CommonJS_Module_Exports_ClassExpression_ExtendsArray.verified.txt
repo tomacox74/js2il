@@ -279,7 +279,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 187 (0xbb)
+			// Code size: 220 (0xdc)
 			.maxstack 10
 			.locals init (
 				[0] object,
@@ -295,82 +295,93 @@
 			IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0006: stloc.2
 			IL_0007: ldloc.2
-			IL_0008: brfalse IL_0026
+			IL_0008: brfalse IL_0047
 
-			IL_000d: ldarg.1
-			IL_000e: ldstr "length"
-			IL_0013: ldstr "CommonJS_Module_Exports_ClassExpression_ExtendsArray:<TwoPhaseDummy_M2>:.ctor:6"
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_001d: stloc.3
-			IL_001e: ldloc.3
-			IL_001f: stloc.s 5
-			IL_0021: br IL_0029
+			IL_000d: volatile.
+			IL_000f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0014: brfalse IL_0029
 
-			IL_0026: ldarg.1
-			IL_0027: stloc.s 5
+			IL_0019: ldarg.1
+			IL_001a: ldstr "length"
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0024: br IL_003e
 
-			IL_0029: ldloc.s 5
-			IL_002b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0030: stloc.2
-			IL_0031: ldloc.2
-			IL_0032: brtrue IL_004c
+			IL_0029: ldarg.1
+			IL_002a: ldstr "length"
+			IL_002f: ldstr "CommonJS_Module_Exports_ClassExpression_ExtendsArray:<TwoPhaseDummy_M2>:.ctor:6"
+			IL_0034: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0037: ldc.r8 0.0
-			IL_0040: box [System.Runtime]System.Double
-			IL_0045: stloc.s 5
-			IL_0047: br IL_004c
+			IL_003e: stloc.3
+			IL_003f: ldloc.3
+			IL_0040: stloc.s 5
+			IL_0042: br IL_004a
 
-			IL_004c: ldarg.0
-			IL_004d: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-			IL_0052: ldarg.0
-			IL_0053: ldc.i4.1
-			IL_0054: newarr [System.Runtime]System.Object
-			IL_0059: dup
-			IL_005a: ldc.i4.0
-			IL_005b: ldloc.s 5
-			IL_005d: stelem.ref
-			IL_005e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
-			IL_0063: ldarg.0
-			IL_0064: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_0069: ldarg.1
-			IL_006a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_006f: stloc.2
-			IL_0070: ldloc.2
-			IL_0071: brfalse IL_00ba
+			IL_0047: ldarg.1
+			IL_0048: stloc.s 5
 
-			IL_0076: ldarg.1
-			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
-			IL_007c: stloc.0
-			// loop start (head: IL_007d)
-				IL_007d: ldloc.0
-				IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_0083: stloc.3
-				IL_0084: ldloc.3
-				IL_0085: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-				IL_008a: stloc.2
-				IL_008b: ldloc.2
-				IL_008c: brtrue IL_00ba
+			IL_004a: ldloc.s 5
+			IL_004c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0051: stloc.2
+			IL_0052: ldloc.2
+			IL_0053: brtrue IL_006d
 
-				IL_0091: ldloc.3
-				IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_0097: stloc.3
-				IL_0098: ldloc.3
-				IL_0099: stloc.1
-				IL_009a: ldarg.1
-				IL_009b: ldloc.1
-				IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-				IL_00a1: stloc.3
-				IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-				IL_00ac: ldloc.1
-				IL_00ad: ldloc.3
-				IL_00ae: ldc.i4.1
-				IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-				IL_00b4: pop
-				IL_00b5: br IL_007d
+			IL_0058: ldc.r8 0.0
+			IL_0061: box [System.Runtime]System.Double
+			IL_0066: stloc.s 5
+			IL_0068: br IL_006d
+
+			IL_006d: ldarg.0
+			IL_006e: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
+			IL_0073: ldarg.0
+			IL_0074: ldc.i4.1
+			IL_0075: newarr [System.Runtime]System.Object
+			IL_007a: dup
+			IL_007b: ldc.i4.0
+			IL_007c: ldloc.s 5
+			IL_007e: stelem.ref
+			IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
+			IL_0084: ldarg.0
+			IL_0085: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
+			IL_008a: ldarg.1
+			IL_008b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0090: stloc.2
+			IL_0091: ldloc.2
+			IL_0092: brfalse IL_00db
+
+			IL_0097: ldarg.1
+			IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
+			IL_009d: stloc.0
+			// loop start (head: IL_009e)
+				IL_009e: ldloc.0
+				IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+				IL_00a4: stloc.3
+				IL_00a5: ldloc.3
+				IL_00a6: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+				IL_00ab: stloc.2
+				IL_00ac: ldloc.2
+				IL_00ad: brtrue IL_00db
+
+				IL_00b2: ldloc.3
+				IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+				IL_00b8: stloc.3
+				IL_00b9: ldloc.3
+				IL_00ba: stloc.1
+				IL_00bb: ldarg.1
+				IL_00bc: ldloc.1
+				IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+				IL_00c2: stloc.3
+				IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+				IL_00cd: ldloc.1
+				IL_00ce: ldloc.3
+				IL_00cf: ldc.i4.1
+				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+				IL_00d5: pop
+				IL_00d6: br IL_009e
 			// end loop
 
-			IL_00ba: ret
+			IL_00db: ret
 		} // end of method NodeList::.ctor
 
 		.method public hidebysig 
@@ -440,7 +451,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 216 (0xd8)
+		// Code size: 249 (0xf9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/Scope,
@@ -496,38 +507,49 @@
 		IL_006c: ldtoken Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList
 		IL_0071: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0076: stloc.2
-		IL_0077: ldloc.2
-		IL_0078: ldstr "prototype"
-		IL_007d: ldstr "CommonJS_Module_Exports_ClassExpression_ExtendsArray:Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray:__js_module_init__:13"
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0087: stloc.s 5
-		IL_0089: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_008e: stloc.1
-		IL_008f: ldloc.s 5
-		IL_0091: ldstr "item"
-		IL_0096: newobj instance void Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/Scope_item/FunctionObject::.ctor()
-		IL_009b: ldc.i4.1
-		IL_009c: conv.r8
-		IL_009d: ldstr "item"
-		IL_00a2: ldc.i4.1
-		IL_00a3: ldc.i4.1
-		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/Scope_item/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00a9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/Scope_item/FunctionObject>(!!0)
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_00b3: pop
-		IL_00b4: ldarg.2
-		IL_00b5: ldstr "exports"
-		IL_00ba: ldloc.s 4
+		IL_0077: volatile.
+		IL_0079: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_007e: brfalse IL_0093
+
+		IL_0083: ldloc.2
+		IL_0084: ldstr "prototype"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_008e: br IL_00a8
+
+		IL_0093: ldloc.2
+		IL_0094: ldstr "prototype"
+		IL_0099: ldstr "CommonJS_Module_Exports_ClassExpression_ExtendsArray:Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray:__js_module_init__:13"
+		IL_009e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00a8: stloc.s 5
+		IL_00aa: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00af: stloc.1
+		IL_00b0: ldloc.s 5
+		IL_00b2: ldstr "item"
+		IL_00b7: newobj instance void Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/Scope_item/FunctionObject::.ctor()
 		IL_00bc: ldc.i4.1
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00c2: pop
-		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c8: stloc.s 6
-		IL_00ca: ldloc.s 6
-		IL_00cc: ldstr "ok"
-		IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d6: pop
-		IL_00d7: ret
+		IL_00bd: conv.r8
+		IL_00be: ldstr "item"
+		IL_00c3: ldc.i4.1
+		IL_00c4: ldc.i4.1
+		IL_00c5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/Scope_item/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00ca: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/Scope_item/FunctionObject>(!!0)
+		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00d4: pop
+		IL_00d5: ldarg.2
+		IL_00d6: ldstr "exports"
+		IL_00db: ldloc.s 4
+		IL_00dd: ldc.i4.1
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00e3: pop
+		IL_00e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e9: stloc.s 6
+		IL_00eb: ldloc.s 6
+		IL_00ed: ldstr "ok"
+		IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f7: pop
+		IL_00f8: ret
 	} // end of method CommonJS_Module_Exports_ClassExpression_ExtendsArray::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray
@@ -553,4 +575,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

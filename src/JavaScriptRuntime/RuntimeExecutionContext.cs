@@ -5,7 +5,11 @@ using JavaScriptRuntime.Modules.CommonJS;
 
 internal sealed class RuntimeExecutionContext
 {
-    private static readonly AsyncLocal<AmbientState?> Ambient = new();
+    private static readonly AsyncLocal<AmbientState?> Ambient =
+        new(OnAmbientChanged);
+
+    [ThreadStatic]
+    private static RuntimeExecutionContext? _threadCurrent;
 
     private readonly object _stateGate = new();
     private GlobalThis? _globalObject;
@@ -24,7 +28,7 @@ internal sealed class RuntimeExecutionContext
     }
 
     internal static RuntimeExecutionContext? Current
-        => Ambient.Value?.Frame?.Context;
+        => _threadCurrent;
 
     internal static ServiceContainer? ServiceProviderOverride
     {
@@ -268,12 +272,22 @@ internal sealed class RuntimeExecutionContext
     }
 
     private static void SetAmbient(AmbientState? next)
+        => Ambient.Value = next;
+
+    private static void OnAmbientChanged(
+        AsyncLocalValueChangedArgs<AmbientState?> args)
     {
-        var previousStore = Ambient.Value?.Frame?.Context.DescriptorStore;
-        Ambient.Value = next;
+        var previousContext =
+            args.PreviousValue?.Frame?.Context;
+        var currentContext =
+            args.CurrentValue?.Frame?.Context;
+        _threadCurrent = currentContext;
+
         PropertyDescriptorStore.OnExecutionContextChanged(
-            previousStore,
-            next?.Frame?.Context.DescriptorStore);
+            previousContext?.DescriptorStore,
+            currentContext?.DescriptorStore);
+        DynamicLookupInlineCache.OnExecutionContextChanged(
+            currentContext?.Realm.ValueCaches);
     }
 
     private static ExecutionFrame CreateFrame(
