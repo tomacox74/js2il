@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-18T00:00:44Z
+> Last generated (UTC): 2026-08-22T01:38:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -193,4 +193,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Date.prototype.toString | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/toString/ExecutionTests.cs` | `test/built-ins/Date/prototype/toString/format.js`<br>`test/built-ins/Date/prototype/toString/negative-year.js` | Formats local Date strings with a GMT offset and correctly pads extended negative years. |
+
+### 21.4.4.45 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype-%symbol.toprimitive%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.prototype[@@toPrimitive](hint) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/PortNext200Batch2ExecutionTests.cs` | `test/built-ins/Date/prototype/Symbol.toPrimitive/hint-default-first-valid.js`<br>`test/built-ins/Date/prototype/Symbol.toPrimitive/hint-number-first-non-callable.js`<br>`test/built-ins/Date/prototype/Symbol.toPrimitive/hint-invalid.js` | Accepts any object receiver, uses the required string/default or number OrdinaryToPrimitive method order, rejects invalid non-string hints without coercion, and throws when neither method produces a primitive. |
 
