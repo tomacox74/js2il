@@ -342,13 +342,8 @@ namespace JavaScriptRuntime
                 return 0;
             }
 
-            if (double.IsInfinity(number) || number < 0)
-            {
-                throw new RangeError(errorMessage);
-            }
-
             var truncated = System.Math.Truncate(number);
-            if (truncated > int.MaxValue)
+            if (double.IsInfinity(number) || truncated < 0 || truncated > int.MaxValue)
             {
                 throw new RangeError(errorMessage);
             }

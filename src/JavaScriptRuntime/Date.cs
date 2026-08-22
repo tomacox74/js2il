@@ -251,7 +251,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod("valueOf", static date => date.valueOf(), 0d);
 
             BuiltinFunction1 toPrimitive = static (thisArgument, hint) =>
-                ThisDateValue(thisArgument).toPrimitive(DotNet2JSConversions.ToString(hint));
+                DatePrototypeToPrimitive(thisArgument, hint);
             Function.InitializeFunctionInstance(
                 toPrimitive,
                 1d,
@@ -858,6 +858,44 @@ namespace JavaScriptRuntime
                 "default" or null => toString(),
                 _ => throw new TypeError("Invalid hint")
             };
+        }
+
+        private static object? DatePrototypeToPrimitive(object? thisArgument, object? hint)
+        {
+            var type = TypeUtilities.Typeof(thisArgument);
+            if (type is not ("object" or "function"))
+            {
+                throw new TypeError("Date.prototype[@@toPrimitive] requires an object receiver");
+            }
+
+            if (hint is not string hintString)
+            {
+                throw new TypeError("Invalid hint");
+            }
+
+            var methodNames = hintString switch
+            {
+                "string" or "default" => new[] { "toString", "valueOf" },
+                "number" => new[] { "valueOf", "toString" },
+                _ => throw new TypeError("Invalid hint")
+            };
+
+            foreach (var methodName in methodNames)
+            {
+                var method = ObjectRuntime.GetProperty(thisArgument!, methodName);
+                if (!CallableOperations.IsCallable(method))
+                {
+                    continue;
+                }
+
+                var result = CallableOperations.Call0(method, thisArgument);
+                if (TypeUtilities.IsPrimitive(result))
+                {
+                    return result;
+                }
+            }
+
+            throw new TypeError("Cannot convert object to primitive value");
         }
 
         private static object? ToJson(object? value)
