@@ -207,7 +207,9 @@ public static class InMemoryTestCompiler
 
                 var entryPoint = assembly.EntryPoint
                     ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
-                ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+                ((Action<string[]>)Delegate.CreateDelegate(
+                    typeof(Action<string[]>),
+                    entryPoint))(System.Array.Empty<string>());
             }
             catch (Exception ex)
             {

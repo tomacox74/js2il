@@ -78,6 +78,13 @@ public static class JrocFacadeNamePlanner
             modules.Add(new JrocFacadeModuleName(moduleId, new ReadOnlyCollection<string>(typePath)));
         }
 
+        ValidateFacadeMemberCollisions(
+            root,
+            rootTypeName,
+            entryModuleId,
+            parentTypeName: "Scripts",
+            parentPath: []);
+
         if (!modules.Any(module => string.Equals(module.ModuleId, entryModuleId, StringComparison.Ordinal)))
         {
             throw new InvalidOperationException(
@@ -222,6 +229,56 @@ public static class JrocFacadeNamePlanner
 
         current.ModuleId = moduleId;
     }
+
+    private static void ValidateFacadeMemberCollisions(
+        NameNode node,
+        string rootTypeName,
+        string entryModuleId,
+        string parentTypeName,
+        IReadOnlyList<string> parentPath)
+    {
+        if (parentPath.Count == 0
+            && IsReservedFacadeMemberName(rootTypeName, includeScripts: true))
+        {
+            throw new JrocFacadeNameCollisionException(
+                entryModuleId,
+                entryModuleId,
+                rootTypeName);
+        }
+
+        foreach (var child in node.Children.Values)
+        {
+            var childPath = parentPath.Concat([child.TypeSegment]).ToArray();
+            if (string.Equals(child.TypeSegment, parentTypeName, StringComparison.OrdinalIgnoreCase)
+                || (child.ModuleId is not null
+                    && IsReservedFacadeMemberName(child.TypeSegment, includeScripts: false))
+                || (node.ModuleId is not null
+                    && IsReservedFacadeMemberName(child.TypeSegment, includeScripts: false)))
+            {
+                throw new JrocFacadeNameCollisionException(
+                    node.ModuleId ?? child.ModuleId ?? entryModuleId,
+                    child.SourceModuleId ?? node.ModuleId ?? entryModuleId,
+                    string.Join(
+                        ".",
+                        new[] { rootTypeName, "Scripts" }.Concat(childPath)));
+            }
+
+            ValidateFacadeMemberCollisions(
+                child,
+                rootTypeName,
+                entryModuleId,
+                child.TypeSegment,
+                childPath);
+        }
+    }
+
+    private static bool IsReservedFacadeMemberName(
+        string name,
+        bool includeScripts) =>
+        string.Equals(name, "Run", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(name, "Import", StringComparison.OrdinalIgnoreCase)
+        || (includeScripts
+            && string.Equals(name, "Scripts", StringComparison.OrdinalIgnoreCase));
 
     private sealed class NameNode(string? sourceSegment, string? sourceModuleId)
     {

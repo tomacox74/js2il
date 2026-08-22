@@ -42,6 +42,7 @@
       "trackingIssues": [ 1709, 1711, 1720, 1722 ],
       "sourceGlobs": [
         "src/Compiler/Services/AssemblyGenerator.cs",
+        "src/Compiler/Services/FacadeEmitter.cs",
         "src/Compiler/Services/BaseClassLibraryReferences.cs",
         "src/Compiler/CompilerServices.cs",
         "src/Compiler/Services/Runtime.cs",
@@ -109,10 +110,11 @@
       "id": "module-main-bootstrap",
       "sourceGlobs": [
         "src/Compiler/Services/AssemblyGenerator.cs",
+        "src/Compiler/Services/FacadeEmitter.cs",
         "src/JavaScriptRuntime/Modules/**/*.cs"
       ],
       "symbols": [ "ModuleMainDelegate" ],
-      "rationale": "The generated assembly entry point and Engine.Execute use a stable CLR bootstrap ABI before JavaScript callable semantics begin."
+      "rationale": "Generated script facades, the assembly entry point, and Engine.Execute use a stable CLR bootstrap ABI before JavaScript callable semantics begin."
     },
     {
       "id": "commonjs-require-bootstrap",

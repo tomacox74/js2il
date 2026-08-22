@@ -750,6 +750,10 @@ internal sealed partial class LIRToILCompiler
         {
             return typeof(JavaScriptRuntime.Modules.ESM.EsModuleLinker);
         }
+        if (string.Equals(intrinsicName, ScriptProcessExitIntrinsicName, StringComparison.Ordinal))
+        {
+            return typeof(JavaScriptRuntime.ScriptProcessExitControl);
+        }
 
         return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
             ? intrinsic.Type
@@ -757,6 +761,7 @@ internal sealed partial class LIRToILCompiler
     }
 
     internal const string EsModuleIntrinsicName = "__EsModuleLinker";
+    internal const string ScriptProcessExitIntrinsicName = "__ScriptProcessExitControl";
 
     // Public API moved to LIRToILCompiler.PublicApi.cs
 

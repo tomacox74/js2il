@@ -1898,6 +1898,7 @@ public class RuntimeServices
         container.RegisterInstance(new ConsoleOutputSinks());
 
         container.Register<Modules.CommonJS.Require>();
+        container.Register<UnhandledPromiseRejectionTracker>();
         container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();

@@ -233,7 +233,7 @@ public class JavaScriptErrorStackTraceTests
             // Load from path so the runtime can find the adjacent PDB for source-mapped stack traces.
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dllPath);
             var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
-            ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+            ((Action<string[]>)Delegate.CreateDelegate(typeof(Action<string[]>), entryPoint))([]);
         }
         finally
         {

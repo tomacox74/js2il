@@ -22,7 +22,8 @@ public sealed class GeneratedAssemblyConsumerHarness : IDisposable
     public GeneratedAssemblyConsumerHarness(
         string javaScript,
         string assemblyName = "ConsumerFixture",
-        IReadOnlyDictionary<string, string>? additionalScripts = null)
+        IReadOnlyDictionary<string, string>? additionalScripts = null,
+        string entryFileName = "entry.js")
     {
         ArgumentNullException.ThrowIfNull(javaScript);
 
@@ -35,7 +36,7 @@ public sealed class GeneratedAssemblyConsumerHarness : IDisposable
         try
         {
             var sourceDirectory = Path.Combine(WorkingDirectory, "javascript");
-            var entryPath = Path.Combine(sourceDirectory, "entry.js");
+            var entryPath = Path.Combine(sourceDirectory, entryFileName);
             var fileSystem = new MockFileSystem();
             fileSystem.AddFile(entryPath, javaScript);
             foreach (var (relativePath, source) in additionalScripts ?? new Dictionary<string, string>())

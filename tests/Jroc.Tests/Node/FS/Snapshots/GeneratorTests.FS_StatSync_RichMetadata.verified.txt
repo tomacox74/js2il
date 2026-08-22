@@ -3,6 +3,71 @@
 {
 } // end of class <Module>
 
+.class public auto ansi abstract sealed beforefieldinit FS_StatSync_RichMetadata
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit Scripts
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit FS_StatSync_RichMetadata
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig static 
+				void Run (
+					string[] args
+				) cil managed 
+			{
+				.param [1]
+					.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+						01 00 00 00
+					)
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldftn void Modules.FS_StatSync_RichMetadata::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_000c: ldstr "FS_StatSync_RichMetadata"
+				IL_0011: ldarg.0
+				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+				IL_0017: ret
+			} // end of method FS_StatSync_RichMetadata::Run
+
+		} // end of class FS_StatSync_RichMetadata
+
+
+	} // end of class Scripts
+
+
+	// Methods
+	.method public hidebysig static 
+		void Run (
+			string[] args
+		) cil managed 
+	{
+		.param [1]
+			.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+				01 00 00 00
+			)
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Modules.FS_StatSync_RichMetadata::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_000c: ldstr "FS_StatSync_RichMetadata"
+		IL_0011: ldarg.0
+		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+		IL_0017: ret
+	} // end of method FS_StatSync_RichMetadata::Run
+
+} // end of class FS_StatSync_RichMetadata
+
 .class private auto ansi beforefieldinit Modules.FS_StatSync_RichMetadata
 	extends [System.Runtime]System.Object
 {
@@ -78,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1230 (0x4ce)
+		// Code size: 1235 (0x4d3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_StatSync_RichMetadata/Scope,
@@ -468,40 +533,41 @@
 			IL_0476: ldloc.s 10
 			IL_0478: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_047d: pop
-			IL_047e: leave IL_04ca
+			IL_047e: leave IL_04cf
 		} // end .try
 		finally
 		{
-			IL_0483: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0488: dup
-			IL_0489: ldstr "force"
-			IL_048e: ldc.i4.1
-			IL_048f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0494: stloc.s 13
-			IL_0496: ldloc.1
-			IL_0497: ldloc.s 5
-			IL_0499: ldloc.s 13
-			IL_049b: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_04a0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_04a5: dup
-			IL_04a6: ldstr "force"
-			IL_04ab: ldc.i4.1
-			IL_04ac: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_04b1: dup
-			IL_04b2: ldstr "recursive"
-			IL_04b7: ldc.i4.1
-			IL_04b8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_04bd: stloc.s 13
-			IL_04bf: ldloc.1
-			IL_04c0: ldloc.s 6
-			IL_04c2: ldloc.s 13
-			IL_04c4: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_04c9: endfinally
+			IL_0483: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
+			IL_0488: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_048d: dup
+			IL_048e: ldstr "force"
+			IL_0493: ldc.i4.1
+			IL_0494: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0499: stloc.s 13
+			IL_049b: ldloc.1
+			IL_049c: ldloc.s 5
+			IL_049e: ldloc.s 13
+			IL_04a0: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_04a5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_04aa: dup
+			IL_04ab: ldstr "force"
+			IL_04b0: ldc.i4.1
+			IL_04b1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_04b6: dup
+			IL_04b7: ldstr "recursive"
+			IL_04bc: ldc.i4.1
+			IL_04bd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_04c2: stloc.s 13
+			IL_04c4: ldloc.1
+			IL_04c5: ldloc.s 6
+			IL_04c7: ldloc.s 13
+			IL_04c9: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_04ce: endfinally
 		} // end handler
 
-		IL_04ca: ldnull
-		IL_04cb: stloc.s 9
-		IL_04cd: ret
+		IL_04cf: ldnull
+		IL_04d0: stloc.s 9
+		IL_04d2: ret
 	} // end of method FS_StatSync_RichMetadata::__js_module_init__
 
 } // end of class Modules.FS_StatSync_RichMetadata
@@ -511,19 +577,18 @@
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			string[] args
+		) cil managed 
 	{
 		// Header size: 1
-		// Code size: 23 (0x17)
+		// Code size: 7 (0x7)
 		.maxstack 8
 		.entrypoint
 
-		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
-		IL_0005: ldnull
-		IL_0006: ldftn void Modules.FS_StatSync_RichMetadata::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
-		IL_0016: ret
+		IL_0000: ldarg.0
+		IL_0001: call void FS_StatSync_RichMetadata::Run(string[])
+		IL_0006: ret
 	} // end of method Program::Main
 
 } // end of class Program

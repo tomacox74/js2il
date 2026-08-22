@@ -3,6 +3,71 @@
 {
 } // end of class <Module>
 
+.class public auto ansi abstract sealed beforefieldinit Function_IIFE_Recursive
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit Scripts
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit Function_IIFE_Recursive
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig static 
+				void Run (
+					string[] args
+				) cil managed 
+			{
+				.param [1]
+					.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+						01 00 00 00
+					)
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldftn void Modules.Function_IIFE_Recursive::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_000c: ldstr "Function_IIFE_Recursive"
+				IL_0011: ldarg.0
+				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+				IL_0017: ret
+			} // end of method Function_IIFE_Recursive::Run
+
+		} // end of class Function_IIFE_Recursive
+
+
+	} // end of class Scripts
+
+
+	// Methods
+	.method public hidebysig static 
+		void Run (
+			string[] args
+		) cil managed 
+	{
+		.param [1]
+			.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+				01 00 00 00
+			)
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Modules.Function_IIFE_Recursive::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_000c: ldstr "Function_IIFE_Recursive"
+		IL_0011: ldarg.0
+		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+		IL_0017: ret
+	} // end of method Function_IIFE_Recursive::Run
+
+} // end of class Function_IIFE_Recursive
+
 .class private auto ansi beforefieldinit Modules.Function_IIFE_Recursive
 	extends [System.Runtime]System.Object
 {
@@ -217,7 +282,7 @@
 			IL_000d: stloc.s 4
 			IL_000f: ldarg.1
 			IL_0010: ldstr "name"
-			IL_0015: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:8"
+			IL_0015: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M4>:__js_call__:8"
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
 			IL_001f: stloc.3
 			IL_0020: ldloc.s 4
@@ -242,7 +307,7 @@
 				IL_0052: stloc.s 5
 				IL_0054: ldarg.1
 				IL_0055: ldstr "children"
-				IL_005a: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:28"
+				IL_005a: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M4>:__js_call__:28"
 				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
 				IL_0064: stloc.3
 				IL_0065: ldloc.3
@@ -256,7 +321,7 @@
 
 				IL_007d: ldarg.1
 				IL_007e: ldstr "children"
-				IL_0083: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:36"
+				IL_0083: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M4>:__js_call__:36"
 				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
 				IL_008d: stloc.3
 				IL_008e: ldloc.3
@@ -412,19 +477,18 @@
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			string[] args
+		) cil managed 
 	{
 		// Header size: 1
-		// Code size: 23 (0x17)
+		// Code size: 7 (0x7)
 		.maxstack 8
 		.entrypoint
 
-		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
-		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Function_IIFE_Recursive::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
-		IL_0016: ret
+		IL_0000: ldarg.0
+		IL_0001: call void Function_IIFE_Recursive::Run(string[])
+		IL_0006: ret
 	} // end of method Program::Main
 
 } // end of class Program
