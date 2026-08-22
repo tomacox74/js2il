@@ -508,6 +508,7 @@ function parseMicrobenchmarkReport(reportPath) {
   const requiredMethods = [
     "GenericPropertyRead",
     "CachedPropertyHit",
+    "CachedPropertyHit_SameShapeAcrossInstances",
     "CachedPolymorphicHit",
     "MegamorphicFallback",
     "ArrayLengthBoxedThenConsumed",
@@ -545,10 +546,10 @@ function printMicrobenchmarks(result) {
   console.log("");
   console.log("Focused cache and Array controls");
   console.log("================================");
-  console.log("Method                              Mean(ns)   N  Allocated(bytes)");
+  console.log("Method                                        Mean(ns)   N  Allocated(bytes)");
   for (const row of result.rows) {
     console.log(
-      `${row.method.padEnd(35)} ${format(row.meanNs).padStart(9)}  ` +
+      `${row.method.padEnd(45)} ${format(row.meanNs).padStart(9)}  ` +
         `${String(row.sampleCount ?? "n/a").padStart(2)}  ` +
         `${String(row.allocatedBytes ?? "n/a").padStart(16)}`
     );
@@ -565,8 +566,15 @@ function printMicrobenchmarks(result) {
   const guarded = result.rows.find(
     (row) => row.method === "ArrayLengthGuardedCandidate"
   );
+  const sameShape = result.rows.find(
+    (row) => row.method === "CachedPropertyHit_SameShapeAcrossInstances"
+  );
   console.log(
     `Megamorphic vs generic: ${format(megamorphic.meanNs / generic.meanNs, 2)}x`
+  );
+  console.log(
+    `Same-shape cross-instance vs generic: ` +
+      `${format(sameShape.meanNs / generic.meanNs, 2)}x`
   );
   console.log(
     `Array length allocation, boxed/guarded/direct: ${boxed.allocatedBytes}/` +

@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): implement issue #1958 Phase 3 by replacing exact-receiver
+  dynamic property-read cache entries with weak shape-and-slot entries.
+  Distinct ordinary objects with the same `JsShape` now share one monomorphic
+  entry, every hit reads the receiver's live value, and structural or
+  descriptor changes retain exact generic fallback semantics.
 - compiler/runtime/hosting/docs: implement the Phase 1 generated `Run` facade
   for #1917 and close #1930, #1931, #1932, and #1933. Compiled assemblies now
   expose deterministic assembly-root and nested script `Run(params string[])`

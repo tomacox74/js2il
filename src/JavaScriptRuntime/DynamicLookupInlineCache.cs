@@ -53,7 +53,7 @@ internal sealed class DynamicLookupInlineCacheSite
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal DynamicLookupInlineCacheProbeResult Probe(
-        object receiver,
+        JsObject receiver,
         string propertyName,
         out object? value)
     {
@@ -78,8 +78,7 @@ internal sealed class DynamicLookupInlineCacheSite
     }
 
     internal void Observe(
-        DynamicLookupInlineCacheEntry entry,
-        object receiver)
+        DynamicLookupInlineCacheEntry entry)
     {
         lock (_writeLock)
         {
@@ -94,9 +93,7 @@ internal sealed class DynamicLookupInlineCacheSite
             var replaceIndex = -1;
             for (var index = 0; index < currentEntries.Length; index++)
             {
-                if (currentEntries[index].MatchesIdentity(
-                        receiver,
-                        entry.PropertyName))
+                if (currentEntries[index].Matches(entry))
                 {
                     replaceIndex = index;
                     break;
@@ -147,7 +144,7 @@ internal sealed class DynamicLookupInlineCacheSite
         for (var index = 0; index < entries.Length; index++)
         {
             var entry = entries[index];
-            if (entry.HasLiveReceiver)
+            if (entry.HasLiveShape)
             {
                 liveEntries?.Add(entry);
                 continue;
@@ -180,83 +177,64 @@ internal sealed class DynamicLookupInlineCacheSite
         };
 }
 
+/// <summary>
+/// A shape-keyed cache entry: a receiver's exact CLR shape identity, a property
+/// name, and the slot resolved for that (shape, property) pair. The entry never
+/// stores a receiver or a value; every hit re-reads the current receiver's live
+/// slot value, so it is naturally correct across plain writes and shared by every
+/// live receiver with the same <see cref="JsShape"/> reference.
+/// </summary>
 internal sealed class DynamicLookupInlineCacheEntry
 {
     internal DynamicLookupInlineCacheEntry(
-        object receiver,
+        JsShape shape,
         string propertyName,
-        object? value,
-        JsObject[] prototypeChain,
-        long[] lookupVersions)
+        int slot)
     {
-        _receiver = new WeakReference<object>(receiver);
+        _shape = new WeakReference<JsShape>(shape);
         PropertyName = propertyName;
-        _value = value is null
-            ? null
-            : new WeakReference<object>(value);
-        _valueIsNull = value is null;
-        PrototypeChain = prototypeChain
-            .Select(static item => new WeakReference<JsObject>(item))
-            .ToArray();
-        LookupVersions = lookupVersions;
+        Slot = slot;
     }
 
-    private readonly WeakReference<object> _receiver;
-
-    private readonly WeakReference<object>? _value;
-
-    private readonly bool _valueIsNull;
+    private readonly WeakReference<JsShape> _shape;
 
     internal string PropertyName { get; }
 
-    private WeakReference<JsObject>[] PrototypeChain { get; }
+    internal int Slot { get; }
 
-    private long[] LookupVersions { get; }
-
-    internal bool HasLiveReceiver
-        => _receiver.TryGetTarget(out _);
+    internal bool HasLiveShape
+        => _shape.TryGetTarget(out _);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal bool MatchesIdentity(
-        object receiver,
-        string propertyName)
-        => _receiver.TryGetTarget(out var cachedReceiver)
-            && ReferenceEquals(cachedReceiver, receiver)
-            && string.Equals(
+    internal bool Matches(DynamicLookupInlineCacheEntry other)
+        => string.Equals(
                 PropertyName,
-                propertyName,
-                StringComparison.Ordinal);
+                other.PropertyName,
+                StringComparison.Ordinal)
+            && _shape.TryGetTarget(out var shape)
+            && other._shape.TryGetTarget(out var otherShape)
+            && ReferenceEquals(shape, otherShape);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool TryGetValue(
-        object receiver,
+        JsObject receiver,
         string propertyName,
         out object? value)
     {
-        if (!MatchesIdentity(receiver, propertyName))
+        if (!string.Equals(
+                PropertyName,
+                propertyName,
+                StringComparison.Ordinal)
+            || !_shape.TryGetTarget(out var shape))
         {
             value = null;
             return false;
         }
 
-        for (var index = 0; index < PrototypeChain.Length; index++)
-        {
-            if (!PrototypeChain[index].TryGetTarget(out var chainObject)
-                || chainObject.LookupVersion
-                != LookupVersions[index])
-            {
-                value = null;
-                return false;
-            }
-        }
-
-        if (_valueIsNull)
-        {
-            value = null;
-            return true;
-        }
-
-        return _value!.TryGetTarget(out value);
+        return receiver.TryGetOwnPlainDataSlotValue(
+            shape,
+            Slot,
+            out value);
     }
 }
 
@@ -367,10 +345,12 @@ public static class DynamicLookupInlineCache
             return ObjectRuntime.GetItem(receiver, propertyName);
         }
 
-        if (!TryResolveOrdinaryDataProperty(
+        if (!TryResolveOwnPlainDataProperty(
                 receiver,
                 propertyName,
-                out var entry))
+                out var shape,
+                out var slot,
+                out var resolvedValue))
         {
             return ObjectRuntime.GetItem(receiver, propertyName);
         }
@@ -379,13 +359,13 @@ public static class DynamicLookupInlineCache
             siteKey,
             static _ => new DynamicLookupInlineCacheSite());
         RememberSite(caches, siteKey, site);
-        site.Observe(entry, receiver);
+        site.Observe(
+            new DynamicLookupInlineCacheEntry(shape, propertyName, slot));
         if (site.State == DynamicLookupInlineCacheState.Megamorphic)
         {
             isMegamorphic = true;
         }
 
-        entry.TryGetValue(receiver, propertyName, out var resolvedValue);
         return resolvedValue!;
     }
 
@@ -479,13 +459,11 @@ public static class DynamicLookupInlineCache
                 propertyName);
         }
 
-        if (!TryResolveOrdinaryDataProperty(
+        if (!TryResolveOwnPlainDataProperty(
                 receiver,
                 propertyName,
-                out var entry)
-            || !entry.TryGetValue(
-                receiver,
-                propertyName,
+                out var shape,
+                out var slot,
                 out var resolvedValue)
             || !CallableOperations.IsCallable(resolvedValue))
         {
@@ -496,7 +474,8 @@ public static class DynamicLookupInlineCache
             siteKey,
             static _ => new DynamicLookupInlineCacheSite());
         RememberSite(caches, siteKey, site);
-        site.Observe(entry, receiver);
+        site.Observe(
+            new DynamicLookupInlineCacheEntry(shape, propertyName, slot));
         if (site.State == DynamicLookupInlineCacheState.Megamorphic)
         {
             isMegamorphic = true;
@@ -680,83 +659,32 @@ public static class DynamicLookupInlineCache
         => receiver is not null
             && receiver.GetType() == typeof(JsObject);
 
-    private static bool TryResolveOrdinaryDataProperty(
-        object receiver,
+    /// <summary>
+    /// Resolves an own, plain (default-attributed) data-property slot eligible for
+    /// the Tier 3 shape-keyed inline cache. Deliberately narrower than generic
+    /// lookup: it never walks the prototype chain, never resolves accessors, and
+    /// rejects encoded symbol keys and shared/override descriptor storage. All of
+    /// those cases must keep using <see cref="ObjectRuntime"/> generic lookup.
+    /// </summary>
+    private static bool TryResolveOwnPlainDataProperty(
+        JsObject receiver,
         string propertyName,
-        out DynamicLookupInlineCacheEntry entry)
+        out JsShape shape,
+        out int slot,
+        out object? value)
     {
-        entry = null!;
-        if (receiver is null
-            || receiver is JsNull
-            || receiver.GetType() != typeof(JsObject))
+        if (ObjectRuntime.IsEncodedSymbolKey(propertyName))
         {
+            shape = null!;
+            slot = -1;
+            value = null;
             return false;
         }
 
-        var chain = new List<JsObject>(4);
-        var versions = new List<long>(4);
-        object? current = receiver;
-        object? value = null;
-        var found = false;
-
-        while (current is not null and not JsNull)
-        {
-            if (current.GetType() != typeof(JsObject))
-            {
-                return false;
-            }
-
-            var jsObject = (JsObject)current;
-            chain.Add(jsObject);
-            versions.Add(jsObject.LookupVersion);
-
-            var lookup = jsObject.GetOwnPropertyDescriptor(
-                propertyName,
-                out var descriptor);
-            if (lookup == PropertyDescriptorLookup.Found)
-            {
-                if (chain.Count > 1
-                    && string.Equals(
-                        propertyName,
-                        "__proto__",
-                        StringComparison.Ordinal))
-                {
-                    return false;
-                }
-
-                if (descriptor.Kind != JsPropertyDescriptorKind.Data)
-                {
-                    return false;
-                }
-
-                value = descriptor.Value;
-                found = true;
-                break;
-            }
-
-            current = PrototypeChain.GetPrototypeOrNull(jsObject);
-        }
-
-        if (!found)
-        {
-            return false;
-        }
-
-        var candidate = new DynamicLookupInlineCacheEntry(
-            receiver,
+        return receiver.TryGetOwnPlainDataSlot(
             propertyName,
-            value,
-            chain.ToArray(),
-            versions.ToArray());
-        if (!candidate.TryGetValue(
-                receiver,
-                propertyName,
-                out _))
-        {
-            return false;
-        }
-
-        entry = candidate;
-        return true;
+            out shape,
+            out slot,
+            out value);
     }
 }

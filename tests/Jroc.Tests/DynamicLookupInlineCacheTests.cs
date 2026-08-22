@@ -194,26 +194,339 @@ public sealed class DynamicLookupInlineCacheTests
     }
 
     [Fact]
+    public void PropertyRead_SameShapeReceiversShareOneMonomorphicEntryAcrossThousandsOfInstances()
+    {
+        WithRealm(
+            () =>
+            {
+                // Mirrors the GraphNode.pos scenario: thousands of distinct
+                // JsObject instances share one JsShape (same own property
+                // added in the same order) and one own plain-data "pos" slot
+                // holding a distinct reference value per instance.
+                const int count = 5_000;
+                var receivers = new JsObject[count];
+                var expectedValues = new object[count];
+
+                for (var index = 0; index < count; index++)
+                {
+                    var receiver = new JsObject();
+                    var pos = new JsObject();
+                    pos.SetValue("x", (double)index);
+                    receiver.SetValue("pos", pos);
+                    receivers[index] = receiver;
+                    expectedValues[index] = pos;
+                }
+
+                for (var index = 0; index < count; index++)
+                {
+                    var value = DynamicLookupInlineCache.GetItem(
+                        receivers[index],
+                        "pos",
+                        "same-shape");
+                    Assert.Same(expectedValues[index], value);
+                }
+
+                var site = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("same-shape"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    site.State);
+                Assert.Equal(1, site.EntryCount);
+            });
+    }
+
+    [Fact]
+    public void PropertyRead_ExistingValueWriteRemainsMonomorphicHitAndReturnsLatestValue()
+    {
+        WithRealm(
+            () =>
+            {
+                var receiver = new JsObject();
+                receiver.SetValue("value", "first");
+
+                Assert.Equal(
+                    "first",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "write-hit"));
+                var site = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("write-hit"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    site.State);
+                Assert.Equal(1, site.EntryCount);
+
+                // Plain writes to an already-cached slot must not invalidate
+                // the entry (no shape transition, no descriptor change) and
+                // every subsequent read must observe the latest value.
+                for (var index = 0; index < 25; index++)
+                {
+                    receiver.SetValue("value", $"value:{index}");
+                    Assert.Equal(
+                        $"value:{index}",
+                        DynamicLookupInlineCache.GetItem(
+                            receiver,
+                            "value",
+                            "write-hit"));
+                    Assert.Equal(
+                        DynamicLookupInlineCacheState.Monomorphic,
+                        site.State);
+                    Assert.Equal(1, site.EntryCount);
+                }
+            });
+    }
+
+    [Fact]
+    public void PropertyRead_AddDeleteReaddAndAccessorRedefinition_NeverReturnsStaleData()
+    {
+        WithRealm(
+            () =>
+            {
+                var receiver = new JsObject();
+                receiver.SetValue("value", "first");
+                Assert.Equal(
+                    "first",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "lifecycle"));
+
+                Assert.True(receiver.Remove("value"));
+                Assert.Null(
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "lifecycle"));
+
+                receiver.SetValue("value", "second");
+                Assert.Equal(
+                    "second",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "lifecycle"));
+
+                var getterCalls = 0;
+                BuiltinFunction0 getter = _ =>
+                {
+                    getterCalls++;
+                    return "accessor:value";
+                };
+                PropertyDescriptorStore.DefineOrUpdate(
+                    receiver,
+                    "value",
+                    new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Accessor,
+                        Get = BuiltinDelegateFunctionAdapter
+                            .FromDelegate(getter),
+                        Enumerable = true,
+                        Configurable = true
+                    });
+
+                Assert.Equal(
+                    "accessor:value",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "lifecycle"));
+                Assert.Equal(1, getterCalls);
+
+                PropertyDescriptorStore.DefineOrUpdate(
+                    receiver,
+                    "value",
+                    new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Value = "third",
+                        Writable = true,
+                        Enumerable = true,
+                        Configurable = true
+                    });
+                Assert.Equal(
+                    "third",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "lifecycle"));
+
+                receiver.SetValue("value", "fourth");
+                Assert.Equal(
+                    "fourth",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        "value",
+                        "lifecycle"));
+            });
+    }
+
+    [Fact]
+    public void PropertyRead_ProxyReceiverBypassesShapeCache()
+    {
+        WithRealm(
+            () =>
+            {
+                var target = new JsObject();
+                target.SetValue("value", "target-value");
+                var handler = new JsObject();
+                var proxy = new JavaScriptRuntime.Proxy(target, handler);
+
+                Assert.Equal(
+                    "target-value",
+                    DynamicLookupInlineCache.GetItem(
+                        proxy,
+                        "value",
+                        "proxy-bypass"));
+
+                target.SetValue("value", "target-value-updated");
+                Assert.Equal(
+                    "target-value-updated",
+                    DynamicLookupInlineCache.GetItem(
+                        proxy,
+                        "value",
+                        "proxy-bypass"));
+
+                // Proxy receivers are excluded before any site/entry is
+                // ever created (CanCacheReceiver requires an exact JsObject).
+                Assert.Null(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("proxy-bypass"));
+            });
+    }
+
+    [Fact]
+    public void PropertyRead_SymbolKeyBypassesShapeCache()
+    {
+        WithRealm(
+            () =>
+            {
+                var receiver = new JsObject();
+                var symbol = new Symbol("marker");
+                var symbolKey =
+                    ObjectRuntime.ToPropertyKeyString(symbol);
+                receiver.SetValue(symbolKey, "symbol-value");
+
+                Assert.Equal(
+                    "symbol-value",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        symbolKey,
+                        "symbol-bypass"));
+
+                receiver.SetValue(symbolKey, "symbol-value-updated");
+                Assert.Equal(
+                    "symbol-value-updated",
+                    DynamicLookupInlineCache.GetItem(
+                        receiver,
+                        symbolKey,
+                        "symbol-bypass"));
+
+                // Encoded symbol keys are rejected before an entry is built,
+                // so no site is ever created for this site key.
+                Assert.Null(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("symbol-bypass"));
+            });
+    }
+
+    [Fact]
+    public void PropertyRead_CachesNullAndUndefinedValuesAcrossRepeatedHits()
+    {
+        WithRealm(
+            () =>
+            {
+                var receiver = new JsObject();
+                receiver.SetValue("nullValue", JsNull.Null);
+                receiver.SetValue("undefinedValue", null);
+
+                for (var attempt = 0; attempt < 3; attempt++)
+                {
+                    Assert.Equal(
+                        JsNull.Null,
+                        DynamicLookupInlineCache.GetItem(
+                            receiver,
+                            "nullValue",
+                            "null-read"));
+                    Assert.Null(
+                        DynamicLookupInlineCache.GetItem(
+                            receiver,
+                            "undefinedValue",
+                            "undefined-read"));
+                }
+
+                var nullSite = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("null-read"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    nullSite.State);
+                var undefinedSite = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("undefined-read"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    undefinedSite.State);
+            });
+    }
+
+    [Fact]
+    public void CallMember0_SharesOneMonomorphicEntryAcrossSameShapeReceivers()
+    {
+        WithRealm(
+            () =>
+            {
+                const int count = 500;
+                var receivers = new JsObject[count];
+
+                for (var index = 0; index < count; index++)
+                {
+                    var receiver = new JsObject();
+                    receiver.SetValue(
+                        "method",
+                        CreateFunction($"result:{index}"));
+                    receivers[index] = receiver;
+                }
+
+                for (var index = 0; index < count; index++)
+                {
+                    Assert.Equal(
+                        $"result:{index}",
+                        DynamicLookupInlineCache.CallMember0(
+                            receivers[index],
+                            "method",
+                            "call-same-shape"));
+                }
+
+                var site = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache
+                        .GetSiteForTests("call-same-shape"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    site.State);
+                Assert.Equal(1, site.EntryCount);
+            });
+    }
+
+    [Fact]
     public void Site_TransitionsToPolymorphicThenMegamorphic()
     {
         WithRealm(
             () =>
             {
-                var receivers = Enumerable
-                    .Range(
-                        0,
-                        DynamicLookupInlineCacheSite
-                            .MaxPolymorphicEntries + 1)
-                    .Select(
-                        index =>
-                        {
-                            var receiver = new JsObject();
-                            receiver.SetValue(
-                                "value",
-                                $"value:{index}");
-                            return receiver;
-                        })
-                    .ToArray();
+                // Shape-keyed entries are shared across same-shape receivers, so
+                // exercising real polymorphic/megamorphic transitions requires
+                // receivers whose shapes are genuinely distinct from each other.
+                var receivers = CreateReceiversWithDistinctShapes(
+                    DynamicLookupInlineCacheSite
+                        .MaxPolymorphicEntries + 1);
 
                 Assert.Equal(
                     "value:0",
@@ -281,21 +594,9 @@ public sealed class DynamicLookupInlineCacheTests
             () =>
             {
                 var terminal = 0;
-                var receivers = Enumerable
-                    .Range(
-                        0,
-                        DynamicLookupInlineCacheSite
-                            .MaxPolymorphicEntries + 1)
-                    .Select(
-                        index =>
-                        {
-                            var receiver = new JsObject();
-                            receiver.SetValue(
-                                "value",
-                                $"value:{index}");
-                            return receiver;
-                        })
-                    .ToArray();
+                var receivers = CreateReceiversWithDistinctShapes(
+                    DynamicLookupInlineCacheSite
+                        .MaxPolymorphicEntries + 1);
 
                 foreach (var receiver in receivers)
                 {
@@ -343,6 +644,7 @@ public sealed class DynamicLookupInlineCacheTests
                         .MaxPolymorphicEntries + 1))
                 {
                     var receiver = new JsObject();
+                    receiver.SetValue($"shape{index}", true);
                     receiver.SetValue("value", index);
                     _ = DynamicLookupInlineCache.GetItem(
                         receiver,
@@ -581,6 +883,23 @@ public sealed class DynamicLookupInlineCacheTests
         {
             var references =
                 PopulateCollectibleCacheEntries(context);
+
+            using (context.EnterAsRoot())
+            {
+                // Confirm real polymorphism was reached (distinct shapes)
+                // before the receivers/shapes are collected below.
+                var populatedSite = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "gc-capacity"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Polymorphic,
+                    populatedSite.State);
+                Assert.Equal(
+                    DynamicLookupInlineCacheSite.MaxPolymorphicEntries,
+                    populatedSite.EntryCount);
+            }
+
             foreach (var reference in references)
             {
                 for (var attempt = 0;
@@ -627,6 +946,28 @@ public sealed class DynamicLookupInlineCacheTests
         return BuiltinDelegateFunctionAdapter
             .FromDelegate(function);
     }
+
+    /// <summary>
+    /// Creates receivers whose shapes are pairwise distinct (via a unique marker
+    /// property per index) while every receiver also owns a "value" data slot.
+    /// Used to exercise genuine polymorphic/megamorphic transitions, since
+    /// shape-keyed entries otherwise share one monomorphic entry across
+    /// same-shape receivers.
+    /// </summary>
+    private static JsObject[] CreateReceiversWithDistinctShapes(int count)
+        => Enumerable
+            .Range(0, count)
+            .Select(
+                index =>
+                {
+                    var receiver = new JsObject();
+                    receiver.SetValue($"shape{index}", true);
+                    receiver.SetValue(
+                        "value",
+                        $"value:{index}");
+                    return receiver;
+                })
+            .ToArray();
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference
@@ -689,6 +1030,11 @@ public sealed class DynamicLookupInlineCacheTests
                     index =>
                     {
                         var receiver = new JsObject();
+                        // Distinct marker property per receiver produces a
+                        // distinct JsShape, so this exercises genuine
+                        // polymorphic capacity rather than shared monomorphic
+                        // reuse.
+                        receiver.SetValue($"gc-shape{index}", true);
                         receiver.SetValue("value", index);
                         _ = DynamicLookupInlineCache.GetItem(
                             receiver,

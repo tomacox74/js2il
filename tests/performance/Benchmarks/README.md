@@ -295,6 +295,43 @@ runtime, benchmark version, scenario, and benchmark boundary. The raw reports,
 sample counts, and allocation values are the comparison evidence; the focused
 Dry control is used only to verify allocation shape, not timing.
 
+Phase 3 shape-keyed property cache candidate recorded on the same Intel host
+on 2026-08-22:
+
+- normal focused controls: same-receiver monomorphic hit 7.98 ns,
+  10,000-instance same-shape hit 9.29 ns, four-shape polymorphic hit 14.39 ns,
+  and generic property read 27.74 ns, all N=3 and 0 B/op;
+- bounded diagnostics for the exact `findGraphNode` sites observed one
+  compulsory miss followed by approximately 93.4 million hits across
+  distinct `GraphNode` receivers sharing one eligible `JsShape`; both `pos`
+  sites remained monomorphic;
+- sequential non-Dry `kracken-ai-astar`: Phase 2 parent 4.654 s mean /
+  4.600 s median, N=98, 57,534,240 B/op; Phase 3 candidate 4.671 s mean /
+  4.717 s median, N=15, 57,887,688 B/op. The 0.35% mean difference is within
+  noise and is not claimed as a throughput change;
+- sequential non-Dry `dromaeo-3d-cube`: parent 7.734 ms mean, N=26,
+  4,972,572 B/op; candidate 7.831 ms mean, N=17, 4,723,039 B/op. The
+  overlapping timing distributions are flat while allocation is 5.0% lower.
+
+Issue #1324 also requires the N=1 Dry cube guardrail before and after. Those
+results are retained as diagnostic counters, not timing claims:
+
+| Scenario | Runtime | Parent mean | Candidate mean | Parent alloc | Candidate alloc |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `dromaeo-3d-cube` | JROC | 172.60 ms | 191.39 ms | 5.27 MiB | 5.05 MiB |
+| `dromaeo-3d-cube` | Jint prepared | 135.08 ms | 124.54 ms | 1.42 MiB | 1.42 MiB |
+| `dromaeo-3d-cube` | Okojo | 66.78 ms | 67.60 ms | 0.74 MiB | 0.74 MiB |
+| `dromaeo-3d-cube-modern` | JROC | 128.96 ms | 140.81 ms | 3.16 MiB | 2.94 MiB |
+| `dromaeo-3d-cube-modern` | Jint prepared | 111.55 ms | 116.51 ms | 1.34 MiB | 1.34 MiB |
+| `dromaeo-3d-cube-modern` | Okojo | 95.69 ms | 77.24 ms | 0.69 MiB | 0.69 MiB |
+
+The Phase 3 structural exit gate is independent of a benchmark-only rewrite:
+same-shape receivers now reuse a slot-location entry and avoid the full
+generic property algorithm, while accessors, inherited properties, Proxies,
+symbols, descriptor changes, deletion, and exotic receivers remain generic.
+The normal end-to-end comparisons show the resulting throughput is currently
+flat; later phases must not treat this foundation as a measured speedup.
+
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:
 
