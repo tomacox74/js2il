@@ -227,7 +227,11 @@ public sealed partial class HIRToLIRLowerer
                             return true;
                         }
 
-                        _methodBodyIR.Instructions.Add(new LIRConvertToNumber(firstArg.Value, resultTempVar));
+                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                            MethodName: nameof(JavaScriptRuntime.RuntimeServices.NumberCall),
+                            Arguments: [firstArg.Value],
+                            Result: resultTempVar,
+                            ParameterTypes: [typeof(object)]));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                         return true;
                     }

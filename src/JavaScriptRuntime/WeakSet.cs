@@ -57,14 +57,14 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    JavaScriptRuntime.ObjectRuntime.IteratorClose(iterator);
+                    JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
                 }
             }
         }
 
         private object GetCallableAdder(string name)
         {
-            var adder = ObjectRuntime.GetProperty(this, name);
+            var adder = ObjectRuntime.GetProperty(Prototype, name);
             if (!CallableOperations.IsCallable(adder))
             {
                 throw new TypeError($"WeakSet.prototype.{name} is not callable");
