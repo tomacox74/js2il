@@ -9,6 +9,7 @@ This reference describes the public .NET APIs used to compile JavaScript, host c
 
 ## Module hosting and invocation
 
+- [Generated script facades](GeneratedFacades.md)
 - [JsEngine](JsEngine.md)
 - [Handles and constructors](Handles.md)
 - [Hosting exceptions](Exceptions.md)

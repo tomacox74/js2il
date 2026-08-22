@@ -3,6 +3,71 @@
 {
 } // end of class <Module>
 
+.class public auto ansi abstract sealed beforefieldinit Environment_EnumerateProcessArgV
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit Scripts
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit Environment_EnumerateProcessArgV
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig static 
+				void Run (
+					string[] args
+				) cil managed 
+			{
+				.param [1]
+					.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+						01 00 00 00
+					)
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldftn void Modules.Environment_EnumerateProcessArgV::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_000c: ldstr "Environment_EnumerateProcessArgV"
+				IL_0011: ldarg.0
+				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+				IL_0017: ret
+			} // end of method Environment_EnumerateProcessArgV::Run
+
+		} // end of class Environment_EnumerateProcessArgV
+
+
+	} // end of class Scripts
+
+
+	// Methods
+	.method public hidebysig static 
+		void Run (
+			string[] args
+		) cil managed 
+	{
+		.param [1]
+			.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+				01 00 00 00
+			)
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Modules.Environment_EnumerateProcessArgV::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_000c: ldstr "Environment_EnumerateProcessArgV"
+		IL_0011: ldarg.0
+		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+		IL_0017: ret
+	} // end of method Environment_EnumerateProcessArgV::Run
+
+} // end of class Environment_EnumerateProcessArgV
+
 .class private auto ansi beforefieldinit Modules.Environment_EnumerateProcessArgV
 	extends [System.Runtime]System.Object
 {
@@ -206,19 +271,18 @@
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			string[] args
+		) cil managed 
 	{
 		// Header size: 1
-		// Code size: 23 (0x17)
+		// Code size: 7 (0x7)
 		.maxstack 8
 		.entrypoint
 
-		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
-		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Environment_EnumerateProcessArgV::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
-		IL_0016: ret
+		IL_0000: ldarg.0
+		IL_0001: call void Environment_EnumerateProcessArgV::Run(string[])
+		IL_0006: ret
 	} // end of method Program::Main
 
 } // end of class Program

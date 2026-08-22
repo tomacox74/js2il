@@ -70,6 +70,26 @@ public sealed class JsInvocationException : JsRuntimeException
     }
 }
 
+public sealed class JsScriptRunException : JsRuntimeException
+{
+    public JsScriptRunException(
+        string message,
+        int? exitCode = null,
+        Exception? innerException = null,
+        string? moduleId = null,
+        string? compiledAssemblyName = null)
+        : base(
+            message,
+            innerException,
+            moduleId: moduleId,
+            compiledAssemblyName: compiledAssemblyName)
+    {
+        ExitCode = exitCode;
+    }
+
+    public int? ExitCode { get; }
+}
+
 public sealed class JsErrorException : JsRuntimeException
 {
     public string? JsName { get; }
@@ -99,6 +119,36 @@ public sealed class JsErrorException : JsRuntimeException
 
 internal static class JsHostingExceptionTranslator
 {
+    internal static Exception TranslateScriptRun(
+        Exception exception,
+        Assembly compiledAssembly,
+        string moduleId)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(compiledAssembly);
+        ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
+
+        var ex = Unwrap(exception);
+        if (ex is JsScriptRunException)
+        {
+            return ex;
+        }
+
+        var assemblyName = compiledAssembly.GetName().Name;
+        var cause = TranslateCause(
+            ex,
+            moduleId,
+            memberName: null,
+            contractType: null,
+            compiledAssemblyName: assemblyName);
+
+        return new JsScriptRunException(
+            $"Failed to run module '{moduleId}'.",
+            innerException: cause,
+            moduleId: moduleId,
+            compiledAssemblyName: assemblyName);
+    }
+
     internal static Exception TranslateModuleLoad(Exception exception, Assembly compiledAssembly, string moduleId, Type? contractType = null)
     {
         ArgumentNullException.ThrowIfNull(exception);
@@ -177,8 +227,8 @@ internal static class JsHostingExceptionTranslator
         {
             return new JsErrorException(
                 memberName == null
-                    ? $"JavaScript Error thrown while evaluating module '{moduleId}'."
-                    : $"JavaScript Error thrown while invoking '{memberName}'.",
+                    ? $"JavaScript {jsError.Name}: {jsError.Message} thrown while evaluating module '{moduleId}'."
+                    : $"JavaScript {jsError.Name}: {jsError.Message} thrown while invoking '{memberName}'.",
                 innerException: ex,
                 moduleId: moduleId,
                 memberName: memberName,
@@ -193,8 +243,8 @@ internal static class JsHostingExceptionTranslator
         {
             return new JsErrorException(
                 memberName == null
-                    ? $"JavaScript threw a non-error value while evaluating module '{moduleId}'."
-                    : $"JavaScript threw a non-error value while invoking '{memberName}'.",
+                    ? $"JavaScript threw non-error value '{thrown.Value}' while evaluating module '{moduleId}'."
+                    : $"JavaScript threw non-error value '{thrown.Value}' while invoking '{memberName}'.",
                 innerException: ex,
                 moduleId: moduleId,
                 memberName: memberName,

@@ -53,6 +53,19 @@ By default:
 
 That means a host project can compile against the generated exports contracts with no extra custom `.proj` file or CLI invocation.
 
+Compiled assemblies also expose assembly-named static script facades. Given
+`AssemblyName="HelloAssembly"` and an entry file named `hello.js`, C# can run
+the entry module or the explicit script without calling runtime APIs:
+
+```csharp
+HelloAssembly.Run();
+HelloAssembly.Scripts.hello.Run("--mode", "test");
+```
+
+Set `CopyToOutputDirectory="true"` when using this facade-only flow without a
+direct `Jroc.Runtime` package reference so the runtime implementation assembly
+is deployed with the generated assembly.
+
 Package/module-id entrypoints work too. For example, if the host project restores the npm package in its own directory:
 
 ```xml

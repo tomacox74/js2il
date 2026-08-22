@@ -30,7 +30,8 @@ namespace Jroc.Services
 
         private AssemblyDefinitionHandle _assemblyDefinition;
 
-        private MethodDefinitionHandle _mainScriptMethod;
+        private MethodDefinitionHandle _assemblyFacadeRunMethod;
+        private string _facadeRootTypeName = string.Empty;
         private BaseClassLibraryReferences _bclReferences;
         private readonly MemberReferenceRegistry _memberReferenceRegistry;
 
@@ -70,6 +71,7 @@ namespace Jroc.Services
         public JrocCompiledAssemblyArtifact GenerateArtifact(Modules modules, string assemblyName)
         {
             var facadeNames = CreateFacadeNamePlan(modules, assemblyName);
+            _facadeRootTypeName = facadeNames.RootTypeName;
 
             createAssemblyMetadata(assemblyName);
 
@@ -86,6 +88,7 @@ namespace Jroc.Services
             // the API for generating IL is a little confusing
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
+            var moduleList = modules._modules.Values.ToList();
 
             // Phase 0: compute callable counts across all modules so we can assign stable
             // future ctor MethodDef tokens for ALL scope types (regardless of module processing order).
@@ -95,6 +98,33 @@ namespace Jroc.Services
                 .Distinct()
                 .Count());
             var totalModuleEntryMethods = modules._modules.Values.Sum(m => m.SymbolTable!.Root.IsAsync ? 2 : 1);
+
+            var expectedModuleInitHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
+            var expectedModuleAsyncBodyHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
+            var facadeEmitter = new FacadeEmitter(
+                _metadataBuilder,
+                _bclReferences,
+                _memberReferenceRegistry,
+                _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>());
+            var moduleInitMethodRow = _metadataBuilder.GetRowCount(TableIndex.MethodDef)
+                + facadeEmitter.GetRunMethodCount(facadeNames)
+                + 1;
+            foreach (var module in moduleList)
+            {
+                expectedModuleInitHandles[module.Name] =
+                    MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
+                if (module.SymbolTable!.Root.IsAsync)
+                {
+                    expectedModuleAsyncBodyHandles[module.Name] =
+                        MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
+                }
+            }
+
+            _assemblyFacadeRunMethod = facadeEmitter.Emit(
+                facadeNames,
+                moduleList,
+                expectedModuleInitHandles,
+                methodBodyStream);
 
             // Scope types are generated before callables are compiled (so variable binding has FieldDef handles),
             // but scope constructors are emitted later. We create a single TypeGenerator instance so it can
@@ -109,8 +139,6 @@ namespace Jroc.Services
                 deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleEntryMethods + 1,
                 emitDebuggerDisplay: compileOptions.EmitPdb);
 
-            var moduleList = modules._modules.Values.ToList();
-
             // Prototype-chain behavior is automatically enabled when the script uses prototype-related
             // features (e.g. __proto__, Object.getPrototypeOf, Object.setPrototypeOf) to ensure
             // ECMAScript compliance.
@@ -124,22 +152,12 @@ namespace Jroc.Services
             // we allocate/emits module init methods FIRST in the MethodDef table, then all callable MethodDefs.
             // This allows module root TypeDefs to be created before callable-owner TypeDefs while keeping MethodList monotonic.
 
-            // Track expected MethodDef tokens for module init methods so we can validate emission order.
-            var expectedModuleInitHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
-            var expectedModuleAsyncBodyHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
-
             // Reserve MethodDef row ids for module init methods first.
             var methodDefBaseRow = _metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
-            var moduleInitMethodRow = methodDefBaseRow;
             var moduleTypeRegistry = _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>();
             foreach (var module in moduleList)
             {
-                var expectedInitHandle = MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
-                expectedModuleInitHandles[module.Name] = expectedInitHandle;
-                if (module.SymbolTable!.Root.IsAsync)
-                {
-                    expectedModuleAsyncBodyHandles[module.Name] = MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
-                }
+                var expectedInitHandle = expectedModuleInitHandles[module.Name];
 
                 var effectiveNamespace = !string.IsNullOrWhiteSpace(module.ClrNamespace)
                     ? module.ClrNamespace!
@@ -254,10 +272,6 @@ namespace Jroc.Services
                     throw new InvalidOperationException(
                         $"Module init MethodDef token mismatch for module '{module.Name}'. Expected 0x{MetadataTokens.GetToken(expectedInitHandle):X8}, got 0x{MetadataTokens.GetToken(methodDefinitionHandle):X8}.");
                 }
-                if (module == modules.rootModule)
-                {
-                    _mainScriptMethod = methodDefinitionHandle;
-                }
             }
 
             // Phase 4: Compile and emit callable MethodDefs for ALL modules.
@@ -351,18 +365,6 @@ namespace Jroc.Services
         /// </remarks>
         // Scope type generation is orchestrated in Generate() so we can defer scope constructors
         // until after callable method bodies have been emitted.
-
-        private void GenerateModules(Modules modules, MethodBodyStreamEncoder methodBodyStream)
-        {
-            foreach (var module in modules._modules.Values)
-            {
-                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, module.Name);
-                if (module == modules.rootModule)
-                {
-                    _mainScriptMethod = methodDefinitionHandle;
-                }
-            }
-        }
 
         private MethodDefinitionHandle GenerateModule(
             ModuleDefinition module,
@@ -493,51 +495,45 @@ namespace Jroc.Services
 
         private void createEntryPoint(MethodBodyStreamEncoder methodBodyStream)
         {
-            var entryPointTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
+            if (_assemblyFacadeRunMethod.IsNil)
+            {
+                throw new InvalidOperationException("Assembly facade Run method was not emitted.");
+            }
 
-            // create the signature for the entry point method
-            var methodSig = MethodBuilder.BuildMethodSignature(
+            var entryPointTypeName = string.Equals(
+                _facadeRootTypeName,
+                "Program",
+                StringComparison.Ordinal)
+                ? "__JrocEntryPoint"
+                : "Program";
+            var entryPointTypeBuilder = new TypeBuilder(
                 _metadataBuilder,
-                isInstance: false,
-                paramCount: 0, 
-                hasScopesParam: false, 
-                returnsVoid: true);
+                "",
+                entryPointTypeName);
 
-            // Emit IL for the entry point method directly (no legacy method generator dependency).
+            var signatureBuilder = new BlobBuilder();
+            new BlobEncoder(signatureBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(
+                    parameterCount: 1,
+                    returnType => returnType.Void(),
+                    parameters => parameters.AddParameter().Type().SZArray().String());
+            var methodSig = _metadataBuilder.GetOrAddBlob(signatureBuilder);
+            var argsParameter = _metadataBuilder.AddParameter(
+                ParameterAttributes.None,
+                _metadataBuilder.GetOrAddString("args"),
+                sequenceNumber: 1);
+
             var ilBuilder = new BlobBuilder();
             var ilEncoder = new InstructionEncoder(ilBuilder);
-            var runtime = new Runtime(
-                ilEncoder,
-                _serviceProvider.GetRequiredService<TypeReferenceRegistry>(),
-                _serviceProvider.GetRequiredService<MemberReferenceRegistry>());
-
-
-            // emit IL for the entry point method
-
-            // first create new instance of the engine
-            runtime.InvokeEngineCtor();
-
-            // Create a ModuleMainDelegate that wraps the main module method
-            // ModuleMainDelegate takes (exports, require, module, __filename, __dirname)
-            ilEncoder.OpCode(ILOpCode.Ldnull);
-            ilEncoder.OpCode(ILOpCode.Ldftn);
-            ilEncoder.Token(this._mainScriptMethod);
-            ilEncoder.OpCode(ILOpCode.Newobj);
-            ilEncoder.Token(_bclReferences.ModuleMainDelegate_Ctor_Ref);
-
-            ilEncoder.OpCode(ILOpCode.Callvirt);
-            var engineExecuteRef = runtime.GetInstanceMethodRef(
-                typeof(JavaScriptRuntime.Engine),
-                "Execute",
-                0,
-                typeof(JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate));
-            ilEncoder.Token(engineExecuteRef);
-
+            ilEncoder.LoadArgument(0);
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(_assemblyFacadeRunMethod);
             ilEncoder.OpCode(ILOpCode.Ret);
 
             var entryPointOffset = methodBodyStream.AddMethodBody(
                 ilEncoder,
-                maxStack: 3,
+                maxStack: 1,
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);
 
@@ -545,7 +541,8 @@ namespace Jroc.Services
                 MethodAttributes.Static | MethodAttributes.Public,
                 "Main",
                 methodSig,
-                entryPointOffset);
+                entryPointOffset,
+                argsParameter);
 
             // Define the Program type that contains the entry point
             entryPointTypeBuilder.AddTypeDefinition(

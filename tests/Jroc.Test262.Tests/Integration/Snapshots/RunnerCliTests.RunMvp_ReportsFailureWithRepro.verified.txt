@@ -1,4 +1,4 @@
-exit: 1
+﻿exit: 1
 stdout:
 root <temp>/test262-root
 jroc <repo>/src/Cli/bin/<configuration>/net10.0/Jroc.dll
@@ -6,7 +6,7 @@ output <temp>/runner-output
 discovered 7
 selected-files 1
 selected-cases 1
-RUNTIME-MISMATCH test/language/mvp/fail-positive.js [non-strict] expected positive but runtime rejected (Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value)
+RUNTIME-MISMATCH test/language/mvp/fail-positive.js [non-strict] expected positive but runtime rejected (JavaScript threw non-error value 'JavaScriptRuntime.JsObject')
 REPRO node scripts/test262/runMvp.js --root "<temp>/test262-root" --file "test/language/mvp/fail-positive.js" --variant non-strict
 SUMMARY matched=0 unexpected=1 not-run=0 selected=1 classified=1 runtime-mismatch=1
 REPORT <temp>/runner-output/summary.json
@@ -78,7 +78,7 @@ summary.json:
         "kind": "runtime-mismatch",
         "verdict": "unexpected",
         "phase": "runtime",
-        "detail": "expected positive but runtime rejected (Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value)"
+        "detail": "expected positive but runtime rejected (JavaScript threw non-error value 'JavaScriptRuntime.JsObject')"
       },
       "reasons": [],
       "observed": {
@@ -92,7 +92,7 @@ summary.json:
           "status": "rejected",
           "exitCode": 1,
           "errorType": null,
-          "summary": "Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value"
+          "summary": "JavaScript threw non-error value 'JavaScriptRuntime.JsObject'"
         }
       },
       "repro": {

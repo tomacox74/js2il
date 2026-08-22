@@ -3,6 +3,71 @@
 {
 } // end of class <Module>
 
+.class public auto ansi abstract sealed beforefieldinit FS_UnlinkSync_ReleaseCleanup
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit Scripts
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit FS_UnlinkSync_ReleaseCleanup
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig static 
+				void Run (
+					string[] args
+				) cil managed 
+			{
+				.param [1]
+					.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+						01 00 00 00
+					)
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldftn void Modules.FS_UnlinkSync_ReleaseCleanup::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_000c: ldstr "FS_UnlinkSync_ReleaseCleanup"
+				IL_0011: ldarg.0
+				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+				IL_0017: ret
+			} // end of method FS_UnlinkSync_ReleaseCleanup::Run
+
+		} // end of class FS_UnlinkSync_ReleaseCleanup
+
+
+	} // end of class Scripts
+
+
+	// Methods
+	.method public hidebysig static 
+		void Run (
+			string[] args
+		) cil managed 
+	{
+		.param [1]
+			.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+				01 00 00 00
+			)
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Modules.FS_UnlinkSync_ReleaseCleanup::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_000c: ldstr "FS_UnlinkSync_ReleaseCleanup"
+		IL_0011: ldarg.0
+		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+		IL_0017: ret
+	} // end of method FS_UnlinkSync_ReleaseCleanup::Run
+
+} // end of class FS_UnlinkSync_ReleaseCleanup
+
 .class private auto ansi beforefieldinit Modules.FS_UnlinkSync_ReleaseCleanup
 	extends [System.Runtime]System.Object
 {
@@ -118,7 +183,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 910 (0x38e)
+		// Code size: 915 (0x393)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_UnlinkSync_ReleaseCleanup/Scope,
@@ -450,30 +515,31 @@
 				IL_0356: leave IL_035b
 			} // end handler
 
-			IL_035b: leave IL_038a
+			IL_035b: leave IL_038f
 		} // end .try
 		finally
 		{
-			IL_0360: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0365: dup
-			IL_0366: ldstr "recursive"
-			IL_036b: ldc.i4.1
-			IL_036c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0371: dup
-			IL_0372: ldstr "force"
-			IL_0377: ldc.i4.1
-			IL_0378: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_037d: stloc.s 15
-			IL_037f: ldloc.1
-			IL_0380: ldloc.s 5
-			IL_0382: ldloc.s 15
-			IL_0384: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_0389: endfinally
+			IL_0360: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
+			IL_0365: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_036a: dup
+			IL_036b: ldstr "recursive"
+			IL_0370: ldc.i4.1
+			IL_0371: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0376: dup
+			IL_0377: ldstr "force"
+			IL_037c: ldc.i4.1
+			IL_037d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0382: stloc.s 15
+			IL_0384: ldloc.1
+			IL_0385: ldloc.s 5
+			IL_0387: ldloc.s 15
+			IL_0389: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_038e: endfinally
 		} // end handler
 
-		IL_038a: ldnull
-		IL_038b: stloc.s 11
-		IL_038d: ret
+		IL_038f: ldnull
+		IL_0390: stloc.s 11
+		IL_0392: ret
 	} // end of method FS_UnlinkSync_ReleaseCleanup::__js_module_init__
 
 } // end of class Modules.FS_UnlinkSync_ReleaseCleanup
@@ -483,19 +549,18 @@
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			string[] args
+		) cil managed 
 	{
 		// Header size: 1
-		// Code size: 23 (0x17)
+		// Code size: 7 (0x7)
 		.maxstack 8
 		.entrypoint
 
-		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
-		IL_0005: ldnull
-		IL_0006: ldftn void Modules.FS_UnlinkSync_ReleaseCleanup::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
-		IL_0016: ret
+		IL_0000: ldarg.0
+		IL_0001: call void FS_UnlinkSync_ReleaseCleanup::Run(string[])
+		IL_0006: ret
 	} // end of method Program::Main
 
 } // end of class Program

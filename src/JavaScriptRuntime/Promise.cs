@@ -54,6 +54,7 @@ public sealed class Promise : JsObject, IJavaScriptPromise
     private State _state = State.Pending;
 
     private object? _result;
+    private bool _isHandled;
     private readonly JavaScriptRuntime.Node.AsyncResourceState? _asyncResourceState;
 
     private readonly List<Reaction> _reactions = new();
@@ -410,6 +411,7 @@ public sealed class Promise : JsObject, IJavaScriptPromise
 
     public object? @then(object? onFulfilled, object? onRejected)
     {
+        MarkHandled();
         var nextPromise = new Promise();
         var reaction = new Reaction(
             BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onFulfilled),
@@ -446,6 +448,7 @@ public sealed class Promise : JsObject, IJavaScriptPromise
 
     public object? @finally(object? onFinally)
     {
+        MarkHandled();
         var nextPromise = new Promise();
         var normalizedFinally =
             BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onFinally);
@@ -698,6 +701,11 @@ public sealed class Promise : JsObject, IJavaScriptPromise
 
     private object? Settle(State state, object? value)
     {
+        if (state == State.Rejected && value is ScriptProcessExitException exit)
+        {
+            throw exit;
+        }
+
         List<Reaction> toSchedule;
 
         if (_state != State.Pending)
@@ -707,6 +715,12 @@ public sealed class Promise : JsObject, IJavaScriptPromise
 
         _state = state;
         _result = value;
+        if (state == State.Rejected && !_isHandled)
+        {
+            GlobalThis.ServiceProvider?
+                .Resolve<UnhandledPromiseRejectionTracker>()
+                .Track(this, value);
+        }
         JavaScriptRuntime.Node.AsyncContextRuntime.EmitPromiseResolve(
             _asyncResourceState);
         toSchedule = new List<Reaction>(_reactions);
@@ -718,6 +732,14 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         }
 
         return null;
+    }
+
+    private void MarkHandled()
+    {
+        _isHandled = true;
+        GlobalThis.ServiceProvider?
+            .Resolve<UnhandledPromiseRejectionTracker>()
+            .MarkHandled(this);
     }
 
     private void EnqueueReaction(Reaction reaction)

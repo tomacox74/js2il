@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Jroc.IR;
+using Jroc.Runtime;
 using JavaScriptRuntime;
 using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
@@ -207,11 +208,14 @@ public static class InMemoryTestCompiler
 
                 var entryPoint = assembly.EntryPoint
                     ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
-                ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+                ((Action<string[]>)Delegate.CreateDelegate(
+                    typeof(Action<string[]>),
+                    entryPoint))(System.Array.Empty<string>());
             }
             catch (Exception ex)
             {
-                threadException = ExceptionDispatchInfo.Capture(ex);
+                threadException = ExceptionDispatchInfo.Capture(
+                    UnwrapGeneratedRunException(ex));
             }
             finally
             {
@@ -248,6 +252,19 @@ public static class InMemoryTestCompiler
 
     private static string NormalizeModuleId(string moduleId)
         => moduleId.Trim().Replace('\\', '/').TrimStart('.', '/');
+
+    private static Exception UnwrapGeneratedRunException(Exception exception)
+    {
+        if (exception is not JsScriptRunException runException
+            || runException.InnerException is not { } cause)
+        {
+            return exception;
+        }
+
+        return cause is JsErrorException { InnerException: { } jsCause }
+            ? jsCause
+            : cause;
+    }
 
     private sealed record ExecutionOutcome(string Output, Exception? UnhandledException);
 }

@@ -132,6 +132,10 @@ public sealed partial class AssertModule : JsFunctionObject
         {
             CallableOperations.Call0(fn, null);
         }
+        catch (ScriptProcessExitException)
+        {
+            throw;
+        }
         catch (Exception exception)
         {
             if (MatchesExpectedError(exception, error))
@@ -157,6 +161,10 @@ public sealed partial class AssertModule : JsFunctionObject
         try
         {
             CallableOperations.Call0(fn, null);
+        }
+        catch (ScriptProcessExitException)
+        {
+            throw;
         }
         catch (Exception exception)
         {

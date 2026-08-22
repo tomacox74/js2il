@@ -225,7 +225,9 @@ public sealed class GeneratedFacadePhaseZeroTests
 
                 var assembly = Assembly.Load("ConsumerFixture");
                 Console.WriteLine($"assembly={assembly.GetName().Name}");
-                assembly.EntryPoint!.Invoke(null, null);
+                assembly.EntryPoint!.Invoke(
+                    null,
+                    new object?[] { Array.Empty<string>() });
                 """,
                 run: true);
 

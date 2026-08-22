@@ -3,6 +3,71 @@
 {
 } // end of class <Module>
 
+.class public auto ansi abstract sealed beforefieldinit TryFinally_Return
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit Scripts
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit TryFinally_Return
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig static 
+				void Run (
+					string[] args
+				) cil managed 
+			{
+				.param [1]
+					.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+						01 00 00 00
+					)
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldftn void Modules.TryFinally_Return::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_000c: ldstr "TryFinally_Return"
+				IL_0011: ldarg.0
+				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+				IL_0017: ret
+			} // end of method TryFinally_Return::Run
+
+		} // end of class TryFinally_Return
+
+
+	} // end of class Scripts
+
+
+	// Methods
+	.method public hidebysig static 
+		void Run (
+			string[] args
+		) cil managed 
+	{
+		.param [1]
+			.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+				01 00 00 00
+			)
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Modules.TryFinally_Return::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_000c: ldstr "TryFinally_Return"
+		IL_0011: ldarg.0
+		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+		IL_0017: ret
+	} // end of method TryFinally_Return::Run
+
+} // end of class TryFinally_Return
+
 .class private auto ansi beforefieldinit Modules.TryFinally_Return
 	extends [System.Runtime]System.Object
 {
@@ -170,7 +235,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 54 (0x36)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -190,23 +255,24 @@
 				IL_0014: stloc.0
 				IL_0015: ldnull
 				IL_0016: stloc.0
-				IL_0017: leave IL_0034
+				IL_0017: leave IL_0039
 
-				IL_001c: leave IL_0034
+				IL_001c: leave IL_0039
 			} // end .try
 			finally
 			{
-				IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0026: stloc.1
-				IL_0027: ldloc.1
-				IL_0028: ldstr "b"
-				IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0032: pop
-				IL_0033: endfinally
+				IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
+				IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_002b: stloc.1
+				IL_002c: ldloc.1
+				IL_002d: ldstr "b"
+				IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0037: pop
+				IL_0038: endfinally
 			} // end handler
 
-			IL_0034: ldloc.0
-			IL_0035: ret
+			IL_0039: ldloc.0
+			IL_003a: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -289,19 +355,18 @@
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			string[] args
+		) cil managed 
 	{
 		// Header size: 1
-		// Code size: 23 (0x17)
+		// Code size: 7 (0x7)
 		.maxstack 8
 		.entrypoint
 
-		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
-		IL_0005: ldnull
-		IL_0006: ldftn void Modules.TryFinally_Return::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
-		IL_0016: ret
+		IL_0000: ldarg.0
+		IL_0001: call void TryFinally_Return::Run(string[])
+		IL_0006: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/hosting/docs: implement the Phase 1 generated `Run` facade
+  for #1917 and close #1930, #1931, #1932, and #1933. Compiled assemblies now
+  expose deterministic assembly-root and nested script `Run(params string[])`
+  methods, share entry execution with `Program.Main`, map arguments to isolated
+  Node-compatible `process.argv`, drain asynchronous work, translate failures,
+  and keep `process.exit` from terminating the host.
 - perf(compiler/runtime): implement issue #1958 Phase 2 by propagating an
   uncertain Array receiver candidate into ordinary functions assigned to the
   intrinsic `Array.prototype`. Loop-hot numeric `length` and indexed reads now
