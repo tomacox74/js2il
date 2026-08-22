@@ -442,6 +442,7 @@ public sealed partial class HIRToLIRLowerer
             PendingExceptionFieldName: pendingExceptionField));
         try
         {
+            EmitProcessExitGuard();
             if (!TryLowerStatement(tryStmt.FinallyBody))
             {
                 return false;

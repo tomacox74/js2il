@@ -56,6 +56,7 @@ another thread must not observe itself as reentrant.
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
 | `RuntimeServices._currentInvocation` | Async flow | Immutable residual invocation frame captured/restored by root frames |
+| `ScriptProcessExitControl.PendingExit` | Async flow | Per-run fatal exit signal cleared at the generated facade boundary |
 | `JsReturnConverter.ResultConversions` | Process metadata | Weak-keyed constructed generic methods |
 
 A weak-keyed table is approved only when the key has the semantic lifetime of

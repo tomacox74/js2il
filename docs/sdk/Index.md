@@ -8,6 +8,7 @@ This page is the **canonical user documentation** for SDK consumers. The older d
 
 - **Build-integrated compilation**: declare `JrocCompile` items and let `Jroc.SDK` compile JavaScript during `dotnet build`.
 - **Library hosting**: load compiled JavaScript assemblies with `Jroc.Runtime.JsEngine` and call `module.exports` from C#.
+- **Generated script facades**: run an assembly or published script directly through assembly-named static types without referencing runtime APIs from C#.
 - **In-memory compile-and-run**: use `Jroc.Core` to produce PE/PDB bytes and optionally load them into a collectible context without writing generated assemblies to disk.
 - A dedicated **script thread** per hosted runtime instance.
 - Optional **debug symbols**: emit Portable PDB (`.pdb`) data for stepping and better stack traces against the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code.
@@ -46,6 +47,20 @@ using var exports = JsEngine.LoadModule<IMyModuleExports>();
 Console.WriteLine(exports.Version);
 Console.WriteLine(exports.Add(1, 2));
 ```
+
+## Quick start (run a script)
+
+Given an assembly named `HelloAssembly` compiled from `hello.js`:
+
+```csharp
+HelloAssembly.Run();
+HelloAssembly.Scripts.hello.Run("--mode", "test");
+```
+
+The root method runs the manifest entry module. Each call uses an isolated
+runtime and maps its arguments to `process.argv[2..]`. See
+[generated script facades](api/GeneratedFacades.md) for naming, lifecycle,
+failure, and deployment details.
 
 If you need to target a specific module id in that same compiled assembly:
 
@@ -98,6 +113,7 @@ Console.WriteLine((double)exports.add(1, 2));
 ## [API reference](api/Index.md)
 
 - [`JrocCompile` MSBuild task](api/JrocCompile.md)
+- [Generated script facades](api/GeneratedFacades.md)
 - [In-memory compiler APIs](api/InMemoryCompiler.md)
 - [`JsEngine`](api/JsEngine.md)
 - [Handles + constructors](api/Handles.md)

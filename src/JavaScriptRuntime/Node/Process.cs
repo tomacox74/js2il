@@ -18,6 +18,7 @@ namespace JavaScriptRuntime.Node
         private readonly Lazy<object> _env;
         private readonly Lazy<Writable> _stdout;
         private readonly Lazy<Writable> _stderr;
+        private readonly Lazy<JavaScriptRuntime.Array> _argv;
         private bool _hasExitCode;
 
         public Process(IEnvironment environment, ConsoleOutputSinks consoleOutputSinks)
@@ -27,6 +28,7 @@ namespace JavaScriptRuntime.Node
             _env = new Lazy<object>(CreateEnvSnapshot);
             _stdout = new Lazy<Writable>(() => new ProcessStdioStream(consoleOutputSinks.Output ?? new DefaultConsoleOutput()));
             _stderr = new Lazy<Writable>(() => new ProcessStdioStream(consoleOutputSinks.ErrorOutput ?? new DefaultErrorConsoleOutput()));
+            _argv = new Lazy<JavaScriptRuntime.Array>(CreateArgv);
 
             if (GlobalThis.ServiceProvider != null
                 && GlobalThis.ServiceProvider.TryResolve<ChildProcessIpcChannel>(out var ipcChannel)
@@ -90,75 +92,80 @@ namespace JavaScriptRuntime.Node
         }
 
         /// <summary>
-        /// Minimal process.argv derived from the active environment. argv[0] is normalized to the current script filename.
+        /// Minimal process.argv derived from the active environment.
         /// </summary>
-        public JavaScriptRuntime.Array argv
+        public JavaScriptRuntime.Array argv => _argv.Value;
+
+        private JavaScriptRuntime.Array CreateArgv()
         {
-            get
+            if (_environment is INodeProcessArgumentsEnvironment runEnvironment)
             {
-                try
-                {
-                    var args = JavaScriptRuntime.EnvironmentProvider.GetProcessArgs();
-                    var scriptFile = JavaScriptRuntime.Modules.CommonJS.ModuleContext.CreateModuleContext().__filename;
-
-                    // Node semantics:
-                    //   argv[0] = execPath (node)
-                    //   argv[1] = script path
-                    //   argv[2..] = user args
-                    // Our host may provide args as either:
-                    //   [dotnet, script.dll, ...]
-                    //   [script.dll, ...]
-                    // Normalize both forms.
-                    if (args != null && args.Length > 1)
-                    {
-                        // If the host provides execPath (dotnet) + script, keep execPath.
-                        // Otherwise, treat args[0] as script and preserve all user args.
-                        var first = args[0] ?? string.Empty;
-                        var fileName = string.Empty;
-                        try
-                        {
-                            fileName = System.IO.Path.GetFileName(first);
-                        }
-                        catch { }
-
-                        bool hasExecPath = fileName.Equals("dotnet", StringComparison.OrdinalIgnoreCase)
-                            || fileName.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase);
-
-                        if (hasExecPath)
-                        {
-                            var normalized = new object[args.Length];
-                            normalized[0] = args[0];
-                            normalized[1] = scriptFile;
-                            for (int i = 2; i < args.Length; i++)
-                            {
-                                normalized[i] = args[i];
-                            }
-                            return new JavaScriptRuntime.Array(normalized);
-                        }
-
-                        // Host omitted execPath: args = [script, ...userArgs]
-                        // Normalize to ["dotnet", script, ...userArgs]
-                        var outArgs = new object[args.Length + 1];
-                        outArgs[0] = "dotnet";
-                        outArgs[1] = scriptFile;
-                        for (int i = 1; i < args.Length; i++)
-                        {
-                            outArgs[i + 1] = args[i];
-                        }
-                        return new JavaScriptRuntime.Array(outArgs);
-                    }
-
-                    if (args != null && args.Length == 1)
-                    {
-                        // Host provided only the script path.
-                        return new JavaScriptRuntime.Array(new object[] { "dotnet", scriptFile });
-                    }
-                }
-                catch { }
-
-                // Fallback to Node-like argv with just execPath + script
-                return new JavaScriptRuntime.Array(new object[] { "dotnet", JavaScriptRuntime.Modules.CommonJS.ModuleContext.CreateModuleContext().__filename });
+                return new JavaScriptRuntime.Array(
+                    runEnvironment.GetNodeProcessArguments().Cast<object>().ToArray());
             }
+
+            try
+            {
+                var args = JavaScriptRuntime.EnvironmentProvider.GetProcessArgs();
+                var scriptFile = JavaScriptRuntime.Modules.CommonJS.ModuleContext.CreateModuleContext().__filename;
+
+                // Node semantics:
+                //   argv[0] = execPath (node)
+                //   argv[1] = script path
+                //   argv[2..] = user args
+                // Our host may provide args as either:
+                //   [dotnet, script.dll, ...]
+                //   [script.dll, ...]
+                // Normalize both forms.
+                if (args != null && args.Length > 1)
+                {
+                    // If the host provides execPath (dotnet) + script, keep execPath.
+                    // Otherwise, treat args[0] as script and preserve all user args.
+                    var first = args[0] ?? string.Empty;
+                    var fileName = string.Empty;
+                    try
+                    {
+                        fileName = System.IO.Path.GetFileName(first);
+                    }
+                    catch { }
+
+                    bool hasExecPath = fileName.Equals("dotnet", StringComparison.OrdinalIgnoreCase)
+                        || fileName.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase);
+
+                    if (hasExecPath)
+                    {
+                        var normalized = new object[args.Length];
+                        normalized[0] = args[0];
+                        normalized[1] = scriptFile;
+                        for (int i = 2; i < args.Length; i++)
+                        {
+                            normalized[i] = args[i];
+                        }
+                        return new JavaScriptRuntime.Array(normalized);
+                    }
+
+                    // Host omitted execPath: args = [script, ...userArgs]
+                    // Normalize to ["dotnet", script, ...userArgs]
+                    var outArgs = new object[args.Length + 1];
+                    outArgs[0] = "dotnet";
+                    outArgs[1] = scriptFile;
+                    for (int i = 1; i < args.Length; i++)
+                    {
+                        outArgs[i + 1] = args[i];
+                    }
+                    return new JavaScriptRuntime.Array(outArgs);
+                }
+
+                if (args != null && args.Length == 1)
+                {
+                    // Host provided only the script path.
+                    return new JavaScriptRuntime.Array(new object[] { "dotnet", scriptFile });
+                }
+            }
+            catch { }
+
+            // Fallback to Node-like argv with just execPath + script
+            return new JavaScriptRuntime.Array(new object[] { "dotnet", JavaScriptRuntime.Modules.CommonJS.ModuleContext.CreateModuleContext().__filename });
         }
 
         public Writable stdout => _stdout.Value;

@@ -141,6 +141,19 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
                 }
+                else
+                {
+                    var ignoredCatchValue = CreateTempVariable();
+                    lirInstructions.Add(new LIRUnwrapCatchException(exTemp, ignoredCatchValue));
+                    DefineTempStorage(
+                        ignoredCatchValue,
+                        new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    SetTempVariableSlot(
+                        ignoredCatchValue,
+                        CreateAnonymousVariableSlot(
+                            "$catch_value",
+                            new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                }
 
                 if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
                 {
@@ -156,6 +169,7 @@ public sealed partial class HIRToLIRLowerer
             if (hasFinally)
             {
                 lirInstructions.Add(new LIRLabel(finallyStart));
+                EmitProcessExitGuard();
                 if (tryStmt.FinallyBody != null && !TryLowerStatement(tryStmt.FinallyBody))
                 {
                     return false;
@@ -278,6 +292,19 @@ public sealed partial class HIRToLIRLowerer
                             return false;
                         }
                     }
+                    else
+                    {
+                        var ignoredCatchValue = CreateTempVariable();
+                        lirInstructions.Add(new LIRUnwrapCatchException(exTemp, ignoredCatchValue));
+                        DefineTempStorage(
+                            ignoredCatchValue,
+                            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        SetTempVariableSlot(
+                            ignoredCatchValue,
+                            CreateAnonymousVariableSlot(
+                                "$catch_value",
+                                new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                    }
 
                     if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
                     {
@@ -301,6 +328,7 @@ public sealed partial class HIRToLIRLowerer
                 _syncTryFinallyStack.Push(ctx with { IsInFinally = true });
 
                 lirInstructions.Add(new LIRLabel(finallyStart));
+                EmitProcessExitGuard();
                 if (tryStmt.FinallyBody != null && !TryLowerStatement(tryStmt.FinallyBody))
                 {
                     return false;
@@ -472,6 +500,7 @@ public sealed partial class HIRToLIRLowerer
                 _generatorTryCatchFinallyStack.Pop();
                 _generatorTryCatchFinallyStack.Push(ctx with { IsInFinally = true });
 
+                EmitProcessExitGuard();
                 if (tryStmt.FinallyBody != null && !TryLowerStatement(tryStmt.FinallyBody))
                 {
                     return false;
@@ -556,5 +585,14 @@ public sealed partial class HIRToLIRLowerer
                 _generatorTryCatchFinallyStack.Pop();
             }
         }
+    }
+
+    private void EmitProcessExitGuard()
+    {
+        _methodBodyIR.Instructions.Add(
+            new LIRCallIntrinsicStaticVoid(
+                Jroc.IL.LIRToILCompiler.ScriptProcessExitIntrinsicName,
+                nameof(JavaScriptRuntime.ScriptProcessExitControl.ThrowIfRequested),
+                []));
     }
 }

@@ -74,7 +74,7 @@ public class Engine
         }
     }
 
-    private static void ConfigureChildProcessIpc(ServiceContainer serviceProvider)
+    internal static void ConfigureChildProcessIpc(ServiceContainer serviceProvider)
     {
         var portText = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkIpcPortEnvVar);
         var ipcToken = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkIpcTokenEnvVar);

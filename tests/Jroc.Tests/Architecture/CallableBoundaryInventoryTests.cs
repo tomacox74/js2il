@@ -151,7 +151,7 @@ public sealed class CallableBoundaryInventoryTests
         Assert.Single(
             ldftnSites,
             site => site.RelativePath ==
-                "src/Compiler/Services/AssemblyGenerator.cs");
+                "src/Compiler/Services/FacadeEmitter.cs");
 
         var continuationEmitter = Assert.Single(
             compilerFiles,
@@ -171,7 +171,7 @@ public sealed class CallableBoundaryInventoryTests
         var bootstrapEmitter = Assert.Single(
             compilerFiles,
             file => file.RelativePath ==
-                "src/Compiler/Services/AssemblyGenerator.cs");
+                "src/Compiler/Services/FacadeEmitter.cs");
         Assert.Equal(
             1,
             CountOccurrences(

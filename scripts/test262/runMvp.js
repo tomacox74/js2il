@@ -962,6 +962,20 @@ function extractJsError(stderr) {
     return dotnetMatch[1].trim();
   }
 
+  const facadeThrownValueMatch = stderr.match(
+    /Jroc\.Runtime\.JsErrorException:\s*(JavaScript threw non-error value '.+?')\s+while (?:evaluating|invoking)/m
+  );
+  if (facadeThrownValueMatch) {
+    return facadeThrownValueMatch[1].trim();
+  }
+
+  const facadeMatch = stderr.match(
+    /Jroc\.Runtime\.JsErrorException:\s*JavaScript\s+([A-Za-z]+Error|Error|EvalError|RangeError|ReferenceError|SyntaxError|TypeError|URIError):\s*(.+?)\s+thrown while (?:evaluating|invoking)/m
+  );
+  if (facadeMatch) {
+    return `${facadeMatch[1]}: ${facadeMatch[2].trim()}`;
+  }
+
   const dotnetUnhandledMatch = stderr.match(/Unhandled exception\.\s*([A-Za-z]+Error|Error|EvalError|RangeError|ReferenceError|SyntaxError|TypeError|URIError):\s*(.+)/m);
   if (dotnetUnhandledMatch) {
     return `${dotnetUnhandledMatch[1]}: ${dotnetUnhandledMatch[2].trim()}`;

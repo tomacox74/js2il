@@ -35,6 +35,21 @@ Thrown when a call through a hosting proxy fails.
 - `InnerException` carries the underlying cause.
 - If the JS code threw, the inner exception is typically `JsErrorException`.
 
+## JsScriptRunException
+
+Thrown when a generated facade `Run(...)` call does not complete successfully.
+
+Common causes:
+
+- top-level or dependency evaluation throws
+- rejected top-level asynchronous work or an unhandled promise rejection
+- a timer, immediate, or microtask callback throws while the event loop drains
+- nonzero `process.exit(...)` or `process.exitCode`
+
+`ModuleId` and `CompiledAssemblyName` identify the selected script. `ExitCode`
+contains the nonzero process exit code when applicable. For JavaScript
+failures, `InnerException` is typically `JsErrorException`.
+
 ## JsErrorException
 
 Represents a JS `Error` (or other thrown JS value) that was raised during module evaluation or invocation.
