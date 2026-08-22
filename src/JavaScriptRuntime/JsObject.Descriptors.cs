@@ -69,6 +69,53 @@ public partial class JsObject
         EnsureDescriptorState().IsFunctionPrototype = true;
     }
 
+    /// <summary>
+    /// Resolves an own data-property slot suitable for the Tier 3 shape-keyed
+    /// inline cache (<see cref="DynamicLookupInlineCache"/>): this object's exact
+    /// shape, the property's slot index, and its current boxed value. Fails for
+    /// missing properties, accessors, attribute-bearing data descriptors, and
+    /// objects backed by shared/override descriptor storage; all of those must
+    /// keep using generic property lookup.
+    /// </summary>
+    internal bool TryGetOwnPlainDataSlot(string key, out JsShape shape, out int slot, out object? value)
+    {
+        shape = _shape;
+        slot = shape.GetSlot(key);
+        if (slot < 0)
+        {
+            value = null;
+            return false;
+        }
+
+        return TryGetOwnPlainDataSlotValue(shape, slot, out value);
+    }
+
+    /// <summary>
+    /// Re-validates and reads the current value of a slot previously resolved by
+    /// <see cref="TryGetOwnPlainDataSlot"/>. Safe to call on every inline-cache
+    /// hit for any receiver sharing <paramref name="expectedShape"/>: it never
+    /// trusts a snapshot, re-checking this receiver's own shape and per-slot
+    /// descriptor state before reading <c>_properties[slot]</c>.
+    /// </summary>
+    internal bool TryGetOwnPlainDataSlotValue(JsShape expectedShape, int slot, out object? value)
+    {
+        if (HasSharedIntrinsicBaseline || !ReferenceEquals(_shape, expectedShape))
+        {
+            value = null;
+            return false;
+        }
+
+        if (_descriptorState is { } state
+            && (JsSlotDescriptorFlags)state.Flags[slot] != JsSlotDescriptorFlags.None)
+        {
+            value = null;
+            return false;
+        }
+
+        value = _properties[slot].ToObject();
+        return true;
+    }
+
     internal bool GetInlineOwnDescriptor(string key, out JsPropertyDescriptor descriptor)
     {
         var slot = _shape.GetSlot(key);

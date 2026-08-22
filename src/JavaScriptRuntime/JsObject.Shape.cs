@@ -155,6 +155,14 @@ public partial class JsObject
     internal void BumpLookupVersion()
         => Interlocked.Increment(ref _lookupVersion);
 
+    /// <summary>
+    /// The object's current hidden-class shape. Used by Tier 3 shape-keyed inline
+    /// caching (<see cref="DynamicLookupInlineCache"/>) to guard cache entries: any
+    /// property add or delete transitions this reference to a different
+    /// <see cref="JsShape"/> instance.
+    /// </summary>
+    internal JsShape Shape => _shape;
+
     internal bool TryGetInlinePrototype(out object? prototype)
         => (prototype = _prototype) is not null;
 

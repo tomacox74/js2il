@@ -44,13 +44,20 @@ public class DynamicLookupInlineCacheBenchmarks
         CreateReceivers(
             DynamicLookupInlineCacheSite
                 .MaxPolymorphicEntries + 1);
+    private readonly JsObject[] _sameShapeReceivers =
+        CreateSameShapeReceivers(SameShapeReceiverCount);
     private readonly JavaScriptRuntime.Array _array =
         new(new object?[] { 1d, 2d });
     private RuntimeAgentCluster? _cluster;
     private IDisposable? _scope;
     private int _polymorphicIndex;
     private int _megamorphicIndex;
+    private int _sameShapeIndex;
     private bool _invalidationToggle;
+
+    private const int SameShapeReceiverCount = 10_000;
+    private const string SameShapeSite = "benchmark:same-shape";
+    private static int _sameShapeTerminal;
 
     [GlobalSetup]
     public void Setup()
@@ -99,6 +106,15 @@ public class DynamicLookupInlineCacheBenchmarks
                 MegamorphicSite,
                 ref _megamorphicTerminal);
         }
+
+        foreach (var receiver in _sameShapeReceivers)
+        {
+            _ = DynamicLookupInlineCache.GetItem(
+                receiver,
+                PropertyName,
+                SameShapeSite,
+                ref _sameShapeTerminal);
+        }
     }
 
     [GlobalCleanup]
@@ -137,6 +153,10 @@ public class DynamicLookupInlineCacheBenchmarks
     [Benchmark]
     public object CachedPropertyInvalidation()
     {
+        // Phase 3 (shape-keyed cache): this is a plain value write to an
+        // already-cached slot on the same shape, so it is a cache hit on every
+        // iteration rather than a rebuild (unlike the identity-keyed cache this
+        // benchmark predates).
         _invalidationToggle = !_invalidationToggle;
         _receiver.SetValue(
             PropertyName,
@@ -199,6 +219,26 @@ public class DynamicLookupInlineCacheBenchmarks
             ref _megamorphicTerminal);
     }
 
+    /// <summary>
+    /// Cycles through thousands of distinct <see cref="JsObject"/> instances that
+    /// all share one <see cref="JsShape"/> (the GraphNode.pos scenario from
+    /// #1958/#1324): the Phase 3 shape-keyed cache should serve every instance
+    /// from a single monomorphic entry instead of collapsing to megamorphic.
+    /// </summary>
+    [Benchmark]
+    public object CachedPropertyHit_SameShapeAcrossInstances()
+    {
+        var receiver =
+            _sameShapeReceivers[
+                _sameShapeIndex++
+                % _sameShapeReceivers.Length];
+        return DynamicLookupInlineCache.GetItem(
+            receiver,
+            PropertyName,
+            SameShapeSite,
+            ref _sameShapeTerminal);
+    }
+
     [Benchmark]
     public object StringGenericLength()
         => ObjectRuntime.GetItem(
@@ -244,6 +284,27 @@ public class DynamicLookupInlineCacheBenchmarks
             ref _arrayTerminal);
 
     private static JsObject[] CreateReceivers(
+        int count)
+        => Enumerable
+            .Range(0, count)
+            .Select(
+                index =>
+                {
+                    var receiver = new JsObject();
+                    // A unique marker property per receiver produces a
+                    // distinct JsShape, so this exercises genuine
+                    // polymorphic/megamorphic transitions under the
+                    // Phase 3 shape-keyed cache instead of collapsing to
+                    // one shared monomorphic entry.
+                    receiver.SetValue($"shape{index}", true);
+                    receiver.SetValue(
+                        PropertyName,
+                        $"value:{index}");
+                    return receiver;
+                })
+            .ToArray();
+
+    private static JsObject[] CreateSameShapeReceivers(
         int count)
         => Enumerable
             .Range(0, count)
