@@ -181,6 +181,49 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_ReceiverCandidates_TrackArrayPrototypeMethodThis()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            Array.prototype.scan = function () {
+                return this.length;
+            };
+        ");
+
+        var functionScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.AstNode is FunctionExpression);
+        Assert.NotNull(functionScope);
+        Assert.True(
+            functionScope!.ReceiverThisTypeSummary.IncludesUnknown);
+        Assert.True(
+            functionScope.ReceiverThisTypeSummary
+                .IncludesNonCandidate);
+        Assert.Contains(
+            typeof(JavaScriptRuntime.Array),
+            functionScope.ReceiverThisTypeSummary
+                .CandidateClrTypes);
+    }
+
+    [Fact]
+    public void SymbolTable_ReceiverCandidates_IgnoreShadowedArrayPrototype()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            function configure(Array) {
+                Array.prototype.scan = function () {
+                    return this.length;
+                };
+            }
+        ");
+
+        var functionScope = FindFirstScope(
+            symbolTable.Root,
+            scope => scope.AstNode is FunctionExpression);
+        Assert.NotNull(functionScope);
+        Assert.True(
+            functionScope!.ReceiverThisTypeSummary.IsEmpty);
+    }
+
+    [Fact]
     public void SymbolTable_ReceiverCandidates_PropagateDirectClosureParametersAndReturns()
     {
         var symbolTable = BuildSymbolTable(@"

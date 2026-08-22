@@ -494,6 +494,7 @@ function runMicrobenchmarks(repoRoot, args, reportPath) {
     "*MegamorphicFallback*",
     "*ArrayLengthBoxedThenConsumed*",
     "*ArrayLengthDirectNumber*",
+    "*ArrayLengthGuardedCandidate*",
   ];
   appendDryJobArgs(dotnetArgs, args.dry);
   runChecked("dotnet", dotnetArgs, { cwd: path.dirname(benchmarkProject) });
@@ -511,6 +512,7 @@ function parseMicrobenchmarkReport(reportPath) {
     "MegamorphicFallback",
     "ArrayLengthBoxedThenConsumed",
     "ArrayLengthDirectNumber",
+    "ArrayLengthGuardedCandidate",
   ];
   const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
   const rows = (report?.Benchmarks || [])
@@ -560,12 +562,15 @@ function printMicrobenchmarks(result) {
   const direct = result.rows.find(
     (row) => row.method === "ArrayLengthDirectNumber"
   );
+  const guarded = result.rows.find(
+    (row) => row.method === "ArrayLengthGuardedCandidate"
+  );
   console.log(
     `Megamorphic vs generic: ${format(megamorphic.meanNs / generic.meanNs, 2)}x`
   );
   console.log(
-    `Array length allocation, boxed/direct: ${boxed.allocatedBytes}/` +
-      `${direct.allocatedBytes} B/op`
+    `Array length allocation, boxed/guarded/direct: ${boxed.allocatedBytes}/` +
+      `${guarded.allocatedBytes}/${direct.allocatedBytes} B/op`
   );
 }
 

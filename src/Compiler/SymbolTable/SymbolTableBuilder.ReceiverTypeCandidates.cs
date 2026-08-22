@@ -21,6 +21,7 @@ public partial class SymbolTableBuilder
             scope.ReceiverParameterTypeSummaries.Clear();
             scope.ReceiverCapturedEntryTypeSummaries.Clear();
             scope.ReceiverReturnTypeSummary = ReceiverTypeSummary.Empty;
+            scope.ReceiverThisTypeSummary = ReceiverTypeSummary.Empty;
 
             foreach (var (index, type) in scope.StableParameterClrTypes)
             {
@@ -120,6 +121,41 @@ public partial class SymbolTableBuilder
                         RecordParameterInputs(call, scope, targetScope);
                         RecordCapturedInputs(call, scope, targetScope);
                         break;
+
+                    case AssignmentExpression
+                    {
+                        Operator: Operator.Assignment,
+                        Left: MemberExpression member,
+                        Right: FunctionExpression function
+                    }
+                    when TryGetIntrinsicPrototypeReceiverType(
+                        member,
+                        scope,
+                        out var receiverType):
+                    {
+                        var functionScope =
+                            FindScopeByAstNode(root, function);
+                        if (functionScope != null)
+                        {
+                            var candidate =
+                                new ReceiverTypeSummary(
+                                    includesUnknown: true,
+                                    includesNonCandidate: true,
+                                    [receiverType]);
+                            var merged =
+                                functionScope.ReceiverThisTypeSummary
+                                    .Union(candidate);
+                            if (!merged.Equals(
+                                    functionScope
+                                        .ReceiverThisTypeSummary))
+                            {
+                                functionScope
+                                    .ReceiverThisTypeSummary = merged;
+                                changed = true;
+                            }
+                        }
+                        break;
+                    }
                 }
 
                 foreach (var child in node.ChildNodes)
@@ -813,6 +849,36 @@ public partial class SymbolTableBuilder
 
         Dictionary<Node, Node> GetParentMap()
             => parentMap ??= BuildParentMap(root.AstNode);
+
+        bool TryGetIntrinsicPrototypeReceiverType(
+            MemberExpression assignedMember,
+            Scope assignmentScope,
+            out Type receiverType)
+        {
+            receiverType = null!;
+            if (assignedMember.Object is not MemberExpression
+                {
+                    Computed: false,
+                    Object: Identifier constructor,
+                    Property: Identifier
+                    {
+                        Name: "prototype"
+                    }
+                }
+                || IsIdentifierShadowed(
+                    assignmentScope,
+                    constructor.Name))
+            {
+                return false;
+            }
+
+            receiverType = constructor.Name switch
+            {
+                "Array" => typeof(JavaScriptRuntime.Array),
+                _ => null!
+            };
+            return receiverType != null;
+        }
 
         static bool UnionSummary<TKey>(
             Dictionary<TKey, ReceiverTypeSummary> summaries,

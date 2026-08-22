@@ -364,6 +364,113 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void ReceiverSpecialization_RewritesHotArrayLengthCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var key = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(string)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(JavaScriptRuntime.Array)]);
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Unknown",
+            "Call",
+            [],
+            receiver));
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(new LIRConstString("length", key));
+        body.Instructions.Add(
+            new LIRGetItemAsNumberString(receiver, key, result));
+        body.Instructions.Add(new LIRBranch(100));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallIntrinsicStatic>(
+                body.Instructions[3]);
+        Assert.Equal(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            guarded.IntrinsicName);
+        Assert.Equal(
+            "GetArrayLengthWithFallback",
+            guarded.MethodName);
+        Assert.Equal([receiver], guarded.Arguments);
+        Assert.Equal(
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)),
+            body.TempStorages[result.Index]);
+    }
+
+    [Fact]
+    public void ReceiverSpecialization_RewritesHotArrayIndexedReadCandidate()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        var index = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(double)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object)));
+        body.ReceiverTempTypeSummaries[receiver.Index] =
+            new ReceiverTypeSummary(
+                includesUnknown: true,
+                includesNonCandidate: true,
+                [typeof(JavaScriptRuntime.Array)]);
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Unknown",
+            "Call",
+            [],
+            receiver));
+        body.Instructions.Add(new LIRLabel(100));
+        body.Instructions.Add(new LIRConstNumber(0d, index));
+        body.Instructions.Add(
+            new LIRGetItem(receiver, index, result));
+        body.Instructions.Add(new LIRBranch(100));
+        body.ReceiverTypeFlowFacts =
+            ReceiverTypeFlowAnalysis.Analyze(body);
+
+        LIRReceiverSpecialization.Normalize(body);
+
+        var guarded =
+            Assert.IsType<LIRCallIntrinsicStatic>(
+                body.Instructions[3]);
+        Assert.Equal(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            guarded.IntrinsicName);
+        Assert.Equal(
+            "GetArrayElementWithFallback",
+            guarded.MethodName);
+        Assert.Equal([receiver, index], guarded.Arguments);
+    }
+
+    [Fact]
     public void ReceiverSpecialization_KeepsColdCandidateCallGeneric()
     {
         var body = new MethodBodyIR();

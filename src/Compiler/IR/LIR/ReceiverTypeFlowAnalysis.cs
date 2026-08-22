@@ -421,6 +421,9 @@ internal static class ReceiverTypeFlowAnalysis
                 IntrinsicName: nameof(JavaScriptRuntime.Array),
                 MethodName: "Construct"
             } => FlowValue.ForCandidate(typeof(JavaScriptRuntime.Array)),
+            LIRLoadThis when methodBody.ReceiverThisTypeSummary.HasCandidates
+                => FlowValue.FromSummary(
+                    methodBody.ReceiverThisTypeSummary),
             LIRConstString => FlowValue.ForCandidate(typeof(string)),
             LIRConvertToString => FlowValue.ForCandidate(typeof(string)),
             LIRConcatStrings => FlowValue.ForCandidate(typeof(string)),
@@ -911,7 +914,9 @@ internal static class ReceiverTypeFlowAnalysis
                     IntrinsicName:
                         nameof(JavaScriptRuntime.Array),
                     MethodName: "Construct"
-                })
+                }
+                || instruction is LIRLoadThis
+                    && methodBody.ReceiverThisTypeSummary.HasCandidates)
             {
                 return true;
             }
@@ -1070,6 +1075,8 @@ internal static class ReceiverTypeFlowAnalysis
                     nameof(JavaScriptRuntime.Array),
                 MethodName: "Construct"
             }
+            || instruction is LIRLoadThis
+                && methodBody.ReceiverThisTypeSummary.HasCandidates
             || defined.Index >= 0
             && defined.Index < methodBody.TempStorages.Count
             && IsReceiverCandidateType(
