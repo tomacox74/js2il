@@ -270,6 +270,9 @@ namespace Jroc.Services
         public MemberReferenceHandle JsCompiledModuleTypeAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsCompiledModuleTypeAttribute), new[] { typeof(string), typeof(string), typeof(string) });
 
+        public MemberReferenceHandle JsCompiledEntryModuleAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsCompiledEntryModuleAttribute), new[] { typeof(string) });
+
         public MemberReferenceHandle JsModuleAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsModuleAttribute), new[] { typeof(string) });
 

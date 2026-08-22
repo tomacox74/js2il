@@ -23,10 +23,11 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
     {
         var generatedAssemblies = new List<ITaskItem>();
         var generatedOutputs = new List<ITaskItem>();
+        var claimedAssemblyNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var source in Sources)
         {
-            if (!TryCompileSource(source, generatedAssemblies, generatedOutputs))
+            if (!TryCompileSource(source, generatedAssemblies, generatedOutputs, claimedAssemblyNames))
             {
                 continue;
             }
@@ -40,7 +41,8 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
     private bool TryCompileSource(
         ITaskItem source,
         List<ITaskItem> generatedAssemblies,
-        List<ITaskItem> generatedOutputs)
+        List<ITaskItem> generatedOutputs,
+        Dictionary<string, string> claimedAssemblyNames)
     {
         var sourceSpecifier = source.ItemSpec;
         var sourcePath = GetMetadataOrFallback(source, "ResolvedSourcePath", () => Path.GetFullPath(source.ItemSpec));
@@ -76,6 +78,36 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
             return false;
         }
 
+        var configuredAssemblyName = source.GetMetadata("AssemblyName");
+        var defaultAssemblyName = resolvedFromModuleId
+            ? DeriveAssemblyNameFromModuleId(sourceSpecifier)
+            : Path.GetFileNameWithoutExtension(sourcePath);
+        string assemblyName;
+        try
+        {
+            assemblyName = JrocAssemblyIdentity.Resolve(
+                sourcePath,
+                string.IsNullOrWhiteSpace(configuredAssemblyName)
+                    ? defaultAssemblyName
+                    : configuredAssemblyName);
+        }
+        catch (ArgumentException ex)
+        {
+            Log.LogError($"Invalid assembly identity for Jroc source '{sourceSpecifier}': {ex.Message}");
+            return false;
+        }
+
+        var assemblyPath = Path.Combine(outputDirectory, assemblyName + ".dll");
+        if (claimedAssemblyNames.TryGetValue(assemblyName, out var conflictingSource))
+        {
+            Log.LogError(
+                $"Jroc sources '{conflictingSource}' and '{sourceSpecifier}' both produce assembly " +
+                $"identity '{assemblyName}'. Configure distinct AssemblyName metadata.");
+            return false;
+        }
+
+        claimedAssemblyNames.Add(assemblyName, sourceSpecifier);
+
         if (!TryGetBooleanMetadata(source, "Verbose", out var verbose)
             || !TryGetBooleanMetadata(source, "AnalyzeUnused", out var analyzeUnused)
             || !TryGetBooleanMetadata(source, "EmitPdb", out var emitPdb)
@@ -93,6 +125,7 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
 
         var compilerOptions = new CompilerOptions
         {
+            AssemblyName = assemblyName,
             OutputDirectory = outputDirectory,
             Verbose = verbose,
             DiagnosticFilePath = string.IsNullOrWhiteSpace(diagnosticFilePath) ? null : diagnosticFilePath,
@@ -113,10 +146,8 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        var emittedAssemblyName = Path.GetFileNameWithoutExtension(sourcePath);
-        var assemblyPath = Path.Combine(outputDirectory, emittedAssemblyName + ".dll");
-        var assemblyPdbPath = Path.Combine(outputDirectory, emittedAssemblyName + ".pdb");
-        var runtimeConfigPath = Path.Combine(outputDirectory, emittedAssemblyName + ".runtimeconfig.json");
+        var assemblyPdbPath = Path.Combine(outputDirectory, assemblyName + ".pdb");
+        var runtimeConfigPath = Path.Combine(outputDirectory, assemblyName + ".runtimeconfig.json");
         var runtimeAssemblyPath = Path.Combine(outputDirectory, "JavaScriptRuntime.dll");
         var runtimePdbPath = Path.Combine(outputDirectory, "JavaScriptRuntime.pdb");
 
@@ -136,55 +167,6 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
         {
             Log.LogError($"Jroc did not produce the expected runtime support assembly '{runtimeAssemblyPath}' for source '{sourcePath}'.");
             return false;
-        }
-
-        var assemblyName = resolvedFromModuleId
-            ? DeriveAssemblyNameFromModuleId(sourceSpecifier)
-            : emittedAssemblyName;
-        if (!string.Equals(assemblyName, emittedAssemblyName, StringComparison.Ordinal))
-        {
-            var desiredAssemblyPath = Path.Combine(outputDirectory, assemblyName + ".dll");
-            var desiredAssemblyPdbPath = Path.Combine(outputDirectory, assemblyName + ".pdb");
-            var desiredRuntimeConfigPath = Path.Combine(outputDirectory, assemblyName + ".runtimeconfig.json");
-
-            try
-            {
-                if (File.Exists(desiredAssemblyPath))
-                {
-                    File.Delete(desiredAssemblyPath);
-                }
-
-                File.Move(assemblyPath, desiredAssemblyPath);
-                assemblyPath = desiredAssemblyPath;
-
-                if (File.Exists(assemblyPdbPath))
-                {
-                    if (File.Exists(desiredAssemblyPdbPath))
-                    {
-                        File.Delete(desiredAssemblyPdbPath);
-                    }
-
-                    File.Move(assemblyPdbPath, desiredAssemblyPdbPath);
-                    assemblyPdbPath = desiredAssemblyPdbPath;
-                }
-                else
-                {
-                    assemblyPdbPath = desiredAssemblyPdbPath;
-                }
-
-                if (File.Exists(desiredRuntimeConfigPath))
-                {
-                    File.Delete(desiredRuntimeConfigPath);
-                }
-
-                File.Move(runtimeConfigPath, desiredRuntimeConfigPath);
-                runtimeConfigPath = desiredRuntimeConfigPath;
-            }
-            catch (Exception ex)
-            {
-                Log.LogError($"Jroc failed to rename generated module artifacts from '{emittedAssemblyName}' to '{assemblyName}': {ex.Message}");
-                return false;
-            }
         }
 
         var assemblyItem = new TaskItem(assemblyPath);

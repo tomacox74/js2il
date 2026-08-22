@@ -28,6 +28,10 @@ public class JrocInMemoryModule : IDisposable
 
     public IReadOnlyList<string> ModuleIds => LoadedAssembly.ModuleIds;
 
+    public string EntryModuleId => LoadedAssembly.EntryModuleId;
+
+    public IReadOnlyList<string> EntryModuleAliases => LoadedAssembly.EntryModuleAliases;
+
     public WeakReference LoadContextWeakReference => LoadedAssembly.LoadContextWeakReference;
 
     protected JrocLoadedAssembly LoadedAssembly => _loadedAssembly ?? throw new ObjectDisposedException(nameof(JrocInMemoryModule));

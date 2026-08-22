@@ -1,5 +1,11 @@
 public class CompilerOptions
 {
+    /// <summary>
+    /// Authoritative assembly identity and artifact basename. When omitted, the entry source
+    /// filename without its extension is used for backward compatibility.
+    /// </summary>
+    public string? AssemblyName { get; set; }
+
     public string? OutputDirectory { get; set; } = null;
     public bool Verbose { get; set; } = false;
     public string? DiagnosticFilePath { get; set; } = null;

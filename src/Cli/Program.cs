@@ -17,6 +17,10 @@ public class JrocArgs
     [ArgShortcut("--moduleid")]
     public string? ModuleId { get; set; }
 
+    [ArgDescription("Set the generated assembly identity and artifact basename")]
+    [ArgShortcut("--assemblyname")]
+    public string? AssemblyName { get; set; }
+
     [ArgPosition(1)]
     [ArgDescription("The output directory for the generated IL")]
     [ArgShortcut("--output")]
@@ -78,6 +82,7 @@ class Program
 
             using var servicesProvider = CompilerServices.BuildServiceProvider(new CompilerOptions
             {
+                AssemblyName = parsed.AssemblyName,
                 OutputDirectory = parsed.OutputPath,
                 Verbose = parsed.Verbose,
                 DiagnosticFilePath = diagnosticFilePath,
@@ -158,6 +163,7 @@ class Program
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
         logger.WriteLineError("--moduleid             Compile an npm/CommonJS module id instead of a file path");
+        logger.WriteLineError("--assemblyname <name>   Set the assembly identity and artifact basename");
         logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
         logger.WriteLineError("-v, --verbose          Enable diagnostics output to console");
         logger.WriteLineError("--diagnostic-file <path> Write diagnostics output to a text file");

@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/sdk/hosting: establish the Phase 0 generated-host-API contracts for
+  #1917. Explicit assembly identities now drive PE and artifact names, compiled
+  manifests identify one canonical entry module separately from aliases,
+  hosting APIs expose that identity, and deterministic future facade naming
+  rejects ordinal and case-insensitive CLR path collisions. Add an external
+  C# consumer harness for compile, reflection, execution, diagnostics, runtime
+  reference policing, and cleanup.
 - runtime/test262/docs: port 200 test262 fixtures across Date, DataView, and
   JSON.parse. DataView index coercion now truncates negative fractional
   offsets before range validation, and `Date.prototype[@@toPrimitive]` now

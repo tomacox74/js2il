@@ -21,6 +21,7 @@ using System.Reflection;
 
 var asm = Assembly.LoadFrom("compiled.dll");
 var ids = JsEngine.GetModuleIds(asm);
+var entryId = JsEngine.GetEntryModuleId(asm);
 
 foreach (var id in ids)
 {
@@ -29,6 +30,9 @@ foreach (var id in ids)
 ```
 
 `GetModuleIds` uses the assembly-level manifest (`[JsCompiledModule]` attributes) when present, and falls back to scanning well-known namespaces for older assemblies.
+
+`GetEntryModuleId` reads the separate entry-module declaration. It returns the
+canonical id even when the entry also has package or root aliases.
 
 ## Bare vs path-like ids
 

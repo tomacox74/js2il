@@ -8,6 +8,7 @@ public class Compiler
 {
     private readonly bool analyzeUnused;
     private readonly string? outputDirectory;
+    private readonly string? configuredAssemblyName;
     private readonly bool diagnosticsEnabled;
 
     private readonly SymbolTableBuilder _symbolTableBuilder;
@@ -27,6 +28,7 @@ public class Compiler
         Microsoft.Extensions.Logging.ILogger<Compiler> diagnosticLogger)
     {
         this.outputDirectory = options.OutputDirectory;
+        this.configuredAssemblyName = options.AssemblyName;
         this.diagnosticsEnabled = options.DiagnosticsEnabled;
         this.analyzeUnused = options.AnalyzeUnused;
         this._moduleLoader = moduleLoader;
@@ -60,6 +62,17 @@ public class Compiler
 
     internal JrocCompiledAssemblyArtifact? CompileToArtifact(string inputFile, string? rootModuleIdOverride = null)
     {
+        string assemblyName;
+        try
+        {
+            assemblyName = JrocAssemblyIdentity.Resolve(inputFile, this.configuredAssemblyName);
+        }
+        catch (ArgumentException ex)
+        {
+            _ux.WriteLineError($"Error: {ex.Message}");
+            return null;
+        }
+
         // When diagnostics are enabled, capture IR pipeline failure reasons to aid debugging.
         if (this.diagnosticsEnabled)
         {
@@ -118,8 +131,15 @@ public class Compiler
             _diagnosticLogger.LogInformation("Generating dotnet assembly...");
         }
         var assemblyGenerator = _serviceProvider.GetRequiredService<AssemblyGenerator>();
-        var assemblyName = Path.GetFileNameWithoutExtension(inputFile);
-        return assemblyGenerator.GenerateArtifact(modules, assemblyName);
+        try
+        {
+            return assemblyGenerator.GenerateArtifact(modules, assemblyName);
+        }
+        catch (JrocFacadeNameCollisionException ex)
+        {
+            _ux.WriteLineError($"Error: {ex.Message}");
+            return null;
+        }
     }
 
     private bool EnsureOutputPathExists(string inputFile, string? outputDirectory, out string outputPath)

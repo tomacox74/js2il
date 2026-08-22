@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Jroc.Tests;
@@ -252,12 +253,14 @@ public class JrocSdkPackageTests
                 $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
 
             var generatedDir = Path.Combine(projectDir, "obj", "jroc-custom", "HostedMathModule");
-            Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathModule.dll")), $"Missing generated module dll in '{generatedDir}'.");
-            Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathModule.runtimeconfig.json")), $"Missing generated runtimeconfig in '{generatedDir}'.");
+            var generatedAssemblyPath = Path.Combine(generatedDir, "HostedMathAssembly.dll");
+            Assert.True(File.Exists(generatedAssemblyPath), $"Missing generated module dll in '{generatedDir}'.");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathAssembly.runtimeconfig.json")), $"Missing generated runtimeconfig in '{generatedDir}'.");
+            Assert.Equal("HostedMathAssembly", AssemblyName.GetAssemblyName(generatedAssemblyPath).Name);
 
             var targetDir = Path.Combine(projectDir, "bin", "Debug", "net10.0");
-            Assert.True(File.Exists(Path.Combine(targetDir, "HostedMathModule.dll")), $"Missing referenced module dll in '{targetDir}'.");
-            Assert.True(File.Exists(Path.Combine(targetDir, "HostedMathModule.runtimeconfig.json")), $"Missing copied runtimeconfig in '{targetDir}'.");
+            Assert.True(File.Exists(Path.Combine(targetDir, "HostedMathAssembly.dll")), $"Missing referenced module dll in '{targetDir}'.");
+            Assert.True(File.Exists(Path.Combine(targetDir, "HostedMathAssembly.runtimeconfig.json")), $"Missing copied runtimeconfig in '{targetDir}'.");
 
             var run = RunProcess(
                 fileName: "dotnet",
@@ -308,8 +311,10 @@ public class JrocSdkPackageTests
                 $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
 
             var generatedDir = Path.Combine(projectDir, "obj", "jroc-custom", "pkg");
-            Assert.True(File.Exists(Path.Combine(generatedDir, "scope.pkg.dll")), $"Missing generated package module dll in '{generatedDir}'.");
+            var generatedAssemblyPath = Path.Combine(generatedDir, "scope.pkg.dll");
+            Assert.True(File.Exists(generatedAssemblyPath), $"Missing generated package module dll in '{generatedDir}'.");
             Assert.True(File.Exists(Path.Combine(generatedDir, "scope.pkg.runtimeconfig.json")), $"Missing generated package runtimeconfig in '{generatedDir}'.");
+            Assert.Equal("scope.pkg", AssemblyName.GetAssemblyName(generatedAssemblyPath).Name);
 
             var targetDir = Path.Combine(projectDir, "bin", "Debug", "net10.0");
             Assert.True(File.Exists(Path.Combine(targetDir, "scope.pkg.dll")), $"Missing copied package module dll in '{targetDir}'.");
@@ -468,6 +473,7 @@ public class JrocSdkPackageTests
 
                 <JrocCompile Include="JavaScript\HostedMathModule.js"
                               OutputDirectory="$(BaseIntermediateOutputPath)\jroc-custom\HostedMathModule"
+                              AssemblyName="HostedMathAssembly"
                               RootModuleId="sample.math"
                               CopyToOutputDirectory="true" />
               </ItemGroup>
@@ -493,12 +499,12 @@ public class JrocSdkPackageTests
             """
             using System.Linq;
             using Jroc.Runtime;
-            using Jroc.HostedMathModule;
+            using Jroc.HostedMathAssembly;
 
-            var moduleIds = JsEngine.GetModuleIds(typeof(IHostedMathModuleExports).Assembly);
+            var moduleIds = JsEngine.GetModuleIds(typeof(IHostedMathAssemblyExports).Assembly);
             Console.WriteLine($"hasModuleId={moduleIds.Contains("sample.math", StringComparer.Ordinal)}");
 
-            using var exports = JsEngine.LoadModule<IHostedMathModuleExports>();
+            using var exports = JsEngine.LoadModule<IHostedMathAssemblyExports>();
             Console.WriteLine($"version={exports.Version}");
             Console.WriteLine($"sum={exports.Add(1, 2)}");
             """);
