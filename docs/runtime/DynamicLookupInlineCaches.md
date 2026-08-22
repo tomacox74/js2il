@@ -245,6 +245,12 @@ The 2026-08-21 local run used BenchmarkDotNet 0.15.8 on Ubuntu 24.04.4,
 | String generic / cache-stub fallback | 50.93 / 51.17 ns | 24 / 24 B |
 | Array generic / cache-stub fallback | 30.33 / 30.56 ns | 24 / 24 B |
 
+The Phase 0 guardrail for #1958 adds two explicit numeric Array-length controls:
+`ArrayLengthBoxedThenConsumed` performs the current generic property read before
+numeric conversion, while `ArrayLengthDirectNumber` reads the runtime Array's
+numeric length directly. The pair makes the generic path's 24 B/op boxing
+visible even though both benchmark methods return `double`.
+
 The cold-miss control includes removal of the site from the realm dictionary,
 so it is an upper bound rather than pure descriptor-resolution cost. The
 invalidation row includes the property mutation. String and Array are fallback

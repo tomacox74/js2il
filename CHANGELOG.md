@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(tooling): add the exact `kracken-ai-astar` Phase 0 guardrail for issue
+  #1958, including same-host raw-artifact comparison with provenance, focused
+  cache-state and boxed Array-length controls, and generated `findGraphNode`
+  IL counters.
 
 ## v0.12.13 - 2026-08-21
 
