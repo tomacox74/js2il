@@ -28,6 +28,9 @@ public class RuntimeServices
 
     public static object[] GetEmptyScopes() => EmptyScopes;
 
+    public static double NumberCall(object? value)
+        => Number.FromNumberConstructorArgument(value);
+
     internal sealed record InvocationFrame(
         object? CurrentThis = null,
         object? CurrentLexicalSuperReceiver = null,

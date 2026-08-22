@@ -115,9 +115,15 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/PortNext200ExecutionTests.cs"
         ],
-        "notes": "WeakMap(iterable) consumes iterable entry pairs through the constructor's adder path, including the covered test262 adder lookup failure semantics. Weak-key validation and broader exotic iterator edge cases remain partial."
+        "test262Paths": [
+          "test/built-ins/WeakMap/iterator-close-after-set-failure.js",
+          "test/built-ins/WeakMap/iterator-item-first-entry-returns-abrupt.js",
+          "test/built-ins/WeakMap/iterator-item-second-entry-returns-abrupt.js"
+        ],
+        "notes": "WeakMap(iterable) consumes iterable entry pairs through the constructor's adder path, observes accessor properties on entry objects, and closes iterators while preserving the original abrupt completion. Weak-key validation and broader exotic iterator edge cases remain partial."
       },
       {
         "clause": "24.3.2.1",

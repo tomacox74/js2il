@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T08:03:05Z
+> Last generated (UTC): 2026-08-22T00:01:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -76,7 +76,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer.isView | Supported with Limitations | [`ArrayBuffer_IsView_DataView.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js) |  | Recognizes DataView and the current Int32Array typed-array surface as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774. |
+| ArrayBuffer.isView | Supported with Limitations | [`ArrayBuffer_IsView_DataView.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/PortNext200ExecutionTests.cs` | `test/built-ins/ArrayBuffer/isView/arg-is-typedarray.js` | Recognizes DataView and the supported TypedArray implementations as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774. |
 
 ### 25.1.6 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object))
 

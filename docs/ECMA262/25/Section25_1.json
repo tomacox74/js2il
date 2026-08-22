@@ -274,9 +274,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.isview",
         "testScripts": [
-          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/PortNext200ExecutionTests.cs"
         ],
-        "notes": "Recognizes DataView and the current Int32Array typed-array surface as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774."
+        "test262Paths": [
+          "test/built-ins/ArrayBuffer/isView/arg-is-typedarray.js"
+        ],
+        "notes": "Recognizes DataView and the supported TypedArray implementations as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774."
       },
       {
         "clause": "25.1.4",

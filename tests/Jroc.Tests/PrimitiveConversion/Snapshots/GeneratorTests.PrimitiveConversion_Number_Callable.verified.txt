@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 279 (0x117)
+		// Code size: 283 (0x11b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PrimitiveConversion_Number_Callable/Scope,
@@ -66,7 +66,7 @@
 		IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0030: stloc.3
 		IL_0031: ldstr "1.5"
-		IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::NumberCall(object)
 		IL_003b: stloc.s 5
 		IL_003d: ldstr "Number(\"1.5\"):"
 		IL_0042: ldloc.s 5
@@ -80,7 +80,7 @@
 		IL_0059: stloc.3
 		IL_005a: ldc.i4.1
 		IL_005b: box [System.Runtime]System.Boolean
-		IL_0060: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0060: call float64 [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::NumberCall(object)
 		IL_0065: stloc.s 5
 		IL_0067: ldstr "Number(true):"
 		IL_006c: ldloc.s 5
@@ -94,7 +94,7 @@
 		IL_0083: stloc.3
 		IL_0084: ldc.i4.0
 		IL_0085: box [System.Runtime]System.Boolean
-		IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::NumberCall(object)
 		IL_008f: stloc.s 5
 		IL_0091: ldstr "Number(false):"
 		IL_0096: ldloc.s 5
@@ -108,7 +108,7 @@
 		IL_00ad: stloc.3
 		IL_00ae: ldc.i4.0
 		IL_00af: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_00b4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00b4: call float64 [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::NumberCall(object)
 		IL_00b9: stloc.s 5
 		IL_00bb: ldstr "Number(null):"
 		IL_00c0: ldloc.s 5
@@ -119,33 +119,35 @@
 		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00d1: pop
 		IL_00d2: ldnull
-		IL_00d3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00d8: box [System.Runtime]System.Double
-		IL_00dd: stloc.1
-		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e3: stloc.3
-		IL_00e4: ldloc.1
-		IL_00e5: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
-		IL_00ea: stloc.s 6
-		IL_00ec: ldloc.s 6
-		IL_00ee: brfalse IL_00fe
+		IL_00d3: call float64 [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::NumberCall(object)
+		IL_00d8: stloc.s 5
+		IL_00da: ldloc.s 5
+		IL_00dc: box [System.Runtime]System.Double
+		IL_00e1: stloc.1
+		IL_00e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e7: stloc.3
+		IL_00e8: ldloc.1
+		IL_00e9: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
+		IL_00ee: stloc.s 6
+		IL_00f0: ldloc.s 6
+		IL_00f2: brfalse IL_0102
 
-		IL_00f3: ldstr "NaN"
-		IL_00f8: stloc.2
-		IL_00f9: br IL_0100
+		IL_00f7: ldstr "NaN"
+		IL_00fc: stloc.2
+		IL_00fd: br IL_0104
 
-		IL_00fe: ldloc.1
-		IL_00ff: stloc.2
+		IL_0102: ldloc.1
+		IL_0103: stloc.2
 
-		IL_0100: ldstr "Number(undefined):"
-		IL_0105: ldloc.2
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_010b: stloc.s 4
-		IL_010d: ldloc.3
-		IL_010e: ldloc.s 4
-		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0115: pop
-		IL_0116: ret
+		IL_0104: ldstr "Number(undefined):"
+		IL_0109: ldloc.2
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_010f: stloc.s 4
+		IL_0111: ldloc.3
+		IL_0112: ldloc.s 4
+		IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0119: pop
+		IL_011a: ret
 	} // end of method PrimitiveConversion_Number_Callable::__js_module_init__
 
 } // end of class Modules.PrimitiveConversion_Number_Callable

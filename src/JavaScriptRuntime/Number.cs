@@ -67,6 +67,40 @@ namespace JavaScriptRuntime
             };
         }
 
+        internal static double FromNumberConstructorArgument(object? value)
+            => value is System.Numerics.BigInteger bigInteger
+                ? ConvertBigIntegerToDouble(bigInteger)
+                : TypeUtilities.ToNumber(value);
+
+        private static double ConvertBigIntegerToDouble(System.Numerics.BigInteger value)
+        {
+            if (value.IsZero)
+            {
+                return 0d;
+            }
+
+            var isNegative = value.Sign < 0;
+            var magnitude = System.Numerics.BigInteger.Abs(value);
+            var bitLength = magnitude.GetBitLength();
+            if (bitLength <= 53)
+            {
+                var exactValue = (double)magnitude;
+                return isNegative ? -exactValue : exactValue;
+            }
+
+            var shift = checked((int)(bitLength - 53));
+            var significand = magnitude >> shift;
+            var remainder = magnitude - (significand << shift);
+            var halfUnit = System.Numerics.BigInteger.One << (shift - 1);
+            if (remainder > halfUnit || (remainder == halfUnit && !significand.IsEven))
+            {
+                significand += System.Numerics.BigInteger.One;
+            }
+
+            var roundedValue = System.Math.ScaleB((double)significand, shift);
+            return isNegative ? -roundedValue : roundedValue;
+        }
+
         internal static bool IsNumberConstructor(Delegate candidate)
         {
             ArgumentNullException.ThrowIfNull(candidate);
@@ -77,7 +111,7 @@ namespace JavaScriptRuntime
         internal static object Construct(object?[]? args, object? newTarget)
         {
             var value = args != null && args.Length > 0
-                ? TypeUtilities.ToNumber(args[0])
+                ? FromNumberConstructorArgument(args[0])
                 : 0d;
 
             var wrapper = new JsObject();
@@ -116,7 +150,7 @@ namespace JavaScriptRuntime
                 && PropertyDescriptorStore.TryGetOwn(value, NumberDataPropertyName, out var descriptor)
                 && descriptor.Kind == JsPropertyDescriptorKind.Data)
             {
-                return TypeUtilities.ToNumber(descriptor.Value);
+                return FromNumberConstructorArgument(descriptor.Value);
             }
 
             throw new TypeError("Number.prototype method called on incompatible receiver");
@@ -137,7 +171,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            numberValue = TypeUtilities.ToNumber(descriptor.Value);
+            numberValue = FromNumberConstructorArgument(descriptor.Value);
             return true;
         }
 

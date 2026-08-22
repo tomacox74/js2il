@@ -196,6 +196,9 @@
         "clause": "21.1.1.1",
         "feature": "Number ( value )",
         "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs"
+        ],
         "test262Paths": [
           "built-ins/Number/return-abrupt-tonumber-value.js",
           "built-ins/Number/S15.7.1.1_A1.js",
@@ -205,9 +208,10 @@
           "built-ins/Number/S9.3_A3_T1.js",
           "built-ins/Number/S9.3_A4.1_T1.js",
           "built-ins/Number/S9.3.1_A1.js",
-          "built-ins/Number/S9.3.1_A7.js"
+          "built-ins/Number/S9.3.1_A7.js",
+          "test/built-ins/Number/bigint-conversion.js"
         ],
-        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, and non-canonical infinity-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+        "notes": "Direct calls to the global Number function preserve observable abrupt completions even when the converted value is discarded. BigInt arguments are converted with IEEE-754 round-to-nearest, ties-to-even semantics, while abstract ToNumber coercion continues to reject BigInt. Checked-in coverage includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, non-canonical infinity-string, and BigInt coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
       },
       {
         "clause": "21.1.2",
@@ -287,11 +291,13 @@
         "feature": "Number.isSafeInteger(number)",
         "status": "Supported",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs"
         ],
         "test262Paths": [
           "built-ins/Number/isSafeInteger/not-safe-integer.js",
-          "built-ins/Number/isSafeInteger/safe-integers.js"
+          "built-ins/Number/isSafeInteger/safe-integers.js",
+          "test/built-ins/Number/isSafeInteger/arg-is-not-number.js"
         ],
         "notes": "Number.isSafeInteger accepts safe integral Number values and rejects NaN, infinities, fractional values, unsafe integers, and non-number inputs without coercion."
       },
