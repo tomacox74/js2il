@@ -58,6 +58,16 @@ public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
 - Prefer this over scanning types directly; compiled assemblies emitted by JROC include an assembly-level manifest via `[JsCompiledModule]`.
 - Includes a back-compat fallback for older compiled assemblies.
 
+## GetEntryModuleId(Assembly compiledAssembly)
+
+```csharp
+public static string GetEntryModuleId(Assembly compiledAssembly)
+```
+
+- Returns the canonical entry-module id from `[JsCompiledEntryModule]`.
+- Does not infer the entry from filenames, aliases, or generated type names.
+- Throws when the metadata is missing or does not identify exactly one entry.
+
 ## Threading model (high level)
 
 Each load call creates a runtime instance with a dedicated script thread.

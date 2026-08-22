@@ -4,7 +4,10 @@ public sealed record JrocCompiledAssemblyArtifact(
     string AssemblyName,
     byte[] PeBytes,
     byte[]? PdbBytes,
-    IReadOnlyList<string> ModuleIds)
+    IReadOnlyList<string> ModuleIds,
+    string EntryModuleId = "",
+    IReadOnlyList<string>? EntryModuleAliases = null,
+    JrocFacadeNamePlan? FacadeNames = null)
 {
     /// <summary>
     /// Writes this artifact and its runtime dependencies to <paramref name="outputDirectory"/>.

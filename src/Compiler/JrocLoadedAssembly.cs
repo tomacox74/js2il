@@ -13,17 +13,25 @@ public sealed class JrocLoadedAssembly : IDisposable
     internal JrocLoadedAssembly(
         AssemblyLoadContext loadContext,
         Assembly assembly,
-        IReadOnlyList<string> moduleIds)
+        IReadOnlyList<string> moduleIds,
+        string entryModuleId,
+        IReadOnlyList<string> entryModuleAliases)
     {
         _loadContext = loadContext;
         _assembly = assembly;
         ModuleIds = moduleIds.ToArray();
+        EntryModuleId = entryModuleId;
+        EntryModuleAliases = entryModuleAliases.ToArray();
         LoadContextWeakReference = new WeakReference(loadContext);
     }
 
     public Assembly Assembly => _assembly ?? throw new ObjectDisposedException(nameof(JrocLoadedAssembly));
 
     public IReadOnlyList<string> ModuleIds { get; }
+
+    public string EntryModuleId { get; }
+
+    public IReadOnlyList<string> EntryModuleAliases { get; }
 
     public WeakReference LoadContextWeakReference { get; }
 

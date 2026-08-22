@@ -6,6 +6,29 @@ namespace Jroc.Runtime;
 public static class JsEngine
 {
     /// <summary>
+    /// Returns the canonical entry module id recorded in a compiled JROC assembly.
+    /// </summary>
+    public static string GetEntryModuleId(Assembly compiledAssembly)
+    {
+        ArgumentNullException.ThrowIfNull(compiledAssembly);
+
+        var entryModules = compiledAssembly
+            .GetCustomAttributes<JsCompiledEntryModuleAttribute>()
+            .Select(attribute => attribute.ModuleId)
+            .Where(moduleId => !string.IsNullOrWhiteSpace(moduleId))
+            .ToArray();
+
+        return entryModules.Length switch
+        {
+            1 => entryModules[0],
+            0 => throw new InvalidOperationException(
+                "The assembly does not contain JROC entry-module metadata."),
+            _ => throw new InvalidOperationException(
+                $"The assembly contains {entryModules.Length} entry-module declarations; exactly one is required.")
+        };
+    }
+
+    /// <summary>
     /// Returns module ids present in a compiled JROC assembly.
     /// Prefer this over scanning types directly; compiled assemblies emitted by JROC include
     /// an assembly-level manifest via <see cref="JsCompiledModuleAttribute"/>.

@@ -2,6 +2,8 @@ namespace Jroc;
 
 public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
 {
+    public string? AssemblyName { get; init; }
+
     public string? SourceText { get; init; }
 
     public IFileSystem? FileSystem { get; init; }

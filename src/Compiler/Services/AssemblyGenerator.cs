@@ -69,6 +69,8 @@ namespace Jroc.Services
 
         public JrocCompiledAssemblyArtifact GenerateArtifact(Modules modules, string assemblyName)
         {
+            var facadeNames = CreateFacadeNamePlan(modules, assemblyName);
+
             createAssemblyMetadata(assemblyName);
 
             EmitDebuggableAttributeIfEnabled();
@@ -293,7 +295,12 @@ namespace Jroc.Services
             // This must happen after all TypeDefs have been created.
             _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>().EmitAllSorted(_metadataBuilder);
 
-            return CreateCompiledAssemblyArtifact(assemblyName, CollectPublishedModuleIds(modules));
+            return CreateCompiledAssemblyArtifact(
+                assemblyName,
+                CollectPublishedModuleIds(modules),
+                modules.rootModule.ModuleId,
+                modules.rootModule.AliasModuleIds,
+                facadeNames);
         }
 
         private void EmitDebuggableAttributeIfEnabled()
@@ -575,9 +582,18 @@ namespace Jroc.Services
 
             var ctorRef = _bclReferences.JsCompiledModuleAttribute_Ctor_Ref;
             var typeMapCtorRef = _bclReferences.JsCompiledModuleTypeAttribute_Ctor_Ref;
+            var entryModuleCtorRef = _bclReferences.JsCompiledEntryModuleAttribute_Ctor_Ref;
 
-            // Root module path is used as the base for stable relative module ids.
-            var rootModulePath = modules.rootModule.Path;
+            if (!modules._modules.Values.Contains(modules.rootModule))
+            {
+                throw new InvalidOperationException(
+                    "The compiled module graph must contain exactly one selected entry module.");
+            }
+
+            _metadataBuilder.AddCustomAttribute(
+                parent: _assemblyDefinition,
+                constructor: entryModuleCtorRef,
+                value: CreateSingleStringCustomAttributeValue(modules.rootModule.ModuleId));
 
             foreach (var module in modules._modules.Values)
             {
@@ -687,7 +703,12 @@ namespace Jroc.Services
             artifact.Materialize(outputPath);
         }
 
-        private JrocCompiledAssemblyArtifact CreateCompiledAssemblyArtifact(string name, IReadOnlyList<string> moduleIds)
+        private JrocCompiledAssemblyArtifact CreateCompiledAssemblyArtifact(
+            string name,
+            IReadOnlyList<string> moduleIds,
+            string entryModuleId,
+            IReadOnlyList<string> entryModuleAliases,
+            JrocFacadeNamePlan facadeNames)
         {
             var options = _serviceProvider.GetRequiredService<CompilerOptions>();
 
@@ -721,7 +742,44 @@ namespace Jroc.Services
             // BadImageFormatException during Assembly.Load.
             ClrMetadataConsistencyValidator.ValidateOrThrow(peBytes, label: name);
 
-            return new JrocCompiledAssemblyArtifact(name, peBytes, pdbBytes, moduleIds);
+            return new JrocCompiledAssemblyArtifact(
+                name,
+                peBytes,
+                pdbBytes,
+                moduleIds,
+                entryModuleId,
+                entryModuleAliases.ToArray(),
+                facadeNames);
+        }
+
+        private static JrocFacadeNamePlan CreateFacadeNamePlan(Modules modules, string assemblyName)
+        {
+            var entryModule = modules.rootModule;
+            var prefix = entryModule.IsPackageModule
+                ? GetPackagePrefix(entryModule.ModuleId)
+                : null;
+
+            return JrocFacadeNamePlanner.Create(
+                assemblyName,
+                entryModule.ModuleId,
+                modules._modules.Values.Select(module => module.ModuleId),
+                prefix);
+        }
+
+        private static string? GetPackagePrefix(string moduleId)
+        {
+            var segments = moduleId.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length == 0)
+            {
+                return null;
+            }
+
+            if (segments[0].StartsWith('@') && segments.Length >= 2)
+            {
+                return $"{segments[0]}/{segments[1]}";
+            }
+
+            return segments[0];
         }
 
         private static IReadOnlyList<string> CollectPublishedModuleIds(Modules modules)

@@ -32,7 +32,12 @@ public static class JrocInMemoryAssemblyLoader
             // dependencies fail deterministically here instead of later at first use.
             _ = assembly.GetTypes();
 
-            return new JrocLoadedAssembly(loadContext, assembly, artifact.ModuleIds);
+            return new JrocLoadedAssembly(
+                loadContext,
+                assembly,
+                artifact.ModuleIds,
+                artifact.EntryModuleId,
+                artifact.EntryModuleAliases ?? []);
         }
         catch
         {

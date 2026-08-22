@@ -9,6 +9,7 @@ The in-memory compiler APIs compile JavaScript without requiring the normal on-d
 ```csharp
 public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
 {
+    public string? AssemblyName { get; init; }
     public string? SourceText { get; init; }
     public IFileSystem? FileSystem { get; init; }
     public string? RootModuleIdOverride { get; init; }
@@ -20,7 +21,7 @@ public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
 }
 ```
 
-`EntryFilePath` is still required because module ids, diagnostics, and PDB sequence points need a stable source identity. When `SourceText` is set, the compiler overlays that text at `EntryFilePath` and uses the supplied `FileSystem` only for any additional imports or requires.
+`EntryFilePath` is still required because module ids, diagnostics, and PDB sequence points need a stable source identity. `AssemblyName` is the authoritative PE identity and basename for the DLL, PDB, and runtime config; when omitted, it defaults to the entry filename without its extension. When `SourceText` is set, the compiler overlays that text at `EntryFilePath` and uses the supplied `FileSystem` only for any additional imports or requires.
 
 ## Compile to an artifact
 
@@ -42,6 +43,9 @@ JrocCompiledAssemblyArtifact artifact =
 | `PeBytes` | The compiled assembly PE image. |
 | `PdbBytes` | Optional Portable PDB bytes when `EmitPdb` is enabled. |
 | `ModuleIds` | Module ids embedded in the compiled assembly manifest. |
+| `EntryModuleId` | Canonical id of the one compiler-selected entry module. |
+| `EntryModuleAliases` | Host-facing aliases for the entry module, kept separate from its canonical id. |
+| `FacadeNames` | Validated, deterministic CLR naming plan reserved for the generated host facade. Phase 0 records the plan but does not emit facade types. |
 
 This API does not write the generated DLL, PDB, runtime config, or runtime assembly to disk.
 
