@@ -1012,7 +1012,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 699 (0x2bb)
+		// Code size: 777 (0x309)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Scope,
@@ -1230,33 +1230,57 @@
 		IL_0251: ldc.r8 99
 		IL_025a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_025f: stloc.s 11
-		IL_0261: ldstr "call"
-		IL_0266: ldloc.s 11
-		IL_0268: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_026d: stloc.s 6
-		IL_026f: ldloc.s 10
-		IL_0271: ldloc.s 6
-		IL_0273: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0278: pop
-		IL_0279: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_027e: stloc.s 10
-		IL_0280: ldloc.s 4
-		IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0287: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_028c: dup
-		IL_028d: ldstr "value"
-		IL_0292: ldc.r8 99
-		IL_029b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_02a0: stloc.s 11
-		IL_02a2: ldstr "call"
-		IL_02a7: ldloc.s 11
-		IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02ae: stloc.s 6
-		IL_02b0: ldloc.s 10
-		IL_02b2: ldloc.s 6
-		IL_02b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02b9: pop
-		IL_02ba: ret
+		IL_0261: volatile.
+		IL_0263: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_0268: brfalse IL_027e
+
+		IL_026d: ldstr "call"
+		IL_0272: ldloc.s 11
+		IL_0274: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0279: br IL_0294
+
+		IL_027e: ldstr "call"
+		IL_0283: ldloc.s 11
+		IL_0285: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:46"
+		IL_028a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_028f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0294: stloc.s 6
+		IL_0296: ldloc.s 10
+		IL_0298: ldloc.s 6
+		IL_029a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_029f: pop
+		IL_02a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02a5: stloc.s 10
+		IL_02a7: ldloc.s 4
+		IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02ae: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_02b3: dup
+		IL_02b4: ldstr "value"
+		IL_02b9: ldc.r8 99
+		IL_02c2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_02c7: stloc.s 11
+		IL_02c9: volatile.
+		IL_02cb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_02d0: brfalse IL_02e6
+
+		IL_02d5: ldstr "call"
+		IL_02da: ldloc.s 11
+		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02e1: br IL_02fc
+
+		IL_02e6: ldstr "call"
+		IL_02eb: ldloc.s 11
+		IL_02ed: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:53"
+		IL_02f2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_02f7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_02fc: stloc.s 6
+		IL_02fe: ldloc.s 10
+		IL_0300: ldloc.s 6
+		IL_0302: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0307: pop
+		IL_0308: ret
 	} // end of method ArrowFunction_LexicalSuper_MethodAndConstructor::__js_module_init__
 
 } // end of class Modules.ArrowFunction_LexicalSuper_MethodAndConstructor
@@ -1289,6 +1313,8 @@
 	.field assembly static int32 __jroc_dynamicLookup_16
 	.field assembly static int32 __jroc_dynamicLookup_17
 	.field assembly static int32 __jroc_dynamicLookup_18
+	.field assembly static int32 __jroc_dynamicLookup_19
+	.field assembly static int32 __jroc_dynamicLookup_20
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

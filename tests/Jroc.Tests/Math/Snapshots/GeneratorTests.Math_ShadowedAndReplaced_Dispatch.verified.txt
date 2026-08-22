@@ -520,7 +520,7 @@
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 223 (0xdf)
+			// Code size: 315 (0x13b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Math_ShadowedAndReplaced_Dispatch/FunctionExpression_L1C1/Scope,
@@ -588,32 +588,59 @@
 			IL_0086: ldloc.s 6
 			IL_0088: box [System.Runtime]System.Double
 			IL_008d: stloc.s 7
-			IL_008f: ldloc.1
-			IL_0090: ldstr "abs"
-			IL_0095: ldloc.s 7
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_009c: stloc.s 8
-			IL_009e: ldloc.1
-			IL_009f: ldstr "round"
-			IL_00a4: ldc.r8 0.0
-			IL_00ad: box [System.Runtime]System.Double
-			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00b7: stloc.s 9
-			IL_00b9: ldloc.1
-			IL_00ba: castclass Modules.Math_ShadowedAndReplaced_Dispatch/ObjectLiterals/L2C16_Math
-			IL_00bf: callvirt instance float64 Modules.Math_ShadowedAndReplaced_Dispatch/ObjectLiterals/L2C16_Math::get_PI()
-			IL_00c4: stloc.s 6
-			IL_00c6: ldloc.s 6
-			IL_00c8: box [System.Runtime]System.Double
-			IL_00cd: stloc.s 7
-			IL_00cf: ldloc.s 5
-			IL_00d1: ldloc.s 8
-			IL_00d3: ldloc.s 9
-			IL_00d5: ldloc.s 7
-			IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_00dc: pop
-			IL_00dd: ldnull
-			IL_00de: ret
+			IL_008f: volatile.
+			IL_0091: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0096: brfalse IL_00ad
+
+			IL_009b: ldloc.1
+			IL_009c: ldstr "abs"
+			IL_00a1: ldloc.s 7
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00a8: br IL_00c4
+
+			IL_00ad: ldloc.1
+			IL_00ae: ldstr "abs"
+			IL_00b3: ldloc.s 7
+			IL_00b5: ldstr "Math_ShadowedAndReplaced_Dispatch:<TwoPhaseDummy_M4>:__js_call__:14"
+			IL_00ba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_00c4: stloc.s 8
+			IL_00c6: volatile.
+			IL_00c8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_00cd: brfalse IL_00f0
+
+			IL_00d2: ldloc.1
+			IL_00d3: ldstr "round"
+			IL_00d8: ldc.r8 0.0
+			IL_00e1: box [System.Runtime]System.Double
+			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00eb: br IL_0113
+
+			IL_00f0: ldloc.1
+			IL_00f1: ldstr "round"
+			IL_00f6: ldc.r8 0.0
+			IL_00ff: box [System.Runtime]System.Double
+			IL_0104: ldstr "Math_ShadowedAndReplaced_Dispatch:<TwoPhaseDummy_M4>:__js_call__:17"
+			IL_0109: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0113: stloc.s 9
+			IL_0115: ldloc.1
+			IL_0116: castclass Modules.Math_ShadowedAndReplaced_Dispatch/ObjectLiterals/L2C16_Math
+			IL_011b: callvirt instance float64 Modules.Math_ShadowedAndReplaced_Dispatch/ObjectLiterals/L2C16_Math::get_PI()
+			IL_0120: stloc.s 6
+			IL_0122: ldloc.s 6
+			IL_0124: box [System.Runtime]System.Double
+			IL_0129: stloc.s 7
+			IL_012b: ldloc.s 5
+			IL_012d: ldloc.s 8
+			IL_012f: ldloc.s 9
+			IL_0131: ldloc.s 7
+			IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_0138: pop
+			IL_0139: ldnull
+			IL_013a: ret
 		} // end of method FunctionExpression_L1C1::__js_call__
 
 	} // end of class FunctionExpression_L1C1
@@ -920,7 +947,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 191 (0xbf)
+		// Code size: 230 (0xe6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_ShadowedAndReplaced_Dispatch/Scope,
@@ -995,15 +1022,27 @@
 		IL_009f: ldloc.s 6
 		IL_00a1: box [System.Runtime]System.Double
 		IL_00a6: stloc.s 7
-		IL_00a8: ldstr "abs"
-		IL_00ad: ldloc.s 7
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b4: stloc.3
-		IL_00b5: ldloc.s 5
-		IL_00b7: ldloc.3
-		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00bd: pop
-		IL_00be: ret
+		IL_00a8: volatile.
+		IL_00aa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00af: brfalse IL_00c5
+
+		IL_00b4: ldstr "abs"
+		IL_00b9: ldloc.s 7
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c0: br IL_00db
+
+		IL_00c5: ldstr "abs"
+		IL_00ca: ldloc.s 7
+		IL_00cc: ldstr "Math_ShadowedAndReplaced_Dispatch:Modules.Math_ShadowedAndReplaced_Dispatch:__js_module_init__:21"
+		IL_00d1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00db: stloc.3
+		IL_00dc: ldloc.s 5
+		IL_00de: ldloc.3
+		IL_00df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e4: pop
+		IL_00e5: ret
 	} // end of method Math_ShadowedAndReplaced_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_ShadowedAndReplaced_Dispatch
@@ -1028,4 +1067,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

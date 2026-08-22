@@ -224,7 +224,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 32 (0x20)
+				// Code size: 70 (0x46)
 				.maxstack 8
 				.locals init (
 					[0] object
@@ -236,12 +236,24 @@
 				IL_0003: castclass Modules.Array_Map_NestedParam/outer/Scope
 				IL_0008: ldfld object Modules.Array_Map_NestedParam/outer/Scope::arr
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0012: ldstr "map"
-				IL_0017: ldarg.2
-				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001d: stloc.0
-				IL_001e: ldloc.0
-				IL_001f: ret
+				IL_0012: volatile.
+				IL_0014: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_0019: brfalse IL_002e
+
+				IL_001e: ldstr "map"
+				IL_0023: ldarg.2
+				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0029: br IL_0043
+
+				IL_002e: ldstr "map"
+				IL_0033: ldarg.2
+				IL_0034: ldstr "Array_Map_NestedParam:<TwoPhaseDummy_M5>:__js_call__:4"
+				IL_0039: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0043: stloc.0
+				IL_0044: ldloc.0
+				IL_0045: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -352,7 +364,7 @@
 				)
 
 				IL_0000: volatile.
-				IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 				IL_0007: brfalse IL_001c
 
 				IL_000c: ldarg.1
@@ -363,7 +375,7 @@
 				IL_001c: ldarg.1
 				IL_001d: ldstr "length"
 				IL_0022: ldstr "Array_Map_NestedParam:<TwoPhaseDummy_M6>:__js_call__:2"
-				IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 				IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0031: stloc.0
@@ -799,6 +811,7 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -349,7 +349,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 186 (0xba)
+			// Code size: 228 (0xe4)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -359,7 +359,7 @@
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
 			IL_0006: volatile.
-			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
 			IL_000d: brfalse IL_0022
 
 			IL_0012: ldarg.2
@@ -370,7 +370,7 @@
 			IL_0022: ldarg.2
 			IL_0023: ldstr "env"
 			IL_0028: ldstr "Require_ChildProcess_Fork_Kill_And_Env:<TwoPhaseDummy_M7>:__js_call__:5"
-			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
 			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0037: stloc.1
@@ -382,7 +382,7 @@
 			IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_004a: stloc.0
 			IL_004b: volatile.
-			IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
 			IL_0052: brfalse IL_0067
 
 			IL_0057: ldarg.2
@@ -393,7 +393,7 @@
 			IL_0067: ldarg.2
 			IL_0068: ldstr "argv2"
 			IL_006d: ldstr "Require_ChildProcess_Fork_Kill_And_Env:<TwoPhaseDummy_M7>:__js_call__:12"
-			IL_0072: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_0072: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
 			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_007c: stloc.1
@@ -407,17 +407,29 @@
 			IL_0090: ldarg.0
 			IL_0091: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
 			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009b: ldstr "kill"
-			IL_00a0: ldstr "SIGTERM"
-			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00aa: stloc.1
-			IL_00ab: ldloc.0
-			IL_00ac: ldstr "kill result:"
-			IL_00b1: ldloc.1
-			IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00b7: pop
-			IL_00b8: ldnull
-			IL_00b9: ret
+			IL_009b: volatile.
+			IL_009d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_00a2: brfalse IL_00bb
+
+			IL_00a7: ldstr "kill"
+			IL_00ac: ldstr "SIGTERM"
+			IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00b6: br IL_00d4
+
+			IL_00bb: ldstr "kill"
+			IL_00c0: ldstr "SIGTERM"
+			IL_00c5: ldstr "Require_ChildProcess_Fork_Kill_And_Env:<TwoPhaseDummy_M7>:__js_call__:20"
+			IL_00ca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_00d4: stloc.1
+			IL_00d5: ldloc.0
+			IL_00d6: ldstr "kill result:"
+			IL_00db: ldloc.1
+			IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00e1: pop
+			IL_00e2: ldnull
+			IL_00e3: ret
 		} // end of method ArrowFunction_L24C21::__js_call__
 
 	} // end of class ArrowFunction_L24C21
@@ -942,7 +954,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 777 (0x309)
+		// Code size: 819 (0x333)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope,
@@ -1060,168 +1072,180 @@
 		IL_013e: stloc.s 4
 		IL_0140: ldloc.s 4
 		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0147: ldstr "setEncoding"
-		IL_014c: ldstr "utf8"
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0156: pop
-		IL_0157: ldloc.0
-		IL_0158: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
-		IL_015d: volatile.
-		IL_015f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0164: brfalse IL_0178
+		IL_0147: volatile.
+		IL_0149: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_014e: brfalse IL_0167
 
-		IL_0169: ldstr "stderr"
-		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0173: br IL_018c
+		IL_0153: ldstr "setEncoding"
+		IL_0158: ldstr "utf8"
+		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0162: br IL_0180
 
-		IL_0178: ldstr "stderr"
-		IL_017d: ldstr "Require_ChildProcess_Fork_Kill_And_Env:Modules.Require_ChildProcess_Fork_Kill_And_Env:__js_module_init__:50"
-		IL_0182: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0167: ldstr "setEncoding"
+		IL_016c: ldstr "utf8"
+		IL_0171: ldstr "Require_ChildProcess_Fork_Kill_And_Env:Modules.Require_ChildProcess_Fork_Kill_And_Env:__js_module_init__:46"
+		IL_0176: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_018c: stloc.s 4
-		IL_018e: ldloc.s 4
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0195: stloc.s 4
-		IL_0197: ldc.i4.1
-		IL_0198: newarr [System.Runtime]System.Object
-		IL_019d: dup
-		IL_019e: ldc.i4.0
-		IL_019f: ldloc.0
-		IL_01a0: stelem.ref
-		IL_01a1: stloc.s 6
-		IL_01a3: ldloc.s 6
-		IL_01a5: ldc.i4.0
-		IL_01a6: ldelem.ref
-		IL_01a7: castclass Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope
-		IL_01ac: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L20C25/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope)
-		IL_01b1: ldc.i4.1
-		IL_01b2: conv.r8
-		IL_01b3: ldstr ""
-		IL_01b8: ldc.i4.0
-		IL_01b9: ldc.i4.0
-		IL_01ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L20C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01bf: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L20C25/FunctionObject>(!!0)
-		IL_01c4: stloc.s 7
-		IL_01c6: ldloc.s 4
-		IL_01c8: ldstr "on"
-		IL_01cd: ldstr "data"
-		IL_01d2: ldloc.s 7
-		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01d9: pop
-		IL_01da: ldloc.0
-		IL_01db: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
-		IL_01e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e5: stloc.s 4
-		IL_01e7: ldc.i4.1
-		IL_01e8: newarr [System.Runtime]System.Object
-		IL_01ed: dup
-		IL_01ee: ldc.i4.0
-		IL_01ef: ldloc.0
-		IL_01f0: stelem.ref
-		IL_01f1: stloc.s 6
-		IL_01f3: ldloc.s 6
-		IL_01f5: ldc.i4.0
-		IL_01f6: ldelem.ref
-		IL_01f7: castclass Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope
-		IL_01fc: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L24C21/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope)
-		IL_0201: ldc.i4.1
-		IL_0202: conv.r8
-		IL_0203: ldstr ""
-		IL_0208: ldc.i4.0
-		IL_0209: ldc.i4.0
-		IL_020a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L24C21/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_020f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L24C21/FunctionObject>(!!0)
-		IL_0214: stloc.s 8
-		IL_0216: ldloc.s 4
-		IL_0218: ldstr "on"
-		IL_021d: ldstr "message"
-		IL_0222: ldloc.s 8
-		IL_0224: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0229: pop
-		IL_022a: ldloc.0
-		IL_022b: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
-		IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0235: stloc.s 4
-		IL_0237: ldc.i4.1
-		IL_0238: newarr [System.Runtime]System.Object
-		IL_023d: dup
-		IL_023e: ldc.i4.0
-		IL_023f: ldloc.0
-		IL_0240: stelem.ref
-		IL_0241: stloc.s 6
-		IL_0243: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L30C24/FunctionObject::.ctor()
-		IL_0248: ldc.i4.0
-		IL_0249: conv.r8
-		IL_024a: ldstr ""
-		IL_024f: ldc.i4.0
-		IL_0250: ldc.i4.0
-		IL_0251: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L30C24/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0256: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L30C24/FunctionObject>(!!0)
-		IL_025b: stloc.s 9
-		IL_025d: ldloc.s 4
-		IL_025f: ldstr "on"
-		IL_0264: ldstr "disconnect"
-		IL_0269: ldloc.s 9
-		IL_026b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0270: pop
-		IL_0271: ldloc.0
-		IL_0272: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
-		IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_027c: stloc.s 4
-		IL_027e: ldc.i4.1
-		IL_027f: newarr [System.Runtime]System.Object
-		IL_0284: dup
-		IL_0285: ldc.i4.0
-		IL_0286: ldloc.0
-		IL_0287: stelem.ref
-		IL_0288: stloc.s 6
-		IL_028a: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L34C18/FunctionObject::.ctor()
-		IL_028f: ldc.i4.2
-		IL_0290: conv.r8
-		IL_0291: ldstr ""
-		IL_0296: ldc.i4.0
-		IL_0297: ldc.i4.0
-		IL_0298: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L34C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_029d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L34C18/FunctionObject>(!!0)
-		IL_02a2: stloc.s 10
-		IL_02a4: ldloc.s 4
-		IL_02a6: ldstr "on"
-		IL_02ab: ldstr "exit"
-		IL_02b0: ldloc.s 10
-		IL_02b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02b7: pop
-		IL_02b8: ldloc.0
-		IL_02b9: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
-		IL_02be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02c3: stloc.s 4
-		IL_02c5: ldc.i4.1
-		IL_02c6: newarr [System.Runtime]System.Object
-		IL_02cb: dup
-		IL_02cc: ldc.i4.0
-		IL_02cd: ldloc.0
-		IL_02ce: stelem.ref
-		IL_02cf: stloc.s 6
-		IL_02d1: ldloc.s 6
-		IL_02d3: ldc.i4.0
-		IL_02d4: ldelem.ref
-		IL_02d5: castclass Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope
-		IL_02da: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L40C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope)
-		IL_02df: ldc.i4.2
-		IL_02e0: conv.r8
-		IL_02e1: ldstr ""
-		IL_02e6: ldc.i4.0
-		IL_02e7: ldc.i4.0
-		IL_02e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L40C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L40C19/FunctionObject>(!!0)
-		IL_02f2: stloc.s 11
-		IL_02f4: ldloc.s 4
-		IL_02f6: ldstr "on"
-		IL_02fb: ldstr "close"
-		IL_0300: ldloc.s 11
-		IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0307: pop
-		IL_0308: ret
+		IL_0180: pop
+		IL_0181: ldloc.0
+		IL_0182: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
+		IL_0187: volatile.
+		IL_0189: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_018e: brfalse IL_01a2
+
+		IL_0193: ldstr "stderr"
+		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_019d: br IL_01b6
+
+		IL_01a2: ldstr "stderr"
+		IL_01a7: ldstr "Require_ChildProcess_Fork_Kill_And_Env:Modules.Require_ChildProcess_Fork_Kill_And_Env:__js_module_init__:50"
+		IL_01ac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01b6: stloc.s 4
+		IL_01b8: ldloc.s 4
+		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01bf: stloc.s 4
+		IL_01c1: ldc.i4.1
+		IL_01c2: newarr [System.Runtime]System.Object
+		IL_01c7: dup
+		IL_01c8: ldc.i4.0
+		IL_01c9: ldloc.0
+		IL_01ca: stelem.ref
+		IL_01cb: stloc.s 6
+		IL_01cd: ldloc.s 6
+		IL_01cf: ldc.i4.0
+		IL_01d0: ldelem.ref
+		IL_01d1: castclass Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope
+		IL_01d6: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L20C25/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope)
+		IL_01db: ldc.i4.1
+		IL_01dc: conv.r8
+		IL_01dd: ldstr ""
+		IL_01e2: ldc.i4.0
+		IL_01e3: ldc.i4.0
+		IL_01e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L20C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01e9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L20C25/FunctionObject>(!!0)
+		IL_01ee: stloc.s 7
+		IL_01f0: ldloc.s 4
+		IL_01f2: ldstr "on"
+		IL_01f7: ldstr "data"
+		IL_01fc: ldloc.s 7
+		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0203: pop
+		IL_0204: ldloc.0
+		IL_0205: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
+		IL_020a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_020f: stloc.s 4
+		IL_0211: ldc.i4.1
+		IL_0212: newarr [System.Runtime]System.Object
+		IL_0217: dup
+		IL_0218: ldc.i4.0
+		IL_0219: ldloc.0
+		IL_021a: stelem.ref
+		IL_021b: stloc.s 6
+		IL_021d: ldloc.s 6
+		IL_021f: ldc.i4.0
+		IL_0220: ldelem.ref
+		IL_0221: castclass Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope
+		IL_0226: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L24C21/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope)
+		IL_022b: ldc.i4.1
+		IL_022c: conv.r8
+		IL_022d: ldstr ""
+		IL_0232: ldc.i4.0
+		IL_0233: ldc.i4.0
+		IL_0234: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L24C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0239: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L24C21/FunctionObject>(!!0)
+		IL_023e: stloc.s 8
+		IL_0240: ldloc.s 4
+		IL_0242: ldstr "on"
+		IL_0247: ldstr "message"
+		IL_024c: ldloc.s 8
+		IL_024e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0253: pop
+		IL_0254: ldloc.0
+		IL_0255: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
+		IL_025a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_025f: stloc.s 4
+		IL_0261: ldc.i4.1
+		IL_0262: newarr [System.Runtime]System.Object
+		IL_0267: dup
+		IL_0268: ldc.i4.0
+		IL_0269: ldloc.0
+		IL_026a: stelem.ref
+		IL_026b: stloc.s 6
+		IL_026d: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L30C24/FunctionObject::.ctor()
+		IL_0272: ldc.i4.0
+		IL_0273: conv.r8
+		IL_0274: ldstr ""
+		IL_0279: ldc.i4.0
+		IL_027a: ldc.i4.0
+		IL_027b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L30C24/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0280: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L30C24/FunctionObject>(!!0)
+		IL_0285: stloc.s 9
+		IL_0287: ldloc.s 4
+		IL_0289: ldstr "on"
+		IL_028e: ldstr "disconnect"
+		IL_0293: ldloc.s 9
+		IL_0295: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_029a: pop
+		IL_029b: ldloc.0
+		IL_029c: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
+		IL_02a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02a6: stloc.s 4
+		IL_02a8: ldc.i4.1
+		IL_02a9: newarr [System.Runtime]System.Object
+		IL_02ae: dup
+		IL_02af: ldc.i4.0
+		IL_02b0: ldloc.0
+		IL_02b1: stelem.ref
+		IL_02b2: stloc.s 6
+		IL_02b4: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L34C18/FunctionObject::.ctor()
+		IL_02b9: ldc.i4.2
+		IL_02ba: conv.r8
+		IL_02bb: ldstr ""
+		IL_02c0: ldc.i4.0
+		IL_02c1: ldc.i4.0
+		IL_02c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L34C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02c7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L34C18/FunctionObject>(!!0)
+		IL_02cc: stloc.s 10
+		IL_02ce: ldloc.s 4
+		IL_02d0: ldstr "on"
+		IL_02d5: ldstr "exit"
+		IL_02da: ldloc.s 10
+		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02e1: pop
+		IL_02e2: ldloc.0
+		IL_02e3: ldfld object Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope::child
+		IL_02e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02ed: stloc.s 4
+		IL_02ef: ldc.i4.1
+		IL_02f0: newarr [System.Runtime]System.Object
+		IL_02f5: dup
+		IL_02f6: ldc.i4.0
+		IL_02f7: ldloc.0
+		IL_02f8: stelem.ref
+		IL_02f9: stloc.s 6
+		IL_02fb: ldloc.s 6
+		IL_02fd: ldc.i4.0
+		IL_02fe: ldelem.ref
+		IL_02ff: castclass Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope
+		IL_0304: newobj instance void Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L40C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_Kill_And_Env/Scope)
+		IL_0309: ldc.i4.2
+		IL_030a: conv.r8
+		IL_030b: ldstr ""
+		IL_0310: ldc.i4.0
+		IL_0311: ldc.i4.0
+		IL_0312: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L40C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0317: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_Kill_And_Env/ArrowFunction_L40C19/FunctionObject>(!!0)
+		IL_031c: stloc.s 11
+		IL_031e: ldloc.s 4
+		IL_0320: ldstr "on"
+		IL_0325: ldstr "close"
+		IL_032a: ldloc.s 11
+		IL_032c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0331: pop
+		IL_0332: ret
 	} // end of method Require_ChildProcess_Fork_Kill_And_Env::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Fork_Kill_And_Env
@@ -1332,7 +1356,7 @@
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
 			// Header size: 12
-			// Code size: 243 (0xf3)
+			// Code size: 282 (0x11a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1348,7 +1372,7 @@
 			IL_0010: ldstr "process"
 			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_001a: volatile.
-			IL_001c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_001c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 			IL_0021: brfalse IL_0035
 
 			IL_0026: ldstr "env"
@@ -1357,12 +1381,12 @@
 
 			IL_0035: ldstr "env"
 			IL_003a: ldstr "Require_ChildProcess_Fork_Kill_And_Env_Child:<TwoPhaseDummy_M11>:__js_call__:7"
-			IL_003f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_003f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0049: stloc.1
 			IL_004a: volatile.
-			IL_004c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_004c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
 			IL_0051: brfalse IL_0066
 
 			IL_0056: ldloc.1
@@ -1373,14 +1397,14 @@
 			IL_0066: ldloc.1
 			IL_0067: ldstr "JROC_KILL_MARKER"
 			IL_006c: ldstr "Require_ChildProcess_Fork_Kill_And_Env_Child:<TwoPhaseDummy_M11>:__js_call__:9"
-			IL_0071: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_0071: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
 			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_007b: stloc.1
 			IL_007c: ldstr "process"
 			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_0086: volatile.
-			IL_0088: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_0088: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
 			IL_008d: brfalse IL_00a1
 
 			IL_0092: ldstr "argv"
@@ -1389,7 +1413,7 @@
 
 			IL_00a1: ldstr "argv"
 			IL_00a6: ldstr "Require_ChildProcess_Fork_Kill_And_Env_Child:<TwoPhaseDummy_M11>:__js_call__:13"
-			IL_00ab: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_00ab: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
 			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_00b5: stloc.2
@@ -1407,13 +1431,26 @@
 			IL_00dd: ldloc.2
 			IL_00de: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 			IL_00e3: stloc.3
-			IL_00e4: ldloc.0
-			IL_00e5: ldstr "send"
-			IL_00ea: ldloc.3
-			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00f0: pop
-			IL_00f1: ldnull
-			IL_00f2: ret
+			IL_00e4: volatile.
+			IL_00e6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_00eb: brfalse IL_0101
+
+			IL_00f0: ldloc.0
+			IL_00f1: ldstr "send"
+			IL_00f6: ldloc.3
+			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00fc: br IL_0117
+
+			IL_0101: ldloc.0
+			IL_0102: ldstr "send"
+			IL_0107: ldloc.3
+			IL_0108: ldstr "Require_ChildProcess_Fork_Kill_And_Env_Child:<TwoPhaseDummy_M11>:__js_call__:17"
+			IL_010d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0117: pop
+			IL_0118: ldnull
+			IL_0119: ret
 		} // end of method ArrowFunction_L3C12::__js_call__
 
 	} // end of class ArrowFunction_L3C12
@@ -1647,6 +1684,9 @@
 	.field assembly static int32 __jroc_dynamicLookup_18
 	.field assembly static int32 __jroc_dynamicLookup_19
 	.field assembly static int32 __jroc_dynamicLookup_20
+	.field assembly static int32 __jroc_dynamicLookup_21
+	.field assembly static int32 __jroc_dynamicLookup_22
+	.field assembly static int32 __jroc_dynamicLookup_23
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

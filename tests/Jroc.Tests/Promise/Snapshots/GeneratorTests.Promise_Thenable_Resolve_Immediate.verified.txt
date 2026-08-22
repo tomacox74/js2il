@@ -386,7 +386,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 123 (0x7b)
+		// Code size: 164 (0xa4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_Resolve_Immediate/Scope,
@@ -442,12 +442,25 @@
 		IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_Thenable_Resolve_Immediate/ArrowFunction_L9C32/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_Thenable_Resolve_Immediate/ArrowFunction_L9C32/FunctionObject>(!!0)
 		IL_0069: stloc.s 5
-		IL_006b: ldloc.s 4
-		IL_006d: ldstr "then"
-		IL_0072: ldloc.s 5
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0079: pop
-		IL_007a: ret
+		IL_006b: volatile.
+		IL_006d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0072: brfalse IL_008a
+
+		IL_0077: ldloc.s 4
+		IL_0079: ldstr "then"
+		IL_007e: ldloc.s 5
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0085: br IL_00a2
+
+		IL_008a: ldloc.s 4
+		IL_008c: ldstr "then"
+		IL_0091: ldloc.s 5
+		IL_0093: ldstr "Promise_Thenable_Resolve_Immediate:Modules.Promise_Thenable_Resolve_Immediate:__js_module_init__:15"
+		IL_0098: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00a2: pop
+		IL_00a3: ret
 	} // end of method Promise_Thenable_Resolve_Immediate::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Resolve_Immediate
@@ -472,4 +485,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

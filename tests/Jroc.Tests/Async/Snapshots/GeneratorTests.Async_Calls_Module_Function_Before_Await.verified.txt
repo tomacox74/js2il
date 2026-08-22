@@ -592,7 +592,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 209 (0xd1)
+			// Code size: 248 (0xf8)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -614,7 +614,7 @@
 			IL_0018: brfalse IL_0057
 
 			IL_001d: volatile.
-			IL_001f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_001f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0024: brfalse IL_0039
 
 			IL_0029: ldarg.1
@@ -625,7 +625,7 @@
 			IL_0039: ldarg.1
 			IL_003a: ldstr "message"
 			IL_003f: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M6>:__js_call__:9"
-			IL_0044: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0044: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_004e: stloc.3
@@ -643,7 +643,7 @@
 			IL_0063: brfalse IL_00a1
 
 			IL_0068: volatile.
-			IL_006a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_006a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 			IL_006f: brfalse IL_0084
 
 			IL_0074: ldarg.1
@@ -654,7 +654,7 @@
 			IL_0084: ldarg.1
 			IL_0085: ldstr "message"
 			IL_008a: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M6>:__js_call__:19"
-			IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0099: stloc.3
@@ -665,20 +665,33 @@
 			IL_00a1: ldarg.1
 			IL_00a2: stloc.0
 
-			IL_00a3: ldloc.1
-			IL_00a4: ldstr "error"
-			IL_00a9: ldloc.0
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00af: pop
-			IL_00b0: ldstr "process"
-			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00ba: ldstr "exitCode"
-			IL_00bf: ldc.r8 1
-			IL_00c8: ldc.i4.1
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_00ce: pop
-			IL_00cf: ldnull
-			IL_00d0: ret
+			IL_00a3: volatile.
+			IL_00a5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00aa: brfalse IL_00c0
+
+			IL_00af: ldloc.1
+			IL_00b0: ldstr "error"
+			IL_00b5: ldloc.0
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00bb: br IL_00d6
+
+			IL_00c0: ldloc.1
+			IL_00c1: ldstr "error"
+			IL_00c6: ldloc.0
+			IL_00c7: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M6>:__js_call__:26"
+			IL_00cc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_00d6: pop
+			IL_00d7: ldstr "process"
+			IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00e1: ldstr "exitCode"
+			IL_00e6: ldc.r8 1
+			IL_00ef: ldc.i4.1
+			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_00f5: pop
+			IL_00f6: ldnull
+			IL_00f7: ret
 		} // end of method ArrowFunction_L13C14::__js_call__
 
 	} // end of class ArrowFunction_L13C14
@@ -724,7 +737,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 167 (0xa7)
+		// Code size: 208 (0xd0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_Calls_Module_Function_Before_Await/Scope,
@@ -802,12 +815,25 @@
 		IL_008b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_Calls_Module_Function_Before_Await/ArrowFunction_L13C14/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0090: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_Calls_Module_Function_Before_Await/ArrowFunction_L13C14/FunctionObject>(!!0)
 		IL_0095: stloc.s 5
-		IL_0097: ldloc.s 4
-		IL_0099: ldstr "catch"
-		IL_009e: ldloc.s 5
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a5: pop
-		IL_00a6: ret
+		IL_0097: volatile.
+		IL_0099: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_009e: brfalse IL_00b6
+
+		IL_00a3: ldloc.s 4
+		IL_00a5: ldstr "catch"
+		IL_00aa: ldloc.s 5
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b1: br IL_00ce
+
+		IL_00b6: ldloc.s 4
+		IL_00b8: ldstr "catch"
+		IL_00bd: ldloc.s 5
+		IL_00bf: ldstr "Async_Calls_Module_Function_Before_Await:Modules.Async_Calls_Module_Function_Before_Await:__js_module_init__:17"
+		IL_00c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00ce: pop
+		IL_00cf: ret
 	} // end of method Async_Calls_Module_Function_Before_Await::__js_module_init__
 
 } // end of class Modules.Async_Calls_Module_Function_Before_Await
@@ -839,6 +865,8 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_7
 	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+	.field assembly static int32 __jroc_dynamicLookup_10
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -487,7 +487,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 218 (0xda)
+		// Code size: 320 (0x140)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ClosureEscapesScope_ObjectLiteralProperty/Scope,
@@ -534,39 +534,65 @@
 		IL_0054: stloc.s 5
 		IL_0056: ldloc.2
 		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005c: ldstr "multiply"
-		IL_0061: ldc.r8 5
-		IL_006a: box [System.Runtime]System.Double
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0074: stloc.s 6
-		IL_0076: ldloc.s 5
-		IL_0078: ldstr "a.multiply(5):"
-		IL_007d: ldloc.s 6
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0084: pop
-		IL_0085: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_008a: stloc.s 4
-		IL_008c: ldloc.1
-		IL_008d: ldloc.s 4
-		IL_008f: ldc.r8 3
-		IL_0098: box [System.Runtime]System.Double
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_00a2: stloc.3
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: stloc.s 5
-		IL_00aa: ldloc.3
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b0: ldstr "multiply"
-		IL_00b5: ldc.r8 7
-		IL_00be: box [System.Runtime]System.Double
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c8: stloc.s 6
-		IL_00ca: ldloc.s 5
-		IL_00cc: ldstr "b.multiply(7):"
-		IL_00d1: ldloc.s 6
-		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00d8: pop
-		IL_00d9: ret
+		IL_005c: volatile.
+		IL_005e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0063: brfalse IL_0085
+
+		IL_0068: ldstr "multiply"
+		IL_006d: ldc.r8 5
+		IL_0076: box [System.Runtime]System.Double
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0080: br IL_00a7
+
+		IL_0085: ldstr "multiply"
+		IL_008a: ldc.r8 5
+		IL_0093: box [System.Runtime]System.Double
+		IL_0098: ldstr "Function_ClosureEscapesScope_ObjectLiteralProperty:Modules.Function_ClosureEscapesScope_ObjectLiteralProperty:__js_module_init__:19"
+		IL_009d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00a7: stloc.s 6
+		IL_00a9: ldloc.s 5
+		IL_00ab: ldstr "a.multiply(5):"
+		IL_00b0: ldloc.s 6
+		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00b7: pop
+		IL_00b8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00bd: stloc.s 4
+		IL_00bf: ldloc.1
+		IL_00c0: ldloc.s 4
+		IL_00c2: ldc.r8 3
+		IL_00cb: box [System.Runtime]System.Double
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00d5: stloc.3
+		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00db: stloc.s 5
+		IL_00dd: ldloc.3
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e3: volatile.
+		IL_00e5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_00ea: brfalse IL_010c
+
+		IL_00ef: ldstr "multiply"
+		IL_00f4: ldc.r8 7
+		IL_00fd: box [System.Runtime]System.Double
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0107: br IL_012e
+
+		IL_010c: ldstr "multiply"
+		IL_0111: ldc.r8 7
+		IL_011a: box [System.Runtime]System.Double
+		IL_011f: ldstr "Function_ClosureEscapesScope_ObjectLiteralProperty:Modules.Function_ClosureEscapesScope_ObjectLiteralProperty:__js_module_init__:33"
+		IL_0124: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_012e: stloc.s 6
+		IL_0130: ldloc.s 5
+		IL_0132: ldstr "b.multiply(7):"
+		IL_0137: ldloc.s 6
+		IL_0139: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_013e: pop
+		IL_013f: ret
 	} // end of method Function_ClosureEscapesScope_ObjectLiteralProperty::__js_module_init__
 
 } // end of class Modules.Function_ClosureEscapesScope_ObjectLiteralProperty
@@ -591,4 +617,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -229,7 +229,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 60 (0x3c)
+				// Code size: 102 (0x66)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -245,22 +245,34 @@
 				IL_000d: stloc.0
 				IL_000e: ldarg.2
 				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0014: ldstr "toString"
-				IL_0019: ldstr "utf8"
-				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0023: stloc.1
-				IL_0024: ldloc.0
-				IL_0025: ldloc.1
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002b: stloc.2
-				IL_002c: ldarg.0
-				IL_002d: ldc.i4.1
-				IL_002e: ldelem.ref
-				IL_002f: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
-				IL_0034: ldloc.2
-				IL_0035: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::received
-				IL_003a: ldnull
-				IL_003b: ret
+				IL_0014: volatile.
+				IL_0016: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+				IL_001b: brfalse IL_0034
+
+				IL_0020: ldstr "toString"
+				IL_0025: ldstr "utf8"
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_002f: br IL_004d
+
+				IL_0034: ldstr "toString"
+				IL_0039: ldstr "utf8"
+				IL_003e: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M6>:__js_call__:5"
+				IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_004d: stloc.1
+				IL_004e: ldloc.0
+				IL_004f: ldloc.1
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0055: stloc.2
+				IL_0056: ldarg.0
+				IL_0057: ldc.i4.1
+				IL_0058: ldelem.ref
+				IL_0059: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
+				IL_005e: ldloc.2
+				IL_005f: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::received
+				IL_0064: ldnull
+				IL_0065: ret
 			} // end of method FunctionExpression_server::__js_call__
 
 		} // end of class FunctionExpression_server
@@ -411,7 +423,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 236 (0xec)
+				// Code size: 275 (0x113)
 				.maxstack 8
 				.locals init (
 					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -481,33 +493,46 @@
 				IL_0094: ldloc.3
 				IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 				IL_009a: stloc.2
-				IL_009b: ldloc.1
-				IL_009c: ldstr "write"
-				IL_00a1: ldloc.2
-				IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00a7: pop
-				IL_00a8: ldarg.0
-				IL_00a9: ldc.i4.1
-				IL_00aa: ldelem.ref
-				IL_00ab: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
-				IL_00b0: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::socket
-				IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00ba: volatile.
-				IL_00bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-				IL_00c1: brfalse IL_00d5
+				IL_009b: volatile.
+				IL_009d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+				IL_00a2: brfalse IL_00b8
 
-				IL_00c6: ldstr "end"
-				IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_00d0: br IL_00e9
+				IL_00a7: ldloc.1
+				IL_00a8: ldstr "write"
+				IL_00ad: ldloc.2
+				IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_00b3: br IL_00ce
 
-				IL_00d5: ldstr "end"
-				IL_00da: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M7>:__js_call__:18"
-				IL_00df: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-				IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+				IL_00b8: ldloc.1
+				IL_00b9: ldstr "write"
+				IL_00be: ldloc.2
+				IL_00bf: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M7>:__js_call__:14"
+				IL_00c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+				IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-				IL_00e9: pop
-				IL_00ea: ldnull
-				IL_00eb: ret
+				IL_00ce: pop
+				IL_00cf: ldarg.0
+				IL_00d0: ldc.i4.1
+				IL_00d1: ldelem.ref
+				IL_00d2: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope
+				IL_00d7: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/Scope::socket
+				IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00e1: volatile.
+				IL_00e3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+				IL_00e8: brfalse IL_00fc
+
+				IL_00ed: ldstr "end"
+				IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_00f7: br IL_0110
+
+				IL_00fc: ldstr "end"
+				IL_0101: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M7>:__js_call__:18"
+				IL_0106: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+				IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+				IL_0110: pop
+				IL_0111: ldnull
+				IL_0112: ret
 			} // end of method FunctionExpression_server_L12C19::__js_call__
 
 		} // end of class FunctionExpression_server_L12C19
@@ -911,8 +936,8 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Header size: 1
-				// Code size: 46 (0x2e)
+				// Header size: 12
+				// Code size: 88 (0x58)
 				.maxstack 8
 
 				IL_0000: ldarg.0
@@ -923,12 +948,24 @@
 				IL_000d: ldstr "Cannot access 'client' before initialization"
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_001c: ldstr "end"
-				IL_0021: ldstr "ping"
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_002b: pop
-				IL_002c: ldnull
-				IL_002d: ret
+				IL_001c: volatile.
+				IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+				IL_0023: brfalse IL_003c
+
+				IL_0028: ldstr "end"
+				IL_002d: ldstr "ping"
+				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0037: br IL_0055
+
+				IL_003c: ldstr "end"
+				IL_0041: ldstr "ping"
+				IL_0046: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M8>:__js_call__:4"
+				IL_004b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0055: pop
+				IL_0056: ldnull
+				IL_0057: ret
 			} // end of method FunctionExpression_client::__js_call__
 
 		} // end of class FunctionExpression_client
@@ -1086,7 +1123,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 60 (0x3c)
+				// Code size: 102 (0x66)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -1102,22 +1139,34 @@
 				IL_000d: stloc.0
 				IL_000e: ldarg.2
 				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0014: ldstr "toString"
-				IL_0019: ldstr "utf8"
-				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0023: stloc.1
-				IL_0024: ldloc.0
-				IL_0025: ldloc.1
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002b: stloc.2
-				IL_002c: ldarg.0
-				IL_002d: ldc.i4.1
-				IL_002e: ldelem.ref
-				IL_002f: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
-				IL_0034: ldloc.2
-				IL_0035: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::reply
-				IL_003a: ldnull
-				IL_003b: ret
+				IL_0014: volatile.
+				IL_0016: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+				IL_001b: brfalse IL_0034
+
+				IL_0020: ldstr "toString"
+				IL_0025: ldstr "utf8"
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_002f: br IL_004d
+
+				IL_0034: ldstr "toString"
+				IL_0039: ldstr "utf8"
+				IL_003e: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M9>:__js_call__:5"
+				IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_004d: stloc.1
+				IL_004e: ldloc.0
+				IL_004f: ldloc.1
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0055: stloc.2
+				IL_0056: ldarg.0
+				IL_0057: ldc.i4.1
+				IL_0058: ldelem.ref
+				IL_0059: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
+				IL_005e: ldloc.2
+				IL_005f: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::reply
+				IL_0064: ldnull
+				IL_0065: ret
 			} // end of method FunctionExpression_L28C20::__js_call__
 
 		} // end of class FunctionExpression_L28C20
@@ -1409,7 +1458,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 116 (0x74)
+				// Code size: 156 (0x9c)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/Scope,
@@ -1462,13 +1511,26 @@
 				IL_005c: ldc.i4.1
 				IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionExpression_L34C17/FunctionObject>(!!0, float64, string, bool, bool)
 				IL_0062: stloc.s 5
-				IL_0064: ldloc.2
-				IL_0065: ldstr "close"
-				IL_006a: ldloc.s 5
-				IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0071: pop
-				IL_0072: ldnull
-				IL_0073: ret
+				IL_0064: volatile.
+				IL_0066: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
+				IL_006b: brfalse IL_0082
+
+				IL_0070: ldloc.2
+				IL_0071: ldstr "close"
+				IL_0076: ldloc.s 5
+				IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_007d: br IL_0099
+
+				IL_0082: ldloc.2
+				IL_0083: ldstr "close"
+				IL_0088: ldloc.s 5
+				IL_008a: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M10>:__js_call__:12"
+				IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
+				IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0099: pop
+				IL_009a: ldnull
+				IL_009b: ret
 			} // end of method FunctionExpression_L32C19::__js_call__
 
 		} // end of class FunctionExpression_L32C19
@@ -1642,7 +1704,7 @@
 			IL_0007: ldfld object Modules.Net_CreateServer_Connect_Basic/Scope::server
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0011: volatile.
-			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
 			IL_0018: brfalse IL_002c
 
 			IL_001d: ldstr "address"
@@ -1651,14 +1713,14 @@
 
 			IL_002c: ldstr "address"
 			IL_0031: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:4"
-			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
 			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
 			IL_0040: stloc.1
 			IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0046: stloc.2
 			IL_0047: volatile.
-			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
 			IL_004e: brfalse IL_0063
 
 			IL_0053: ldloc.1
@@ -1669,7 +1731,7 @@
 			IL_0063: ldloc.1
 			IL_0064: ldstr "family"
 			IL_0069: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:10"
-			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
 			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0078: stloc.3
@@ -1682,7 +1744,7 @@
 			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0092: stloc.s 4
 			IL_0094: volatile.
-			IL_0096: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_0096: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
 			IL_009b: brfalse IL_00b0
 
 			IL_00a0: ldloc.1
@@ -1693,7 +1755,7 @@
 			IL_00b0: ldloc.1
 			IL_00b1: ldstr "address"
 			IL_00b6: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:15"
-			IL_00bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_00bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
 			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_00c5: stloc.3
@@ -1706,7 +1768,7 @@
 			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_00dc: stloc.s 4
 			IL_00de: volatile.
-			IL_00e0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+			IL_00e0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
 			IL_00e5: brfalse IL_00fa
 
 			IL_00ea: ldloc.1
@@ -1717,7 +1779,7 @@
 			IL_00fa: ldloc.1
 			IL_00fb: ldstr "port"
 			IL_0100: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:20"
-			IL_0105: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+			IL_0105: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
 			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_010f: stloc.3
@@ -1740,7 +1802,7 @@
 			IL_0140: ldarg.0
 			IL_0141: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.INetModule Modules.Net_CreateServer_Connect_Basic/Scope::net
 			IL_0146: volatile.
-			IL_0148: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+			IL_0148: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
 			IL_014d: brfalse IL_0162
 
 			IL_0152: ldloc.1
@@ -1751,12 +1813,12 @@
 			IL_0162: ldloc.1
 			IL_0163: ldstr "port"
 			IL_0168: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:30"
-			IL_016d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+			IL_016d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
 			IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0177: stloc.3
 			IL_0178: volatile.
-			IL_017a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_017a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
 			IL_017f: brfalse IL_0194
 
 			IL_0184: ldloc.1
@@ -1767,7 +1829,7 @@
 			IL_0194: ldloc.1
 			IL_0195: ldstr "address"
 			IL_019a: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:32"
-			IL_019f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_019f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
 			IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_01a9: stloc.s 7
@@ -1937,7 +1999,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 180 (0xb4)
+		// Code size: 218 (0xda)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Net_CreateServer_Connect_Basic/Scope,
@@ -1979,45 +2041,57 @@
 		IL_0040: ldc.i4.1
 		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_server/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0046: stloc.3
-		IL_0047: ldstr "createServer"
-		IL_004c: ldloc.3
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.0
-		IL_0055: ldloc.s 4
-		IL_0057: stfld object Modules.Net_CreateServer_Connect_Basic/Scope::server
-		IL_005c: ldloc.0
-		IL_005d: ldfld object Modules.Net_CreateServer_Connect_Basic/Scope::server
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: stloc.s 4
-		IL_0069: ldc.i4.1
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldloc.0
-		IL_0072: stelem.ref
-		IL_0073: stloc.2
-		IL_0074: ldloc.2
-		IL_0075: ldc.i4.0
-		IL_0076: ldelem.ref
-		IL_0077: castclass Modules.Net_CreateServer_Connect_Basic/Scope
-		IL_007c: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope)
-		IL_0081: ldc.i4.0
-		IL_0082: conv.r8
-		IL_0083: ldstr ""
-		IL_0088: ldc.i4.0
-		IL_0089: ldc.i4.1
-		IL_008a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_008f: stloc.s 5
-		IL_0091: ldloc.s 4
-		IL_0093: ldstr "listen"
-		IL_0098: ldc.r8 0.0
-		IL_00a1: box [System.Runtime]System.Double
-		IL_00a6: ldstr "127.0.0.1"
-		IL_00ab: ldloc.s 5
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00b2: pop
-		IL_00b3: ret
+		IL_0047: volatile.
+		IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_004e: brfalse IL_0063
+
+		IL_0053: ldstr "createServer"
+		IL_0058: ldloc.3
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_005e: br IL_0078
+
+		IL_0063: ldstr "createServer"
+		IL_0068: ldloc.3
+		IL_0069: ldstr "Net_CreateServer_Connect_Basic:Modules.Net_CreateServer_Connect_Basic:__js_module_init__:12"
+		IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0078: stloc.s 4
+		IL_007a: ldloc.0
+		IL_007b: ldloc.s 4
+		IL_007d: stfld object Modules.Net_CreateServer_Connect_Basic/Scope::server
+		IL_0082: ldloc.0
+		IL_0083: ldfld object Modules.Net_CreateServer_Connect_Basic/Scope::server
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008d: stloc.s 4
+		IL_008f: ldc.i4.1
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: dup
+		IL_0096: ldc.i4.0
+		IL_0097: ldloc.0
+		IL_0098: stelem.ref
+		IL_0099: stloc.2
+		IL_009a: ldloc.2
+		IL_009b: ldc.i4.0
+		IL_009c: ldelem.ref
+		IL_009d: castclass Modules.Net_CreateServer_Connect_Basic/Scope
+		IL_00a2: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope)
+		IL_00a7: ldc.i4.0
+		IL_00a8: conv.r8
+		IL_00a9: ldstr ""
+		IL_00ae: ldc.i4.0
+		IL_00af: ldc.i4.1
+		IL_00b0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00b5: stloc.s 5
+		IL_00b7: ldloc.s 4
+		IL_00b9: ldstr "listen"
+		IL_00be: ldc.r8 0.0
+		IL_00c7: box [System.Runtime]System.Double
+		IL_00cc: ldstr "127.0.0.1"
+		IL_00d1: ldloc.s 5
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_00d8: pop
+		IL_00d9: ret
 	} // end of method Net_CreateServer_Connect_Basic::__js_module_init__
 
 } // end of class Modules.Net_CreateServer_Connect_Basic
@@ -2054,6 +2128,12 @@
 	.field assembly static int32 __jroc_dynamicLookup_28
 	.field assembly static int32 __jroc_dynamicLookup_29
 	.field assembly static int32 __jroc_dynamicLookup_30
+	.field assembly static int32 __jroc_dynamicLookup_31
+	.field assembly static int32 __jroc_dynamicLookup_32
+	.field assembly static int32 __jroc_dynamicLookup_33
+	.field assembly static int32 __jroc_dynamicLookup_34
+	.field assembly static int32 __jroc_dynamicLookup_35
+	.field assembly static int32 __jroc_dynamicLookup_36
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

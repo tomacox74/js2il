@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 309 (0x135)
+		// Code size: 351 (0x15f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_Spread_SkipsNonEnumerable/Scope,
@@ -202,15 +202,27 @@
 		IL_010e: ldloc.2
 		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
 		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0119: ldstr "join"
-		IL_011e: ldstr ","
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0128: stloc.s 5
-		IL_012a: ldloc.s 4
-		IL_012c: ldloc.s 5
-		IL_012e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0133: pop
-		IL_0134: ret
+		IL_0119: volatile.
+		IL_011b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0120: brfalse IL_0139
+
+		IL_0125: ldstr "join"
+		IL_012a: ldstr ","
+		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0134: br IL_0152
+
+		IL_0139: ldstr "join"
+		IL_013e: ldstr ","
+		IL_0143: ldstr "ObjectLiteral_Spread_SkipsNonEnumerable:Modules.ObjectLiteral_Spread_SkipsNonEnumerable:__js_module_init__:37"
+		IL_0148: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0152: stloc.s 5
+		IL_0154: ldloc.s 4
+		IL_0156: ldloc.s 5
+		IL_0158: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_015d: pop
+		IL_015e: ret
 	} // end of method ObjectLiteral_Spread_SkipsNonEnumerable::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_Spread_SkipsNonEnumerable
@@ -242,6 +254,7 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
 	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

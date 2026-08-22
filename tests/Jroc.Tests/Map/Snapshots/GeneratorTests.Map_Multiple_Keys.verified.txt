@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 237 (0xed)
+		// Code size: 366 (0x16e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Multiple_Keys/Scope,
@@ -159,38 +159,77 @@
 		IL_008e: pop
 		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0094: stloc.2
-		IL_0095: ldloc.1
-		IL_0096: ldstr "get"
-		IL_009b: ldstr "key1"
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a5: stloc.3
-		IL_00a6: ldloc.2
-		IL_00a7: ldloc.3
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ad: pop
-		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b3: stloc.2
-		IL_00b4: ldloc.1
-		IL_00b5: ldstr "get"
-		IL_00ba: ldstr "key2"
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c4: stloc.3
-		IL_00c5: ldloc.2
-		IL_00c6: ldloc.3
-		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cc: pop
-		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d2: stloc.2
-		IL_00d3: ldloc.1
-		IL_00d4: ldstr "get"
-		IL_00d9: ldstr "key3"
-		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e3: stloc.3
-		IL_00e4: ldloc.2
-		IL_00e5: ldloc.3
-		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00eb: pop
-		IL_00ec: ret
+		IL_0095: volatile.
+		IL_0097: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_009c: brfalse IL_00b6
+
+		IL_00a1: ldloc.1
+		IL_00a2: ldstr "get"
+		IL_00a7: ldstr "key1"
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b1: br IL_00d0
+
+		IL_00b6: ldloc.1
+		IL_00b7: ldstr "get"
+		IL_00bc: ldstr "key1"
+		IL_00c1: ldstr "Map_Multiple_Keys:Modules.Map_Multiple_Keys:__js_module_init__:26"
+		IL_00c6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00d0: stloc.3
+		IL_00d1: ldloc.2
+		IL_00d2: ldloc.3
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00de: stloc.2
+		IL_00df: volatile.
+		IL_00e1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00e6: brfalse IL_0100
+
+		IL_00eb: ldloc.1
+		IL_00ec: ldstr "get"
+		IL_00f1: ldstr "key2"
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00fb: br IL_011a
+
+		IL_0100: ldloc.1
+		IL_0101: ldstr "get"
+		IL_0106: ldstr "key2"
+		IL_010b: ldstr "Map_Multiple_Keys:Modules.Map_Multiple_Keys:__js_module_init__:31"
+		IL_0110: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_011a: stloc.3
+		IL_011b: ldloc.2
+		IL_011c: ldloc.3
+		IL_011d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0122: pop
+		IL_0123: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0128: stloc.2
+		IL_0129: volatile.
+		IL_012b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0130: brfalse IL_014a
+
+		IL_0135: ldloc.1
+		IL_0136: ldstr "get"
+		IL_013b: ldstr "key3"
+		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0145: br IL_0164
+
+		IL_014a: ldloc.1
+		IL_014b: ldstr "get"
+		IL_0150: ldstr "key3"
+		IL_0155: ldstr "Map_Multiple_Keys:Modules.Map_Multiple_Keys:__js_module_init__:36"
+		IL_015a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0164: stloc.3
+		IL_0165: ldloc.2
+		IL_0166: ldloc.3
+		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_016c: pop
+		IL_016d: ret
 	} // end of method Map_Multiple_Keys::__js_module_init__
 
 } // end of class Modules.Map_Multiple_Keys
@@ -221,6 +260,9 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

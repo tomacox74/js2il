@@ -516,6 +516,293 @@ public sealed class DynamicLookupInlineCacheTests
     }
 
     [Fact]
+    public void CallMember1_SharesPrototypeEntryAcrossArraysAndPreservesThisAndArgument()
+    {
+        WithRealm(
+            () =>
+            {
+                const int count = 500;
+                var prototype = new JsObject();
+                var receivers = Enumerable
+                    .Range(0, count)
+                    .Select(
+                        _ =>
+                        {
+                            var receiver = new JavaScriptRuntime.Array();
+                            PrototypeChain.SetPrototype(receiver, prototype);
+                            return receiver;
+                        })
+                    .ToArray();
+                BuiltinFunction1 method = (thisArgument, argument0) =>
+                {
+                    var index = (int)(double)argument0!;
+                    return ReferenceEquals(
+                        thisArgument,
+                        receivers[index]);
+                };
+                prototype.SetValue(
+                    "method",
+                    BuiltinDelegateFunctionAdapter.FromDelegate(method));
+
+                for (var index = 0; index < count; index++)
+                {
+                    Assert.Equal(
+                        true,
+                        DynamicLookupInlineCache.CallMember1(
+                            receivers[index],
+                            "method",
+                            (double)index,
+                            "call1-prototype-same-shape"));
+                }
+
+                var site = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "call1-prototype-same-shape"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    site.State);
+                Assert.Equal(1, site.EntryCount);
+            });
+    }
+
+    [Fact]
+    public void CallMember1_CachesUserMethodOnSharedArrayPrototype()
+    {
+        WithRealm(
+            () =>
+            {
+                BuiltinFunction1 method =
+                    static (_, argument0) => argument0;
+                JavaScriptRuntime.Array.Prototype.SetValue(
+                    "phase4Method",
+                    BuiltinDelegateFunctionAdapter
+                        .FromDelegate(method));
+                var receiver =
+                    new JavaScriptRuntime.Array();
+
+                Assert.Equal(
+                    "argument",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "phase4Method",
+                        "argument",
+                        "call1-shared-array-prototype"));
+                Assert.Equal(
+                    "updated",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "phase4Method",
+                        "updated",
+                        "call1-shared-array-prototype"));
+
+                var site = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "call1-shared-array-prototype"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Monomorphic,
+                    site.State);
+                Assert.Equal(1, site.EntryCount);
+            });
+    }
+
+    [Fact]
+    public void CallMember1_InvalidatesForShadowingReassignmentDescriptorsAndPrototypeMutation()
+    {
+        WithRealm(
+            () =>
+            {
+                var prototype = new JsObject();
+                prototype.SetValue(
+                    "method",
+                    CreateFunction1("prototype:first"));
+                var receiver = new JavaScriptRuntime.Array();
+                PrototypeChain.SetPrototype(receiver, prototype);
+
+                Assert.Equal(
+                    "prototype:first:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-invalidation"));
+
+                prototype.SetValue(
+                    "method",
+                    CreateFunction1("prototype:updated"));
+                Assert.Equal(
+                    "prototype:updated:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-invalidation"));
+
+                receiver.SetValue(
+                    "method",
+                    CreateFunction1("own"));
+                Assert.Equal(
+                    "own:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-invalidation"));
+
+                Assert.True(receiver.Remove("method"));
+                Assert.Equal(
+                    "prototype:updated:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-invalidation"));
+
+                var getterCalls = 0;
+                BuiltinFunction0 getter = _ =>
+                {
+                    getterCalls++;
+                    return CreateFunction1("accessor");
+                };
+                PropertyDescriptorStore.DefineOrUpdate(
+                    prototype,
+                    "method",
+                    new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Accessor,
+                        Get = BuiltinDelegateFunctionAdapter
+                            .FromDelegate(getter),
+                        Enumerable = true,
+                        Configurable = true
+                    });
+                Assert.Equal(
+                    "accessor:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-invalidation"));
+                Assert.Equal(1, getterCalls);
+
+                var replacementPrototype = new JsObject();
+                replacementPrototype.SetValue(
+                    "method",
+                    CreateFunction1("replacement"));
+                PrototypeChain.SetPrototype(
+                    receiver,
+                    replacementPrototype);
+                Assert.Equal(
+                    "replacement:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-invalidation"));
+            });
+    }
+
+    [Fact]
+    public void CallMember1_TransitionsToPolymorphicThenMegamorphic()
+    {
+        WithRealm(
+            () =>
+            {
+                var prototype = new JsObject();
+                prototype.SetValue(
+                    "method",
+                    CreateFunction1("prototype"));
+                var receivers = Enumerable
+                    .Range(
+                        0,
+                        DynamicLookupInlineCacheSite
+                            .MaxPolymorphicEntries + 1)
+                    .Select(
+                        index =>
+                        {
+                            var receiver = new JavaScriptRuntime.Array();
+                            receiver.SetValue($"shape{index}", true);
+                            PrototypeChain.SetPrototype(receiver, prototype);
+                            return receiver;
+                        })
+                    .ToArray();
+
+                foreach (var receiver in receivers)
+                {
+                    Assert.Equal(
+                        "prototype:arg",
+                        DynamicLookupInlineCache.CallMember1(
+                            receiver,
+                            "method",
+                            "arg",
+                            "call1-transition"));
+                }
+
+                var site = Assert.IsType<
+                    DynamicLookupInlineCacheSite>(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "call1-transition"));
+                Assert.Equal(
+                    DynamicLookupInlineCacheState.Megamorphic,
+                    site.State);
+                Assert.Equal(0, site.EntryCount);
+            });
+    }
+
+    [Fact]
+    public void CallMember1_ProxyBypassesCache()
+    {
+        WithRealm(
+            () =>
+            {
+                var target = new JsObject();
+                target.SetValue(
+                    "method",
+                    CreateFunction1("target"));
+                var proxy = new JavaScriptRuntime.Proxy(
+                    target,
+                    new JsObject());
+
+                Assert.Equal(
+                    "target:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        proxy,
+                        "method",
+                        "arg",
+                        "call1-proxy"));
+                Assert.Null(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "call1-proxy"));
+            });
+    }
+
+    [Fact]
+    public void CallMember1_SymbolKeyBypassesCache()
+    {
+        WithRealm(
+            () =>
+            {
+                var receiver = new JsObject();
+                var symbolKey = ObjectRuntime.ToPropertyKeyString(
+                    new Symbol("method"));
+                receiver.SetValue(
+                    symbolKey,
+                    CreateFunction1("symbol"));
+
+                Assert.Equal(
+                    "symbol:arg",
+                    DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        symbolKey,
+                        "arg",
+                        "call1-symbol"));
+                Assert.Null(
+                    DynamicLookupInlineCache.GetSiteForTests(
+                        "call1-symbol"));
+            });
+    }
+
+    [Fact]
     public void Site_TransitionsToPolymorphicThenMegamorphic()
     {
         WithRealm(
@@ -821,6 +1108,54 @@ public sealed class DynamicLookupInlineCacheTests
     }
 
     [Fact]
+    public void MonomorphicCallMember1PrototypeHit_AllocatesZeroBytes()
+    {
+        WithRealm(
+            () =>
+            {
+                var prototype = new JsObject();
+                BuiltinFunction1 method =
+                    static (_, _) => "cached";
+                prototype.SetValue(
+                    "method",
+                    BuiltinDelegateFunctionAdapter
+                        .FromDelegate(method));
+                var receiver = new JavaScriptRuntime.Array();
+                PrototypeChain.SetPrototype(receiver, prototype);
+                _ = DynamicLookupInlineCache.CallMember1(
+                    receiver,
+                    "method",
+                    "arg",
+                    "call1-allocation");
+
+                for (var index = 0; index < 100; index++)
+                {
+                    _ = DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-allocation");
+                }
+
+                var before =
+                    GC.GetAllocatedBytesForCurrentThread();
+                for (var index = 0; index < 1_000; index++)
+                {
+                    _ = DynamicLookupInlineCache.CallMember1(
+                        receiver,
+                        "method",
+                        "arg",
+                        "call1-allocation");
+                }
+                var allocated =
+                    GC.GetAllocatedBytesForCurrentThread()
+                    - before;
+
+                Assert.Equal(0, allocated);
+            });
+    }
+
+    [Fact]
     public void DisposedRealmCache_DoesNotRetainReceiver()
     {
         var receiverReference =
@@ -864,6 +1199,39 @@ public sealed class DynamicLookupInlineCacheTests
 
             Assert.False(references.Receiver.IsAlive);
             Assert.False(references.Value.IsAlive);
+        }
+        finally
+        {
+            services.OwningRealm!.Agent.Cluster.Dispose();
+        }
+    }
+
+    [Fact]
+    public void LiveRealmCallMember1Cache_DoesNotRetainPrototypeOrCallable()
+    {
+        var services =
+            RuntimeServices.BuildServiceProvider();
+        var context =
+            RuntimeExecutionContext.GetOrCreate(services);
+
+        try
+        {
+            var references =
+                PopulateCollectibleCallMember1Entry(context);
+
+            for (var attempt = 0;
+                 attempt < 10
+                    && (references.Prototype.IsAlive
+                        || references.Callable.IsAlive);
+                 attempt++)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
+
+            Assert.False(references.Prototype.IsAlive);
+            Assert.False(references.Callable.IsAlive);
         }
         finally
         {
@@ -943,6 +1311,14 @@ public sealed class DynamicLookupInlineCacheTests
     private static object CreateFunction(string result)
     {
         BuiltinFunction0 function = _ => result;
+        return BuiltinDelegateFunctionAdapter
+            .FromDelegate(function);
+    }
+
+    private static object CreateFunction1(string result)
+    {
+        BuiltinFunction1 function =
+            (_, argument0) => $"{result}:{argument0}";
         return BuiltinDelegateFunctionAdapter
             .FromDelegate(function);
     }
@@ -1043,6 +1419,39 @@ public sealed class DynamicLookupInlineCacheTests
                         return new WeakReference(receiver);
                     })
                 .ToArray();
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static (WeakReference Prototype, WeakReference Callable)
+        PopulateCollectibleCallMember1Entry(
+            RuntimeExecutionContext context)
+    {
+        using (context.EnterAsRoot())
+        {
+            var prototype = new JsObject();
+            BuiltinFunction1 first =
+                static (_, _) => null;
+            BuiltinFunction1 second =
+                static (_, argument0) => argument0;
+            var function = (BuiltinFunction1)Delegate.Combine(
+                first,
+                second);
+            var callable =
+                BuiltinDelegateFunctionAdapter
+                    .FromDelegate(function);
+            prototype.SetValue("method", callable);
+            var receiver =
+                new JavaScriptRuntime.Array();
+            PrototypeChain.SetPrototype(receiver, prototype);
+            _ = DynamicLookupInlineCache.CallMember1(
+                receiver,
+                "method",
+                "argument",
+                "call1-gc");
+            return (
+                new WeakReference(prototype),
+                new WeakReference(callable));
         }
     }
 

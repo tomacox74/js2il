@@ -182,7 +182,7 @@
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
 			IL_0006: volatile.
-			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_000d: brfalse IL_0022
 
 			IL_0012: ldarg.1
@@ -193,7 +193,7 @@
 			IL_0022: ldarg.1
 			IL_0023: ldstr "value"
 			IL_0028: ldstr "Async_StaticMethod_SimpleAwait:<TwoPhaseDummy_M4>:__js_call__:5"
-			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0037: stloc.1
@@ -550,7 +550,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 338 (0x152)
+		// Code size: 379 (0x17b)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_StaticMethod_SimpleAwait/Scope,
@@ -696,12 +696,25 @@
 		IL_0136: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_013b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24/FunctionObject>(!!0)
 		IL_0140: stloc.s 6
-		IL_0142: ldloc.s 5
-		IL_0144: ldstr "then"
-		IL_0149: ldloc.s 6
-		IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0150: pop
-		IL_0151: ret
+		IL_0142: volatile.
+		IL_0144: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0149: brfalse IL_0161
+
+		IL_014e: ldloc.s 5
+		IL_0150: ldstr "then"
+		IL_0155: ldloc.s 6
+		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_015c: br IL_0179
+
+		IL_0161: ldloc.s 5
+		IL_0163: ldstr "then"
+		IL_0168: ldloc.s 6
+		IL_016a: ldstr "Async_StaticMethod_SimpleAwait:Modules.Async_StaticMethod_SimpleAwait:__js_module_init__:31"
+		IL_016f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0179: pop
+		IL_017a: ret
 	} // end of method Async_StaticMethod_SimpleAwait::__js_module_init__
 
 } // end of class Modules.Async_StaticMethod_SimpleAwait
@@ -734,6 +747,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_5
 	.field assembly static int32 __jroc_dynamicLookup_6
 	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -332,7 +332,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 198 (0xc6)
+			// Code size: 281 (0x119)
 			.maxstack 10
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
@@ -360,78 +360,103 @@
 			IL_0022: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48/FunctionObject>(!!0)
 			IL_002c: stloc.s 6
-			IL_002e: ldloc.s 4
-			IL_0030: ldstr "filter"
-			IL_0035: ldloc.s 6
-			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_003c: stloc.s 4
-			IL_003e: ldloc.s 4
-			IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
-			IL_0045: stloc.0
-			IL_0046: ldc.i4.0
-			IL_0047: stloc.1
-			IL_0048: ldc.i4.0
-			IL_0049: stloc.2
+			IL_002e: volatile.
+			IL_0030: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0035: brfalse IL_004d
+
+			IL_003a: ldloc.s 4
+			IL_003c: ldstr "filter"
+			IL_0041: ldloc.s 6
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0048: br IL_0065
+
+			IL_004d: ldloc.s 4
+			IL_004f: ldstr "filter"
+			IL_0054: ldloc.s 6
+			IL_0056: ldstr "ArrowFunction_ForOfIterableArrowCallback:<TwoPhaseDummy_M4>:__js_call__:6"
+			IL_005b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0065: stloc.s 4
+			IL_0067: ldloc.s 4
+			IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
+			IL_006e: stloc.0
+			IL_006f: ldc.i4.0
+			IL_0070: stloc.1
+			IL_0071: ldc.i4.0
+			IL_0072: stloc.2
 			.try
 			{
-				// loop start (head: IL_004a)
-					IL_004a: ldc.i4.1
-					IL_004b: stloc.1
-					IL_004c: ldloc.0
-					IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_0052: stloc.s 4
-					IL_0054: ldloc.s 4
-					IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_005b: stloc.s 7
-					IL_005d: ldloc.s 7
-					IL_005f: brtrue IL_008d
+				// loop start (head: IL_0073)
+					IL_0073: ldc.i4.1
+					IL_0074: stloc.1
+					IL_0075: ldloc.0
+					IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_007b: stloc.s 4
+					IL_007d: ldloc.s 4
+					IL_007f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_0084: stloc.s 7
+					IL_0086: ldloc.s 7
+					IL_0088: brtrue IL_00b6
 
-					IL_0064: ldloc.s 4
-					IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_006b: stloc.s 4
-					IL_006d: ldc.i4.0
-					IL_006e: stloc.1
-					IL_006f: ldloc.s 4
-					IL_0071: stloc.3
-					IL_0072: ldarg.1
-					IL_0073: ldloc.3
-					IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteItemNonStrict(object, object)
-					IL_0079: stloc.s 7
-					IL_007b: br IL_004a
+					IL_008d: ldloc.s 4
+					IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_0094: stloc.s 4
+					IL_0096: ldc.i4.0
+					IL_0097: stloc.1
+					IL_0098: ldloc.s 4
+					IL_009a: stloc.3
+					IL_009b: ldarg.1
+					IL_009c: ldloc.3
+					IL_009d: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteItemNonStrict(object, object)
+					IL_00a2: stloc.s 7
+					IL_00a4: br IL_0073
 				// end loop
-				IL_0080: ldloc.0
-				IL_0081: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_0086: ldc.i4.1
-				IL_0087: stloc.2
-				IL_0088: leave IL_00a7
+				IL_00a9: ldloc.0
+				IL_00aa: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_00af: ldc.i4.1
+				IL_00b0: stloc.2
+				IL_00b1: leave IL_00d0
 
-				IL_008d: ldc.i4.1
-				IL_008e: stloc.1
-				IL_008f: leave IL_00a7
+				IL_00b6: ldc.i4.1
+				IL_00b7: stloc.1
+				IL_00b8: leave IL_00d0
 			} // end .try
 			finally
 			{
-				IL_0094: ldloc.1
-				IL_0095: brtrue IL_00a6
+				IL_00bd: ldloc.1
+				IL_00be: brtrue IL_00cf
 
-				IL_009a: ldloc.2
-				IL_009b: brtrue IL_00a6
+				IL_00c3: ldloc.2
+				IL_00c4: brtrue IL_00cf
 
-				IL_00a0: ldloc.0
-				IL_00a1: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_00c9: ldloc.0
+				IL_00ca: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_00a6: endfinally
+				IL_00cf: endfinally
 			} // end handler
 
-			IL_00a7: ldarg.1
-			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00b2: ldstr "join"
-			IL_00b7: ldstr ","
-			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00c1: stloc.s 4
-			IL_00c3: ldloc.s 4
-			IL_00c5: ret
+			IL_00d0: ldarg.1
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+			IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00db: volatile.
+			IL_00dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_00e2: brfalse IL_00fb
+
+			IL_00e7: ldstr "join"
+			IL_00ec: ldstr ","
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00f6: br IL_0114
+
+			IL_00fb: ldstr "join"
+			IL_0100: ldstr ","
+			IL_0105: ldstr "ArrowFunction_ForOfIterableArrowCallback:<TwoPhaseDummy_M4>:__js_call__:49"
+			IL_010a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0114: stloc.s 4
+			IL_0116: ldloc.s 4
+			IL_0118: ret
 		} // end of method ArrowFunction_L1C26::__js_call__
 
 	} // end of class ArrowFunction_L1C26
@@ -528,4 +553,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 
