@@ -5486,8 +5486,7 @@ namespace JavaScriptRuntime
                 obj = arrayConstructor.Target;
             }
 
-            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
-                && (string.Equals(name, "caller", StringComparison.Ordinal) || string.Equals(name, "arguments", StringComparison.Ordinal)))
+            if (IsRestrictedFunctionPrototypeProperty(obj, name))
             {
                 throw new TypeError($"Cannot access restricted function property '{name}'");
             }
@@ -5638,6 +5637,20 @@ namespace JavaScriptRuntime
 
             return TryGetInheritedPropertyValue(obj, name, out var inherited) ? inherited : null;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsRestrictedFunctionPrototypeProperty(
+            object obj,
+            string name)
+            => obj is JsObject { IsFunctionPrototype: true }
+                && (string.Equals(
+                        name,
+                        "caller",
+                        StringComparison.Ordinal)
+                    || string.Equals(
+                        name,
+                        "arguments",
+                        StringComparison.Ordinal));
 
         /// <summary>
         /// Sets a numeric property on a JavaScript object without boxing the double value.

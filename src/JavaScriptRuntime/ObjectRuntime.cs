@@ -693,8 +693,7 @@ namespace JavaScriptRuntime
 
             var propName = ToPropertyKeyString(index);
 
-            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
-                && (string.Equals(propName, "caller", StringComparison.Ordinal) || string.Equals(propName, "arguments", StringComparison.Ordinal)))
+            if (IsRestrictedFunctionPrototypeProperty(obj, propName))
             {
                 throw new TypeError($"Cannot access restricted function property '{propName}'");
             }
@@ -923,8 +922,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot read properties of null or undefined");
             }
 
-            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
-                && (string.Equals(key, "caller", StringComparison.Ordinal) || string.Equals(key, "arguments", StringComparison.Ordinal)))
+            if (IsRestrictedFunctionPrototypeProperty(obj, key))
             {
                 throw new TypeError($"Cannot access restricted function property '{key}'");
             }

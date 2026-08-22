@@ -213,7 +213,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1025 (0x401)
+		// Code size: 1059 (0x423)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope,
@@ -481,7 +481,7 @@
 			IL_0396: ldc.i4.1
 			IL_0397: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
 			IL_039c: pop
-			IL_039d: leave IL_03fd
+			IL_039d: leave IL_041f
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
@@ -510,21 +510,32 @@
 			IL_03d2: stloc.s 9
 			IL_03d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_03d9: stloc.s 12
-			IL_03db: ldloc.s 9
-			IL_03dd: ldstr "name"
-			IL_03e2: ldstr "TypedArray_SignedAndClamped_ConversionSemantics:Modules.TypedArray_SignedAndClamped_ConversionSemantics:__js_module_init__:123"
-			IL_03e7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_03ec: stloc.s 13
-			IL_03ee: ldloc.s 12
-			IL_03f0: ldloc.s 13
-			IL_03f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03f7: pop
-			IL_03f8: leave IL_03fd
+			IL_03db: volatile.
+			IL_03dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_03e2: brfalse IL_03f8
+
+			IL_03e7: ldloc.s 9
+			IL_03e9: ldstr "name"
+			IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03f3: br IL_040e
+
+			IL_03f8: ldloc.s 9
+			IL_03fa: ldstr "name"
+			IL_03ff: ldstr "TypedArray_SignedAndClamped_ConversionSemantics:Modules.TypedArray_SignedAndClamped_ConversionSemantics:__js_module_init__:123"
+			IL_0404: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0409: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_040e: stloc.s 13
+			IL_0410: ldloc.s 12
+			IL_0412: ldloc.s 13
+			IL_0414: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0419: pop
+			IL_041a: leave IL_041f
 		} // end handler
 
-		IL_03fd: ldnull
-		IL_03fe: stloc.s 10
-		IL_0400: ret
+		IL_041f: ldnull
+		IL_0420: stloc.s 10
+		IL_0422: ret
 	} // end of method TypedArray_SignedAndClamped_ConversionSemantics::__js_module_init__
 
 } // end of class Modules.TypedArray_SignedAndClamped_ConversionSemantics
@@ -550,4 +561,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

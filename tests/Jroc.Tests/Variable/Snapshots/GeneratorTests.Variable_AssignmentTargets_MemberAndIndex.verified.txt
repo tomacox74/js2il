@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 253 (0xfd)
+		// Code size: 319 (0x13f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_AssignmentTargets_MemberAndIndex/Scope,
@@ -85,40 +85,62 @@
 		IL_0086: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
 		IL_008b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0090: stloc.3
-		IL_0091: ldloc.1
-		IL_0092: ldstr "b"
-		IL_0097: ldstr "Variable_AssignmentTargets_MemberAndIndex:Modules.Variable_AssignmentTargets_MemberAndIndex:__js_module_init__:28"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00a1: stloc.s 4
-		IL_00a3: ldloc.3
-		IL_00a4: ldstr "cfg.b="
-		IL_00a9: ldloc.s 4
-		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00b0: pop
-		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b6: stloc.3
-		IL_00b7: ldloc.1
-		IL_00b8: ldstr "c"
-		IL_00bd: ldstr "Variable_AssignmentTargets_MemberAndIndex:Modules.Variable_AssignmentTargets_MemberAndIndex:__js_module_init__:34"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00c7: stloc.s 4
-		IL_00c9: ldloc.3
-		IL_00ca: ldstr "cfg.c="
-		IL_00cf: ldloc.s 4
-		IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00d6: pop
-		IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00dc: stloc.3
-		IL_00dd: ldloc.2
-		IL_00de: ldc.r8 1
-		IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_00ec: stloc.s 4
-		IL_00ee: ldloc.3
-		IL_00ef: ldstr "arr1="
-		IL_00f4: ldloc.s 4
-		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00fb: pop
-		IL_00fc: ret
+		IL_0091: volatile.
+		IL_0093: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0098: brfalse IL_00ad
+
+		IL_009d: ldloc.1
+		IL_009e: ldstr "b"
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a8: br IL_00c2
+
+		IL_00ad: ldloc.1
+		IL_00ae: ldstr "b"
+		IL_00b3: ldstr "Variable_AssignmentTargets_MemberAndIndex:Modules.Variable_AssignmentTargets_MemberAndIndex:__js_module_init__:28"
+		IL_00b8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00c2: stloc.s 4
+		IL_00c4: ldloc.3
+		IL_00c5: ldstr "cfg.b="
+		IL_00ca: ldloc.s 4
+		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00d1: pop
+		IL_00d2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d7: stloc.3
+		IL_00d8: volatile.
+		IL_00da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00df: brfalse IL_00f4
+
+		IL_00e4: ldloc.1
+		IL_00e5: ldstr "c"
+		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ef: br IL_0109
+
+		IL_00f4: ldloc.1
+		IL_00f5: ldstr "c"
+		IL_00fa: ldstr "Variable_AssignmentTargets_MemberAndIndex:Modules.Variable_AssignmentTargets_MemberAndIndex:__js_module_init__:34"
+		IL_00ff: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0109: stloc.s 4
+		IL_010b: ldloc.3
+		IL_010c: ldstr "cfg.c="
+		IL_0111: ldloc.s 4
+		IL_0113: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0118: pop
+		IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_011e: stloc.3
+		IL_011f: ldloc.2
+		IL_0120: ldc.r8 1
+		IL_0129: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_012e: stloc.s 4
+		IL_0130: ldloc.3
+		IL_0131: ldstr "arr1="
+		IL_0136: ldloc.s 4
+		IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_013d: pop
+		IL_013e: ret
 	} // end of method Variable_AssignmentTargets_MemberAndIndex::__js_module_init__
 
 } // end of class Modules.Variable_AssignmentTargets_MemberAndIndex
@@ -144,4 +166,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -157,7 +157,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 504 (0x1f8)
+		// Code size: 638 (0x27e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Spawn_Ignore/Scope,
@@ -184,160 +184,203 @@
 		IL_0012: stloc.1
 		IL_0013: ldstr "process"
 		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001d: ldstr "platform"
-		IL_0022: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:12"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_002c: stloc.s 5
-		IL_002e: ldloc.s 5
-		IL_0030: ldstr "win32"
-		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: brfalse IL_00a5
+		IL_001d: volatile.
+		IL_001f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0024: brfalse IL_0038
 
-		IL_0041: ldc.i4.4
-		IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0047: dup
-		IL_0048: ldstr "/d"
-		IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0052: dup
-		IL_0053: ldstr "/s"
-		IL_0058: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_005d: dup
-		IL_005e: ldstr "/c"
-		IL_0063: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0068: dup
-		IL_0069: ldstr "echo spawn-ignore"
-		IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0073: stloc.s 6
-		IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_007a: dup
-		IL_007b: ldstr "stdio"
-		IL_0080: ldstr "ignore"
-		IL_0085: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_008a: stloc.s 7
-		IL_008c: ldloc.1
-		IL_008d: ldstr "cmd.exe"
-		IL_0092: ldloc.s 6
-		IL_0094: ldloc.s 7
-		IL_0096: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object, object)
-		IL_009b: stloc.s 5
-		IL_009d: ldloc.s 5
-		IL_009f: stloc.3
-		IL_00a0: br IL_00ee
+		IL_0029: ldstr "platform"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: br IL_004c
 
-		IL_00a5: ldc.i4.2
-		IL_00a6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00ab: dup
-		IL_00ac: ldstr "-c"
-		IL_00b1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00b6: dup
-		IL_00b7: ldstr "printf spawn-ignore"
-		IL_00bc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00c1: stloc.s 6
-		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00c8: dup
-		IL_00c9: ldstr "stdio"
-		IL_00ce: ldstr "ignore"
-		IL_00d3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00d8: stloc.s 7
-		IL_00da: ldloc.1
-		IL_00db: ldstr "/bin/sh"
-		IL_00e0: ldloc.s 6
-		IL_00e2: ldloc.s 7
-		IL_00e4: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object, object)
-		IL_00e9: stloc.s 5
-		IL_00eb: ldloc.s 5
-		IL_00ed: stloc.3
+		IL_0038: ldstr "platform"
+		IL_003d: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:12"
+		IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00ee: ldloc.3
-		IL_00ef: stloc.s 4
-		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f6: stloc.s 8
-		IL_00f8: ldloc.s 4
-		IL_00fa: ldstr "stdin"
-		IL_00ff: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:44"
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
+		IL_004c: stloc.s 5
+		IL_004e: ldloc.s 5
+		IL_0050: ldstr "win32"
+		IL_0055: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_005a: stloc.2
+		IL_005b: ldloc.2
+		IL_005c: brfalse IL_00c5
+
+		IL_0061: ldc.i4.4
+		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0067: dup
+		IL_0068: ldstr "/d"
+		IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0072: dup
+		IL_0073: ldstr "/s"
+		IL_0078: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_007d: dup
+		IL_007e: ldstr "/c"
+		IL_0083: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0088: dup
+		IL_0089: ldstr "echo spawn-ignore"
+		IL_008e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0093: stloc.s 6
+		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_009a: dup
+		IL_009b: ldstr "stdio"
+		IL_00a0: ldstr "ignore"
+		IL_00a5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00aa: stloc.s 7
+		IL_00ac: ldloc.1
+		IL_00ad: ldstr "cmd.exe"
+		IL_00b2: ldloc.s 6
+		IL_00b4: ldloc.s 7
+		IL_00b6: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object, object)
+		IL_00bb: stloc.s 5
+		IL_00bd: ldloc.s 5
+		IL_00bf: stloc.3
+		IL_00c0: br IL_010e
+
+		IL_00c5: ldc.i4.2
+		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00cb: dup
+		IL_00cc: ldstr "-c"
+		IL_00d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00d6: dup
+		IL_00d7: ldstr "printf spawn-ignore"
+		IL_00dc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00e1: stloc.s 6
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00e8: dup
+		IL_00e9: ldstr "stdio"
+		IL_00ee: ldstr "ignore"
+		IL_00f3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00f8: stloc.s 7
+		IL_00fa: ldloc.1
+		IL_00fb: ldstr "/bin/sh"
+		IL_0100: ldloc.s 6
+		IL_0102: ldloc.s 7
+		IL_0104: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IChildProcessModule::spawn(string, object, object)
 		IL_0109: stloc.s 5
 		IL_010b: ldloc.s 5
-		IL_010d: ldc.i4.0
-		IL_010e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0113: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0118: stloc.s 9
-		IL_011a: ldloc.s 9
-		IL_011c: box [System.Runtime]System.Boolean
-		IL_0121: stloc.s 10
-		IL_0123: ldloc.s 8
-		IL_0125: ldstr "stdin ignored:"
-		IL_012a: ldloc.s 10
-		IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0131: pop
-		IL_0132: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0137: stloc.s 8
-		IL_0139: ldloc.s 4
-		IL_013b: ldstr "stdout"
-		IL_0140: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:54"
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_014a: stloc.s 5
-		IL_014c: ldloc.s 5
-		IL_014e: ldc.i4.0
-		IL_014f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0154: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0159: stloc.s 9
-		IL_015b: ldloc.s 9
-		IL_015d: box [System.Runtime]System.Boolean
-		IL_0162: stloc.s 10
-		IL_0164: ldloc.s 8
-		IL_0166: ldstr "stdout ignored:"
-		IL_016b: ldloc.s 10
-		IL_016d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0172: pop
-		IL_0173: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0178: stloc.s 8
-		IL_017a: ldloc.s 4
-		IL_017c: ldstr "stderr"
-		IL_0181: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:64"
-		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_018b: stloc.s 5
-		IL_018d: ldloc.s 5
-		IL_018f: ldc.i4.0
-		IL_0190: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0195: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_019a: stloc.s 9
-		IL_019c: ldloc.s 9
-		IL_019e: box [System.Runtime]System.Boolean
-		IL_01a3: stloc.s 10
-		IL_01a5: ldloc.s 8
-		IL_01a7: ldstr "stderr ignored:"
-		IL_01ac: ldloc.s 10
-		IL_01ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01b3: pop
-		IL_01b4: ldloc.s 4
-		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01bb: stloc.s 5
-		IL_01bd: ldc.i4.1
-		IL_01be: newarr [System.Runtime]System.Object
-		IL_01c3: dup
-		IL_01c4: ldc.i4.0
-		IL_01c5: ldloc.0
-		IL_01c6: stelem.ref
-		IL_01c7: stloc.s 11
-		IL_01c9: newobj instance void Modules.Require_ChildProcess_Spawn_Ignore/ArrowFunction_L14C19/FunctionObject::.ctor()
-		IL_01ce: ldc.i4.1
-		IL_01cf: conv.r8
-		IL_01d0: ldstr ""
-		IL_01d5: ldc.i4.0
-		IL_01d6: ldc.i4.0
-		IL_01d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Ignore/ArrowFunction_L14C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01dc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Ignore/ArrowFunction_L14C19/FunctionObject>(!!0)
-		IL_01e1: stloc.s 12
-		IL_01e3: ldloc.s 5
-		IL_01e5: ldstr "on"
-		IL_01ea: ldstr "close"
-		IL_01ef: ldloc.s 12
-		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01f6: pop
-		IL_01f7: ret
+		IL_010d: stloc.3
+
+		IL_010e: ldloc.3
+		IL_010f: stloc.s 4
+		IL_0111: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0116: stloc.s 8
+		IL_0118: volatile.
+		IL_011a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_011f: brfalse IL_0135
+
+		IL_0124: ldloc.s 4
+		IL_0126: ldstr "stdin"
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0130: br IL_014b
+
+		IL_0135: ldloc.s 4
+		IL_0137: ldstr "stdin"
+		IL_013c: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:44"
+		IL_0141: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_014b: stloc.s 5
+		IL_014d: ldloc.s 5
+		IL_014f: ldc.i4.0
+		IL_0150: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0155: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_015a: stloc.s 9
+		IL_015c: ldloc.s 9
+		IL_015e: box [System.Runtime]System.Boolean
+		IL_0163: stloc.s 10
+		IL_0165: ldloc.s 8
+		IL_0167: ldstr "stdin ignored:"
+		IL_016c: ldloc.s 10
+		IL_016e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0173: pop
+		IL_0174: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0179: stloc.s 8
+		IL_017b: volatile.
+		IL_017d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0182: brfalse IL_0198
+
+		IL_0187: ldloc.s 4
+		IL_0189: ldstr "stdout"
+		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0193: br IL_01ae
+
+		IL_0198: ldloc.s 4
+		IL_019a: ldstr "stdout"
+		IL_019f: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:54"
+		IL_01a4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01ae: stloc.s 5
+		IL_01b0: ldloc.s 5
+		IL_01b2: ldc.i4.0
+		IL_01b3: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_01b8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01bd: stloc.s 9
+		IL_01bf: ldloc.s 9
+		IL_01c1: box [System.Runtime]System.Boolean
+		IL_01c6: stloc.s 10
+		IL_01c8: ldloc.s 8
+		IL_01ca: ldstr "stdout ignored:"
+		IL_01cf: ldloc.s 10
+		IL_01d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01d6: pop
+		IL_01d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01dc: stloc.s 8
+		IL_01de: volatile.
+		IL_01e0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_01e5: brfalse IL_01fb
+
+		IL_01ea: ldloc.s 4
+		IL_01ec: ldstr "stderr"
+		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01f6: br IL_0211
+
+		IL_01fb: ldloc.s 4
+		IL_01fd: ldstr "stderr"
+		IL_0202: ldstr "Require_ChildProcess_Spawn_Ignore:Modules.Require_ChildProcess_Spawn_Ignore:__js_module_init__:64"
+		IL_0207: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0211: stloc.s 5
+		IL_0213: ldloc.s 5
+		IL_0215: ldc.i4.0
+		IL_0216: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_021b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0220: stloc.s 9
+		IL_0222: ldloc.s 9
+		IL_0224: box [System.Runtime]System.Boolean
+		IL_0229: stloc.s 10
+		IL_022b: ldloc.s 8
+		IL_022d: ldstr "stderr ignored:"
+		IL_0232: ldloc.s 10
+		IL_0234: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0239: pop
+		IL_023a: ldloc.s 4
+		IL_023c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0241: stloc.s 5
+		IL_0243: ldc.i4.1
+		IL_0244: newarr [System.Runtime]System.Object
+		IL_0249: dup
+		IL_024a: ldc.i4.0
+		IL_024b: ldloc.0
+		IL_024c: stelem.ref
+		IL_024d: stloc.s 11
+		IL_024f: newobj instance void Modules.Require_ChildProcess_Spawn_Ignore/ArrowFunction_L14C19/FunctionObject::.ctor()
+		IL_0254: ldc.i4.1
+		IL_0255: conv.r8
+		IL_0256: ldstr ""
+		IL_025b: ldc.i4.0
+		IL_025c: ldc.i4.0
+		IL_025d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Spawn_Ignore/ArrowFunction_L14C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0262: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Spawn_Ignore/ArrowFunction_L14C19/FunctionObject>(!!0)
+		IL_0267: stloc.s 12
+		IL_0269: ldloc.s 5
+		IL_026b: ldstr "on"
+		IL_0270: ldstr "close"
+		IL_0275: ldloc.s 12
+		IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_027c: pop
+		IL_027d: ret
 	} // end of method Require_ChildProcess_Spawn_Ignore::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Spawn_Ignore
@@ -363,4 +406,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

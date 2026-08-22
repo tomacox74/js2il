@@ -78,7 +78,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 980 (0x3d4)
+		// Code size: 1014 (0x3f6)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.Object_OwnPropertyKeyOrdering/Scope,
@@ -409,20 +409,31 @@
 		IL_039f: ldstr ","
 		IL_03a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_03a9: stloc.s 18
-		IL_03ab: ldloc.s 13
-		IL_03ad: ldstr "length"
-		IL_03b2: ldstr "Object_OwnPropertyKeyOrdering:Modules.Object_OwnPropertyKeyOrdering:__js_module_init__:165"
-		IL_03b7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_03bc: stloc.s 14
-		IL_03be: ldloc.s 18
-		IL_03c0: ldloc.s 14
-		IL_03c2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_03c7: stloc.s 18
-		IL_03c9: ldloc.s 19
-		IL_03cb: ldloc.s 18
-		IL_03cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_03d2: pop
-		IL_03d3: ret
+		IL_03ab: volatile.
+		IL_03ad: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_03b2: brfalse IL_03c8
+
+		IL_03b7: ldloc.s 13
+		IL_03b9: ldstr "length"
+		IL_03be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03c3: br IL_03de
+
+		IL_03c8: ldloc.s 13
+		IL_03ca: ldstr "length"
+		IL_03cf: ldstr "Object_OwnPropertyKeyOrdering:Modules.Object_OwnPropertyKeyOrdering:__js_module_init__:165"
+		IL_03d4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_03d9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_03de: stloc.s 14
+		IL_03e0: ldloc.s 18
+		IL_03e2: ldloc.s 14
+		IL_03e4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_03e9: stloc.s 18
+		IL_03eb: ldloc.s 19
+		IL_03ed: ldloc.s 18
+		IL_03ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_03f4: pop
+		IL_03f5: ret
 	} // end of method Object_OwnPropertyKeyOrdering::__js_module_init__
 
 } // end of class Modules.Object_OwnPropertyKeyOrdering
@@ -448,4 +459,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -2465,7 +2465,7 @@
 				74 61 54 6f 6b 65 6e 14 00 00 02
 			)
 			// Header size: 12
-			// Code size: 134 (0x86)
+			// Code size: 167 (0xa7)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_SchedulerCallResults/Counter,
@@ -2504,17 +2504,28 @@
 			IL_005e: ldstr ","
 			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0068: stloc.3
-			IL_0069: ldloc.0
-			IL_006a: ldstr "value"
-			IL_006f: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M14>:__js_call__:12"
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0079: stloc.s 4
-			IL_007b: ldloc.3
-			IL_007c: ldloc.s 4
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0083: stloc.3
-			IL_0084: ldloc.3
-			IL_0085: ret
+			IL_0069: volatile.
+			IL_006b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+			IL_0070: brfalse IL_0085
+
+			IL_0075: ldloc.0
+			IL_0076: ldstr "value"
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0080: br IL_009a
+
+			IL_0085: ldloc.0
+			IL_0086: ldstr "value"
+			IL_008b: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M14>:__js_call__:12"
+			IL_0090: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_009a: stloc.s 4
+			IL_009c: ldloc.3
+			IL_009d: ldloc.s 4
+			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00a4: stloc.3
+			IL_00a5: ldloc.3
+			IL_00a6: ret
 		} // end of method scheduledInlineCall::__js_call__
 
 	} // end of class scheduledInlineCall
@@ -3857,30 +3868,41 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 74 (0x4a)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldstr "value"
-			IL_0006: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M19>:add:3"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldarg.1
-			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0018: stloc.1
-			IL_0019: ldarg.0
-			IL_001a: ldstr "value"
-			IL_001f: ldloc.1
-			IL_0020: ldc.i4.1
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0026: pop
-			IL_0027: ldarg.0
-			IL_0028: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+			IL_0007: brfalse IL_001c
+
+			IL_000c: ldarg.0
+			IL_000d: ldstr "value"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0017: br IL_0031
+
+			IL_001c: ldarg.0
+			IL_001d: ldstr "value"
+			IL_0022: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M19>:add:3"
+			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0031: stloc.0
+			IL_0032: ldloc.0
+			IL_0033: ldarg.1
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0039: stloc.1
+			IL_003a: ldarg.0
+			IL_003b: ldstr "value"
+			IL_0040: ldloc.1
+			IL_0041: ldc.i4.1
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0047: pop
+			IL_0048: ldarg.0
+			IL_0049: ret
 		} // end of method Counter::'add'
 
 		.method public hidebysig 
@@ -3982,31 +4004,42 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 54 (0x36)
+			// Code size: 87 (0x57)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldstr "value"
-			IL_0006: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M23>:next:3"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 1
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0020: stloc.1
-			IL_0021: ldarg.0
-			IL_0022: ldstr "value"
-			IL_0027: ldloc.1
-			IL_0028: ldc.i4.1
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_002e: pop
-			IL_002f: ldarg.0
-			IL_0030: ldfld object Modules.Function_SchedulerCallResults/Counter::'value'
-			IL_0035: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+			IL_0007: brfalse IL_001c
+
+			IL_000c: ldarg.0
+			IL_000d: ldstr "value"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0017: br IL_0031
+
+			IL_001c: ldarg.0
+			IL_001d: ldstr "value"
+			IL_0022: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M23>:next:3"
+			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0031: stloc.0
+			IL_0032: ldloc.0
+			IL_0033: ldc.r8 1
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0041: stloc.1
+			IL_0042: ldarg.0
+			IL_0043: ldstr "value"
+			IL_0048: ldloc.1
+			IL_0049: ldc.i4.1
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_004f: pop
+			IL_0050: ldarg.0
+			IL_0051: ldfld object Modules.Function_SchedulerCallResults/Counter::'value'
+			IL_0056: ret
 		} // end of method Counter::next
 
 		.method public hidebysig 
@@ -4217,7 +4250,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1657 (0x679)
+		// Code size: 1691 (0x69b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_SchedulerCallResults/Scope,
@@ -4537,324 +4570,335 @@
 		IL_027c: ldtoken Modules.Function_SchedulerCallResults/Counter
 		IL_0281: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0286: stloc.s 17
-		IL_0288: ldloc.s 17
-		IL_028a: ldstr "prototype"
-		IL_028f: ldstr "Function_SchedulerCallResults:Modules.Function_SchedulerCallResults:__js_module_init__:64"
-		IL_0294: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0299: stloc.s 18
-		IL_029b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02a0: stloc.s 14
-		IL_02a2: ldloc.s 18
-		IL_02a4: ldstr "add"
-		IL_02a9: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_add/FunctionObject::.ctor()
-		IL_02ae: ldc.i4.1
-		IL_02af: conv.r8
-		IL_02b0: ldstr "add"
-		IL_02b5: ldc.i4.1
-		IL_02b6: ldc.i4.1
-		IL_02b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_add/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_add/FunctionObject>(!!0)
-		IL_02c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_02c6: pop
-		IL_02c7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02cc: stloc.s 14
-		IL_02ce: ldloc.s 18
-		IL_02d0: ldstr "getValue"
-		IL_02d5: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_getValue/FunctionObject::.ctor()
-		IL_02da: ldc.i4.0
-		IL_02db: conv.r8
-		IL_02dc: ldstr "getValue"
-		IL_02e1: ldc.i4.1
-		IL_02e2: ldc.i4.1
-		IL_02e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_getValue/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_getValue/FunctionObject>(!!0)
-		IL_02ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_02f2: pop
-		IL_02f3: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02f8: stloc.s 14
-		IL_02fa: ldloc.s 18
-		IL_02fc: ldstr "chain"
-		IL_0301: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_chain/FunctionObject::.ctor()
-		IL_0306: ldc.i4.0
-		IL_0307: conv.r8
-		IL_0308: ldstr "chain"
-		IL_030d: ldc.i4.1
-		IL_030e: ldc.i4.1
-		IL_030f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_chain/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0314: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_chain/FunctionObject>(!!0)
-		IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_031e: pop
-		IL_031f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0324: stloc.s 14
-		IL_0326: ldloc.s 18
-		IL_0328: ldstr "addOnce"
-		IL_032d: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_addOnce/FunctionObject::.ctor()
-		IL_0332: ldc.i4.0
-		IL_0333: conv.r8
-		IL_0334: ldstr "addOnce"
-		IL_0339: ldc.i4.1
-		IL_033a: ldc.i4.1
-		IL_033b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_addOnce/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0340: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_addOnce/FunctionObject>(!!0)
-		IL_0345: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_034a: pop
-		IL_034b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0350: stloc.s 14
-		IL_0352: ldloc.s 18
-		IL_0354: ldstr "next"
-		IL_0359: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_next/FunctionObject::.ctor()
-		IL_035e: ldc.i4.0
-		IL_035f: conv.r8
-		IL_0360: ldstr "next"
-		IL_0365: ldc.i4.1
-		IL_0366: ldc.i4.1
-		IL_0367: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_next/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_036c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_next/FunctionObject>(!!0)
-		IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0376: pop
-		IL_0377: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_037c: stloc.s 14
-		IL_037e: ldloc.s 18
-		IL_0380: ldstr "maxNext"
-		IL_0385: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_maxNext/FunctionObject::.ctor()
-		IL_038a: ldc.i4.0
-		IL_038b: conv.r8
-		IL_038c: ldstr "maxNext"
-		IL_0391: ldc.i4.1
-		IL_0392: ldc.i4.1
-		IL_0393: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_maxNext/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0398: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_maxNext/FunctionObject>(!!0)
-		IL_039d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_03a2: pop
-		IL_03a3: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03a8: stloc.s 14
-		IL_03aa: ldloc.s 18
-		IL_03ac: ldstr "sum"
-		IL_03b1: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_sum/FunctionObject::.ctor()
-		IL_03b6: ldc.i4.s 9
-		IL_03b8: conv.r8
-		IL_03b9: ldstr "sum"
-		IL_03be: ldc.i4.0
-		IL_03bf: ldc.i4.1
-		IL_03c0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_sum/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_03c5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_sum/FunctionObject>(!!0)
-		IL_03ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_03cf: pop
-		IL_03d0: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03d5: stloc.s 14
-		IL_03d7: ldloc.s 18
-		IL_03d9: ldstr "maxSum"
-		IL_03de: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_maxSum/FunctionObject::.ctor()
-		IL_03e3: ldc.i4.0
-		IL_03e4: conv.r8
-		IL_03e5: ldstr "maxSum"
-		IL_03ea: ldc.i4.1
-		IL_03eb: ldc.i4.1
-		IL_03ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSum/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_03f1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSum/FunctionObject>(!!0)
-		IL_03f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_03fb: pop
-		IL_03fc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0401: stloc.s 14
-		IL_0403: ldloc.s 18
-		IL_0405: ldstr "maxSumWithFloor"
-		IL_040a: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_maxSumWithFloor/FunctionObject::.ctor()
-		IL_040f: ldc.i4.0
-		IL_0410: conv.r8
-		IL_0411: ldstr "maxSumWithFloor"
-		IL_0416: ldc.i4.1
-		IL_0417: ldc.i4.1
-		IL_0418: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSumWithFloor/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_041d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSumWithFloor/FunctionObject>(!!0)
-		IL_0422: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0427: pop
-		IL_0428: ldc.i4.1
-		IL_0429: newarr [System.Runtime]System.Object
-		IL_042e: dup
-		IL_042f: ldc.i4.0
-		IL_0430: ldloc.0
-		IL_0431: stelem.ref
-		IL_0432: stloc.s 14
-		IL_0434: ldloc.s 14
-		IL_0436: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_ctor/FunctionObject::.ctor(object[])
-		IL_043b: ldloc.s 17
-		IL_043d: ldloc.s 14
-		IL_043f: ldc.i4.1
-		IL_0440: conv.r8
-		IL_0441: ldc.i4.0
-		IL_0442: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0447: castclass Modules.Function_SchedulerCallResults/Counter/Scope_ctor/FunctionObject
-		IL_044c: stloc.s 19
-		IL_044e: ldloc.0
-		IL_044f: ldloc.s 19
-		IL_0451: stfld object Modules.Function_SchedulerCallResults/Scope::Counter
-		IL_0456: nop
-		IL_0457: nop
-		IL_0458: nop
-		IL_0459: nop
-		IL_045a: nop
-		IL_045b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0460: stloc.s 20
-		IL_0462: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0467: stloc.s 14
-		IL_0469: ldloc.1
-		IL_046a: ldloc.s 14
-		IL_046c: ldc.r8 9
-		IL_0475: box [System.Runtime]System.Double
-		IL_047a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_047f: stloc.s 18
-		IL_0481: ldloc.s 20
-		IL_0483: ldloc.s 18
-		IL_0485: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_048a: pop
-		IL_048b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0490: stloc.s 20
-		IL_0492: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0497: stloc.s 14
-		IL_0499: ldc.r8 2.7
-		IL_04a2: neg
-		IL_04a3: stloc.s 21
-		IL_04a5: ldloc.s 21
-		IL_04a7: box [System.Runtime]System.Double
-		IL_04ac: stloc.s 22
-		IL_04ae: ldloc.2
-		IL_04af: ldloc.s 14
-		IL_04b1: ldloc.s 22
-		IL_04b3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_04b8: stloc.s 18
-		IL_04ba: ldloc.s 20
-		IL_04bc: ldloc.s 18
-		IL_04be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04c3: pop
-		IL_04c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04c9: stloc.s 20
-		IL_04cb: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_04d0: stloc.s 14
-		IL_04d2: ldloc.3
-		IL_04d3: ldloc.s 14
-		IL_04d5: ldc.r8 1.2
-		IL_04de: box [System.Runtime]System.Double
-		IL_04e3: ldc.r8 1.1
-		IL_04ec: box [System.Runtime]System.Double
-		IL_04f1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_04f6: stloc.s 18
-		IL_04f8: ldloc.s 20
-		IL_04fa: ldloc.s 18
-		IL_04fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0501: pop
-		IL_0502: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0507: stloc.s 20
-		IL_0509: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_050e: stloc.s 14
-		IL_0510: ldloc.s 4
-		IL_0512: ldloc.s 14
-		IL_0514: ldc.r8 9
-		IL_051d: box [System.Runtime]System.Double
-		IL_0522: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0527: stloc.s 18
-		IL_0529: ldloc.s 20
-		IL_052b: ldloc.s 18
-		IL_052d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0532: pop
-		IL_0533: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0538: stloc.s 20
-		IL_053a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_053f: stloc.s 14
-		IL_0541: ldloc.s 5
-		IL_0543: ldloc.s 14
-		IL_0545: ldc.r8 2
-		IL_054e: box [System.Runtime]System.Double
-		IL_0553: ldc.r8 3
-		IL_055c: box [System.Runtime]System.Double
-		IL_0561: ldc.r8 2
-		IL_056a: box [System.Runtime]System.Double
-		IL_056f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_0574: stloc.s 18
-		IL_0576: ldloc.s 20
-		IL_0578: ldloc.s 18
-		IL_057a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_057f: pop
-		IL_0580: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0585: stloc.s 20
-		IL_0587: ldloc.s 6
-		IL_0589: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_058e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0593: stloc.s 18
-		IL_0595: ldloc.s 20
-		IL_0597: ldloc.s 18
-		IL_0599: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_059e: pop
-		IL_059f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05a4: stloc.s 20
-		IL_05a6: ldloc.s 7
-		IL_05a8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_05b2: stloc.s 18
-		IL_05b4: ldloc.s 20
-		IL_05b6: ldloc.s 18
-		IL_05b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05bd: pop
-		IL_05be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05c3: stloc.s 20
-		IL_05c5: ldloc.s 8
-		IL_05c7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05cc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_05d1: stloc.s 18
-		IL_05d3: ldloc.s 20
-		IL_05d5: ldloc.s 18
-		IL_05d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05dc: pop
-		IL_05dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05e2: stloc.s 20
-		IL_05e4: ldloc.s 9
-		IL_05e6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05eb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_05f0: stloc.s 18
-		IL_05f2: ldloc.s 20
-		IL_05f4: ldloc.s 18
-		IL_05f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05fb: pop
-		IL_05fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0601: stloc.s 20
-		IL_0603: ldloc.s 10
-		IL_0605: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_060a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_060f: stloc.s 18
-		IL_0611: ldloc.s 20
-		IL_0613: ldloc.s 18
-		IL_0615: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_061a: pop
-		IL_061b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0620: stloc.s 20
-		IL_0622: ldloc.s 11
-		IL_0624: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0629: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_062e: stloc.s 18
-		IL_0630: ldloc.s 20
-		IL_0632: ldloc.s 18
-		IL_0634: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0639: pop
-		IL_063a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_063f: stloc.s 20
-		IL_0641: ldloc.s 12
-		IL_0643: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0648: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_064d: stloc.s 18
-		IL_064f: ldloc.s 20
-		IL_0651: ldloc.s 18
-		IL_0653: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0658: pop
-		IL_0659: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_065e: stloc.s 20
-		IL_0660: ldloc.s 13
-		IL_0662: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0667: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_066c: stloc.s 18
-		IL_066e: ldloc.s 20
-		IL_0670: ldloc.s 18
-		IL_0672: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0677: pop
-		IL_0678: ret
+		IL_0288: volatile.
+		IL_028a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+		IL_028f: brfalse IL_02a5
+
+		IL_0294: ldloc.s 17
+		IL_0296: ldstr "prototype"
+		IL_029b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02a0: br IL_02bb
+
+		IL_02a5: ldloc.s 17
+		IL_02a7: ldstr "prototype"
+		IL_02ac: ldstr "Function_SchedulerCallResults:Modules.Function_SchedulerCallResults:__js_module_init__:64"
+		IL_02b1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_02bb: stloc.s 18
+		IL_02bd: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02c2: stloc.s 14
+		IL_02c4: ldloc.s 18
+		IL_02c6: ldstr "add"
+		IL_02cb: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_add/FunctionObject::.ctor()
+		IL_02d0: ldc.i4.1
+		IL_02d1: conv.r8
+		IL_02d2: ldstr "add"
+		IL_02d7: ldc.i4.1
+		IL_02d8: ldc.i4.1
+		IL_02d9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_add/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02de: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_add/FunctionObject>(!!0)
+		IL_02e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_02e8: pop
+		IL_02e9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02ee: stloc.s 14
+		IL_02f0: ldloc.s 18
+		IL_02f2: ldstr "getValue"
+		IL_02f7: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_getValue/FunctionObject::.ctor()
+		IL_02fc: ldc.i4.0
+		IL_02fd: conv.r8
+		IL_02fe: ldstr "getValue"
+		IL_0303: ldc.i4.1
+		IL_0304: ldc.i4.1
+		IL_0305: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_getValue/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_030a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_getValue/FunctionObject>(!!0)
+		IL_030f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0314: pop
+		IL_0315: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_031a: stloc.s 14
+		IL_031c: ldloc.s 18
+		IL_031e: ldstr "chain"
+		IL_0323: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_chain/FunctionObject::.ctor()
+		IL_0328: ldc.i4.0
+		IL_0329: conv.r8
+		IL_032a: ldstr "chain"
+		IL_032f: ldc.i4.1
+		IL_0330: ldc.i4.1
+		IL_0331: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_chain/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0336: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_chain/FunctionObject>(!!0)
+		IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0340: pop
+		IL_0341: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0346: stloc.s 14
+		IL_0348: ldloc.s 18
+		IL_034a: ldstr "addOnce"
+		IL_034f: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_addOnce/FunctionObject::.ctor()
+		IL_0354: ldc.i4.0
+		IL_0355: conv.r8
+		IL_0356: ldstr "addOnce"
+		IL_035b: ldc.i4.1
+		IL_035c: ldc.i4.1
+		IL_035d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_addOnce/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0362: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_addOnce/FunctionObject>(!!0)
+		IL_0367: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_036c: pop
+		IL_036d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0372: stloc.s 14
+		IL_0374: ldloc.s 18
+		IL_0376: ldstr "next"
+		IL_037b: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_next/FunctionObject::.ctor()
+		IL_0380: ldc.i4.0
+		IL_0381: conv.r8
+		IL_0382: ldstr "next"
+		IL_0387: ldc.i4.1
+		IL_0388: ldc.i4.1
+		IL_0389: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_next/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_038e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_next/FunctionObject>(!!0)
+		IL_0393: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0398: pop
+		IL_0399: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_039e: stloc.s 14
+		IL_03a0: ldloc.s 18
+		IL_03a2: ldstr "maxNext"
+		IL_03a7: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_maxNext/FunctionObject::.ctor()
+		IL_03ac: ldc.i4.0
+		IL_03ad: conv.r8
+		IL_03ae: ldstr "maxNext"
+		IL_03b3: ldc.i4.1
+		IL_03b4: ldc.i4.1
+		IL_03b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_maxNext/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_maxNext/FunctionObject>(!!0)
+		IL_03bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_03c4: pop
+		IL_03c5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03ca: stloc.s 14
+		IL_03cc: ldloc.s 18
+		IL_03ce: ldstr "sum"
+		IL_03d3: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_sum/FunctionObject::.ctor()
+		IL_03d8: ldc.i4.s 9
+		IL_03da: conv.r8
+		IL_03db: ldstr "sum"
+		IL_03e0: ldc.i4.0
+		IL_03e1: ldc.i4.1
+		IL_03e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_sum/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03e7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_sum/FunctionObject>(!!0)
+		IL_03ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_03f1: pop
+		IL_03f2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03f7: stloc.s 14
+		IL_03f9: ldloc.s 18
+		IL_03fb: ldstr "maxSum"
+		IL_0400: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_maxSum/FunctionObject::.ctor()
+		IL_0405: ldc.i4.0
+		IL_0406: conv.r8
+		IL_0407: ldstr "maxSum"
+		IL_040c: ldc.i4.1
+		IL_040d: ldc.i4.1
+		IL_040e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSum/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0413: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSum/FunctionObject>(!!0)
+		IL_0418: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_041d: pop
+		IL_041e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0423: stloc.s 14
+		IL_0425: ldloc.s 18
+		IL_0427: ldstr "maxSumWithFloor"
+		IL_042c: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_maxSumWithFloor/FunctionObject::.ctor()
+		IL_0431: ldc.i4.0
+		IL_0432: conv.r8
+		IL_0433: ldstr "maxSumWithFloor"
+		IL_0438: ldc.i4.1
+		IL_0439: ldc.i4.1
+		IL_043a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSumWithFloor/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_043f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_SchedulerCallResults/Counter/Scope_maxSumWithFloor/FunctionObject>(!!0)
+		IL_0444: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0449: pop
+		IL_044a: ldc.i4.1
+		IL_044b: newarr [System.Runtime]System.Object
+		IL_0450: dup
+		IL_0451: ldc.i4.0
+		IL_0452: ldloc.0
+		IL_0453: stelem.ref
+		IL_0454: stloc.s 14
+		IL_0456: ldloc.s 14
+		IL_0458: newobj instance void Modules.Function_SchedulerCallResults/Counter/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_045d: ldloc.s 17
+		IL_045f: ldloc.s 14
+		IL_0461: ldc.i4.1
+		IL_0462: conv.r8
+		IL_0463: ldc.i4.0
+		IL_0464: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0469: castclass Modules.Function_SchedulerCallResults/Counter/Scope_ctor/FunctionObject
+		IL_046e: stloc.s 19
+		IL_0470: ldloc.0
+		IL_0471: ldloc.s 19
+		IL_0473: stfld object Modules.Function_SchedulerCallResults/Scope::Counter
+		IL_0478: nop
+		IL_0479: nop
+		IL_047a: nop
+		IL_047b: nop
+		IL_047c: nop
+		IL_047d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0482: stloc.s 20
+		IL_0484: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0489: stloc.s 14
+		IL_048b: ldloc.1
+		IL_048c: ldloc.s 14
+		IL_048e: ldc.r8 9
+		IL_0497: box [System.Runtime]System.Double
+		IL_049c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_04a1: stloc.s 18
+		IL_04a3: ldloc.s 20
+		IL_04a5: ldloc.s 18
+		IL_04a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04ac: pop
+		IL_04ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04b2: stloc.s 20
+		IL_04b4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_04b9: stloc.s 14
+		IL_04bb: ldc.r8 2.7
+		IL_04c4: neg
+		IL_04c5: stloc.s 21
+		IL_04c7: ldloc.s 21
+		IL_04c9: box [System.Runtime]System.Double
+		IL_04ce: stloc.s 22
+		IL_04d0: ldloc.2
+		IL_04d1: ldloc.s 14
+		IL_04d3: ldloc.s 22
+		IL_04d5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_04da: stloc.s 18
+		IL_04dc: ldloc.s 20
+		IL_04de: ldloc.s 18
+		IL_04e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04e5: pop
+		IL_04e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04eb: stloc.s 20
+		IL_04ed: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_04f2: stloc.s 14
+		IL_04f4: ldloc.3
+		IL_04f5: ldloc.s 14
+		IL_04f7: ldc.r8 1.2
+		IL_0500: box [System.Runtime]System.Double
+		IL_0505: ldc.r8 1.1
+		IL_050e: box [System.Runtime]System.Double
+		IL_0513: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0518: stloc.s 18
+		IL_051a: ldloc.s 20
+		IL_051c: ldloc.s 18
+		IL_051e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0523: pop
+		IL_0524: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0529: stloc.s 20
+		IL_052b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0530: stloc.s 14
+		IL_0532: ldloc.s 4
+		IL_0534: ldloc.s 14
+		IL_0536: ldc.r8 9
+		IL_053f: box [System.Runtime]System.Double
+		IL_0544: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0549: stloc.s 18
+		IL_054b: ldloc.s 20
+		IL_054d: ldloc.s 18
+		IL_054f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0554: pop
+		IL_0555: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_055a: stloc.s 20
+		IL_055c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0561: stloc.s 14
+		IL_0563: ldloc.s 5
+		IL_0565: ldloc.s 14
+		IL_0567: ldc.r8 2
+		IL_0570: box [System.Runtime]System.Double
+		IL_0575: ldc.r8 3
+		IL_057e: box [System.Runtime]System.Double
+		IL_0583: ldc.r8 2
+		IL_058c: box [System.Runtime]System.Double
+		IL_0591: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_0596: stloc.s 18
+		IL_0598: ldloc.s 20
+		IL_059a: ldloc.s 18
+		IL_059c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05a1: pop
+		IL_05a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05a7: stloc.s 20
+		IL_05a9: ldloc.s 6
+		IL_05ab: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_05b0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_05b5: stloc.s 18
+		IL_05b7: ldloc.s 20
+		IL_05b9: ldloc.s 18
+		IL_05bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05c0: pop
+		IL_05c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05c6: stloc.s 20
+		IL_05c8: ldloc.s 7
+		IL_05ca: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_05cf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_05d4: stloc.s 18
+		IL_05d6: ldloc.s 20
+		IL_05d8: ldloc.s 18
+		IL_05da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05df: pop
+		IL_05e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05e5: stloc.s 20
+		IL_05e7: ldloc.s 8
+		IL_05e9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_05ee: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_05f3: stloc.s 18
+		IL_05f5: ldloc.s 20
+		IL_05f7: ldloc.s 18
+		IL_05f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05fe: pop
+		IL_05ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0604: stloc.s 20
+		IL_0606: ldloc.s 9
+		IL_0608: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_060d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0612: stloc.s 18
+		IL_0614: ldloc.s 20
+		IL_0616: ldloc.s 18
+		IL_0618: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_061d: pop
+		IL_061e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0623: stloc.s 20
+		IL_0625: ldloc.s 10
+		IL_0627: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_062c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0631: stloc.s 18
+		IL_0633: ldloc.s 20
+		IL_0635: ldloc.s 18
+		IL_0637: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_063c: pop
+		IL_063d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0642: stloc.s 20
+		IL_0644: ldloc.s 11
+		IL_0646: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_064b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0650: stloc.s 18
+		IL_0652: ldloc.s 20
+		IL_0654: ldloc.s 18
+		IL_0656: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_065b: pop
+		IL_065c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0661: stloc.s 20
+		IL_0663: ldloc.s 12
+		IL_0665: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_066a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_066f: stloc.s 18
+		IL_0671: ldloc.s 20
+		IL_0673: ldloc.s 18
+		IL_0675: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_067a: pop
+		IL_067b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0680: stloc.s 20
+		IL_0682: ldloc.s 13
+		IL_0684: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0689: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_068e: stloc.s 18
+		IL_0690: ldloc.s 20
+		IL_0692: ldloc.s 18
+		IL_0694: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0699: pop
+		IL_069a: ret
 	} // end of method Function_SchedulerCallResults::__js_module_init__
 
 } // end of class Modules.Function_SchedulerCallResults
@@ -4880,4 +4924,15 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_32
+	.field assembly static int32 __jroc_dynamicLookup_33
+	.field assembly static int32 __jroc_dynamicLookup_34
+	.field assembly static int32 __jroc_dynamicLookup_35
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

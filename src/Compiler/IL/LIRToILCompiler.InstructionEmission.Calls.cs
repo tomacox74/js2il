@@ -1156,15 +1156,38 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallMember0 callMember0:
                 {
-                    // Emit the realm-owned per-call-site cache prototype for
-                    // dynamic zero-argument member calls.
+                    var cachedPath = ilEncoder.DefineLabel();
+                    var done = ilEncoder.DefineLabel();
+                    ilEncoder.OpCode(ILOpCode.Volatile);
+                    ilEncoder.OpCode(ILOpCode.Ldsfld);
+                    ilEncoder.Token(
+                        GetDynamicLookupTerminalField(callMember0));
+                    ilEncoder.Branch(
+                        ILOpCode.Brfalse,
+                        cachedPath);
+
                     EmitLoadTempAsObject(callMember0.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
-                    ilEncoder.Ldstr(
-                        _metadataBuilder,
-                        GetDynamicLookupInlineCacheSiteKey(
-                            methodDescriptor,
-                            callMember0));
+                    var genericCallMemberRef =
+                        _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.CallMember0),
+                            new[]
+                            {
+                                typeof(object),
+                                typeof(string)
+                            });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(genericCallMemberRef);
+                    ilEncoder.Branch(ILOpCode.Br, done);
+
+                    ilEncoder.MarkLabel(cachedPath);
+                    EmitLoadTempAsObject(callMember0.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
+                    EmitDynamicLookupInlineCacheSite(
+                        ilEncoder,
+                        methodDescriptor,
+                        callMember0);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.DynamicLookupInlineCache),
@@ -1173,10 +1196,12 @@ internal sealed partial class LIRToILCompiler
                         {
                             typeof(object),
                             typeof(string),
-                            typeof(string)
+                            typeof(string),
+                            typeof(int).MakeByRefType()
                         });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
+                    ilEncoder.MarkLabel(done);
 
                     if (IsMaterialized(callMember0.Result, allocation))
                     {

@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): recover the identity-cache megamorphic regression
+  from issue #1958 Phase 1. Generated property-read and zero-argument member
+  call sites now publish a bounded terminal deoptimization flag and branch
+  directly to the generic operation after the fifth receiver, while
+  realm-owned entries remain isolated and weak. Runtime context mirroring,
+  recent-site lookup, and intrinsic prototype markers also remove ambient
+  realm and `%Function.prototype%` discovery from active property-read paths.
 - perf(tooling): add the exact `kracken-ai-astar` Phase 0 guardrail for issue
   #1958, including same-host raw-artifact comparison with provenance, focused
   cache-state and boxed Array-length controls, and generated `findGraphNode`

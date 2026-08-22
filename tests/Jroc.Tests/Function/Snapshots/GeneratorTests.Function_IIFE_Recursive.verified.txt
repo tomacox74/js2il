@@ -195,7 +195,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 205 (0xcd)
+			// Code size: 304 (0x130)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -215,75 +215,108 @@
 			IL_0007: stloc.0
 			IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_000d: stloc.s 4
-			IL_000f: ldarg.1
-			IL_0010: ldstr "name"
-			IL_0015: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:8"
-			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_001f: stloc.3
-			IL_0020: ldloc.s 4
-			IL_0022: ldstr "visit"
-			IL_0027: ldloc.3
-			IL_0028: ldarg.2
-			IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_002e: pop
-			IL_002f: ldarg.2
-			IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0035: ldc.r8 2
-			IL_003e: cgt
-			IL_0040: brfalse IL_0047
+			IL_000f: volatile.
+			IL_0011: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0016: brfalse IL_002b
 
-			IL_0045: ldnull
-			IL_0046: ret
+			IL_001b: ldarg.1
+			IL_001c: ldstr "name"
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0026: br IL_0040
 
-			IL_0047: ldc.r8 0.0
-			IL_0050: stloc.1
-			// loop start (head: IL_0051)
-				IL_0051: ldloc.1
-				IL_0052: stloc.s 5
-				IL_0054: ldarg.1
-				IL_0055: ldstr "children"
-				IL_005a: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:28"
-				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0064: stloc.3
-				IL_0065: ldloc.3
-				IL_0066: ldstr "length"
-				IL_006b: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0070: stloc.s 6
-				IL_0072: ldloc.s 5
-				IL_0074: ldloc.s 6
-				IL_0076: clt
-				IL_0078: brfalse IL_00cb
+			IL_002b: ldarg.1
+			IL_002c: ldstr "name"
+			IL_0031: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:8"
+			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_007d: ldarg.1
-				IL_007e: ldstr "children"
-				IL_0083: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:36"
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_008d: stloc.3
-				IL_008e: ldloc.3
-				IL_008f: ldloc.1
-				IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0095: stloc.2
-				IL_0096: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_009b: stloc.s 7
-				IL_009d: ldarg.2
-				IL_009e: ldc.r8 1
-				IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_00ac: stloc.s 8
-				IL_00ae: ldloc.0
-				IL_00af: ldloc.s 7
-				IL_00b1: ldloc.2
-				IL_00b2: ldloc.s 8
-				IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-				IL_00b9: pop
-				IL_00ba: ldloc.1
-				IL_00bb: ldc.r8 1
-				IL_00c4: add
-				IL_00c5: stloc.1
-				IL_00c6: br IL_0051
+			IL_0040: stloc.3
+			IL_0041: ldloc.s 4
+			IL_0043: ldstr "visit"
+			IL_0048: ldloc.3
+			IL_0049: ldarg.2
+			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_004f: pop
+			IL_0050: ldarg.2
+			IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0056: ldc.r8 2
+			IL_005f: cgt
+			IL_0061: brfalse IL_0068
+
+			IL_0066: ldnull
+			IL_0067: ret
+
+			IL_0068: ldc.r8 0.0
+			IL_0071: stloc.1
+			// loop start (head: IL_0072)
+				IL_0072: ldloc.1
+				IL_0073: stloc.s 5
+				IL_0075: volatile.
+				IL_0077: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+				IL_007c: brfalse IL_0091
+
+				IL_0081: ldarg.1
+				IL_0082: ldstr "children"
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_008c: br IL_00a6
+
+				IL_0091: ldarg.1
+				IL_0092: ldstr "children"
+				IL_0097: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:28"
+				IL_009c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+				IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_00a6: stloc.3
+				IL_00a7: ldloc.3
+				IL_00a8: ldstr "length"
+				IL_00ad: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_00b2: stloc.s 6
+				IL_00b4: ldloc.s 5
+				IL_00b6: ldloc.s 6
+				IL_00b8: clt
+				IL_00ba: brfalse IL_012e
+
+				IL_00bf: volatile.
+				IL_00c1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+				IL_00c6: brfalse IL_00db
+
+				IL_00cb: ldarg.1
+				IL_00cc: ldstr "children"
+				IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00d6: br IL_00f0
+
+				IL_00db: ldarg.1
+				IL_00dc: ldstr "children"
+				IL_00e1: ldstr "Function_IIFE_Recursive:<TwoPhaseDummy_M2>:__js_call__:36"
+				IL_00e6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+				IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_00f0: stloc.3
+				IL_00f1: ldloc.3
+				IL_00f2: ldloc.1
+				IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00f8: stloc.2
+				IL_00f9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_00fe: stloc.s 7
+				IL_0100: ldarg.2
+				IL_0101: ldc.r8 1
+				IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_010f: stloc.s 8
+				IL_0111: ldloc.0
+				IL_0112: ldloc.s 7
+				IL_0114: ldloc.2
+				IL_0115: ldloc.s 8
+				IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+				IL_011c: pop
+				IL_011d: ldloc.1
+				IL_011e: ldc.r8 1
+				IL_0127: add
+				IL_0128: stloc.1
+				IL_0129: br IL_0072
 			// end loop
 
-			IL_00cb: ldnull
-			IL_00cc: ret
+			IL_012e: ldnull
+			IL_012f: ret
 		} // end of method walk::__js_call__
 
 	} // end of class walk
@@ -428,4 +461,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

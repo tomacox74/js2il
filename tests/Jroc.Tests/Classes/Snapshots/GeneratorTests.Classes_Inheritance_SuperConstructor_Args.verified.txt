@@ -342,7 +342,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 276 (0x114)
+		// Code size: 310 (0x136)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Inheritance_SuperConstructor_Args/Scope,
@@ -447,16 +447,27 @@
 		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 		IL_00ef: stloc.s 6
 		IL_00f1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_00f6: ldloc.s 6
-		IL_00f8: ldstr "x"
-		IL_00fd: ldstr "Classes_Inheritance_SuperConstructor_Args:Modules.Classes_Inheritance_SuperConstructor_Args:__js_module_init__:20"
-		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_0107: stloc.s 6
-		IL_0109: ldloc.s 7
-		IL_010b: ldloc.s 6
-		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0112: pop
-		IL_0113: ret
+		IL_00f6: volatile.
+		IL_00f8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_00fd: brfalse IL_0113
+
+		IL_0102: ldloc.s 6
+		IL_0104: ldstr "x"
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010e: br IL_0129
+
+		IL_0113: ldloc.s 6
+		IL_0115: ldstr "x"
+		IL_011a: ldstr "Classes_Inheritance_SuperConstructor_Args:Modules.Classes_Inheritance_SuperConstructor_Args:__js_module_init__:20"
+		IL_011f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0129: stloc.s 6
+		IL_012b: ldloc.s 7
+		IL_012d: ldloc.s 6
+		IL_012f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0134: pop
+		IL_0135: ret
 	} // end of method Classes_Inheritance_SuperConstructor_Args::__js_module_init__
 
 } // end of class Modules.Classes_Inheritance_SuperConstructor_Args
@@ -482,4 +493,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_8
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

@@ -10,6 +10,13 @@ internal enum DynamicLookupInlineCacheState
     Megamorphic
 }
 
+internal enum DynamicLookupInlineCacheProbeResult
+{
+    Miss,
+    Hit,
+    Megamorphic
+}
+
 internal sealed class DynamicLookupInlineCacheSite
 {
     internal const int MaxPolymorphicEntries = 4;
@@ -45,25 +52,29 @@ internal sealed class DynamicLookupInlineCacheSite
         => Volatile.Read(ref _snapshot).Entries.Length;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal bool TryGet(
+    internal DynamicLookupInlineCacheProbeResult Probe(
         object receiver,
         string propertyName,
         out object? value)
     {
         var snapshot = Volatile.Read(ref _snapshot);
-        if (snapshot.State != DynamicLookupInlineCacheState.Megamorphic)
+        if (snapshot.State
+            == DynamicLookupInlineCacheState.Megamorphic)
         {
-            foreach (var entry in snapshot.Entries)
+            value = null;
+            return DynamicLookupInlineCacheProbeResult.Megamorphic;
+        }
+
+        foreach (var entry in snapshot.Entries)
+        {
+            if (entry.TryGetValue(receiver, propertyName, out value))
             {
-                if (entry.TryGetValue(receiver, propertyName, out value))
-                {
-                    return true;
-                }
+                return DynamicLookupInlineCacheProbeResult.Hit;
             }
         }
 
         value = null;
-        return false;
+        return DynamicLookupInlineCacheProbeResult.Miss;
     }
 
     internal void Observe(
@@ -251,6 +262,28 @@ internal sealed class DynamicLookupInlineCacheEntry
 
 public static class DynamicLookupInlineCache
 {
+    private const int RecentSiteCapacity = 8;
+
+    [ThreadStatic]
+    private static RecentSite[]? _recentSites;
+
+    [ThreadStatic]
+    private static int _nextRecentSite;
+
+    [ThreadStatic]
+    private static RecentSite _lastSite;
+
+    [ThreadStatic]
+    private static RecentSite _previousSite;
+
+    [ThreadStatic]
+    private static RuntimeRealmValueCacheState? _currentCaches;
+
+    private readonly record struct RecentSite(
+        RuntimeRealmValueCacheState Caches,
+        string SiteKey,
+        DynamicLookupInlineCacheSite Site);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static object GetItem(
         object receiver,
@@ -265,29 +298,72 @@ public static class DynamicLookupInlineCache
             return ObjectRuntime.GetItem(receiver, propertyName);
         }
 
+        var caches = _currentCaches
+            ?? GetCurrentRealmCaches();
         return GetItemCacheable(
             (JsObject)receiver,
             propertyName,
-            siteKey);
+            siteKey,
+            caches,
+            out _);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object GetItem(
+        object receiver,
+        string propertyName,
+        string siteKey,
+        ref int terminalMegamorphic)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName);
+        ArgumentNullException.ThrowIfNull(siteKey);
+
+        if (Volatile.Read(ref terminalMegamorphic) != 0
+            || !CanCacheReceiver(receiver))
+        {
+            return ObjectRuntime.GetItem(receiver, propertyName);
+        }
+
+        var caches = _currentCaches
+            ?? GetCurrentRealmCaches();
+        var result = GetItemCacheable(
+            (JsObject)receiver,
+            propertyName,
+            siteKey,
+            caches,
+            out var isMegamorphic);
+        if (isMegamorphic)
+        {
+            Volatile.Write(ref terminalMegamorphic, 1);
+        }
+
+        return result;
     }
 
     private static object GetItemCacheable(
         JsObject receiver,
         string propertyName,
-        string siteKey)
+        string siteKey,
+        RuntimeRealmValueCacheState caches,
+        out bool isMegamorphic)
     {
-        var caches = GetCurrentRealmCaches();
-        if (caches.DynamicLookupInlineCaches.TryGetValue(
-                siteKey,
-                out var site)
-            && site.TryGet(receiver, propertyName, out var cachedValue))
+        isMegamorphic = false;
+        var site = GetSite(caches, siteKey);
+        object? cachedValue = null;
+        var probe = site is null
+            ? DynamicLookupInlineCacheProbeResult.Miss
+            : site.Probe(
+                receiver,
+                propertyName,
+                out cachedValue);
+        if (probe == DynamicLookupInlineCacheProbeResult.Hit)
         {
             return cachedValue!;
         }
 
-        if (site?.State
-            == DynamicLookupInlineCacheState.Megamorphic)
+        if (probe == DynamicLookupInlineCacheProbeResult.Megamorphic)
         {
+            isMegamorphic = true;
             return ObjectRuntime.GetItem(receiver, propertyName);
         }
 
@@ -302,7 +378,13 @@ public static class DynamicLookupInlineCache
         site ??= caches.DynamicLookupInlineCaches.GetOrAdd(
             siteKey,
             static _ => new DynamicLookupInlineCacheSite());
+        RememberSite(caches, siteKey, site);
         site.Observe(entry, receiver);
+        if (site.State == DynamicLookupInlineCacheState.Megamorphic)
+        {
+            isMegamorphic = true;
+        }
+
         entry.TryGetValue(receiver, propertyName, out var resolvedValue);
         return resolvedValue!;
     }
@@ -323,30 +405,75 @@ public static class DynamicLookupInlineCache
                 propertyName);
         }
 
+        var caches = _currentCaches
+            ?? GetCurrentRealmCaches();
         return CallMember0Cacheable(
             (JsObject)receiver,
             propertyName,
-            siteKey);
+            siteKey,
+            caches,
+            out _);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? CallMember0(
+        object receiver,
+        string propertyName,
+        string siteKey,
+        ref int terminalMegamorphic)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName);
+        ArgumentNullException.ThrowIfNull(siteKey);
+
+        if (Volatile.Read(ref terminalMegamorphic) != 0
+            || !CanCacheReceiver(receiver))
+        {
+            return ObjectRuntime.CallMember0(
+                receiver,
+                propertyName);
+        }
+
+        var caches = _currentCaches
+            ?? GetCurrentRealmCaches();
+        var result = CallMember0Cacheable(
+            (JsObject)receiver,
+            propertyName,
+            siteKey,
+            caches,
+            out var isMegamorphic);
+        if (isMegamorphic)
+        {
+            Volatile.Write(ref terminalMegamorphic, 1);
+        }
+
+        return result;
     }
 
     private static object? CallMember0Cacheable(
         JsObject receiver,
         string propertyName,
-        string siteKey)
+        string siteKey,
+        RuntimeRealmValueCacheState caches,
+        out bool isMegamorphic)
     {
-        var caches = GetCurrentRealmCaches();
-        if (caches.DynamicLookupInlineCaches.TryGetValue(
-                siteKey,
-                out var site)
-            && site.TryGet(receiver, propertyName, out var cachedValue)
+        isMegamorphic = false;
+        var site = GetSite(caches, siteKey);
+        object? cachedValue = null;
+        var probe = site is null
+            ? DynamicLookupInlineCacheProbeResult.Miss
+            : site.Probe(
+                receiver,
+                propertyName,
+                out cachedValue);
+        if (probe == DynamicLookupInlineCacheProbeResult.Hit
             && CallableOperations.IsCallable(cachedValue))
         {
             return CallableOperations.Call0(cachedValue!, receiver);
         }
 
-        if (site?.State
-            == DynamicLookupInlineCacheState.Megamorphic)
+        if (probe == DynamicLookupInlineCacheProbeResult.Megamorphic)
         {
+            isMegamorphic = true;
             return ObjectRuntime.CallMember0(
                 receiver,
                 propertyName);
@@ -368,7 +495,13 @@ public static class DynamicLookupInlineCache
         site ??= caches.DynamicLookupInlineCaches.GetOrAdd(
             siteKey,
             static _ => new DynamicLookupInlineCacheSite());
+        RememberSite(caches, siteKey, site);
         site.Observe(entry, receiver);
+        if (site.State == DynamicLookupInlineCacheState.Megamorphic)
+        {
+            isMegamorphic = true;
+        }
+
         return CallableOperations.Call0(resolvedValue!, receiver);
     }
 
@@ -384,14 +517,163 @@ public static class DynamicLookupInlineCache
     }
 
     internal static bool RemoveSiteForBenchmarks(string siteKey)
-        => GetCurrentRealmCaches()
-            .DynamicLookupInlineCaches
+    {
+        var caches = GetCurrentRealmCaches();
+        RemoveRecentSite(caches, siteKey);
+        return caches.DynamicLookupInlineCaches
             .TryRemove(siteKey, out _);
+    }
+
+    internal static void OnExecutionContextChanged(
+        RuntimeRealmValueCacheState? currentCaches)
+    {
+        _currentCaches = currentCaches;
+        _recentSites = null;
+        _nextRecentSite = 0;
+        _lastSite = default;
+        _previousSite = default;
+    }
 
     private static RuntimeRealmValueCacheState GetCurrentRealmCaches()
         => RuntimeExecutionContext.CurrentOrOverride?.Realm.ValueCaches
             ?? throw new InvalidOperationException(
                 "Dynamic lookup inline caches require an active JavaScript runtime.");
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static DynamicLookupInlineCacheSite? GetSite(
+        RuntimeRealmValueCacheState caches,
+        string siteKey)
+    {
+        if (MatchesRecentSite(_lastSite, caches, siteKey))
+        {
+            return _lastSite.Site;
+        }
+
+        if (MatchesRecentSite(_previousSite, caches, siteKey))
+        {
+            (_lastSite, _previousSite) =
+                (_previousSite, _lastSite);
+            return _lastSite.Site;
+        }
+
+        var recentSites = _recentSites;
+        if (recentSites is not null)
+        {
+            for (var index = 0;
+                 index < recentSites.Length;
+                 index++)
+            {
+                var recent = recentSites[index];
+                if (MatchesRecentSite(
+                        recent,
+                        caches,
+                        siteKey))
+                {
+                    _previousSite = _lastSite;
+                    _lastSite = recent;
+                    return recent.Site;
+                }
+            }
+        }
+
+        if (!caches.DynamicLookupInlineCaches.TryGetValue(
+                siteKey,
+                out var site))
+        {
+            return null;
+        }
+
+        RememberSite(caches, siteKey, site);
+        return site;
+    }
+
+    private static void RememberSite(
+        RuntimeRealmValueCacheState caches,
+        string siteKey,
+        DynamicLookupInlineCacheSite site)
+    {
+        var recent = new RecentSite(
+            caches,
+            siteKey,
+            site);
+        if (MatchesRecentSite(
+                _lastSite,
+                caches,
+                siteKey))
+        {
+            _lastSite = recent;
+            return;
+        }
+
+        _previousSite = _lastSite;
+        _lastSite = recent;
+        var recentSites = _recentSites
+            ??= new RecentSite[RecentSiteCapacity];
+        recentSites[_nextRecentSite] =
+            recent;
+        _nextRecentSite =
+            (_nextRecentSite + 1) % recentSites.Length;
+    }
+
+    private static void RemoveRecentSite(
+        RuntimeRealmValueCacheState caches,
+        string siteKey)
+    {
+        if (MatchesRecentSite(
+                _lastSite,
+                caches,
+                siteKey))
+        {
+            _lastSite = default;
+        }
+
+        if (MatchesRecentSite(
+                _previousSite,
+                caches,
+                siteKey))
+        {
+            _previousSite = default;
+        }
+
+        var recentSites = _recentSites;
+        if (recentSites is null)
+        {
+            return;
+        }
+
+        for (var index = 0;
+             index < recentSites.Length;
+             index++)
+        {
+            var recent = recentSites[index];
+            if (MatchesRecentSite(
+                    recent,
+                    caches,
+                    siteKey))
+            {
+                recentSites[index] = default;
+            }
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool MatchesRecentSite(
+        RecentSite recent,
+        RuntimeRealmValueCacheState caches,
+        string siteKey)
+        => recent.Caches is not null
+            && ReferenceEquals(recent.Caches, caches)
+            && SiteKeysEqual(recent.SiteKey, siteKey);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool SiteKeysEqual(
+        string? left,
+        string right)
+        => ReferenceEquals(left, right)
+            || string.Equals(
+                left,
+                right,
+                StringComparison.Ordinal);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool CanCacheReceiver(object receiver)

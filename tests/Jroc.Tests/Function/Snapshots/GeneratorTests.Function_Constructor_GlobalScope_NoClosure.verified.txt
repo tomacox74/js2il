@@ -148,7 +148,7 @@
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 82 (0x52)
+				// Code size: 114 (0x72)
 				.maxstack 8
 				.locals init (
 					[0] string,
@@ -168,16 +168,26 @@
 				IL_002d: stloc.0
 				IL_002e: ldstr "globalThis"
 				IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0038: ldstr "dynamicFnVisible"
-				IL_003d: ldstr "Function_Constructor_GlobalScope_NoClosure:<TwoPhaseDummy_M3>:__js_call__:13"
-				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-				IL_0047: stloc.1
-				IL_0048: ldloc.0
-				IL_0049: ldloc.1
-				IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_004f: stloc.2
-				IL_0050: ldloc.2
-				IL_0051: ret
+				IL_0038: volatile.
+				IL_003a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+				IL_003f: brfalse IL_0053
+
+				IL_0044: ldstr "dynamicFnVisible"
+				IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_004e: br IL_0067
+
+				IL_0053: ldstr "dynamicFnVisible"
+				IL_0058: ldstr "Function_Constructor_GlobalScope_NoClosure:<TwoPhaseDummy_M3>:__js_call__:13"
+				IL_005d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+				IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_0067: stloc.1
+				IL_0068: ldloc.0
+				IL_0069: ldloc.1
+				IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_006f: stloc.2
+				IL_0070: ldloc.2
+				IL_0071: ret
 			} // end of method '<>DynamicFunction_L9C15'::__js_call__
 
 		} // end of class <>DynamicFunction_L9C15
@@ -482,4 +492,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

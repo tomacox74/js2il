@@ -37,6 +37,7 @@ public static class Function
 
     private static void InitializePrototypeSurface(JsObject prototype)
     {
+        prototype.MarkFunctionPrototype();
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);

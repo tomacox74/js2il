@@ -36,6 +36,8 @@ internal sealed partial class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
     private Dictionary<LIRInstruction, int>? _lirInstructionIndices;
+    private Dictionary<LIRInstruction, FieldDefinitionHandle>?
+        _dynamicLookupTerminalFields;
 
     private string GetDynamicLookupInlineCacheSiteKey(
         MethodDescriptor methodDescriptor,
@@ -68,6 +70,65 @@ internal sealed partial class LIRToILCompiler
             + $"{methodDescriptor.TypeBuilder.FullName}:"
             + $"{methodDescriptor.Name}:"
             + $"{instructionIndex}";
+    }
+
+    private void PrepareDynamicLookupTerminalFields()
+    {
+        var instructions = MethodBody.Instructions
+            .Where(
+                instruction =>
+                    instruction is LIRCallMember0
+                    || instruction is LIRGetItem getItem
+                    && GetTempStorage(getItem.Index).Kind
+                        == ValueStorageKind.Reference
+                    && GetTempStorage(getItem.Index).ClrType
+                        == typeof(string))
+            .ToArray();
+        if (instructions.Length == 0)
+        {
+            return;
+        }
+
+        _dynamicLookupTerminalFields =
+            new Dictionary<LIRInstruction, FieldDefinitionHandle>(
+                ReferenceEqualityComparer.Instance);
+        var registry = _serviceProvider.GetRequiredService<
+            DynamicLookupTerminalFieldRegistry>();
+
+        foreach (var instruction in instructions)
+        {
+            _dynamicLookupTerminalFields[instruction] =
+                registry.ReserveField(_metadataBuilder);
+        }
+    }
+
+    private FieldDefinitionHandle GetDynamicLookupTerminalField(
+        LIRInstruction instruction)
+    {
+        if (_dynamicLookupTerminalFields is null
+            || !_dynamicLookupTerminalFields.TryGetValue(
+                instruction,
+                out var field))
+        {
+            throw new InvalidOperationException(
+                "Dynamic lookup terminal state was not declared for the instruction.");
+        }
+
+        return field;
+    }
+
+    private void EmitDynamicLookupInlineCacheSite(
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor,
+        LIRInstruction instruction)
+    {
+        var siteKey = GetDynamicLookupInlineCacheSiteKey(
+            methodDescriptor,
+            instruction);
+        ilEncoder.Ldstr(_metadataBuilder, siteKey);
+        ilEncoder.OpCode(ILOpCode.Ldsflda);
+        ilEncoder.Token(
+            GetDynamicLookupTerminalField(instruction));
     }
 
     private void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType, EntityHandle returnTypeHandle = default)

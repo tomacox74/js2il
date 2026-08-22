@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 553 (0x229)
+		// Code size: 585 (0x249)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_CreateHmac/Scope,
@@ -179,35 +179,45 @@
 		IL_01bf: stloc.s 6
 		IL_01c1: ldloc.s 6
 		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01c8: ldstr "digest"
-		IL_01cd: ldstr "Require_Crypto_CreateHmac:Modules.Require_Crypto_CreateHmac:__js_module_init__:77"
-		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string)
-		IL_01d7: stloc.3
-		IL_01d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01dd: stloc.s 5
-		IL_01df: ldloc.3
-		IL_01e0: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
-		IL_01e5: box [System.Runtime]System.Boolean
-		IL_01ea: stloc.s 7
-		IL_01ec: ldloc.s 5
-		IL_01ee: ldstr "hmac buffer:"
-		IL_01f3: ldloc.s 7
-		IL_01f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01fa: pop
-		IL_01fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0200: stloc.s 5
-		IL_0202: ldloc.3
-		IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0208: ldstr "toString"
-		IL_020d: ldstr "hex"
-		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0217: stloc.s 6
-		IL_0219: ldloc.s 5
-		IL_021b: ldstr "hmac sha1 hex:"
-		IL_0220: ldloc.s 6
-		IL_0222: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0227: pop
-		IL_0228: ret
+		IL_01c8: volatile.
+		IL_01ca: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_01cf: brfalse IL_01e3
+
+		IL_01d4: ldstr "digest"
+		IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01de: br IL_01f7
+
+		IL_01e3: ldstr "digest"
+		IL_01e8: ldstr "Require_Crypto_CreateHmac:Modules.Require_Crypto_CreateHmac:__js_module_init__:77"
+		IL_01ed: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_01f7: stloc.3
+		IL_01f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01fd: stloc.s 5
+		IL_01ff: ldloc.3
+		IL_0200: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_0205: box [System.Runtime]System.Boolean
+		IL_020a: stloc.s 7
+		IL_020c: ldloc.s 5
+		IL_020e: ldstr "hmac buffer:"
+		IL_0213: ldloc.s 7
+		IL_0215: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_021a: pop
+		IL_021b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0220: stloc.s 5
+		IL_0222: ldloc.3
+		IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0228: ldstr "toString"
+		IL_022d: ldstr "hex"
+		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0237: stloc.s 6
+		IL_0239: ldloc.s 5
+		IL_023b: ldstr "hmac sha1 hex:"
+		IL_0240: ldloc.s 6
+		IL_0242: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0247: pop
+		IL_0248: ret
 	} // end of method Require_Crypto_CreateHmac::__js_module_init__
 
 } // end of class Modules.Require_Crypto_CreateHmac
@@ -233,4 +243,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

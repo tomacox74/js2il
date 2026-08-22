@@ -527,7 +527,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 143 (0x8f)
+			// Code size: 209 (0xd1)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -546,52 +546,74 @@
 			IL_0011: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0016: stloc.2
 			IL_0017: ldloc.2
-			IL_0018: brfalse IL_0036
+			IL_0018: brfalse IL_0057
 
-			IL_001d: ldarg.1
-			IL_001e: ldstr "message"
-			IL_0023: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M4>:__js_call__:9"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_002d: stloc.3
-			IL_002e: ldloc.3
-			IL_002f: stloc.s 5
-			IL_0031: br IL_0039
+			IL_001d: volatile.
+			IL_001f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0024: brfalse IL_0039
 
-			IL_0036: ldarg.1
-			IL_0037: stloc.s 5
+			IL_0029: ldarg.1
+			IL_002a: ldstr "message"
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0034: br IL_004e
 
-			IL_0039: ldloc.s 5
-			IL_003b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0040: stloc.2
-			IL_0041: ldloc.2
-			IL_0042: brfalse IL_005f
+			IL_0039: ldarg.1
+			IL_003a: ldstr "message"
+			IL_003f: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M4>:__js_call__:9"
+			IL_0044: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0047: ldarg.1
-			IL_0048: ldstr "message"
-			IL_004d: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M4>:__js_call__:19"
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-			IL_0057: stloc.3
-			IL_0058: ldloc.3
-			IL_0059: stloc.0
-			IL_005a: br IL_0061
+			IL_004e: stloc.3
+			IL_004f: ldloc.3
+			IL_0050: stloc.s 5
+			IL_0052: br IL_005a
 
-			IL_005f: ldarg.1
-			IL_0060: stloc.0
+			IL_0057: ldarg.1
+			IL_0058: stloc.s 5
 
-			IL_0061: ldloc.1
-			IL_0062: ldstr "error"
-			IL_0067: ldloc.0
-			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_006d: pop
-			IL_006e: ldstr "process"
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0078: ldstr "exitCode"
-			IL_007d: ldc.r8 1
-			IL_0086: ldc.i4.1
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_008c: pop
-			IL_008d: ldnull
-			IL_008e: ret
+			IL_005a: ldloc.s 5
+			IL_005c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0061: stloc.2
+			IL_0062: ldloc.2
+			IL_0063: brfalse IL_00a1
+
+			IL_0068: volatile.
+			IL_006a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_006f: brfalse IL_0084
+
+			IL_0074: ldarg.1
+			IL_0075: ldstr "message"
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_007f: br IL_0099
+
+			IL_0084: ldarg.1
+			IL_0085: ldstr "message"
+			IL_008a: ldstr "Async_Calls_Module_Function_Before_Await:<TwoPhaseDummy_M4>:__js_call__:19"
+			IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0099: stloc.3
+			IL_009a: ldloc.3
+			IL_009b: stloc.0
+			IL_009c: br IL_00a3
+
+			IL_00a1: ldarg.1
+			IL_00a2: stloc.0
+
+			IL_00a3: ldloc.1
+			IL_00a4: ldstr "error"
+			IL_00a9: ldloc.0
+			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00af: pop
+			IL_00b0: ldstr "process"
+			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00ba: ldstr "exitCode"
+			IL_00bf: ldc.r8 1
+			IL_00c8: ldc.i4.1
+			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_00ce: pop
+			IL_00cf: ldnull
+			IL_00d0: ret
 		} // end of method ArrowFunction_L13C14::__js_call__
 
 	} // end of class ArrowFunction_L13C14
@@ -746,4 +768,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

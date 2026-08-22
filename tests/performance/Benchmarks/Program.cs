@@ -34,6 +34,12 @@ else
         var summary = BenchmarkRunner.Run<JsObjectDescriptorStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--descriptor-lookup")
+    {
+        var summary = BenchmarkRunner.Run<DescriptorLookupExecutionFrameBenchmarks>(
+            args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--array-operations")
     {
         var summary = BenchmarkRunner.Run<ArrayInternalOperationsBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -163,6 +169,7 @@ Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape stor
 #endif
 Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-object operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline descriptor storage microbenchmarks");
+Console.WriteLine("  dotnet run -c Release --descriptor-lookup # Run active-realm descriptor lookup microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");

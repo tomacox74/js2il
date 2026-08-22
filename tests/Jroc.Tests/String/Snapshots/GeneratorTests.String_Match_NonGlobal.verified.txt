@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 215 (0xd7)
+		// Code size: 281 (0x119)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Match_NonGlobal/Scope,
@@ -95,27 +95,49 @@
 		IL_008f: pop
 		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0095: stloc.s 4
-		IL_0097: ldloc.2
-		IL_0098: ldstr "index"
-		IL_009d: ldstr "String_Match_NonGlobal:Modules.String_Match_NonGlobal:__js_module_init__:30"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00a7: stloc.s 5
-		IL_00a9: ldloc.s 4
-		IL_00ab: ldloc.s 5
-		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b2: pop
-		IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b8: stloc.s 4
-		IL_00ba: ldloc.2
-		IL_00bb: ldstr "input"
-		IL_00c0: ldstr "String_Match_NonGlobal:Modules.String_Match_NonGlobal:__js_module_init__:35"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_00ca: stloc.s 5
-		IL_00cc: ldloc.s 4
-		IL_00ce: ldloc.s 5
-		IL_00d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d5: pop
-		IL_00d6: ret
+		IL_0097: volatile.
+		IL_0099: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_009e: brfalse IL_00b3
+
+		IL_00a3: ldloc.2
+		IL_00a4: ldstr "index"
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ae: br IL_00c8
+
+		IL_00b3: ldloc.2
+		IL_00b4: ldstr "index"
+		IL_00b9: ldstr "String_Match_NonGlobal:Modules.String_Match_NonGlobal:__js_module_init__:30"
+		IL_00be: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00c8: stloc.s 5
+		IL_00ca: ldloc.s 4
+		IL_00cc: ldloc.s 5
+		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d3: pop
+		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d9: stloc.s 4
+		IL_00db: volatile.
+		IL_00dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00e2: brfalse IL_00f7
+
+		IL_00e7: ldloc.2
+		IL_00e8: ldstr "input"
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f2: br IL_010c
+
+		IL_00f7: ldloc.2
+		IL_00f8: ldstr "input"
+		IL_00fd: ldstr "String_Match_NonGlobal:Modules.String_Match_NonGlobal:__js_module_init__:35"
+		IL_0102: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_010c: stloc.s 5
+		IL_010e: ldloc.s 4
+		IL_0110: ldloc.s 5
+		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0117: pop
+		IL_0118: ret
 	} // end of method String_Match_NonGlobal::__js_module_init__
 
 } // end of class Modules.String_Match_NonGlobal
@@ -141,4 +163,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

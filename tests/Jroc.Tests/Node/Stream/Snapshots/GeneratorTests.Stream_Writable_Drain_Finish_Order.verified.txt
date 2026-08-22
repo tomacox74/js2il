@@ -567,7 +567,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 403 (0x193)
+		// Code size: 436 (0x1b4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_Drain_Finish_Order/Scope,
@@ -720,20 +720,31 @@
 		IL_0162: pop
 		IL_0163: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0168: stloc.s 9
-		IL_016a: ldloc.2
-		IL_016b: ldstr "writable"
-		IL_0170: ldstr "Stream_Writable_Drain_Finish_Order:Modules.Stream_Writable_Drain_Finish_Order:__js_module_init__:55"
-		IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string)
-		IL_017a: stloc.3
-		IL_017b: ldstr "after-end:"
-		IL_0180: ldloc.3
-		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0186: stloc.s 10
-		IL_0188: ldloc.s 9
-		IL_018a: ldloc.s 10
-		IL_018c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0191: pop
-		IL_0192: ret
+		IL_016a: volatile.
+		IL_016c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0171: brfalse IL_0186
+
+		IL_0176: ldloc.2
+		IL_0177: ldstr "writable"
+		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0181: br IL_019b
+
+		IL_0186: ldloc.2
+		IL_0187: ldstr "writable"
+		IL_018c: ldstr "Stream_Writable_Drain_Finish_Order:Modules.Stream_Writable_Drain_Finish_Order:__js_module_init__:55"
+		IL_0191: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0196: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_019b: stloc.3
+		IL_019c: ldstr "after-end:"
+		IL_01a1: ldloc.3
+		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01a7: stloc.s 10
+		IL_01a9: ldloc.s 9
+		IL_01ab: ldloc.s 10
+		IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b2: pop
+		IL_01b3: ret
 	} // end of method Stream_Writable_Drain_Finish_Order::__js_module_init__
 
 } // end of class Modules.Stream_Writable_Drain_Finish_Order
@@ -759,4 +770,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_6
+
+} // end of class Jroc.Generated.DynamicLookupSites
 
