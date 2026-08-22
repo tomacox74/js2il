@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): implement issue #1958 Phase 3 by replacing exact-receiver
+  dynamic property-read cache entries with weak shape-and-slot entries.
+  Distinct ordinary objects with the same `JsShape` now share one monomorphic
+  entry, every hit reads the receiver's live value, and structural or
+  descriptor changes retain exact generic fallback semantics.
 - perf(compiler/runtime): implement issue #1958 Phase 2 by propagating an
   uncertain Array receiver candidate into ordinary functions assigned to the
   intrinsic `Array.prototype`. Loop-hot numeric `length` and indexed reads now

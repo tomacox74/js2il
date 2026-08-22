@@ -5,6 +5,21 @@ dynamic property reads and zero-argument member calls that remain after AOT
 specialization. The prototype targets repeated access to ordinary user
 objects without weakening JavaScript lookup semantics.
 
+Phase 3 (issues #1958 / #1324) replaced the original exact-receiver-identity
+cache entries described below with **shape-keyed** entries for property
+reads and `CallMember0`. An entry now records a receiver's `JsShape` reference
+and a resolved slot index instead of a specific receiver object, a cached
+value, or a snapshotted prototype chain. Every hit re-reads the current
+receiver's live slot value. This lets thousands of distinct `JsObject`
+instances that share one shape and one own plain-data property (for example,
+many `GraphNode` instances each with their own `pos` value) hit the same
+monomorphic entry instead of exhausting the four-entry polymorphic budget.
+Sections below describe this current contract; historical Phase 0/1 sections
+that still describe identity-only behavior are updated in place rather than
+kept as a separate legacy description, since the generated call surface and
+state-machine shape (empty/monomorphic/polymorphic/megamorphic, four-entry
+bound) are unchanged.
+
 ## Terminology
 
 The terms below describe this implementation and may be narrower than their
@@ -18,17 +33,17 @@ general use in JavaScript engines.
 | **Terminal bypass** | A compiler-emitted static flag for one generated call site. After any realm transitions that site to megamorphic, generated code tests the flag and calls the generic operation without entering the runtime cache helper. The flag is only a conservative deoptimization hint: it contains no JavaScript value or realm reference. |
 | **Receiver** | The JavaScript value to the left of the property access, such as `record` in `record.name` or `record.save()`. |
 | **Dynamic lookup** | Resolving a property or callable at runtime because the compiler cannot determine the result safely in advance. |
-| **Inline cache** | Per-call-site runtime state that reuses a previously resolved data property when its recorded assumptions remain valid. Entries and transition state are stored in the realm. Generated code contains only the terminal bypass flag, which can select the full generic algorithm but can never supply a cached value. |
-| **Cache entry** | One recorded exact receiver/property identity, resolved value, prototype path, and set of lookup versions. |
-| **Empty** | A cache site that has not recorded a usable receiver/property identity. |
-| **Monomorphic** | A site containing one live cache entry. In this first-stage identity cache, repeated access must use the same receiver object; another object with the same shape is still a distinct identity. |
-| **Polymorphic** | A site containing two through four live cache entries, allowing a small set of exact receiver identities to hit the same generated site. |
-| **Megamorphic** | A site that has observed more receiver identities than its four-entry limit. It permanently stops recording entries, publishes its generated terminal bypass flag, and uses generic lookup. |
-| **Cache hit** | The receiver, property name, weak references, and every recorded `LookupVersion` still match, so the cached value can be reused. |
-| **Cache miss** | No valid entry matches. The runtime performs exact generic lookup and may record a new entry when the result is cacheable. |
-| **Invalidation** | A property, descriptor, or prototype change advances a recorded version, making an existing entry stale and therefore unable to hit. |
+| **Inline cache** | Per-call-site runtime state that reuses a previously resolved own plain-data property slot when the receiver's shape and per-slot descriptor state remain trivial. Entries and transition state are stored in the realm. Generated code contains only the terminal bypass flag, which can select the full generic algorithm but can never supply a cached value. |
+| **Cache entry** | A weak reference to a `JsShape`, the looked-up property name, and the resolved slot index for that (shape, property) pair. It stores neither a receiver nor a value; every hit reads the current receiver's live slot. |
+| **Empty** | A cache site that has not recorded a usable shape/property/slot triple. |
+| **Monomorphic** | A site containing one live cache entry. Because entries are shape-keyed, every receiver that shares that exact `JsShape` reference hits the same entry, regardless of how many distinct receiver instances exist. |
+| **Polymorphic** | A site containing two through four live cache entries, allowing a small set of distinct shapes to hit the same generated site. |
+| **Megamorphic** | A site that has observed more distinct shapes than its four-entry limit. It permanently stops recording entries, publishes its generated terminal bypass flag, and uses generic lookup. |
+| **Cache hit** | The property name matches an entry, the entry's weakly held `JsShape` is still alive, the receiver's current shape is reference-equal to it, and the resolved slot carries no non-default descriptor flags (plain writable/enumerable/configurable data). The receiver's current slot value is then read and returned. |
+| **Cache miss** | No valid entry matches. The runtime performs exact generic lookup and may record a new entry when the result is an own plain-data property. |
+| **Invalidation** | A structural change — adding, deleting, or redefining a property (including a data/accessor transition) — changes the receiver's shape or per-slot descriptor flags, so the existing entry (keyed to the old shape/slot) can no longer hit for that receiver. There is no separate value or version snapshot to invalidate: reads are always live. |
 | **Generic fallback** | The existing `ObjectRuntime` lookup or call path, which preserves complete JavaScript behavior for misses and cases the cache deliberately excludes. |
-| **Ordinary object** | In this stage, an object whose exact CLR representation is `JsObject` and whose traversed prototype objects are also exact `JsObject` instances. |
+| **Ordinary object** | In this stage, an object whose exact CLR representation is `JsObject`. Only its **own** properties are eligible for shape-keyed caching; inherited/prototype-chain reads always use generic lookup. |
 | **Exotic object** | A representation with specialized property behavior, such as a proxy, array, typed array, or host object. These bypass this cache prototype. |
 | **Realm** | The JavaScript execution environment that owns intrinsic objects and this feature’s cache-site dictionary. Cache entries and site snapshots are never shared between realms. A generated terminal bypass may conservatively deoptimize the same compiled call site in another realm, but it never exposes or reuses another realm's values or lookup state. |
 
@@ -109,9 +124,9 @@ should remove this performance-level collision as well as string lookup cost.
 The property or method name is passed separately and is not part of the site
 key. `CallMember0` has a literal method name, while a string-key `LIRGetItem`
 may produce different names on different executions. Cache entries validate
-the property name in addition to the receiver identity; several names observed
+the property name in addition to the receiver's shape; several names observed
 at one computed-property site can therefore consume separate polymorphic
-entries.
+entries even when every receiver shares one shape.
 
 While the generated terminal field is zero, the key literal is used with
 ordinal comparison in the current realm's
@@ -130,7 +145,7 @@ whenever the ambient execution context changes. Benchmark-only site removal
 also removes matching recent entries; generated terminal fields remain
 monotonic.
 
-When a fifth live receiver/property identity makes a site megamorphic, the
+When a fifth distinct live shape/property pair makes a site megamorphic, the
 runtime publishes `1` to the generated field with `Volatile.Write`. Generated
 code tests the field before loading the site key or entering the cache helper.
 A nonzero field branches directly to the same `ObjectRuntime.GetItem` or
@@ -152,51 +167,89 @@ integer site IDs or realm-owned per-module arrays. Any replacement must
 preserve module namespacing, distinct LIR call sites, realm isolation, and
 collectible-assembly lifetime behavior.
 
-The first stage deliberately caches only receivers whose exact CLR type is
-`JsObject` and whose complete prototype chain also consists of exact
-`JsObject` instances. Arrays, typed arrays, proxies, host objects, primitive
-receivers, and other exotic representations use the existing generic lookup.
-AOT direct and realm-guarded calls are unchanged because they no longer reach
-these dynamic LIR instructions.
+Caching is deliberately narrow (Tier 3 scope, #1958/#1324 Phase 3): only a
+receiver whose exact CLR type is `JsObject`, and only an **own** property
+resolved to a plain default-attributed data slot (writable, enumerable,
+configurable, no accessor), is eligible. `JsObject.TryGetOwnPlainDataSlot`
+(used to build an entry) and `JsObject.TryGetOwnPlainDataSlotValue` (used on
+every hit) enforce this: they reject missing properties, inherited/prototype
+properties, accessors, attribute-bearing data descriptors, encoded symbol
+keys, and objects marked `HasSharedIntrinsicBaseline` (intrinsic prototype
+objects whose descriptor storage is overlaid outside the inline
+shape/property arrays). Arrays, typed arrays, proxies, host objects, primitive
+receivers, and other exotic representations use the existing generic lookup,
+as `Proxy` deliberately does not inherit `JsObject`. Because prototype-chain
+reads are never cached, prototype mutation cannot invalidate a shape-keyed
+entry — inherited access simply never populates one. AOT direct and
+realm-guarded calls are unchanged because they no longer reach these dynamic
+LIR instructions.
 
 ## Validity contract
 
 An entry records:
 
-- the exact receiver identity and property name;
-- the resolved data-property value;
-- every ordinary object from the receiver through the resolving prototype;
-- each object's `LookupVersion` at resolution time.
+- a weak reference to the receiver's `JsShape` at resolution time;
+- the property name;
+- the resolved slot index within that shape.
 
-`LookupVersion` advances when an ordinary object's observable lookup result
-can change, including value writes, descriptor definition or reconfiguration,
-deletion, descriptor-store overlays, property reset/clear, and prototype-link
-changes. A hit requires the same live receiver, the same property name, and an
-unchanged version for every recorded chain object.
+It does not record a receiver, a value, a prototype chain, or a lookup
+version. Every hit re-validates and re-reads live state:
 
-The resolver caches only a data descriptor that it actually finds. Missing
-properties and accessors always use generic lookup. This preserves getter
-execution and runtime fallbacks such as legacy `__proto__`. Shadowing a
-prototype property, deleting an own property, replacing a value, changing a
-data property into an accessor, or replacing any prototype link invalidates
-the old entry before reuse.
+1. The entry's weakly held `JsShape` must still be alive
+   (`WeakReference<JsShape>.TryGetTarget`).
+2. The receiver's *current* shape must be reference-equal to that shape
+   (`JsObject.Shape`). Adding, deleting, or otherwise changing the set of own
+   properties always transitions an object to a different `JsShape` instance
+   (`JsShape.TransitionTo`/`TransitionAway`), so a shape change alone is
+   sufficient to miss.
+3. The receiver must not be `HasSharedIntrinsicBaseline`.
+4. The resolved slot's per-slot descriptor flags
+   (`JsObject`'s inline `JsSlotDescriptorFlags`) must still be `None` — i.e.
+   still a plain writable/enumerable/configurable data property. A
+   `defineProperty` call that narrows attributes or converts the slot to an
+   accessor sets non-`None` flags on that slot even when the shape itself is
+   otherwise unchanged (for example, redefining an existing own property in
+   place does not add or remove a property name), so this check independently
+   guards against descriptor-only mutation that shape identity alone would
+   miss.
 
-Entries weakly reference receivers, resolved object values, and prototype
-objects. A live realm cache therefore does not keep otherwise unreachable
-JavaScript objects alive. If a weak target has been collected, the entry
-misses and generic resolution runs again. Miss updates remove collected
-receivers before applying the polymorphic limit, so dead entries do not force
-a site into megamorphic state.
+Only if all four checks pass does the entry read `_properties[slot]` and
+return the receiver's live current value. There is no cached/stale value to
+return: a plain value write to an existing slot changes what this read
+observes on the very next hit, with no separate invalidation step required.
+
+Because entries never hold a receiver reference, cache reuse across receivers
+is a natural consequence of shape sharing: `JsShape.TransitionTo` caches child
+shapes by property name on the parent shape, so any two `JsObject` instances
+built by adding the same own property names in the same order (starting from
+the shared empty root shape) resolve to the exact same `JsShape` reference.
+Thousands of otherwise-unrelated instances that each have their own value in a
+same-named own data slot (the `GraphNode.pos` motivating scenario) therefore
+share one monomorphic entry, and each hit still returns that specific
+receiver's own current value.
+
+Because Tier 3 only caches **own** properties, prototype-chain mutation needs
+no invalidation tracking: an inherited read is never represented by a
+shape-keyed entry, so `TryGetOwnPlainDataSlot` naturally reports a miss for it
+and generic lookup (which already walks the prototype chain correctly) always
+runs instead.
+
+Entries weakly reference only the `JsShape`. A live realm cache therefore does
+not keep otherwise unreachable JavaScript objects (receivers, values, or
+shapes) alive. If the weak shape target has been collected, the entry misses
+and generic resolution runs again. Miss updates remove collected-shape entries
+before applying the polymorphic limit, so dead entries do not force a site
+into megamorphic state.
 
 ## State transitions and concurrency
 
-A new realm-owned site starts empty, becomes monomorphic after one observed identity, and
-supports up to four identities as a small polymorphic cache. A fifth distinct
-identity permanently transitions the site to megamorphic state and releases
-its entries. The transition also publishes the generated terminal flag.
-Subsequent executions dispatch directly to generic lookup without discovering
-the ambient realm, hashing the site key, reading the site snapshot, or
-constructing discarded cache entries.
+A new realm-owned site starts empty, becomes monomorphic after one observed
+(shape, property) pair, and supports up to four distinct pairs as a small
+polymorphic cache. A fifth distinct pair permanently transitions the site to
+megamorphic state and releases its entries. The transition also publishes the
+generated terminal flag. Subsequent executions dispatch directly to generic
+lookup without discovering the ambient realm, hashing the site key, reading
+the site snapshot, or constructing discarded cache entries.
 
 Readers use an immutable published snapshot and do not lock. Miss updates are
 serialized by a site-local lock and publish a replacement snapshot. Monomorphic
@@ -205,16 +258,17 @@ publication. A racing execution can enter the cache helper once more, but it
 will observe the realm site's terminal snapshot and still execute generic
 lookup; no race can return a stale cached value.
 
-Every miss, stale entry, accessor, proxy, primitive, exotic receiver, and
-megamorphic site executes the existing generic `ObjectRuntime` operation.
-`CallMember0` additionally validates callability before caching or invoking a
-resolved value.
+Every miss, missing-slot, accessor, symbol-key, shared-intrinsic-baseline,
+inherited-only, proxy, primitive, exotic receiver, and megamorphic site
+executes the existing generic `ObjectRuntime` operation. `CallMember0`
+additionally validates callability before caching or invoking a resolved
+value.
 
 ## Cache size and lifetime policy
 
 The cache policy follows the principle that an infinite cache is another name
-for a memory leak. This prototype bounds receiver entries at each site, uses
-weak references for JavaScript object graphs, and gives the realm an explicit
+for a memory leak. This prototype bounds entries at each site, uses weak
+references for JavaScript object graphs, and gives the realm an explicit
 bulk-disposal boundary. It does not use LRU, LFU, time-to-live, or
 process-global eviction.
 
@@ -222,27 +276,31 @@ process-global eviction.
 | --- | --- | --- |
 | Generated terminal fields | Exactly one four-byte logical flag per emitted cache-bearing property read or zero-argument member call, plus normal CLR metadata/alignment overhead. | The zero-initialized flag changes monotonically to one after a megamorphic transition and remains for the loaded assembly's lifetime. It contains no receiver, value, site key, cache object, or realm reference. |
 | Thread-local recent sites | Two MRU slots plus an eight-entry ring per thread. Entries are keyed by realm-cache identity and ordinal site key. | All slots are discarded on every ambient execution-context transition. They are a lookup front end only; the realm dictionary remains authoritative. |
-| Realm site dictionary | One site for each distinct generated site key that produces at least one cacheable ordinary-data-property result. Uncacheable-only operations do not create sites. | The dictionary strongly retains each key and site until realm disposal. Individual sites are not currently removed. |
-| Cache site | At most four live monomorphic/polymorphic entries. | A fifth distinct live receiver/property identity changes the site permanently to megamorphic state and releases all entries. The site object and key remain in the realm dictionary so later calls can take generic fallback directly. |
-| Cache entry | One exact receiver/property identity. The entry also has arrays proportional to the traversed prototype-chain depth, so four entries is a count bound rather than a fixed byte bound. | The receiver, non-null resolved value, and prototype objects are weakly referenced. The property-name string, weak-reference arrays, and version array remain strongly held while the entry remains in the current site snapshot. |
+| Realm site dictionary | One site for each distinct generated site key that produces at least one cacheable own-plain-data-property result. Uncacheable-only operations do not create sites. | The dictionary strongly retains each key and site until realm disposal. Individual sites are not currently removed. |
+| Cache site | At most four live monomorphic/polymorphic entries. | A fifth distinct live (shape, property) pair changes the site permanently to megamorphic state and releases all entries. The site object and key remain in the realm dictionary so later calls can take generic fallback directly. |
+| Cache entry | One weak `JsShape` reference, a property name, and one slot index — a small, fixed-size object regardless of how many receivers share that shape. | The `JsShape` is weakly referenced; the entry never references a receiver, a value, or a prototype chain. The property name and slot index remain strongly held while the entry remains in the current site snapshot. |
 | Published snapshot | One immutable entry array visible to new readers. | A miss update atomically publishes a replacement. An older snapshot remains alive only while an in-flight reader still references it, then becomes collectible. |
 
-A cache entry is created only after exact generic resolution finds a cacheable
-data descriptor. Its subsequent lifetime is:
+A cache entry is created only after exact generic resolution finds a
+cacheable own plain-data slot. Its subsequent lifetime is:
 
-1. Valid hits reuse the entry without allocation.
-2. A descriptor, value, or prototype mutation makes the recorded versions
-   stale. The entry immediately stops hitting, but it is not removed merely by
-   detecting the stale version.
-3. If the same live receiver/property identity later resolves to a cacheable
-   data property, the miss update replaces that entry. If lookup remains
-   missing, accessor-based, or otherwise uncacheable, generic fallback
-   continues and the stale metadata can remain until replacement for that
-   identity, megamorphic transition, or realm disposal.
-4. If a receiver is collected, its weak entry is removed during the next
-   cacheable miss update at that site. There is no background sweep, so a site
-   that is never touched again can retain the entry's bounded metadata, but
-   not its receiver, value, or prototype graph.
+1. Valid hits reuse the entry without allocation, always reading the current
+   receiver's live slot value.
+2. A structural change (add/delete of an own property, or a `defineProperty`
+   call that changes attributes or converts the slot to/from an accessor)
+   changes the receiver's shape and/or per-slot descriptor flags. The old
+   entry (keyed to the prior shape) simply no longer matches that receiver;
+   there is no version counter to advance.
+3. If the same (shape, property) pair later resolves again to a cacheable own
+   plain-data slot — for example after a delete-then-re-add restores a
+   matching shape — the miss update replaces or reuses the matching entry. If
+   lookup remains missing, accessor-based, or otherwise uncacheable, generic
+   fallback continues.
+4. If a shape becomes unreachable (every receiver sharing it has been
+   collected), its weak entry is removed during the next cacheable miss
+   update at that site. There is no background sweep, so a site that is
+   never touched again can retain the entry's small fixed metadata, but not
+   the shape, any receiver, or any value.
 5. A megamorphic transition drops the complete entry array and is
    irreversible for the lifetime of that realm-owned site.
 
@@ -322,17 +380,35 @@ controls, not cache-hit cases. Their small differences in this three-sample
 run reinforce that broad expansion must continue to be evaluated against
 receiver analysis rather than inferred from one microbenchmark.
 
+`CachedPropertyInvalidation`'s 680.05 ns / 520 B row above predates Phase 3
+and reflects the earlier identity-keyed cache, where every plain value write
+to an already-cached slot forced a version-based rebuild. Under the Phase 3
+shape-keyed cache the same benchmark body — a plain write to an existing own
+slot on an unchanged shape — is a genuine cache hit on every iteration (see
+"Validity contract" above), so this specific historical
+number is expected to drop substantially and is no longer representative of
+current behavior. Refreshing the full dated table with a new Phase 3
+measurement run is left to the tracking issue rather than this change. Phase 3
+also added `CachedPropertyHit_SameShapeAcrossInstances`, which cycles through
+thousands of distinct same-shape receivers at one site to demonstrate the
+cross-instance monomorphic sharing this phase introduces.
+
 ## Staged plan
 
-The decision is to proceed with this conservative identity-based first stage,
-while limiting further expansion to measured cases:
+The original decision was to proceed with a conservative identity-based first
+stage, while limiting further expansion to measured cases:
 
 1. Retain exact-identity caching for ordinary-object property reads and
    `CallMember0`, and collect end-to-end profiles for sites that remain after
    AOT receiver analysis.
-2. Add a descriptor/shape generation contract before sharing entries among
+2. ~~Add a descriptor/shape generation contract before sharing entries among
    different same-shape objects. `JsShape` identity alone is insufficient
-   because value and descriptor changes can preserve shape.
+   because value and descriptor changes can preserve shape.~~ **Done in
+   Phase 3 (#1958/#1324):** property-read and `CallMember0` entries are now
+   shape-keyed with a live per-slot descriptor-flag re-check on every hit (see
+   "Validity contract" above), restricted to own plain-data slots. Member
+   calls beyond `CallMember0` and AOT-compiled classes remain out of scope for
+   this phase.
 3. Use profile and receiver-analysis evidence to gate cache emission and to
    decide whether `CallMember1..5` merit additional stubs.
 4. Consider exotics or primitive families only with dedicated validity
