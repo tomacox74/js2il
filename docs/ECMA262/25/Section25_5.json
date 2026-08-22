@@ -97,7 +97,8 @@
         "specUrl": "https://tc39.es/ecma262/#sec-json.parse",
         "testScripts": [
           "tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_Reviver_Holder.js",
-          "tests/Jroc.Test262.Tests/built-ins/JSON/parse/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/JSON/parse/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/JSON/PortNext200Batch2ExecutionTests.cs"
         ],
         "notes": "Implemented by JavaScriptRuntime.JSON.Parse with ECMAScript string coercion and SyntaxError translation for invalid input. Parsed objects and the reviver root wrapper are ordinary JsObject instances; arrays use JavaScriptRuntime.Array and numbers use double. Reviver processing walks properties post-order, calls the reviver with the current holder as this, supports deletion through an undefined result, and supports replacement values. Broader proxy, cross-realm, and extreme-depth behavior remains limited.",
         "test262Paths": [
@@ -108,6 +109,8 @@
           "test/built-ins/JSON/parse/15.12.1.1-g1-4.js",
           "test/built-ins/JSON/parse/15.12.1.1-g2-1.js",
           "test/built-ins/JSON/parse/15.12.1.1-g2-4.js",
+          "test/built-ins/JSON/parse/15.12.1.1-0-2.js",
+          "test/built-ins/JSON/parse/15.12.1.1-g1-2.js",
           "test/built-ins/JSON/parse/reviver-call-order.js",
           "test/built-ins/JSON/parse/reviver-wrapper.js"
         ]

@@ -809,6 +809,21 @@
             "tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_4_45/ExecutionTests.cs"
           ],
           "notes": "The Section21_4 representative buckets now cover the previously untracked Date.prototype constructor, local/UTC getters, setters, string/JSON conversions, and Symbol.toPrimitive metadata. Those APIs are now tracked in-repo, but many remain documented as supported with limitations because the current coverage is representative rather than full conformance."
+        },
+        {
+          "clause": "21.4.4.45",
+          "feature": "Date.prototype[@@toPrimitive](hint)",
+          "status": "Supported with Limitations",
+          "specUrl": "https://tc39.es/ecma262/#sec-date.prototype-%symbol.toprimitive%",
+          "testScripts": [
+            "tests/Jroc.Test262.Tests/built-ins/Date/PortNext200Batch2ExecutionTests.cs"
+          ],
+          "test262Paths": [
+            "test/built-ins/Date/prototype/Symbol.toPrimitive/hint-default-first-valid.js",
+            "test/built-ins/Date/prototype/Symbol.toPrimitive/hint-number-first-non-callable.js",
+            "test/built-ins/Date/prototype/Symbol.toPrimitive/hint-invalid.js"
+          ],
+          "notes": "Accepts any object receiver, uses the required string/default or number OrdinaryToPrimitive method order, rejects invalid non-string hints without coercion, and throws when neither method produces a primitive."
         }
     ]
   }

@@ -13,6 +13,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   realm-owned entries remain isolated and weak. Runtime context mirroring,
   recent-site lookup, and intrinsic prototype markers also remove ambient
   realm and `%Function.prototype%` discovery from active property-read paths.
+- runtime/test262/docs: port 200 test262 fixtures across Date, DataView, and
+  JSON.parse. DataView index coercion now truncates negative fractional
+  offsets before range validation, and `Date.prototype[@@toPrimitive]` now
+  implements generic object receivers and exact string-hint validation.
 - perf(tooling): add the exact `kracken-ai-astar` Phase 0 guardrail for issue
   #1958, including same-host raw-artifact comparison with provenance, focused
   cache-state and boxed Array-length controls, and generated `findGraphNode`
