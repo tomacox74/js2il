@@ -127,7 +127,7 @@ public sealed class Symbol
     // Symbol.for(key)
     public static object @for(object? key)
     {
-        var registryKey = DotNet2JSConversions.ToString(key);
+        var registryKey = DotNet2JSConversions.ToStringRejectingSymbols(key);
         return GetCurrentRegistry().GetOrCreate(registryKey);
     }
 

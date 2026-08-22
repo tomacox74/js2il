@@ -10,6 +10,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   #1958, including same-host raw-artifact comparison with provenance, focused
   cache-state and boxed Array-length controls, and generated `findGraphNode`
   IL counters.
+- runtime/test262/docs: port 200 test262 fixtures across Number, WeakMap,
+  WeakSet, and ArrayBuffer views. Number now accepts BigInt arguments with
+  correctly rounded IEEE-754 conversion, exposes `Number.isSafeInteger`, and
+  preserves constructor wrapper values. Weak collection constructors now use
+  JavaScript property access for iterable entries and close iterators while
+  preserving abrupt completions.
+- runtime/test262/docs: port 100 test262 fixtures for `parseInt`, `parseFloat`,
+  `Reflect`, Symbol registry APIs, and `BigInt.asIntN`/`BigInt.asUintN`.
+  `BigInt` width helpers now perform the required number-hint primitive
+  coercion, `Reflect.has` preserves symbol property keys, and `Symbol.for`
+  rejects Symbol keys while propagating string-conversion errors.
 
 ## v0.12.13 - 2026-08-21
 

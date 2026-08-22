@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-18T05:14:52Z
+> Last generated (UTC): 2026-08-22T00:01:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -57,7 +57,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number ( value ) | Supported with Limitations |  | `built-ins/Number/return-abrupt-tonumber-value.js`<br>`built-ins/Number/S15.7.1.1_A1.js`<br>`built-ins/Number/S9.3_A1_T1.js`<br>`built-ins/Number/S9.3.1_A17.js`<br>`built-ins/Number/S9.3_A2_T1.js`<br>`built-ins/Number/S9.3_A3_T1.js`<br>`built-ins/Number/S9.3_A4.1_T1.js`<br>`built-ins/Number/S9.3.1_A1.js`<br>`built-ins/Number/S9.3.1_A7.js` | Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, and non-canonical infinity-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete. |
+| Number ( value ) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs` | `built-ins/Number/return-abrupt-tonumber-value.js`<br>`built-ins/Number/S15.7.1.1_A1.js`<br>`built-ins/Number/S9.3_A1_T1.js`<br>`built-ins/Number/S9.3.1_A17.js`<br>`built-ins/Number/S9.3_A2_T1.js`<br>`built-ins/Number/S9.3_A3_T1.js`<br>`built-ins/Number/S9.3_A4.1_T1.js`<br>`built-ins/Number/S9.3.1_A1.js`<br>`built-ins/Number/S9.3.1_A7.js`<br>`test/built-ins/Number/bigint-conversion.js` | Direct calls to the global Number function preserve observable abrupt completions even when the converted value is discarded. BigInt arguments are converted with IEEE-754 round-to-nearest, ties-to-even semantics, while abstract ToNumber coercion continues to reject BigInt. Checked-in coverage includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, non-canonical infinity-string, and BigInt coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete. |
 
 ### 21.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-number-constructor))
 
@@ -93,7 +93,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.isSafeInteger(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs` | `built-ins/Number/isSafeInteger/not-safe-integer.js`<br>`built-ins/Number/isSafeInteger/safe-integers.js` | Number.isSafeInteger accepts safe integral Number values and rejects NaN, infinities, fractional values, unsafe integers, and non-number inputs without coercion. |
+| Number.isSafeInteger(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs` | `built-ins/Number/isSafeInteger/not-safe-integer.js`<br>`built-ins/Number/isSafeInteger/safe-integers.js`<br>`test/built-ins/Number/isSafeInteger/arg-is-not-number.js` | Number.isSafeInteger accepts safe integral Number values and rejects NaN, infinities, fractional values, unsafe integers, and non-number inputs without coercion. |
 
 ### 21.1.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-number.max_safe_integer))
 

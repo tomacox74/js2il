@@ -131,7 +131,7 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.DotNet2JSConversions.ToString(value);
 
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
-            JavaScriptRuntime.TypeUtilities.ToNumber(value);
+            JavaScriptRuntime.Number.FromNumberConstructorArgument(value);
         private static readonly Func<object[], object?, object> _bigIntFunctionValue = static (_, value) =>
             global::JavaScriptRuntime.BigInt.Call(value);
         // Static; the receiver is ignored (issue #1895).
@@ -186,6 +186,7 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, bool> _numberIsFiniteValue = JavaScriptRuntime.Number.isFinite;
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
         private static readonly Func<object?, bool> _numberIsNaNValue = JavaScriptRuntime.Number.isNaN;
+        private static readonly Func<object?, bool> _numberIsSafeIntegerValue = JavaScriptRuntime.Number.isSafeInteger;
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static iterable => new JavaScriptRuntime.Map(iterable));
@@ -717,12 +718,15 @@ namespace JavaScriptRuntime
             ConfigureBuiltinFunctionObject(_numberIsIntegerValue);
             ConfigureBuiltinFunctionObject(_numberIsFiniteValue);
             ConfigureBuiltinFunctionObject(_numberIsNaNValue);
+            ConfigureBuiltinFunctionObject(_numberIsSafeIntegerValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "isFinite", _numberIsFiniteValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "isInteger", _numberIsIntegerValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "isNaN", _numberIsNaNValue);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "isSafeInteger", _numberIsSafeIntegerValue);
             DefineUndefinedPrototypeProperty(_numberIsFiniteValue);
             DefineUndefinedPrototypeProperty(_numberIsIntegerValue);
             DefineUndefinedPrototypeProperty(_numberIsNaNValue);
+            DefineUndefinedPrototypeProperty(_numberIsSafeIntegerValue);
             DefineBuiltinFunctionProperty(_numberPrototypeValue, "toExponential", _numberPrototypeToExponentialValue, 1d);
             DefineBuiltinFunctionProperty(_numberPrototypeValue, "toFixed", _numberPrototypeToFixedValue, 1d);
             DefineBuiltinFunctionProperty(_numberPrototypeValue, "toLocaleString", _numberPrototypeToLocaleStringValue, 0d);

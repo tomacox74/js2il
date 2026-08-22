@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T01:33:26Z
+> Last generated (UTC): 2026-08-22T00:01:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -35,7 +35,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | new WeakSet() | Supported | [`WeakSet_Constructor_Empty.js`](../../../tests/Jroc.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js) | `test/built-ins/WeakSet/undefined-newtarget.js` | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
-| new WeakSet(iterable) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs` |  | WeakSet(iterable) consumes iterable values through the constructor's adder path, including the covered test262 adder lookup failure semantics. Weak-value validation and broader exotic iterator edge cases remain partial. |
+| new WeakSet(iterable) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/WeakSet/PortNext200ExecutionTests.cs` | `test/built-ins/WeakSet/iterator-close-after-add-failure.js` | WeakSet(iterable) consumes iterable values through the constructor's adder path and closes iterators while preserving the original abrupt completion. Weak-value validation and broader exotic iterator edge cases remain partial. |
 
 ### 24.4.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype))
 

@@ -225,9 +225,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-symbol.for",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/PortNext100ExecutionTests.cs"
         ],
-        "notes": "Supports global symbol registry round-tripping and TypeError on non-symbol Symbol.keyFor input."
+        "notes": "Supports global symbol registry round-tripping, callable metadata, and TypeError on non-symbol Symbol.keyFor input. PortNext100ExecutionTests additionally covers Symbol.for key coercion including abrupt toString completion and Symbol input rejection, plus Symbol.keyFor registry hits and misses."
       },
       {
         "clause": "20.4.2.4",
