@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 381 (0x17d)
+		// Code size: 465 (0x1d1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Require/Scope,
@@ -229,24 +229,48 @@
 
 		IL_0139: ldloc.2
 		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_013f: ldstr "split"
-		IL_0144: ldstr "\\"
-		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_014e: stloc.s 5
-		IL_0150: ldloc.s 5
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0157: ldstr "join"
-		IL_015c: ldstr "/"
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0166: stloc.3
-		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_016c: stloc.s 4
-		IL_016e: ldloc.s 4
-		IL_0170: ldstr "path.join result:"
-		IL_0175: ldloc.3
-		IL_0176: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_017b: pop
-		IL_017c: ret
+		IL_013f: volatile.
+		IL_0141: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0146: brfalse IL_015f
+
+		IL_014b: ldstr "split"
+		IL_0150: ldstr "\\"
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_015a: br IL_0178
+
+		IL_015f: ldstr "split"
+		IL_0164: ldstr "\\"
+		IL_0169: ldstr "CommonJS_Module_Require:Modules.CommonJS_Module_Require:__js_module_init__:37"
+		IL_016e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0178: stloc.s 5
+		IL_017a: ldloc.s 5
+		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0181: volatile.
+		IL_0183: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0188: brfalse IL_01a1
+
+		IL_018d: ldstr "join"
+		IL_0192: ldstr "/"
+		IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_019c: br IL_01ba
+
+		IL_01a1: ldstr "join"
+		IL_01a6: ldstr "/"
+		IL_01ab: ldstr "CommonJS_Module_Require:Modules.CommonJS_Module_Require:__js_module_init__:40"
+		IL_01b0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_01ba: stloc.3
+		IL_01bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01c0: stloc.s 4
+		IL_01c2: ldloc.s 4
+		IL_01c4: ldstr "path.join result:"
+		IL_01c9: ldloc.3
+		IL_01ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01cf: pop
+		IL_01d0: ret
 	} // end of method CommonJS_Module_Require::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Require
@@ -278,6 +302,8 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
 	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

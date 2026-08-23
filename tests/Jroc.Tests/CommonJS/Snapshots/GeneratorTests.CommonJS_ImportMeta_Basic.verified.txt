@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 687 (0x2af)
+		// Code size: 771 (0x303)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_ImportMeta_Basic/Scope,
@@ -312,54 +312,78 @@
 		IL_0222: stloc.3
 		IL_0223: ldloc.3
 		IL_0224: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0229: ldstr "split"
-		IL_022e: ldstr "\\"
-		IL_0233: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0238: stloc.3
-		IL_0239: ldloc.3
-		IL_023a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_023f: ldstr "join"
-		IL_0244: ldstr "/"
-		IL_0249: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_024e: stloc.3
-		IL_024f: ldloc.3
-		IL_0250: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0255: stloc.3
-		IL_0256: ldc.i4.0
-		IL_0257: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_025c: brfalse IL_0295
+		IL_0229: volatile.
+		IL_022b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0230: brfalse IL_0249
 
-		IL_0261: ldloc.3
-		IL_0262: isinst [System.Runtime]System.String
-		IL_0267: dup
-		IL_0268: brtrue IL_027f
+		IL_0235: ldstr "split"
+		IL_023a: ldstr "\\"
+		IL_023f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0244: br IL_0262
 
-		IL_026d: pop
-		IL_026e: ldloc.3
-		IL_026f: ldstr "endsWith"
-		IL_0274: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_0279: dup
-		IL_027a: brfalse IL_0294
+		IL_0249: ldstr "split"
+		IL_024e: ldstr "\\"
+		IL_0253: ldstr "CommonJS_ImportMeta_Basic:Modules.CommonJS_ImportMeta_Basic:__js_module_init__:64"
+		IL_0258: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_027f: ldstr "/fixtures/demo.txt"
-		IL_0284: call bool [JavaScriptRuntime]JavaScriptRuntime.String::EndsWith(string, string)
-		IL_0289: box [System.Runtime]System.Boolean
-		IL_028e: stloc.3
-		IL_028f: br IL_02a6
+		IL_0262: stloc.3
+		IL_0263: ldloc.3
+		IL_0264: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0269: volatile.
+		IL_026b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0270: brfalse IL_0289
 
-		IL_0294: pop
+		IL_0275: ldstr "join"
+		IL_027a: ldstr "/"
+		IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0284: br IL_02a2
 
-		IL_0295: ldloc.3
-		IL_0296: ldstr "endsWith"
-		IL_029b: ldstr "/fixtures/demo.txt"
-		IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02a5: stloc.3
+		IL_0289: ldstr "join"
+		IL_028e: ldstr "/"
+		IL_0293: ldstr "CommonJS_ImportMeta_Basic:Modules.CommonJS_ImportMeta_Basic:__js_module_init__:67"
+		IL_0298: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_029d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_02a6: ldloc.2
-		IL_02a7: ldloc.3
-		IL_02a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02ad: pop
-		IL_02ae: ret
+		IL_02a2: stloc.3
+		IL_02a3: ldloc.3
+		IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02a9: stloc.3
+		IL_02aa: ldc.i4.0
+		IL_02ab: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_02b0: brfalse IL_02e9
+
+		IL_02b5: ldloc.3
+		IL_02b6: isinst [System.Runtime]System.String
+		IL_02bb: dup
+		IL_02bc: brtrue IL_02d3
+
+		IL_02c1: pop
+		IL_02c2: ldloc.3
+		IL_02c3: ldstr "endsWith"
+		IL_02c8: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_02cd: dup
+		IL_02ce: brfalse IL_02e8
+
+		IL_02d3: ldstr "/fixtures/demo.txt"
+		IL_02d8: call bool [JavaScriptRuntime]JavaScriptRuntime.String::EndsWith(string, string)
+		IL_02dd: box [System.Runtime]System.Boolean
+		IL_02e2: stloc.3
+		IL_02e3: br IL_02fa
+
+		IL_02e8: pop
+
+		IL_02e9: ldloc.3
+		IL_02ea: ldstr "endsWith"
+		IL_02ef: ldstr "/fixtures/demo.txt"
+		IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02f9: stloc.3
+
+		IL_02fa: ldloc.2
+		IL_02fb: ldloc.3
+		IL_02fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0301: pop
+		IL_0302: ret
 	} // end of method CommonJS_ImportMeta_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_ImportMeta_Basic
@@ -393,6 +417,8 @@
 	.field assembly static int32 __jroc_dynamicLookup_2
 	.field assembly static int32 __jroc_dynamicLookup_3
 	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

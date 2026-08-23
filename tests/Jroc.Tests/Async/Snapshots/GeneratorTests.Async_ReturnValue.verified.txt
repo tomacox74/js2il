@@ -341,7 +341,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 116 (0x74)
+		// Code size: 156 (0x9c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ReturnValue/Scope,
@@ -395,12 +395,25 @@
 		IL_0059: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ReturnValue/ArrowFunction_L7C17/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ReturnValue/ArrowFunction_L7C17/FunctionObject>(!!0)
 		IL_0063: stloc.s 4
-		IL_0065: ldloc.3
-		IL_0066: ldstr "then"
-		IL_006b: ldloc.s 4
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0072: pop
-		IL_0073: ret
+		IL_0065: volatile.
+		IL_0067: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_006c: brfalse IL_0083
+
+		IL_0071: ldloc.3
+		IL_0072: ldstr "then"
+		IL_0077: ldloc.s 4
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_007e: br IL_009a
+
+		IL_0083: ldloc.3
+		IL_0084: ldstr "then"
+		IL_0089: ldloc.s 4
+		IL_008b: ldstr "Async_ReturnValue:Modules.Async_ReturnValue:__js_module_init__:13"
+		IL_0090: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_009a: pop
+		IL_009b: ret
 	} // end of method Async_ReturnValue::__js_module_init__
 
 } // end of class Modules.Async_ReturnValue
@@ -425,4 +438,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

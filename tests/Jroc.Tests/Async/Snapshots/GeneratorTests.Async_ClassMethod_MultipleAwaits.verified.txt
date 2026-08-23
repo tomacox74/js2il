@@ -627,7 +627,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 409 (0x199)
+		// Code size: 450 (0x1c2)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_ClassMethod_MultipleAwaits/Scope,
@@ -795,12 +795,25 @@
 		IL_017d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_MultipleAwaits/ArrowFunction_L12C34/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0182: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_MultipleAwaits/ArrowFunction_L12C34/FunctionObject>(!!0)
 		IL_0187: stloc.s 9
-		IL_0189: ldloc.s 8
-		IL_018b: ldstr "then"
-		IL_0190: ldloc.s 9
-		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0197: pop
-		IL_0198: ret
+		IL_0189: volatile.
+		IL_018b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0190: brfalse IL_01a8
+
+		IL_0195: ldloc.s 8
+		IL_0197: ldstr "then"
+		IL_019c: ldloc.s 9
+		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01a3: br IL_01c0
+
+		IL_01a8: ldloc.s 8
+		IL_01aa: ldstr "then"
+		IL_01af: ldloc.s 9
+		IL_01b1: ldstr "Async_ClassMethod_MultipleAwaits:Modules.Async_ClassMethod_MultipleAwaits:__js_module_init__:38"
+		IL_01b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_01c0: pop
+		IL_01c1: ret
 	} // end of method Async_ClassMethod_MultipleAwaits::__js_module_init__
 
 } // end of class Modules.Async_ClassMethod_MultipleAwaits
@@ -831,6 +844,7 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

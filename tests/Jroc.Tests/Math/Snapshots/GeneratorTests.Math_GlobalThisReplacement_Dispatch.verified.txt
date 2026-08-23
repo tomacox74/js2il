@@ -251,7 +251,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 216 (0xd8)
+		// Code size: 307 (0x133)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_GlobalThisReplacement_Dispatch/Scope,
@@ -314,17 +314,43 @@
 		IL_00a0: ldstr "Math"
 		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00af: ldstr "round"
-		IL_00b4: ldc.r8 1.2
-		IL_00bd: box [System.Runtime]System.Double
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c7: stloc.s 4
-		IL_00c9: ldloc.1
-		IL_00ca: ldstr "log"
-		IL_00cf: ldloc.s 4
-		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d6: pop
-		IL_00d7: ret
+		IL_00af: volatile.
+		IL_00b1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00b6: brfalse IL_00d8
+
+		IL_00bb: ldstr "round"
+		IL_00c0: ldc.r8 1.2
+		IL_00c9: box [System.Runtime]System.Double
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d3: br IL_00fa
+
+		IL_00d8: ldstr "round"
+		IL_00dd: ldc.r8 1.2
+		IL_00e6: box [System.Runtime]System.Double
+		IL_00eb: ldstr "Math_GlobalThisReplacement_Dispatch:Modules.Math_GlobalThisReplacement_Dispatch:__js_module_init__:25"
+		IL_00f0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00fa: stloc.s 4
+		IL_00fc: volatile.
+		IL_00fe: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0103: brfalse IL_011a
+
+		IL_0108: ldloc.1
+		IL_0109: ldstr "log"
+		IL_010e: ldloc.s 4
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0115: br IL_0131
+
+		IL_011a: ldloc.1
+		IL_011b: ldstr "log"
+		IL_0120: ldloc.s 4
+		IL_0122: ldstr "Math_GlobalThisReplacement_Dispatch:Modules.Math_GlobalThisReplacement_Dispatch:__js_module_init__:26"
+		IL_0127: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0131: pop
+		IL_0132: ret
 	} // end of method Math_GlobalThisReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_GlobalThisReplacement_Dispatch
@@ -355,6 +381,8 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

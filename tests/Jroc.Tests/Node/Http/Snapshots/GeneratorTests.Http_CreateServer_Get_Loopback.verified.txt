@@ -209,7 +209,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 530 (0x212)
+			// Code size: 569 (0x239)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -391,13 +391,26 @@
 			IL_01fb: ldloc.s 5
 			IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0202: stloc.2
-			IL_0203: ldloc.1
-			IL_0204: ldstr "end"
-			IL_0209: ldloc.2
-			IL_020a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_020f: pop
-			IL_0210: ldnull
-			IL_0211: ret
+			IL_0203: volatile.
+			IL_0205: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_020a: brfalse IL_0220
+
+			IL_020f: ldloc.1
+			IL_0210: ldstr "end"
+			IL_0215: ldloc.2
+			IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_021b: br IL_0236
+
+			IL_0220: ldloc.1
+			IL_0221: ldstr "end"
+			IL_0226: ldloc.2
+			IL_0227: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M4>:__js_call__:52"
+			IL_022c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_0231: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0236: pop
+			IL_0237: ldnull
+			IL_0238: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server
@@ -879,7 +892,7 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 116 (0x74)
+					// Code size: 156 (0x9c)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/Scope,
@@ -932,13 +945,26 @@
 					IL_005c: ldc.i4.1
 					IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionExpression_L31C19/FunctionObject>(!!0, float64, string, bool, bool)
 					IL_0062: stloc.s 5
-					IL_0064: ldloc.2
-					IL_0065: ldstr "close"
-					IL_006a: ldloc.s 5
-					IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_0071: pop
-					IL_0072: ldnull
-					IL_0073: ret
+					IL_0064: volatile.
+					IL_0066: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+					IL_006b: brfalse IL_0082
+
+					IL_0070: ldloc.2
+					IL_0071: ldstr "close"
+					IL_0076: ldloc.s 5
+					IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+					IL_007d: br IL_0099
+
+					IL_0082: ldloc.2
+					IL_0083: ldstr "close"
+					IL_0088: ldloc.s 5
+					IL_008a: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M8>:__js_call__:12"
+					IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+					IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+					IL_0099: pop
+					IL_009a: ldnull
+					IL_009b: ret
 				} // end of method FunctionExpression_L29C18::__js_call__
 
 			} // end of class FunctionExpression_L29C18
@@ -1094,7 +1120,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 425 (0x1a9)
+				// Code size: 467 (0x1d3)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope,
@@ -1110,173 +1136,185 @@
 				IL_0005: stloc.0
 				IL_0006: ldarg.2
 				IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000c: ldstr "setEncoding"
-				IL_0011: ldstr "utf8"
-				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001b: pop
-				IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0021: stloc.1
-				IL_0022: volatile.
-				IL_0024: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-				IL_0029: brfalse IL_003e
+				IL_000c: volatile.
+				IL_000e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+				IL_0013: brfalse IL_002c
 
-				IL_002e: ldarg.2
-				IL_002f: ldstr "statusCode"
-				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0039: br IL_0053
+				IL_0018: ldstr "setEncoding"
+				IL_001d: ldstr "utf8"
+				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0027: br IL_0045
 
-				IL_003e: ldarg.2
-				IL_003f: ldstr "statusCode"
-				IL_0044: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:11"
-				IL_0049: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_002c: ldstr "setEncoding"
+				IL_0031: ldstr "utf8"
+				IL_0036: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:5"
+				IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-				IL_0053: stloc.2
-				IL_0054: ldstr "status:"
-				IL_0059: ldloc.2
-				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_005f: stloc.3
-				IL_0060: ldloc.1
-				IL_0061: ldloc.3
-				IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0067: pop
-				IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_006d: stloc.1
-				IL_006e: volatile.
-				IL_0070: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-				IL_0075: brfalse IL_008a
+				IL_0045: pop
+				IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_004b: stloc.1
+				IL_004c: volatile.
+				IL_004e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+				IL_0053: brfalse IL_0068
 
-				IL_007a: ldarg.2
-				IL_007b: ldstr "headers"
-				IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0085: br IL_009f
+				IL_0058: ldarg.2
+				IL_0059: ldstr "statusCode"
+				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0063: br IL_007d
 
-				IL_008a: ldarg.2
-				IL_008b: ldstr "headers"
-				IL_0090: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:19"
-				IL_0095: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-				IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_0068: ldarg.2
+				IL_0069: ldstr "statusCode"
+				IL_006e: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:11"
+				IL_0073: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+				IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_009f: stloc.2
-				IL_00a0: volatile.
-				IL_00a2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-				IL_00a7: brfalse IL_00bc
+				IL_007d: stloc.2
+				IL_007e: ldstr "status:"
+				IL_0083: ldloc.2
+				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0089: stloc.3
+				IL_008a: ldloc.1
+				IL_008b: ldloc.3
+				IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0091: pop
+				IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0097: stloc.1
+				IL_0098: volatile.
+				IL_009a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+				IL_009f: brfalse IL_00b4
 
-				IL_00ac: ldloc.2
-				IL_00ad: ldstr "x-answer"
-				IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00b7: br IL_00d1
+				IL_00a4: ldarg.2
+				IL_00a5: ldstr "headers"
+				IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00af: br IL_00c9
 
-				IL_00bc: ldloc.2
-				IL_00bd: ldstr "x-answer"
-				IL_00c2: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:21"
-				IL_00c7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-				IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_00b4: ldarg.2
+				IL_00b5: ldstr "headers"
+				IL_00ba: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:19"
+				IL_00bf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+				IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_00d1: stloc.2
-				IL_00d2: ldstr "answer:"
-				IL_00d7: ldloc.2
-				IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00dd: stloc.3
-				IL_00de: ldloc.1
-				IL_00df: ldloc.3
-				IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00e5: pop
-				IL_00e6: ldloc.0
-				IL_00e7: ldstr ""
-				IL_00ec: stfld object Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope::body
-				IL_00f1: ldarg.2
-				IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00f7: stloc.2
-				IL_00f8: ldc.i4.3
-				IL_00f9: newarr [System.Runtime]System.Object
-				IL_00fe: dup
-				IL_00ff: ldc.i4.0
-				IL_0100: ldarg.0
-				IL_0101: ldc.i4.0
-				IL_0102: ldelem.ref
-				IL_0103: stelem.ref
-				IL_0104: dup
-				IL_0105: ldc.i4.1
-				IL_0106: ldarg.0
-				IL_0107: ldc.i4.1
-				IL_0108: ldelem.ref
-				IL_0109: stelem.ref
-				IL_010a: dup
-				IL_010b: ldc.i4.2
-				IL_010c: ldloc.0
-				IL_010d: stelem.ref
-				IL_010e: stloc.s 4
-				IL_0110: ldloc.s 4
-				IL_0112: ldc.i4.0
-				IL_0113: ldelem.ref
-				IL_0114: castclass Modules.Http_CreateServer_Get_Loopback/Scope
-				IL_0119: ldloc.s 4
-				IL_011b: ldc.i4.2
-				IL_011c: ldelem.ref
-				IL_011d: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
-				IL_0122: ldloc.s 4
-				IL_0124: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
-				IL_0129: ldc.i4.1
-				IL_012a: conv.r8
-				IL_012b: ldstr ""
-				IL_0130: ldc.i4.0
+				IL_00c9: stloc.2
+				IL_00ca: volatile.
+				IL_00cc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+				IL_00d1: brfalse IL_00e6
+
+				IL_00d6: ldloc.2
+				IL_00d7: ldstr "x-answer"
+				IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00e1: br IL_00fb
+
+				IL_00e6: ldloc.2
+				IL_00e7: ldstr "x-answer"
+				IL_00ec: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M6>:__js_call__:21"
+				IL_00f1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+				IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_00fb: stloc.2
+				IL_00fc: ldstr "answer:"
+				IL_0101: ldloc.2
+				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0107: stloc.3
+				IL_0108: ldloc.1
+				IL_0109: ldloc.3
+				IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_010f: pop
+				IL_0110: ldloc.0
+				IL_0111: ldstr ""
+				IL_0116: stfld object Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope::body
+				IL_011b: ldarg.2
+				IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0121: stloc.2
+				IL_0122: ldc.i4.3
+				IL_0123: newarr [System.Runtime]System.Object
+				IL_0128: dup
+				IL_0129: ldc.i4.0
+				IL_012a: ldarg.0
+				IL_012b: ldc.i4.0
+				IL_012c: ldelem.ref
+				IL_012d: stelem.ref
+				IL_012e: dup
+				IL_012f: ldc.i4.1
+				IL_0130: ldarg.0
 				IL_0131: ldc.i4.1
-				IL_0132: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject>(!!0, float64, string, bool, bool)
-				IL_0137: stloc.s 5
-				IL_0139: ldloc.2
-				IL_013a: ldstr "on"
-				IL_013f: ldstr "data"
-				IL_0144: ldloc.s 5
-				IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_014b: pop
-				IL_014c: ldarg.2
-				IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0152: stloc.2
-				IL_0153: ldc.i4.3
-				IL_0154: newarr [System.Runtime]System.Object
-				IL_0159: dup
+				IL_0132: ldelem.ref
+				IL_0133: stelem.ref
+				IL_0134: dup
+				IL_0135: ldc.i4.2
+				IL_0136: ldloc.0
+				IL_0137: stelem.ref
+				IL_0138: stloc.s 4
+				IL_013a: ldloc.s 4
+				IL_013c: ldc.i4.0
+				IL_013d: ldelem.ref
+				IL_013e: castclass Modules.Http_CreateServer_Get_Loopback/Scope
+				IL_0143: ldloc.s 4
+				IL_0145: ldc.i4.2
+				IL_0146: ldelem.ref
+				IL_0147: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
+				IL_014c: ldloc.s 4
+				IL_014e: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
+				IL_0153: ldc.i4.1
+				IL_0154: conv.r8
+				IL_0155: ldstr ""
 				IL_015a: ldc.i4.0
-				IL_015b: ldarg.0
-				IL_015c: ldc.i4.0
-				IL_015d: ldelem.ref
-				IL_015e: stelem.ref
-				IL_015f: dup
-				IL_0160: ldc.i4.1
-				IL_0161: ldarg.0
-				IL_0162: ldc.i4.1
-				IL_0163: ldelem.ref
-				IL_0164: stelem.ref
-				IL_0165: dup
-				IL_0166: ldc.i4.2
-				IL_0167: ldloc.0
-				IL_0168: stelem.ref
-				IL_0169: stloc.s 4
-				IL_016b: ldloc.s 4
-				IL_016d: ldc.i4.0
-				IL_016e: ldelem.ref
-				IL_016f: castclass Modules.Http_CreateServer_Get_Loopback/Scope
-				IL_0174: ldloc.s 4
-				IL_0176: ldc.i4.2
-				IL_0177: ldelem.ref
-				IL_0178: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
-				IL_017d: ldloc.s 4
-				IL_017f: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
+				IL_015b: ldc.i4.1
+				IL_015c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_0161: stloc.s 5
+				IL_0163: ldloc.2
+				IL_0164: ldstr "on"
+				IL_0169: ldstr "data"
+				IL_016e: ldloc.s 5
+				IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0175: pop
+				IL_0176: ldarg.2
+				IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_017c: stloc.2
+				IL_017d: ldc.i4.3
+				IL_017e: newarr [System.Runtime]System.Object
+				IL_0183: dup
 				IL_0184: ldc.i4.0
-				IL_0185: conv.r8
-				IL_0186: ldstr ""
-				IL_018b: ldc.i4.0
+				IL_0185: ldarg.0
+				IL_0186: ldc.i4.0
+				IL_0187: ldelem.ref
+				IL_0188: stelem.ref
+				IL_0189: dup
+				IL_018a: ldc.i4.1
+				IL_018b: ldarg.0
 				IL_018c: ldc.i4.1
-				IL_018d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject>(!!0, float64, string, bool, bool)
-				IL_0192: stloc.s 6
-				IL_0194: ldloc.2
-				IL_0195: ldstr "on"
-				IL_019a: ldstr "end"
-				IL_019f: ldloc.s 6
-				IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_01a6: pop
-				IL_01a7: ldnull
-				IL_01a8: ret
+				IL_018d: ldelem.ref
+				IL_018e: stelem.ref
+				IL_018f: dup
+				IL_0190: ldc.i4.2
+				IL_0191: ldloc.0
+				IL_0192: stelem.ref
+				IL_0193: stloc.s 4
+				IL_0195: ldloc.s 4
+				IL_0197: ldc.i4.0
+				IL_0198: ldelem.ref
+				IL_0199: castclass Modules.Http_CreateServer_Get_Loopback/Scope
+				IL_019e: ldloc.s 4
+				IL_01a0: ldc.i4.2
+				IL_01a1: ldelem.ref
+				IL_01a2: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
+				IL_01a7: ldloc.s 4
+				IL_01a9: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
+				IL_01ae: ldc.i4.0
+				IL_01af: conv.r8
+				IL_01b0: ldstr ""
+				IL_01b5: ldc.i4.0
+				IL_01b6: ldc.i4.1
+				IL_01b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_01bc: stloc.s 6
+				IL_01be: ldloc.2
+				IL_01bf: ldstr "on"
+				IL_01c4: ldstr "end"
+				IL_01c9: ldloc.s 6
+				IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_01d0: pop
+				IL_01d1: ldnull
+				IL_01d2: ret
 			} // end of method FunctionExpression_L19C76::__js_call__
 
 		} // end of class FunctionExpression_L19C76
@@ -1436,7 +1474,7 @@
 			IL_0007: ldfld object Modules.Http_CreateServer_Get_Loopback/Scope::server
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0011: volatile.
-			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 			IL_0018: brfalse IL_002c
 
 			IL_001d: ldstr "address"
@@ -1445,14 +1483,14 @@
 
 			IL_002c: ldstr "address"
 			IL_0031: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M5>:__js_call__:4"
-			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
 			IL_0040: stloc.1
 			IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0046: stloc.2
 			IL_0047: volatile.
-			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 			IL_004e: brfalse IL_0063
 
 			IL_0053: ldloc.1
@@ -1463,7 +1501,7 @@
 			IL_0063: ldloc.1
 			IL_0064: ldstr "address"
 			IL_0069: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M5>:__js_call__:10"
-			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0078: stloc.3
@@ -1476,7 +1514,7 @@
 			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0092: stloc.s 4
 			IL_0094: volatile.
-			IL_0096: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_0096: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
 			IL_009b: brfalse IL_00b0
 
 			IL_00a0: ldloc.1
@@ -1487,7 +1525,7 @@
 			IL_00b0: ldloc.1
 			IL_00b1: ldstr "port"
 			IL_00b6: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M5>:__js_call__:15"
-			IL_00bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_00bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
 			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_00c5: stloc.3
@@ -1511,7 +1549,7 @@
 			IL_00f7: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule Modules.Http_CreateServer_Get_Loopback/Scope::http
 			IL_00fc: stloc.s 7
 			IL_00fe: volatile.
-			IL_0100: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_0100: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
 			IL_0105: brfalse IL_011a
 
 			IL_010a: ldloc.1
@@ -1522,7 +1560,7 @@
 			IL_011a: ldloc.1
 			IL_011b: ldstr "address"
 			IL_0120: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M5>:__js_call__:26"
-			IL_0125: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_0125: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
 			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_012f: stloc.3
@@ -1535,7 +1573,7 @@
 			IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0149: stloc.s 4
 			IL_014b: volatile.
-			IL_014d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_014d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
 			IL_0152: brfalse IL_0167
 
 			IL_0157: ldloc.1
@@ -1546,7 +1584,7 @@
 			IL_0167: ldloc.1
 			IL_0168: ldstr "port"
 			IL_016d: ldstr "Http_CreateServer_Get_Loopback:<TwoPhaseDummy_M5>:__js_call__:31"
-			IL_0172: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_0172: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
 			IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_017c: stloc.3
@@ -1754,6 +1792,9 @@
 	.field assembly static int32 __jroc_dynamicLookup_23
 	.field assembly static int32 __jroc_dynamicLookup_24
 	.field assembly static int32 __jroc_dynamicLookup_25
+	.field assembly static int32 __jroc_dynamicLookup_26
+	.field assembly static int32 __jroc_dynamicLookup_27
+	.field assembly static int32 __jroc_dynamicLookup_28
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

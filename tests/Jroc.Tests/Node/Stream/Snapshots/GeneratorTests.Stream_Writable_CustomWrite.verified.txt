@@ -323,7 +323,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 366 (0x16e)
+		// Code size: 450 (0x1c2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_CustomWrite/Scope,
@@ -389,86 +389,110 @@
 		IL_006a: pop
 		IL_006b: ldloc.3
 		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0071: ldstr "write"
-		IL_0076: ldstr "test1"
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0080: pop
-		IL_0081: ldloc.3
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0087: ldstr "write"
-		IL_008c: ldstr "test2"
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0096: pop
-		IL_0097: ldloc.3
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009d: volatile.
-		IL_009f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00a4: brfalse IL_00b8
+		IL_0071: volatile.
+		IL_0073: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0078: brfalse IL_0091
 
-		IL_00a9: ldstr "end"
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00b3: br IL_00cc
+		IL_007d: ldstr "write"
+		IL_0082: ldstr "test1"
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008c: br IL_00aa
 
-		IL_00b8: ldstr "end"
-		IL_00bd: ldstr "Stream_Writable_CustomWrite:Modules.Stream_Writable_CustomWrite:__js_module_init__:32"
-		IL_00c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0091: ldstr "write"
+		IL_0096: ldstr "test1"
+		IL_009b: ldstr "Stream_Writable_CustomWrite:Modules.Stream_Writable_CustomWrite:__js_module_init__:25"
+		IL_00a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_00cc: pop
-		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d2: stloc.s 8
-		IL_00d4: ldloc.0
-		IL_00d5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
-		IL_00da: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_00df: box [System.Runtime]System.Double
-		IL_00e4: stloc.s 9
-		IL_00e6: ldloc.s 8
-		IL_00e8: ldstr "Written data count:"
-		IL_00ed: ldloc.s 9
-		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00f4: pop
-		IL_00f5: ldc.r8 0.0
-		IL_00fe: stloc.s 4
-		// loop start (head: IL_0100)
-			IL_0100: ldloc.s 4
-			IL_0102: stloc.s 10
-			IL_0104: ldloc.0
-			IL_0105: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
-			IL_010a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_010f: stloc.s 11
-			IL_0111: ldloc.s 10
-			IL_0113: ldloc.s 11
-			IL_0115: clt
-			IL_0117: brfalse IL_016d
+		IL_00aa: pop
+		IL_00ab: ldloc.3
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b1: volatile.
+		IL_00b3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00b8: brfalse IL_00d1
 
-			IL_011c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0121: stloc.s 8
-			IL_0123: ldstr "Chunk "
-			IL_0128: ldloc.s 4
-			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_012f: stloc.s 12
-			IL_0131: ldloc.s 12
-			IL_0133: ldstr ":"
-			IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_013d: stloc.s 12
-			IL_013f: ldloc.0
-			IL_0140: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
-			IL_0145: ldloc.s 4
-			IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_014c: stloc.s 13
-			IL_014e: ldloc.s 8
-			IL_0150: ldloc.s 12
-			IL_0152: ldloc.s 13
-			IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0159: pop
-			IL_015a: ldloc.s 4
-			IL_015c: ldc.r8 1
-			IL_0165: add
-			IL_0166: stloc.s 4
-			IL_0168: br IL_0100
+		IL_00bd: ldstr "write"
+		IL_00c2: ldstr "test2"
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00cc: br IL_00ea
+
+		IL_00d1: ldstr "write"
+		IL_00d6: ldstr "test2"
+		IL_00db: ldstr "Stream_Writable_CustomWrite:Modules.Stream_Writable_CustomWrite:__js_module_init__:29"
+		IL_00e0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00ea: pop
+		IL_00eb: ldloc.3
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f1: volatile.
+		IL_00f3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00f8: brfalse IL_010c
+
+		IL_00fd: ldstr "end"
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0107: br IL_0120
+
+		IL_010c: ldstr "end"
+		IL_0111: ldstr "Stream_Writable_CustomWrite:Modules.Stream_Writable_CustomWrite:__js_module_init__:32"
+		IL_0116: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_0120: pop
+		IL_0121: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0126: stloc.s 8
+		IL_0128: ldloc.0
+		IL_0129: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
+		IL_012e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_0133: box [System.Runtime]System.Double
+		IL_0138: stloc.s 9
+		IL_013a: ldloc.s 8
+		IL_013c: ldstr "Written data count:"
+		IL_0141: ldloc.s 9
+		IL_0143: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0148: pop
+		IL_0149: ldc.r8 0.0
+		IL_0152: stloc.s 4
+		// loop start (head: IL_0154)
+			IL_0154: ldloc.s 4
+			IL_0156: stloc.s 10
+			IL_0158: ldloc.0
+			IL_0159: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
+			IL_015e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0163: stloc.s 11
+			IL_0165: ldloc.s 10
+			IL_0167: ldloc.s 11
+			IL_0169: clt
+			IL_016b: brfalse IL_01c1
+
+			IL_0170: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0175: stloc.s 8
+			IL_0177: ldstr "Chunk "
+			IL_017c: ldloc.s 4
+			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0183: stloc.s 12
+			IL_0185: ldloc.s 12
+			IL_0187: ldstr ":"
+			IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0191: stloc.s 12
+			IL_0193: ldloc.0
+			IL_0194: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
+			IL_0199: ldloc.s 4
+			IL_019b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_01a0: stloc.s 13
+			IL_01a2: ldloc.s 8
+			IL_01a4: ldloc.s 12
+			IL_01a6: ldloc.s 13
+			IL_01a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01ad: pop
+			IL_01ae: ldloc.s 4
+			IL_01b0: ldc.r8 1
+			IL_01b9: add
+			IL_01ba: stloc.s 4
+			IL_01bc: br IL_0154
 		// end loop
 
-		IL_016d: ret
+		IL_01c1: ret
 	} // end of method Stream_Writable_CustomWrite::__js_module_init__
 
 } // end of class Modules.Stream_Writable_CustomWrite
@@ -499,6 +523,8 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

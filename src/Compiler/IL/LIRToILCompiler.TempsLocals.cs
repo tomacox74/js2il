@@ -1328,16 +1328,51 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallMember1 callMember1:
                 {
+                    var cachedPath = ilEncoder.DefineLabel();
+                    var done = ilEncoder.DefineLabel();
+                    ilEncoder.OpCode(ILOpCode.Volatile);
+                    ilEncoder.OpCode(ILOpCode.Ldsfld);
+                    ilEncoder.Token(
+                        GetDynamicLookupTerminalField(callMember1));
+                    ilEncoder.Branch(
+                        ILOpCode.Brfalse,
+                        cachedPath);
+
                     EmitLoadTempAsObject(callMember1.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember1.MethodName);
                     EmitLoadTempAsObject(callMember1.A0, ilEncoder, allocation, methodDescriptor);
-
-                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                    var genericCallMemberRef =
+                        _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.ObjectRuntime),
                         nameof(JavaScriptRuntime.ObjectRuntime.CallMember1),
                         new[] { typeof(object), typeof(string), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(genericCallMemberRef);
+                    ilEncoder.Branch(ILOpCode.Br, done);
+
+                    ilEncoder.MarkLabel(cachedPath);
+                    EmitLoadTempAsObject(callMember1.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember1.MethodName);
+                    EmitLoadTempAsObject(callMember1.A0, ilEncoder, allocation, methodDescriptor);
+                    EmitDynamicLookupInlineCacheSite(
+                        ilEncoder,
+                        methodDescriptor,
+                        callMember1);
+
+                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.DynamicLookupInlineCache),
+                        nameof(JavaScriptRuntime.DynamicLookupInlineCache.CallMember1),
+                        new[]
+                        {
+                            typeof(object),
+                            typeof(string),
+                            typeof(object),
+                            typeof(string),
+                            typeof(int).MakeByRefType()
+                        });
+                    ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
+                    ilEncoder.MarkLabel(done);
                     break;
                 }
 

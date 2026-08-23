@@ -22,6 +22,19 @@ public class DynamicLookupInlineCacheBenchmarks
     private const string PropertyInvalidationSite =
         "benchmark:property-invalidation";
     private const string CallHitSite = "benchmark:call-hit";
+    private const string Call1HitSite = "benchmark:call1-hit";
+    private const string Call1SharedPrototypeHitSite =
+        "benchmark:call1-shared-prototype-hit";
+    private const string Call1ReassignmentSite =
+        "benchmark:call1-reassignment";
+    private const string Call1PolymorphicSite =
+        "benchmark:call1-polymorphic";
+    private const string Call1MegamorphicSite =
+        "benchmark:call1-megamorphic";
+    private const string Call1AccessorSite =
+        "benchmark:call1-accessor";
+    private const string Call1ProxySite =
+        "benchmark:call1-proxy";
     private const string PolymorphicSite = "benchmark:polymorphic";
     private const string MegamorphicSite = "benchmark:megamorphic";
     private const string StringSite = "benchmark:string";
@@ -30,6 +43,13 @@ public class DynamicLookupInlineCacheBenchmarks
     private static int _propertyMissTerminal;
     private static int _propertyInvalidationTerminal;
     private static int _callHitTerminal;
+    private static int _call1HitTerminal;
+    private static int _call1SharedPrototypeHitTerminal;
+    private static int _call1ReassignmentTerminal;
+    private static int _call1PolymorphicTerminal;
+    private static int _call1MegamorphicTerminal;
+    private static int _call1AccessorTerminal;
+    private static int _call1ProxyTerminal;
     private static int _polymorphicTerminal;
     private static int _megamorphicTerminal;
     private static int _stringTerminal;
@@ -48,12 +68,26 @@ public class DynamicLookupInlineCacheBenchmarks
         CreateSameShapeReceivers(SameShapeReceiverCount);
     private readonly JavaScriptRuntime.Array _array =
         new(new object?[] { 1d, 2d });
+    private readonly JavaScriptRuntime.Array _call1Receiver = new();
+    private readonly JavaScriptRuntime.Array
+        _call1SharedPrototypeReceiver = new();
+    private readonly JavaScriptRuntime.Array _call1ReassignmentReceiver = new();
+    private readonly JavaScriptRuntime.Array _call1AccessorReceiver = new();
+    private JsObject[] _call1PolymorphicReceivers = null!;
+    private JsObject[] _call1MegamorphicReceivers = null!;
+    private JavaScriptRuntime.Proxy _call1Proxy = null!;
+    private JsObject _call1ReassignmentPrototype = null!;
+    private object _call1FirstFunction = null!;
+    private object _call1SecondFunction = null!;
     private RuntimeAgentCluster? _cluster;
     private IDisposable? _scope;
     private int _polymorphicIndex;
     private int _megamorphicIndex;
     private int _sameShapeIndex;
+    private int _call1PolymorphicIndex;
+    private int _call1MegamorphicIndex;
     private bool _invalidationToggle;
+    private bool _call1ReassignmentToggle;
 
     private const int SameShapeReceiverCount = 10_000;
     private const string SameShapeSite = "benchmark:same-shape";
@@ -78,6 +112,68 @@ public class DynamicLookupInlineCacheBenchmarks
             BuiltinDelegateFunctionAdapter
                 .FromDelegate(function));
 
+        BuiltinFunction1 call1Function =
+            static (_, argument0) => argument0;
+        _call1FirstFunction =
+            BuiltinDelegateFunctionAdapter
+                .FromDelegate(call1Function);
+        BuiltinFunction1 secondCall1Function =
+            static (_, argument0) => argument0;
+        _call1SecondFunction =
+            BuiltinDelegateFunctionAdapter
+                .FromDelegate(secondCall1Function);
+        var call1Prototype = new JsObject();
+        call1Prototype.SetValue(MethodName, _call1FirstFunction);
+        PrototypeChain.SetPrototype(_call1Receiver, call1Prototype);
+        JavaScriptRuntime.Array.Prototype.SetValue(
+            "benchmarkPhase4Method",
+            _call1FirstFunction);
+        PrototypeChain.SetPrototype(
+            _call1SharedPrototypeReceiver,
+            JavaScriptRuntime.Array.Prototype);
+
+        _call1ReassignmentPrototype = new JsObject();
+        _call1ReassignmentPrototype.SetValue(
+            MethodName,
+            _call1FirstFunction);
+        PrototypeChain.SetPrototype(
+            _call1ReassignmentReceiver,
+            _call1ReassignmentPrototype);
+
+        var call1AccessorPrototype = new JsObject();
+        BuiltinFunction0 call1Getter = _ => _call1FirstFunction;
+        PropertyDescriptorStore.DefineOrUpdate(
+            call1AccessorPrototype,
+            MethodName,
+            new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Get = BuiltinDelegateFunctionAdapter
+                    .FromDelegate(call1Getter),
+                Enumerable = true,
+                Configurable = true
+            });
+        PrototypeChain.SetPrototype(
+            _call1AccessorReceiver,
+            call1AccessorPrototype);
+
+        var proxyTarget = new JsObject();
+        proxyTarget.SetValue(MethodName, _call1FirstFunction);
+        _call1Proxy = new JavaScriptRuntime.Proxy(
+            proxyTarget,
+            new JsObject());
+
+        _call1PolymorphicReceivers =
+            CreateCall1Receivers(
+                DynamicLookupInlineCacheSite
+                    .MaxPolymorphicEntries,
+                call1Prototype);
+        _call1MegamorphicReceivers =
+            CreateCall1Receivers(
+                DynamicLookupInlineCacheSite
+                    .MaxPolymorphicEntries + 1,
+                call1Prototype);
+
         _ = DynamicLookupInlineCache.GetItem(
             _receiver,
             PropertyName,
@@ -88,6 +184,44 @@ public class DynamicLookupInlineCacheBenchmarks
             MethodName,
             CallHitSite,
             ref _callHitTerminal);
+        _ = DynamicLookupInlineCache.CallMember1(
+            _call1Receiver,
+            MethodName,
+            "argument",
+            Call1HitSite,
+            ref _call1HitTerminal);
+        _ = DynamicLookupInlineCache.CallMember1(
+            _call1SharedPrototypeReceiver,
+            "benchmarkPhase4Method",
+            "argument",
+            Call1SharedPrototypeHitSite,
+            ref _call1SharedPrototypeHitTerminal);
+        _ = DynamicLookupInlineCache.CallMember1(
+            _call1ReassignmentReceiver,
+            MethodName,
+            "argument",
+            Call1ReassignmentSite,
+            ref _call1ReassignmentTerminal);
+
+        foreach (var receiver in _call1PolymorphicReceivers)
+        {
+            _ = DynamicLookupInlineCache.CallMember1(
+                receiver,
+                MethodName,
+                "argument",
+                Call1PolymorphicSite,
+                ref _call1PolymorphicTerminal);
+        }
+
+        foreach (var receiver in _call1MegamorphicReceivers)
+        {
+            _ = DynamicLookupInlineCache.CallMember1(
+                receiver,
+                MethodName,
+                "argument",
+                Call1MegamorphicSite,
+                ref _call1MegamorphicTerminal);
+        }
 
         foreach (var receiver in _polymorphicReceivers)
         {
@@ -183,6 +317,105 @@ public class DynamicLookupInlineCacheBenchmarks
             MethodName,
             CallHitSite,
             ref _callHitTerminal);
+
+    [Benchmark]
+    public object? GenericCallMember1()
+        => ObjectRuntime.CallMember1(
+            _call1Receiver,
+            MethodName,
+            "argument");
+
+    [Benchmark]
+    public object? CachedCallMember1PrototypeHit()
+        => DynamicLookupInlineCache.CallMember1(
+            _call1Receiver,
+            MethodName,
+            "argument",
+            Call1HitSite,
+            ref _call1HitTerminal);
+
+    [Benchmark]
+    public object? CachedCallMember1SharedArrayPrototypeHit()
+        => DynamicLookupInlineCache.CallMember1(
+            _call1SharedPrototypeReceiver,
+            "benchmarkPhase4Method",
+            "argument",
+            Call1SharedPrototypeHitSite,
+            ref _call1SharedPrototypeHitTerminal);
+
+    [Benchmark]
+    public object? CachedCallMember1PrototypeReassignment()
+    {
+        _call1ReassignmentToggle =
+            !_call1ReassignmentToggle;
+        _call1ReassignmentPrototype.SetValue(
+            MethodName,
+            _call1ReassignmentToggle
+                ? _call1FirstFunction
+                : _call1SecondFunction);
+        return DynamicLookupInlineCache.CallMember1(
+            _call1ReassignmentReceiver,
+            MethodName,
+            "argument",
+            Call1ReassignmentSite,
+            ref _call1ReassignmentTerminal);
+    }
+
+    [Benchmark]
+    public object? CachedCallMember1PolymorphicHit()
+    {
+        var receiver =
+            _call1PolymorphicReceivers[
+                _call1PolymorphicIndex++
+                % _call1PolymorphicReceivers.Length];
+        return DynamicLookupInlineCache.CallMember1(
+            receiver,
+            MethodName,
+            "argument",
+            Call1PolymorphicSite,
+            ref _call1PolymorphicTerminal);
+    }
+
+    [Benchmark]
+    public object? CallMember1MegamorphicFallback()
+    {
+        var receiver =
+            _call1MegamorphicReceivers[
+                _call1MegamorphicIndex++
+                % _call1MegamorphicReceivers.Length];
+        if (Volatile.Read(ref _call1MegamorphicTerminal) != 0)
+        {
+            return ObjectRuntime.CallMember1(
+                receiver,
+                MethodName,
+                "argument");
+        }
+
+        return DynamicLookupInlineCache.CallMember1(
+            receiver,
+            MethodName,
+            "argument",
+            Call1MegamorphicSite,
+            ref _call1MegamorphicTerminal);
+    }
+
+    [Benchmark]
+    public object? CallMember1AccessorFallback()
+        => DynamicLookupInlineCache.CallMember1(
+            _call1AccessorReceiver,
+            MethodName,
+            "argument",
+            Call1AccessorSite,
+            ref _call1AccessorTerminal);
+
+    [Benchmark]
+    public object? CallMember1ProxyFallback()
+        => DynamicLookupInlineCache.CallMember1(
+            _call1Proxy,
+            MethodName,
+            "argument",
+            Call1ProxySite,
+            ref _call1ProxyTerminal);
 
     [Benchmark]
     public object CachedPolymorphicHit()
@@ -316,6 +549,26 @@ public class DynamicLookupInlineCacheBenchmarks
                         PropertyName,
                         $"value:{index}");
                     return receiver;
+                })
+            .ToArray();
+
+    private static JsObject[] CreateCall1Receivers(
+        int count,
+        JsObject prototype)
+        => Enumerable
+            .Range(0, count)
+            .Select(
+                index =>
+                {
+                    var receiver =
+                        new JavaScriptRuntime.Array();
+                    receiver.SetValue(
+                        $"shape{index}",
+                        true);
+                    PrototypeChain.SetPrototype(
+                        receiver,
+                        prototype);
+                    return (JsObject)receiver;
                 })
             .ToArray();
 }

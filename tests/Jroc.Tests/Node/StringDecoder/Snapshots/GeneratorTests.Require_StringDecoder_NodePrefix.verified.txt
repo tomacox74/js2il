@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 134 (0x86)
+		// Code size: 212 (0xd4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_StringDecoder_NodePrefix/Scope,
@@ -136,30 +136,54 @@
 		IL_0034: ldstr "ok"
 		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
 		IL_003e: stloc.s 5
-		IL_0040: ldstr "write"
-		IL_0045: ldloc.s 5
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004c: stloc.3
-		IL_004d: ldloc.s 4
-		IL_004f: ldloc.3
-		IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0055: pop
-		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005b: stloc.s 4
-		IL_005d: ldloc.2
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0063: ldstr "!"
-		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_006d: stloc.s 5
-		IL_006f: ldstr "end"
-		IL_0074: ldloc.s 5
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007b: stloc.3
-		IL_007c: ldloc.s 4
-		IL_007e: ldloc.3
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0084: pop
-		IL_0085: ret
+		IL_0040: volatile.
+		IL_0042: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0047: brfalse IL_005d
+
+		IL_004c: ldstr "write"
+		IL_0051: ldloc.s 5
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0058: br IL_0073
+
+		IL_005d: ldstr "write"
+		IL_0062: ldloc.s 5
+		IL_0064: ldstr "Require_StringDecoder_NodePrefix:Modules.Require_StringDecoder_NodePrefix:__js_module_init__:18"
+		IL_0069: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0073: stloc.3
+		IL_0074: ldloc.s 4
+		IL_0076: ldloc.3
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007c: pop
+		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0082: stloc.s 4
+		IL_0084: ldloc.2
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008a: ldstr "!"
+		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0094: stloc.s 5
+		IL_0096: volatile.
+		IL_0098: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_009d: brfalse IL_00b3
+
+		IL_00a2: ldstr "end"
+		IL_00a7: ldloc.s 5
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ae: br IL_00c9
+
+		IL_00b3: ldstr "end"
+		IL_00b8: ldloc.s 5
+		IL_00ba: ldstr "Require_StringDecoder_NodePrefix:Modules.Require_StringDecoder_NodePrefix:__js_module_init__:25"
+		IL_00bf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00c9: stloc.3
+		IL_00ca: ldloc.s 4
+		IL_00cc: ldloc.3
+		IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d2: pop
+		IL_00d3: ret
 	} // end of method Require_StringDecoder_NodePrefix::__js_module_init__
 
 } // end of class Modules.Require_StringDecoder_NodePrefix
@@ -184,4 +208,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

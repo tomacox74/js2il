@@ -182,7 +182,7 @@
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
 			IL_0006: volatile.
-			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
 			IL_000d: brfalse IL_0022
 
 			IL_0012: ldarg.1
@@ -193,7 +193,7 @@
 			IL_0022: ldarg.1
 			IL_0023: ldstr "length"
 			IL_0028: ldstr "Promise_AllSettled_EmptyArray:<TwoPhaseDummy_M4>:__js_call__:5"
-			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
 			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0037: stloc.1
@@ -239,7 +239,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 113 (0x71)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_AllSettled_EmptyArray/Scope,
@@ -272,12 +272,25 @@
 		IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_AllSettled_EmptyArray/ArrowFunction_L3C29/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_AllSettled_EmptyArray/ArrowFunction_L3C29/FunctionObject>(!!0)
 		IL_003b: stloc.3
-		IL_003c: ldloc.1
-		IL_003d: ldstr "then"
-		IL_0042: ldloc.3
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0048: pop
-		IL_0049: ret
+		IL_003c: volatile.
+		IL_003e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0043: brfalse IL_0059
+
+		IL_0048: ldloc.1
+		IL_0049: ldstr "then"
+		IL_004e: ldloc.3
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0054: br IL_006f
+
+		IL_0059: ldloc.1
+		IL_005a: ldstr "then"
+		IL_005f: ldloc.3
+		IL_0060: ldstr "Promise_AllSettled_EmptyArray:Modules.Promise_AllSettled_EmptyArray:__js_module_init__:9"
+		IL_0065: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_006f: pop
+		IL_0070: ret
 	} // end of method Promise_AllSettled_EmptyArray::__js_module_init__
 
 } // end of class Modules.Promise_AllSettled_EmptyArray
@@ -308,6 +321,7 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

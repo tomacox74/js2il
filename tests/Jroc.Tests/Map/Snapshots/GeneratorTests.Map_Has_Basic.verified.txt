@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 184 (0xb8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Has_Basic/Scope,
@@ -125,27 +125,53 @@
 		IL_0022: pop
 		IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0028: stloc.2
-		IL_0029: ldloc.1
-		IL_002a: ldstr "has"
-		IL_002f: ldstr "key1"
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0039: stloc.3
-		IL_003a: ldloc.2
-		IL_003b: ldloc.3
-		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0041: pop
-		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0047: stloc.2
-		IL_0048: ldloc.1
-		IL_0049: ldstr "has"
-		IL_004e: ldstr "key2"
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0058: stloc.3
-		IL_0059: ldloc.2
-		IL_005a: ldloc.3
-		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0060: pop
-		IL_0061: ret
+		IL_0029: volatile.
+		IL_002b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0030: brfalse IL_004a
+
+		IL_0035: ldloc.1
+		IL_0036: ldstr "has"
+		IL_003b: ldstr "key1"
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0045: br IL_0064
+
+		IL_004a: ldloc.1
+		IL_004b: ldstr "has"
+		IL_0050: ldstr "key1"
+		IL_0055: ldstr "Map_Has_Basic:Modules.Map_Has_Basic:__js_module_init__:13"
+		IL_005a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0064: stloc.3
+		IL_0065: ldloc.2
+		IL_0066: ldloc.3
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006c: pop
+		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0072: stloc.2
+		IL_0073: volatile.
+		IL_0075: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_007a: brfalse IL_0094
+
+		IL_007f: ldloc.1
+		IL_0080: ldstr "has"
+		IL_0085: ldstr "key2"
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008f: br IL_00ae
+
+		IL_0094: ldloc.1
+		IL_0095: ldstr "has"
+		IL_009a: ldstr "key2"
+		IL_009f: ldstr "Map_Has_Basic:Modules.Map_Has_Basic:__js_module_init__:18"
+		IL_00a4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00ae: stloc.3
+		IL_00af: ldloc.2
+		IL_00b0: ldloc.3
+		IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b6: pop
+		IL_00b7: ret
 	} // end of method Map_Has_Basic::__js_module_init__
 
 } // end of class Modules.Map_Has_Basic
@@ -170,4 +196,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

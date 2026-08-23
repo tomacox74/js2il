@@ -317,7 +317,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 203 (0xcb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithArrayIteration/Scope,
@@ -372,15 +372,27 @@
 		IL_007d: stloc.s 5
 		IL_007f: ldloc.3
 		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0085: ldstr "join"
-		IL_008a: ldstr ","
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0094: stloc.s 6
-		IL_0096: ldloc.s 5
-		IL_0098: ldloc.s 6
-		IL_009a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009f: pop
-		IL_00a0: ret
+		IL_0085: volatile.
+		IL_0087: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_008c: brfalse IL_00a5
+
+		IL_0091: ldstr "join"
+		IL_0096: ldstr ","
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a0: br IL_00be
+
+		IL_00a5: ldstr "join"
+		IL_00aa: ldstr ","
+		IL_00af: ldstr "Function_GlobalFunctionWithArrayIteration:Modules.Function_GlobalFunctionWithArrayIteration:__js_module_init__:22"
+		IL_00b4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00be: stloc.s 6
+		IL_00c0: ldloc.s 5
+		IL_00c2: ldloc.s 6
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c9: pop
+		IL_00ca: ret
 	} // end of method Function_GlobalFunctionWithArrayIteration::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithArrayIteration
@@ -405,4 +417,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_2
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

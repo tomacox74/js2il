@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 352 (0x160)
+		// Code size: 518 (0x206)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Search_Basic/Scope,
@@ -125,107 +125,159 @@
 		IL_0018: ldstr ""
 		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
 		IL_0022: stloc.s 4
-		IL_0024: ldloc.1
-		IL_0025: ldstr "search"
-		IL_002a: ldloc.s 4
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0031: stloc.s 5
-		IL_0033: ldloc.3
-		IL_0034: ldloc.s 5
-		IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003b: pop
-		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0041: stloc.3
+		IL_0024: volatile.
+		IL_0026: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_002b: brfalse IL_0042
+
+		IL_0030: ldloc.1
+		IL_0031: ldstr "search"
+		IL_0036: ldloc.s 4
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_003d: br IL_0059
+
 		IL_0042: ldloc.1
 		IL_0043: ldstr "search"
-		IL_0048: ldstr "123"
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0052: stloc.s 5
-		IL_0054: ldloc.3
-		IL_0055: ldloc.s 5
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005c: pop
-		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0062: stloc.3
-		IL_0063: ldstr "xyz"
-		IL_0068: ldstr ""
-		IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_0072: stloc.s 4
-		IL_0074: ldloc.1
-		IL_0075: ldstr "search"
-		IL_007a: ldloc.s 4
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0081: stloc.s 5
-		IL_0083: ldloc.3
-		IL_0084: ldloc.s 5
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008b: pop
-		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0091: stloc.3
-		IL_0092: volatile.
-		IL_0094: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_0099: brfalse IL_00b2
+		IL_0048: ldloc.s 4
+		IL_004a: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:11"
+		IL_004f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_009e: ldstr "undefined-value"
-		IL_00a3: ldstr "search"
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00ad: br IL_00cb
+		IL_0059: stloc.s 5
+		IL_005b: ldloc.3
+		IL_005c: ldloc.s 5
+		IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0063: pop
+		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0069: stloc.3
+		IL_006a: volatile.
+		IL_006c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0071: brfalse IL_008b
 
-		IL_00b2: ldstr "undefined-value"
-		IL_00b7: ldstr "search"
-		IL_00bc: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:28"
-		IL_00c1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0076: ldloc.1
+		IL_0077: ldstr "search"
+		IL_007c: ldstr "123"
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0086: br IL_00a5
 
-		IL_00cb: stloc.s 5
-		IL_00cd: ldloc.3
-		IL_00ce: ldloc.s 5
-		IL_00d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d5: pop
-		IL_00d6: ldstr "a"
-		IL_00db: ldstr "g"
-		IL_00e0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_00e5: stloc.2
-		IL_00e6: ldloc.2
-		IL_00e7: ldstr "lastIndex"
-		IL_00ec: ldc.r8 2
-		IL_00f5: ldc.i4.1
-		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_00fb: pop
-		IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0101: stloc.3
-		IL_0102: ldstr "baaa"
-		IL_0107: ldstr "search"
-		IL_010c: ldloc.2
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0112: stloc.s 5
-		IL_0114: ldloc.3
-		IL_0115: ldloc.s 5
-		IL_0117: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_011c: pop
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0122: stloc.3
-		IL_0123: volatile.
-		IL_0125: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_012a: brfalse IL_013f
+		IL_008b: ldloc.1
+		IL_008c: ldstr "search"
+		IL_0091: ldstr "123"
+		IL_0096: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:16"
+		IL_009b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_012f: ldloc.2
-		IL_0130: ldstr "lastIndex"
-		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013a: br IL_0154
+		IL_00a5: stloc.s 5
+		IL_00a7: ldloc.3
+		IL_00a8: ldloc.s 5
+		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00af: pop
+		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b5: stloc.3
+		IL_00b6: ldstr "xyz"
+		IL_00bb: ldstr ""
+		IL_00c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_00c5: stloc.s 4
+		IL_00c7: volatile.
+		IL_00c9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00ce: brfalse IL_00e5
 
-		IL_013f: ldloc.2
-		IL_0140: ldstr "lastIndex"
-		IL_0145: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:47"
-		IL_014a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00d3: ldloc.1
+		IL_00d4: ldstr "search"
+		IL_00d9: ldloc.s 4
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e0: br IL_00fc
 
-		IL_0154: stloc.s 5
-		IL_0156: ldloc.3
-		IL_0157: ldloc.s 5
-		IL_0159: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_015e: pop
-		IL_015f: ret
+		IL_00e5: ldloc.1
+		IL_00e6: ldstr "search"
+		IL_00eb: ldloc.s 4
+		IL_00ed: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:23"
+		IL_00f2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00fc: stloc.s 5
+		IL_00fe: ldloc.3
+		IL_00ff: ldloc.s 5
+		IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0106: pop
+		IL_0107: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010c: stloc.3
+		IL_010d: volatile.
+		IL_010f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0114: brfalse IL_012d
+
+		IL_0119: ldstr "undefined-value"
+		IL_011e: ldstr "search"
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0128: br IL_0146
+
+		IL_012d: ldstr "undefined-value"
+		IL_0132: ldstr "search"
+		IL_0137: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:28"
+		IL_013c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_0146: stloc.s 5
+		IL_0148: ldloc.3
+		IL_0149: ldloc.s 5
+		IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0150: pop
+		IL_0151: ldstr "a"
+		IL_0156: ldstr "g"
+		IL_015b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0160: stloc.2
+		IL_0161: ldloc.2
+		IL_0162: ldstr "lastIndex"
+		IL_0167: ldc.r8 2
+		IL_0170: ldc.i4.1
+		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0176: pop
+		IL_0177: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_017c: stloc.3
+		IL_017d: volatile.
+		IL_017f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0184: brfalse IL_019e
+
+		IL_0189: ldstr "baaa"
+		IL_018e: ldstr "search"
+		IL_0193: ldloc.2
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0199: br IL_01b8
+
+		IL_019e: ldstr "baaa"
+		IL_01a3: ldstr "search"
+		IL_01a8: ldloc.2
+		IL_01a9: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:42"
+		IL_01ae: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_01b8: stloc.s 5
+		IL_01ba: ldloc.3
+		IL_01bb: ldloc.s 5
+		IL_01bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c2: pop
+		IL_01c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01c8: stloc.3
+		IL_01c9: volatile.
+		IL_01cb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_01d0: brfalse IL_01e5
+
+		IL_01d5: ldloc.2
+		IL_01d6: ldstr "lastIndex"
+		IL_01db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01e0: br IL_01fa
+
+		IL_01e5: ldloc.2
+		IL_01e6: ldstr "lastIndex"
+		IL_01eb: ldstr "String_Search_Basic:Modules.String_Search_Basic:__js_module_init__:47"
+		IL_01f0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_01f5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01fa: stloc.s 5
+		IL_01fc: ldloc.3
+		IL_01fd: ldloc.s 5
+		IL_01ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0204: pop
+		IL_0205: ret
 	} // end of method String_Search_Basic::__js_module_init__
 
 } // end of class Modules.String_Search_Basic
@@ -257,6 +309,10 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
 	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

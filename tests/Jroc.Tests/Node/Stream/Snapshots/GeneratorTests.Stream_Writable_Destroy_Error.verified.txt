@@ -391,7 +391,7 @@
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_Destroy_Error/Scope::sequence
 			IL_0006: stloc.0
 			IL_0007: volatile.
-			IL_0009: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0009: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
 			IL_000e: brfalse IL_0023
 
 			IL_0013: ldarg.2
@@ -402,7 +402,7 @@
 			IL_0023: ldarg.2
 			IL_0024: ldstr "message"
 			IL_0029: ldstr "Stream_Writable_Destroy_Error:<TwoPhaseDummy_M5>:__js_call__:5"
-			IL_002e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_002e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
 			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0038: stloc.1
@@ -753,7 +753,7 @@
 			IL_0041: ldarg.0
 			IL_0042: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
 			IL_0047: volatile.
-			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_004e: brfalse IL_0062
 
 			IL_0053: ldstr "destroyed"
@@ -762,7 +762,7 @@
 
 			IL_0062: ldstr "destroyed"
 			IL_0067: ldstr "Stream_Writable_Destroy_Error:<TwoPhaseDummy_M7>:__js_call__:15"
-			IL_006c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_006c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0076: stloc.3
@@ -821,7 +821,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 387 (0x183)
+		// Code size: 429 (0x1ad)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_Destroy_Error/Scope,
@@ -976,19 +976,31 @@
 		IL_0150: ldloc.0
 		IL_0151: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
 		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015b: ldstr "write"
-		IL_0160: ldstr "x"
-		IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_016a: stloc.2
-		IL_016b: ldstr "write-return:"
-		IL_0170: ldloc.2
-		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0176: stloc.s 10
-		IL_0178: ldloc.s 9
-		IL_017a: ldloc.s 10
-		IL_017c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0181: pop
-		IL_0182: ret
+		IL_015b: volatile.
+		IL_015d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0162: brfalse IL_017b
+
+		IL_0167: ldstr "write"
+		IL_016c: ldstr "x"
+		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0176: br IL_0194
+
+		IL_017b: ldstr "write"
+		IL_0180: ldstr "x"
+		IL_0185: ldstr "Stream_Writable_Destroy_Error:Modules.Stream_Writable_Destroy_Error:__js_module_init__:48"
+		IL_018a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0194: stloc.2
+		IL_0195: ldstr "write-return:"
+		IL_019a: ldloc.2
+		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01a0: stloc.s 10
+		IL_01a2: ldloc.s 9
+		IL_01a4: ldloc.s 10
+		IL_01a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ab: pop
+		IL_01ac: ret
 	} // end of method Stream_Writable_Destroy_Error::__js_module_init__
 
 } // end of class Modules.Stream_Writable_Destroy_Error
@@ -1020,6 +1032,7 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_6
 	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

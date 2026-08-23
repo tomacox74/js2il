@@ -685,13 +685,22 @@ function inspectHotMethodIl(il, source) {
       body,
       /ObjectRuntime::CallMember1\(/g
     ),
+    cachedArity1MemberDispatches: countMatches(
+      body,
+      /DynamicLookupInlineCache::CallMember1\(/g
+    ),
     findGraphNodeArity1CallSites: 0,
+    cachedFindGraphNodeArity1CallSites: 0,
   };
 
   for (const callable of bodies) {
     result.findGraphNodeArity1CallSites += countMatches(
       callable.text,
       /ldstr "findGraphNode"[\s\S]{0,500}?ObjectRuntime::CallMember1\(/g
+    );
+    result.cachedFindGraphNodeArity1CallSites += countMatches(
+      callable.text,
+      /ldstr "findGraphNode"[\s\S]{0,500}?DynamicLookupInlineCache::CallMember1\(/g
     );
   }
   return result;
@@ -765,7 +774,13 @@ function printIlCounters(result) {
     `Arity-1 dispatches inside findGraphNode:   ${result.arity1MemberDispatches}`
   );
   console.log(
+    `Cached arity-1 dispatches in findGraphNode:${result.cachedArity1MemberDispatches}`
+  );
+  console.log(
     `Arity-1 calls to findGraphNode elsewhere: ${result.findGraphNodeArity1CallSites}`
+  );
+  console.log(
+    `Cached calls to findGraphNode elsewhere:  ${result.cachedFindGraphNodeArity1CallSites}`
   );
 }
 

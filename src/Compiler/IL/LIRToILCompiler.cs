@@ -78,6 +78,7 @@ internal sealed partial class LIRToILCompiler
             .Where(
                 instruction =>
                     instruction is LIRCallMember0
+                    || instruction is LIRCallMember1
                     || instruction is LIRGetItem getItem
                     && GetTempStorage(getItem.Index).Kind
                         == ValueStorageKind.Reference
