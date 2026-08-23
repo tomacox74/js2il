@@ -124,12 +124,11 @@ public sealed partial class HIRToLIRLowerer
                     constructorShape,
                     Array.Empty<InferredObjectProperty>(),
                     receiver));
-            DefineTempStorage(
-                receiver,
-                new ValueStorage(
-                    ValueStorageKind.Reference,
-                    typeof(object),
-                    constructorShape.GeneratedClrTypeHandle));
+            var receiverStorage = new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(object),
+                constructorShape.GeneratedClrTypeHandle);
+            DefineTempStorage(receiver, receiverStorage);
 
             resultTempVar = CreateTempVariable();
             var helperArguments = new List<TempVariable>(
@@ -154,13 +153,9 @@ public sealed partial class HIRToLIRLowerer
                         .ConstructGeneratedFunctionWithReceiverArray)
                     : $"ConstructGeneratedFunctionWithReceiver{arguments.Count}",
                 helperArguments,
-                resultTempVar));
-            DefineTempStorage(
                 resultTempVar,
-                new ValueStorage(
-                    ValueStorageKind.Reference,
-                    typeof(object),
-                    constructorShape.GeneratedClrTypeHandle));
+                receiverStorage));
+            DefineTempStorage(resultTempVar, receiverStorage);
             return true;
         }
 

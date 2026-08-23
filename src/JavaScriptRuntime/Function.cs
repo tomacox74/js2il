@@ -726,53 +726,53 @@ public static class Function
             }
         }
 
-        public static object? ConstructGeneratedFunctionWithReceiver0(
+        public static T ConstructGeneratedFunctionWithReceiver0<T>(
             object constructor,
             object receiver,
             object? newTarget)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.Empty,
-                newTarget);
+                newTarget)!;
 
-        public static object? ConstructGeneratedFunctionWithReceiver1(
+        public static T ConstructGeneratedFunctionWithReceiver1<T>(
             object constructor,
             object receiver,
             object? newTarget,
             object? argument0)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.From(argument0),
-                newTarget);
+                newTarget)!;
 
-        public static object? ConstructGeneratedFunctionWithReceiver2(
+        public static T ConstructGeneratedFunctionWithReceiver2<T>(
             object constructor,
             object receiver,
             object? newTarget,
             object? argument0,
             object? argument1)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.From(argument0, argument1),
-                newTarget);
+                newTarget)!;
 
-        public static object? ConstructGeneratedFunctionWithReceiver3(
+        public static T ConstructGeneratedFunctionWithReceiver3<T>(
             object constructor,
             object receiver,
             object? newTarget,
             object? argument0,
             object? argument1,
             object? argument2)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.From(argument0, argument1, argument2),
-                newTarget);
+                newTarget)!;
 
-        public static object? ConstructGeneratedFunctionWithReceiver4(
+        public static T ConstructGeneratedFunctionWithReceiver4<T>(
             object constructor,
             object receiver,
             object? newTarget,
@@ -780,7 +780,7 @@ public static class Function
             object? argument1,
             object? argument2,
             object? argument3)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.From(
@@ -788,9 +788,9 @@ public static class Function
                     argument1,
                     argument2,
                     argument3),
-                newTarget);
+                newTarget)!;
 
-        public static object? ConstructGeneratedFunctionWithReceiver5(
+        public static T ConstructGeneratedFunctionWithReceiver5<T>(
             object constructor,
             object receiver,
             object? newTarget,
@@ -799,7 +799,7 @@ public static class Function
             object? argument2,
             object? argument3,
             object? argument4)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.From(
@@ -808,18 +808,18 @@ public static class Function
                     argument2,
                     argument3,
                     argument4),
-                newTarget);
+                newTarget)!;
 
-        public static object? ConstructGeneratedFunctionWithReceiverArray(
+        public static T ConstructGeneratedFunctionWithReceiverArray<T>(
             object constructor,
             object receiver,
             object? newTarget,
             object?[]? arguments)
-            => ConstructGeneratedFunctionWithReceiver(
+            => (T)ConstructGeneratedFunctionWithReceiver(
                 constructor,
                 receiver,
                 JsCallArguments.FromArray(arguments),
-                newTarget);
+                newTarget)!;
 
         private static object? ConstructGeneratedFunctionWithReceiver(
             object constructor,
