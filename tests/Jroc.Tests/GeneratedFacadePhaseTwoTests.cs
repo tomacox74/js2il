@@ -83,12 +83,14 @@ public sealed class GeneratedFacadePhaseTwoTests
         using var exportingEntryAssembly = JrocInMemoryAssemblyLoader.Load(exportingEntryHarness.Artifact);
         var exportingRoot = exportingEntryAssembly.Assembly.GetType("EntryImportAssembly", throwOnError: true)!;
         var rootImport = exportingRoot.GetMethod("Import", BindingFlags.Public | BindingFlags.Static)!;
-        var explicitImport = exportingRoot
+        var entryFacade = exportingRoot
             .GetNestedType("Scripts", BindingFlags.Public)!
-            .GetNestedType("entry", BindingFlags.Public)!
-            .GetMethod("Import", BindingFlags.Public | BindingFlags.Static)!;
+            .GetNestedType("entry", BindingFlags.Public)!;
+        var explicitImport = entryFacade.GetMethod("Import", BindingFlags.Public | BindingFlags.Static)!;
 
         Assert.Equal(rootImport.ReturnType, explicitImport.ReturnType);
+        Assert.Equal("IExports", rootImport.ReturnType.Name);
+        Assert.Equal(entryFacade, rootImport.ReturnType.DeclaringType);
         Assert.True(typeof(IDisposable).IsAssignableFrom(rootImport.ReturnType));
         Assert.Equal(
             "entry",
@@ -114,7 +116,8 @@ public sealed class GeneratedFacadePhaseTwoTests
             using var root = HostedMathModule.Import();
             using var entry = HostedMathModule.Scripts.entry.Import();
             using var css = HostedMathModule.Scripts.api.css.Import();
-            using var math = HostedMathModule.Scripts.api.math.Import();
+            using HostedMathModule.Scripts.api.math.IExports math =
+                HostedMathModule.Scripts.api.math.Import();
 
             Console.WriteLine(root.GetType() == entry.GetType());
             Console.WriteLine(root.Version);
@@ -301,16 +304,18 @@ public sealed class GeneratedFacadePhaseTwoTests
         var import = root.GetMethod("Import", BindingFlags.Public | BindingFlags.Static)!;
         var contract = import.ReturnType;
 
-        AssertPublicSignatureUsesOnlyGeneratedOrBcl(import);
+        AssertPublicSignatureUsesOnlyGeneratedOrBcl(import, loaded.Assembly);
         foreach (var member in contract.GetMembers(BindingFlags.Public | BindingFlags.Instance))
         {
             switch (member)
             {
                 case MethodInfo method when !method.IsSpecialName:
-                    AssertPublicSignatureUsesOnlyGeneratedOrBcl(method);
+                    AssertPublicSignatureUsesOnlyGeneratedOrBcl(method, loaded.Assembly);
                     break;
                 case PropertyInfo property:
-                    Assert.True(IsGeneratedOrBcl(property.PropertyType), property.ToString());
+                    Assert.True(
+                        IsGeneratedOrBcl(property.PropertyType, loaded.Assembly),
+                        property.ToString());
                     break;
             }
         }
@@ -342,28 +347,32 @@ public sealed class GeneratedFacadePhaseTwoTests
         return PublicExportShapeAnalyzer.Analyze(modules!);
     }
 
-    private static void AssertPublicSignatureUsesOnlyGeneratedOrBcl(MethodInfo method)
+    private static void AssertPublicSignatureUsesOnlyGeneratedOrBcl(
+        MethodInfo method,
+        Assembly generatedAssembly)
     {
-        Assert.True(IsGeneratedOrBcl(method.ReturnType), method.ToString());
+        Assert.True(IsGeneratedOrBcl(method.ReturnType, generatedAssembly), method.ToString());
         foreach (var parameter in method.GetParameters())
         {
-            Assert.True(IsGeneratedOrBcl(parameter.ParameterType), method.ToString());
+            Assert.True(
+                IsGeneratedOrBcl(parameter.ParameterType, generatedAssembly),
+                method.ToString());
         }
     }
 
-    private static bool IsGeneratedOrBcl(Type type)
+    private static bool IsGeneratedOrBcl(Type type, Assembly generatedAssembly)
     {
         if (type.IsArray)
         {
-            return IsGeneratedOrBcl(type.GetElementType()!);
+            return IsGeneratedOrBcl(type.GetElementType()!, generatedAssembly);
         }
 
-        if (type.Assembly == typeof(object).Assembly)
+        if (type.Assembly == generatedAssembly || type.Assembly == typeof(object).Assembly)
         {
             return true;
         }
 
-        return type.Namespace?.StartsWith("Jroc.UnknownFallbackAssembly", StringComparison.Ordinal) == true;
+        return false;
     }
 
     private static void AssertConsumerSucceeded(GeneratedAssemblyConsumerResult result)

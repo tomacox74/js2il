@@ -3,33 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 26 49 6d 70 6f 72 74 5f 44 79 6e 61 6d 69
-		63 49 6d 70 6f 72 74 5f 43 6a 73 5f 4e 61 6d 65
-		73 70 61 63 65 5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance void Inc () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 03 69 6e 63 00 00
-		)
-	} // end of method IImportDynamicImportCjsNamespaceLibExports::Inc
-
-	.method public hidebysig newslot abstract virtual 
-		instance float64 Value () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 05 76 61 6c 75 65 00 00
-		)
-	} // end of method IImportDynamicImportCjsNamespaceLibExports::Value
-
-} // end of class Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports
-
 .class public auto ansi abstract sealed beforefieldinit Import_DynamicImport_Cjs_Namespace
 	extends [System.Runtime]System.Object
 {
@@ -69,6 +42,35 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Import_DynamicImport_Cjs_Namespace_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 26 49 6d 70 6f 72 74 5f 44 79 6e 61 6d 69
+					63 49 6d 70 6f 72 74 5f 43 6a 73 5f 4e 61 6d 65
+					73 70 61 63 65 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance void Inc () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 69 6e 63 00 00
+					)
+				} // end of method IExports::Inc
+
+				.method public hidebysig newslot abstract virtual 
+					instance float64 Value () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 05 76 61 6c 75 65 00 00
+					)
+				} // end of method IExports::Value
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -93,20 +95,20 @@
 			} // end of method Import_DynamicImport_Cjs_Namespace_Lib::Run
 
 			.method public hidebysig static 
-				class Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports Import () cil managed 
+				class Import_DynamicImport_Cjs_Namespace/Scripts/Import_DynamicImport_Cjs_Namespace_Lib/IExports Import () cil managed 
 			{
 				// Header size: 1
 				// Code size: 38 (0x26)
 				.maxstack 8
 
-				IL_0000: ldtoken Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports
+				IL_0000: ldtoken Import_DynamicImport_Cjs_Namespace/Scripts/Import_DynamicImport_Cjs_Namespace_Lib/IExports
 				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 				IL_000a: ldnull
 				IL_000b: ldftn void Modules.Import_DynamicImport_Cjs_Namespace_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 				IL_0016: ldstr "Import_DynamicImport_Cjs_Namespace_Lib"
 				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-				IL_0020: castclass Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports
+				IL_0020: castclass Import_DynamicImport_Cjs_Namespace/Scripts/Import_DynamicImport_Cjs_Namespace_Lib/IExports
 				IL_0025: ret
 			} // end of method Import_DynamicImport_Cjs_Namespace_Lib::Import
 

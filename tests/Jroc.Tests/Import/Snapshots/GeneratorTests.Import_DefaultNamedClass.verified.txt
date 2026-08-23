@@ -3,30 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.Import_DefaultNamedClass.IImportDefaultNamedClassLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 1c 49 6d 70 6f 72 74 5f 44 65 66 61 75 6c
-		74 4e 61 6d 65 64 43 6c 61 73 73 5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig specialname newslot abstract virtual 
-		instance object get_Default () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 07 64 65 66 61 75 6c 74 00 00
-		)
-	} // end of method IImportDefaultNamedClassLibExports::get_Default
-
-	// Properties
-	.property instance object Default()
-	{
-		.get instance object Jroc.Import_DefaultNamedClass.IImportDefaultNamedClassLibExports::get_Default()
-	}
-
-} // end of class Jroc.Import_DefaultNamedClass.IImportDefaultNamedClassLibExports
-
 .class public auto ansi abstract sealed beforefieldinit Import_DefaultNamedClass
 	extends [System.Runtime]System.Object
 {
@@ -66,6 +42,32 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Import_DefaultNamedClass_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 1c 49 6d 70 6f 72 74 5f 44 65 66 61 75 6c
+					74 4e 61 6d 65 64 43 6c 61 73 73 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_Default () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 07 64 65 66 61 75 6c 74 00 00
+					)
+				} // end of method IExports::get_Default
+
+				// Properties
+				.property instance object Default()
+				{
+					.get instance object Import_DefaultNamedClass/Scripts/Import_DefaultNamedClass_Lib/IExports::get_Default()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -90,20 +92,20 @@
 			} // end of method Import_DefaultNamedClass_Lib::Run
 
 			.method public hidebysig static 
-				class Jroc.Import_DefaultNamedClass.IImportDefaultNamedClassLibExports Import () cil managed 
+				class Import_DefaultNamedClass/Scripts/Import_DefaultNamedClass_Lib/IExports Import () cil managed 
 			{
 				// Header size: 1
 				// Code size: 38 (0x26)
 				.maxstack 8
 
-				IL_0000: ldtoken Jroc.Import_DefaultNamedClass.IImportDefaultNamedClassLibExports
+				IL_0000: ldtoken Import_DefaultNamedClass/Scripts/Import_DefaultNamedClass_Lib/IExports
 				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 				IL_000a: ldnull
 				IL_000b: ldftn void Modules.Import_DefaultNamedClass_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 				IL_0016: ldstr "Import_DefaultNamedClass_Lib"
 				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-				IL_0020: castclass Jroc.Import_DefaultNamedClass.IImportDefaultNamedClassLibExports
+				IL_0020: castclass Import_DefaultNamedClass/Scripts/Import_DefaultNamedClass_Lib/IExports
 				IL_0025: ret
 			} // end of method Import_DefaultNamedClass_Lib::Import
 

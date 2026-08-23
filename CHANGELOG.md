@@ -10,7 +10,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   for #1917 and issues #1934, #1935, #1936, and #1937. The compiler now shares
   one ESM/CommonJS export-shape model, emits `Import()` only for exported or
   unknown modules, supports direct/default/unknown fallback contracts, and
-  routes each import through an isolated disposable runtime.
+  routes each import through an isolated disposable runtime. Each module
+  contract is exposed as `IExports` nested under that module's static facade.
 - perf(compiler/runtime): implement issue #1958 Phase 4 with shape-keyed
   `CallMember1` caches for own methods and direct prototype methods, including
   the hot `Array.prototype.findGraphNode` path. Generated sites use fixed-arity

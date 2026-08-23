@@ -72,19 +72,13 @@ Reference the compiled module assembly (`out\math.dll`):
 
 ## 4) Call exports (typed)
 
-If contract generation is enabled (it is **enabled by default**), `math.dll` contains a generated exports interface annotated with `[JsModule("math")]`.
+If contract generation is enabled (it is **enabled by default**), `math.dll`
+contains `math.Scripts.math.IExports`, annotated with `[JsModule("math")]`.
 
 In your host app:
 
 ```csharp
-using Jroc.Runtime;
-
-// Namespace and type name are generated from the compiled assembly name.
-// For an assembly named "math", the entry exports contract is:
-//   Jroc.math.IMathExports
-using Jroc.math;
-
-using var exports = JsEngine.LoadModule<IMathExports>();
+using var exports = math.Import();
 
 Console.WriteLine(exports.Version);
 Console.WriteLine(exports.Add(1, 2));

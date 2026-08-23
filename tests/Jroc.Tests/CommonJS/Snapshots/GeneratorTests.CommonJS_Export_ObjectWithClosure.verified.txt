@@ -3,39 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.CommonJS_Export_ObjectWithClosure.ICommonJSExportObjectWithClosureLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 25 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
-		72 74 5f 4f 62 6a 65 63 74 57 69 74 68 43 6c 6f
-		73 75 72 65 5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance float64 MultiplyModuleFactor (
-			float64 x
-		) cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 14 6d 75 6c 74 69 70 6c 79 4d 6f 64 75 6c
-			65 46 61 63 74 6f 72 00 00
-		)
-	} // end of method ICommonJSExportObjectWithClosureLibExports::MultiplyModuleFactor
-
-	.method public hidebysig newslot abstract virtual 
-		instance object CreateCalculator (
-			object factor
-		) cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 10 63 72 65 61 74 65 43 61 6c 63 75 6c 61
-			74 6f 72 00 00
-		)
-	} // end of method ICommonJSExportObjectWithClosureLibExports::CreateCalculator
-
-} // end of class Jroc.CommonJS_Export_ObjectWithClosure.ICommonJSExportObjectWithClosureLibExports
-
 .class public auto ansi abstract sealed beforefieldinit CommonJS_Export_ObjectWithClosure
 	extends [System.Runtime]System.Object
 {
@@ -75,6 +42,41 @@
 		.class nested public auto ansi abstract sealed beforefieldinit CommonJS_Export_ObjectWithClosure_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 25 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
+					72 74 5f 4f 62 6a 65 63 74 57 69 74 68 43 6c 6f
+					73 75 72 65 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance float64 MultiplyModuleFactor (
+						float64 x
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 14 6d 75 6c 74 69 70 6c 79 4d 6f 64 75 6c
+						65 46 61 63 74 6f 72 00 00
+					)
+				} // end of method IExports::MultiplyModuleFactor
+
+				.method public hidebysig newslot abstract virtual 
+					instance object CreateCalculator (
+						object factor
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 10 63 72 65 61 74 65 43 61 6c 63 75 6c 61
+						74 6f 72 00 00
+					)
+				} // end of method IExports::CreateCalculator
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -99,20 +101,20 @@
 			} // end of method CommonJS_Export_ObjectWithClosure_Lib::Run
 
 			.method public hidebysig static 
-				class Jroc.CommonJS_Export_ObjectWithClosure.ICommonJSExportObjectWithClosureLibExports Import () cil managed 
+				class CommonJS_Export_ObjectWithClosure/Scripts/CommonJS_Export_ObjectWithClosure_Lib/IExports Import () cil managed 
 			{
 				// Header size: 1
 				// Code size: 38 (0x26)
 				.maxstack 8
 
-				IL_0000: ldtoken Jroc.CommonJS_Export_ObjectWithClosure.ICommonJSExportObjectWithClosureLibExports
+				IL_0000: ldtoken CommonJS_Export_ObjectWithClosure/Scripts/CommonJS_Export_ObjectWithClosure_Lib/IExports
 				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 				IL_000a: ldnull
 				IL_000b: ldftn void Modules.CommonJS_Export_ObjectWithClosure_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 				IL_0016: ldstr "CommonJS_Export_ObjectWithClosure_Lib"
 				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-				IL_0020: castclass Jroc.CommonJS_Export_ObjectWithClosure.ICommonJSExportObjectWithClosureLibExports
+				IL_0020: castclass CommonJS_Export_ObjectWithClosure/Scripts/CommonJS_Export_ObjectWithClosure_Lib/IExports
 				IL_0025: ret
 			} // end of method CommonJS_Export_ObjectWithClosure_Lib::Import
 

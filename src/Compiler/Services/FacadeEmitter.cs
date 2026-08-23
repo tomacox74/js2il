@@ -6,6 +6,10 @@ using Jroc.Utilities.Ecma335;
 
 namespace Jroc.Services;
 
+internal sealed record FacadeEmissionResult(
+    MethodDefinitionHandle RootRunMethod,
+    IReadOnlyDictionary<string, TypeDefinitionHandle> ModuleTypes);
+
 internal sealed class FacadeEmitter
 {
     private readonly MetadataBuilder _metadata;
@@ -41,7 +45,13 @@ internal sealed class FacadeEmitter
         return plan.Modules.Count + 1 + importMethodCount;
     }
 
-    internal MethodDefinitionHandle Emit(
+    internal int GetTypeCount(JrocFacadeNamePlan plan)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        return Flatten(BuildTypeTree(plan)).Count();
+    }
+
+    internal FacadeEmissionResult Emit(
         JrocFacadeNamePlan plan,
         IReadOnlyList<ModuleDefinition> modules,
         IReadOnlyDictionary<string, MethodDefinitionHandle> moduleInitializers,
@@ -53,30 +63,7 @@ internal sealed class FacadeEmitter
         ArgumentNullException.ThrowIfNull(moduleInitializers);
         ArgumentNullException.ThrowIfNull(moduleExportContracts);
 
-        var root = new FacadeType(plan.RootTypeName, plan.EntryModuleId, parent: null);
-        var scripts = new FacadeType("Scripts", moduleId: null, root);
-        root.Children.Add(scripts);
-
-        foreach (var moduleName in plan.Modules)
-        {
-            var current = scripts;
-            foreach (var segment in moduleName.TypePath)
-            {
-                var child = current.Children.FirstOrDefault(
-                    candidate => string.Equals(candidate.Name, segment, StringComparison.Ordinal));
-                if (child is null)
-                {
-                    child = new FacadeType(segment, moduleId: null, current);
-                    current.Children.Add(child);
-                }
-
-                current = child;
-            }
-
-            current.ModuleId = moduleName.ModuleId;
-        }
-
-        SortChildren(root);
+        var root = BuildTypeTree(plan);
         var types = Flatten(root).ToArray();
         var moduleById = modules
             .GroupBy(module => module.ModuleId, StringComparer.Ordinal)
@@ -144,7 +131,14 @@ internal sealed class FacadeEmitter
             }
         }
 
-        return root.RunMethod;
+        var moduleTypes = types
+            .Where(type => type.Parent is not null && type.ModuleId is not null)
+            .ToDictionary(
+                type => type.ModuleId!,
+                type => type.TypeHandle,
+                StringComparer.Ordinal);
+
+        return new FacadeEmissionResult(root.RunMethod, moduleTypes);
     }
 
     private MethodDefinitionHandle EmitRunMethod(
@@ -266,6 +260,35 @@ internal sealed class FacadeEmitter
         blob.WriteUInt16(0x0001);
         blob.WriteUInt16(0);
         return _metadata.GetOrAddBlob(blob);
+    }
+
+    private static FacadeType BuildTypeTree(JrocFacadeNamePlan plan)
+    {
+        var root = new FacadeType(plan.RootTypeName, plan.EntryModuleId, parent: null);
+        var scripts = new FacadeType("Scripts", moduleId: null, root);
+        root.Children.Add(scripts);
+
+        foreach (var moduleName in plan.Modules)
+        {
+            var current = scripts;
+            foreach (var segment in moduleName.TypePath)
+            {
+                var child = current.Children.FirstOrDefault(
+                    candidate => string.Equals(candidate.Name, segment, StringComparison.Ordinal));
+                if (child is null)
+                {
+                    child = new FacadeType(segment, moduleId: null, current);
+                    current.Children.Add(child);
+                }
+
+                current = child;
+            }
+
+            current.ModuleId = moduleName.ModuleId;
+        }
+
+        SortChildren(root);
+        return root;
     }
 
     private static IEnumerable<FacadeType> Flatten(FacadeType type)

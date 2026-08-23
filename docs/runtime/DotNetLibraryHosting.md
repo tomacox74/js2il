@@ -442,51 +442,20 @@ Recommended behavior:
 
 ### Naming generated export contracts for nested modules
 
-Modules commonly have path-like ids (e.g., `calculator/index`). Generated contract names should avoid collisions while remaining pleasant to use.
+Every exported module owns an `IExports` interface nested directly under its
+generated static facade type. The facade path already identifies the assembly
+and module, so the contract name does not repeat either name.
 
-Generated contract namespaces should default to being prefixed with `Jroc.` + the **compiled assembly name**.
+Examples within `foo.dll`:
 
-Notes:
+- entry module `foo` → `foo.Scripts.foo.IExports`
+- module id `calculator/index` → `foo.Scripts.calculator.index.IExports`
+- module id `calculator/advanced` →
+  `foo.Scripts.calculator.advanced.IExports`
 
-- During compilation, the assembly name currently defaults to the script name being compiled.
-  - Example: `jroc foo.js` produces `foo.dll` with `<AssemblyName> = foo`.
-
-Recommended convention:
-
-1. Root namespace is `Jroc.<AssemblyName>`.
-2. The “entry module” exports interface is `I<AssemblyName>Exports`.
-      - Example: `Jroc.foo.IFooExports`
-3. For non-entry modules (including `require(...)` dependencies), use:
-      - namespace: `Jroc.<AssemblyName>.<ModuleName>`
-      - exports interface: `I<ModuleName>Exports`
-4. `<ModuleName>` is derived from the module id:
-      - split on `/` and `\\`
-      - if the last segment is `index`, use the parent segment as `<ModuleName>`
-      - otherwise use the last segment
-
-Examples (within `foo.dll`):
-
-- entry module → `Jroc.foo.IFooExports`
-- module id `calculator/index` → `Jroc.foo.Calculator.ICalculatorExports`
-- module id `calculator/advanced` → `Jroc.foo.Calculator.IAdvancedExports`
-
-Exports for `require(...)` dependencies follow the same rule:
-
-- `Jroc.<AssemblyName>.<ModuleName>.I<ModuleName>Exports`
-
- This is preferred over `calculator.IIndexExports` because:
-
-- the namespace is PascalCase (`Calculator`), which is idiomatic in C#
-- `ICalculatorExports` is more descriptive than `IIndexExports` for a folder module
-
-If you want an even simpler per-module naming model, an alternative is:
-
-- namespace per module (`JsModules.Calculator`)
-- exports interface always named `IExports`
-
-Example: `calculator/index` → `JsModules.Calculator.IExports`
-
-This is concise but makes `IExports` harder to search for globally, so the `I<DisplayName>Exports` approach is usually friendlier.
+The assembly-root `foo.Import()` returns the exact same contract as the entry
+facade's `foo.Scripts.foo.Import()`. Supporting handle interfaces for projected
+classes and nested objects remain generated implementation details.
 
 ### Strongly typed exports
 
@@ -494,7 +463,7 @@ The return value of `LoadModule(moduleId)` is whatever the module assigned to `m
 
 In practice there are two common shapes:
 
-- **Typed per-module interface**: e.g. `I<DisplayName>Exports` (read/write proxy surface)
+- **Typed per-module interface**: the facade's nested `IExports` contract
 - **Typed object graph**: an exports interface plus additional interfaces for nested objects/instances
 
 Exports are mutable through the hosting proxies:

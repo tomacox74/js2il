@@ -3,42 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 14 54 6c 73 5f 54 65 73 74 43 65 72 74 69
-		66 69 63 61 74 65 73 00 00
-	)
-	// Methods
-	.method public hidebysig specialname newslot abstract virtual 
-		instance object get_CertPem () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 07 63 65 72 74 50 65 6d 00 00
-		)
-	} // end of method ITlsTestCertificatesExports::get_CertPem
-
-	.method public hidebysig specialname newslot abstract virtual 
-		instance object get_KeyPem () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 06 6b 65 79 50 65 6d 00 00
-		)
-	} // end of method ITlsTestCertificatesExports::get_KeyPem
-
-	// Properties
-	.property instance object CertPem()
-	{
-		.get instance object Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports::get_CertPem()
-	}
-	.property instance object KeyPem()
-	{
-		.get instance object Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports::get_KeyPem()
-	}
-
-} // end of class Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports
-
 .class public auto ansi abstract sealed beforefieldinit Tls_CreateServer_Connect_Basic
 	extends [System.Runtime]System.Object
 {
@@ -78,6 +42,44 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Tls_TestCertificates
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 14 54 6c 73 5f 54 65 73 74 43 65 72 74 69
+					66 69 63 61 74 65 73 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_CertPem () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 07 63 65 72 74 50 65 6d 00 00
+					)
+				} // end of method IExports::get_CertPem
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_KeyPem () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 06 6b 65 79 50 65 6d 00 00
+					)
+				} // end of method IExports::get_KeyPem
+
+				// Properties
+				.property instance object CertPem()
+				{
+					.get instance object Tls_CreateServer_Connect_Basic/Scripts/Tls_TestCertificates/IExports::get_CertPem()
+				}
+				.property instance object KeyPem()
+				{
+					.get instance object Tls_CreateServer_Connect_Basic/Scripts/Tls_TestCertificates/IExports::get_KeyPem()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -102,20 +104,20 @@
 			} // end of method Tls_TestCertificates::Run
 
 			.method public hidebysig static 
-				class Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports Import () cil managed 
+				class Tls_CreateServer_Connect_Basic/Scripts/Tls_TestCertificates/IExports Import () cil managed 
 			{
 				// Header size: 1
 				// Code size: 38 (0x26)
 				.maxstack 8
 
-				IL_0000: ldtoken Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports
+				IL_0000: ldtoken Tls_CreateServer_Connect_Basic/Scripts/Tls_TestCertificates/IExports
 				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 				IL_000a: ldnull
 				IL_000b: ldftn void Modules.Tls_TestCertificates::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 				IL_0016: ldstr "Tls_TestCertificates"
 				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-				IL_0020: castclass Jroc.Tls_CreateServer_Connect_Basic.ITlsTestCertificatesExports
+				IL_0020: castclass Tls_CreateServer_Connect_Basic/Scripts/Tls_TestCertificates/IExports
 				IL_0025: ret
 			} // end of method Tls_TestCertificates::Import
 

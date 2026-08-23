@@ -3,27 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode.ICompileScriptsExtractEcma262SectionHtmlTestHarnessExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 35 43 6f 6d 70 69 6c 65 5f 53 63 72 69 70
-		74 73 5f 45 78 74 72 61 63 74 45 63 6d 61 32 36
-		32 53 65 63 74 69 6f 6e 48 74 6d 6c 5f 54 65 73
-		74 48 61 72 6e 65 73 73 00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance class [System.Runtime]System.Threading.Tasks.Task RunHarnessCli () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 0d 72 75 6e 48 61 72 6e 65 73 73 43 6c 69
-			00 00
-		)
-	} // end of method ICompileScriptsExtractEcma262SectionHtmlTestHarnessExports::RunHarnessCli
-
-} // end of class Jroc.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode.ICompileScriptsExtractEcma262SectionHtmlTestHarnessExports
-
 .class public auto ansi abstract sealed beforefieldinit Compile_Scripts_ExtractEcma262SectionHtml_UrlMode
 	extends [System.Runtime]System.Object
 {
@@ -35,6 +14,29 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 35 43 6f 6d 70 69 6c 65 5f 53 63 72 69 70
+					74 73 5f 45 78 74 72 61 63 74 45 63 6d 61 32 36
+					32 53 65 63 74 69 6f 6e 48 74 6d 6c 5f 54 65 73
+					74 48 61 72 6e 65 73 73 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance class [System.Runtime]System.Threading.Tasks.Task RunHarnessCli () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 0d 72 75 6e 48 61 72 6e 65 73 73 43 6c 69
+						00 00
+					)
+				} // end of method IExports::RunHarnessCli
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -59,20 +61,20 @@
 			} // end of method Compile_Scripts_ExtractEcma262SectionHtml_TestHarness::Run
 
 			.method public hidebysig static 
-				class Jroc.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode.ICompileScriptsExtractEcma262SectionHtmlTestHarnessExports Import () cil managed 
+				class Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/Scripts/Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/IExports Import () cil managed 
 			{
 				// Header size: 1
 				// Code size: 38 (0x26)
 				.maxstack 8
 
-				IL_0000: ldtoken Jroc.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode.ICompileScriptsExtractEcma262SectionHtmlTestHarnessExports
+				IL_0000: ldtoken Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/Scripts/Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/IExports
 				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 				IL_000a: ldnull
 				IL_000b: ldftn void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 				IL_0016: ldstr "Compile_Scripts_ExtractEcma262SectionHtml_TestHarness"
 				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-				IL_0020: castclass Jroc.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode.ICompileScriptsExtractEcma262SectionHtmlTestHarnessExports
+				IL_0020: castclass Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/Scripts/Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/IExports
 				IL_0025: ret
 			} // end of method Compile_Scripts_ExtractEcma262SectionHtml_TestHarness::Import
 

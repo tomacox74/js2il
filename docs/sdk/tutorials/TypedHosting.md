@@ -12,12 +12,11 @@ Typed hosting is the recommended UX when you control the compilation step (or yo
 
 Contracts follow these conventions (see the generator for the authoritative rules):
 
-- Root namespace: `Jroc.<AssemblyName>`
-- Entry module exports interface: `I<AssemblyName>Exports`
-  - Example: assembly `HostedCounterModule.dll` → `Jroc.HostedCounterModule.IHostedCounterModuleExports`
-- Non-entry modules:
-  - Namespace includes path segments (PascalCase)
-  - Interface name is `I<DisplayName>Exports` (`index` maps to the parent folder name)
+- Each module's static facade contains a nested `IExports` interface.
+- Example: assembly `HostedCounterModule.dll`, entry module `counter.js` →
+  `HostedCounterModule.Scripts.counter.IExports`.
+- `HostedCounterModule.Import()` and
+  `HostedCounterModule.Scripts.counter.Import()` return that same interface.
 
 ## Example module
 
@@ -44,10 +43,7 @@ module.exports = {
 ## Calling it from C#
 
 ```csharp
-using Jroc.Runtime;
-using Jroc.HostedCounterModule;
-
-using var exports = JsEngine.LoadModule<IHostedCounterModuleExports>();
+using var exports = HostedCounterModule.Import();
 
 Console.WriteLine(exports.Version);
 Console.WriteLine(exports.Add(1, 2));

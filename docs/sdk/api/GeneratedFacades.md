@@ -66,13 +66,19 @@ When compiler analysis determines that a module exports values, its facade also
 exposes:
 
 ```csharp
-public static <generated exports contract> Import();
+public interface IExports : IDisposable { }
+public static IExports Import();
 ```
 
 No `Import` method is generated for side-effect-only modules. The assembly-root
 `Import` method is generated only when the manifest entry module exports values,
 and it returns the same generated contract type as
 `<Assembly>.Scripts.<entry>.Import()`.
+
+Each `IExports` interface is nested under the static facade for its module. For
+example, `CommonJS_Export_Class.Scripts.CommonJS_Export_Class_Lib.Import()`
+returns
+`CommonJS_Export_Class.Scripts.CommonJS_Export_Class_Lib.IExports`.
 
 The export-shape analyzer classifies every module as:
 

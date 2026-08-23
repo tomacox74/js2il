@@ -3,61 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.Compile_Scripts_Test262MetadataParser.Test262.IMetadataParserExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 16 74 65 73 74 32 36 32 2f 6d 65 74 61 64
-		61 74 61 50 61 72 73 65 72 00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance object ExtractTest262Frontmatter (
-			object sourceText
-		) cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 19 65 78 74 72 61 63 74 54 65 73 74 32 36
-			32 46 72 6f 6e 74 6d 61 74 74 65 72 00 00
-		)
-	} // end of method IMetadataParserExports::ExtractTest262Frontmatter
-
-	.method public hidebysig newslot abstract virtual 
-		instance object ParseTest262File (
-			object filePath
-		) cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 10 70 61 72 73 65 54 65 73 74 32 36 32 46
-			69 6c 65 00 00
-		)
-	} // end of method IMetadataParserExports::ParseTest262File
-
-	.method public hidebysig newslot abstract virtual 
-		instance object ParseTest262Frontmatter (
-			object frontmatterText
-		) cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 17 70 61 72 73 65 54 65 73 74 32 36 32 46
-			72 6f 6e 74 6d 61 74 74 65 72 00 00
-		)
-	} // end of method IMetadataParserExports::ParseTest262Frontmatter
-
-	.method public hidebysig newslot abstract virtual 
-		instance object ParseTest262Metadata (
-			object sourceText,
-			object options
-		) cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 14 70 61 72 73 65 54 65 73 74 32 36 32 4d
-			65 74 61 64 61 74 61 00 00
-		)
-	} // end of method IMetadataParserExports::ParseTest262Metadata
-
-} // end of class Jroc.Compile_Scripts_Test262MetadataParser.Test262.IMetadataParserExports
-
 .class public auto ansi abstract sealed beforefieldinit Compile_Scripts_Test262MetadataParser
 	extends [System.Runtime]System.Object
 {
@@ -101,6 +46,63 @@
 			.class nested public auto ansi abstract sealed beforefieldinit metadataParser
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class interface nested public auto ansi abstract IExports
+					implements [System.Runtime]System.IDisposable
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+						01 00 16 74 65 73 74 32 36 32 2f 6d 65 74 61 64
+						61 74 61 50 61 72 73 65 72 00 00
+					)
+					// Methods
+					.method public hidebysig newslot abstract virtual 
+						instance object ExtractTest262Frontmatter (
+							object sourceText
+						) cil managed 
+					{
+						.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+							01 00 19 65 78 74 72 61 63 74 54 65 73 74 32 36
+							32 46 72 6f 6e 74 6d 61 74 74 65 72 00 00
+						)
+					} // end of method IExports::ExtractTest262Frontmatter
+
+					.method public hidebysig newslot abstract virtual 
+						instance object ParseTest262File (
+							object filePath
+						) cil managed 
+					{
+						.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+							01 00 10 70 61 72 73 65 54 65 73 74 32 36 32 46
+							69 6c 65 00 00
+						)
+					} // end of method IExports::ParseTest262File
+
+					.method public hidebysig newslot abstract virtual 
+						instance object ParseTest262Frontmatter (
+							object frontmatterText
+						) cil managed 
+					{
+						.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+							01 00 17 70 61 72 73 65 54 65 73 74 32 36 32 46
+							72 6f 6e 74 6d 61 74 74 65 72 00 00
+						)
+					} // end of method IExports::ParseTest262Frontmatter
+
+					.method public hidebysig newslot abstract virtual 
+						instance object ParseTest262Metadata (
+							object sourceText,
+							object options
+						) cil managed 
+					{
+						.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+							01 00 14 70 61 72 73 65 54 65 73 74 32 36 32 4d
+							65 74 61 64 61 74 61 00 00
+						)
+					} // end of method IExports::ParseTest262Metadata
+
+				} // end of class IExports
+
+
 				// Methods
 				.method public hidebysig static 
 					void Run (
@@ -125,20 +127,20 @@
 				} // end of method metadataParser::Run
 
 				.method public hidebysig static 
-					class Jroc.Compile_Scripts_Test262MetadataParser.Test262.IMetadataParserExports Import () cil managed 
+					class Compile_Scripts_Test262MetadataParser/Scripts/test262/metadataParser/IExports Import () cil managed 
 				{
 					// Header size: 1
 					// Code size: 38 (0x26)
 					.maxstack 8
 
-					IL_0000: ldtoken Jroc.Compile_Scripts_Test262MetadataParser.Test262.IMetadataParserExports
+					IL_0000: ldtoken Compile_Scripts_Test262MetadataParser/Scripts/test262/metadataParser/IExports
 					IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 					IL_000a: ldnull
 					IL_000b: ldftn void Modules.test262_metadataParser::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 					IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 					IL_0016: ldstr "test262/metadataParser"
 					IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-					IL_0020: castclass Jroc.Compile_Scripts_Test262MetadataParser.Test262.IMetadataParserExports
+					IL_0020: castclass Compile_Scripts_Test262MetadataParser/Scripts/test262/metadataParser/IExports
 					IL_0025: ret
 				} // end of method metadataParser::Import
 

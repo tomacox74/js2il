@@ -3,39 +3,6 @@
 {
 } // end of class <Module>
 
-.class interface public auto ansi abstract Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 1d 49 6d 70 6f 72 74 5f 4c 69 76 65 42 69
-		6e 64 69 6e 67 73 5f 4e 61 6d 65 64 5f 4c 69 62
-		00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance void Inc () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 03 69 6e 63 00 00
-		)
-	} // end of method IImportLiveBindingsNamedLibExports::Inc
-
-	.method public hidebysig specialname newslot abstract virtual 
-		instance float64 get_X () cil managed 
-	{
-		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
-			01 00 01 78 00 00
-		)
-	} // end of method IImportLiveBindingsNamedLibExports::get_X
-
-	// Properties
-	.property instance float64 X()
-	{
-		.get instance float64 Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports::get_X()
-	}
-
-} // end of class Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
-
 .class public auto ansi abstract sealed beforefieldinit Import_LiveBindings_Named
 	extends [System.Runtime]System.Object
 {
@@ -75,6 +42,41 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Import_LiveBindings_Named_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 1d 49 6d 70 6f 72 74 5f 4c 69 76 65 42 69
+					6e 64 69 6e 67 73 5f 4e 61 6d 65 64 5f 4c 69 62
+					00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance void Inc () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 69 6e 63 00 00
+					)
+				} // end of method IExports::Inc
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance float64 get_X () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 01 78 00 00
+					)
+				} // end of method IExports::get_X
+
+				// Properties
+				.property instance float64 X()
+				{
+					.get instance float64 Import_LiveBindings_Named/Scripts/Import_LiveBindings_Named_Lib/IExports::get_X()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -99,20 +101,20 @@
 			} // end of method Import_LiveBindings_Named_Lib::Run
 
 			.method public hidebysig static 
-				class Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports Import () cil managed 
+				class Import_LiveBindings_Named/Scripts/Import_LiveBindings_Named_Lib/IExports Import () cil managed 
 			{
 				// Header size: 1
 				// Code size: 38 (0x26)
 				.maxstack 8
 
-				IL_0000: ldtoken Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
+				IL_0000: ldtoken Import_LiveBindings_Named/Scripts/Import_LiveBindings_Named_Lib/IExports
 				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 				IL_000a: ldnull
 				IL_000b: ldftn void Modules.Import_LiveBindings_Named_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
 				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 				IL_0016: ldstr "Import_LiveBindings_Named_Lib"
 				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
-				IL_0020: castclass Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
+				IL_0020: castclass Import_LiveBindings_Named/Scripts/Import_LiveBindings_Named_Lib/IExports
 				IL_0025: ret
 			} // end of method Import_LiveBindings_Named_Lib::Import
 
