@@ -28,6 +28,9 @@ internal sealed class JsRuntimeInstance : IDisposable
     private readonly BlockingCollection<IWorkItem> _queue = new();
     private readonly ConcurrentDictionary<IWorkItem, byte> _pendingWorkItems = new();
     private readonly ConcurrentDictionary<IRuntimeDependentOperation, byte> _runtimeDependentOperations = new();
+    // Active iterators must close before runtime shutdown so iterator return(), generator
+    // finally blocks, and async cleanup can run. Registration and completion occur on host
+    // and continuation threads while root disposal may race from another thread.
     private readonly ConcurrentDictionary<IRuntimeDisposalParticipant, byte> _runtimeDisposalParticipants = new();
 
     // Dedicated thread that owns the engine, synchronization context, and event loop.
