@@ -14,6 +14,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   identity and mutation on the owning import runtime, exported functions preserve
   receiver/arrow/callback semantics, and async exports surface as
   `Task`/`Task<T>` with contextual rejection and disposal behavior.
+
+## v0.12.14 - 2026-08-23
+
 - perf(validation): add the issue #1964 Phase 6 closure gate for Kraken
   `ai-astar`. The exact workflow runs JROC, Jint, Okojo, and YantraJS from one
   BenchmarkDotNet job, records raw timing/allocation/GC provenance, validates
