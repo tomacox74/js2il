@@ -2,8 +2,8 @@
 
 Typed hosting sample demonstrating:
 - typed `module.exports` projection
-- exporting a class and constructing it via `IJsConstructor<T>`
-- instance handles via `IJsHandle`
+- exporting a class and constructing it via generated constructor contracts
+- instance handles via generated `IDisposable` contracts
 
 ## Layout
 

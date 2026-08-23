@@ -19,7 +19,6 @@ The API described here is intentionally geared toward C# developers.
 - Load and execute a **compiled** module (modules are compiled into an assembly; nothing is loaded from the filesystem).
 - A dedicated **script thread** per module runtime instance.
 - Strongly typed projections for `module.exports` (interfaces/classes generated per module).
-- A `JsEngine` entry point provided by **JavaScriptRuntime** (not generated into each compiled assembly).
 - Assembly-named generated facades that call the same hosting path without host
   source referencing `Jroc.Runtime`:
   `MyAssembly.Run()` and, for modules with exports, `MyAssembly.Import()`.
@@ -32,7 +31,9 @@ Calling `JsEngine.LoadModule(...)` creates a runtime instance that:
 - owns per-thread JavaScript runtime state,
 - returns a proxy to the module exports.
 
-Exports, callable wrappers, constructors, and object handles marshal work to that script thread. Generated function objects are exposed as `JsCallable`; callers never cast them to generated CLR types or CLR delegates.
+Exports, generated constructor contracts, and generated object/instance/array
+handles marshal work to that script thread. Runtime proxy types remain an
+implementation detail of the generated facade.
 
 ### Hosted `child_process.fork()`
 
@@ -73,28 +74,32 @@ module.exports = {
 Corresponding C# contract (generated during compilation):
 
 ```csharp
-public interface IExampleExports : IDisposable
+public interface IExports : IDisposable
 {
     string Version { get; }
 
-    double Add(double x, double y);
+    double Add(object x, object y);
 
     Task WarmUp();
 
-    IJsConstructor<ICalculator> Calculator { get; }
+    ICalculatorConstructor Calculator { get; }
 }
 
-public interface ICalculator : IJsHandle
+public interface ICalculatorConstructor : IDisposable
 {
-    double Add(double x, double y);
+    ICalculator Construct(params object[] args);
+}
+
+public interface ICalculator : IDisposable
+{
+    double Add(object x, object y);
 }
 ```
 
 Calling it from C# (recommended patterns):
 
 ```csharp
-// Option A (best UX): contract carries module + compiled-assembly metadata
-using var exports = JsEngine.LoadModule<IExampleExports>();
+using var exports = MyAssembly.Import();
 
 Console.WriteLine(exports.Version);
 
@@ -109,20 +114,8 @@ Console.WriteLine(sum2);
 ```
 
 ```csharp
-// Option B: contract type identifies which compiled assembly to load from,
-// moduleId selects the module within that compiled assembly
-using var exports2 = JsEngine.LoadModule<IExampleExports>("example");
-
-Console.WriteLine(exports2.Version);
-
-var sum = exports2.Add(1, 2);
-Console.WriteLine(sum);
-
-await exports2.WarmUp();
-
-using var calculator = exports2.Calculator.Construct();
-var sum2 = calculator.Add(3, 4);
-Console.WriteLine(sum2);
+// Advanced hosts can still use JsEngine when they intentionally reference
+// Jroc.Runtime, but normal generated-facade consumers do not need it.
 ```
 
 ### Quick start
@@ -148,7 +141,8 @@ computed CommonJS export assignments and incomplete static inference still emit
 `Import()` with a generated fallback contract whose public signatures use BCL
 types such as `object`, `object[]`, and `IDisposable`.
 
-Advanced hosts can still use `JsEngine` directly:
+Advanced hosts can still use `JsEngine` directly when they intentionally
+reference `Jroc.Runtime`:
 
 ```csharp
 // Option A: no module id needed if the contract type is annotated with module metadata
@@ -175,11 +169,18 @@ await exports.RefreshAsync();
 
 ### Exported function values
 
-Functions returned as values, including ordinary, async, generator, and nested
-functions, are projected as `JsCallable`:
+At the generated facade boundary, exported function declarations, expressions,
+object methods, and arrows are projected as normal C# methods when their shape
+is known. Default/rest/destructured parameter lists use a conservative
+`params object[]` method, and direct callable `module.exports` values expose a
+generated `Call(...)` method. Callable return values use the generated
+`ICallable.Invoke(params object[] args)` contract.
+
+Advanced dynamic hosting still projects raw function values as `JsCallable`:
 
 ```csharp
-JsCallable callback = exports.GetCallback();
+using JsDynamicExports module = JsEngine.LoadDynamicModule(assembly, "plugin");
+var callback = (JsCallable)module.GetProperty("callback")!;
 
 var value = callback.Call(1, 2);
 var withReceiver = callback.CallWithReceiver(receiver, 1, 2);
@@ -267,7 +268,8 @@ module.exports = Calculator;
 Then in C# you don’t use the C# `new` operator. Instead, the export is treated as a **constructor** and you call `Construct(...)`:
 
 ```csharp
-using var calculatorCtor = JsEngine.LoadModule<IJsConstructor<ICalculator>>("calculator");
+using var exports = CalculatorModule.Import();
+using var calculatorCtor = exports.Value;
 using var calculator = calculatorCtor.Construct();
 
 var sum = calculator.Add(1, 2);
@@ -276,7 +278,7 @@ var sum = calculator.Add(1, 2);
 If the module exports an object containing a class:
 
 ```csharp
-using var exports = JsEngine.LoadModule<IMyExports>("calculator");
+using var exports = CalculatorModule.Import();
 using var calculator = exports.Calculator.Construct();
 ```
 
@@ -490,17 +492,17 @@ The generator should produce both interfaces and classes (the interfaces are the
 Exported JS classes are represented as constructors.
 
 ```csharp
-public interface IJsConstructor<out TInstance> : IJsHandle
-      where TInstance : class
+public interface ICalculatorConstructor : IDisposable
 {
-      TInstance Construct(params object[] args);
+      ICalculator Construct(params object[] args);
+      string Description { get; }
 }
 ```
 
 Constructed instances are also handles:
 
 ```csharp
-public interface ICalculator : IJsHandle
+public interface ICalculator : IDisposable
 {
       double Add(double x, double y);
 }
@@ -512,17 +514,11 @@ Most non-primitive values returned from exports are proxies that represent JS va
 
 These proxies should support explicit lifetime management:
 
-```csharp
-public interface IJsHandle : IDisposable
-{
-      // Marker interface: indicates this value is a runtime handle.
-}
-```
-
 Suggested conventions:
 
 - Generated exports interfaces should implement `IDisposable` (they are the runtime instance boundary).
-- Proxies representing JS object handles should implement `IJsHandle`.
+- Proxies representing JS object handles should implement generated interfaces
+  plus `IDisposable`, not runtime marker interfaces.
 - Primitive results (`double`, `bool`, `string`) and `Task` are by-value and not disposable.
 - `JsCallable` is runtime-owned and is not independently disposable. Dispose
   the owning module; subsequent calls or property access throw
@@ -601,6 +597,7 @@ local proxy reference; `JsCallable` wrappers do not own or dispose the runtime.
 Each runtime owns weak-key caches for:
 
 - JavaScript callable → `JsCallable`
+- JavaScript object/constructor + generated contract interface → generated proxy
 - CLR delegate / `JsHostFunction` → JavaScript host function adapter
 - CLR method target + method → explicit method function adapter
 

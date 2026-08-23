@@ -18,8 +18,8 @@ This sample demonstrates compiling the [`npm-run-all2`](https://www.npmjs.com/pa
 |---|---|
 | `package.json` / `package-lock.json` | npm manifest — pins `npm-run-all2@^8.0.0` |
 | `index.js` | Wrapper that re-exports `createHeader` from npm-run-all2 and provides `filterTasks` |
-| `NpmRunAll2.csproj` | C# host; compiles `index.js` via `Jroc.SDK` and uses `Jroc.Runtime` |
-| `Program.cs` | Loads the compiled module and exercises both utilities |
+| `NpmRunAll2.csproj` | C# host; compiles `index.js` via `Jroc.SDK` as `NpmRunAll2Module` |
+| `Program.cs` | Imports the generated facade and exercises both utilities |
 
 ## Running the sample
 
@@ -32,8 +32,8 @@ dotnet run -c Release
 This will:
 
 1. Run `npm ci` to restore `npm-run-all2` into `node_modules`
-2. Compile `index.js` (and its `npm-run-all2` dependency) to `index.dll` via `Jroc.SDK`
-3. Load the compiled module and call `taskHeader` and `filterTasks`
+2. Compile `index.js` (and its `npm-run-all2` dependency) to `NpmRunAll2Module.dll` via `Jroc.SDK`
+3. Import `NpmRunAll2Module` through the generated facade and call `TaskHeader` and `FilterTasks`
 
 ## Expected output
 

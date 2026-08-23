@@ -16,9 +16,10 @@ This is the practical mapping you will see when hosting compiled JS from C#.
 
 Typed hosting:
 
-- JavaScript callable values are returned as `JsCallable`.
-- If your contract return type is `IJsHandle`, the hosting layer returns a handle proxy.
-- If your contract return type is `IJsConstructor<T>`, the hosting layer returns a constructor proxy.
+- Known exported JavaScript functions and arrows are generated as C# methods.
+- Exported classes are generated as constructor contracts with `Construct(...)`.
+- Exported object, array, constructor, and instance contracts implement
+  `IDisposable`; they do not expose runtime marker interfaces.
 - If your contract return type is `object`, runtime references remain behind a
   dynamic proxy or `JsCallable`; raw generated/runtime object types are not
   exposed.
@@ -37,6 +38,7 @@ Dynamic hosting:
 ## Async
 
 - A JS `Promise` can be projected as `Task`/`Task<T>`.
+- Generated async functions/arrows use `Task`/`Task<T>` directly.
 - `JsCallable.CallAsync<T>(...)` bridges a callable's Promise result to
   `Task<T>`.
 - If the contract expects `Task<T>` and the JS side returns a non-promise value, it is treated as an already-completed task with that value.

@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/hosting/docs: implement Phase 3 rich generated export
+  facades for #1917 and issues #1938, #1939, #1940, #1941, and #1942.
+  Generated public contracts now avoid runtime types in bases, generic
+  arguments, constructor/instance handles, and export metadata; class exports
+  use generated constructor/instance contracts, object/array projections keep
+  identity and mutation on the owning import runtime, exported functions preserve
+  receiver/arrow/callback semantics, and async exports surface as
+  `Task`/`Task<T>` with contextual rejection and disposal behavior.
 - perf(validation): add the issue #1964 Phase 6 closure gate for Kraken
   `ai-astar`. The exact workflow runs JROC, Jint, Okojo, and YantraJS from one
   BenchmarkDotNet job, records raw timing/allocation/GC provenance, validates

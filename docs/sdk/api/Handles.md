@@ -2,10 +2,63 @@
 
 Hosting uses proxies to represent non-primitive JS values.
 
-## JsCallable
+## Generated facade handles
 
-Generated JavaScript function values are represented by the public
-`JsCallable` class, not by CLR delegates or generated CLR types.
+Generated facade contracts use only BCL and generated assembly types:
+
+```csharp
+public interface IExports : IDisposable
+{
+    ICounterConstructor Counter { get; }
+}
+
+public interface ICounterConstructor : IDisposable
+{
+    ICounter Construct(params object?[] args);
+    string Description { get; }
+}
+
+public interface ICounter : IDisposable
+{
+    double Add(object delta);
+}
+```
+
+Object, array, constructor, and instance proxies are bound to the owning
+`Import()` runtime. Repeated access to the same JavaScript value through one
+runtime returns the same generated proxy for a given contract, so aliases and
+cycles do not duplicate host identity. Disposing the root exports object shuts
+down the runtime; later handle access throws `ObjectDisposedException`.
+
+Generated array contracts expose:
+
+```csharp
+double Length { get; set; }
+object? Get(double index);
+void Set(double index, object? value);
+bool HasIndex(double index);
+double Push(params object?[] values);
+```
+
+`HasIndex` lets consumers distinguish sparse holes from present values whose
+value is `undefined`/`null` in the public projection.
+
+Generated object contracts expose known properties, methods, and accessors plus
+`GetDynamicProperty`, `SetDynamicProperty`, and `HasDynamicProperty` for
+unknown/computed names. Callable return values use a generated `ICallable`
+contract with `Invoke(params object?[] args)`. Anonymous classes returned from
+functions use a generated `IConstructor` fallback whose `Construct(...)`
+returns the generated `IObject` fallback.
+
+## Advanced dynamic handles
+
+The types below remain available for explicit `Jroc.Runtime` hosting. They are
+not emitted in generated facade public signatures.
+
+### JsCallable
+
+JavaScript function values obtained through advanced dynamic hosting are
+represented by the public `JsCallable` class.
 
 ```csharp
 var result = callable.Call(1, 2);
@@ -21,7 +74,7 @@ returns the same wrapper reference. `JsCallable` is owned by the module runtime
 and is not separately disposable. `ConstructWithNewTarget` requires a
 constructable alternate target and reports JavaScript `TypeError` otherwise.
 
-## IJsHandle
+### IJsHandle
 
 ```csharp
 public interface IJsHandle : IDisposable
@@ -32,7 +85,7 @@ public interface IJsHandle : IDisposable
 - Marker interface for a proxy that represents a JS value living on the script thread.
 - When you dispose a handle proxy, further calls on that proxy throw `ObjectDisposedException`.
 
-## IJsConstructor<T>
+### IJsConstructor<T>
 
 Exported JS classes are represented as constructors:
 

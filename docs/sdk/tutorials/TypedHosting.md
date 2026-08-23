@@ -5,8 +5,9 @@ Typed hosting is the recommended UX when you control the compilation step (or yo
 ## Key idea
 
 - JROC emits a generated exports contract interface into the compiled module assembly.
-- The interface is annotated with `[JsModule("<moduleId>")]`.
-- `JsEngine.LoadModule<TExports>()` uses that attribute to load the module with **no module id argument**.
+- The facade's `Import()` method returns that contract directly.
+- Runtime metadata is generated into the compiled assembly; consumer source does
+  not need `Jroc.Runtime` types.
 
 ## Generated contract naming
 
@@ -48,11 +49,10 @@ using var exports = HostedCounterModule.Import();
 Console.WriteLine(exports.Version);
 Console.WriteLine(exports.Add(1, 2));
 
-// Exported class → IJsConstructor<T>
 using var counter = exports.Counter.Construct(10);
 Console.WriteLine(counter.Add(5));
 
-// Async export returns a Promise at runtime → projected as Task in C#
+// Async export returns a Promise at runtime → projected as Task/Task<T> in C#
 var sum = await exports.AddAsync(1d, 2d);
 Console.WriteLine(sum);
 ```
@@ -80,3 +80,16 @@ Name matching for setters follows the same contract-to-JavaScript rules as gette
 
 - exact member name (`MutableValue`)
 - first-letter-lowercased (`mutableValue`)
+
+## Classes, objects, arrays, and async calls
+
+Exported classes are surfaced as generated constructor contracts. Constructed
+instances and nested object/array handles are also generated contracts that
+implement `IDisposable`; they do not inherit from `IJsHandle`, and constructor
+properties do not use `IJsConstructor<T>`.
+
+Object literal contracts expose properties, methods, and accessors with the
+correct JavaScript receiver. Array contracts expose `Length`, `Get`, `Set`,
+`HasIndex`, and `Push`, including sparse-array hole checks. Async exports are
+ordinary awaitable `Task`/`Task<T>` methods, and rejection faults the task with
+host-facing JavaScript context.
