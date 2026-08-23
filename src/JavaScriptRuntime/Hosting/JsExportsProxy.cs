@@ -50,12 +50,14 @@ internal class JsExportsProxy : DispatchProxy
         {
             if (targetMethod.Name.StartsWith("get_", StringComparison.Ordinal))
             {
-                var name = targetMethod.Name.Substring(4);
+                var name = GetContractExportName(targetMethod, targetMethod.Name.Substring(4));
                 try
                 {
                     return runtime.Invoke(() =>
                     {
-                        var value = ExportMemberResolver.GetExportMember(runtime.Exports, name);
+                        var value = IsExportValueMember(targetMethod)
+                            ? runtime.Exports
+                            : ExportMemberResolver.GetExportMember(runtime.Exports, name);
                         return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
                     });
                 }
@@ -69,7 +71,7 @@ internal class JsExportsProxy : DispatchProxy
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
             {
-                var name = targetMethod.Name.Substring(4);
+                var name = GetContractExportName(targetMethod, targetMethod.Name.Substring(4));
                 try
                 {
                     runtime.Invoke(() => ExportMemberResolver.SetExportMember(runtime, runtime.Exports, name, args is { Length: > 0 } ? args[0] : null));
@@ -85,12 +87,26 @@ internal class JsExportsProxy : DispatchProxy
         }
 
         // Default path: method name maps to an exported callable function.
-        var exportName = targetMethod.Name;
+        var exportName = GetContractExportName(targetMethod, targetMethod.Name);
         try
         {
             return runtime.Invoke(() =>
             {
-                var callable = ExportMemberResolver.GetExportMember(runtime.Exports, exportName);
+                var usesWholeExportsValue = IsExportValueMember(targetMethod);
+                var callable = usesWholeExportsValue
+                    ? runtime.Exports
+                    : ExportMemberResolver.GetExportMember(runtime.Exports, exportName);
+
+                if (usesWholeExportsValue
+                    && string.Equals(targetMethod.Name, "Construct", StringComparison.Ordinal))
+                {
+                    var constructed = ExportMemberResolver.Construct(
+                        runtime,
+                        callable!,
+                        UnpackParamsArray(targetMethod, args));
+                    return JsReturnConverter.ConvertReturn(runtime, constructed, targetMethod.ReturnType);
+                }
+
                 if (!JavaScriptRuntime.CallableOperations.IsCallable(callable))
                 {
                     throw new MissingMethodException($"Export '{exportName}' is not a callable function.");
@@ -99,7 +115,7 @@ internal class JsExportsProxy : DispatchProxy
                 var result = ExportMemberResolver.InvokeJsCallable(
                     runtime,
                     callable!,
-                    args ?? Array.Empty<object?>());
+                    UnpackParamsArray(targetMethod, args));
                 return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
             });
         }
@@ -109,6 +125,25 @@ internal class JsExportsProxy : DispatchProxy
             ExceptionDispatchInfo.Capture(translated).Throw();
             throw;
         }
+    }
+
+    private static string GetContractExportName(MethodInfo targetMethod, string fallback)
+        => targetMethod.GetCustomAttribute<JsExportNameAttribute>()?.ExportName ?? fallback;
+
+    private static bool IsExportValueMember(MethodInfo targetMethod)
+        => targetMethod.GetCustomAttribute<JsExportValueAttribute>() != null;
+
+    private static object?[] UnpackParamsArray(MethodInfo targetMethod, object?[]? args)
+    {
+        if (args is { Length: 1 }
+            && args[0] is object?[] packed
+            && targetMethod.GetParameters() is [{ ParameterType: { IsArray: true } parameterType }]
+            && parameterType.GetElementType() == typeof(object))
+        {
+            return packed;
+        }
+
+        return args ?? Array.Empty<object?>();
     }
 
     private object? HandleObjectMethod(MethodInfo targetMethod, object?[]? args)

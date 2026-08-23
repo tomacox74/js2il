@@ -33,15 +33,17 @@ public sealed class GeneratedFacadePhaseOneTests
         Assert.True(root.IsPublic);
         Assert.All(new[] { scripts, hello, api, css }, type => Assert.True(type.IsNestedPublic));
 
-        foreach (var type in new[] { root, hello, api, css })
+        foreach (var type in new[] { root, hello })
         {
-            var run = Assert.Single(
-                type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly));
-            Assert.Equal("Run", run.Name);
-            Assert.Equal(typeof(void), run.ReturnType);
-            var parameter = Assert.Single(run.GetParameters());
-            Assert.Equal(typeof(string[]), parameter.ParameterType);
-            Assert.NotNull(parameter.GetCustomAttribute<ParamArrayAttribute>());
+            AssertRunSignature(Assert.Single(
+                type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)));
+        }
+
+        foreach (var type in new[] { api, css })
+        {
+            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+            AssertRunSignature(Assert.Single(methods, method => method.Name == "Run"));
+            Assert.NotNull(Assert.Single(methods, method => method.Name == "Import").ReturnType);
         }
 
         Assert.Empty(
@@ -605,4 +607,13 @@ public sealed class GeneratedFacadePhaseOneTests
     private static string[] OutputLines(string output) =>
         output.Replace("\r", string.Empty, StringComparison.Ordinal)
             .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+    private static void AssertRunSignature(MethodInfo run)
+    {
+        Assert.Equal("Run", run.Name);
+        Assert.Equal(typeof(void), run.ReturnType);
+        var parameter = Assert.Single(run.GetParameters());
+        Assert.Equal(typeof(string[]), parameter.ParameterType);
+        Assert.NotNull(parameter.GetCustomAttribute<ParamArrayAttribute>());
+    }
 }

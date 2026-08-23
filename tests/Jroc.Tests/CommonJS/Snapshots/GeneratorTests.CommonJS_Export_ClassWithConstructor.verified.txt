@@ -42,6 +42,61 @@
 		.class nested public auto ansi abstract sealed beforefieldinit CommonJS_Export_ClassWithConstructor_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 28 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
+					72 74 5f 43 6c 61 73 73 57 69 74 68 43 6f 6e 73
+					74 72 75 63 74 6f 72 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_Value () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportValueAttribute::.ctor() = (
+						01 00 00 00
+					)
+				} // end of method IExports::get_Value
+
+				.method public hidebysig newslot abstract virtual 
+					instance object Call (
+						object[] arguments
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportValueAttribute::.ctor() = (
+						01 00 00 00
+					)
+					.param [1]
+						.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+							01 00 00 00
+						)
+				} // end of method IExports::Call
+
+				.method public hidebysig newslot abstract virtual 
+					instance object Construct (
+						object[] arguments
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportValueAttribute::.ctor() = (
+						01 00 00 00
+					)
+					.param [1]
+						.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+							01 00 00 00
+						)
+				} // end of method IExports::Construct
+
+				// Properties
+				.property instance object Value()
+				{
+					.get instance object CommonJS_Export_ClassWithConstructor/Scripts/CommonJS_Export_ClassWithConstructor_Lib/IExports::get_Value()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -64,6 +119,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method CommonJS_Export_ClassWithConstructor_Lib::Run
+
+			.method public hidebysig static 
+				class CommonJS_Export_ClassWithConstructor/Scripts/CommonJS_Export_ClassWithConstructor_Lib/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken CommonJS_Export_ClassWithConstructor/Scripts/CommonJS_Export_ClassWithConstructor_Lib/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.CommonJS_Export_ClassWithConstructor_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "CommonJS_Export_ClassWithConstructor_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass CommonJS_Export_ClassWithConstructor/Scripts/CommonJS_Export_ClassWithConstructor_Lib/IExports
+				IL_0025: ret
+			} // end of method CommonJS_Export_ClassWithConstructor_Lib::Import
 
 		} // end of class CommonJS_Export_ClassWithConstructor_Lib
 
@@ -95,6 +168,17 @@
 	} // end of method CommonJS_Export_ClassWithConstructor::Run
 
 } // end of class CommonJS_Export_ClassWithConstructor
+
+.class interface public auto ansi abstract Jroc.CommonJS_Export_ClassWithConstructor.IPerson
+	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
+{
+	// Methods
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Greet () cil managed 
+	{
+	} // end of method IPerson::Greet
+
+} // end of class Jroc.CommonJS_Export_ClassWithConstructor.IPerson
 
 .class private auto ansi beforefieldinit Modules.CommonJS_Export_ClassWithConstructor
 	extends [System.Runtime]System.Object

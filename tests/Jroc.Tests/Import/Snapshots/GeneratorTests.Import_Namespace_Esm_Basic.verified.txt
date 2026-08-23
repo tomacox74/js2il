@@ -42,6 +42,49 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Import_Namespace_Esm_Basic_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 1e 49 6d 70 6f 72 74 5f 4e 61 6d 65 73 70
+					61 63 65 5f 45 73 6d 5f 42 61 73 69 63 5f 4c 69
+					62 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance float64 Default () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 07 64 65 66 61 75 6c 74 00 00
+					)
+				} // end of method IExports::Default
+
+				.method public hidebysig newslot abstract virtual 
+					instance void Inc () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 69 6e 63 00 00
+					)
+				} // end of method IExports::Inc
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance float64 get_X () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 01 78 00 00
+					)
+				} // end of method IExports::get_X
+
+				// Properties
+				.property instance float64 X()
+				{
+					.get instance float64 Import_Namespace_Esm_Basic/Scripts/Import_Namespace_Esm_Basic_Lib/IExports::get_X()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -64,6 +107,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Import_Namespace_Esm_Basic_Lib::Run
+
+			.method public hidebysig static 
+				class Import_Namespace_Esm_Basic/Scripts/Import_Namespace_Esm_Basic_Lib/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Import_Namespace_Esm_Basic/Scripts/Import_Namespace_Esm_Basic_Lib/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_Namespace_Esm_Basic_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_Namespace_Esm_Basic_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Import_Namespace_Esm_Basic/Scripts/Import_Namespace_Esm_Basic_Lib/IExports
+				IL_0025: ret
+			} // end of method Import_Namespace_Esm_Basic_Lib::Import
 
 		} // end of class Import_Namespace_Esm_Basic_Lib
 
@@ -600,7 +661,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 0b 00 00 02
+				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
 			// Header size: 12
 			// Code size: 49 (0x31)
@@ -766,7 +827,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 0b 00 00 02
+				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
 			// Header size: 1
 			// Code size: 7 (0x7)

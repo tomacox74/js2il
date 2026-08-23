@@ -14,6 +14,32 @@
 		.class nested public auto ansi abstract sealed beforefieldinit UnaryOperator_VoidOperator
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 1a 55 6e 61 72 79 4f 70 65 72 61 74 6f 72
+					5f 56 6f 69 64 4f 70 65 72 61 74 6f 72 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_A () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 01 61 00 00
+					)
+				} // end of method IExports::get_A
+
+				// Properties
+				.property instance object A()
+				{
+					.get instance object UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports::get_A()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -36,6 +62,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method UnaryOperator_VoidOperator::Run
+
+			.method public hidebysig static 
+				class UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.UnaryOperator_VoidOperator::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "UnaryOperator_VoidOperator"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports
+				IL_0025: ret
+			} // end of method UnaryOperator_VoidOperator::Import
 
 		} // end of class UnaryOperator_VoidOperator
 
@@ -65,6 +109,24 @@
 		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 		IL_0017: ret
 	} // end of method UnaryOperator_VoidOperator::Run
+
+	.method public hidebysig static 
+		class UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports Import () cil managed 
+	{
+		// Header size: 1
+		// Code size: 38 (0x26)
+		.maxstack 8
+
+		IL_0000: ldtoken UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports
+		IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000a: ldnull
+		IL_000b: ldftn void Modules.UnaryOperator_VoidOperator::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0016: ldstr "UnaryOperator_VoidOperator"
+		IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+		IL_0020: castclass UnaryOperator_VoidOperator/Scripts/UnaryOperator_VoidOperator/IExports
+		IL_0025: ret
+	} // end of method UnaryOperator_VoidOperator::Import
 
 } // end of class UnaryOperator_VoidOperator
 

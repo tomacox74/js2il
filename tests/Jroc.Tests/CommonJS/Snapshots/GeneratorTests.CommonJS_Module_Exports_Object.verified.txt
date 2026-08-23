@@ -14,6 +14,45 @@
 		.class nested public auto ansi abstract sealed beforefieldinit CommonJS_Module_Exports_Object
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 1e 43 6f 6d 6d 6f 6e 4a 53 5f 4d 6f 64 75
+					6c 65 5f 45 78 70 6f 72 74 73 5f 4f 62 6a 65 63
+					74 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance string get_Foo () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 66 6f 6f 00 00
+					)
+				} // end of method IExports::get_Foo
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance string get_Bar () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 62 61 72 00 00
+					)
+				} // end of method IExports::get_Bar
+
+				// Properties
+				.property instance string Foo()
+				{
+					.get instance string CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports::get_Foo()
+				}
+				.property instance string Bar()
+				{
+					.get instance string CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports::get_Bar()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -36,6 +75,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method CommonJS_Module_Exports_Object::Run
+
+			.method public hidebysig static 
+				class CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.CommonJS_Module_Exports_Object::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "CommonJS_Module_Exports_Object"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports
+				IL_0025: ret
+			} // end of method CommonJS_Module_Exports_Object::Import
 
 		} // end of class CommonJS_Module_Exports_Object
 
@@ -65,6 +122,24 @@
 		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 		IL_0017: ret
 	} // end of method CommonJS_Module_Exports_Object::Run
+
+	.method public hidebysig static 
+		class CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports Import () cil managed 
+	{
+		// Header size: 1
+		// Code size: 38 (0x26)
+		.maxstack 8
+
+		IL_0000: ldtoken CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports
+		IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000a: ldnull
+		IL_000b: ldftn void Modules.CommonJS_Module_Exports_Object::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0016: ldstr "CommonJS_Module_Exports_Object"
+		IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+		IL_0020: castclass CommonJS_Module_Exports_Object/Scripts/CommonJS_Module_Exports_Object/IExports
+		IL_0025: ret
+	} // end of method CommonJS_Module_Exports_Object::Import
 
 } // end of class CommonJS_Module_Exports_Object
 

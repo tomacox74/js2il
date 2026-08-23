@@ -42,6 +42,33 @@
 		.class nested public auto ansi abstract sealed beforefieldinit CommonJS_Require_OptionalChain_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 22 43 6f 6d 6d 6f 6e 4a 53 5f 52 65 71 75
+					69 72 65 5f 4f 70 74 69 6f 6e 61 6c 43 68 61 69
+					6e 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance string get_Value () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 05 76 61 6c 75 65 00 00
+					)
+				} // end of method IExports::get_Value
+
+				// Properties
+				.property instance string Value()
+				{
+					.get instance string CommonJS_Require_OptionalChain_InNestedFunction/Scripts/CommonJS_Require_OptionalChain_Lib/IExports::get_Value()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -64,6 +91,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method CommonJS_Require_OptionalChain_Lib::Run
+
+			.method public hidebysig static 
+				class CommonJS_Require_OptionalChain_InNestedFunction/Scripts/CommonJS_Require_OptionalChain_Lib/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken CommonJS_Require_OptionalChain_InNestedFunction/Scripts/CommonJS_Require_OptionalChain_Lib/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.CommonJS_Require_OptionalChain_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "CommonJS_Require_OptionalChain_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass CommonJS_Require_OptionalChain_InNestedFunction/Scripts/CommonJS_Require_OptionalChain_Lib/IExports
+				IL_0025: ret
+			} // end of method CommonJS_Require_OptionalChain_Lib::Import
 
 		} // end of class CommonJS_Require_OptionalChain_Lib
 
@@ -296,7 +341,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 09 00 00 02
+				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
 			// Header size: 12
 			// Code size: 191 (0xbf)
@@ -341,7 +386,7 @@
 
 				IL_0049: ldloc.s 5
 				IL_004b: ldstr "value"
-				IL_0050: ldstr "CommonJS_Require_OptionalChain_InNestedFunction:<TwoPhaseDummy_M6>:__js_call__:14"
+				IL_0050: ldstr "CommonJS_Require_OptionalChain_InNestedFunction:<TwoPhaseDummy_M8>:__js_call__:14"
 				IL_0055: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
 				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -585,26 +630,4 @@
 	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
-
-.class interface public auto ansi abstract Jroc.CommonJS_Require_OptionalChain_InNestedFunction.ICommonJSRequireOptionalChainLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 22 43 6f 6d 6d 6f 6e 4a 53 5f 52 65 71 75
-		69 72 65 5f 4f 70 74 69 6f 6e 61 6c 43 68 61 69
-		6e 5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig specialname newslot abstract virtual 
-		instance string get_Value () cil managed 
-	{
-	} // end of method ICommonJSRequireOptionalChainLibExports::get_Value
-
-	// Properties
-	.property instance string Value()
-	{
-		.get instance string Jroc.CommonJS_Require_OptionalChain_InNestedFunction.ICommonJSRequireOptionalChainLibExports::get_Value()
-	}
-
-} // end of class Jroc.CommonJS_Require_OptionalChain_InNestedFunction.ICommonJSRequireOptionalChainLibExports
 

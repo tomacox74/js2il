@@ -20,9 +20,9 @@ public class GeneratedContractTests
             rootModuleName: "hosting",
             scriptResourcePath: "Hosting_TypedExports.js");
 
-        // Entry-module exports contract naming per docs/runtime/DotNetLibraryHosting.md:
-        //   Jroc.<AssemblyName>.I<AssemblyName>Exports
-        var contractType = module.Assembly.GetType("Jroc.hosting.IHostingExports", throwOnError: true)!;
+        var contractType = module.Assembly.GetType(
+            "hosting+Scripts+hosting+IExports",
+            throwOnError: true)!;
 
         var attr = contractType.GetCustomAttribute<Jroc.Runtime.JsModuleAttribute>();
         Assert.NotNull(attr);

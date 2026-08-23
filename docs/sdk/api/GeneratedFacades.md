@@ -1,8 +1,8 @@
 # API: generated script facades
 
-Every compiled assembly exposes public static facade types for running its
-published scripts directly from C#. The facade is rooted at the sanitized
-assembly name:
+Every compiled assembly exposes public static facade types for running or
+importing its published scripts directly from C#. The facade is rooted at the
+sanitized assembly name:
 
 ```csharp
 HelloAssembly.Run();
@@ -19,7 +19,7 @@ Compilation reports a facade-name collision when identifier normalization,
 case-insensitive paths, or reserved members such as `Run` and `Import` would
 make the C# surface ambiguous.
 
-Each script method has this C# shape:
+Each script exposes this C# execution method:
 
 ```csharp
 public static void Run(params string[] args);
@@ -59,3 +59,42 @@ does not otherwise reference `Jroc.Runtime`.
 `Program.Main(string[] args)` uses the same root `Run` execution path. The
 internal module initializer ABI and generated `Modules`, `Packages`, scope, and
 callable types are not supported hosting APIs.
+
+## Importing module exports
+
+When compiler analysis determines that a module exports values, its facade also
+exposes:
+
+```csharp
+public interface IExports : IDisposable { }
+public static IExports Import();
+```
+
+No `Import` method is generated for side-effect-only modules. The assembly-root
+`Import` method is generated only when the manifest entry module exports values,
+and it returns the same generated contract type as
+`<Assembly>.Scripts.<entry>.Import()`.
+
+Each `IExports` interface is nested under the static facade for its module. For
+example, `CommonJS_Export_Class.Scripts.CommonJS_Export_Class_Lib.Import()`
+returns
+`CommonJS_Export_Class.Scripts.CommonJS_Export_Class_Lib.IExports`.
+
+The export-shape analyzer classifies every module as:
+
+- **NoExports**: no public export surface was detected, so only `Run` is
+  emitted.
+- **Known**: ESM named/default exports, aliases, namespace exports, re-exports,
+  or CommonJS `exports.name`, `module.exports.name`, and object-literal
+  `module.exports = { ... }` assignments produce named contract members.
+- **Unknown**: conditional or computed CommonJS exports, star re-exports from an
+  unknown module, or incomplete inference still produce `Import` with a safe
+  generated fallback contract instead of silently hiding the API.
+
+Fallback contracts expose BCL-only members such as `Value` and, for directly
+exported callables/classes, `Call(params object[] args)` and
+`Construct(params object[] args)`. The returned root contract implements
+`IDisposable`; disposing it shuts down the private runtime for that import.
+Calls through the root contract or derived dynamic handles after disposal throw
+`ObjectDisposedException`. Each `Import` call creates an isolated runtime and
+module cache.

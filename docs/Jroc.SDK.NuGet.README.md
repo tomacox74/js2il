@@ -62,6 +62,16 @@ HelloAssembly.Run();
 HelloAssembly.Scripts.hello.Run("--mode", "test");
 ```
 
+Modules with compiler-detected exports also expose `Import()`:
+
+```csharp
+using var exports = HelloAssembly.Import();
+Console.WriteLine(exports.Version);
+```
+
+Side-effect-only modules do not get `Import()`. Dynamic or computed CommonJS
+exports get a safe generated fallback contract rather than being hidden.
+
 Set `CopyToOutputDirectory="true"` when using this facade-only flow without a
 direct `Jroc.Runtime` package reference so the runtime implementation assembly
 is deployed with the generated assembly.

@@ -42,6 +42,35 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Import_DynamicImport_Cjs_Namespace_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 26 49 6d 70 6f 72 74 5f 44 79 6e 61 6d 69
+					63 49 6d 70 6f 72 74 5f 43 6a 73 5f 4e 61 6d 65
+					73 70 61 63 65 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance void Inc () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 69 6e 63 00 00
+					)
+				} // end of method IExports::Inc
+
+				.method public hidebysig newslot abstract virtual 
+					instance float64 Value () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 05 76 61 6c 75 65 00 00
+					)
+				} // end of method IExports::Value
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -64,6 +93,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Import_DynamicImport_Cjs_Namespace_Lib::Run
+
+			.method public hidebysig static 
+				class Import_DynamicImport_Cjs_Namespace/Scripts/Import_DynamicImport_Cjs_Namespace_Lib/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Import_DynamicImport_Cjs_Namespace/Scripts/Import_DynamicImport_Cjs_Namespace_Lib/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_DynamicImport_Cjs_Namespace_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_DynamicImport_Cjs_Namespace_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Import_DynamicImport_Cjs_Namespace/Scripts/Import_DynamicImport_Cjs_Namespace_Lib/IExports
+				IL_0025: ret
+			} // end of method Import_DynamicImport_Cjs_Namespace_Lib::Import
 
 		} // end of class Import_DynamicImport_Cjs_Namespace_Lib
 
@@ -272,7 +319,7 @@
 				IL_0067: br IL_0080
 
 				IL_006c: ldstr "sort"
-				IL_0071: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:14"
+				IL_0071: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:14"
 				IL_0076: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
 				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -290,7 +337,7 @@
 
 				IL_00a7: ldstr "join"
 				IL_00ac: ldstr ","
-				IL_00b1: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:17"
+				IL_00b1: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:17"
 				IL_00b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
 				IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -316,7 +363,7 @@
 				IL_00f7: br IL_0110
 
 				IL_00fc: ldstr "default"
-				IL_0101: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:24"
+				IL_0101: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:24"
 				IL_0106: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
 				IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -335,7 +382,7 @@
 				IL_0134: br IL_014d
 
 				IL_0139: ldstr "module.exports"
-				IL_013e: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:27"
+				IL_013e: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:27"
 				IL_0143: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
 				IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -368,7 +415,7 @@
 				IL_0195: br IL_01ae
 
 				IL_019a: ldstr "value"
-				IL_019f: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:36"
+				IL_019f: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:36"
 				IL_01a4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
 				IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -393,7 +440,7 @@
 				IL_01e6: br IL_01ff
 
 				IL_01eb: ldstr "inc"
-				IL_01f0: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:41"
+				IL_01f0: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:41"
 				IL_01f5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
 				IL_01fa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -411,7 +458,7 @@
 
 				IL_0222: ldarg.2
 				IL_0223: ldstr "value"
-				IL_0228: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:47"
+				IL_0228: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:47"
 				IL_022d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 				IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -437,7 +484,7 @@
 				IL_0270: br IL_0289
 
 				IL_0275: ldstr "default"
-				IL_027a: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:54"
+				IL_027a: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:54"
 				IL_027f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 				IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -453,7 +500,7 @@
 
 				IL_02a8: ldloc.s 4
 				IL_02aa: ldstr "value"
-				IL_02af: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M8>:__js_call__:56"
+				IL_02af: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M11>:__js_call__:56"
 				IL_02b4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
 				IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -575,7 +622,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 0d 00 00 02
+				74 61 54 6f 6b 65 6e 0e 00 00 02
 			)
 			// Header size: 12
 			// Code size: 141 (0x8d)
@@ -786,7 +833,7 @@
 
 			IL_0039: ldarg.1
 			IL_003a: ldstr "message"
-			IL_003f: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M7>:__js_call__:10"
+			IL_003f: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M10>:__js_call__:10"
 			IL_0044: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
 			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -815,7 +862,7 @@
 
 			IL_0084: ldarg.1
 			IL_0085: ldstr "message"
-			IL_008a: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M7>:__js_call__:20"
+			IL_008a: ldstr "Import_DynamicImport_Cjs_Namespace:<TwoPhaseDummy_M10>:__js_call__:20"
 			IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
 			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1081,7 +1128,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 11 00 00 02
+				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
 			// Code size: 32 (0x20)
@@ -1206,7 +1253,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 11 00 00 02
+				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 1
 			// Code size: 7 (0x7)
@@ -1383,25 +1430,4 @@
 	.field assembly static int32 __jroc_dynamicLookup_21
 
 } // end of class Jroc.Generated.DynamicLookupSites
-
-.class interface public auto ansi abstract Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 26 49 6d 70 6f 72 74 5f 44 79 6e 61 6d 69
-		63 49 6d 70 6f 72 74 5f 43 6a 73 5f 4e 61 6d 65
-		73 70 61 63 65 5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance void Inc () cil managed 
-	{
-	} // end of method IImportDynamicImportCjsNamespaceLibExports::Inc
-
-	.method public hidebysig newslot abstract virtual 
-		instance float64 Value () cil managed 
-	{
-	} // end of method IImportDynamicImportCjsNamespaceLibExports::Value
-
-} // end of class Jroc.Import_DynamicImport_Cjs_Namespace.IImportDynamicImportCjsNamespaceLibExports
 
