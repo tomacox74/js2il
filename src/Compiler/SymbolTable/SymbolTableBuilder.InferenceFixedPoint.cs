@@ -27,6 +27,7 @@ public partial class SymbolTableBuilder
             InferClassInstanceFieldClrTypes(root);
             InferCallableReturnClrTypes(root);
             AnalyzeObjectLiteralShapes(root);
+            AnalyzeConstructorShapes(root);
 
             var after = CaptureInferenceState(root);
             if (string.Equals(before, after, StringComparison.Ordinal))

@@ -578,7 +578,11 @@ internal static partial class LIRInstructionInfo
                 VisitInferredObjectPropertyValues(value.Properties, ref visitor); break;
             case LIRGetInferredMember value:
                 visitor.Visit(value.Receiver); break;
+            case LIRGetGuardedInferredMember value:
+                visitor.Visit(value.Receiver); break;
             case LIRSetInferredMember value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Value); break;
+            case LIRSetGuardedInferredMember value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.Value); break;
             case LIRGetLength value:
                 visitor.Visit(value.Object); break;
@@ -1112,6 +1116,9 @@ internal static partial class LIRInstructionInfo
                 return true;
             case LIRGetInferredMember getInferredMember:
                 defined = getInferredMember.Result;
+                return true;
+            case LIRGetGuardedInferredMember guarded:
+                defined = guarded.Result;
                 return true;
             case LIRGetLength getLength:
                 defined = getLength.Result;

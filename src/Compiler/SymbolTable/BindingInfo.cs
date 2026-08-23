@@ -155,6 +155,24 @@ public class BindingInfo
     public ObjectLiteralShapeInfo? ObjectLiteralShape { get; set; }
 
     /// <summary>
+    /// Eligible ES5 constructor layout introduced by this function binding.
+    /// </summary>
+    public ConstructorShapeInfo? ConstructorShape { get; set; }
+
+    /// <summary>
+    /// Exact generated constructor layout for a stable binding initialized by
+    /// <c>new Constructor(...)</c>.
+    /// </summary>
+    public ConstructorShapeInfo? ConstructedShape { get; set; }
+
+    /// <summary>
+    /// Constructor layouts that may flow into this binding. Candidate layouts always
+    /// require a runtime type guard unless <see cref="ConstructedShape"/> is set.
+    /// </summary>
+    public HashSet<ConstructorShapeInfo> ConstructorShapeCandidates { get; } =
+        new(ReferenceEqualityComparer.Instance);
+
+    /// <summary>
     /// Whole-program policy for function-valued binding initialization. HIR carries this
     /// semantic decision into lowering; LIR never inspects the source AST to derive it.
     /// </summary>

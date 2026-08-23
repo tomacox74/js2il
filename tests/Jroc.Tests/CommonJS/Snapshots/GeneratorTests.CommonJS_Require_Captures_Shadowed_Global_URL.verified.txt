@@ -336,7 +336,7 @@
 			IL_0014: ldloc.0
 			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_001a: volatile.
-			IL_001c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_001c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0021: brfalse IL_0036
 
 			IL_0026: ldstr "resolve"
@@ -347,7 +347,7 @@
 			IL_0036: ldstr "resolve"
 			IL_003b: ldarg.2
 			IL_003c: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL:<TwoPhaseDummy_M10>:__js_call__:6"
-			IL_0041: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_0041: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 			IL_004b: stloc.0
@@ -502,7 +502,7 @@
 		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0055: stloc.s 5
 		IL_0057: volatile.
-		IL_0059: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0059: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
 		IL_005e: brfalse IL_0078
 
 		IL_0063: ldloc.1
@@ -515,7 +515,7 @@
 		IL_0079: ldstr "value"
 		IL_007e: ldstr "child"
 		IL_0083: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL:Modules.CommonJS_Require_Captures_Shadowed_Global_URL:__js_module_init__:16"
-		IL_0088: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0088: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
 		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 		IL_0092: stloc.2
@@ -680,20 +680,42 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 26 (0x1a)
+			// Header size: 12
+			// Code size: 87 (0x57)
 			.maxstack 8
 
 			IL_0000: ldarg.1
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_000b: ldstr "base"
-			IL_0010: ldarg.2
-			IL_0011: ldc.i4.1
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0017: pop
-			IL_0018: ldnull
-			IL_0019: ret
+			IL_000b: isinst Modules.CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ObjectLiterals/Ctor_L3C1_LocalURL
+			IL_0010: dup
+			IL_0011: brfalse IL_003c
+
+			IL_0016: dup
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
+			IL_001c: brfalse IL_003c
+
+			IL_0021: dup
+			IL_0022: ldstr "base"
+			IL_0027: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
+			IL_002c: brfalse IL_003c
+
+			IL_0031: ldarg.2
+			IL_0032: callvirt instance void Modules.CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ObjectLiterals/Ctor_L3C1_LocalURL::set_base(object)
+			IL_0037: br IL_0055
+
+			IL_003c: pop
+			IL_003d: ldarg.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0048: ldstr "base"
+			IL_004d: ldarg.2
+			IL_004e: ldc.i4.1
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0054: pop
+
+			IL_0055: ldnull
+			IL_0056: ret
 		} // end of method LocalURL::__js_call__
 
 	} // end of class LocalURL
@@ -855,7 +877,7 @@
 			)
 
 			IL_0000: volatile.
-			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 			IL_0007: brfalse IL_0026
 
 			IL_000c: ldarg.1
@@ -870,7 +892,7 @@
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_0031: ldstr "base"
 			IL_0036: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL_Lib:<TwoPhaseDummy_M12>:__js_call__:3"
-			IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0045: stloc.0
@@ -914,6 +936,77 @@
 
 	} // end of class Scope
 
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Ctor_L3C1_LocalURL
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private object _base
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method Ctor_L3C1_LocalURL::.ctor
+
+			.method public hidebysig 
+				instance object get_base () cil managed 
+			{
+				// Header size: 1
+				// Code size: 41 (0x29)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldstr "base"
+				IL_0006: ldarg.0
+				IL_0007: ldfld object Modules.CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ObjectLiterals/Ctor_L3C1_LocalURL::_base
+				IL_000c: call instance bool [JavaScriptRuntime]JavaScriptRuntime.JsObject::IsSpecializedDataPropertyCurrent(string, object)
+				IL_0011: brfalse IL_001d
+
+				IL_0016: ldarg.0
+				IL_0017: ldfld object Modules.CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ObjectLiterals/Ctor_L3C1_LocalURL::_base
+				IL_001c: ret
+
+				IL_001d: ldarg.0
+				IL_001e: ldstr "base"
+				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0028: ret
+			} // end of method Ctor_L3C1_LocalURL::get_base
+
+			.method public hidebysig 
+				instance void set_base (
+					object ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ObjectLiterals/Ctor_L3C1_LocalURL::_base
+				IL_0007: ldarg.0
+				IL_0008: ldstr "base"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method Ctor_L3C1_LocalURL::set_base
+
+		} // end of class Ctor_L3C1_LocalURL
+
+
+	} // end of class ObjectLiterals
+
 
 	// Methods
 	.method public hidebysig static 
@@ -956,7 +1049,7 @@
 		IL_0025: nop
 		IL_0026: nop
 		IL_0027: volatile.
-		IL_0029: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0029: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
 		IL_002e: brfalse IL_0043
 
 		IL_0033: ldloc.1
@@ -967,7 +1060,7 @@
 		IL_0043: ldloc.1
 		IL_0044: ldstr "prototype"
 		IL_0049: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL_Lib:Modules.CommonJS_Require_Captures_Shadowed_Global_URL_Lib:__js_module_init__:9"
-		IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_0058: stloc.3
@@ -1028,10 +1121,10 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field assembly static int32 __jroc_dynamicLookup_5
 	.field assembly static int32 __jroc_dynamicLookup_6
 	.field assembly static int32 __jroc_dynamicLookup_7
 	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

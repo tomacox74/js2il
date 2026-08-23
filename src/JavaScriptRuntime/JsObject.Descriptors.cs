@@ -91,6 +91,17 @@ public partial class JsObject
     }
 
     /// <summary>
+    /// Validates that a generated CLR backing field still mirrors an ordinary own
+    /// data property. Generated constructor-shape getters use this before returning
+    /// the field so structural mutations fall back to full JavaScript lookup.
+    /// </summary>
+    public bool IsSpecializedDataPropertyCurrent(
+        string key,
+        object? expectedValue)
+        => TryGetOwnPlainDataSlot(key, out _, out _, out var currentValue)
+            && Operators.SameValue(currentValue, expectedValue);
+
+    /// <summary>
     /// Re-validates and reads the current value of a slot previously resolved by
     /// <see cref="TryGetOwnPlainDataSlot"/>. Safe to call on every inline-cache
     /// hit for any receiver sharing <paramref name="expectedShape"/>: it never

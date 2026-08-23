@@ -195,6 +195,62 @@ public sealed class ObjectLiteralTypeGenerationGroundworkTests
     }
 
     [Fact]
+    public void GeneratedAssembly_DeclaresConstructorShapeTypeWithMirroredAccessors()
+    {
+        var entryPath = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "ConstructorShapeTypeGeneration",
+            Guid.NewGuid().ToString("N"),
+            "entry.js");
+
+        var artifact = JrocInMemoryCompiler.Compile(
+            new JrocInMemoryCompileRequest(entryPath)
+            {
+                SourceText = """
+                    function GraphNode(x, y) {
+                        this.x = x;
+                        this.y = y;
+                        this.pos = { x: x, y: y };
+                    }
+                    var node = new GraphNode(1, 2);
+                    console.log(node.pos.x);
+                    """
+            });
+
+        using var loadedAssembly =
+            JrocInMemoryAssemblyLoader.Load(artifact);
+        var moduleType = loadedAssembly.Assembly.GetType(
+            "Modules.entry",
+            throwOnError: true)!;
+        var container = moduleType.GetNestedType(
+            "ObjectLiterals",
+            BindingFlags.Public | BindingFlags.NonPublic)!;
+        var shapeType = Assert.Single(
+            container.GetNestedTypes(
+                BindingFlags.Public | BindingFlags.NonPublic),
+            type => type.Name.StartsWith(
+                "Ctor_",
+                StringComparison.Ordinal));
+
+        Assert.Equal(typeof(JsObject), shapeType.BaseType);
+        Assert.Equal(
+            new[] { "_x", "_y", "_pos" },
+            shapeType.GetFields(
+                    BindingFlags.Instance | BindingFlags.NonPublic)
+                .Select(static field => field.Name));
+        foreach (var member in new[] { "x", "y", "pos" })
+        {
+            Assert.NotNull(shapeType.GetMethod(
+                $"get_{member}",
+                BindingFlags.Instance | BindingFlags.Public));
+            Assert.NotNull(shapeType.GetMethod(
+                $"set_{member}",
+                BindingFlags.Instance | BindingFlags.Public));
+        }
+    }
+
+    [Fact]
     public void JsObjectSubclass_PreservesDictionaryDescriptorEnumerationAndJsonBehavior()
     {
         var obj = new SpecializedJsObjectForTest

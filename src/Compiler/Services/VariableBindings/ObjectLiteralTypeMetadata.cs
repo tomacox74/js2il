@@ -10,7 +10,7 @@ namespace Jroc.Services.VariableBindings;
 public sealed class ObjectLiteralTypeMetadata
 {
     public ObjectLiteralTypeMetadata(
-        ObjectLiteralShapeInfo shape,
+        InferredObjectShapeInfo shape,
         string typeName,
         TypeDefinitionHandle typeHandle,
         MethodDefinitionHandle constructorHandle,
@@ -29,7 +29,7 @@ public sealed class ObjectLiteralTypeMetadata
         SetterHandlesByMemberName = setterHandlesByMemberName;
     }
 
-    public ObjectLiteralShapeInfo Shape { get; }
+    public InferredObjectShapeInfo Shape { get; }
 
     public string TypeName { get; }
 
