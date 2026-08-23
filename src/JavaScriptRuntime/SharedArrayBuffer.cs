@@ -46,6 +46,32 @@ namespace JavaScriptRuntime
             return new SharedArrayBuffer(_backingStore);
         }
 
+        public new SharedArrayBuffer slice(object? start)
+            => slice(start, null);
+
+        public new SharedArrayBuffer slice(object? start, object? end)
+        {
+            var bytes = RawBytes;
+            var startIndex = CoerceRelativeIndex(start, 0, bytes.Length);
+            var endIndex = CoerceRelativeIndex(end, bytes.Length, bytes.Length);
+            if (endIndex < startIndex)
+            {
+                endIndex = startIndex;
+            }
+
+            var result = new SharedArrayBuffer(endIndex - startIndex);
+            if (endIndex > startIndex)
+            {
+                System.Buffer.BlockCopy(
+                    bytes,
+                    startIndex,
+                    result.RawBytes,
+                    0,
+                    endIndex - startIndex);
+            }
+            return result;
+        }
+
         private static RuntimeSharedArrayBufferBackingStore CreateBackingStore(object? length)
         {
             var byteLength = CoerceByteLength(length);

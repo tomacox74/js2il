@@ -115,6 +115,26 @@
 
 } // end of class Jroc.Generated.Metadata.JsCallableContractAttribute
 
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsBuiltinContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			string 'value'
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsBuiltinContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsBuiltinContractAttribute
+
 .class public auto ansi abstract sealed beforefieldinit Compile_Scripts_Test262MetadataParser
 	extends [System.Runtime]System.Object
 {
@@ -189,6 +209,26 @@
 					} // end of method IObject::HasDynamicProperty
 
 				} // end of class IObject
+
+				.class interface nested public auto ansi abstract ICallable
+					implements [System.Runtime]System.IDisposable
+				{
+					.custom instance void Jroc.Generated.Metadata.JsCallableContractAttribute::.ctor() = (
+						01 00 00 00
+					)
+					// Methods
+					.method public hidebysig newslot abstract virtual 
+						instance object Invoke (
+							object[] arguments
+						) cil managed 
+					{
+						.param [1]
+							.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+								01 00 00 00
+							)
+					} // end of method ICallable::Invoke
+
+				} // end of class ICallable
 
 				.class interface nested public auto ansi abstract IExports
 					implements [System.Runtime]System.IDisposable
@@ -730,7 +770,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 2c 00 00 02
+				74 61 54 6f 6b 65 6e 2e 00 00 02
 			)
 			// Header size: 12
 			// Code size: 100 (0x64)
@@ -957,7 +997,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 2c 00 00 02
+				74 61 54 6f 6b 65 6e 2e 00 00 02
 			)
 			// Header size: 12
 			// Code size: 218 (0xda)
@@ -1000,7 +1040,7 @@
 
 			IL_0043: ldarg.2
 			IL_0044: ldstr "phase"
-			IL_0049: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M22>:__js_call__:14"
+			IL_0049: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:14"
 			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_55
 			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1037,7 +1077,7 @@
 
 			IL_00a6: ldarg.2
 			IL_00a7: ldstr "type"
-			IL_00ac: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M22>:__js_call__:23"
+			IL_00ac: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:23"
 			IL_00b1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_56
 			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1223,7 +1263,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 2c 00 00 02
+				74 61 54 6f 6b 65 6e 2e 00 00 02
 			)
 			// Header size: 12
 			// Code size: 313 (0x139)
@@ -1266,7 +1306,7 @@
 
 			IL_0043: ldarg.2
 			IL_0044: ldstr "code"
-			IL_0049: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M23>:__js_call__:14"
+			IL_0049: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M25>:__js_call__:14"
 			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_57
 			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1303,7 +1343,7 @@
 
 			IL_00a6: ldarg.2
 			IL_00a7: ldstr "source"
-			IL_00ac: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M23>:__js_call__:23"
+			IL_00ac: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M25>:__js_call__:23"
 			IL_00b1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_58
 			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1340,7 +1380,7 @@
 
 			IL_0105: ldarg.2
 			IL_0106: ldstr "reason"
-			IL_010b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M23>:__js_call__:32"
+			IL_010b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M25>:__js_call__:32"
 			IL_0110: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
 			IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1514,7 +1554,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 2c 00 00 02
+				74 61 54 6f 6b 65 6e 2e 00 00 02
 			)
 			// Header size: 12
 			// Code size: 7157 (0x1bf5)
@@ -1571,7 +1611,7 @@
 
 			IL_0066: ldarg.3
 			IL_0067: ldstr "filePath"
-			IL_006c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:16"
+			IL_006c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:16"
 			IL_0071: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
 			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1610,7 +1650,7 @@
 
 			IL_00cb: ldarg.3
 			IL_00cc: ldstr "fileName"
-			IL_00d1: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:27"
+			IL_00d1: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:27"
 			IL_00d6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
 			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1649,7 +1689,7 @@
 
 			IL_0130: ldarg.3
 			IL_0131: ldstr "hasFrontmatter"
-			IL_0136: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:38"
+			IL_0136: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:38"
 			IL_013b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
 			IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1688,7 +1728,7 @@
 
 			IL_0195: ldarg.3
 			IL_0196: ldstr "unknownKeys"
-			IL_019b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:49"
+			IL_019b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:49"
 			IL_01a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
 			IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1704,7 +1744,7 @@
 
 			IL_01c7: ldloc.2
 			IL_01c8: ldstr "length"
-			IL_01cd: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:51"
+			IL_01cd: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:51"
 			IL_01d2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
 			IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1743,7 +1783,7 @@
 
 			IL_022c: ldarg.3
 			IL_022d: ldstr "unknownKeys"
-			IL_0232: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:62"
+			IL_0232: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:62"
 			IL_0237: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
 			IL_023c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1786,7 +1826,7 @@
 
 			IL_02a1: ldarg.3
 			IL_02a2: ldstr "description"
-			IL_02a7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:75"
+			IL_02a7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:75"
 			IL_02ac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
 			IL_02b1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1825,7 +1865,7 @@
 
 			IL_0306: ldarg.3
 			IL_0307: ldstr "info"
-			IL_030c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:86"
+			IL_030c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:86"
 			IL_0311: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
 			IL_0316: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1864,7 +1904,7 @@
 
 			IL_036b: ldarg.3
 			IL_036c: ldstr "esid"
-			IL_0371: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:97"
+			IL_0371: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:97"
 			IL_0376: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
 			IL_037b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1903,7 +1943,7 @@
 
 			IL_03d0: ldarg.3
 			IL_03d1: ldstr "es5id"
-			IL_03d6: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:108"
+			IL_03d6: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:108"
 			IL_03db: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
 			IL_03e0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1942,7 +1982,7 @@
 
 			IL_0435: ldarg.3
 			IL_0436: ldstr "includes"
-			IL_043b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:119"
+			IL_043b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:119"
 			IL_0440: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
 			IL_0445: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1958,7 +1998,7 @@
 
 			IL_0467: ldloc.2
 			IL_0468: ldstr "length"
-			IL_046d: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:121"
+			IL_046d: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:121"
 			IL_0472: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
 			IL_0477: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1997,7 +2037,7 @@
 
 			IL_04cc: ldarg.3
 			IL_04cd: ldstr "includes"
-			IL_04d2: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:132"
+			IL_04d2: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:132"
 			IL_04d7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
 			IL_04dc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2040,7 +2080,7 @@
 
 			IL_0541: ldarg.3
 			IL_0542: ldstr "includes"
-			IL_0547: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:145"
+			IL_0547: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:145"
 			IL_054c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_73
 			IL_0551: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2083,7 +2123,7 @@
 
 			IL_05b6: ldarg.3
 			IL_05b7: ldstr "flags"
-			IL_05bc: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:158"
+			IL_05bc: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:158"
 			IL_05c1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_74
 			IL_05c6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2099,7 +2139,7 @@
 
 			IL_05e8: ldloc.2
 			IL_05e9: ldstr "length"
-			IL_05ee: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:160"
+			IL_05ee: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:160"
 			IL_05f3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_75
 			IL_05f8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2138,7 +2178,7 @@
 
 			IL_064d: ldarg.3
 			IL_064e: ldstr "flags"
-			IL_0653: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:171"
+			IL_0653: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:171"
 			IL_0658: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
 			IL_065d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2181,7 +2221,7 @@
 
 			IL_06c2: ldarg.3
 			IL_06c3: ldstr "flags"
-			IL_06c8: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:184"
+			IL_06c8: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:184"
 			IL_06cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
 			IL_06d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2224,7 +2264,7 @@
 
 			IL_0737: ldarg.3
 			IL_0738: ldstr "flags"
-			IL_073d: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:197"
+			IL_073d: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:197"
 			IL_0742: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_78
 			IL_0747: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2267,7 +2307,7 @@
 
 			IL_07ac: ldarg.3
 			IL_07ad: ldstr "features"
-			IL_07b2: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:210"
+			IL_07b2: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:210"
 			IL_07b7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
 			IL_07bc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2283,7 +2323,7 @@
 
 			IL_07de: ldloc.2
 			IL_07df: ldstr "length"
-			IL_07e4: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:212"
+			IL_07e4: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:212"
 			IL_07e9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
 			IL_07ee: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2322,7 +2362,7 @@
 
 			IL_0843: ldarg.3
 			IL_0844: ldstr "features"
-			IL_0849: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:223"
+			IL_0849: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:223"
 			IL_084e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_81
 			IL_0853: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2365,7 +2405,7 @@
 
 			IL_08b8: ldarg.3
 			IL_08b9: ldstr "features"
-			IL_08be: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:236"
+			IL_08be: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:236"
 			IL_08c3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_82
 			IL_08c8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2408,7 +2448,7 @@
 
 			IL_092d: ldarg.3
 			IL_092e: ldstr "locale"
-			IL_0933: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:249"
+			IL_0933: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:249"
 			IL_0938: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_83
 			IL_093d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2424,7 +2464,7 @@
 
 			IL_095f: ldloc.2
 			IL_0960: ldstr "length"
-			IL_0965: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:251"
+			IL_0965: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:251"
 			IL_096a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_84
 			IL_096f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2463,7 +2503,7 @@
 
 			IL_09c4: ldarg.3
 			IL_09c5: ldstr "locale"
-			IL_09ca: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:262"
+			IL_09ca: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:262"
 			IL_09cf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
 			IL_09d4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2506,7 +2546,7 @@
 
 			IL_0a39: ldarg.3
 			IL_0a3a: ldstr "defines"
-			IL_0a3f: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:275"
+			IL_0a3f: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:275"
 			IL_0a44: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
 			IL_0a49: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2522,7 +2562,7 @@
 
 			IL_0a6b: ldloc.2
 			IL_0a6c: ldstr "length"
-			IL_0a71: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:277"
+			IL_0a71: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:277"
 			IL_0a76: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
 			IL_0a7b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2561,7 +2601,7 @@
 
 			IL_0ad0: ldarg.3
 			IL_0ad1: ldstr "defines"
-			IL_0ad6: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:288"
+			IL_0ad6: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:288"
 			IL_0adb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_88
 			IL_0ae0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2604,7 +2644,7 @@
 
 			IL_0b45: ldarg.3
 			IL_0b46: ldstr "negative"
-			IL_0b4b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:301"
+			IL_0b4b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:301"
 			IL_0b50: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
 			IL_0b55: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2643,7 +2683,7 @@
 
 			IL_0baa: ldarg.3
 			IL_0bab: ldstr "execution"
-			IL_0bb0: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:312"
+			IL_0bb0: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:312"
 			IL_0bb5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
 			IL_0bba: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2659,7 +2699,7 @@
 
 			IL_0bdc: ldloc.2
 			IL_0bdd: ldstr "sourceType"
-			IL_0be2: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:314"
+			IL_0be2: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:314"
 			IL_0be7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
 			IL_0bec: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2698,7 +2738,7 @@
 
 			IL_0c41: ldarg.3
 			IL_0c42: ldstr "execution"
-			IL_0c47: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:325"
+			IL_0c47: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:325"
 			IL_0c4c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
 			IL_0c51: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2714,7 +2754,7 @@
 
 			IL_0c73: ldloc.2
 			IL_0c74: ldstr "strictMode"
-			IL_0c79: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:327"
+			IL_0c79: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:327"
 			IL_0c7e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_93
 			IL_0c83: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2753,7 +2793,7 @@
 
 			IL_0cd8: ldarg.3
 			IL_0cd9: ldstr "execution"
-			IL_0cde: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:338"
+			IL_0cde: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:338"
 			IL_0ce3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_94
 			IL_0ce8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2769,7 +2809,7 @@
 
 			IL_0d0a: ldloc.2
 			IL_0d0b: ldstr "defaultHarnessIncludes"
-			IL_0d10: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:340"
+			IL_0d10: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:340"
 			IL_0d15: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_95
 			IL_0d1a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2785,7 +2825,7 @@
 
 			IL_0d3c: ldloc.2
 			IL_0d3d: ldstr "length"
-			IL_0d42: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:342"
+			IL_0d42: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:342"
 			IL_0d47: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_96
 			IL_0d4c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2824,7 +2864,7 @@
 
 			IL_0da1: ldarg.3
 			IL_0da2: ldstr "execution"
-			IL_0da7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:353"
+			IL_0da7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:353"
 			IL_0dac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_97
 			IL_0db1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2840,7 +2880,7 @@
 
 			IL_0dd3: ldloc.2
 			IL_0dd4: ldstr "defaultHarnessIncludes"
-			IL_0dd9: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:355"
+			IL_0dd9: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:355"
 			IL_0dde: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_98
 			IL_0de3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2883,7 +2923,7 @@
 
 			IL_0e48: ldarg.3
 			IL_0e49: ldstr "execution"
-			IL_0e4e: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:368"
+			IL_0e4e: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:368"
 			IL_0e53: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_99
 			IL_0e58: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2899,7 +2939,7 @@
 
 			IL_0e7a: ldloc.2
 			IL_0e7b: ldstr "defaultHarnessIncludes"
-			IL_0e80: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:370"
+			IL_0e80: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:370"
 			IL_0e85: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
 			IL_0e8a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2942,7 +2982,7 @@
 
 			IL_0eef: ldarg.3
 			IL_0ef0: ldstr "execution"
-			IL_0ef5: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:383"
+			IL_0ef5: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:383"
 			IL_0efa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_101
 			IL_0eff: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2958,7 +2998,7 @@
 
 			IL_0f21: ldloc.2
 			IL_0f22: ldstr "harnessIncludes"
-			IL_0f27: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:385"
+			IL_0f27: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:385"
 			IL_0f2c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_102
 			IL_0f31: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2974,7 +3014,7 @@
 
 			IL_0f53: ldloc.2
 			IL_0f54: ldstr "length"
-			IL_0f59: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:387"
+			IL_0f59: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:387"
 			IL_0f5e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
 			IL_0f63: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3013,7 +3053,7 @@
 
 			IL_0fb8: ldarg.3
 			IL_0fb9: ldstr "execution"
-			IL_0fbe: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:398"
+			IL_0fbe: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:398"
 			IL_0fc3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_104
 			IL_0fc8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3029,7 +3069,7 @@
 
 			IL_0fea: ldloc.2
 			IL_0feb: ldstr "harnessIncludes"
-			IL_0ff0: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:400"
+			IL_0ff0: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:400"
 			IL_0ff5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_105
 			IL_0ffa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3072,7 +3112,7 @@
 
 			IL_105f: ldarg.3
 			IL_1060: ldstr "execution"
-			IL_1065: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:413"
+			IL_1065: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:413"
 			IL_106a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_106
 			IL_106f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3088,7 +3128,7 @@
 
 			IL_1091: ldloc.2
 			IL_1092: ldstr "harnessIncludes"
-			IL_1097: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:415"
+			IL_1097: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:415"
 			IL_109c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_107
 			IL_10a1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3131,7 +3171,7 @@
 
 			IL_1106: ldarg.3
 			IL_1107: ldstr "execution"
-			IL_110c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:428"
+			IL_110c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:428"
 			IL_1111: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_108
 			IL_1116: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3147,7 +3187,7 @@
 
 			IL_1138: ldloc.2
 			IL_1139: ldstr "harnessIncludes"
-			IL_113e: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:430"
+			IL_113e: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:430"
 			IL_1143: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_109
 			IL_1148: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3190,7 +3230,7 @@
 
 			IL_11ad: ldarg.3
 			IL_11ae: ldstr "execution"
-			IL_11b3: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:443"
+			IL_11b3: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:443"
 			IL_11b8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_110
 			IL_11bd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3206,7 +3246,7 @@
 
 			IL_11df: ldloc.2
 			IL_11e0: ldstr "harnessIncludes"
-			IL_11e5: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:445"
+			IL_11e5: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:445"
 			IL_11ea: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_111
 			IL_11ef: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3249,7 +3289,7 @@
 
 			IL_1254: ldarg.3
 			IL_1255: ldstr "execution"
-			IL_125a: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:458"
+			IL_125a: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:458"
 			IL_125f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_112
 			IL_1264: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3265,7 +3305,7 @@
 
 			IL_1286: ldloc.2
 			IL_1287: ldstr "requiresDefaultHarness"
-			IL_128c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:460"
+			IL_128c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:460"
 			IL_1291: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_113
 			IL_1296: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3304,7 +3344,7 @@
 
 			IL_12eb: ldarg.3
 			IL_12ec: ldstr "execution"
-			IL_12f1: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:471"
+			IL_12f1: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:471"
 			IL_12f6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_114
 			IL_12fb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3320,7 +3360,7 @@
 
 			IL_131d: ldloc.2
 			IL_131e: ldstr "requiresAsyncHarness"
-			IL_1323: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:473"
+			IL_1323: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:473"
 			IL_1328: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_115
 			IL_132d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3359,7 +3399,7 @@
 
 			IL_1382: ldarg.3
 			IL_1383: ldstr "execution"
-			IL_1388: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:484"
+			IL_1388: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:484"
 			IL_138d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_116
 			IL_1392: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3375,7 +3415,7 @@
 
 			IL_13b4: ldloc.2
 			IL_13b5: ldstr "requiresAgent"
-			IL_13ba: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:486"
+			IL_13ba: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:486"
 			IL_13bf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_117
 			IL_13c4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3414,7 +3454,7 @@
 
 			IL_1419: ldarg.3
 			IL_141a: ldstr "execution"
-			IL_141f: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:497"
+			IL_141f: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:497"
 			IL_1424: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_118
 			IL_1429: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3430,7 +3470,7 @@
 
 			IL_144b: ldloc.2
 			IL_144c: ldstr "canBlock"
-			IL_1451: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:499"
+			IL_1451: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:499"
 			IL_1456: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_119
 			IL_145b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3469,7 +3509,7 @@
 
 			IL_14b0: ldarg.3
 			IL_14b1: ldstr "execution"
-			IL_14b6: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:510"
+			IL_14b6: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:510"
 			IL_14bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_120
 			IL_14c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3485,7 +3525,7 @@
 
 			IL_14e2: ldloc.2
 			IL_14e3: ldstr "isModule"
-			IL_14e8: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:512"
+			IL_14e8: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:512"
 			IL_14ed: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_121
 			IL_14f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3524,7 +3564,7 @@
 
 			IL_1547: ldarg.3
 			IL_1548: ldstr "execution"
-			IL_154d: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:523"
+			IL_154d: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:523"
 			IL_1552: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_122
 			IL_1557: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3540,7 +3580,7 @@
 
 			IL_1579: ldloc.2
 			IL_157a: ldstr "isRaw"
-			IL_157f: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:525"
+			IL_157f: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:525"
 			IL_1584: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_123
 			IL_1589: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3579,7 +3619,7 @@
 
 			IL_15de: ldarg.3
 			IL_15df: ldstr "execution"
-			IL_15e4: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:536"
+			IL_15e4: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:536"
 			IL_15e9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_124
 			IL_15ee: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3595,7 +3635,7 @@
 
 			IL_1610: ldloc.2
 			IL_1611: ldstr "isAsync"
-			IL_1616: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:538"
+			IL_1616: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:538"
 			IL_161b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_125
 			IL_1620: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3634,7 +3674,7 @@
 
 			IL_1675: ldarg.3
 			IL_1676: ldstr "execution"
-			IL_167b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:549"
+			IL_167b: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:549"
 			IL_1680: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_126
 			IL_1685: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3650,7 +3690,7 @@
 
 			IL_16a7: ldloc.2
 			IL_16a8: ldstr "isGenerated"
-			IL_16ad: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:551"
+			IL_16ad: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:551"
 			IL_16b2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_127
 			IL_16b7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3689,7 +3729,7 @@
 
 			IL_170c: ldarg.3
 			IL_170d: ldstr "execution"
-			IL_1712: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:562"
+			IL_1712: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:562"
 			IL_1717: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_128
 			IL_171c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3705,7 +3745,7 @@
 
 			IL_173e: ldloc.2
 			IL_173f: ldstr "isNonDeterministic"
-			IL_1744: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:564"
+			IL_1744: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:564"
 			IL_1749: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_129
 			IL_174e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3744,7 +3784,7 @@
 
 			IL_17a3: ldarg.3
 			IL_17a4: ldstr "execution"
-			IL_17a9: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:575"
+			IL_17a9: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:575"
 			IL_17ae: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_130
 			IL_17b3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3760,7 +3800,7 @@
 
 			IL_17d5: ldloc.2
 			IL_17d6: ldstr "isFixture"
-			IL_17db: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:577"
+			IL_17db: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:577"
 			IL_17e0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_131
 			IL_17e5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3799,7 +3839,7 @@
 
 			IL_183a: ldarg.3
 			IL_183b: ldstr "mvpBlockers"
-			IL_1840: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:588"
+			IL_1840: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:588"
 			IL_1845: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_132
 			IL_184a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3815,7 +3855,7 @@
 
 			IL_186c: ldloc.2
 			IL_186d: ldstr "length"
-			IL_1872: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:590"
+			IL_1872: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:590"
 			IL_1877: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_133
 			IL_187c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3854,7 +3894,7 @@
 
 			IL_18d1: ldarg.3
 			IL_18d2: ldstr "mvpBlockers"
-			IL_18d7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:601"
+			IL_18d7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:601"
 			IL_18dc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_134
 			IL_18e1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3897,7 +3937,7 @@
 
 			IL_1946: ldarg.3
 			IL_1947: ldstr "mvpBlockers"
-			IL_194c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:614"
+			IL_194c: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:614"
 			IL_1951: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_135
 			IL_1956: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3940,7 +3980,7 @@
 
 			IL_19bb: ldarg.3
 			IL_19bc: ldstr "mvpBlockers"
-			IL_19c1: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:627"
+			IL_19c1: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:627"
 			IL_19c6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_136
 			IL_19cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3983,7 +4023,7 @@
 
 			IL_1a30: ldarg.3
 			IL_1a31: ldstr "mvpBlockers"
-			IL_1a36: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:640"
+			IL_1a36: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:640"
 			IL_1a3b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_137
 			IL_1a40: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -4026,7 +4066,7 @@
 
 			IL_1aa5: ldarg.3
 			IL_1aa6: ldstr "unsupported"
-			IL_1aab: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:653"
+			IL_1aab: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:653"
 			IL_1ab0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_138
 			IL_1ab5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -4042,7 +4082,7 @@
 
 			IL_1ad7: ldloc.2
 			IL_1ad8: ldstr "length"
-			IL_1add: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:655"
+			IL_1add: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:655"
 			IL_1ae2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_139
 			IL_1ae7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -4081,7 +4121,7 @@
 
 			IL_1b3c: ldarg.3
 			IL_1b3d: ldstr "unsupported"
-			IL_1b42: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:666"
+			IL_1b42: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:666"
 			IL_1b47: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_140
 			IL_1b4c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -4124,7 +4164,7 @@
 
 			IL_1bb1: ldarg.3
 			IL_1bb2: ldstr "unsupported"
-			IL_1bb7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M24>:__js_call__:679"
+			IL_1bb7: ldstr "Compile_Scripts_Test262MetadataParser:<TwoPhaseDummy_M26>:__js_call__:679"
 			IL_1bbc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_141
 			IL_1bc1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -4866,7 +4906,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 159 (0x9f)
@@ -5134,7 +5174,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 538 (0x21a)
@@ -5166,7 +5206,7 @@
 
 			IL_001c: ldarg.2
 			IL_001d: ldstr "length"
-			IL_0022: ldstr "test262/metadataParser:<TwoPhaseDummy_M27>:__js_call__:3"
+			IL_0022: ldstr "test262/metadataParser:<TwoPhaseDummy_M29>:__js_call__:3"
 			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_142
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -5194,7 +5234,7 @@
 
 			IL_0077: ldarg.2
 			IL_0078: ldstr "length"
-			IL_007d: ldstr "test262/metadataParser:<TwoPhaseDummy_M27>:__js_call__:17"
+			IL_007d: ldstr "test262/metadataParser:<TwoPhaseDummy_M29>:__js_call__:17"
 			IL_0082: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_143
 			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -5292,7 +5332,7 @@
 
 			IL_0184: ldarg.2
 			IL_0185: ldstr "length"
-			IL_018a: ldstr "test262/metadataParser:<TwoPhaseDummy_M27>:__js_call__:66"
+			IL_018a: ldstr "test262/metadataParser:<TwoPhaseDummy_M29>:__js_call__:66"
 			IL_018f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_144
 			IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -5571,7 +5611,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 567 (0x237)
@@ -5605,7 +5645,7 @@
 
 			IL_0024: ldarg.2
 			IL_0025: ldstr "length"
-			IL_002a: ldstr "test262/metadataParser:<TwoPhaseDummy_M28>:__js_call__:7"
+			IL_002a: ldstr "test262/metadataParser:<TwoPhaseDummy_M30>:__js_call__:7"
 			IL_002f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_145
 			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -5707,7 +5747,7 @@
 
 			IL_014f: ldstr "split"
 			IL_0154: ldstr ","
-			IL_0159: ldstr "test262/metadataParser:<TwoPhaseDummy_M28>:__js_call__:27"
+			IL_0159: ldstr "test262/metadataParser:<TwoPhaseDummy_M30>:__js_call__:27"
 			IL_015e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_146
 			IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -5962,7 +6002,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 348 (0x15c)
@@ -6394,7 +6434,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 337 (0x151)
@@ -6489,7 +6529,7 @@
 				IL_00d2: ldstr "\n"
 				IL_00d7: ldstr "repeat"
 				IL_00dc: ldloc.s 7
-				IL_00de: ldstr "test262/metadataParser:<TwoPhaseDummy_M30>:__js_call__:50"
+				IL_00de: ldstr "test262/metadataParser:<TwoPhaseDummy_M32>:__js_call__:50"
 				IL_00e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_147
 				IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -6783,7 +6823,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 673 (0x2a1)
@@ -6823,7 +6863,7 @@
 
 				IL_0037: ldarg.3
 				IL_0038: ldstr "index"
-				IL_003d: ldstr "test262/metadataParser:<TwoPhaseDummy_M31>:__js_call__:12"
+				IL_003d: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:12"
 				IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_148
 				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -6839,7 +6879,7 @@
 
 				IL_006a: ldarg.2
 				IL_006b: ldstr "length"
-				IL_0070: ldstr "test262/metadataParser:<TwoPhaseDummy_M31>:__js_call__:15"
+				IL_0070: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:15"
 				IL_0075: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_149
 				IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -6862,7 +6902,7 @@
 
 				IL_00b2: ldarg.3
 				IL_00b3: ldstr "index"
-				IL_00b8: ldstr "test262/metadataParser:<TwoPhaseDummy_M31>:__js_call__:24"
+				IL_00b8: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:24"
 				IL_00bd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_150
 				IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -7275,7 +7315,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 537 (0x219)
@@ -7306,7 +7346,7 @@
 
 			IL_001c: ldarg.3
 			IL_001d: ldstr "index"
-			IL_0022: ldstr "test262/metadataParser:<TwoPhaseDummy_M32>:__js_call__:3"
+			IL_0022: ldstr "test262/metadataParser:<TwoPhaseDummy_M34>:__js_call__:3"
 			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_151
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -7325,7 +7365,7 @@
 
 				IL_0050: ldarg.2
 				IL_0051: ldstr "length"
-				IL_0056: ldstr "test262/metadataParser:<TwoPhaseDummy_M32>:__js_call__:10"
+				IL_0056: ldstr "test262/metadataParser:<TwoPhaseDummy_M34>:__js_call__:10"
 				IL_005b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_152
 				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -7425,7 +7465,7 @@
 
 			IL_0154: ldarg.2
 			IL_0155: ldstr "length"
-			IL_015a: ldstr "test262/metadataParser:<TwoPhaseDummy_M32>:__js_call__:44"
+			IL_015a: ldstr "test262/metadataParser:<TwoPhaseDummy_M34>:__js_call__:44"
 			IL_015f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_153
 			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -7832,7 +7872,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 1268 (0x4f4)
@@ -7876,7 +7916,7 @@
 
 				IL_0022: ldarg.3
 				IL_0023: ldstr "index"
-				IL_0028: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:7"
+				IL_0028: ldstr "test262/metadataParser:<TwoPhaseDummy_M35>:__js_call__:7"
 				IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_154
 				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -7892,7 +7932,7 @@
 
 				IL_0055: ldarg.2
 				IL_0056: ldstr "length"
-				IL_005b: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:10"
+				IL_005b: ldstr "test262/metadataParser:<TwoPhaseDummy_M35>:__js_call__:10"
 				IL_0060: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_155
 				IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -7915,7 +7955,7 @@
 
 				IL_009d: ldarg.3
 				IL_009e: ldstr "index"
-				IL_00a3: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:19"
+				IL_00a3: ldstr "test262/metadataParser:<TwoPhaseDummy_M35>:__js_call__:19"
 				IL_00a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_156
 				IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -8014,7 +8054,7 @@
 
 				IL_01a4: ldarg.3
 				IL_01a5: ldstr "index"
-				IL_01aa: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:59"
+				IL_01aa: ldstr "test262/metadataParser:<TwoPhaseDummy_M35>:__js_call__:59"
 				IL_01af: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_157
 				IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -8099,7 +8139,7 @@
 				IL_0295: ldloc.s 17
 				IL_0297: ldstr "exec"
 				IL_029c: ldloc.s 4
-				IL_029e: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:79"
+				IL_029e: ldstr "test262/metadataParser:<TwoPhaseDummy_M35>:__js_call__:79"
 				IL_02a3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_158
 				IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -8123,7 +8163,7 @@
 
 				IL_02de: ldarg.3
 				IL_02df: ldstr "index"
-				IL_02e4: ldstr "test262/metadataParser:<TwoPhaseDummy_M33>:__js_call__:88"
+				IL_02e4: ldstr "test262/metadataParser:<TwoPhaseDummy_M35>:__js_call__:88"
 				IL_02e9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_159
 				IL_02ee: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -8467,7 +8507,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 156 (0x9c)
@@ -8505,7 +8545,7 @@
 
 			IL_003f: ldstr "split"
 			IL_0044: ldstr "\n"
-			IL_0049: ldstr "test262/metadataParser:<TwoPhaseDummy_M34>:__js_call__:7"
+			IL_0049: ldstr "test262/metadataParser:<TwoPhaseDummy_M36>:__js_call__:7"
 			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_160
 			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -8742,7 +8782,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 638 (0x27e)
@@ -9580,7 +9620,7 @@
 
 			IL_0022: ldstr "indexOf"
 			IL_0027: ldarg.2
-			IL_0028: ldstr "test262/metadataParser:<TwoPhaseDummy_M38>:__js_call__:4"
+			IL_0028: ldstr "test262/metadataParser:<TwoPhaseDummy_M40>:__js_call__:4"
 			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_161
 			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -10043,7 +10083,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 416 (0x1a0)
@@ -10444,7 +10484,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 229 (0xe5)
@@ -10853,7 +10893,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 1085 (0x43d)
@@ -11033,7 +11073,7 @@
 
 			IL_0175: ldarg.2
 			IL_0176: ldstr "phase"
-			IL_017b: ldstr "test262/metadataParser:<TwoPhaseDummy_M42>:__js_call__:81"
+			IL_017b: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:81"
 			IL_0180: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_162
 			IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -11064,7 +11104,7 @@
 
 			IL_01ca: ldarg.2
 			IL_01cb: ldstr "type"
-			IL_01d0: ldstr "test262/metadataParser:<TwoPhaseDummy_M42>:__js_call__:91"
+			IL_01d0: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:91"
 			IL_01d5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_163
 			IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -11701,7 +11741,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 1692 (0x69c)
@@ -12261,7 +12301,7 @@
 
 			IL_053f: ldloc.s 13
 			IL_0541: ldstr "length"
-			IL_0546: ldstr "test262/metadataParser:<TwoPhaseDummy_M43>:__js_call__:271"
+			IL_0546: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:271"
 			IL_054b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_164
 			IL_0550: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12676,7 +12716,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 954 (0x3ba)
@@ -12709,7 +12749,7 @@
 
 			IL_0024: ldarg.s execution
 			IL_0026: ldstr "isFixture"
-			IL_002b: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:6"
+			IL_002b: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:6"
 			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_165
 			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12763,7 +12803,7 @@
 
 			IL_00aa: ldarg.s execution
 			IL_00ac: ldstr "isModule"
-			IL_00b1: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:28"
+			IL_00b1: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:28"
 			IL_00b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_166
 			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12804,7 +12844,7 @@
 
 			IL_0117: ldarg.s execution
 			IL_0119: ldstr "isRaw"
-			IL_011e: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:42"
+			IL_011e: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:42"
 			IL_0123: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_167
 			IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12845,7 +12885,7 @@
 
 			IL_0184: ldarg.s execution
 			IL_0186: ldstr "requiresAsyncHarness"
-			IL_018b: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:56"
+			IL_018b: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:56"
 			IL_0190: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_168
 			IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12886,7 +12926,7 @@
 
 			IL_01f1: ldarg.s execution
 			IL_01f3: ldstr "requiresAgent"
-			IL_01f8: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:70"
+			IL_01f8: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:70"
 			IL_01fd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_169
 			IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12927,7 +12967,7 @@
 
 			IL_025e: ldarg.s execution
 			IL_0260: ldstr "canBlock"
-			IL_0265: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:84"
+			IL_0265: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:84"
 			IL_026a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_170
 			IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -12960,7 +13000,7 @@
 
 			IL_02b7: ldarg.s execution
 			IL_02b9: ldstr "canBlock"
-			IL_02be: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:95"
+			IL_02be: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:95"
 			IL_02c3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_171
 			IL_02c8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13012,7 +13052,7 @@
 
 			IL_0348: ldarg.3
 			IL_0349: ldstr "phase"
-			IL_034e: ldstr "test262/metadataParser:<TwoPhaseDummy_M44>:__js_call__:117"
+			IL_034e: ldstr "test262/metadataParser:<TwoPhaseDummy_M46>:__js_call__:117"
 			IL_0353: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_172
 			IL_0358: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13354,7 +13394,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 2290 (0x8f2)
@@ -13440,7 +13480,7 @@
 
 			IL_0055: ldloc.0
 			IL_0056: ldstr "filePath"
-			IL_005b: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:15"
+			IL_005b: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:15"
 			IL_0060: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_173
 			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13618,7 +13658,7 @@
 
 			IL_021b: ldloc.s 7
 			IL_021d: ldstr "includes"
-			IL_0222: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:104"
+			IL_0222: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:104"
 			IL_0227: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_174
 			IL_022c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13649,7 +13689,7 @@
 
 			IL_0274: ldloc.s 7
 			IL_0276: ldstr "flags"
-			IL_027b: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:112"
+			IL_027b: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:112"
 			IL_0280: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_175
 			IL_0285: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13680,7 +13720,7 @@
 
 			IL_02cd: ldloc.s 7
 			IL_02cf: ldstr "features"
-			IL_02d4: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:120"
+			IL_02d4: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:120"
 			IL_02d9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_176
 			IL_02de: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13711,7 +13751,7 @@
 
 			IL_0326: ldloc.s 7
 			IL_0328: ldstr "locale"
-			IL_032d: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:128"
+			IL_032d: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:128"
 			IL_0332: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_177
 			IL_0337: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13742,7 +13782,7 @@
 
 			IL_037f: ldloc.s 7
 			IL_0381: ldstr "defines"
-			IL_0386: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:136"
+			IL_0386: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:136"
 			IL_038b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_178
 			IL_0390: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13773,7 +13813,7 @@
 
 			IL_03d8: ldloc.s 7
 			IL_03da: ldstr "negative"
-			IL_03df: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:144"
+			IL_03df: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:144"
 			IL_03e4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_179
 			IL_03e9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13889,7 +13929,7 @@
 
 			IL_0518: ldloc.s 19
 			IL_051a: ldstr "strictMode"
-			IL_051f: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:191"
+			IL_051f: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:191"
 			IL_0524: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_180
 			IL_0529: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13968,7 +14008,7 @@
 
 			IL_05e1: ldloc.s 7
 			IL_05e3: ldstr "description"
-			IL_05e8: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:225"
+			IL_05e8: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:225"
 			IL_05ed: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_181
 			IL_05f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -13999,7 +14039,7 @@
 
 			IL_063a: ldloc.s 7
 			IL_063c: ldstr "info"
-			IL_0641: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:231"
+			IL_0641: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:231"
 			IL_0646: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_182
 			IL_064b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -14030,7 +14070,7 @@
 
 			IL_0693: ldloc.s 7
 			IL_0695: ldstr "esid"
-			IL_069a: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:237"
+			IL_069a: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:237"
 			IL_069f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_183
 			IL_06a4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -14061,7 +14101,7 @@
 
 			IL_06ec: ldloc.s 7
 			IL_06ee: ldstr "es5id"
-			IL_06f3: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:243"
+			IL_06f3: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:243"
 			IL_06f8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_184
 			IL_06fd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -14092,7 +14132,7 @@
 
 			IL_0745: ldloc.s 7
 			IL_0747: ldstr "es6id"
-			IL_074c: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:249"
+			IL_074c: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:249"
 			IL_0751: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_185
 			IL_0756: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -14123,7 +14163,7 @@
 
 			IL_079e: ldloc.s 7
 			IL_07a0: ldstr "author"
-			IL_07a5: ldstr "test262/metadataParser:<TwoPhaseDummy_M45>:__js_call__:255"
+			IL_07a5: ldstr "test262/metadataParser:<TwoPhaseDummy_M47>:__js_call__:255"
 			IL_07aa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_186
 			IL_07af: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -14377,7 +14417,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 37 00 00 02
+				74 61 54 6f 6b 65 6e 39 00 00 02
 			)
 			// Header size: 12
 			// Code size: 70 (0x46)

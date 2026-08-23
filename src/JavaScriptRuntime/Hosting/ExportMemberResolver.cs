@@ -32,12 +32,11 @@ internal static class ExportMemberResolver
 
         foreach (var candidate in GetNameCandidates(contractName))
         {
-            if (exports is IDictionary<string, object?>
-                && JavaScriptRuntime.ObjectRuntime.HasPropertyIn(candidate, exports))
+            if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn(candidate, exports))
             {
                 // Read through the runtime property path so accessor properties
-                // and inherited class members are evaluated instead of
-                // returning a raw backing slot.
+                // inherited members, and mutations on callable constructor
+                // objects are observed instead of returning a raw CLR slot.
                 value = JavaScriptRuntime.ObjectRuntime.GetProperty(exports, candidate);
                 return true;
             }
