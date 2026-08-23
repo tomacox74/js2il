@@ -27,6 +27,16 @@ known constructor layout use an `isinst` guard and the same generated getter,
 with `ObjectRuntime.GetItem` on a type miss. The getter revalidates mirrored
 plain-data storage before returning its field, so descriptor or value mutation
 falls back safely. These guarded hits never enter `DynamicLookupInlineCache`.
+Phase 6 (#1964) validates the integrated tiers with the unmodified Kraken A*
+fixture. `runKrackenAStarGuardrails.js --final-validation` requires both
+arity-1 `findGraphNode` sites to remain cached, both `GraphNode.pos` reads to
+remain guarded generated-field reads, and those hit paths to contain no
+dynamic-cache property read. The same run records all cross-runtime timing,
+allocation, GC, host, and generated-IL evidence in one raw artifact. The final
+[workflow run](https://github.com/tomacox74/js2il/actions/runs/32621937739)
+passed every required and stretch gate: JROC led all four runtimes at 4.356 s
+mean with 56,971,416 B/op, the 193-byte hot method retained both cached
+arity-1 call sites, and both guarded property reads bypassed the dynamic cache.
 Sections below describe this current contract; historical Phase 0/1 sections
 that still describe identity-only behavior are updated in place rather than
 kept as a separate legacy description, since the generated call surface and

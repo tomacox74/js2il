@@ -14,6 +14,7 @@ const RUNTIME_BY_METHOD = {
   RunYantraJsTest: "yantrajs-execute",
 };
 const REQUIRED_RUNTIMES = Object.values(RUNTIME_BY_METHOD);
+const FINAL_MAX_ALLOCATED_BYTES = 100_000_000;
 const WORKLOAD_REGISTRATION_SCRIPT = [
   "var __jrocKrackenWorkload = null;",
   "var __jrocKrackenIterations = 0;",
@@ -49,6 +50,7 @@ function printUsage() {
   console.log("  --candidate-sha SHA           Source SHA associated with the candidate report.");
   console.log("  --tolerance-percent NUMBER    Allowed same-host mean regression (default: 5).");
   console.log("  --allow-regression            Report a regression without returning a failure code.");
+  console.log("  --final-validation            Enforce the Phase 6 cross-runtime, allocation, sample, and IL gates.");
   console.log("  --output-json PATH            Write the complete machine-readable summary.");
   console.log("  -h, --help                    Show this help.");
 }
@@ -67,6 +69,7 @@ function parseArgs(argv) {
     candidateSha: "",
     tolerancePercent: 5,
     allowRegression: false,
+    finalValidation: false,
     outputJson: "",
   };
 
@@ -116,6 +119,10 @@ function parseArgs(argv) {
         break;
       case "--allow-regression":
         args.allowRegression = true;
+        break;
+      case "--final-validation":
+        args.finalValidation = true;
+        args.inspectIl = true;
         break;
       case "-h":
       case "--help":
@@ -227,9 +234,24 @@ function parseKrackenReport(
       runtime,
       meanNs: finiteOrNull(benchmark?.Statistics?.Mean),
       medianNs: finiteOrNull(benchmark?.Statistics?.Median),
+      standardDeviationNs: finiteOrNull(
+        benchmark?.Statistics?.StandardDeviation
+      ),
       sampleCount: finiteOrNull(benchmark?.Statistics?.N),
       allocatedBytes: finiteOrNull(
         benchmark?.Memory?.BytesAllocatedPerOperation
+      ),
+      gen0CollectionsPer1000Operations: findMetric(
+        benchmark,
+        "Gen0Collects"
+      ),
+      gen1CollectionsPer1000Operations: findMetric(
+        benchmark,
+        "Gen1Collects"
+      ),
+      gen2CollectionsPer1000Operations: findMetric(
+        benchmark,
+        "Gen2Collects"
       ),
       displayInfo: benchmark?.DisplayInfo || "",
     });
@@ -266,6 +288,14 @@ function parseKrackenReport(
 
 function finiteOrNull(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function findMetric(benchmark, id) {
+  return finiteOrNull(
+    benchmark?.Metrics?.find(
+      (metric) => metric?.Descriptor?.Id === id
+    )?.Value
+  );
 }
 
 function hostCompatibilityProblems(baseline, candidate) {
@@ -346,14 +376,148 @@ function printKrackenReport(label, result) {
   console.log(
     `BenchmarkDotNet ${result.benchmarkDotNetVersion}; report ${result.reportPath}`
   );
-  console.log("Runtime             Mean(s)  Median(s)   N  Allocated(bytes)");
+  console.log(
+    "Runtime             Mean(s)  Median(s)  StdDev(s)   N  " +
+      "Allocated(bytes)  Gen0/1/2 per 1k"
+  );
   for (const row of result.rows) {
     console.log(
-      `${row.runtime.padEnd(19)} ${format(row.meanNs / 1e9).padStart(8)}  ` +
-        `${format(row.medianNs / 1e9).padStart(9)}  ` +
+      `${row.runtime.padEnd(19)} ${format(seconds(row.meanNs)).padStart(8)}  ` +
+        `${format(seconds(row.medianNs)).padStart(9)}  ` +
+        `${format(seconds(row.standardDeviationNs)).padStart(9)}  ` +
         `${String(row.sampleCount ?? "n/a").padStart(2)}  ` +
-        `${String(row.allocatedBytes ?? "n/a").padStart(16)}`
+        `${String(row.allocatedBytes ?? "n/a").padStart(16)}  ` +
+        `${format(row.gen0CollectionsPer1000Operations, 2)}/` +
+        `${format(row.gen1CollectionsPer1000Operations, 2)}/` +
+        `${format(row.gen2CollectionsPer1000Operations, 2)}`
     );
+  }
+}
+
+function evaluateFinalValidation(result, ilCounters) {
+  const byRuntime = new Map(
+    result.rows.map((row) => [row.runtime, row])
+  );
+  const jroc = byRuntime.get("jroc-execute");
+  const jint = byRuntime.get("jint-execute");
+  const okojo = byRuntime.get("okojo-execute");
+  const competitors = result.rows.filter(
+    (row) => row.runtime !== "jroc-execute"
+  );
+  const competitorMeans = competitors
+    .map((row) => row.meanNs)
+    .filter(Number.isFinite);
+  const fastestCompetitorMean = competitorMeans.length > 0
+    ? Math.min(...competitorMeans)
+    : null;
+  const checks = [
+    {
+      name: "JROC no slower than Jint",
+      required: true,
+      passed:
+        Number.isFinite(jroc?.meanNs)
+        && Number.isFinite(jint?.meanNs)
+        && jroc.meanNs <= jint.meanNs,
+      detail:
+        `${format((jroc?.meanNs ?? NaN) / 1e9)}s <= ` +
+        `${format((jint?.meanNs ?? NaN) / 1e9)}s`,
+    },
+    {
+      name: "JROC no slower than Okojo",
+      required: true,
+      passed:
+        Number.isFinite(jroc?.meanNs)
+        && Number.isFinite(okojo?.meanNs)
+        && jroc.meanNs <= okojo.meanNs,
+      detail:
+        `${format((jroc?.meanNs ?? NaN) / 1e9)}s <= ` +
+        `${format((okojo?.meanNs ?? NaN) / 1e9)}s`,
+    },
+    {
+      name: "JROC within 10% of fastest managed competitor",
+      required: false,
+      passed:
+        Number.isFinite(jroc?.meanNs)
+        && Number.isFinite(fastestCompetitorMean)
+        && jroc.meanNs <= fastestCompetitorMean * 1.1,
+      detail:
+        `${format((jroc?.meanNs ?? NaN) / 1e9)}s <= ` +
+        `${format(((fastestCompetitorMean ?? NaN) * 1.1) / 1e9)}s`,
+    },
+    {
+      name: "JROC allocation below 100 MB/op",
+      required: true,
+      passed:
+        Number.isFinite(jroc?.allocatedBytes)
+        && jroc.allocatedBytes < FINAL_MAX_ALLOCATED_BYTES,
+      detail:
+        `${jroc?.allocatedBytes ?? "missing"} B < ` +
+        `${FINAL_MAX_ALLOCATED_BYTES} B`,
+    },
+    {
+      name: "All runtime rows have at least 3 samples",
+      required: true,
+      passed: result.rows.every(
+        (row) =>
+          Number.isFinite(row.sampleCount)
+          && row.sampleCount >= 3
+      ),
+      detail: result.rows
+        .map((row) => `${row.runtime}=${row.sampleCount}`)
+        .join(", "),
+    },
+    {
+      name: "Array.length avoids generic numeric reads",
+      required: true,
+      passed: ilCounters?.arrayLengthGenericNumericReads === 0,
+      detail: `${ilCounters?.arrayLengthGenericNumericReads ?? "missing"} generic reads`,
+    },
+    {
+      name: "GraphNode.pos uses guarded generated fields",
+      required: true,
+      passed:
+        ilCounters?.guardedConstructorFieldReads >= 2
+        && ilCounters?.dynamicCachePropertyReads === 0,
+      detail:
+        `${ilCounters?.guardedConstructorFieldReads ?? "missing"} guarded reads, ` +
+        `${ilCounters?.dynamicCachePropertyReads ?? "missing"} dynamic-cache reads`,
+    },
+    {
+      name: "findGraphNode arity-1 calls use cached dispatch",
+      required: true,
+      passed:
+        ilCounters?.findGraphNodeArity1CallSites >= 2
+        && ilCounters?.cachedFindGraphNodeArity1CallSites
+          === ilCounters?.findGraphNodeArity1CallSites,
+      detail:
+        `${ilCounters?.cachedFindGraphNodeArity1CallSites ?? "missing"}/` +
+        `${ilCounters?.findGraphNodeArity1CallSites ?? "missing"} cached`,
+    },
+  ];
+
+  return {
+    maxAllocatedBytes: FINAL_MAX_ALLOCATED_BYTES,
+    requiredPassed: checks
+      .filter((check) => check.required)
+      .every((check) => check.passed),
+    stretchPassed: checks
+      .filter((check) => !check.required)
+      .every((check) => check.passed),
+    checks,
+  };
+}
+
+function printFinalValidation(validation) {
+  console.log("");
+  console.log("Phase 6 final validation");
+  console.log("========================");
+  for (const check of validation.checks) {
+    const status = check.passed
+      ? "PASS"
+      : check.required
+        ? "FAIL"
+        : "MISS";
+    console.log(`${status.padEnd(4)} ${check.name}: ${check.detail}`);
   }
 }
 
@@ -385,6 +549,10 @@ function printComparison(comparison) {
 
 function format(value, decimals = 3) {
   return Number.isFinite(value) ? value.toFixed(decimals) : "n/a";
+}
+
+function seconds(value) {
+  return Number.isFinite(value) ? value / 1e9 : NaN;
 }
 
 function formatSigned(value) {
@@ -710,7 +878,26 @@ function inspectHotMethodIl(il, source) {
 }
 
 function runIlInspection(repoRoot, keepArtifacts) {
-  runChecked("ilspycmd", ["--version"], { cwd: repoRoot, stdio: "pipe" });
+  let runIlSpy;
+  try {
+    runChecked("ilspycmd", ["--version"], { cwd: repoRoot, stdio: "pipe" });
+    runIlSpy = (args) =>
+      runChecked("ilspycmd", args, { cwd: repoRoot, stdio: "pipe" });
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      throw error;
+    }
+    const localToolPrefix = ["tool", "run", "ilspycmd", "--"];
+    runChecked("dotnet", [...localToolPrefix, "--version"], {
+      cwd: repoRoot,
+      stdio: "pipe",
+    });
+    runIlSpy = (args) =>
+      runChecked("dotnet", [...localToolPrefix, ...args], {
+        cwd: repoRoot,
+        stdio: "pipe",
+      });
+  }
   const artifactsDirectory = path.join(repoRoot, "artifacts");
   fs.mkdirSync(artifactsDirectory, { recursive: true });
   const artifactRoot = fs.mkdtempSync(
@@ -738,10 +925,7 @@ function runIlInspection(repoRoot, keepArtifacts) {
       { cwd: repoRoot, stdio: "pipe" }
     );
     const dllPath = path.join(outputDirectory, `${TARGET_SCENARIO}.dll`);
-    const il = runChecked("ilspycmd", ["-il", dllPath], {
-      cwd: repoRoot,
-      stdio: "pipe",
-    }).stdout;
+    const il = runIlSpy(["-il", dllPath]).stdout;
     fs.writeFileSync(path.join(artifactRoot, `${TARGET_SCENARIO}.il`), il, "utf8");
 
     const result = inspectHotMethodIl(il, source);
@@ -825,6 +1009,12 @@ function main() {
   const ilCounters = args.inspectIl
     ? runIlInspection(repoRoot, args.keepIlArtifacts)
     : null;
+  const finalValidation = args.finalValidation && candidate
+    ? evaluateFinalValidation(candidate, ilCounters)
+    : null;
+  if (finalValidation) {
+    printFinalValidation(finalValidation);
+  }
 
   let baseline = null;
   let comparison = null;
@@ -854,6 +1044,7 @@ function main() {
     comparison,
     microbenchmarks,
     ilCounters,
+    finalValidation,
   };
   const outputPath = args.outputJson
     ? path.resolve(repoRoot, args.outputJson)
@@ -865,10 +1056,14 @@ function main() {
   if (comparison?.regression && !args.allowRegression) {
     process.exitCode = 2;
   }
+  if (finalValidation && !finalValidation.requiredPassed) {
+    process.exitCode = 3;
+  }
 }
 
 module.exports = {
   compareJrocReports,
+  evaluateFinalValidation,
   extractSourceMethodBodies,
   findFindGraphNodeOwner,
   hostCompatibilityProblems,

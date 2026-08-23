@@ -8,16 +8,17 @@ const path = require("node:path");
 const test = require("node:test");
 const {
   compareJrocReports,
+  evaluateFinalValidation,
   inspectHotMethodIl,
   parseKrackenReport,
 } = require("./runKrackenAStarGuardrails");
 const scriptPath = path.join(__dirname, "runKrackenAStarGuardrails.js");
 
 const runtimes = [
-  ["RunJrocTest", 100, 90, 15, 200],
-  ["RunOkojoTest", 80, 78, 13, 20],
-  ["RunJintTest", 85, 84, 14, 30],
-  ["RunYantraJsTest", 70, 68, 15, 400],
+  ["RunJrocTest", 100, 90, 10, 15, 200],
+  ["RunOkojoTest", 120, 118, 12, 13, 20],
+  ["RunJintTest", 110, 108, 11, 14, 30],
+  ["RunYantraJsTest", 95, 93, 9, 15, 400],
 ];
 
 function createReport(filePath, jrocMean = 100, processorName = "Test CPU") {
@@ -36,7 +37,14 @@ function createReport(filePath, jrocMean = 100, processorName = "Test CPU") {
       DotNetCliVersion: "10.0.100",
     },
     Benchmarks: runtimes.map(
-      ([method, mean, median, sampleCount, allocatedBytes]) => ({
+      ([
+        method,
+        mean,
+        median,
+        standardDeviation,
+        sampleCount,
+        allocatedBytes,
+      ]) => ({
         Method: method,
         Parameters: "ScriptName=kracken-ai-astar.js",
         DisplayInfo:
@@ -44,11 +52,26 @@ function createReport(filePath, jrocMean = 100, processorName = "Test CPU") {
         Statistics: {
           Mean: method === "RunJrocTest" ? jrocMean : mean,
           Median: median,
+          StandardDeviation: standardDeviation,
           N: sampleCount,
         },
         Memory: {
           BytesAllocatedPerOperation: allocatedBytes,
         },
+        Metrics: [
+          {
+            Value: 1,
+            Descriptor: { Id: "Gen0Collects" },
+          },
+          {
+            Value: 0,
+            Descriptor: { Id: "Gen1Collects" },
+          },
+          {
+            Value: 0,
+            Descriptor: { Id: "Gen2Collects" },
+          },
+        ],
       })
     ),
   };
@@ -72,11 +95,67 @@ test("parses exact Kraken rows with raw provenance", () => {
         runtime: "jroc-execute",
         meanNs: 100,
         medianNs: 90,
+        standardDeviationNs: 10,
         sampleCount: 15,
         allocatedBytes: 200,
+        gen0CollectionsPer1000Operations: 1,
+        gen1CollectionsPer1000Operations: 0,
+        gen2CollectionsPer1000Operations: 0,
         displayInfo:
           "RunJrocTest [ScriptName=kracken-ai-astar.js]",
       }
+    );
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("evaluates required and stretch Phase 6 gates", () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "jroc-kraken-final-"));
+  try {
+    const reportPath = path.join(directory, "report.json");
+    createReport(reportPath);
+    const validation = evaluateFinalValidation(
+      parseKrackenReport(reportPath, "candidate"),
+      {
+        arrayLengthGenericNumericReads: 0,
+        guardedConstructorFieldReads: 2,
+        dynamicCachePropertyReads: 0,
+        findGraphNodeArity1CallSites: 2,
+        cachedFindGraphNodeArity1CallSites: 2,
+      }
+    );
+
+    assert.equal(validation.requiredPassed, true);
+    assert.equal(validation.stretchPassed, true);
+    assert.equal(validation.checks.length, 8);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("fails Phase 6 when JROC trails a required competitor", () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "jroc-kraken-fail-"));
+  try {
+    const reportPath = path.join(directory, "report.json");
+    createReport(reportPath, 130);
+    const validation = evaluateFinalValidation(
+      parseKrackenReport(reportPath, "candidate"),
+      {
+        arrayLengthGenericNumericReads: 0,
+        guardedConstructorFieldReads: 2,
+        dynamicCachePropertyReads: 0,
+        findGraphNodeArity1CallSites: 2,
+        cachedFindGraphNodeArity1CallSites: 2,
+      }
+    );
+
+    assert.equal(validation.requiredPassed, false);
+    assert.equal(
+      validation.checks.find(
+        (check) => check.name === "JROC no slower than Jint"
+      ).passed,
+      false
     );
   } finally {
     fs.rmSync(directory, { recursive: true, force: true });
