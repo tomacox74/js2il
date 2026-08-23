@@ -217,12 +217,11 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 55 (0x37)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[1] float64,
-				[2] object
+				[1] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -234,18 +233,20 @@
 			IL_0012: pop
 			IL_0013: ldarg.0
 			IL_0014: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001e: ldc.r8 1
-			IL_0027: add
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: box [System.Runtime]System.Double
-			IL_002f: stloc.2
-			IL_0030: ldarg.0
-			IL_0031: ldloc.2
-			IL_0032: stfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-			IL_0037: ldnull
-			IL_0038: ret
+			IL_0019: stloc.1
+			IL_001a: ldloc.1
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_0020: stloc.1
+			IL_0021: ldloc.1
+			IL_0022: ldc.i4.1
+			IL_0023: box [System.Runtime]System.Boolean
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_002d: stloc.1
+			IL_002e: ldarg.0
+			IL_002f: ldloc.1
+			IL_0030: stfld object Modules.Stream_Readable_Basic/Scope::dataReceived
+			IL_0035: ldnull
+			IL_0036: ret
 		} // end of method FunctionExpression_L13C20::__js_call__
 
 	} // end of class FunctionExpression_L13C20

@@ -29,4 +29,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "size-is-a-number")]
     public Task size_is_a_number()
         => ExecutionTestFromFile("size-is-a-number");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

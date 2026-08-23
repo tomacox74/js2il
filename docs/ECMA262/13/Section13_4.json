@@ -108,9 +108,15 @@
         "specUrl": "https://tc39.es/ecma262/#sec-prefix-increment-operator",
         "testScripts": [
           "tests/Jroc.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js",
-          "tests/Jroc.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/prefix-increment/ExecutionTests.cs"
         ],
-        "notes": "Prefix increment writes back the incremented ToNumber result and returns that updated value. The checked-in test262 port adds explicit primitive-coercion coverage alongside the existing project-local prefix regression."
+        "notes": "Prefix increment evaluates its reference once, performs ToNumeric with abrupt completion, preserves BigInt results, writes the incremented value back (including with-environment references), and returns the updated value.",
+        "test262Paths": [
+          "test/language/expressions/prefix-increment/S11.4.4_A5_T1.js",
+          "test/language/expressions/prefix-increment/S11.4.4_A5_T2.js",
+          "test/language/expressions/prefix-increment/S11.4.4_A6_T3.js"
+        ]
       },
       {
         "clause": "13.4.5",

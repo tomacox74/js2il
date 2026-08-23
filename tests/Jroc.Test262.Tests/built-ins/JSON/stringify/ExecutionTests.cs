@@ -174,4 +174,14 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "space-string-object.js")]
     public Task space_string_object()
         => ExecutionTestFromFile("space-string-object");
+
+
+
+    [Fact(DisplayName = "value-bigint")]
+    public Task value_bigint()
+        => ExecutionTestFromFile("value-bigint");
+
+    [Fact(DisplayName = "value-bigint-tojson")]
+    public Task value_bigint_tojson()
+        => ExecutionTestFromFile("value-bigint-tojson");
 }

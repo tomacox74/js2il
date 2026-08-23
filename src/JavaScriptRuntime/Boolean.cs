@@ -39,6 +39,17 @@ namespace JavaScriptRuntime
                 return wrapper._value;
             }
 
+            if (value is not null
+                && PropertyDescriptorStore.TryGetOwn(
+                    value,
+                    ObjectRuntime.PrimitiveValuePropertyName,
+                    out var descriptor)
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && descriptor.Value is bool wrapped)
+            {
+                return wrapped;
+            }
+
             throw new TypeError("Boolean.prototype method called on incompatible receiver");
         }
 

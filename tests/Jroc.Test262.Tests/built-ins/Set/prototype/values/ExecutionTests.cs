@@ -38,4 +38,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task length()
         => ExecutionTestFromFile("length");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

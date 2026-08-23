@@ -13,4 +13,24 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "get")]
     public Task get()
         => ExecutionTestFromFile("get");
+
+    [Fact(DisplayName = "descriptor")]
+    public Task descriptor()
+        => ExecutionTestFromFile("descriptor");
+
+    [Fact(DisplayName = "this-val-symbol")]
+    public Task this_val_symbol()
+        => ExecutionTestFromFile("this-val-symbol");
+
+    [Fact(DisplayName = "this-val-non-symbol")]
+    public Task this_val_non_symbol()
+        => ExecutionTestFromFile("this-val-non-symbol");
+
+    [Fact(DisplayName = "wrapper")]
+    public Task wrapper()
+        => ExecutionTestFromFile("wrapper");
+
+    [Fact(DisplayName = "is-not-own-property")]
+    public Task is_not_own_property()
+        => ExecutionTestFromFile("is-not-own-property");
 }

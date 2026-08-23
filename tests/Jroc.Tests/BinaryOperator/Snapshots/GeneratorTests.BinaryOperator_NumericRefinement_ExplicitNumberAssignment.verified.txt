@@ -202,7 +202,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 64 (0x40)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -220,25 +220,24 @@
 			IL_000e: ldloc.3
 			IL_000f: starg.s x
 			IL_0011: ldloc.2
-			IL_0012: conv.i4
-			IL_0013: conv.u4
-			IL_0014: ldc.r8 5
-			IL_001d: conv.i4
-			IL_001e: shr.un
-			IL_001f: conv.r.un
-			IL_0020: stloc.0
-			IL_0021: ldloc.2
-			IL_0022: conv.i4
-			IL_0023: ldc.r8 31
-			IL_002c: conv.i4
-			IL_002d: and
-			IL_002e: conv.r8
-			IL_002f: stloc.1
-			IL_0030: ldloc.0
-			IL_0031: ldloc.1
-			IL_0032: add
-			IL_0033: box [System.Runtime]System.Double
-			IL_0038: ret
+			IL_0012: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+			IL_0017: ldc.r8 5
+			IL_0020: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+			IL_0025: shr.un
+			IL_0026: conv.r.un
+			IL_0027: stloc.0
+			IL_0028: ldloc.2
+			IL_0029: conv.i4
+			IL_002a: ldc.r8 31
+			IL_0033: conv.i4
+			IL_0034: and
+			IL_0035: conv.r8
+			IL_0036: stloc.1
+			IL_0037: ldloc.0
+			IL_0038: ldloc.1
+			IL_0039: add
+			IL_003a: box [System.Runtime]System.Double
+			IL_003f: ret
 		} // end of method numberAssignmentRefinement::__js_call__
 
 	} // end of class numberAssignmentRefinement

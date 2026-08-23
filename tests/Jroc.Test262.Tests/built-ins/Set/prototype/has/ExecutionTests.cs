@@ -30,4 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task returns_true_when_value_present_nan()
         => ExecutionTestFromFile("returns-true-when-value-present-nan");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

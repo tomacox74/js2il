@@ -80,16 +80,7 @@ namespace JavaScriptRuntime
         }
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method)
-        {
-            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = method
-            });
-        }
+            => DefinePrototypeMethod(prototype, name, method, Function.GetLength(method));
 
         private static void DefinePrototypeMethod(
             JsObject prototype,
@@ -103,7 +94,14 @@ namespace JavaScriptRuntime
                 name,
                 requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(method));
             Function.MarkUndefinedPrototype(method);
-            DefinePrototypeMethod(prototype, name, method);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = method
+            });
         }
 
         private static Map GetMapReceiver(object? thisArgument, string methodName)

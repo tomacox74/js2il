@@ -316,7 +316,7 @@ public sealed partial class HIRToLIRLowerer
                                     return true;
                                 }
 
-                                if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var errorArgs))
+                                if (!TryEvaluateCallArguments(callExpr.Arguments, 2, out var errorArgs))
                                 {
                                     return false;
                                 }
@@ -325,6 +325,19 @@ public sealed partial class HIRToLIRLowerer
 
                                 _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(intrinsicInfo.Name, messageTemp, resultTempVar));
                                 DefineTempStorage(resultTempVar, GetBuiltInErrorStorage(intrinsicInfo.Name));
+
+                                if (errorArgs.Count > 1)
+                                {
+                                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                                        nameof(JavaScriptRuntime.Error),
+                                        nameof(JavaScriptRuntime.Error.InstallCause),
+                                        new[]
+                                        {
+                                            EnsureObject(resultTempVar),
+                                            EnsureObject(errorArgs[1])
+                                        }));
+                                }
+
                                 return true;
                             }
 

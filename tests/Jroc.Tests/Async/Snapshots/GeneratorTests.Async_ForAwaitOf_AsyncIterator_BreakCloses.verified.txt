@@ -186,14 +186,13 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 130 (0x82)
+				// Code size: 117 (0x75)
 				.maxstack 8
 				.locals init (
-					[0] float64,
+					[0] object,
 					[1] object,
-					[2] object,
-					[3] bool,
-					[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+					[2] bool,
+					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 				)
 
 				IL_0000: ldarg.0
@@ -201,48 +200,45 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope
 				IL_0008: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope::i
-				IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0012: stloc.0
-				IL_0013: ldloc.0
-				IL_0014: box [System.Runtime]System.Double
-				IL_0019: stloc.1
-				IL_001a: ldloc.1
-				IL_001b: stloc.2
-				IL_001c: ldloc.0
-				IL_001d: ldc.r8 1
-				IL_0026: add
-				IL_0027: stloc.0
-				IL_0028: ldloc.0
-				IL_0029: box [System.Runtime]System.Double
-				IL_002e: stloc.1
-				IL_002f: ldarg.0
-				IL_0030: ldc.i4.1
-				IL_0031: ldelem.ref
-				IL_0032: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope
-				IL_0037: ldloc.1
-				IL_0038: stfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope::i
-				IL_003d: ldarg.0
-				IL_003e: ldc.i4.1
-				IL_003f: ldelem.ref
-				IL_0040: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope
-				IL_0045: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope::i
-				IL_004a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_004f: ldc.r8 3
-				IL_0058: cgt
-				IL_005a: stloc.3
-				IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0060: dup
-				IL_0061: ldstr "value"
-				IL_0066: ldloc.2
-				IL_0067: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_006c: dup
-				IL_006d: ldstr "done"
-				IL_0072: ldloc.3
-				IL_0073: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_0078: stloc.s 4
-				IL_007a: ldloc.s 4
-				IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-				IL_0081: ret
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+				IL_0014: stloc.0
+				IL_0015: ldloc.0
+				IL_0016: stloc.1
+				IL_0017: ldloc.0
+				IL_0018: ldc.i4.1
+				IL_0019: box [System.Runtime]System.Boolean
+				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+				IL_0023: stloc.0
+				IL_0024: ldarg.0
+				IL_0025: ldc.i4.1
+				IL_0026: ldelem.ref
+				IL_0027: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope
+				IL_002c: ldloc.0
+				IL_002d: stfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope::i
+				IL_0032: ldarg.0
+				IL_0033: ldc.i4.1
+				IL_0034: ldelem.ref
+				IL_0035: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope
+				IL_003a: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/Scope::i
+				IL_003f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0044: ldc.r8 3
+				IL_004d: cgt
+				IL_004f: stloc.2
+				IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0055: dup
+				IL_0056: ldstr "value"
+				IL_005b: ldloc.1
+				IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0061: dup
+				IL_0062: ldstr "done"
+				IL_0067: ldloc.2
+				IL_0068: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_006d: stloc.3
+				IL_006e: ldloc.3
+				IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+				IL_0074: ret
 			} // end of method ArrowFunction_L8C19::__js_call__
 
 		} // end of class ArrowFunction_L8C19

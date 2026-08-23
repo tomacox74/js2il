@@ -34,6 +34,7 @@ public static class CallableOperations
         return value switch
         {
             JsFunctionObject => true,
+            JsObject { IsFunctionPrototype: true } => true,
             Type type => ObjectRuntime.IsConstructibleValue(type),
             Proxy proxy => proxy.IsCallableTarget,
             _ => false
@@ -253,6 +254,7 @@ public static class CallableOperations
                 functionObject,
                 thisArgument,
                 arguments),
+            JsObject { IsFunctionPrototype: true } => null,
             Proxy proxy when proxy.IsCallableTarget => CallProxy(
                 proxy,
                 thisArgument,

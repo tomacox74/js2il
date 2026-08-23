@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:00:14Z
+> Last generated (UTC): 2026-08-23T20:02:19Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -29,5 +29,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Bitwise shift operators | Supported with Limitations | `tests/Jroc.Tests/BinaryOperator/ExecutionTests.cs`<br>`tests/Jroc.Tests/CompoundAssignment/ExecutionTests.cs` |  | Left shift, signed right shift, and unsigned right shift are lowered through LIR/native IL paths for numeric operands with runtime dynamic fallback. Coverage includes direct binary operators and compound shift assignments. |
+| Bitwise shift operators | Supported with Limitations | `tests/Jroc.Tests/BinaryOperator/ExecutionTests.cs`<br>`tests/Jroc.Tests/CompoundAssignment/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/left-shift/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/right-shift/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/unsigned-right-shift/ExecutionTests.cs` | `test/language/expressions/unsigned-right-shift/S9.6_A2.1.js`<br>`test/language/expressions/unsigned-right-shift/S9.6_A2.2.js`<br>`test/language/expressions/left-shift/S11.7.1_A5.1_T1.js`<br>`test/language/expressions/left-shift/S9.5_A1_T1.js`<br>`test/language/expressions/left-shift/S9.5_A2.1_T1.js`<br>`test/language/expressions/left-shift/S9.5_A2.2_T1.js`<br>`test/language/expressions/left-shift/S9.5_A2.3_T1.js`<br>`test/language/expressions/right-shift/S11.7.2_A5.1_T1.js`<br>`test/language/expressions/unsigned-right-shift/S11.7.3_A4_T1.js`<br>`test/language/expressions/unsigned-right-shift/S11.7.3_A4_T2.js`<br>`test/language/expressions/unsigned-right-shift/S11.7.3_A4_T3.js`<br>`test/language/expressions/unsigned-right-shift/S11.7.3_A4_T4.js`<br>`test/language/expressions/unsigned-right-shift/S11.7.3_A5.1_T1.js`<br>`test/language/expressions/unsigned-right-shift/S11.7.3_A5.2_T1.js`<br>`test/language/expressions/unsigned-right-shift/S9.6_A1.js` | Left shift, signed right shift, and unsigned right shift preserve left-to-right ToNumeric coercion and abrupt completion, reject mixed Number/BigInt operands, apply modulo-based ToInt32/ToUint32 conversion, and use native IL fast paths only when static numeric types make them semantics-preserving. Unsigned right shift remains unavailable for BigInt as required by ECMA-262. |
 

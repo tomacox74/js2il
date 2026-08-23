@@ -8,5 +8,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "this-val-symbol")]
     public Task this_val_symbol()
-        => ExecutionTestFromFile("this-val-symbol");
-}
+        => ExecutionTestFromFile("this-val-symbol");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

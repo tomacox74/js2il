@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 97 (0x61)
+		// Code size: 104 (0x68)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_ShiftDerived_Index_Access/Scope,
@@ -121,29 +121,28 @@
 		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
 		IL_001a: stloc.1
 		IL_001b: ldc.r8 64
-		IL_0024: conv.i4
-		IL_0025: conv.u4
-		IL_0026: ldc.r8 5
-		IL_002f: conv.i4
-		IL_0030: shr.un
-		IL_0031: conv.r.un
-		IL_0032: stloc.2
-		IL_0033: ldloc.1
-		IL_0034: ldloc.2
-		IL_0035: ldc.r8 42
-		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0048: stloc.3
-		IL_0049: ldloc.1
-		IL_004a: ldloc.2
-		IL_004b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0050: box [System.Runtime]System.Double
-		IL_0055: stloc.s 4
-		IL_0057: ldloc.3
-		IL_0058: ldloc.s 4
-		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005f: pop
-		IL_0060: ret
+		IL_0024: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+		IL_0029: ldc.r8 5
+		IL_0032: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+		IL_0037: shr.un
+		IL_0038: conv.r.un
+		IL_0039: stloc.2
+		IL_003a: ldloc.1
+		IL_003b: ldloc.2
+		IL_003c: ldc.r8 42
+		IL_0045: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+		IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004f: stloc.3
+		IL_0050: ldloc.1
+		IL_0051: ldloc.2
+		IL_0052: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_0057: box [System.Runtime]System.Double
+		IL_005c: stloc.s 4
+		IL_005e: ldloc.3
+		IL_005f: ldloc.s 4
+		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0066: pop
+		IL_0067: ret
 	} // end of method Int32Array_ShiftDerived_Index_Access::__js_module_init__
 
 } // end of class Modules.Int32Array_ShiftDerived_Index_Access

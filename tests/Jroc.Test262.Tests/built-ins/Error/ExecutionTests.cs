@@ -34,4 +34,27 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task prototype_S15_11_4_A4()
         => ExecutionTestFromFile("prototype/S15.11.4_A4");
 
+    [Fact(DisplayName = "message_property")]
+    public Task message_property()
+        => ExecutionTestFromFile("message_property");
+
+    [Fact(DisplayName = "cause_property")]
+    public Task cause_property()
+        => ExecutionTestFromFile("cause_property");
+
+    [Fact(DisplayName = "tostring-1")]
+    public Task tostring_1()
+        => ExecutionTestFromFile("tostring-1");
+
+    [Fact(DisplayName = "tostring-2")]
+    public Task tostring_2()
+        => ExecutionTestFromFile("tostring-2");
+
+    [Fact(DisplayName = "error-message-tostring-symbol")]
+    public Task error_message_tostring_symbol()
+        => ExecutionTestFromFile("error-message-tostring-symbol");
+
+    [Fact(DisplayName = "error-message-tostring-toprimitive")]
+    public Task error_message_tostring_toprimitive()
+        => ExecutionTestFromFile("error-message-tostring-toprimitive");
 }

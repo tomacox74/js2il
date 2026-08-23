@@ -1591,11 +1591,10 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 52 (0x34)
+				// Code size: 50 (0x32)
 				.maxstack 8
 				.locals init (
-					[0] float64,
-					[1] object
+					[0] object
 				)
 
 				IL_0000: ldarg.0
@@ -1603,21 +1602,23 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Variable_NumericLetLocalSpecialization/captured/Scope
 				IL_0008: ldfld object Modules.Variable_NumericLetLocalSpecialization/captured/Scope::'value'
-				IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0012: ldc.r8 1
-				IL_001b: add
-				IL_001c: stloc.0
-				IL_001d: ldloc.0
-				IL_001e: box [System.Runtime]System.Double
-				IL_0023: stloc.1
-				IL_0024: ldarg.0
-				IL_0025: ldc.i4.1
-				IL_0026: ldelem.ref
-				IL_0027: castclass Modules.Variable_NumericLetLocalSpecialization/captured/Scope
-				IL_002c: ldloc.1
-				IL_002d: stfld object Modules.Variable_NumericLetLocalSpecialization/captured/Scope::'value'
-				IL_0032: ldloc.1
-				IL_0033: ret
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+				IL_0014: stloc.0
+				IL_0015: ldloc.0
+				IL_0016: ldc.i4.1
+				IL_0017: box [System.Runtime]System.Boolean
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+				IL_0021: stloc.0
+				IL_0022: ldarg.0
+				IL_0023: ldc.i4.1
+				IL_0024: ldelem.ref
+				IL_0025: castclass Modules.Variable_NumericLetLocalSpecialization/captured/Scope
+				IL_002a: ldloc.0
+				IL_002b: stfld object Modules.Variable_NumericLetLocalSpecialization/captured/Scope::'value'
+				IL_0030: ldloc.0
+				IL_0031: ret
 			} // end of method FunctionExpression_L81C11::__js_call__
 
 		} // end of class FunctionExpression_L81C11

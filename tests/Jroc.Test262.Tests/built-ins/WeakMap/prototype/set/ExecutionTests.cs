@@ -34,4 +34,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task this_not_object_throw_undefined()
         => ExecutionTestFromFile("this-not-object-throw-undefined");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

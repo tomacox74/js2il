@@ -38,32 +38,52 @@ namespace JavaScriptRuntime
         // Convenience .NET-style alias (optional)
         public string Stack => stack;
 
-        public Error() : this(string.Empty) { }
+        public Error() : this(string.Empty, hasMessage: false, innerException: null) { }
 
-        public Error(object? message) : this(CoerceMessage(message)) { }
+        public Error(object? message)
+            : this(
+                message is null ? string.Empty : CoerceMessage(message),
+                hasMessage: message is not null,
+                innerException: null)
+        {
+        }
 
-        public Error(string? message) : base(message ?? string.Empty)
+        public Error(string? message)
+            : this(message ?? string.Empty, hasMessage: message is not null, innerException: null)
+        {
+        }
+
+        private Error(string message, bool hasMessage, Exception? innerException)
+            : base(message, innerException)
         {
             Name = "Error";
             _constructedStack = CaptureStack();
             PrototypeChain.SetPrototype(this, GlobalThis.ErrorPrototypeValue);
+
+            PropertyDescriptorStore.Delete(this, "cause");
+            if (hasMessage)
+            {
+                InstallDataProperty("message", message);
+            }
+            else
+            {
+                PropertyDescriptorStore.Delete(this, "message");
+            }
         }
 
         public Error(string? message, object? cause) : this(message)
         {
-            this.cause = cause;
+            InstallCauseProperty(cause);
         }
 
-        public Error(string? message, Exception? innerException) : base(message ?? string.Empty, innerException)
+        public Error(string? message, Exception? innerException)
+            : this(message ?? string.Empty, hasMessage: message is not null, innerException)
         {
-            Name = "Error";
-            _constructedStack = CaptureStack();
-            PrototypeChain.SetPrototype(this, GlobalThis.ErrorPrototypeValue);
         }
 
         public Error(string? message, Exception? innerException, object? cause) : this(message, innerException)
         {
-            this.cause = cause;
+            InstallCauseProperty(cause);
         }
 
         public static void InstallCause(object? errorValue, object? options)
@@ -74,7 +94,7 @@ namespace JavaScriptRuntime
                 && !TypeUtilities.IsPrimitive(options)
                 && ObjectRuntime.HasPropertyIn("cause", options))
             {
-                error.cause = ObjectRuntime.GetProperty(options, "cause");
+                error.InstallCauseProperty(ObjectRuntime.GetProperty(options, "cause"));
             }
         }
 
@@ -92,6 +112,24 @@ namespace JavaScriptRuntime
 
         protected static string CoerceMessage(object? message)
             => message is null ? string.Empty : DotNet2JSConversions.ToErrorMessageString(message);
+
+        private void InstallCauseProperty(object? value)
+        {
+            cause = value;
+            InstallDataProperty("cause", value);
+        }
+
+        protected void InstallDataProperty(string name, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
 
         public override string ToString()
             => string.IsNullOrEmpty(Message) ? Name : $"{Name}: {Message}";
@@ -278,16 +316,5 @@ namespace JavaScriptRuntime
             return error;
         }
 
-        private void InstallDataProperty(string name, object? value)
-        {
-            PropertyDescriptorStore.DefineOrUpdate(this, name, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = value
-            });
-        }
     }
 }

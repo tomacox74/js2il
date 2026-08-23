@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 65 (0x41)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_RightShiftNumberNumber/Scope,
@@ -116,23 +116,23 @@
 		IL_0005: stloc.0
 		IL_0006: nop
 		IL_0007: ldc.r8 16
-		IL_0010: conv.i4
-		IL_0011: ldc.r8 2
-		IL_001a: conv.i4
-		IL_001b: shr
-		IL_001c: conv.r8
-		IL_001d: stloc.1
-		IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0023: stloc.2
-		IL_0024: ldloc.1
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: stloc.3
-		IL_002b: ldloc.2
-		IL_002c: ldstr "x is"
-		IL_0031: ldloc.3
-		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0037: pop
-		IL_0038: ret
+		IL_0010: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+		IL_0015: ldc.r8 2
+		IL_001e: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+		IL_0023: shr
+		IL_0024: conv.r8
+		IL_0025: stloc.1
+		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002b: stloc.2
+		IL_002c: ldloc.1
+		IL_002d: box [System.Runtime]System.Double
+		IL_0032: stloc.3
+		IL_0033: ldloc.2
+		IL_0034: ldstr "x is"
+		IL_0039: ldloc.3
+		IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_003f: pop
+		IL_0040: ret
 	} // end of method BinaryOperator_RightShiftNumberNumber::__js_module_init__
 
 } // end of class Modules.BinaryOperator_RightShiftNumberNumber
