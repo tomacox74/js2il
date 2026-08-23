@@ -35,6 +35,14 @@ Exports, generated constructor contracts, and generated object/instance/array
 handles marshal work to that script thread. Runtime proxy types remain an
 implementation detail of the generated facade.
 
+Generator and custom iterable exports use runtime-owned adapters behind
+`IEnumerable<T>`/`IAsyncEnumerable<T>`. Enumerator disposal is marshalled back
+to JavaScript `return()` before root shutdown, so generator `finally` blocks
+run on early break, cancellation, and import disposal. Built-in, collection,
+and binary facade contracts use the same identity cache and thread-affine
+dispatch as ordinary generated handles; no runtime implementation type appears
+in their public signatures.
+
 ### Hosted `child_process.fork()`
 
 Hosted runtimes can launch compiled child processes, but unlike standalone `Engine.Execute(...)` they require an explicit launchable assembly path whenever hosted code may call `child_process.fork()`. Set `JsModuleLoadOptions.CompiledAssemblyPath` when calling `JsEngine.LoadModule(...)`; hosted `fork()` does not infer a launch target automatically, even if the assembly was loaded from a physical file.

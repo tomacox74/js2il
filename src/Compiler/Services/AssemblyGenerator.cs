@@ -104,6 +104,7 @@ namespace Jroc.Services
                     default,
                     default,
                     default,
+                    default,
                     default);
 
             // Phase 0: compute callable counts across all modules so we can assign stable

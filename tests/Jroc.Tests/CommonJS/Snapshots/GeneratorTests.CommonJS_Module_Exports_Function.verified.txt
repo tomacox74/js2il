@@ -115,6 +115,26 @@
 
 } // end of class Jroc.Generated.Metadata.JsCallableContractAttribute
 
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsBuiltinContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			string 'value'
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsBuiltinContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsBuiltinContractAttribute
+
 .class public auto ansi abstract sealed beforefieldinit CommonJS_Module_Exports_Function
 	extends [System.Runtime]System.Object
 {
@@ -127,6 +147,26 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
+			.class interface nested public auto ansi abstract ICallable
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void Jroc.Generated.Metadata.JsCallableContractAttribute::.ctor() = (
+					01 00 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance object Invoke (
+						object[] arguments
+					) cil managed 
+				{
+					.param [1]
+						.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+							01 00 00 00
+						)
+				} // end of method ICallable::Invoke
+
+			} // end of class ICallable
+
 			.class interface nested public auto ansi abstract IExports
 				implements [System.Runtime]System.IDisposable
 			{
@@ -137,7 +177,7 @@
 				)
 				// Methods
 				.method public hidebysig specialname newslot abstract virtual 
-					instance object get_Value () cil managed 
+					instance class CommonJS_Module_Exports_Function/Scripts/CommonJS_Module_Exports_Function/ICallable get_Value () cil managed 
 				{
 					.custom instance void Jroc.Generated.Metadata.JsExportValueAttribute::.ctor() = (
 						01 00 00 00
@@ -169,9 +209,9 @@
 				} // end of method IExports::Construct
 
 				// Properties
-				.property instance object Value()
+				.property instance class CommonJS_Module_Exports_Function/Scripts/CommonJS_Module_Exports_Function/ICallable Value()
 				{
-					.get instance object CommonJS_Module_Exports_Function/Scripts/CommonJS_Module_Exports_Function/IExports::get_Value()
+					.get instance class CommonJS_Module_Exports_Function/Scripts/CommonJS_Module_Exports_Function/ICallable CommonJS_Module_Exports_Function/Scripts/CommonJS_Module_Exports_Function/IExports::get_Value()
 				}
 
 			} // end of class IExports

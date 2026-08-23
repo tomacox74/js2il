@@ -29,6 +29,22 @@ internal sealed class ModuleExportsContractEmitter
     private const string FallbackCallableContractKey = "\0callable";
     private const string FallbackConstructorContractKey = "\0constructor";
     private const string ConstructorContractKeyPrefix = "\0constructor:";
+    private const string DateContractKey = "\0builtin:Date";
+    private const string DateConstructorContractKey = "\0builtin:DateConstructor";
+    private const string RegExpContractKey = "\0builtin:RegExp";
+    private const string RegExpConstructorContractKey = "\0builtin:RegExpConstructor";
+    private const string ErrorContractKey = "\0builtin:Error";
+    private const string ErrorConstructorContractKey = "\0builtin:ErrorConstructor";
+    private const string SymbolContractKey = "\0builtin:Symbol";
+    private const string SymbolConstructorContractKey = "\0builtin:SymbolConstructor";
+    private const string MapEntryContractKey = "\0builtin:MapEntry";
+    private const string MapContractKey = "\0builtin:Map";
+    private const string SetContractKey = "\0builtin:Set";
+    private const string WeakMapContractKey = "\0builtin:WeakMap";
+    private const string WeakSetContractKey = "\0builtin:WeakSet";
+    private const string ArrayBufferContractKey = "\0builtin:ArrayBuffer";
+    private const string DataViewContractKey = "\0builtin:DataView";
+    private const string TypedArrayContractKey = "\0builtin:TypedArray";
 
     private readonly MetadataBuilder _metadata;
     private readonly BaseClassLibraryReferences _bcl;
@@ -218,6 +234,110 @@ internal sealed class ModuleExportsContractEmitter
                 nestedTypes,
                 instanceInterfacesByClassName[FallbackObjectContractKey]);
         }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.Symbol))
+        {
+            instanceInterfacesByClassName[SymbolContractKey] = EmitSymbolInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.ArrayBuffer))
+        {
+            instanceInterfacesByClassName[ArrayBufferContractKey] = EmitArrayBufferInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.Map))
+        {
+            instanceInterfacesByClassName[MapEntryContractKey] = EmitMapEntryInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.Date))
+        {
+            instanceInterfacesByClassName[DateContractKey] = EmitDateInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.RegExp))
+        {
+            instanceInterfacesByClassName[RegExpContractKey] = EmitRegExpInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[FallbackArrayContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.Error))
+        {
+            instanceInterfacesByClassName[ErrorContractKey] = EmitErrorInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.Map))
+        {
+            instanceInterfacesByClassName[MapContractKey] = EmitMapInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[MapEntryContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.Set))
+        {
+            instanceInterfacesByClassName[SetContractKey] = EmitSetInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.WeakMap))
+        {
+            instanceInterfacesByClassName[WeakMapContractKey] = EmitWeakMapInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.WeakSet))
+        {
+            instanceInterfacesByClassName[WeakSetContractKey] = EmitWeakSetInterface(
+                facadeType,
+                nestedTypes);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.DataView))
+        {
+            instanceInterfacesByClassName[DataViewContractKey] = EmitDataViewInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[ArrayBufferContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.TypedArray))
+        {
+            instanceInterfacesByClassName[TypedArrayContractKey] = EmitTypedArrayInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[ArrayBufferContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.DateConstructor))
+        {
+            instanceInterfacesByClassName[DateConstructorContractKey] = EmitDateConstructorInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[DateContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.RegExpConstructor))
+        {
+            instanceInterfacesByClassName[RegExpConstructorContractKey] = EmitRegExpConstructorInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[RegExpContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.ErrorConstructor))
+        {
+            instanceInterfacesByClassName[ErrorConstructorContractKey] = EmitErrorConstructorInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[ErrorContractKey]);
+        }
+        if (fallbackRequirements.HasFlag(FallbackContractKind.SymbolConstructor))
+        {
+            instanceInterfacesByClassName[SymbolConstructorContractKey] = EmitSymbolConstructorInterface(
+                facadeType,
+                nestedTypes,
+                instanceInterfacesByClassName[SymbolContractKey]);
+        }
 
         // Emit class instance and constructor contracts first so function inference can reference them.
         var classContracts = BuildClassContractDefinitions(module, exportShape, topLevel);
@@ -334,15 +454,17 @@ internal sealed class ModuleExportsContractEmitter
             }
             else
             {
-                valueType = TypeOrHandle.FromClr(
-                    MapClrType(
-                        InferClrTypeFromExpression(
-                            directValueNode,
-                            topLevel,
-                            classFields: null,
-                            instanceInterfacesByClassName,
-                            ensureClassInstanceInterface: null)
-                        .ClrType ?? typeof(object)));
+                var inferredDirectType = InferClrTypeFromExpression(
+                    directValueNode,
+                    topLevel,
+                    classFields: null,
+                    instanceInterfacesByClassName,
+                    ensureClassInstanceInterface: null);
+                valueType = inferredDirectType.Handle.HasValue
+                    || inferredDirectType.OpenGenericTypeRef.HasValue
+                    ? inferredDirectType
+                    : TypeOrHandle.FromClr(
+                        MapClrType(inferredDirectType.ClrType ?? typeof(object)));
             }
             var valueProperty = EmitReadOnlyProperty(
                 exportsTypeBuilder,
@@ -499,9 +621,19 @@ internal sealed class ModuleExportsContractEmitter
             }
 
             // Default: exported value projected as a read-only property.
-            // Prefer stable binding type from symbol table when available (e.g. const x = complexExpr).
+            // Prefer generated/BCL projection shapes over broad stable runtime CLR types.
+            var inferredType = InferClrTypeFromExpression(
+                valueNode,
+                memberTopLevel,
+                classFields: null,
+                instanceInterfacesByClassName,
+                ensureClassInstanceInterface: null);
             TypeOrHandle clrType;
-            if (member.StableClrType != null)
+            if (inferredType.Handle.HasValue || inferredType.OpenGenericTypeRef.HasValue)
+            {
+                clrType = inferredType;
+            }
+            else if (member.StableClrType != null)
             {
                 clrType = TypeOrHandle.FromClr(MapClrType(member.StableClrType));
             }
@@ -515,12 +647,7 @@ internal sealed class ModuleExportsContractEmitter
             }
             else
             {
-                clrType = InferClrTypeFromExpression(
-                    valueNode,
-                    memberTopLevel,
-                    classFields: null,
-                    instanceInterfacesByClassName,
-                    ensureClassInstanceInterface: null);
+                clrType = inferredType;
             }
             var propHandle = EmitProperty(
                 exportsTypeBuilder,
@@ -612,6 +739,564 @@ internal sealed class ModuleExportsContractEmitter
         nestedTypes.Add(typeDef, facadeType);
         _metadata.AddInterfaceImplementation(typeDef, _typeRefs.GetOrAdd(typeof(IDisposable)));
         return typeDef;
+    }
+
+    private TypeDefinitionHandle EmitDateInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IDate");
+        EmitInterfaceMethod(typeBuilder, Method("GetTime", typeof(double)), "getTime");
+        EmitInterfaceMethod(typeBuilder, Method("SetTime", typeof(double), ("value", typeof(object))), "setTime");
+        EmitInterfaceMethod(typeBuilder, Method("ToISOString", typeof(string)), "toISOString");
+        EmitInterfaceMethod(typeBuilder, Method("ToUtcString", typeof(string)), "toUTCString");
+        EmitInterfaceMethod(typeBuilder, Method("ToDisplayString", typeof(string)), "toString");
+        return CompleteBuiltinInterface(typeBuilder, facadeType, nestedTypes, "Date");
+    }
+
+    private TypeDefinitionHandle EmitDateConstructorInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle dateContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IDateConstructor");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Construct",
+                ["arguments"],
+                [TypeOrHandle.FromClr(typeof(object[]))],
+                TypeOrHandle.FromHandle(dateContract),
+                IsParamArray: true));
+        EmitInterfaceMethod(typeBuilder, Method("Now", typeof(double)), "now");
+        EmitInterfaceMethod(typeBuilder, Method("Parse", typeof(double), ("input", typeof(string))), "parse");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Utc",
+                ["arguments"],
+                [TypeOrHandle.FromClr(typeof(object[]))],
+                TypeOrHandle.FromClr(typeof(double)),
+                IsParamArray: true),
+            "UTC");
+        return CompleteBuiltinInterface(typeBuilder, facadeType, nestedTypes, "DateConstructor");
+    }
+
+    private TypeDefinitionHandle EmitRegExpInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle arrayContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IRegExp");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Source",
+            TypeOrHandle.FromClr(typeof(string)),
+            "source");
+        EmitReadOnlyProperty(typeBuilder, "Flags", TypeOrHandle.FromClr(typeof(string)), "flags");
+        EmitProperty(
+            typeBuilder,
+            "LastIndex",
+            TypeOrHandle.FromClr(typeof(double)),
+            canWrite: true,
+            exportName: "lastIndex");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Exec",
+                ["input"],
+                [TypeOrHandle.FromClr(typeof(object))],
+                TypeOrHandle.FromHandle(arrayContract)),
+            "exec");
+        EmitInterfaceMethod(typeBuilder, Method("Test", typeof(bool), ("input", typeof(object))), "test");
+        EmitInterfaceMethod(typeBuilder, Method("ToDisplayString", typeof(string)), "toString");
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "RegExp",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitRegExpConstructorInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle regExpContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IRegExpConstructor");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Construct",
+                ["arguments"],
+                [TypeOrHandle.FromClr(typeof(object[]))],
+                TypeOrHandle.FromHandle(regExpContract),
+                IsParamArray: true));
+        EmitInterfaceMethod(typeBuilder, Method("Escape", typeof(string), ("input", typeof(object))), "escape");
+        return CompleteBuiltinInterface(typeBuilder, facadeType, nestedTypes, "RegExpConstructor");
+    }
+
+    private TypeDefinitionHandle EmitErrorInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IError");
+        var firstProperty = EmitProperty(
+            typeBuilder,
+            "Name",
+            TypeOrHandle.FromClr(typeof(string)),
+            canWrite: true,
+            exportName: "name");
+        EmitProperty(
+            typeBuilder,
+            "Message",
+            TypeOrHandle.FromClr(typeof(string)),
+            canWrite: true,
+            exportName: "message");
+        EmitProperty(
+            typeBuilder,
+            "Cause",
+            TypeOrHandle.FromClr(typeof(object)),
+            canWrite: true,
+            exportName: "cause");
+        EmitReadOnlyProperty(
+            typeBuilder,
+            "Stack",
+            TypeOrHandle.FromClr(typeof(string)),
+            "stack");
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "Error",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitErrorConstructorInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle errorContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IErrorConstructor");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Construct",
+                ["arguments"],
+                [TypeOrHandle.FromClr(typeof(object[]))],
+                TypeOrHandle.FromHandle(errorContract),
+                IsParamArray: true));
+        return CompleteBuiltinInterface(typeBuilder, facadeType, nestedTypes, "ErrorConstructor");
+    }
+
+    private TypeDefinitionHandle EmitSymbolInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "ISymbol");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Description",
+            TypeOrHandle.FromClr(typeof(string)),
+            "description");
+        EmitReadOnlyProperty(typeBuilder, "RegistryKey", TypeOrHandle.FromClr(typeof(string)));
+        EmitReadOnlyProperty(typeBuilder, "WellKnownName", TypeOrHandle.FromClr(typeof(string)));
+        EmitInterfaceMethod(typeBuilder, Method("ToDisplayString", typeof(string)), "toString");
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "Symbol",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitSymbolConstructorInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle symbolContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "ISymbolConstructor");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Create",
+                ["description"],
+                [TypeOrHandle.FromClr(typeof(object))],
+                TypeOrHandle.FromHandle(symbolContract)));
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "For",
+                ["key"],
+                [TypeOrHandle.FromClr(typeof(object))],
+                TypeOrHandle.FromHandle(symbolContract)),
+            "for");
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "KeyFor",
+                ["symbol"],
+                [TypeOrHandle.FromHandle(symbolContract)],
+                TypeOrHandle.FromClr(typeof(string))),
+            "keyFor");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Iterator",
+            TypeOrHandle.FromHandle(symbolContract),
+            "iterator");
+        EmitReadOnlyProperty(
+            typeBuilder,
+            "AsyncIterator",
+            TypeOrHandle.FromHandle(symbolContract),
+            "asyncIterator");
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "SymbolConstructor",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitMapEntryInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IMapEntry");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Key",
+            TypeOrHandle.FromClr(typeof(object)));
+        EmitReadOnlyProperty(typeBuilder, "Value", TypeOrHandle.FromClr(typeof(object)));
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "MapEntry",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitMapInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle mapEntryContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IMap");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Count",
+            TypeOrHandle.FromClr(typeof(double)),
+            "size");
+        EmitInterfaceMethod(typeBuilder, Method("Get", typeof(object), ("key", typeof(object))), "get");
+        EmitInterfaceMethod(typeBuilder, Method("Has", typeof(bool), ("key", typeof(object))), "has");
+        EmitInterfaceMethod(
+            typeBuilder,
+            Method("Set", typeof(void), ("key", typeof(object)), ("value", typeof(object))),
+            "set");
+        EmitInterfaceMethod(typeBuilder, Method("Delete", typeof(bool), ("key", typeof(object))), "delete");
+        EmitInterfaceMethod(typeBuilder, Method("Clear", typeof(void)), "clear");
+        EmitInterfaceMethod(
+            typeBuilder,
+            GenericMethod("Keys", typeof(IEnumerable<>), typeof(object)),
+            "keys");
+        EmitInterfaceMethod(
+            typeBuilder,
+            GenericMethod("Values", typeof(IEnumerable<>), typeof(object)),
+            "values");
+        EmitInterfaceMethod(
+            typeBuilder,
+            GenericMethod("Entries", typeof(IEnumerable<>), mapEntryContract),
+            "entries");
+        var typeDef = CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "Map",
+            firstProperty);
+        AddGenericInterfaceImplementation(typeDef, typeof(IEnumerable<>), mapEntryContract);
+        return typeDef;
+    }
+
+    private TypeDefinitionHandle EmitSetInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "ISet");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Count",
+            TypeOrHandle.FromClr(typeof(double)),
+            "size");
+        EmitInterfaceMethod(typeBuilder, Method("Has", typeof(bool), ("value", typeof(object))), "has");
+        EmitInterfaceMethod(typeBuilder, Method("Add", typeof(void), ("value", typeof(object))), "add");
+        EmitInterfaceMethod(typeBuilder, Method("Delete", typeof(bool), ("value", typeof(object))), "delete");
+        EmitInterfaceMethod(typeBuilder, Method("Clear", typeof(void)), "clear");
+        EmitInterfaceMethod(
+            typeBuilder,
+            GenericMethod("Values", typeof(IEnumerable<>), typeof(object)),
+            "values");
+        var typeDef = CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "Set",
+            firstProperty);
+        AddGenericInterfaceImplementation(typeDef, typeof(IEnumerable<>), typeof(object));
+        return typeDef;
+    }
+
+    private TypeDefinitionHandle EmitWeakMapInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IWeakMap");
+        EmitInterfaceMethod(typeBuilder, Method("Get", typeof(object), ("key", typeof(object))), "get");
+        EmitInterfaceMethod(typeBuilder, Method("Has", typeof(bool), ("key", typeof(object))), "has");
+        EmitInterfaceMethod(
+            typeBuilder,
+            Method("Set", typeof(void), ("key", typeof(object)), ("value", typeof(object))),
+            "set");
+        EmitInterfaceMethod(typeBuilder, Method("Delete", typeof(bool), ("key", typeof(object))), "delete");
+        return CompleteBuiltinInterface(typeBuilder, facadeType, nestedTypes, "WeakMap");
+    }
+
+    private TypeDefinitionHandle EmitWeakSetInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IWeakSet");
+        EmitInterfaceMethod(typeBuilder, Method("Has", typeof(bool), ("value", typeof(object))), "has");
+        EmitInterfaceMethod(typeBuilder, Method("Add", typeof(void), ("value", typeof(object))), "add");
+        EmitInterfaceMethod(typeBuilder, Method("Delete", typeof(bool), ("value", typeof(object))), "delete");
+        return CompleteBuiltinInterface(typeBuilder, facadeType, nestedTypes, "WeakSet");
+    }
+
+    private TypeDefinitionHandle EmitArrayBufferInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
+    {
+        var selfContract = MetadataTokens.TypeDefinitionHandle(
+            _metadata.GetRowCount(TableIndex.TypeDef) + 1);
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IArrayBuffer");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "ByteLength",
+            TypeOrHandle.FromClr(typeof(double)),
+            "byteLength");
+        EmitReadOnlyProperty(
+            typeBuilder,
+            "MaxByteLength",
+            TypeOrHandle.FromClr(typeof(double)),
+            "maxByteLength");
+        EmitReadOnlyProperty(
+            typeBuilder,
+            "Resizable",
+            TypeOrHandle.FromClr(typeof(bool)),
+            "resizable");
+        EmitReadOnlyProperty(
+            typeBuilder,
+            "IsShared",
+            TypeOrHandle.FromClr(typeof(bool)));
+        EmitInterfaceMethod(
+            typeBuilder,
+            new ContractMethod(
+                "Slice",
+                ["arguments"],
+                [TypeOrHandle.FromClr(typeof(object[]))],
+                TypeOrHandle.FromHandle(selfContract),
+                IsParamArray: true),
+            "slice");
+        EmitInterfaceMethod(typeBuilder, Method("Resize", typeof(void), ("newLength", typeof(object))), "resize");
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "ArrayBuffer",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitDataViewInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle arrayBufferContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "IDataView");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Buffer",
+            TypeOrHandle.FromHandle(arrayBufferContract),
+            "buffer");
+        EmitReadOnlyProperty(typeBuilder, "ByteOffset", TypeOrHandle.FromClr(typeof(double)), "byteOffset");
+        EmitReadOnlyProperty(typeBuilder, "ByteLength", TypeOrHandle.FromClr(typeof(double)), "byteLength");
+        EmitInterfaceMethod(typeBuilder, Method("GetInt8", typeof(double), ("byteOffset", typeof(object))), "getInt8");
+        EmitInterfaceMethod(typeBuilder, Method("GetUint8", typeof(double), ("byteOffset", typeof(object))), "getUint8");
+        EmitDataViewEndianGetter(typeBuilder, "GetInt16", "getInt16");
+        EmitDataViewEndianGetter(typeBuilder, "GetUint16", "getUint16");
+        EmitDataViewEndianGetter(typeBuilder, "GetInt32", "getInt32");
+        EmitDataViewEndianGetter(typeBuilder, "GetUint32", "getUint32");
+        EmitDataViewEndianGetter(typeBuilder, "GetFloat32", "getFloat32");
+        EmitDataViewEndianGetter(typeBuilder, "GetFloat64", "getFloat64");
+        EmitInterfaceMethod(
+            typeBuilder,
+            Method("SetInt8", typeof(void), ("byteOffset", typeof(object)), ("value", typeof(object))),
+            "setInt8");
+        EmitInterfaceMethod(
+            typeBuilder,
+            Method("SetUint8", typeof(void), ("byteOffset", typeof(object)), ("value", typeof(object))),
+            "setUint8");
+        EmitDataViewEndianSetter(typeBuilder, "SetInt16", "setInt16");
+        EmitDataViewEndianSetter(typeBuilder, "SetUint16", "setUint16");
+        EmitDataViewEndianSetter(typeBuilder, "SetInt32", "setInt32");
+        EmitDataViewEndianSetter(typeBuilder, "SetUint32", "setUint32");
+        EmitDataViewEndianSetter(typeBuilder, "SetFloat32", "setFloat32");
+        EmitDataViewEndianSetter(typeBuilder, "SetFloat64", "setFloat64");
+        return CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "DataView",
+            firstProperty);
+    }
+
+    private TypeDefinitionHandle EmitTypedArrayInterface(
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        TypeDefinitionHandle arrayBufferContract)
+    {
+        var typeBuilder = new TypeBuilder(_metadata, string.Empty, "ITypedArray");
+        var firstProperty = EmitReadOnlyProperty(
+            typeBuilder,
+            "Buffer",
+            TypeOrHandle.FromHandle(arrayBufferContract),
+            "buffer");
+        EmitReadOnlyProperty(typeBuilder, "ByteOffset", TypeOrHandle.FromClr(typeof(double)), "byteOffset");
+        EmitReadOnlyProperty(typeBuilder, "ByteLength", TypeOrHandle.FromClr(typeof(double)), "byteLength");
+        EmitReadOnlyProperty(typeBuilder, "Length", TypeOrHandle.FromClr(typeof(double)), "length");
+        EmitReadOnlyProperty(
+            typeBuilder,
+            "BytesPerElement",
+            TypeOrHandle.FromClr(typeof(double)),
+            "BYTES_PER_ELEMENT");
+        EmitReadOnlyProperty(typeBuilder, "Kind", TypeOrHandle.FromClr(typeof(string)));
+        EmitInterfaceMethod(typeBuilder, Method("Get", typeof(double), ("index", typeof(double))));
+        EmitInterfaceMethod(
+            typeBuilder,
+            Method("Set", typeof(void), ("index", typeof(double)), ("value", typeof(object))));
+
+        var typeDef = CompleteBuiltinInterface(
+            typeBuilder,
+            facadeType,
+            nestedTypes,
+            "TypedArray",
+            firstProperty);
+        AddGenericInterfaceImplementation(typeDef, typeof(IEnumerable<>), typeof(object));
+        return typeDef;
+    }
+
+    private void EmitDataViewEndianGetter(TypeBuilder typeBuilder, string methodName, string exportName)
+        => EmitInterfaceMethod(
+            typeBuilder,
+            Method(
+                methodName,
+                typeof(double),
+                ("byteOffset", typeof(object)),
+                ("littleEndian", typeof(bool))),
+            exportName);
+
+    private void EmitDataViewEndianSetter(TypeBuilder typeBuilder, string methodName, string exportName)
+        => EmitInterfaceMethod(
+            typeBuilder,
+            Method(
+                methodName,
+                typeof(void),
+                ("byteOffset", typeof(object)),
+                ("value", typeof(object)),
+                ("littleEndian", typeof(bool))),
+            exportName);
+
+    private TypeDefinitionHandle CompleteBuiltinInterface(
+        TypeBuilder typeBuilder,
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes,
+        string kind,
+        PropertyDefinitionHandle firstProperty = default)
+    {
+        var typeDef = typeBuilder.AddTypeDefinition(
+            TypeAttributes.NestedPublic | TypeAttributes.Interface | TypeAttributes.Abstract,
+            default);
+        nestedTypes.Add(typeDef, facadeType);
+        if (!firstProperty.IsNil)
+        {
+            _metadata.AddPropertyMap(typeDef, firstProperty);
+        }
+
+        _metadata.AddInterfaceImplementation(typeDef, _typeRefs.GetOrAdd(typeof(IDisposable)));
+        AddBuiltinMarkerAttribute(typeDef, kind);
+        return typeDef;
+    }
+
+    private static ContractMethod Method(
+        string name,
+        Type returnType,
+        params (string Name, Type Type)[] parameters)
+        => new(
+            name,
+            parameters.Select(parameter => parameter.Name).ToArray(),
+            parameters.Select(parameter => TypeOrHandle.FromClr(parameter.Type)).ToArray(),
+            TypeOrHandle.FromClr(returnType));
+
+    private ContractMethod GenericMethod(
+        string name,
+        Type openGenericReturnType,
+        Type genericArgument)
+        => new(
+            name,
+            Array.Empty<string>(),
+            Array.Empty<TypeOrHandle>(),
+            TypeOrHandle.FromGenericInstantiation(
+                _typeRefs.GetOrAdd(openGenericReturnType),
+                genericArgument));
+
+    private ContractMethod GenericMethod(
+        string name,
+        Type openGenericReturnType,
+        EntityHandle genericArgument)
+        => new(
+            name,
+            Array.Empty<string>(),
+            Array.Empty<TypeOrHandle>(),
+            TypeOrHandle.FromGenericInstantiation(
+                _typeRefs.GetOrAdd(openGenericReturnType),
+                genericArgument));
+
+    private void AddGenericInterfaceImplementation(
+        TypeDefinitionHandle typeDef,
+        Type openGenericInterface,
+        Type genericArgument)
+        => _metadata.AddInterfaceImplementation(
+            typeDef,
+            CreateGenericTypeSpecification(openGenericInterface, TypeOrHandle.FromClr(genericArgument)));
+
+    private void AddGenericInterfaceImplementation(
+        TypeDefinitionHandle typeDef,
+        Type openGenericInterface,
+        EntityHandle genericArgument)
+        => _metadata.AddInterfaceImplementation(
+            typeDef,
+            CreateGenericTypeSpecification(openGenericInterface, TypeOrHandle.FromHandle(genericArgument)));
+
+    private TypeSpecificationHandle CreateGenericTypeSpecification(
+        Type openGenericType,
+        TypeOrHandle genericArgument)
+    {
+        var blob = new BlobBuilder();
+        var instantiation = new BlobEncoder(blob)
+            .TypeSpecificationSignature()
+            .GenericInstantiation(
+                _typeRefs.GetOrAdd(openGenericType),
+                genericArgumentCount: 1,
+                isValueType: false);
+        EncodeParamType(instantiation.AddArgument(), genericArgument);
+        return _metadata.AddTypeSpecification(_metadata.GetOrAddBlob(blob));
     }
 
     private void EmitDynamicObjectHelpers(TypeBuilder typeBuilder)
@@ -885,9 +1570,34 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         _metadata.AddInterfaceImplementation(typeDef, _typeRefs.GetOrAdd(typeof(IDisposable)));
-        if (members is ObjectExpression)
+        if (members is ObjectExpression objectExpression)
         {
             AddGeneratedMarkerAttribute(typeDef, _generatedMetadata.JsObjectContractAttributeCtor);
+            if (IsSyncIterableObject(objectExpression, topLevelIndex))
+            {
+                AddGenericInterfaceImplementation(typeDef, typeof(IEnumerable<>), typeof(object));
+            }
+            if (IsAsyncIterableObject(objectExpression, topLevelIndex))
+            {
+                AddGenericInterfaceImplementation(typeDef, typeof(IAsyncEnumerable<>), typeof(object));
+            }
+        }
+        else if (members is Node classContractNode)
+        {
+            if (HasClassWellKnownSymbolMethod(
+                    classContractNode,
+                    topLevelIndex,
+                    "iterator"))
+            {
+                AddGenericInterfaceImplementation(typeDef, typeof(IEnumerable<>), typeof(object));
+            }
+            if (HasClassWellKnownSymbolMethod(
+                    classContractNode,
+                    topLevelIndex,
+                    "asyncIterator"))
+            {
+                AddGenericInterfaceImplementation(typeDef, typeof(IAsyncEnumerable<>), typeof(object));
+            }
         }
 
         return typeDef;
@@ -1121,7 +1831,22 @@ internal sealed class ModuleExportsContractEmitter
         Object = 1,
         Array = 2,
         Callable = 4,
-        Constructor = 8
+        Constructor = 8,
+        Date = 16,
+        DateConstructor = 32,
+        RegExp = 64,
+        RegExpConstructor = 128,
+        Error = 256,
+        ErrorConstructor = 512,
+        Symbol = 1024,
+        SymbolConstructor = 2048,
+        Map = 4096,
+        Set = 8192,
+        WeakMap = 16384,
+        WeakSet = 32768,
+        ArrayBuffer = 65536,
+        DataView = 131072,
+        TypedArray = 262144
     }
 
     private sealed record ClassContractDefinition(
@@ -1277,6 +2002,7 @@ internal sealed class ModuleExportsContractEmitter
                 ? topLevel
                 : BuildTopLevelDeclarationIndex(member.SourceModule.Ast);
             var valueNode = GetValueNode(member.SourceNode);
+            requirements |= GetExpressionFallbackRequirement(valueNode, memberTopLevel);
             if (TryResolveExportAsFunction(valueNode, memberTopLevel, out var function, out _))
             {
                 requirements |= GetFunctionFallbackRequirements(function, memberTopLevel);
@@ -1288,6 +2014,7 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         var directValueNode = GetValueNode(exportShape.DirectValueSourceNode);
+        requirements |= GetExpressionFallbackRequirement(directValueNode, topLevel);
         if (TryResolveExportAsFunction(directValueNode, topLevel, out var directFunction, out _))
         {
             requirements |= GetFunctionFallbackRequirements(directFunction, topLevel);
@@ -1301,6 +2028,38 @@ internal sealed class ModuleExportsContractEmitter
         {
             requirements |= FallbackContractKind.Object;
         }
+        if (requirements.HasFlag(FallbackContractKind.RegExp))
+        {
+            requirements |= FallbackContractKind.Array;
+        }
+        if (requirements.HasFlag(FallbackContractKind.DateConstructor))
+        {
+            requirements |= FallbackContractKind.Date;
+        }
+        if (requirements.HasFlag(FallbackContractKind.RegExpConstructor))
+        {
+            requirements |= FallbackContractKind.RegExp | FallbackContractKind.Array;
+        }
+        if (requirements.HasFlag(FallbackContractKind.ErrorConstructor))
+        {
+            requirements |= FallbackContractKind.Error;
+        }
+        if (requirements.HasFlag(FallbackContractKind.SymbolConstructor))
+        {
+            requirements |= FallbackContractKind.Symbol;
+        }
+        if (requirements.HasFlag(FallbackContractKind.DataView)
+            || requirements.HasFlag(FallbackContractKind.TypedArray))
+        {
+            requirements |= FallbackContractKind.ArrayBuffer;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Map)
+            || requirements.HasFlag(FallbackContractKind.Set)
+            || requirements.HasFlag(FallbackContractKind.WeakMap)
+            || requirements.HasFlag(FallbackContractKind.WeakSet))
+        {
+            requirements |= FallbackContractKind.Object;
+        }
 
         return requirements;
     }
@@ -1308,18 +2067,28 @@ internal sealed class ModuleExportsContractEmitter
     private static FallbackContractKind GetObjectFallbackRequirements(
         ObjectExpression objectExpression,
         TopLevelIndex topLevel)
+        => GetObjectFallbackRequirements(
+            objectExpression,
+            topLevel,
+            new HashSet<Node>(ReferenceEqualityComparer.Instance));
+
+    private static FallbackContractKind GetObjectFallbackRequirements(
+        ObjectExpression objectExpression,
+        TopLevelIndex topLevel,
+        HashSet<Node> visited)
     {
+        if (!visited.Add(objectExpression))
+        {
+            return FallbackContractKind.None;
+        }
+
         var requirements = FallbackContractKind.None;
         foreach (var property in objectExpression.Properties.OfType<Property>())
         {
-            requirements |= property.Value switch
-            {
-                FunctionExpression or ArrowFunctionExpression =>
-                    GetFunctionFallbackRequirements(property.Value, topLevel),
-                ObjectExpression childObject =>
-                    GetObjectFallbackRequirements(childObject, topLevel),
-                _ => FallbackContractKind.None
-            };
+            requirements |= GetExpressionFallbackRequirement(
+                property.Value,
+                topLevel,
+                visited);
         }
 
         return requirements;
@@ -1328,10 +2097,24 @@ internal sealed class ModuleExportsContractEmitter
     private static FallbackContractKind GetFunctionFallbackRequirements(
         Node functionNode,
         TopLevelIndex topLevel)
+        => GetFunctionFallbackRequirements(
+            functionNode,
+            topLevel,
+            new HashSet<Node>(ReferenceEqualityComparer.Instance));
+
+    private static FallbackContractKind GetFunctionFallbackRequirements(
+        Node functionNode,
+        TopLevelIndex topLevel,
+        HashSet<Node> visited)
     {
+        if (!visited.Add(functionNode))
+        {
+            return FallbackContractKind.None;
+        }
+
         if (functionNode is ArrowFunctionExpression { Body: Expression expressionBody })
         {
-            return GetExpressionFallbackRequirement(expressionBody, topLevel);
+            return GetExpressionFallbackRequirement(expressionBody, topLevel, visited);
         }
 
         if (GetFunctionBody(functionNode) is not BlockStatement block)
@@ -1340,11 +2123,12 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         var requirements = FallbackContractKind.None;
-        foreach (var returnStatement in block.Body.OfType<ReturnStatement>())
+        foreach (var returnStatement in GetFunctionReturnStatements(functionNode))
         {
             requirements |= GetExpressionFallbackRequirement(
                 returnStatement.Argument,
-                topLevel);
+                topLevel,
+                visited);
         }
 
         return requirements;
@@ -1353,17 +2137,75 @@ internal sealed class ModuleExportsContractEmitter
     private static FallbackContractKind GetExpressionFallbackRequirement(
         Node? expression,
         TopLevelIndex topLevel)
+        => GetExpressionFallbackRequirement(
+            expression,
+            topLevel,
+            new HashSet<Node>(ReferenceEqualityComparer.Instance));
+
+    private static FallbackContractKind GetExpressionFallbackRequirement(
+        Node? expression,
+        TopLevelIndex topLevel,
+        HashSet<Node> visited)
     {
         switch (expression)
         {
             case FunctionExpression or ArrowFunctionExpression:
-                return FallbackContractKind.Callable;
-            case ObjectExpression:
-                return FallbackContractKind.Object;
+                return FallbackContractKind.Callable
+                       | GetFunctionFallbackRequirements(expression, topLevel, visited);
+            case ObjectExpression objectExpression:
+                var objectKind = IsAsyncIterableObject(objectExpression, topLevel)
+                                 || IsSyncIterableObject(objectExpression, topLevel)
+                    ? FallbackContractKind.None
+                    : FallbackContractKind.Object;
+                return objectKind
+                       | GetObjectFallbackRequirements(objectExpression, topLevel, visited);
+        }
+
+        if (expression == null || !visited.Add(expression))
+        {
+            return FallbackContractKind.None;
+        }
+
+        switch (expression)
+        {
             case ArrayExpression:
                 return FallbackContractKind.Array;
             case ClassExpression:
                 return FallbackContractKind.Constructor | FallbackContractKind.Object;
+            case NewExpression { Callee: Identifier constructor }
+                when IsUnshadowedBuiltinName(constructor.Name, topLevel)
+                     && GetBuiltinInstanceRequirement(constructor.Name) != FallbackContractKind.None:
+                return GetBuiltinInstanceRequirement(constructor.Name);
+            case CallExpression { Callee: Identifier { Name: "RegExp" } }
+                when IsUnshadowedBuiltinName("RegExp", topLevel):
+                return FallbackContractKind.RegExp;
+            case CallExpression { Callee: Identifier error }
+                when IsErrorConstructorName(error.Name)
+                     && IsUnshadowedBuiltinName(error.Name, topLevel):
+                return FallbackContractKind.Error;
+            case CallExpression { Callee: Identifier { Name: "Symbol" } }
+                when IsUnshadowedBuiltinName("Symbol", topLevel):
+            case CallExpression
+            {
+                Callee: MemberExpression
+                {
+                    Object: Identifier { Name: "Symbol" },
+                    Property: Identifier { Name: "for" }
+                }
+            } when IsUnshadowedBuiltinName("Symbol", topLevel):
+            case MemberExpression
+            {
+                Object: Identifier { Name: "Symbol" },
+                Property: Identifier
+            } when IsUnshadowedBuiltinName("Symbol", topLevel):
+                return FallbackContractKind.Symbol;
+            case CallExpression { Callee: Identifier functionName }
+                when topLevel.Functions.TryGetValue(functionName.Name, out var function):
+                if (IsAsyncGeneratorFunction(function) || IsGeneratorFunction(function))
+                {
+                    return FallbackContractKind.None;
+                }
+                return GetFunctionFallbackRequirements(function, topLevel, visited);
             case CallExpression
             {
                 Callee: MemberExpression
@@ -1377,13 +2219,98 @@ internal sealed class ModuleExportsContractEmitter
                 return FallbackContractKind.Callable;
             case Identifier identifier when topLevel.Classes.ContainsKey(identifier.Name):
                 return FallbackContractKind.None;
-            case Identifier identifier
-                when topLevel.VariableInitializers.TryGetValue(identifier.Name, out var initializer):
-                return GetExpressionFallbackRequirement(initializer, topLevel);
+            case Identifier identifier:
+                if (topLevel.VariableInitializers.TryGetValue(identifier.Name, out var initializer))
+                {
+                    return GetExpressionFallbackRequirement(initializer, topLevel, visited);
+                }
+                var constructorRequirement = GetBuiltinConstructorRequirement(identifier.Name);
+                if (constructorRequirement != FallbackContractKind.None)
+                {
+                    return constructorRequirement;
+                }
+                return FallbackContractKind.None;
             default:
                 return FallbackContractKind.None;
         }
     }
+
+    private static FallbackContractKind GetBuiltinInstanceRequirement(string name)
+    {
+        if (string.Equals(name, "Date", StringComparison.Ordinal))
+        {
+            return FallbackContractKind.Date;
+        }
+        if (string.Equals(name, "RegExp", StringComparison.Ordinal))
+        {
+            return FallbackContractKind.RegExp;
+        }
+        if (IsErrorConstructorName(name))
+        {
+            return FallbackContractKind.Error;
+        }
+
+        return name switch
+        {
+            "Map" => FallbackContractKind.Map,
+            "Set" => FallbackContractKind.Set,
+            "WeakMap" => FallbackContractKind.WeakMap,
+            "WeakSet" => FallbackContractKind.WeakSet,
+            "ArrayBuffer" or "SharedArrayBuffer" => FallbackContractKind.ArrayBuffer,
+            "DataView" => FallbackContractKind.DataView,
+            _ when IsTypedArrayConstructorName(name) => FallbackContractKind.TypedArray,
+            _ => FallbackContractKind.None
+        };
+    }
+
+    private static FallbackContractKind GetBuiltinConstructorRequirement(string name)
+    {
+        if (string.Equals(name, "Date", StringComparison.Ordinal))
+        {
+            return FallbackContractKind.DateConstructor;
+        }
+        if (string.Equals(name, "RegExp", StringComparison.Ordinal))
+        {
+            return FallbackContractKind.RegExpConstructor;
+        }
+        if (IsErrorConstructorName(name))
+        {
+            return FallbackContractKind.ErrorConstructor;
+        }
+        if (string.Equals(name, "Symbol", StringComparison.Ordinal))
+        {
+            return FallbackContractKind.SymbolConstructor;
+        }
+
+        return FallbackContractKind.None;
+    }
+
+    private static bool IsErrorConstructorName(string name)
+        => name is "Error"
+            or "EvalError"
+            or "RangeError"
+            or "ReferenceError"
+            or "SyntaxError"
+            or "TypeError"
+            or "URIError"
+            or "AggregateError"
+            or "SuppressedError";
+
+    private static bool IsTypedArrayConstructorName(string name)
+        => name is "Int8Array"
+            or "Uint8Array"
+            or "Uint8ClampedArray"
+            or "Int16Array"
+            or "Uint16Array"
+            or "Int32Array"
+            or "Uint32Array"
+            or "Float32Array"
+            or "Float64Array";
+
+    private static bool IsUnshadowedBuiltinName(string name, TopLevelIndex topLevel)
+        => !topLevel.Functions.ContainsKey(name)
+           && !topLevel.Classes.ContainsKey(name)
+           && !topLevel.VariableInitializers.ContainsKey(name);
 
     private static bool TryGetPropertyName(Expression key, out string name)
     {
@@ -1400,6 +2327,64 @@ internal sealed class ModuleExportsContractEmitter
                 return false;
         }
     }
+
+    private static bool IsSyncIterableObject(
+        ObjectExpression objectExpression,
+        TopLevelIndex? topLevel)
+        => (topLevel == null || IsUnshadowedBuiltinName("Symbol", topLevel.Value))
+           && HasWellKnownSymbolMethod(objectExpression, "iterator");
+
+    private static bool IsAsyncIterableObject(
+        ObjectExpression objectExpression,
+        TopLevelIndex? topLevel)
+        => (topLevel == null || IsUnshadowedBuiltinName("Symbol", topLevel.Value))
+           && HasWellKnownSymbolMethod(objectExpression, "asyncIterator");
+
+    private static bool HasWellKnownSymbolMethod(
+        ObjectExpression objectExpression,
+        string symbolName)
+        => objectExpression.Properties.OfType<Property>().Any(property =>
+            property.Key is MemberExpression
+            {
+                Object: Identifier { Name: "Symbol" },
+                Property: Identifier symbol
+            }
+            && string.Equals(symbol.Name, symbolName, StringComparison.Ordinal)
+            && property.Value is FunctionExpression or ArrowFunctionExpression);
+
+    private static bool HasClassWellKnownSymbolMethod(
+        Node classNode,
+        TopLevelIndex? topLevel,
+        string symbolName)
+        => (topLevel == null || IsUnshadowedBuiltinName("Symbol", topLevel.Value))
+           && GetClassHierarchyBodies(classNode, topLevel).Any(body =>
+               body.Body
+                   .OfType<Acornima.Ast.MethodDefinition>()
+                   .Any(method =>
+                       !method.Static
+                       && method.Value is FunctionExpression
+                       && method.Key is MemberExpression
+                       {
+                           Object: Identifier { Name: "Symbol" },
+                           Property: Identifier symbol
+                       }
+                       && string.Equals(symbol.Name, symbolName, StringComparison.Ordinal)));
+
+    private static bool IsGeneratorFunction(Node functionNode)
+        => functionNode switch
+        {
+            FunctionDeclaration function => function.Generator && !function.Async,
+            FunctionExpression function => function.Generator && !function.Async,
+            _ => false
+        };
+
+    private static bool IsAsyncGeneratorFunction(Node functionNode)
+        => functionNode switch
+        {
+            FunctionDeclaration function => function.Generator && function.Async,
+            FunctionExpression function => function.Generator && function.Async,
+            _ => false
+        };
 
     private static bool TryGetClassBody(object? classNode, out ClassBody body)
     {
@@ -1697,6 +2682,66 @@ internal sealed class ModuleExportsContractEmitter
         {
             count++;
         }
+        if (requirements.HasFlag(FallbackContractKind.Date))
+        {
+            count += 5;
+        }
+        if (requirements.HasFlag(FallbackContractKind.DateConstructor))
+        {
+            count += 4;
+        }
+        if (requirements.HasFlag(FallbackContractKind.RegExp))
+        {
+            count += 7;
+        }
+        if (requirements.HasFlag(FallbackContractKind.RegExpConstructor))
+        {
+            count += 2;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Error))
+        {
+            count += 7;
+        }
+        if (requirements.HasFlag(FallbackContractKind.ErrorConstructor))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Symbol))
+        {
+            count += 4;
+        }
+        if (requirements.HasFlag(FallbackContractKind.SymbolConstructor))
+        {
+            count += 5;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Map))
+        {
+            count += 11;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Set))
+        {
+            count += 6;
+        }
+        if (requirements.HasFlag(FallbackContractKind.WeakMap))
+        {
+            count += 4;
+        }
+        if (requirements.HasFlag(FallbackContractKind.WeakSet))
+        {
+            count += 3;
+        }
+        if (requirements.HasFlag(FallbackContractKind.ArrayBuffer))
+        {
+            count += 6;
+        }
+        if (requirements.HasFlag(FallbackContractKind.DataView))
+        {
+            count += 19;
+        }
+        if (requirements.HasFlag(FallbackContractKind.TypedArray))
+        {
+            count += 8;
+        }
         return count;
     }
 
@@ -1716,6 +2761,66 @@ internal sealed class ModuleExportsContractEmitter
             count++;
         }
         if (requirements.HasFlag(FallbackContractKind.Constructor))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Date))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.DateConstructor))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.RegExp))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.RegExpConstructor))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Error))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.ErrorConstructor))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Symbol))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.SymbolConstructor))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Map))
+        {
+            count += 2;
+        }
+        if (requirements.HasFlag(FallbackContractKind.Set))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.WeakMap))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.WeakSet))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.ArrayBuffer))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.DataView))
+        {
+            count++;
+        }
+        if (requirements.HasFlag(FallbackContractKind.TypedArray))
         {
             count++;
         }
@@ -2072,6 +3177,20 @@ internal sealed class ModuleExportsContractEmitter
 
     private TypeOrHandle WrapReturnTypeForAsyncFunction(Node functionNode, TypeOrHandle baseReturnType)
     {
+        if (IsAsyncGeneratorFunction(functionNode))
+        {
+            return TypeOrHandle.FromGenericInstantiation(
+                _typeRefs.GetOrAdd(typeof(IAsyncEnumerable<>)),
+                typeof(object));
+        }
+
+        if (IsGeneratorFunction(functionNode))
+        {
+            return TypeOrHandle.FromGenericInstantiation(
+                _typeRefs.GetOrAdd(typeof(IEnumerable<>)),
+                typeof(object));
+        }
+
         var isAsync = functionNode switch
         {
             FunctionDeclaration fd => fd.Async,
@@ -2118,7 +3237,7 @@ internal sealed class ModuleExportsContractEmitter
         };
     }
 
-    private static TypeOrHandle InferReturnTypeFromFunction(
+    private TypeOrHandle InferReturnTypeFromFunction(
         Node functionNode,
         TopLevelIndex? topLevelIndex,
         Dictionary<string, Type>? classFields,
@@ -2131,38 +3250,82 @@ internal sealed class ModuleExportsContractEmitter
             return InferClrTypeFromExpression(exprBody, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
         }
 
-        // Block body: look for a single return statement.
-        if (GetFunctionBody(functionNode) is BlockStatement block)
+        // Block body: infer all returns in this callable while excluding nested
+        // functions and classes, whose returns belong to different contracts.
+        if (GetFunctionBody(functionNode) is BlockStatement)
         {
-            ReturnStatement? onlyReturn = null;
-            var returnCount = 0;
-
-            foreach (var stmt in block.Body)
-            {
-                if (stmt is ReturnStatement rs)
-                {
-                    returnCount++;
-                    onlyReturn ??= rs;
-                }
-            }
-
-            if (returnCount == 0)
+            var returns = GetFunctionReturnStatements(functionNode);
+            if (returns.Count == 0)
             {
                 return TypeOrHandle.FromClr(typeof(void));
             }
 
-            if (returnCount == 1 && onlyReturn != null)
+            TypeOrHandle? commonReturn = null;
+            foreach (var returnStatement in returns)
             {
-                if (onlyReturn.Argument is Expression arg)
+                var returnType = returnStatement.Argument is Expression argument
+                    ? InferClrTypeFromExpression(
+                        argument,
+                        topLevelIndex,
+                        classFields,
+                        instanceInterfacesByClassName,
+                        ensureClassInstanceInterface)
+                    : TypeOrHandle.FromClr(typeof(void));
+                if (commonReturn == null)
                 {
-                    return InferClrTypeFromExpression(arg, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
+                    commonReturn = returnType;
                 }
-
-                return TypeOrHandle.FromClr(typeof(void));
+                else if (commonReturn.Value != returnType)
+                {
+                    return TypeOrHandle.FromClr(typeof(object));
+                }
             }
+
+            return commonReturn ?? TypeOrHandle.FromClr(typeof(void));
         }
 
         return TypeOrHandle.FromClr(typeof(object));
+    }
+
+    private static IReadOnlyList<ReturnStatement> GetFunctionReturnStatements(
+        Node functionNode)
+    {
+        if (GetFunctionBody(functionNode) is not BlockStatement body)
+        {
+            return Array.Empty<ReturnStatement>();
+        }
+
+        var returns = new List<ReturnStatement>();
+        foreach (var child in body.ChildNodes)
+        {
+            CollectFunctionReturns(child, returns);
+        }
+        return returns;
+    }
+
+    private static void CollectFunctionReturns(
+        Node node,
+        List<ReturnStatement> returns)
+    {
+        if (node is FunctionDeclaration
+            or FunctionExpression
+            or ArrowFunctionExpression
+            or ClassDeclaration
+            or ClassExpression)
+        {
+            return;
+        }
+
+        if (node is ReturnStatement returnStatement)
+        {
+            returns.Add(returnStatement);
+            return;
+        }
+
+        foreach (var child in node.ChildNodes)
+        {
+            CollectFunctionReturns(child, returns);
+        }
     }
 
     private static Node? GetFunctionBody(Node functionNode)
@@ -2176,7 +3339,7 @@ internal sealed class ModuleExportsContractEmitter
         };
     }
 
-    private static TypeOrHandle InferClrTypeFromExpression(
+    private TypeOrHandle InferClrTypeFromExpression(
         Node? expr,
         TopLevelIndex? topLevelIndex,
         Dictionary<string, Type>? classFields,
@@ -2194,6 +3357,18 @@ internal sealed class ModuleExportsContractEmitter
                     return TypeOrHandle.FromHandle(callableContract);
                 }
                 return TypeOrHandle.FromClr(typeof(object));
+
+            case ObjectExpression objectExpression
+                when IsAsyncIterableObject(objectExpression, topLevelIndex):
+                return TypeOrHandle.FromGenericInstantiation(
+                    _typeRefs.GetOrAdd(typeof(IAsyncEnumerable<>)),
+                    typeof(object));
+
+            case ObjectExpression objectExpression
+                when IsSyncIterableObject(objectExpression, topLevelIndex):
+                return TypeOrHandle.FromGenericInstantiation(
+                    _typeRefs.GetOrAdd(typeof(IEnumerable<>)),
+                    typeof(object));
 
             case ObjectExpression:
                 if (TryGetProjectionInterface(
@@ -2222,6 +3397,67 @@ internal sealed class ModuleExportsContractEmitter
                         out var constructorContract))
                 {
                     return TypeOrHandle.FromHandle(constructorContract);
+                }
+                return TypeOrHandle.FromClr(typeof(object));
+
+            case NewExpression { Callee: Identifier constructor }
+                when topLevelIndex == null
+                     || IsUnshadowedBuiltinName(constructor.Name, topLevelIndex.Value):
+                if (TryGetBuiltinProjectionInterface(
+                        constructor.Name,
+                        isConstructorValue: false,
+                        instanceInterfacesByClassName,
+                        out var builtinInstance))
+                {
+                    return TypeOrHandle.FromHandle(builtinInstance);
+                }
+                return TypeOrHandle.FromClr(typeof(object));
+
+            case CallExpression { Callee: Identifier { Name: "RegExp" } }
+                when topLevelIndex == null
+                     || IsUnshadowedBuiltinName("RegExp", topLevelIndex.Value):
+                return GetProjectionOrObject(instanceInterfacesByClassName, RegExpContractKey);
+
+            case CallExpression { Callee: Identifier error }
+                when IsErrorConstructorName(error.Name)
+                     && (topLevelIndex == null
+                         || IsUnshadowedBuiltinName(error.Name, topLevelIndex.Value)):
+                return GetProjectionOrObject(instanceInterfacesByClassName, ErrorContractKey);
+
+            case CallExpression { Callee: Identifier { Name: "Symbol" } }
+                when topLevelIndex == null
+                     || IsUnshadowedBuiltinName("Symbol", topLevelIndex.Value):
+            case CallExpression
+            {
+                Callee: MemberExpression
+                {
+                    Object: Identifier { Name: "Symbol" },
+                    Property: Identifier { Name: "for" }
+                }
+            } when topLevelIndex == null
+                   || IsUnshadowedBuiltinName("Symbol", topLevelIndex.Value):
+            case MemberExpression
+            {
+                Object: Identifier { Name: "Symbol" },
+                Property: Identifier
+            } when topLevelIndex == null
+                   || IsUnshadowedBuiltinName("Symbol", topLevelIndex.Value):
+                return GetProjectionOrObject(instanceInterfacesByClassName, SymbolContractKey);
+
+            case CallExpression { Callee: Identifier functionName }
+                when topLevelIndex != null
+                     && topLevelIndex.Value.Functions.TryGetValue(functionName.Name, out var calledFunction):
+                if (IsAsyncGeneratorFunction(calledFunction))
+                {
+                    return TypeOrHandle.FromGenericInstantiation(
+                        _typeRefs.GetOrAdd(typeof(IAsyncEnumerable<>)),
+                        typeof(object));
+                }
+                if (IsGeneratorFunction(calledFunction))
+                {
+                    return TypeOrHandle.FromGenericInstantiation(
+                        _typeRefs.GetOrAdd(typeof(IEnumerable<>)),
+                        typeof(object));
                 }
                 return TypeOrHandle.FromClr(typeof(object));
 
@@ -2301,16 +3537,30 @@ internal sealed class ModuleExportsContractEmitter
                 }
                 return TypeOrHandle.FromClr(typeof(object));
 
-            case Identifier id when topLevelIndex != null:
-                if (topLevelIndex.Value.VariableInitializers.TryGetValue(id.Name, out var init))
+            case Identifier id:
+                if (topLevelIndex != null
+                    && topLevelIndex.Value.VariableInitializers.TryGetValue(id.Name, out var initializer))
                 {
-                    return InferClrTypeFromExpression(init, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
+                    return InferClrTypeFromExpression(
+                        initializer,
+                        topLevelIndex,
+                        classFields,
+                        instanceInterfacesByClassName,
+                        ensureClassInstanceInterface);
+                }
+                if (TryGetBuiltinProjectionInterface(
+                        id.Name,
+                        isConstructorValue: true,
+                        instanceInterfacesByClassName,
+                        out var builtinConstructor))
+                {
+                    return TypeOrHandle.FromHandle(builtinConstructor);
                 }
                 return TypeOrHandle.FromClr(typeof(object));
 
             case NewExpression ne when ne.Callee is Identifier ctorId && instanceInterfacesByClassName != null:
-                // new Counter(...) => ICounter (handle) if we have a known instance contract.
-                if (instanceInterfacesByClassName.TryGetValue(ctorId.Name, out var instanceHandle) && !instanceHandle.IsNil)
+                if (instanceInterfacesByClassName.TryGetValue(ctorId.Name, out var instanceHandle)
+                    && !instanceHandle.IsNil)
                 {
                     return TypeOrHandle.FromHandle(instanceHandle);
                 }
@@ -2342,6 +3592,53 @@ internal sealed class ModuleExportsContractEmitter
 
         handle = default;
         return false;
+    }
+
+    private static TypeOrHandle GetProjectionOrObject(
+        Dictionary<string, TypeDefinitionHandle>? interfaces,
+        string key)
+        => TryGetProjectionInterface(interfaces, key, out var handle)
+            ? TypeOrHandle.FromHandle(handle)
+            : TypeOrHandle.FromClr(typeof(object));
+
+    private static bool TryGetBuiltinProjectionInterface(
+        string name,
+        bool isConstructorValue,
+        Dictionary<string, TypeDefinitionHandle>? interfaces,
+        out TypeDefinitionHandle handle)
+    {
+        handle = default;
+        string? key;
+        if (isConstructorValue)
+        {
+            key = name switch
+            {
+                "Date" => DateConstructorContractKey,
+                "RegExp" => RegExpConstructorContractKey,
+                "Symbol" => SymbolConstructorContractKey,
+                _ when IsErrorConstructorName(name) => ErrorConstructorContractKey,
+                _ => null
+            };
+        }
+        else
+        {
+            key = name switch
+            {
+                "Date" => DateContractKey,
+                "RegExp" => RegExpContractKey,
+                _ when IsErrorConstructorName(name) => ErrorContractKey,
+                "Map" => MapContractKey,
+                "Set" => SetContractKey,
+                "WeakMap" => WeakMapContractKey,
+                "WeakSet" => WeakSetContractKey,
+                "ArrayBuffer" or "SharedArrayBuffer" => ArrayBufferContractKey,
+                "DataView" => DataViewContractKey,
+                _ when IsTypedArrayConstructorName(name) => TypedArrayContractKey,
+                _ => null
+            };
+        }
+
+        return key != null && TryGetProjectionInterface(interfaces, key, out handle);
     }
 
     private static Type MapClrType(Type type)
@@ -2622,6 +3919,16 @@ internal sealed class ModuleExportsContractEmitter
             typeDefinition,
             constructor,
             CreateParameterlessAttributeValue());
+    }
+
+    private void AddBuiltinMarkerAttribute(
+        TypeDefinitionHandle typeDefinition,
+        string kind)
+    {
+        _metadata.AddCustomAttribute(
+            typeDefinition,
+            _generatedMetadata.JsBuiltinContractAttributeCtor,
+            CreateSingleStringCustomAttributeValue(kind));
     }
 
     private BlobHandle CreateParameterlessAttributeValue()

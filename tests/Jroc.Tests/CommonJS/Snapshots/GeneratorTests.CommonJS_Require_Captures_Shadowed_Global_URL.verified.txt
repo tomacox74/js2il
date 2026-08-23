@@ -115,6 +115,26 @@
 
 } // end of class Jroc.Generated.Metadata.JsCallableContractAttribute
 
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsBuiltinContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			string 'value'
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsBuiltinContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsBuiltinContractAttribute
+
 .class public auto ansi abstract sealed beforefieldinit CommonJS_Require_Captures_Shadowed_Global_URL
 	extends [System.Runtime]System.Object
 {
@@ -155,6 +175,26 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
+			.class interface nested public auto ansi abstract ICallable
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void Jroc.Generated.Metadata.JsCallableContractAttribute::.ctor() = (
+					01 00 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance object Invoke (
+						object[] arguments
+					) cil managed 
+				{
+					.param [1]
+						.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+							01 00 00 00
+						)
+				} // end of method ICallable::Invoke
+
+			} // end of class ICallable
+
 			.class interface nested public auto ansi abstract IExports
 				implements [System.Runtime]System.IDisposable
 			{
@@ -166,7 +206,7 @@
 				)
 				// Methods
 				.method public hidebysig specialname newslot abstract virtual 
-					instance object get_Value () cil managed 
+					instance class CommonJS_Require_Captures_Shadowed_Global_URL/Scripts/CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ICallable get_Value () cil managed 
 				{
 					.custom instance void Jroc.Generated.Metadata.JsExportValueAttribute::.ctor() = (
 						01 00 00 00
@@ -198,9 +238,9 @@
 				} // end of method IExports::Construct
 
 				// Properties
-				.property instance object Value()
+				.property instance class CommonJS_Require_Captures_Shadowed_Global_URL/Scripts/CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ICallable Value()
 				{
-					.get instance object CommonJS_Require_Captures_Shadowed_Global_URL/Scripts/CommonJS_Require_Captures_Shadowed_Global_URL_Lib/IExports::get_Value()
+					.get instance class CommonJS_Require_Captures_Shadowed_Global_URL/Scripts/CommonJS_Require_Captures_Shadowed_Global_URL_Lib/ICallable CommonJS_Require_Captures_Shadowed_Global_URL/Scripts/CommonJS_Require_Captures_Shadowed_Global_URL_Lib/IExports::get_Value()
 				}
 
 			} // end of class IExports
@@ -424,7 +464,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 12 00 00 02
+				74 61 54 6f 6b 65 6e 14 00 00 02
 			)
 			// Header size: 12
 			// Code size: 78 (0x4e)
@@ -454,7 +494,7 @@
 
 			IL_0036: ldstr "resolve"
 			IL_003b: ldarg.2
-			IL_003c: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL:<TwoPhaseDummy_M16>:__js_call__:6"
+			IL_003c: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL:<TwoPhaseDummy_M18>:__js_call__:6"
 			IL_0041: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -999,7 +1039,7 @@
 			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_0031: ldstr "base"
-			IL_0036: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL_Lib:<TwoPhaseDummy_M18>:__js_call__:3"
+			IL_0036: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL_Lib:<TwoPhaseDummy_M20>:__js_call__:3"
 			IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 

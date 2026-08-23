@@ -10,6 +10,9 @@ This page is the **canonical user documentation** for SDK consumers. The older d
 - **Library hosting**: import compiled JavaScript assemblies through generated
   `Run`/`Import` facades and call `module.exports` from C#.
 - **Generated script facades**: run an assembly or published script directly through assembly-named static types without referencing runtime APIs from C#.
+- **BCL iterable and built-in projections**: consume generators with
+  `foreach`/`await foreach`, and use generated contracts for Date, RegExp,
+  Error, Symbol, collections, buffers, DataView, and supported typed arrays.
 - **In-memory compile-and-run**: use `Jroc.Core` to produce PE/PDB bytes and optionally load them into a collectible context without writing generated assemblies to disk.
 - A dedicated **script thread** per hosted runtime instance.
 - Optional **debug symbols**: emit Portable PDB (`.pdb`) data for stepping and better stack traces against the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code.

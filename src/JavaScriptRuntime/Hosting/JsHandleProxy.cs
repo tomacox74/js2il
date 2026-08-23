@@ -2,6 +2,11 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
+using JsArrayBuffer = JavaScriptRuntime.SharedArrayBuffer;
+using JsCallableOperations = JavaScriptRuntime.CallableOperations;
+using JsObjectRuntime = JavaScriptRuntime.ObjectRuntime;
+using JsSymbol = JavaScriptRuntime.Symbol;
+using JsTypedArray = JavaScriptRuntime.TypedArrayBase;
 
 namespace Jroc.Runtime;
 
@@ -9,15 +14,21 @@ internal class JsHandleProxy : DispatchProxy
 {
     private JsRuntimeInstance? _runtime;
     private object? _target;
+    private Type? _contractType;
     private int _disposed;
 
-    internal void Initialize(JsRuntimeInstance runtime, object? target)
+    internal void Initialize(
+        JsRuntimeInstance runtime,
+        object? target,
+        Type contractType)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(contractType);
 
         _runtime = runtime;
         _target = target;
+        _contractType = contractType;
     }
 
     internal object UnwrapTarget()
@@ -61,10 +72,23 @@ internal class JsHandleProxy : DispatchProxy
 
         var runtime = _runtime ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
         var target = _target ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
+        var contractType = _contractType
+            ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
 
         if (targetMethod.DeclaringType == typeof(object))
         {
             return HandleObjectMethod(targetMethod, args);
+        }
+
+        if (TryInvokeEnumerableMember(
+                runtime,
+                target,
+                contractType,
+                targetMethod,
+                args,
+                out var enumerableResult))
+        {
+            return enumerableResult;
         }
 
         if (targetMethod.IsSpecialName)
@@ -76,6 +100,16 @@ internal class JsHandleProxy : DispatchProxy
                 {
                     return runtime.Invoke(() =>
                     {
+                        if (TryGetGeneratedBuiltinProperty(
+                                runtime,
+                                target,
+                                contractType,
+                                targetMethod,
+                                out var builtinValue))
+                        {
+                            return builtinValue;
+                        }
+
                         var value = ExportMemberResolver.GetExportMember(target, name);
                         return JsReturnConverter.ConvertReturn(
                             runtime,
@@ -98,11 +132,24 @@ internal class JsHandleProxy : DispatchProxy
                 var name = GetContractMemberName(targetMethod, targetMethod.Name.Substring(4));
                 try
                 {
-                    runtime.Invoke(() => ExportMemberResolver.SetExportMember(
-                        runtime,
-                        target,
-                        name,
-                        args is { Length: > 0 } ? args[0] : null));
+                    runtime.Invoke(() =>
+                    {
+                        if (TrySetGeneratedBuiltinProperty(
+                                runtime,
+                                target,
+                                contractType,
+                                targetMethod,
+                                args is { Length: > 0 } ? args[0] : null))
+                        {
+                            return;
+                        }
+
+                        ExportMemberResolver.SetExportMember(
+                            runtime,
+                            target,
+                            name,
+                            args is { Length: > 0 } ? args[0] : null);
+                    });
                     return null;
                 }
                 catch (Exception ex)
@@ -147,6 +194,17 @@ internal class JsHandleProxy : DispatchProxy
                     out var helperResult))
                 {
                     return helperResult;
+                }
+
+                if (TryInvokeGeneratedBuiltinHelper(
+                    runtime,
+                    target,
+                    contractType,
+                    targetMethod,
+                    args ?? Array.Empty<object?>(),
+                    out var builtinResult))
+                {
+                    return builtinResult;
                 }
 
                 var result = ExportMemberResolver.InvokeInstanceMethod(
@@ -195,6 +253,284 @@ internal class JsHandleProxy : DispatchProxy
             targetMethod.Name,
             targetMethod.DeclaringType);
         return true;
+    }
+
+    private static bool TryInvokeEnumerableMember(
+        JsRuntimeInstance runtime,
+        object target,
+        Type contractType,
+        MethodInfo targetMethod,
+        object?[]? args,
+        out object? result)
+    {
+        result = null;
+        var declaringType = targetMethod.DeclaringType;
+        if (declaringType == null)
+        {
+            return false;
+        }
+
+        var isAsync = declaringType.IsGenericType
+            && declaringType.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>)
+            && targetMethod.Name == nameof(IAsyncEnumerable<object>.GetAsyncEnumerator);
+        var isGenericSync = declaringType.IsGenericType
+            && declaringType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+            && targetMethod.Name == nameof(IEnumerable<object>.GetEnumerator);
+        var isNonGenericSync = declaringType == typeof(System.Collections.IEnumerable)
+            && targetMethod.Name == nameof(System.Collections.IEnumerable.GetEnumerator);
+        if (!isAsync && !isGenericSync && !isNonGenericSync)
+        {
+            return false;
+        }
+
+        var enumerableInterface = contractType
+            .GetInterfaces()
+            .Append(contractType)
+            .FirstOrDefault(type =>
+                type.IsGenericType
+                && type.GetGenericTypeDefinition()
+                    == (isAsync ? typeof(IAsyncEnumerable<>) : typeof(IEnumerable<>)));
+        if (enumerableInterface == null)
+        {
+            return false;
+        }
+
+        var elementType = enumerableInterface.GetGenericArguments()[0];
+        var adapter = runtime.GetOrCreateIterableAdapter(
+            target,
+            elementType,
+            isAsync,
+            targetMethod.Name,
+            contractType);
+        result = targetMethod.Invoke(adapter, args);
+        return true;
+    }
+
+    private static bool TryGetGeneratedBuiltinProperty(
+        JsRuntimeInstance runtime,
+        object target,
+        Type contractType,
+        MethodInfo targetMethod,
+        out object? result)
+    {
+        result = null;
+        var kind = GeneratedContractMetadata.GetBuiltinContractKind(contractType);
+        var propertyName = targetMethod.Name.Substring(4);
+        switch (kind, propertyName)
+        {
+            case ("Error", "Name"):
+            case ("Error", "Message"):
+            case ("Error", "Cause"):
+            case ("Error", "Stack"):
+                var errorPropertyName = char.ToLowerInvariant(propertyName[0]) + propertyName[1..];
+                result = JsReturnConverter.ConvertReturn(
+                    runtime,
+                    JsObjectRuntime.GetProperty(target, errorPropertyName),
+                    targetMethod.ReturnType,
+                    errorPropertyName,
+                    contractType);
+                return true;
+            case ("Symbol", "Description"):
+                result = target is JsSymbol describedSymbol
+                    ? describedSymbol.Description
+                    : throw new InvalidCastException("The generated Symbol contract target is not a Symbol.");
+                return true;
+            case ("Symbol", "RegistryKey"):
+                result = target is JsSymbol symbol
+                    ? JsSymbol.keyFor(symbol)
+                    : throw new InvalidCastException("The generated Symbol contract target is not a Symbol.");
+                return true;
+            case ("Symbol", "WellKnownName"):
+                result = GetWellKnownSymbolName(target);
+                return true;
+            case ("ArrayBuffer", "IsShared"):
+                result = target is JsArrayBuffer;
+                return true;
+            case ("TypedArray", "Kind"):
+                result = target is JsTypedArray
+                    ? target.GetType().Name
+                    : throw new InvalidCastException("The generated typed-array contract target is not a typed array.");
+                return true;
+            case ("MapEntry", "Key"):
+                result = JsReturnConverter.ConvertReturn(
+                    runtime,
+                    JsObjectRuntime.GetItem(target, 0d),
+                    targetMethod.ReturnType,
+                    propertyName,
+                    contractType);
+                return true;
+            case ("MapEntry", "Value"):
+                result = JsReturnConverter.ConvertReturn(
+                    runtime,
+                    JsObjectRuntime.GetItem(target, 1d),
+                    targetMethod.ReturnType,
+                    propertyName,
+                    contractType);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static bool TrySetGeneratedBuiltinProperty(
+        JsRuntimeInstance runtime,
+        object target,
+        Type contractType,
+        MethodInfo targetMethod,
+        object? value)
+    {
+        var kind = GeneratedContractMetadata.GetBuiltinContractKind(contractType);
+        var propertyName = targetMethod.Name.Substring(4);
+        if (kind != "Error"
+            || propertyName is not ("Name" or "Message" or "Cause"))
+        {
+            return false;
+        }
+
+        var errorPropertyName = char.ToLowerInvariant(propertyName[0]) + propertyName[1..];
+        JsObjectRuntime.SetItem(
+            target,
+            errorPropertyName,
+            runtime.NormalizeHostValue(value));
+        return true;
+    }
+
+    private static bool TryInvokeGeneratedBuiltinHelper(
+        JsRuntimeInstance runtime,
+        object target,
+        Type contractType,
+        MethodInfo targetMethod,
+        object?[] args,
+        out object? result)
+    {
+        result = null;
+        var kind = GeneratedContractMetadata.GetBuiltinContractKind(contractType);
+        if (kind == "SymbolConstructor" && targetMethod.Name == "Create")
+        {
+            result = JsReturnConverter.ConvertReturn(
+                runtime,
+                ExportMemberResolver.InvokeJsCallable(
+                    runtime,
+                    target,
+                    args,
+                    receiver: null),
+                targetMethod.ReturnType,
+                targetMethod.Name,
+                contractType);
+            return true;
+        }
+
+        if (kind == "Symbol" && targetMethod.Name == "ToDisplayString")
+        {
+            result = target is JsSymbol symbol
+                ? symbol.ToString()
+                : throw new InvalidCastException(
+                    "The generated Symbol contract target is not a Symbol.");
+            return true;
+        }
+
+        if (kind == "TypedArray")
+        {
+            switch (targetMethod.Name)
+            {
+                case "Get":
+                    RequireArgumentCount(targetMethod, args, 1);
+                    var getIndex = GetTypedArrayIndex(target, args[0]);
+                    result = JsReturnConverter.ConvertReturn(
+                        runtime,
+                        JsObjectRuntime.GetItem(target, getIndex),
+                        targetMethod.ReturnType,
+                        targetMethod.Name,
+                        contractType);
+                    return true;
+                case "Set":
+                    RequireArgumentCount(targetMethod, args, 2);
+                    var setIndex = GetTypedArrayIndex(target, args[0]);
+                    JsObjectRuntime.SetItem(
+                        target,
+                        setIndex,
+                        runtime.NormalizeHostValue(args[1]));
+                    return true;
+            }
+        }
+
+        if (kind == "ArrayBuffer"
+            && target is JavaScriptRuntime.ArrayBuffer arrayBuffer)
+        {
+            if (targetMethod.Name == "Slice")
+            {
+                var sliceArguments = UnpackParamsArray(targetMethod, args);
+                var slice = target is JavaScriptRuntime.SharedArrayBuffer sharedBuffer
+                    ? sharedBuffer.slice(
+                        sliceArguments.ElementAtOrDefault(0),
+                        sliceArguments.ElementAtOrDefault(1))
+                    : arrayBuffer.slice(
+                        sliceArguments.ElementAtOrDefault(0),
+                        sliceArguments.ElementAtOrDefault(1));
+                result = JsReturnConverter.ConvertReturn(
+                    runtime,
+                    slice,
+                    targetMethod.ReturnType,
+                    "slice",
+                    contractType);
+                return true;
+            }
+
+            if (targetMethod.Name == "Resize")
+            {
+                _ = arrayBuffer.resize(args.ElementAtOrDefault(0));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string? GetWellKnownSymbolName(object target)
+    {
+        if (target is not JsSymbol symbol)
+        {
+            throw new InvalidCastException(
+                "The generated Symbol contract target is not a Symbol.");
+        }
+
+        foreach (var name in new[]
+                 {
+                     "iterator", "asyncIterator", "hasInstance", "isConcatSpreadable",
+                     "match", "matchAll", "replace", "search", "species", "split",
+                     "toPrimitive", "toStringTag", "unscopables", "dispose", "asyncDispose"
+                 })
+        {
+            if (ReferenceEquals(symbol, JsSymbol.GetWellKnown(name)))
+            {
+                return name;
+            }
+        }
+
+        return null;
+    }
+
+    private static double GetTypedArrayIndex(object target, object? value)
+    {
+        if (target is not JsTypedArray typedArray)
+        {
+            throw new InvalidCastException(
+                "The generated typed-array contract target is not a typed array.");
+        }
+
+        var index = ToArrayIndex(value);
+        if (!double.IsFinite(index)
+            || index < 0
+            || index != Math.Truncate(index)
+            || index >= typedArray.length)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                "Typed-array host indexes must identify an existing element.");
+        }
+
+        return index;
     }
 
     private static bool TryInvokeGeneratedObjectHelper(
@@ -351,6 +687,7 @@ internal class JsHandleProxy : DispatchProxy
 
         Interlocked.Exchange(ref _runtime, null);
         Interlocked.Exchange(ref _target, null);
+        Interlocked.Exchange(ref _contractType, null);
     }
 
     private object? HandleObjectMethod(MethodInfo targetMethod, object?[]? args)
@@ -369,15 +706,21 @@ internal class JsConstructorProxy : DispatchProxy
 {
     private JsRuntimeInstance? _runtime;
     private object? _constructor;
+    private Type? _contractType;
     private int _disposed;
 
-    internal void Initialize(JsRuntimeInstance runtime, object? constructor)
+    internal void Initialize(
+        JsRuntimeInstance runtime,
+        object? constructor,
+        Type contractType)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(constructor);
+        ArgumentNullException.ThrowIfNull(contractType);
 
         _runtime = runtime;
         _constructor = constructor;
+        _contractType = contractType;
     }
 
     internal object UnwrapConstructor()
@@ -421,6 +764,8 @@ internal class JsConstructorProxy : DispatchProxy
 
         var runtime = _runtime ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
         var constructor = _constructor ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
+        var contractType = _contractType
+            ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
 
         if (targetMethod.DeclaringType == typeof(object))
         {
@@ -511,6 +856,7 @@ internal class JsConstructorProxy : DispatchProxy
 
         Interlocked.Exchange(ref _runtime, null);
         Interlocked.Exchange(ref _constructor, null);
+        Interlocked.Exchange(ref _contractType, null);
     }
 
     private static string GetContractMemberName(MethodInfo targetMethod, string fallback)

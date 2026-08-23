@@ -11,7 +11,8 @@ internal sealed record GeneratedContractMetadataReferences(
     MethodDefinitionHandle JsExportValueAttributeCtor,
     MethodDefinitionHandle JsObjectContractAttributeCtor,
     MethodDefinitionHandle JsArrayContractAttributeCtor,
-    MethodDefinitionHandle JsCallableContractAttributeCtor);
+    MethodDefinitionHandle JsCallableContractAttributeCtor,
+    MethodDefinitionHandle JsBuiltinContractAttributeCtor);
 
 internal sealed class GeneratedContractMetadataEmitter
 {
@@ -42,6 +43,7 @@ internal sealed class GeneratedContractMetadataEmitter
         var jsObjectContractCtor = EmitAttributeType("JsObjectContractAttribute", hasStringArgument: false);
         var jsArrayContractCtor = EmitAttributeType("JsArrayContractAttribute", hasStringArgument: false);
         var jsCallableContractCtor = EmitAttributeType("JsCallableContractAttribute", hasStringArgument: false);
+        var jsBuiltinContractCtor = EmitAttributeType("JsBuiltinContractAttribute", hasStringArgument: true);
 
         return new GeneratedContractMetadataReferences(
             jsModuleCtor,
@@ -49,7 +51,8 @@ internal sealed class GeneratedContractMetadataEmitter
             jsExportValueCtor,
             jsObjectContractCtor,
             jsArrayContractCtor,
-            jsCallableContractCtor);
+            jsCallableContractCtor,
+            jsBuiltinContractCtor);
     }
 
     private MethodDefinitionHandle EmitAttributeType(string typeName, bool hasStringArgument)

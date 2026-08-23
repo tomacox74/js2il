@@ -28,6 +28,9 @@ namespace Jroc.Tests.AsyncGenerator
         public Task AsyncGenerator_TryCatchFinally() { var testName = nameof(AsyncGenerator_TryCatchFinally); return GenerateTest(testName); }
 
         [Fact]
+        public Task AsyncGenerator_AwaitRejectionTryCatchFinally() { var testName = nameof(AsyncGenerator_AwaitRejectionTryCatchFinally); return GenerateTest(testName); }
+
+        [Fact]
         public Task AsyncGenerator_ExplicitReceiverAbi() { var testName = nameof(AsyncGenerator_ExplicitReceiverAbi); return GenerateTest(testName); }
     }
 }
