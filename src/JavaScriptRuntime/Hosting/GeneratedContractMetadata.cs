@@ -48,6 +48,31 @@ internal static class GeneratedContractMetadata
     internal static bool IsCallableContract(Type? contractType)
         => HasGeneratedAttribute(contractType, "JsCallableContractAttribute");
 
+    internal static string? GetBuiltinContractKind(Type? contractType)
+        => contractType == null
+            ? null
+            : GetStringConstructorArgument(contractType, "JsBuiltinContractAttribute");
+
+    internal static Type? GetSiblingObjectContract(Type? contractType)
+        => GetSiblingGeneratedHandleContract(contractType, "IObject");
+
+    internal static Type? GetSiblingCallableContract(Type? contractType)
+        => GetSiblingGeneratedHandleContract(contractType, "ICallable");
+
+    private static Type? GetSiblingGeneratedHandleContract(
+        Type? contractType,
+        string name)
+    {
+        var siblingContract = contractType?.DeclaringType?.GetNestedType(
+            name,
+            BindingFlags.Public | BindingFlags.NonPublic);
+        return IsGeneratedContractType(siblingContract)
+               && siblingContract!.IsInterface
+               && typeof(IDisposable).IsAssignableFrom(siblingContract)
+            ? siblingContract
+            : null;
+    }
+
     private static string? GetStringConstructorArgument(MemberInfo member, string attributeName)
         => member
             .GetCustomAttributesData()

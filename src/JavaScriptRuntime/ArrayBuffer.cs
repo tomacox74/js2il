@@ -193,7 +193,7 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private static int CoerceRelativeIndex(object? value, int defaultValue, int length)
+        protected static int CoerceRelativeIndex(object? value, int defaultValue, int length)
         {
             if (value is null || value is JsNull)
             {

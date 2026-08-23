@@ -37,6 +37,14 @@ internal static class JsReturnConverter
             memberName = null;
             contractType = null;
         }
+        // Preserve Phase 2's opaque object projection for a direct JavaScript
+        // null export. More specific generated contracts (for example
+        // RegExp.exec()'s array result) should surface JavaScript null as CLR
+        // null rather than manufacturing a handle for the null sentinel.
+        if (value is JsNull && returnType != typeof(object))
+        {
+            value = null;
+        }
 
         if (returnType == typeof(Task))
         {
@@ -78,6 +86,22 @@ internal static class JsReturnConverter
             return null;
         }
 
+        if (TryGetEnumerableElementType(returnType, out var elementType, out var isAsync))
+        {
+            if (value == null)
+            {
+                throw new InvalidCastException(
+                    $"JavaScript value for '{memberName ?? "<iteration>"}' is null and cannot be projected as '{returnType.FullName}'.");
+            }
+
+            return runtime.GetOrCreateIterableAdapter(
+                value,
+                elementType,
+                isAsync,
+                memberName,
+                contractType);
+        }
+
         if (value == null)
         {
             return returnType.IsValueType ? Activator.CreateInstance(returnType) : null;
@@ -88,22 +112,38 @@ internal static class JsReturnConverter
             return runtime.GetOrCreateConstructorProxy(returnType, value);
         }
 
+        if (returnType == typeof(object))
+        {
+            if (!TypeUtilities.IsPrimitive(value))
+            {
+                var canonicalContract =
+                    JavaScriptRuntime.CallableOperations.IsCallable(value)
+                        ? GeneratedContractMetadata.GetSiblingCallableContract(contractType)
+                        : GeneratedContractMetadata.GetSiblingObjectContract(contractType);
+                if (runtime.TryGetExistingHandleProxy(value, canonicalContract, out var existingHandle))
+                {
+                    return existingHandle;
+                }
+
+                if (canonicalContract != null)
+                {
+                    return runtime.GetOrCreateHandleProxy(canonicalContract, value);
+                }
+            }
+
+            // An object-typed host contract erases whether the value is a JS reference.
+            // Keep runtime objects behind the dynamic hosting boundary instead of leaking them.
+            return JsDynamicValueProxy.Wrap(runtime, value);
+        }
+
         if (JavaScriptRuntime.CallableOperations.IsCallable(value))
         {
             var callable = runtime.GetOrCreateCallableWrapper(value);
-            if (returnType == typeof(object)
-                || returnType == typeof(JsCallable)
+            if (returnType == typeof(JsCallable)
                 || returnType.IsInstanceOfType(callable))
             {
                 return callable;
             }
-        }
-
-        if (returnType == typeof(object))
-        {
-            // An object-typed host contract erases whether the value is a JS reference.
-            // Keep runtime objects behind the dynamic hosting boundary instead of leaking them.
-            return JsDynamicValueProxy.Wrap(runtime, value);
         }
 
         if (returnType.IsInstanceOfType(value))
@@ -163,6 +203,33 @@ internal static class JsReturnConverter
         => GeneratedContractMetadata.IsGeneratedContractType(returnType)
            && returnType.IsInterface
            && typeof(IDisposable).IsAssignableFrom(returnType);
+
+    private static bool TryGetEnumerableElementType(
+        Type returnType,
+        out Type elementType,
+        out bool isAsync)
+    {
+        if (returnType.IsGenericType)
+        {
+            var definition = returnType.GetGenericTypeDefinition();
+            if (definition == typeof(IEnumerable<>))
+            {
+                elementType = returnType.GetGenericArguments()[0];
+                isAsync = false;
+                return true;
+            }
+            if (definition == typeof(IAsyncEnumerable<>))
+            {
+                elementType = returnType.GetGenericArguments()[0];
+                isAsync = true;
+                return true;
+            }
+        }
+
+        elementType = null!;
+        isAsync = false;
+        return false;
+    }
 
     private sealed record ResultConversionMethods(
         MethodInfo PromiseToTask,

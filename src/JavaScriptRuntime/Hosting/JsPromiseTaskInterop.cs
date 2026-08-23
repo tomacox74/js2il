@@ -99,6 +99,64 @@ internal static class JsPromiseTaskInterop
         return completion.Task;
     }
 
+    internal static Task<object?> ToRawTask(
+        JsRuntimeInstance runtime,
+        Promise promise,
+        string? memberName = null,
+        Type? contractType = null,
+        bool duringRuntimeDisposal = false)
+    {
+        ArgumentNullException.ThrowIfNull(runtime);
+        ArgumentNullException.ThrowIfNull(promise);
+
+        var completion = new RuntimeTaskCompletion<object?>(
+            runtime,
+            unregisterOnCompletion: !duringRuntimeDisposal);
+        if (!duringRuntimeDisposal
+            && !runtime.TryRegisterRuntimeDependentOperation(completion))
+        {
+            return completion.Task;
+        }
+
+        try
+        {
+            object? Attach()
+            {
+                promise.then(
+                    onFulfilled: new Func<object[]?, object?, object?>((_, value) =>
+                    {
+                        completion.TrySetResult(value);
+                        return null;
+                    }),
+                    onRejected: new Func<object[]?, object?, object?>((_, reason) =>
+                    {
+                        completion.TrySetException(ToException(
+                            runtime,
+                            reason,
+                            memberName,
+                            contractType));
+                        return null;
+                    }));
+                return null;
+            }
+
+            if (duringRuntimeDisposal)
+            {
+                runtime.InvokeDuringDisposal(Attach);
+            }
+            else
+            {
+                runtime.Invoke(Attach);
+            }
+        }
+        catch (Exception exception)
+        {
+            completion.TrySetException(exception);
+        }
+
+        return completion.Task;
+    }
+
     private static Exception ToException(
         JsRuntimeInstance runtime,
         object? reason,
@@ -145,19 +203,23 @@ internal static class JsPromiseTaskInterop
     private sealed class RuntimeTaskCompletion<T> : IRuntimeDependentOperation
     {
         private readonly JsRuntimeInstance _runtime;
+        private readonly bool _unregisterOnCompletion;
         private readonly TaskCompletionSource<T> _completion =
             new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        internal RuntimeTaskCompletion(JsRuntimeInstance runtime)
+        internal RuntimeTaskCompletion(
+            JsRuntimeInstance runtime,
+            bool unregisterOnCompletion = true)
         {
             _runtime = runtime;
+            _unregisterOnCompletion = unregisterOnCompletion;
         }
 
         internal Task<T> Task => _completion.Task;
 
         internal void TrySetResult(T result)
         {
-            if (_completion.TrySetResult(result))
+            if (_completion.TrySetResult(result) && _unregisterOnCompletion)
             {
                 _runtime.UnregisterRuntimeDependentOperation(this);
             }
@@ -165,7 +227,7 @@ internal static class JsPromiseTaskInterop
 
         internal void TrySetException(Exception exception)
         {
-            if (_completion.TrySetException(exception))
+            if (_completion.TrySetException(exception) && _unregisterOnCompletion)
             {
                 _runtime.UnregisterRuntimeDependentOperation(this);
             }

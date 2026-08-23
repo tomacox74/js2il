@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using JavaScriptRuntime;
 using JavaScriptRuntime.Modules.CommonJS;
 using JavaScriptRuntime.Node;
@@ -27,6 +28,10 @@ internal sealed class JsRuntimeInstance : IDisposable
     private readonly BlockingCollection<IWorkItem> _queue = new();
     private readonly ConcurrentDictionary<IWorkItem, byte> _pendingWorkItems = new();
     private readonly ConcurrentDictionary<IRuntimeDependentOperation, byte> _runtimeDependentOperations = new();
+    // Active iterators must close before runtime shutdown so iterator return(), generator
+    // finally blocks, and async cleanup can run. Registration and completion occur on host
+    // and continuation threads while root disposal may race from another thread.
+    private readonly ConcurrentDictionary<IRuntimeDisposalParticipant, byte> _runtimeDisposalParticipants = new();
 
     // Dedicated thread that owns the engine, synchronization context, and event loop.
     private readonly Thread _thread;
@@ -52,6 +57,7 @@ internal sealed class JsRuntimeInstance : IDisposable
     private readonly ConditionalWeakTable<object, ConcurrentDictionary<Type, object>> _handleProxies = new();
     private readonly ConditionalWeakTable<object, ConcurrentDictionary<Type, object>> _constructorProxies = new();
     private readonly ConditionalWeakTable<object, JsDynamicValueProxy> _dynamicValueProxies = new();
+    private readonly ConditionalWeakTable<object, ConcurrentDictionary<IterableAdapterKey, object>> _iterableAdapters = new();
 
     public JsRuntimeInstance(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options = null)
     {
@@ -191,26 +197,47 @@ internal sealed class JsRuntimeInstance : IDisposable
             return;
         }
 
-        FailPendingOperations();
+        var enumerationCleanupTasks = new List<Task>();
+        foreach (var participant in _runtimeDisposalParticipants.Keys)
+        {
+            if (!_runtimeDisposalParticipants.TryRemove(participant, out _))
+            {
+                continue;
+            }
 
-        _agent?.RequestShutdown();
+            enumerationCleanupTasks.Add(participant.DisposeForRuntimeShutdownAsync());
+        }
 
-        // Stop accepting work. Agent shutdown cancellation wakes the consumer.
+        var enumerationCleanup = Task.WhenAll(enumerationCleanupTasks);
+        if (IsRuntimeThread && !enumerationCleanup.IsCompleted)
+        {
+            _ = FinishRuntimeThreadDisposalAsync(enumerationCleanup);
+            GC.SuppressFinalize(this);
+            return;
+        }
+
+        Exception? enumerationCleanupFailure = null;
         try
         {
-            _queue.CompleteAdding();
+            // Bound the wait like the thread join below: a JavaScript finally block
+            // awaiting a never-settling promise must not hang host Dispose forever.
+            if (!enumerationCleanup.Wait(DisposeJoinTimeout))
+            {
+                enumerationCleanupFailure = new TimeoutException(
+                    "Timed out waiting for JavaScript iterator cleanup during disposal.");
+            }
         }
-        catch (ObjectDisposedException)
+        catch (AggregateException exception)
         {
-            // If the runtime thread already terminated, it may have disposed the queue.
-        }
-        catch (InvalidOperationException)
-        {
-            // Already marked complete.
+            enumerationCleanupFailure = exception.InnerExceptions.Count == 1
+                ? exception.InnerException
+                : exception;
         }
 
+        FinishShutdown();
+
         // Avoid self-join if Dispose is called from within the script thread.
-        if (Thread.CurrentThread.ManagedThreadId != _thread.ManagedThreadId)
+        if (!IsRuntimeThread)
         {
             if (!_thread.Join(DisposeJoinTimeout))
             {
@@ -224,9 +251,16 @@ internal sealed class JsRuntimeInstance : IDisposable
         // This type intentionally has no finalizer (it would be unsafe to block/join on the finalizer thread).
         // Ensure we don't ever pay finalization costs if one is added later.
         GC.SuppressFinalize(this);
+
+        if (enumerationCleanupFailure != null)
+        {
+            ExceptionDispatchInfo.Capture(enumerationCleanupFailure).Throw();
+        }
     }
 
     internal bool IsShutdown => _terminated.Task.IsCompleted;
+    internal bool IsRuntimeThread
+        => Thread.CurrentThread.ManagedThreadId == _thread.ManagedThreadId;
 
     internal int PendingWorkItemCount => _pendingWorkItems.Count;
 
@@ -259,9 +293,42 @@ internal sealed class JsRuntimeInstance : IDisposable
             .GetOrAdd(interfaceType, type =>
             {
                 var proxy = JsProxyFactory.CreateProxy(type, typeof(JsHandleProxy));
-                ((JsHandleProxy)proxy).Initialize(this, target);
+                ((JsHandleProxy)proxy).Initialize(this, target, type);
                 return proxy;
             });
+    }
+
+    internal bool TryGetExistingHandleProxy(
+        object target,
+        Type? preferredContract,
+        out object proxy)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        if (_handleProxies.TryGetValue(target, out var proxies))
+        {
+            // Selection must be deterministic so repeated object-typed reads of the
+            // same JS value keep returning a reference-identical proxy even after
+            // additional contract projections are cached for the target.
+            if (preferredContract != null
+                && proxies.TryGetValue(preferredContract, out var preferred))
+            {
+                proxy = preferred;
+                return true;
+            }
+
+            var existing = proxies
+                .OrderBy(pair => pair.Key.FullName, StringComparer.Ordinal)
+                .Select(pair => pair.Value)
+                .FirstOrDefault();
+            if (existing != null)
+            {
+                proxy = existing;
+                return true;
+            }
+        }
+
+        proxy = null!;
+        return false;
     }
 
     internal object GetOrCreateConstructorProxy(Type interfaceType, object constructor)
@@ -274,7 +341,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             .GetOrAdd(interfaceType, type =>
             {
                 var proxy = JsProxyFactory.CreateProxy(type, typeof(JsConstructorProxy));
-                ((JsConstructorProxy)proxy).Initialize(this, constructor);
+                ((JsConstructorProxy)proxy).Initialize(this, constructor, type);
                 return proxy;
             });
     }
@@ -286,6 +353,122 @@ internal sealed class JsRuntimeInstance : IDisposable
             target,
             value => new JsDynamicValueProxy(this, value));
     }
+
+    internal object GetOrCreateIterableAdapter(
+        object target,
+        Type elementType,
+        bool isAsync,
+        string? memberName,
+        Type? contractType)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(elementType);
+
+        var key = new IterableAdapterKey(
+            elementType,
+            isAsync,
+            memberName,
+            contractType);
+        return _iterableAdapters
+            .GetOrCreateValue(target)
+            .GetOrAdd(
+                key,
+                _ => isAsync
+                    ? JsIterableAdapterFactory.CreateAsyncEnumerable(
+                        this,
+                        target,
+                        elementType,
+                        memberName,
+                        contractType)
+                    : JsIterableAdapterFactory.CreateEnumerable(
+                        this,
+                        target,
+                        elementType,
+                        memberName,
+                        contractType));
+    }
+
+    internal void RegisterRuntimeDisposalParticipant(
+        IRuntimeDisposalParticipant participant)
+    {
+        ArgumentNullException.ThrowIfNull(participant);
+        if (Volatile.Read(ref _disposeSignaled) != 0)
+        {
+            throw CreateDisposedException();
+        }
+
+        if (!_runtimeDisposalParticipants.TryAdd(participant, 0))
+        {
+            throw new InvalidOperationException(
+                "The runtime disposal participant is already registered.");
+        }
+
+        if (Volatile.Read(ref _disposeSignaled) != 0
+            && _runtimeDisposalParticipants.TryRemove(participant, out _))
+        {
+            var cleanup = participant.DisposeForRuntimeShutdownAsync();
+            if (!IsRuntimeThread || cleanup.IsCompleted)
+            {
+                cleanup.GetAwaiter().GetResult();
+            }
+            throw CreateDisposedException();
+        }
+    }
+
+    internal void UnregisterRuntimeDisposalParticipant(
+        IRuntimeDisposalParticipant participant)
+        => _runtimeDisposalParticipants.TryRemove(participant, out _);
+
+    internal TResult InvokeDuringDisposal<TResult>(Func<TResult> func)
+    {
+        ArgumentNullException.ThrowIfNull(func);
+        if (_terminated.Task.IsCompleted)
+        {
+            throw CreateDisposedException();
+        }
+
+        if (Thread.CurrentThread.ManagedThreadId == _thread.ManagedThreadId)
+        {
+            return func();
+        }
+
+        var completion = new TaskCompletionSource<TResult>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var item = new WorkItem<TResult>(func, completion);
+        if (!_pendingWorkItems.TryAdd(item, 0))
+        {
+            throw new InvalidOperationException("Failed to register disposal work.");
+        }
+
+        try
+        {
+            _queue.Add(item);
+        }
+        catch (Exception exception)
+            when (exception is ObjectDisposedException or InvalidOperationException)
+        {
+            FailWorkItem(item);
+            throw CreateDisposedException();
+        }
+
+        // The script thread fails pending items before disposing the queue and only
+        // then completes _terminated; an item enqueued inside that window would
+        // otherwise never execute, so fail it once termination is observed.
+        _ = Task.WhenAny(completion.Task, _terminated.Task).GetAwaiter().GetResult();
+        if (!completion.Task.IsCompleted)
+        {
+            FailWorkItem(item);
+        }
+
+        return completion.Task.GetAwaiter().GetResult();
+    }
+
+    internal void InvokeDuringDisposal(Action action)
+        => InvokeDuringDisposal(() =>
+        {
+            action();
+            return (object?)null;
+        });
 
     internal HostedMethodFunctionObject GetOrCreateHostMethodAdapter(
         object target,
@@ -682,6 +865,44 @@ internal sealed class JsRuntimeInstance : IDisposable
     private static ObjectDisposedException CreateDisposedException()
         => new(nameof(JsRuntimeInstance));
 
+    private async Task FinishRuntimeThreadDisposalAsync(Task enumerationCleanup)
+    {
+        try
+        {
+            await enumerationCleanup.ConfigureAwait(false);
+        }
+        catch
+        {
+            // Disposal is already in progress and cannot synchronously report an
+            // asynchronous cleanup failure back through a runtime-thread callback.
+        }
+        finally
+        {
+            FinishShutdown();
+        }
+    }
+
+    private void FinishShutdown()
+    {
+        FailPendingOperations();
+        _agent?.RequestShutdown();
+
+        try
+        {
+            _queue.CompleteAdding();
+        }
+        catch (Exception exception)
+            when (exception is ObjectDisposedException or InvalidOperationException)
+        {
+        }
+    }
+
+    private readonly record struct IterableAdapterKey(
+        Type ElementType,
+        bool IsAsync,
+        string? MemberName,
+        Type? ContractType);
+
     private static string NormalizeLocalModuleSpecifier(string moduleId)
     {
         var trimmed = moduleId.Trim();
@@ -786,4 +1007,9 @@ internal sealed class JsRuntimeInstance : IDisposable
 internal interface IRuntimeDependentOperation
 {
     void OnRuntimeDisposed(ObjectDisposedException exception);
+}
+
+internal interface IRuntimeDisposalParticipant
+{
+    Task DisposeForRuntimeShutdownAsync();
 }

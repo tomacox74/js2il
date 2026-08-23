@@ -24,7 +24,6 @@ namespace Jroc.Utilities.Ecma335
             ["System.Collections.Generic.List`1"] = "System.Collections",
             ["System.Collections.Generic.IList`1"] = "System.Collections",
             ["System.Collections.Generic.ICollection`1"] = "System.Collections",
-            ["System.Collections.Generic.IEnumerable`1"] = "System.Collections",
         };
 
         public TypeReferenceRegistry(MetadataBuilder metadataBuilder)

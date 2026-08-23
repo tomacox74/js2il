@@ -115,6 +115,26 @@
 
 } // end of class Jroc.Generated.Metadata.JsCallableContractAttribute
 
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsBuiltinContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			string 'value'
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsBuiltinContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsBuiltinContractAttribute
+
 .class public auto ansi abstract sealed beforefieldinit Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown
 	extends [System.Runtime]System.Object
 {
@@ -159,6 +179,26 @@
 				extends [System.Runtime]System.Object
 			{
 				// Nested Types
+				.class interface nested public auto ansi abstract ICallable
+					implements [System.Runtime]System.IDisposable
+				{
+					.custom instance void Jroc.Generated.Metadata.JsCallableContractAttribute::.ctor() = (
+						01 00 00 00
+					)
+					// Methods
+					.method public hidebysig newslot abstract virtual 
+						instance object Invoke (
+							object[] arguments
+						) cil managed 
+					{
+						.param [1]
+							.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+								01 00 00 00
+							)
+					} // end of method ICallable::Invoke
+
+				} // end of class ICallable
+
 				.class interface nested public auto ansi abstract IExports
 					implements [System.Runtime]System.IDisposable
 				{
@@ -168,7 +208,7 @@
 					)
 					// Methods
 					.method public hidebysig specialname newslot abstract virtual 
-						instance object get_Value () cil managed 
+						instance class Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown/Scripts/turndown/index/ICallable get_Value () cil managed 
 					{
 						.custom instance void Jroc.Generated.Metadata.JsExportValueAttribute::.ctor() = (
 							01 00 00 00
@@ -198,9 +238,9 @@
 					} // end of method IExports::Construct
 
 					// Properties
-					.property instance object Value()
+					.property instance class Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown/Scripts/turndown/index/ICallable Value()
 					{
-						.get instance object Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown/Scripts/turndown/index/IExports::get_Value()
+						.get instance class Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown/Scripts/turndown/index/ICallable Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown/Scripts/turndown/index/IExports::get_Value()
 					}
 
 				} // end of class IExports
@@ -545,7 +585,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 1b 00 00 02
+				74 61 54 6f 6b 65 6e 1d 00 00 02
 			)
 			// Header size: 12
 			// Code size: 918 (0x396)
@@ -1045,7 +1085,7 @@
 
 				IL_001c: ldarg.2
 				IL_001d: ldstr "nodeName"
-				IL_0022: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M19>:__js_call__:3"
+				IL_0022: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M21>:__js_call__:3"
 				IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
 				IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1147,7 +1187,7 @@
 				IL_0148: ldstr "#"
 				IL_014d: ldstr "repeat"
 				IL_0152: ldloc.s 11
-				IL_0154: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M19>:__js_call__:49"
+				IL_0154: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M21>:__js_call__:49"
 				IL_0159: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
 				IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1522,7 +1562,7 @@
 
 				IL_001c: ldarg.1
 				IL_001d: ldstr "nodeName"
-				IL_0022: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M21>:__js_call__:3"
+				IL_0022: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M23>:__js_call__:3"
 				IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
 				IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1674,7 +1714,7 @@
 
 					IL_0029: ldarg.1
 					IL_002a: ldstr "getAttribute"
-					IL_002f: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M23>:__js_call__:6"
+					IL_002f: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M25>:__js_call__:6"
 					IL_0034: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_41
 					IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1705,7 +1745,7 @@
 
 					IL_0080: ldstr "getAttribute"
 					IL_0085: ldstr "class"
-					IL_008a: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M23>:__js_call__:17"
+					IL_008a: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M25>:__js_call__:17"
 					IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_42
 					IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1742,7 +1782,7 @@
 					IL_00e7: ldloc.s 7
 					IL_00e9: ldstr "exec"
 					IL_00ee: ldloc.1
-					IL_00ef: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M23>:__js_call__:31"
+					IL_00ef: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M25>:__js_call__:31"
 					IL_00f4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_43
 					IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1951,7 +1991,7 @@
 
 				IL_0022: ldarg.3
 				IL_0023: ldstr "textContent"
-				IL_0028: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M22>:__js_call__:4"
+				IL_0028: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M24>:__js_call__:4"
 				IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_38
 				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2012,7 +2052,7 @@
 
 				IL_00d0: ldarg.3
 				IL_00d1: ldstr "querySelector"
-				IL_00d6: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M22>:__js_call__:33"
+				IL_00d6: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M24>:__js_call__:33"
 				IL_00db: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
 				IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2043,7 +2083,7 @@
 
 				IL_012a: ldstr "querySelector"
 				IL_012f: ldstr "code"
-				IL_0134: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M22>:__js_call__:45"
+				IL_0134: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M24>:__js_call__:45"
 				IL_0139: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_40
 				IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -2259,7 +2299,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 1b 00 00 02
+				74 61 54 6f 6b 65 6e 1d 00 00 02
 			)
 			// Header size: 12
 			// Code size: 719 (0x2cf)
@@ -2481,7 +2521,7 @@
 
 			IL_0236: ldstr "turndown"
 			IL_023b: ldarg.2
-			IL_023c: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M17>:__js_call__:56"
+			IL_023c: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M19>:__js_call__:56"
 			IL_0241: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
 			IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -2674,7 +2714,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 1b 00 00 02
+				74 61 54 6f 6b 65 6e 1d 00 00 02
 			)
 			// Header size: 12
 			// Code size: 1365 (0x555)
@@ -2719,7 +2759,7 @@
 			IL_0032: br IL_004b
 
 			IL_0037: ldstr "argv"
-			IL_003c: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:6"
+			IL_003c: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:6"
 			IL_0041: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
 			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2739,7 +2779,7 @@
 
 			IL_0073: ldloc.0
 			IL_0074: ldstr "inFile"
-			IL_0079: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:11"
+			IL_0079: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:11"
 			IL_007e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
 			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2778,7 +2818,7 @@
 
 			IL_00d9: ldloc.0
 			IL_00da: ldstr "outFile"
-			IL_00df: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:22"
+			IL_00df: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:22"
 			IL_00e4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
 			IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2821,7 +2861,7 @@
 			IL_0150: br IL_0169
 
 			IL_0155: ldstr "cwd"
-			IL_015a: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:36"
+			IL_015a: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:36"
 			IL_015f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
 			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -2837,7 +2877,7 @@
 
 			IL_0187: ldloc.0
 			IL_0188: ldstr "inFile"
-			IL_018d: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:38"
+			IL_018d: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:38"
 			IL_0192: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
 			IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -2892,7 +2932,7 @@
 			IL_0216: br IL_022f
 
 			IL_021b: ldstr "cwd"
-			IL_0220: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:46"
+			IL_0220: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:46"
 			IL_0225: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
 			IL_022a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -2908,7 +2948,7 @@
 
 			IL_024d: ldloc.0
 			IL_024e: ldstr "outFile"
-			IL_0253: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:48"
+			IL_0253: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:48"
 			IL_0258: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
 			IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3005,7 +3045,7 @@
 
 			IL_0342: ldstr "dirname"
 			IL_0347: ldloc.s 4
-			IL_0349: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:64"
+			IL_0349: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:64"
 			IL_034e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
 			IL_0353: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -3090,7 +3130,7 @@
 
 			IL_0422: ldloc.0
 			IL_0423: ldstr "inFile"
-			IL_0428: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:76"
+			IL_0428: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:76"
 			IL_042d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
 			IL_0432: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3114,7 +3154,7 @@
 
 			IL_0474: ldloc.0
 			IL_0475: ldstr "outFile"
-			IL_047a: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:82"
+			IL_047a: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:82"
 			IL_047f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
 			IL_0484: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3146,7 +3186,7 @@
 			IL_04de: ldloc.s 8
 			IL_04e0: ldstr "split"
 			IL_04e5: ldloc.s 16
-			IL_04e7: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:91"
+			IL_04e7: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:91"
 			IL_04ec: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
 			IL_04f1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -3162,7 +3202,7 @@
 
 			IL_0515: ldloc.s 8
 			IL_0517: ldstr "length"
-			IL_051c: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:93"
+			IL_051c: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M20>:__js_call__:93"
 			IL_0521: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
 			IL_0526: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
