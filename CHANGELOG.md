@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(validation): add the issue #1964 Phase 6 closure gate for Kraken
+  `ai-astar`. The exact workflow runs JROC, Jint, Okojo, and YantraJS from one
+  BenchmarkDotNet job, records raw timing/allocation/GC provenance, validates
+  the generated `findGraphNode` IL, and fails unless JROC beats Jint and Okojo,
+  allocates under 100 MB/op, retains cached arity-1 dispatch, and uses guarded
+  constructor fields without generic `Array.length` reads. The final
+  same-run result was 4.356 s for JROC versus 5.968 s for YantraJS, 7.582 s
+  for Jint, and 7.624 s for Okojo, with 56,971,416 B/op allocated by JROC.
 - perf(compiler/runtime): implement issue #1965 (Phase 5 of #1958) with
   conservative ES5 constructor-layout inference, generated `JsObject`
   subclasses, specialized static `new` allocation, direct typed reads, and

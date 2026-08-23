@@ -267,6 +267,73 @@ BenchmarkDotNet 0.15.8:
 The candidate is **37.3% faster by mean** and **39.9% faster by median**.
 Managed allocation increased by 77,808 bytes (0.14%).
 
+## Integrated Kraken validation
+
+Issue #1964 closes the #1958 optimization stack with one exact, reproducible
+cross-runtime gate:
+
+```bash
+node scripts/runKrackenAStarGuardrails.js \
+  --no-microbenchmarks \
+  --final-validation \
+  --output-json artifacts/kracken-ai-astar-validation/summary.json
+```
+
+The command runs the unmodified `kracken-ai-astar` fixture for JROC, Jint,
+Okojo, and YantraJS in one BenchmarkDotNet job. The raw summary records mean,
+median, standard deviation, sample count, managed allocation, normalized
+Gen0/Gen1/Gen2 collections, SHA, BenchmarkDotNet/.NET versions, CPU, and OS.
+It then recompiles the exact fixture and enforces these generated-code gates:
+
+- no generic numeric `Array.length` read in `findGraphNode`;
+- two guarded generated-constructor reads for `GraphNode.pos`;
+- no dynamic-cache property read on those guarded hit paths; and
+- both arity-1 `findGraphNode` call sites use cached dispatch.
+
+The required performance gates are JROC no slower than Jint or Okojo, at least
+three measured samples for every runtime, and less than 100 MB managed
+allocation per JROC operation. Being within 10% of the fastest managed
+competitor is reported separately as a stretch gate. The
+`BenchmarkDotNet Performance Suite` workflow exposes the same protocol through
+its `kracken_final_validation` dispatch input and retains the raw BenchmarkDotNet
+and machine-readable gate artifacts for 90 days.
+
+### Final evidence
+
+[Workflow run #32621937739](https://github.com/tomacox74/js2il/actions/runs/32621937739)
+validated clean candidate `afecdc5f2b74ff69044f53f83125a53044f52ebb`
+on an AMD EPYC 7763 runner with Ubuntu 24.04.4, .NET 10.0.11, and
+BenchmarkDotNet 0.15.8. All rows came from the same exact-scenario job:
+
+| Runtime | Mean (s) | Median (s) | StdDev (s) | N | Allocated (B/op) | Gen0/1/2 per 1k ops |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| JROC | **4.356** | **4.347** | 0.019 | 15 | 56,971,416 | 3,000 / 0 / 0 |
+| YantraJS | 5.968 | 5.959 | 0.045 | 15 | 3,805,208,696 | 227,000 / 30,000 / 0 |
+| Jint | 7.582 | 7.582 | 0.005 | 13 | 2,065,224 | 0 / 0 / 0 |
+| Okojo | 7.624 | 7.620 | 0.019 | 12 | 2,005,632 | 0 / 0 / 0 |
+
+JROC was the fastest runtime: 27.0% faster than YantraJS, 42.6% faster
+than Jint, and 42.9% faster than Okojo by mean. This passes the two required
+competitor gates and the within-10%-of-fastest stretch gate. The same artifact
+records a 193-byte `findGraphNode` body, zero generic numeric `Array.length`
+reads, two guarded constructor-field reads, zero dynamic-cache reads on those
+property paths, and two cached arity-1 `findGraphNode` call sites out of two.
+
+The following historical runs are directly comparable with the final run:
+they used the same AMD EPYC 7763 host shape, Ubuntu/.NET versions, benchmark
+implementation, and BenchmarkDotNet version. They are separate workflow
+executions, so the table reports the integrated result rather than attributing
+the full delta to any one phase:
+
+| Candidate | Workflow | JROC mean (s) | JROC allocated (B/op) |
+| --- | --- | ---: | ---: |
+| v0.12.12 (`264edb8ad`) | [#32459909381](https://github.com/tomacox74/js2il/actions/runs/32459909381) | 14.234 | 2,314,905,240 |
+| v0.12.13 (`4678366be`) | [#32525359520](https://github.com/tomacox74/js2il/actions/runs/32525359520) | 17.533 | 2,314,973,376 |
+| Phase 6 (`afecdc5f2`) | [#32621937739](https://github.com/tomacox74/js2il/actions/runs/32621937739) | **4.356** | **56,971,416** |
+
+Relative to v0.12.13, the integrated Phase 1-5 candidate reduces JROC mean
+time by 75.2% (4.03x speedup) and managed allocation by 97.5%.
+
 ## Test coverage
 
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_InferredConstruction_Parity.js` — construction parity, descriptor/enumeration fallback
