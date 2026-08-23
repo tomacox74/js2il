@@ -6,6 +6,23 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/hosting/docs: implement Phase 4 iterable and built-in
+  generated facades for #1917 and issues #1943, #1944, #1945, #1946, and
+  #1947. Generator and custom iterator values now project through
+  `IEnumerable<T>`/`IAsyncEnumerable<T>` with JavaScript `return()` cleanup,
+  cancellation, contextual failures, root-disposal integration, and preserved
+  single-use/independent-iterator behavior. Generated contracts now cover Date,
+  RegExp, Error subclasses, opaque Symbols, Map/Set/weak collections,
+  ArrayBuffer/SharedArrayBuffer, DataView, and every currently supported typed
+  array while preserving identity, ordered iteration, backing-store sharing,
+  offsets, mutation, and BCL/generated-only public signatures. Async iterator
+  thenables, runtime-thread disposal, async-generator await rejection routing,
+  inherited class iterables, nested control-flow return inference, collection
+  alias identity, shared-buffer slicing, and mutated constructor helpers retain
+  their JavaScript semantics at the facade boundary. Callable collection
+  aliases now share generated-handle identity, primitive async iterator results
+  are rejected, and concurrent enumerator/root disposal awaits one in-flight
+  iterator close operation.
 - compiler/runtime/hosting/docs: implement Phase 3 rich generated export
   facades for #1917 and issues #1938, #1939, #1940, #1941, and #1942.
   Generated public contracts now avoid runtime types in bases, generic

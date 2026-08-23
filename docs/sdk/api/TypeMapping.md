@@ -10,7 +10,7 @@ This is the practical mapping you will see when hosting compiled JS from C#.
 | `string` | `string` |
 | `boolean` | `bool` |
 | `undefined` | `null` |
-| `null` | `JavaScriptRuntime.JsNull.Null` (runtime sentinel) |
+| `null` | An opaque dynamic proxy when projected as `object`; `null` when a more specific generated reference contract permits no value |
 
 ## Objects / functions
 
@@ -23,6 +23,11 @@ Typed hosting:
 - If your contract return type is `object`, runtime references remain behind a
   dynamic proxy or `JsCallable`; raw generated/runtime object types are not
   exposed.
+- Generator and custom iterable results use `IEnumerable<object>`; async
+  generator and async iterable results use `IAsyncEnumerable<object>`.
+- Date, RegExp, Error, Symbol, Map/Set/weak collections, ArrayBuffer,
+  SharedArrayBuffer, DataView, and supported typed arrays use generated
+  `IDisposable` contracts. Their nested values use the same projection rules.
 
 Dynamic hosting:
 
