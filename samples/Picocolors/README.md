@@ -2,7 +2,7 @@
 
 This sample demonstrates compiling and hosting a real npm package: `picocolors`.
 
-[picocolors](https://www.npmjs.com/package/picocolors) is a tiny terminal-color library that wraps strings in ANSI escape codes. The sample compiles the package to a .NET assembly via `Jroc.SDK`, imports it through the generated facade, and calls several color/style functions from C#.
+[picocolors](https://www.npmjs.com/package/picocolors) is a tiny terminal-color library that wraps strings in ANSI escape codes. The sample compiles the package to a .NET assembly via `Jroc.SDK`, loads it at runtime, and calls several color/style functions from C#.
 
 ## Prerequisites
 
@@ -20,8 +20,8 @@ dotnet run -c Release
 This will:
 
 1. Run `npm ci` to restore `picocolors` into `node_modules`
-2. Compile the local facade wrapper `index.js` to `picocolors.dll` via `Jroc.SDK`
-3. Import `picocolors` through the generated facade and call several color functions, printing the results
+2. Compile `picocolors` to `picocolors.dll` via `Jroc.SDK`
+3. Load the compiled module and call several color functions, printing the results
 
 ## Expected output
 
