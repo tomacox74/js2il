@@ -350,9 +350,13 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-property-accessors",
         "testScripts": [
-          "tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
+          "tests/Jroc.Test262.Tests/language/expressions/property-accessors/ExecutionTests.cs"
         ],
-        "notes": "MemberExpression lowering supports both identifier and computed forms, and supports both read and write targets. `super.prop` as a *value* (non-call) is not supported; only `super.m(...)` is supported for base-method calls."
+        "notes": "MemberExpression lowering supports identifier and computed read/write targets. Computed keys are converted through ToPropertyKey exactly once so observable coercion and abrupt completion are preserved. super.prop as a value (non-call) is not supported; only super.m(...) is supported for base-method calls.",
+        "test262Paths": [
+          "test/language/expressions/property-accessors/S11.2.1_A4_T3.js"
+        ]
       },
       {
         "clause": "13.3.6",

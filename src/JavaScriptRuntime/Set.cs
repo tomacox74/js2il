@@ -84,6 +84,12 @@ namespace JavaScriptRuntime
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method)
         {
+            Function.InitializeFunctionInstance(
+                method,
+                Function.GetLength(method),
+                name,
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(method));
+            Function.MarkUndefinedPrototype(method);
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

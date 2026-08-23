@@ -24,6 +24,17 @@ public sealed partial class HIRToLIRLowerer
 
         var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
+        if (updateExpr.Argument is HIRVariableExpression withUpdateVar
+            && _activeWithObjects.Count > 0)
+        {
+            return TryLowerActiveWithUpdateExpression(
+                updateExpr,
+                withUpdateVar,
+                isIncrement,
+                needsPostfixValue,
+                out resultTempVar);
+        }
+
         // Support ++/-- on identifiers, property access, and index access.
         // This is needed for common JS patterns like `obj.prop++` and `obj[idx]++`.
         if (updateExpr.Argument is HIRPropertyAccessExpression propAccessExpr)
@@ -58,6 +69,8 @@ public sealed partial class HIRToLIRLowerer
         {
             _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
             resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 
@@ -93,7 +106,7 @@ public sealed partial class HIRToLIRLowerer
                 && updateBinding.IsStableType
                 && updateBinding.ClrType == typeof(double);
 
-            var currentNumber = EnsureNumber(currentValue);
+            var currentNumeric = EnsureNumeric(currentValue);
 
             // For postfix, we must capture the old (ToNumber-coerced) value before the store happens.
             // Use LIRCopyTemp so the captured value is materialized as a snapshot.
@@ -101,8 +114,8 @@ public sealed partial class HIRToLIRLowerer
             if (needsPostfixValue)
             {
                 var snapshotValue = isTypedNumericParameter
-                    ? currentNumber
-                    : EnsureObject(currentNumber);
+                    ? currentNumeric
+                    : EnsureObject(currentNumeric);
                 var snapshot = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
                 DefineTempStorage(
@@ -113,24 +126,11 @@ public sealed partial class HIRToLIRLowerer
                 originalSnapshotForPostfix = snapshot;
             }
 
-            var deltaOneTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
-            DefineTempStorage(deltaOneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-            var updatedNumber = CreateTempVariable();
-            if (isIncrement)
-            {
-                _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, deltaOneTemp, updatedNumber));
-            }
-            else
-            {
-                _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, deltaOneTemp, updatedNumber));
-            }
-            DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            var updatedNumeric = EmitNumericUpdate(currentNumeric, isIncrement);
 
             var storedValue = isTypedNumericParameter
-                ? updatedNumber
-                : EnsureObject(updatedNumber);
+                ? updatedNumeric
+                : EnsureObject(updatedNumeric);
 
             if (isActiveScopeStored)
             {
@@ -198,30 +198,15 @@ public sealed partial class HIRToLIRLowerer
         if (!isStableDoubleBinding)
         {
             // Boxed/local update path (e.g., object-typed locals).
-            var currentNumber = EnsureNumber(currentValue);
+            var currentNumeric = EnsureNumeric(currentValue);
 
             TempVariable? originalSnapshotForPostfix = null;
             if (needsPostfixValue)
             {
-                originalSnapshotForPostfix = EnsureObject(currentNumber);
+                originalSnapshotForPostfix = EnsureObject(currentNumeric);
             }
 
-            var boxedDeltaTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, boxedDeltaTemp));
-            DefineTempStorage(boxedDeltaTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-            var boxedUpdatedNumber = CreateTempVariable();
-            if (isIncrement)
-            {
-                _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, boxedDeltaTemp, boxedUpdatedNumber));
-            }
-            else
-            {
-                _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, boxedDeltaTemp, boxedUpdatedNumber));
-            }
-            DefineTempStorage(boxedUpdatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-            var updatedBoxed = EnsureObject(boxedUpdatedNumber);
+            var updatedBoxed = EnsureObject(EmitNumericUpdate(currentNumeric, isIncrement));
 
             if (!TryStoreToBinding(updateBinding, updatedBoxed, out var storedValue))
             {
@@ -304,6 +289,84 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryLowerActiveWithUpdateExpression(
+        HIRUpdateExpression updateExpr,
+        HIRVariableExpression updateVarExpr,
+        bool isIncrement,
+        bool needsPostfixValue,
+        out TempVariable resultTempVar)
+    {
+        var binding = updateVarExpr.Name.BindingInfo;
+        var probe = EmitWithBindingProbe(binding.Name)
+            ?? throw new InvalidOperationException("Active with update requires a binding probe.");
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        resultTempVar = CreateTempVariable();
+
+        var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
+
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(probe.HasBinding, lexicalLabel));
+
+        var withValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+            new[] { probe.WithObject, probe.Name },
+            withValue));
+        DefineTempStorage(withValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var withNumeric = EnsureNumeric(withValue);
+        var withUpdated = EmitNumericUpdate(withNumeric, isIncrement);
+
+        var withSetResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRSetItem(
+            probe.WithObject,
+            probe.Name,
+            withUpdated,
+            withSetResult,
+            UsesStrictAssignmentSemantics()));
+        DefineTempStorage(withSetResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var withExpressionValue = updateExpr.Prefix || !needsPostfixValue
+            ? EnsureObject(withUpdated)
+            : EnsureObject(withNumeric);
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(withExpressionValue, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+
+        TempVariable lexicalResult;
+        var activeWithObject = _activeWithObjects.Pop();
+        try
+        {
+            if (!TryLowerUpdateExpression(updateExpr, out lexicalResult))
+            {
+                return false;
+            }
+        }
+        finally
+        {
+            _activeWithObjects.Push(activeWithObject);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(lexicalResult), resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (hadPreviousValue)
+        {
+            _variableMap[binding] = previousValue;
+        }
+        else
+        {
+            _variableMap.Remove(binding);
+        }
+        _numericRefinements.Remove(binding);
+        return true;
+    }
+
     private bool TryLowerUpdatePropertyAccessExpression(
         HIRPropertyAccessExpression propAccessExpr,
         bool isIncrement,
@@ -327,36 +390,23 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRGetInferredMember(inferredShape, inferredMember.Name, receiver, currentValue));
             DefineTempStorage(currentValue, GetInferredMemberStorage(inferredMember));
 
-            var currentAsNumber = EnsureNumber(currentValue);
+            var inferredCurrentNumeric = EnsureNumeric(currentValue);
 
             TempVariable? snapshotForPostfix = null;
             if (needsPostfixValue)
             {
-                var snapshotValue = EnsureObject(currentAsNumber);
+                var snapshotValue = EnsureObject(inferredCurrentNumeric);
                 var snapshot = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
                 DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 snapshotForPostfix = snapshot;
             }
 
-            var oneTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, oneTemp));
-            DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            var newNumeric = EmitNumericUpdate(inferredCurrentNumeric, isIncrement);
 
-            var newNumber = CreateTempVariable();
-            if (isIncrement)
-            {
-                _methodBodyIR.Instructions.Add(new LIRAddNumber(currentAsNumber, oneTemp, newNumber));
-            }
-            else
-            {
-                _methodBodyIR.Instructions.Add(new LIRSubNumber(currentAsNumber, oneTemp, newNumber));
-            }
-            DefineTempStorage(newNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            _methodBodyIR.Instructions.Add(new LIRSetInferredMember(inferredShape, inferredMember.Name, receiver, newNumeric));
 
-            _methodBodyIR.Instructions.Add(new LIRSetInferredMember(inferredShape, inferredMember.Name, receiver, newNumber));
-
-            var newBoxed = EnsureObject(newNumber);
+            var newBoxed = EnsureObject(newNumeric);
             if (prefix)
             {
                 resultTempVar = newBoxed;
@@ -380,35 +430,21 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedKey, current));
         DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-        var currentNumber = EnsureNumber(current);
+        var currentNumeric = EnsureNumeric(current);
 
         TempVariable? originalSnapshotForPostfix = null;
         if (needsPostfixValue)
         {
-            var snapshotValue = EnsureObject(currentNumber);
+            var snapshotValue = EnsureObject(currentNumeric);
             var snapshot = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
             DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             originalSnapshotForPostfix = snapshot;
         }
 
-        var deltaOneTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
-        DefineTempStorage(deltaOneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-        var updatedNumber = CreateTempVariable();
-        if (isIncrement)
-        {
-            _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, deltaOneTemp, updatedNumber));
-        }
-        else
-        {
-            _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, deltaOneTemp, updatedNumber));
-        }
-        DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-        var valueForSet = updatedNumber;
-        var updatedBoxed = EnsureObject(updatedNumber);
+        var updatedNumeric = EmitNumericUpdate(currentNumeric, isIncrement);
+        var valueForSet = updatedNumeric;
+        var updatedBoxed = EnsureObject(updatedNumeric);
 
         var setResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueForSet, setResult, UsesStrictAssignmentSemantics()));
@@ -444,81 +480,36 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        TempVariable? boxedIndex = null;
-        var indexStorageForGet = GetTempStorage(indexTemp);
-        TempVariable indexForGet;
-        if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
-        {
-            indexForGet = indexTemp;
-        }
-        else
-        {
-            boxedIndex = EnsureObject(indexTemp);
-            indexForGet = boxedIndex.Value;
-        }
+        var propertyKey = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.ToPropertyKeyString),
+            new[] { EnsureObject(indexTemp) },
+            propertyKey));
+        DefineTempStorage(propertyKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
         var current = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
+        _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, propertyKey, current));
         DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-        var currentNumber = EnsureNumber(current);
+        var currentNumeric = EnsureNumeric(current);
 
         TempVariable? originalSnapshotForPostfix = null;
         if (needsPostfixValue)
         {
-            var snapshotValue = EnsureObject(currentNumber);
+            var snapshotValue = EnsureObject(currentNumeric);
             var snapshot = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
             DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             originalSnapshotForPostfix = snapshot;
         }
 
-        var deltaOneTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
-        DefineTempStorage(deltaOneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-        var updatedNumber = CreateTempVariable();
-        if (isIncrement)
-        {
-            _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, deltaOneTemp, updatedNumber));
-        }
-        else
-        {
-            _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, deltaOneTemp, updatedNumber));
-        }
-        DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-        // Use typed SetItem when possible (avoids boxing updatedNumber for the store).
-        var indexStorage = GetTempStorage(indexTemp);
-        bool canUseNumericSetItem = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
-        bool canUseStringKeyDoubleValueSetItem = indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string);
-
-        TempVariable indexForSet;
-        if (canUseNumericSetItem)
-        {
-            indexForSet = indexTemp;
-        }
-        else
-        {
-            boxedIndex ??= EnsureObject(indexTemp);
-            indexForSet = boxedIndex.Value;
-        }
-
-        TempVariable valueForSet;
-        TempVariable updatedBoxed;
-        if (canUseNumericSetItem || canUseStringKeyDoubleValueSetItem)
-        {
-            valueForSet = updatedNumber;
-            updatedBoxed = EnsureObject(updatedNumber);
-        }
-        else
-        {
-            updatedBoxed = EnsureObject(updatedNumber);
-            valueForSet = updatedBoxed;
-        }
+        var updatedNumeric = EmitNumericUpdate(currentNumeric, isIncrement);
+        var valueForSet = updatedNumeric;
+        var updatedBoxed = EnsureObject(updatedNumeric);
 
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueForSet, setResult, UsesStrictAssignmentSemantics()));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, propertyKey, valueForSet, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         if (prefix)
@@ -566,6 +557,55 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return numberTempVar;
+    }
+
+    private TempVariable EnsureNumeric(TempVariable tempVar)
+    {
+        var storage = GetTempStorage(tempVar);
+        if (storage.Kind == ValueStorageKind.UnboxedValue
+            && storage.ClrType == typeof(double))
+        {
+            return tempVar;
+        }
+
+        var numericTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.ToNumeric),
+            new[] { EnsureObject(tempVar) },
+            numericTemp));
+        DefineTempStorage(numericTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return numericTemp;
+    }
+
+    private TempVariable EmitNumericUpdate(TempVariable numericValue, bool isIncrement)
+    {
+        var storage = GetTempStorage(numericValue);
+        if (storage.Kind == ValueStorageKind.UnboxedValue
+            && storage.ClrType == typeof(double))
+        {
+            var oneTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNumber(1d, oneTemp));
+            DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var updatedNumber = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(isIncrement
+                ? new LIRAddNumber(numericValue, oneTemp, updatedNumber)
+                : new LIRSubNumber(numericValue, oneTemp, updatedNumber));
+            DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return updatedNumber;
+        }
+
+        var incrementTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(isIncrement, incrementTemp));
+        DefineTempStorage(incrementTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        var updatedNumeric = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.ApplyNumericUpdate),
+            new[] { EnsureObject(numericValue), incrementTemp },
+            updatedNumeric));
+        DefineTempStorage(updatedNumeric, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return updatedNumeric;
     }
 
     // Invalidate or update the numeric refinement for a binding after an assignment.

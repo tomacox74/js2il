@@ -134,14 +134,7 @@ namespace JavaScriptRuntime
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int ToInt32FromDouble(double number)
-        {
-            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
-            {
-                return 0;
-            }
-
-            return unchecked((int)(long)number);
-        }
+            => TypeUtilities.ToInt32(number);
 
         [DoesNotReturn]
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -755,9 +748,12 @@ namespace JavaScriptRuntime
                 return (double)(leftInt << rightInt);
             }
 
-            if (a is BigInteger leftBigInt)
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     var shiftCount = ToShiftCount(rightBigInt);
                     return shiftCount >= 0
@@ -768,13 +764,13 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var left = TypeUtilities.ToInt32(a);
-            var right = TypeUtilities.ToInt32(b) & 0x1f;
+            var left = TypeUtilities.ToInt32((double)leftNumeric);
+            var right = (int)(TypeUtilities.ToUint32((double)rightNumeric) & 0x1f);
             return (double)(left << right);
         }
 
@@ -788,9 +784,12 @@ namespace JavaScriptRuntime
                 return (double)(leftInt >> rightInt);
             }
 
-            if (a is BigInteger leftBigInt)
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     var shiftCount = ToShiftCount(rightBigInt);
                     return shiftCount >= 0
@@ -801,13 +800,13 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var left = TypeUtilities.ToInt32(a);
-            var right = TypeUtilities.ToInt32(b) & 0x1f;
+            var left = TypeUtilities.ToInt32((double)leftNumeric);
+            var right = (int)(TypeUtilities.ToUint32((double)rightNumeric) & 0x1f);
             return (double)(left >> right);
         }
 
@@ -821,18 +820,21 @@ namespace JavaScriptRuntime
                 return (double)(leftUint >> rightInt);
             }
 
-            if (a is BigInteger && b is BigInteger)
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger && rightNumeric is BigInteger)
             {
                 throw new TypeError("BigInts have no unsigned right shift, use >> instead");
             }
 
-            if (a is BigInteger || b is BigInteger)
+            if (leftNumeric is BigInteger || rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var left = unchecked((uint)TypeUtilities.ToInt32(a));
-            var right = TypeUtilities.ToInt32(b) & 0x1f;
+            var left = TypeUtilities.ToUint32((double)leftNumeric);
+            var right = (int)(TypeUtilities.ToUint32((double)rightNumeric) & 0x1f);
             return (double)(left >> right);
         }
 

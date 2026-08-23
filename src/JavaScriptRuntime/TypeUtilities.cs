@@ -64,16 +64,9 @@ namespace JavaScriptRuntime
                     throw new TypeError("Cannot convert a Symbol value to a number");
                 case string str:
                     return ParseStringNumber(str);
-                case JavaScriptRuntime.Boolean booleanObject:
-                    return booleanObject.valueOf() ? 1d : 0d;
                 case JsNull: return 0d; // JS ToNumber(null) => +0 (JsNull represents JS null)
                 case BigInteger:
                     throw new TypeError("Cannot convert a BigInt value to a number");
-            }
-
-            if (JavaScriptRuntime.Number.TryGetWrappedNumberValue(value, out var wrappedNumberValue))
-            {
-                return wrappedNumberValue;
             }
 
             if (TryCoerceObjectToNumber(value, out var coercedNumber))
@@ -114,10 +107,10 @@ namespace JavaScriptRuntime
         /// https://tc39.es/ecma262/#sec-toint32
         /// </summary>
         public static int ToInt32(object? value)
-        {
-            // Step 1: Let number be ? ToNumber(argument).
-            var number = ToNumber(value);
+            => ToInt32(ToNumber(value));
 
+        public static int ToInt32(double number)
+        {
             // Step 2: If number is NaN, +0, -0, +∞, or -∞, return +0.
             if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
             {
@@ -126,8 +119,10 @@ namespace JavaScriptRuntime
 
             // Step 3: Let int be truncate(ℝ(number)).
             // Step 4-5: Let int32bit be int modulo 2^32, then adjust to signed range.
-            // The truncate-then-modulo logic is exactly what unchecked conversion does.
-            return unchecked((int)(long)number);
+            var uint32 = ToUint32(number);
+            return uint32 >= 0x80000000u
+                ? (int)(uint32 - 4294967296.0)
+                : (int)uint32;
         }
 
         /// <summary>
@@ -135,8 +130,10 @@ namespace JavaScriptRuntime
         /// Converts argument to an unsigned 32-bit integer in the range [0, 2^32-1].
         /// </summary>
         public static uint ToUint32(object? value)
+            => ToUint32(ToNumber(value));
+
+        public static uint ToUint32(double number)
         {
-            var number = ToNumber(value);
             if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
             {
                 return 0;
@@ -151,6 +148,37 @@ namespace JavaScriptRuntime
             }
 
             return (uint)uint32bit;
+        }
+
+        public static int ToUint32AsInt32(double number)
+            => unchecked((int)ToUint32(number));
+
+        /// <summary>
+        /// ECMA-262 §7.1.3 ToNumeric ( value ).
+        /// </summary>
+        public static object ToNumeric(object? value)
+        {
+            if (value is BigInteger)
+            {
+                return value;
+            }
+
+            if (value is not null
+                && value is not JsNull
+                && !IsPrimitive(value))
+            {
+                if (!TryCoerceObjectToPrimitive(value, "number", out value))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+
+                if (value is BigInteger)
+                {
+                    return value;
+                }
+            }
+
+            return ToNumber(value);
         }
 
         public static short ToInt16(object? value)

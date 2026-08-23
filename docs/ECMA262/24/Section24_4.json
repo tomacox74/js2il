@@ -133,9 +133,12 @@
           "test/built-ins/WeakSet/prototype/has/has.js",
           "test/built-ins/WeakSet/prototype/has/returns-false-when-object-value-not-present.js",
           "test/built-ins/WeakSet/prototype/has/returns-false-when-value-cannot-be-held-weakly.js",
-          "test/built-ins/WeakSet/prototype/has/this-not-object-throw-undefined.js"
+          "test/built-ins/WeakSet/prototype/has/this-not-object-throw-undefined.js",
+          "test/built-ins/WeakSet/prototype/add/name.js",
+          "test/built-ins/WeakSet/prototype/delete/name.js",
+          "test/built-ins/WeakSet/prototype/has/name.js"
         ],
-        "notes": "Core WeakSet flows work for the object values used in tests. Current checked-in coverage includes has() receiver checks, object-value lookup, and false results for missing or non-weakly-held values. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-value restrictions for every non-null primitive or boxed value."
+        "notes": "Core WeakSet flows work for valid weak values, and the public prototype methods expose their standard JavaScript names. Current coverage includes receiver checks, object-value lookup, and false results for values that cannot be held weakly; broader weak-value and exotic behavior remains limited."
       },
       {
         "clause": "24.4.3.5",

@@ -55,9 +55,29 @@
         "specUrl": "https://tc39.es/ecma262/#sec-bitwise-shift-operators",
         "testScripts": [
           "tests/Jroc.Tests/BinaryOperator/ExecutionTests.cs",
-          "tests/Jroc.Tests/CompoundAssignment/ExecutionTests.cs"
+          "tests/Jroc.Tests/CompoundAssignment/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/left-shift/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/right-shift/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/unsigned-right-shift/ExecutionTests.cs"
         ],
-        "notes": "Left shift, signed right shift, and unsigned right shift are lowered through LIR/native IL paths for numeric operands with runtime dynamic fallback. Coverage includes direct binary operators and compound shift assignments."
+        "notes": "Left shift, signed right shift, and unsigned right shift preserve left-to-right ToNumeric coercion and abrupt completion, reject mixed Number/BigInt operands, apply modulo-based ToInt32/ToUint32 conversion, and use native IL fast paths only when static numeric types make them semantics-preserving. Unsigned right shift remains unavailable for BigInt as required by ECMA-262.",
+        "test262Paths": [
+          "test/language/expressions/unsigned-right-shift/S9.6_A2.1.js",
+          "test/language/expressions/unsigned-right-shift/S9.6_A2.2.js",
+          "test/language/expressions/left-shift/S11.7.1_A5.1_T1.js",
+          "test/language/expressions/left-shift/S9.5_A1_T1.js",
+          "test/language/expressions/left-shift/S9.5_A2.1_T1.js",
+          "test/language/expressions/left-shift/S9.5_A2.2_T1.js",
+          "test/language/expressions/left-shift/S9.5_A2.3_T1.js",
+          "test/language/expressions/right-shift/S11.7.2_A5.1_T1.js",
+          "test/language/expressions/unsigned-right-shift/S11.7.3_A4_T1.js",
+          "test/language/expressions/unsigned-right-shift/S11.7.3_A4_T2.js",
+          "test/language/expressions/unsigned-right-shift/S11.7.3_A4_T3.js",
+          "test/language/expressions/unsigned-right-shift/S11.7.3_A4_T4.js",
+          "test/language/expressions/unsigned-right-shift/S11.7.3_A5.1_T1.js",
+          "test/language/expressions/unsigned-right-shift/S11.7.3_A5.2_T1.js",
+          "test/language/expressions/unsigned-right-shift/S9.6_A1.js"
+        ]
       }
     ]
   }

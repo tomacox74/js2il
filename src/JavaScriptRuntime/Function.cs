@@ -44,6 +44,14 @@ public static class Function
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);
+        PropertyDescriptorStore.DefineOrUpdate(prototype, "length", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = 0d
+        });
         DefinePrototypeMethod(prototype, "apply", (BuiltinFunction2)PrototypeApply, 2);
         DefinePrototypeMethod(prototype, "call", (BuiltinFunctionVariadic)PrototypeCall, 1);
         DefinePrototypeMethod(prototype, "bind", (BuiltinFunctionVariadic)PrototypeBind, 1);
@@ -321,6 +329,26 @@ public static class Function
             if (argArray is object?[] objArr)
             {
                 return objArr;
+            }
+
+            if (argArray is ArgumentsObject)
+            {
+                var lengthValue = ObjectRuntime.GetProperty(argArray, "length");
+                var numericLength = TypeUtilities.ToNumber(lengthValue);
+                var length = double.IsNaN(numericLength) || numericLength <= 0d
+                    ? 0
+                    : (int)global::System.Math.Min(
+                        global::System.Math.Truncate(numericLength),
+                        int.MaxValue);
+                var arguments = new object?[length];
+                for (var index = 0; index < length; index++)
+                {
+                    arguments[index] = ObjectRuntime.GetProperty(
+                        argArray,
+                        index.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                }
+
+                return arguments;
             }
 
             if (argArray is IEnumerable enumerable && argArray is not string)

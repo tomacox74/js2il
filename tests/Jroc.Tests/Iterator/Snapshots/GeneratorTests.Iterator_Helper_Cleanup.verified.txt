@@ -318,16 +318,14 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 145 (0x91)
+					// Code size: 139 (0x8b)
 					.maxstack 8
 					.locals init (
-						[0] float64,
+						[0] object,
 						[1] object,
 						[2] object,
-						[3] object,
-						[4] object,
-						[5] bool,
-						[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+						[3] bool,
+						[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 					)
 
 					IL_0000: ldarg.0
@@ -335,55 +333,57 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
 					IL_0008: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
-					IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0012: ldc.r8 1
-					IL_001b: add
-					IL_001c: stloc.0
-					IL_001d: ldloc.0
-					IL_001e: box [System.Runtime]System.Double
-					IL_0023: stloc.1
-					IL_0024: ldarg.0
-					IL_0025: ldc.i4.2
-					IL_0026: ldelem.ref
-					IL_0027: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
-					IL_002c: ldloc.1
-					IL_002d: stfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
-					IL_0032: ldarg.0
-					IL_0033: ldc.i4.2
-					IL_0034: ldelem.ref
-					IL_0035: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
-					IL_003a: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
-					IL_003f: stloc.2
-					IL_0040: ldarg.0
-					IL_0041: ldc.i4.2
-					IL_0042: ldelem.ref
-					IL_0043: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
-					IL_0048: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
-					IL_004d: stloc.3
-					IL_004e: ldarg.0
-					IL_004f: ldc.i4.1
-					IL_0050: ldelem.ref
-					IL_0051: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
-					IL_0056: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/Scope::limit
-					IL_005b: stloc.s 4
-					IL_005d: ldloc.3
-					IL_005e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0063: ldloc.s 4
-					IL_0065: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_006a: cgt
-					IL_006c: stloc.s 5
-					IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_0073: dup
-					IL_0074: ldstr "value"
-					IL_0079: ldloc.2
-					IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_007f: dup
-					IL_0080: ldstr "done"
-					IL_0085: ldloc.s 5
-					IL_0087: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-					IL_008c: stloc.s 6
-					IL_008e: ldloc.s 6
-					IL_0090: ret
+					IL_000d: stloc.0
+					IL_000e: ldloc.0
+					IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+					IL_0014: stloc.0
+					IL_0015: ldloc.0
+					IL_0016: ldc.i4.1
+					IL_0017: box [System.Runtime]System.Boolean
+					IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+					IL_0021: stloc.0
+					IL_0022: ldarg.0
+					IL_0023: ldc.i4.2
+					IL_0024: ldelem.ref
+					IL_0025: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
+					IL_002a: ldloc.0
+					IL_002b: stfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
+					IL_0030: ldarg.0
+					IL_0031: ldc.i4.2
+					IL_0032: ldelem.ref
+					IL_0033: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
+					IL_0038: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
+					IL_003d: stloc.0
+					IL_003e: ldarg.0
+					IL_003f: ldc.i4.2
+					IL_0040: ldelem.ref
+					IL_0041: castclass Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope
+					IL_0046: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/Scope::'value'
+					IL_004b: stloc.1
+					IL_004c: ldarg.0
+					IL_004d: ldc.i4.1
+					IL_004e: ldelem.ref
+					IL_004f: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
+					IL_0054: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/Scope::limit
+					IL_0059: stloc.2
+					IL_005a: ldloc.1
+					IL_005b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0060: ldloc.2
+					IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0066: cgt
+					IL_0068: stloc.3
+					IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_006e: dup
+					IL_006f: ldstr "value"
+					IL_0074: ldloc.0
+					IL_0075: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_007a: dup
+					IL_007b: ldstr "done"
+					IL_0080: ldloc.3
+					IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+					IL_0086: stloc.s 4
+					IL_0088: ldloc.s 4
+					IL_008a: ret
 				} // end of method FunctionExpression_L13C24::__js_call__
 
 			} // end of class FunctionExpression_L13C24
@@ -503,11 +503,10 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 68 (0x44)
+					// Code size: 66 (0x42)
 					.maxstack 8
 					.locals init (
-						[0] float64,
-						[1] object
+						[0] object
 					)
 
 					IL_0000: ldarg.0
@@ -515,25 +514,27 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
 					IL_0008: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/Scope::closed
-					IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0012: ldc.r8 1
-					IL_001b: add
-					IL_001c: stloc.0
-					IL_001d: ldloc.0
-					IL_001e: box [System.Runtime]System.Double
-					IL_0023: stloc.1
-					IL_0024: ldarg.0
-					IL_0025: ldc.i4.1
-					IL_0026: ldelem.ref
-					IL_0027: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
-					IL_002c: ldloc.1
-					IL_002d: stfld object Modules.Iterator_Helper_Cleanup/makeIterable/Scope::closed
-					IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_0037: dup
-					IL_0038: ldstr "done"
-					IL_003d: ldc.i4.1
-					IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-					IL_0043: ret
+					IL_000d: stloc.0
+					IL_000e: ldloc.0
+					IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+					IL_0014: stloc.0
+					IL_0015: ldloc.0
+					IL_0016: ldc.i4.1
+					IL_0017: box [System.Runtime]System.Boolean
+					IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+					IL_0021: stloc.0
+					IL_0022: ldarg.0
+					IL_0023: ldc.i4.1
+					IL_0024: ldelem.ref
+					IL_0025: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
+					IL_002a: ldloc.0
+					IL_002b: stfld object Modules.Iterator_Helper_Cleanup/makeIterable/Scope::closed
+					IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_0035: dup
+					IL_0036: ldstr "done"
+					IL_003b: ldc.i4.1
+					IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+					IL_0041: ret
 				} // end of method FunctionExpression_L17C26::__js_call__
 
 			} // end of class FunctionExpression_L17C26
@@ -1699,11 +1700,10 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 68 (0x44)
+					// Code size: 66 (0x42)
 					.maxstack 8
 					.locals init (
-						[0] float64,
-						[1] object
+						[0] object
 					)
 
 					IL_0000: ldarg.0
@@ -1711,25 +1711,27 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Iterator_Helper_Cleanup/Scope
 					IL_0008: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatInnerClosed
-					IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0012: ldc.r8 1
-					IL_001b: add
-					IL_001c: stloc.0
-					IL_001d: ldloc.0
-					IL_001e: box [System.Runtime]System.Double
-					IL_0023: stloc.1
-					IL_0024: ldarg.0
-					IL_0025: ldc.i4.0
-					IL_0026: ldelem.ref
-					IL_0027: castclass Modules.Iterator_Helper_Cleanup/Scope
-					IL_002c: ldloc.1
-					IL_002d: stfld object Modules.Iterator_Helper_Cleanup/Scope::flatInnerClosed
-					IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_0037: dup
-					IL_0038: ldstr "done"
-					IL_003d: ldc.i4.1
-					IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-					IL_0043: ret
+					IL_000d: stloc.0
+					IL_000e: ldloc.0
+					IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+					IL_0014: stloc.0
+					IL_0015: ldloc.0
+					IL_0016: ldc.i4.1
+					IL_0017: box [System.Runtime]System.Boolean
+					IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+					IL_0021: stloc.0
+					IL_0022: ldarg.0
+					IL_0023: ldc.i4.0
+					IL_0024: ldelem.ref
+					IL_0025: castclass Modules.Iterator_Helper_Cleanup/Scope
+					IL_002a: ldloc.0
+					IL_002b: stfld object Modules.Iterator_Helper_Cleanup/Scope::flatInnerClosed
+					IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_0035: dup
+					IL_0036: ldstr "done"
+					IL_003b: ldc.i4.1
+					IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+					IL_0041: ret
 				} // end of method FunctionExpression_flatHelper_L72C18::__js_call__
 
 			} // end of class FunctionExpression_flatHelper_L72C18
@@ -2548,11 +2550,10 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 68 (0x44)
+				// Code size: 66 (0x42)
 				.maxstack 8
 				.locals init (
-					[0] float64,
-					[1] object
+					[0] object
 				)
 
 				IL_0000: ldarg.0
@@ -2560,25 +2561,27 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Iterator_Helper_Cleanup/Scope
 				IL_0008: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowOuterClosed
-				IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0012: ldc.r8 1
-				IL_001b: add
-				IL_001c: stloc.0
-				IL_001d: ldloc.0
-				IL_001e: box [System.Runtime]System.Double
-				IL_0023: stloc.1
-				IL_0024: ldarg.0
-				IL_0025: ldc.i4.0
-				IL_0026: ldelem.ref
-				IL_0027: castclass Modules.Iterator_Helper_Cleanup/Scope
-				IL_002c: ldloc.1
-				IL_002d: stfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowOuterClosed
-				IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0037: dup
-				IL_0038: ldstr "done"
-				IL_003d: ldc.i4.1
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_0043: ret
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+				IL_0014: stloc.0
+				IL_0015: ldloc.0
+				IL_0016: ldc.i4.1
+				IL_0017: box [System.Runtime]System.Boolean
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+				IL_0021: stloc.0
+				IL_0022: ldarg.0
+				IL_0023: ldc.i4.0
+				IL_0024: ldelem.ref
+				IL_0025: castclass Modules.Iterator_Helper_Cleanup/Scope
+				IL_002a: ldloc.0
+				IL_002b: stfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowOuterClosed
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "done"
+				IL_003b: ldc.i4.1
+				IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_0041: ret
 			} // end of method FunctionExpression_flatThrowHelper_L107C18::__js_call__
 
 		} // end of class FunctionExpression_flatThrowHelper_L107C18
@@ -3009,11 +3012,10 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 68 (0x44)
+					// Code size: 66 (0x42)
 					.maxstack 8
 					.locals init (
-						[0] float64,
-						[1] object
+						[0] object
 					)
 
 					IL_0000: ldarg.0
@@ -3021,25 +3023,27 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Iterator_Helper_Cleanup/Scope
 					IL_0008: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowInnerClosed
-					IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0012: ldc.r8 1
-					IL_001b: add
-					IL_001c: stloc.0
-					IL_001d: ldloc.0
-					IL_001e: box [System.Runtime]System.Double
-					IL_0023: stloc.1
-					IL_0024: ldarg.0
-					IL_0025: ldc.i4.0
-					IL_0026: ldelem.ref
-					IL_0027: castclass Modules.Iterator_Helper_Cleanup/Scope
-					IL_002c: ldloc.1
-					IL_002d: stfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowInnerClosed
-					IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_0037: dup
-					IL_0038: ldstr "done"
-					IL_003d: ldc.i4.1
-					IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-					IL_0043: ret
+					IL_000d: stloc.0
+					IL_000e: ldloc.0
+					IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+					IL_0014: stloc.0
+					IL_0015: ldloc.0
+					IL_0016: ldc.i4.1
+					IL_0017: box [System.Runtime]System.Boolean
+					IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+					IL_0021: stloc.0
+					IL_0022: ldarg.0
+					IL_0023: ldc.i4.0
+					IL_0024: ldelem.ref
+					IL_0025: castclass Modules.Iterator_Helper_Cleanup/Scope
+					IL_002a: ldloc.0
+					IL_002b: stfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowInnerClosed
+					IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_0035: dup
+					IL_0036: ldstr "done"
+					IL_003b: ldc.i4.1
+					IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+					IL_0041: ret
 				} // end of method FunctionExpression_flatThrowHelper_L119C18::__js_call__
 
 			} // end of class FunctionExpression_flatThrowHelper_L119C18

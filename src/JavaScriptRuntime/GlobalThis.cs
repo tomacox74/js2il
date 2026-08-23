@@ -166,11 +166,8 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
 
-        // Placeholder Array constructor value. JROC uses dedicated codegen paths for `new Array(...)`.
-        // We expose a callable value so libraries can reference `Array` as a global identifier and
-        // access `Array.prototype.*` members.
-        private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
-            throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
+        private static readonly Func<object[], object?[], object?> _arrayConstructorValue =
+            static (_, args) => JavaScriptRuntime.Array.Construct(args ?? System.Array.Empty<object?>());
         private static readonly Func<object?, bool> _arrayIsArrayValue = JavaScriptRuntime.Array.isArray;
         private static readonly BuiltinFunction3 _arrayFromValue = static (_, source, mapFn, thisArg) =>
             JavaScriptRuntime.Array.from(source, mapFn, thisArg);
@@ -386,6 +383,7 @@ namespace JavaScriptRuntime
         private object _promisePrototypeValue => _intrinsics.GlobalPromisePrototype;
         // Static; the receiver is ignored (issue #1895).
         private readonly BuiltinFunction1 _symbolFunctionValue = SymbolCall;
+        private readonly BuiltinFunction0 _symbolPrototypeDescriptionGetterValue = SymbolPrototypeDescription;
         private readonly BuiltinFunction0 _symbolPrototypeToPrimitiveValue = SymbolPrototypeToPrimitive;
 
         // TypedArray intrinsic constructor and prototype
@@ -403,10 +401,12 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunctionVariadic _typedArraySortValue = TypedArrayPrototypeSort;
         private static readonly BuiltinFunctionVariadic _typedArrayToSortedValue = TypedArrayPrototypeToSorted;
         private static readonly BuiltinFunctionVariadic _typedArrayWithValue = TypedArrayPrototypeWith;
+        private static readonly BuiltinFunction1 _typedArrayAtValue = TypedArrayPrototypeAt;
         private static readonly BuiltinFunction0 _typedArrayLengthGetterValue = TypedArrayPrototypeLength;
         private static readonly BuiltinFunction0 _typedArrayBufferGetterValue = TypedArrayPrototypeBuffer;
         private static readonly BuiltinFunction0 _typedArrayByteOffsetGetterValue = TypedArrayPrototypeByteOffset;
         private static readonly BuiltinFunction0 _typedArrayByteLengthGetterValue = TypedArrayPrototypeByteLength;
+        private static readonly BuiltinFunction0 _typedArrayToStringTagGetterValue = TypedArrayPrototypeToStringTag;
         private static readonly BuiltinFunction0 _typedArrayToStringValue = TypedArrayPrototypeToString;
         private static readonly BuiltinFunction0 _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
@@ -667,6 +667,14 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = 0d
             });
+            PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, ObjectRuntime.PrimitiveValuePropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = false
+            });
             PropertyDescriptorStore.DefineOrUpdate(_bigIntPrototypeValue, ObjectRuntime.PrimitiveValuePropertyName, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -832,32 +840,35 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _symbolFunctionValue
             });
-            PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "toString", new JsPropertyDescriptor
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                _symbolPrototypeDescriptionGetterValue,
+                0d,
+                "get description",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(_symbolPrototypeDescriptionGetterValue));
+            DefineUndefinedPrototypeProperty(_symbolPrototypeDescriptionGetterValue);
+            PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "description", new JsPropertyDescriptor
             {
-                Kind = JsPropertyDescriptorKind.Data,
+                Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Writable = true,
-                Value = (BuiltinFunction0)(thisArgument =>
-                {
-                    return TryGetThisSymbolValue(thisArgument, out var symbol)
+                Get = _symbolPrototypeDescriptionGetterValue
+            });
+            DefineBuiltinFunctionProperty(
+                _symbolPrototypeValue,
+                "toString",
+                (BuiltinFunction0)(thisArgument =>
+                    TryGetThisSymbolValue(thisArgument, out var symbol)
                         ? symbol.toString()
-                        : throw new TypeError("Symbol.prototype.toString called on incompatible receiver");
-                })
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "valueOf", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (BuiltinFunction0)(thisArgument =>
-                {
-                    return TryGetThisSymbolValue(thisArgument, out var symbol)
+                        : throw new TypeError("Symbol.prototype.toString called on incompatible receiver")),
+                0d);
+            DefineBuiltinFunctionProperty(
+                _symbolPrototypeValue,
+                "valueOf",
+                (BuiltinFunction0)(thisArgument =>
+                    TryGetThisSymbolValue(thisArgument, out var symbol)
                         ? symbol.valueOf()
-                        : throw new TypeError("Symbol.prototype.valueOf called on incompatible receiver");
-                })
-            });
+                        : throw new TypeError("Symbol.prototype.valueOf called on incompatible receiver")),
+                0d);
             JavaScriptRuntime.Function.InitializeFunctionInstance(
                 _symbolPrototypeToPrimitiveValue,
                 1d,
@@ -997,6 +1008,23 @@ namespace JavaScriptRuntime
             DefineTypedArrayAccessor("buffer", _typedArrayBufferGetterValue);
             DefineTypedArrayAccessor("byteOffset", _typedArrayByteOffsetGetterValue);
             DefineTypedArrayAccessor("byteLength", _typedArrayByteLengthGetterValue);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "at", _typedArrayAtValue, 1d);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                _typedArrayToStringTagGetterValue,
+                0d,
+                "get [Symbol.toStringTag]",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(_typedArrayToStringTagGetterValue));
+            DefineUndefinedPrototypeProperty(_typedArrayToStringTagGetterValue);
+            PropertyDescriptorStore.DefineOrUpdate(
+                _typedArrayPrototypeValue,
+                global::JavaScriptRuntime.Symbol.toStringTag.DebugId,
+                new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Accessor,
+                    Enumerable = false,
+                    Configurable = true,
+                    Get = _typedArrayToStringTagGetterValue
+                });
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "sort", _typedArraySortValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toSorted", _typedArrayToSortedValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "with", _typedArrayWithValue, 2d);
@@ -1038,20 +1066,20 @@ namespace JavaScriptRuntime
         private static object? ErrorPrototypeToString(object? thisArgument)
         {
             var thisVal = thisArgument;
-            if (thisVal is null || thisVal is JsNull)
+            if (TypeUtilities.IsPrimitive(thisVal))
             {
-                throw new TypeError("Error.prototype.toString called on null or undefined");
+                throw new TypeError("Error.prototype.toString called on incompatible receiver");
             }
 
-            var nameValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, "name");
-            var messageValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, "message");
+            var nameValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal!, "name");
+            var messageValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal!, "message");
 
-            var name = (nameValue is null || nameValue is JsNull)
+            var name = nameValue is null
                 ? "Error"
-                : DotNet2JSConversions.ToString(nameValue);
-            var message = (messageValue is null || messageValue is JsNull)
+                : DotNet2JSConversions.ToStringRejectingSymbols(nameValue);
+            var message = messageValue is null
                 ? string.Empty
-                : DotNet2JSConversions.ToString(messageValue);
+                : DotNet2JSConversions.ToStringRejectingSymbols(messageValue);
 
             if (string.IsNullOrEmpty(name)) return message;
             if (string.IsNullOrEmpty(message)) return name;
@@ -1126,6 +1154,16 @@ namespace JavaScriptRuntime
             return typedArray.findLast(arguments.ToArray());
         }
 
+        private static object? TypedArrayPrototypeAt(object? thisArgument, object? index)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.at called on incompatible receiver");
+            }
+
+            return typedArray.at(index);
+        }
+
         private static object? TypedArrayPrototypeSort(object? thisArgument, in JsCallArguments arguments)
         {
             if (thisArgument is not TypedArrayBase typedArray)
@@ -1174,6 +1212,11 @@ namespace JavaScriptRuntime
 
         private static object? TypedArrayPrototypeByteLength(object? thisArgument)
             => GetTypedArrayReceiver(thisArgument, "byteLength").byteLength;
+
+        private static object? TypedArrayPrototypeToStringTag(object? thisArgument)
+            => thisArgument is TypedArrayBase typedArray
+                ? typedArray.TypedArrayNameValue
+                : null;
 
         private static TypedArrayBase GetTypedArrayReceiver(object? thisArgument, string propertyName)
         {
@@ -2358,24 +2401,6 @@ namespace JavaScriptRuntime
             return ServiceProvider!.Resolve<Timers>();
         }
 
-        /// <summary>
-        /// Creates a callable built-in error constructor that applies the shared ECMAScript
-        /// message-argument coercion used by the exposed global error constructor values.
-        /// </summary>
-        private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, JavaScriptRuntime.Error> factory)
-        {
-            return (_, args) =>
-            {
-                string? message = null;
-                if (args != null && args.Length > 0 && args[0] is not null and not JsNull)
-                {
-                    message = DotNet2JSConversions.ToString(args[0]);
-                }
-
-                return factory(message);
-            };
-        }
-
         private static JsFuncNoScopes1 CreateCollectionConstructorValue(string name, Func<object?, object> factory)
         {
             return (newTarget, iterable) =>
@@ -2728,6 +2753,16 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        private static object? SymbolPrototypeDescription(object? thisArgument)
+        {
+            if (!TryGetThisSymbolValue(thisArgument, out var symbol))
+            {
+                throw new TypeError("Symbol.prototype.description called on incompatible receiver");
+            }
+
+            return symbol.Description;
+        }
+
         internal static object ObjectPrototypeValue => RuntimeIntrinsics.Current.ObjectPrototype;
 
         /// <summary>
@@ -2789,17 +2824,18 @@ namespace JavaScriptRuntime
         internal static object URIErrorPrototypeValue => BootstrappedIntrinsics().URIErrorPrototype;
         internal static object AggregateErrorPrototypeValue => BootstrappedIntrinsics().AggregateErrorPrototype;
         internal static object SuppressedErrorPrototypeValue => BootstrappedIntrinsics().SuppressedErrorPrototype;
-        private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)
+        private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<object?, object> factory)
         {
             return (_, args) =>
             {
-                string? message = null;
-                if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
+                var message = args != null && args.Length > 0 ? args[0] : null;
+                var error = factory(message);
+                if (args != null && args.Length > 1)
                 {
-                    message = DotNet2JSConversions.ToString(args[0]);
+                    JavaScriptRuntime.Error.InstallCause(error, args[1]);
                 }
 
-                return factory(message);
+                return error;
             };
         }
 
@@ -2813,8 +2849,8 @@ namespace JavaScriptRuntime
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
-                Configurable = true,
-                Writable = true,
+                Configurable = false,
+                Writable = false,
                 Value = prototypeValue
             });
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor

@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-21T22:59:26Z
+> Last generated (UTC): 2026-08-23T20:02:19Z
 
 JROC supports Symbol callable creation, global registry APIs (Symbol.for/keyFor), well-known symbols, core Symbol.prototype behaviors (description/toString/valueOf), symbol-key reflection on ordinary objects, Array.prototype.concat spreadability hooks, and Object.prototype.toString Symbol.toStringTag lookup. Some broader well-known-symbol protocol integrations remain tracked as limitations.
 
@@ -86,5 +86,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Symbol.prototype core surface | Supported | [`IntrinsicCallables_Symbol_Prototype_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js) |  | Supports description, toString(), and valueOf() behavior for symbol instances. |
+| Symbol.prototype core surface | Supported | [`IntrinsicCallables_Symbol_Prototype_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/description/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/toString/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/valueOf/ExecutionTests.cs` | `test/built-ins/Symbol/prototype/toString/name.js`<br>`test/built-ins/Symbol/prototype/valueOf/name.js`<br>`test/built-ins/Symbol/prototype/description/descriptor.js`<br>`test/built-ins/Symbol/prototype/description/this-val-symbol.js`<br>`test/built-ins/Symbol/prototype/description/this-val-non-symbol.js`<br>`test/built-ins/Symbol/prototype/description/wrapper.js`<br>`test/built-ins/Symbol/prototype/description/is-not-own-property.js` | Supports the Symbol.prototype description accessor, toString(), and valueOf() for primitive symbols and wrappers, including incompatible-receiver TypeErrors, accessor/property descriptors, non-own description behavior, and standard function-name metadata. |
 

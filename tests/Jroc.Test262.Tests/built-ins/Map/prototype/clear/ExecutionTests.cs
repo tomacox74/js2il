@@ -33,4 +33,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task map_data_list_is_preserved()
         => ExecutionTestFromFile("map-data-list-is-preserved");
 
-}
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

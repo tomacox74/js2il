@@ -511,15 +511,6 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            if (canUseLegacyNumericFallback)
-            {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRLeftShift(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
-            }
-
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -542,15 +533,6 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            if (canUseLegacyNumericFallback)
-            {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRRightShift(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
-            }
-
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -569,15 +551,6 @@ public sealed partial class HIRToLIRLowerer
             if (leftIsUnboxedDouble && rightIsUnboxedDouble)
             {
                 _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
-            }
-
-            if (canUseLegacyNumericFallback)
-            {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }

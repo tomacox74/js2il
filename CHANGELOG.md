@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262/docs: port 100 previously failing ES2025
+  compatibility tests covering collection method metadata, Symbol and
+  TypedArray prototype behavior, Array concat/species semantics, Boolean and
+  Error receivers, JSON BigInt handling, numeric shift coercion, update
+  expressions, and computed property keys; implement the shared runtime and
+  lowering fixes required for all 100 cases.
 - compiler/runtime/hosting/docs: implement Phase 3 rich generated export
   facades for #1917 and issues #1938, #1939, #1940, #1941, and #1942.
   Generated public contracts now avoid runtime types in bases, generic

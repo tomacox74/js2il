@@ -155,13 +155,15 @@ internal sealed partial class LIRToILCompiler
 
             case LIRNewBuiltInError newError:
                 {
-                    if (!IsMaterialized(newError.Result, allocation))
-                    {
-                        return true;
-                    }
-
                     EmitNewBuiltInError(newError, ilEncoder, allocation, methodDescriptor);
-                    EmitStoreTemp(newError.Result, ilEncoder, allocation);
+                    if (IsMaterialized(newError.Result, allocation))
+                    {
+                        EmitStoreTemp(newError.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     return true;
                 }
 

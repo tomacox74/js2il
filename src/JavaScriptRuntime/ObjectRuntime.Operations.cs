@@ -2097,6 +2097,7 @@ namespace JavaScriptRuntime
             if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
             if (thisVal is GeneratorObject) return "[object Generator]";
             if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
+            if (thisVal is JavaScriptRuntime.Error) return "[object Error]";
 
             return "[object Object]";
         }
@@ -3336,6 +3337,11 @@ namespace JavaScriptRuntime
                 return dictGeneric.ContainsKey(name);
             }
 
+            if (target is JavaScriptRuntime.Symbol)
+            {
+                return false;
+            }
+
             if (target is System.Collections.IDictionary dictObj)
             {
                 if (dictObj.Contains(name)) return true;
@@ -4197,6 +4203,12 @@ namespace JavaScriptRuntime
                     return true;
                 }
 
+                value = null;
+                return false;
+            }
+
+            if (target is JavaScriptRuntime.Symbol)
+            {
                 value = null;
                 return false;
             }

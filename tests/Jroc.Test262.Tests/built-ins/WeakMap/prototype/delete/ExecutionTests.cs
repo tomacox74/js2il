@@ -8,5 +8,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "delete-entry-with-object-key")]
     public Task delete_entry_with_object_key()
-        => ExecutionTestFromFile("delete-entry-with-object-key");
-}
+        => ExecutionTestFromFile("delete-entry-with-object-key");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

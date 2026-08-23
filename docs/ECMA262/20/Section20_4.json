@@ -257,9 +257,21 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-symbol-prototype-object",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/description/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/toString/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/valueOf/ExecutionTests.cs"
         ],
-        "notes": "Supports description, toString(), and valueOf() behavior for symbol instances."
+        "notes": "Supports the Symbol.prototype description accessor, toString(), and valueOf() for primitive symbols and wrappers, including incompatible-receiver TypeErrors, accessor/property descriptors, non-own description behavior, and standard function-name metadata.",
+        "test262Paths": [
+          "test/built-ins/Symbol/prototype/toString/name.js",
+          "test/built-ins/Symbol/prototype/valueOf/name.js",
+          "test/built-ins/Symbol/prototype/description/descriptor.js",
+          "test/built-ins/Symbol/prototype/description/this-val-symbol.js",
+          "test/built-ins/Symbol/prototype/description/this-val-non-symbol.js",
+          "test/built-ins/Symbol/prototype/description/wrapper.js",
+          "test/built-ins/Symbol/prototype/description/is-not-own-property.js"
+        ]
       }
     ]
   }
