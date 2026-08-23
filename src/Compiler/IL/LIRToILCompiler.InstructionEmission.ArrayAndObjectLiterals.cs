@@ -1,6 +1,7 @@
 using Jroc.IR;
 using Jroc.Services.ILGenerators;
 using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
@@ -100,8 +101,13 @@ internal sealed partial class LIRToILCompiler
 
             case LIRGetInferredMember getInferredMember:
                 {
-                    // The generated getter is pure; skip entirely when the result is unused.
-                    if (!IsMaterialized(getInferredMember.Result, allocation))
+                    var resultMaterialized = IsMaterialized(
+                        getInferredMember.Result,
+                        allocation);
+                    // Object-literal getters are pure. Constructor-shape getters can
+                    // fall back to dynamic lookup after mutation and must still run.
+                    if (!resultMaterialized
+                        && getInferredMember.Shape is not ConstructorShapeInfo)
                     {
                         return true;
                     }
@@ -118,7 +124,86 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(metadata.TypeHandle);
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(getterHandle);
-                    EmitStoreTemp(getInferredMember.Result, ilEncoder, allocation);
+                    if (resultMaterialized)
+                    {
+                        EmitStoreTemp(
+                            getInferredMember.Result,
+                            ilEncoder,
+                            allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    return true;
+                }
+
+            case LIRGetGuardedInferredMember guarded:
+                {
+                    var resultMaterialized = IsMaterialized(
+                        guarded.Result,
+                        allocation);
+
+                    var metadata = GetObjectLiteralTypeMetadata(guarded.Shape);
+                    if (!metadata.GetterHandlesByMemberName.TryGetValue(
+                            guarded.MemberName,
+                            out var getterHandle))
+                    {
+                        throw new InvalidOperationException(
+                            $"Missing generated constructor-shape getter metadata for member '{guarded.MemberName}'.");
+                    }
+
+                    var fallback = ilEncoder.DefineLabel();
+                    var done = ilEncoder.DefineLabel();
+                    EmitLoadTempAsObject(
+                        guarded.Receiver,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(metadata.TypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.Branch(ILOpCode.Brfalse, fallback);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getterHandle);
+                    if (resultMaterialized)
+                    {
+                        EmitStoreTemp(
+                            guarded.Result,
+                            ilEncoder,
+                            allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    ilEncoder.Branch(ILOpCode.Br, done);
+
+                    ilEncoder.MarkLabel(fallback);
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                    EmitLoadTempAsObject(
+                        guarded.Receiver,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, guarded.MemberName);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                        new[] { typeof(object), typeof(string) }));
+                    if (resultMaterialized)
+                    {
+                        EmitStoreTemp(
+                            guarded.Result,
+                            ilEncoder,
+                            allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    ilEncoder.MarkLabel(done);
                     return true;
                 }
 
@@ -142,6 +227,94 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsClrType(setInferredMember.Value, memberClrType, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(setterHandle);
+                    return true;
+                }
+
+            case LIRSetGuardedInferredMember guarded:
+                {
+                    var metadata = GetObjectLiteralTypeMetadata(
+                        guarded.Shape);
+                    if (!metadata.SetterHandlesByMemberName.TryGetValue(
+                            guarded.MemberName,
+                            out var setterHandle))
+                    {
+                        throw new InvalidOperationException(
+                            $"Missing generated constructor-shape setter metadata for member '{guarded.MemberName}'.");
+                    }
+
+                    var fallback = ilEncoder.DefineLabel();
+                    var done = ilEncoder.DefineLabel();
+                    EmitLoadTempAsObject(
+                        guarded.Receiver,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(metadata.TypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.Branch(ILOpCode.Brfalse, fallback);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Function),
+                        nameof(JavaScriptRuntime.Function
+                            .IsCurrentGeneratedConstructionReceiver),
+                        new[] { typeof(object) }));
+                    ilEncoder.Branch(ILOpCode.Brfalse, fallback);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.Ldstr(
+                        _metadataBuilder,
+                        guarded.MemberName);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime
+                            .CanUseSpecializedDataPropertySetter),
+                        new[]
+                        {
+                            typeof(object),
+                            typeof(string)
+                        }));
+                    ilEncoder.Branch(ILOpCode.Brfalse, fallback);
+                    EmitLoadTempAsObject(
+                        guarded.Value,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(setterHandle);
+                    ilEncoder.Branch(ILOpCode.Br, done);
+
+                    ilEncoder.MarkLabel(fallback);
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                    EmitLoadTempAsObject(
+                        guarded.Receiver,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.Ldstr(
+                        _metadataBuilder,
+                        guarded.MemberName);
+                    EmitLoadTempAsObject(
+                        guarded.Value,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.LoadConstantI4(
+                        guarded.Strict ? 1 : 0);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                        new[]
+                        {
+                            typeof(object),
+                            typeof(string),
+                            typeof(object),
+                            typeof(bool)
+                        }));
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                    ilEncoder.MarkLabel(done);
                     return true;
                 }
 
@@ -283,7 +456,7 @@ internal sealed partial class LIRToILCompiler
             }
         }
     }
-    private Jroc.Services.VariableBindings.ObjectLiteralTypeMetadata GetObjectLiteralTypeMetadata(Jroc.SymbolTables.ObjectLiteralShapeInfo shape)
+    private Jroc.Services.VariableBindings.ObjectLiteralTypeMetadata GetObjectLiteralTypeMetadata(Jroc.SymbolTables.InferredObjectShapeInfo shape)
     {
         if (!_variableRegistry.TryGetObjectLiteralType(shape, out var metadata))
         {

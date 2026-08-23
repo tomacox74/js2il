@@ -148,7 +148,7 @@ public record LIRNewJsObject(IReadOnlyList<ObjectProperty> Properties, TempVaria
 /// IL emitter: newobj generated::.ctor(), then for each property stfld + JsObject mirror setter.
 /// </summary>
 public record LIRNewInferredJsObject(
-    ObjectLiteralShapeInfo Shape,
+    InferredObjectShapeInfo Shape,
     IReadOnlyList<InferredObjectProperty> Properties,
     TempVariable Result) : LIRInstruction;
 
@@ -158,7 +158,7 @@ public record LIRNewInferredJsObject(
 /// The result carries the member's stable CLR type (unboxed double/bool, string, or object).
 /// </summary>
 public record LIRGetInferredMember(
-    ObjectLiteralShapeInfo Shape,
+    InferredObjectShapeInfo Shape,
     string MemberName,
     TempVariable Receiver,
     TempVariable Result) : LIRInstruction;
@@ -170,7 +170,30 @@ public record LIRGetInferredMember(
 /// mirrors the value into JsObject storage, keeping dynamic views in sync.
 /// </summary>
 public record LIRSetInferredMember(
-    ObjectLiteralShapeInfo Shape,
+    InferredObjectShapeInfo Shape,
     string MemberName,
     TempVariable Receiver,
     TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Runtime-guarded constructor-body write. Ordinary calls to a constructor
+/// function can supply a non-specialized receiver, so the miss path preserves
+/// normal JavaScript assignment semantics.
+/// </summary>
+public record LIRSetGuardedInferredMember(
+    ConstructorShapeInfo Shape,
+    string MemberName,
+    TempVariable Receiver,
+    TempVariable Value,
+    bool Strict) : LIRInstruction;
+
+/// <summary>
+/// Runtime-guarded read of a member declared by a generated constructor layout.
+/// The specialized getter is used when the receiver has the generated CLR type;
+/// otherwise emission falls back to ordinary dynamic property lookup.
+/// </summary>
+public record LIRGetGuardedInferredMember(
+    ConstructorShapeInfo Shape,
+    string MemberName,
+    TempVariable Receiver,
+    TempVariable Result) : LIRInstruction;

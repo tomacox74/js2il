@@ -91,6 +91,74 @@ public sealed class LIRInstructionInfoTests
     }
 
     [Fact]
+    public void ConstructorInferredReads_KeepInstanceSensitiveCallEffects()
+    {
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript(
+            "const literal = {}; function C(value) { this.value = value; }",
+            "inferred-effects.js");
+        var literalDeclaration = Assert.IsType<VariableDeclaration>(
+            program.Body[0]);
+        var literalDeclarator = Assert.Single(literalDeclaration.Declarations);
+        var literal = Assert.IsType<ObjectExpression>(literalDeclarator.Init);
+        var constructor = Assert.IsType<FunctionDeclaration>(program.Body[1]);
+        var globalScope = new Scope(
+            "global",
+            ScopeKind.Global,
+            parent: null,
+            program);
+        var literalBinding = new BindingInfo(
+            "literal",
+            BindingKind.Const,
+            globalScope,
+            literalDeclarator);
+        var constructorBinding = new BindingInfo(
+            "C",
+            BindingKind.Function,
+            globalScope,
+            constructor);
+        var constructorScope = new Scope(
+            "C",
+            ScopeKind.Function,
+            globalScope,
+            constructor);
+        var literalShape = new ObjectLiteralShapeInfo(
+            literal,
+            literalBinding,
+            []);
+        var constructorShape = new ConstructorShapeInfo(
+            constructor,
+            constructorScope,
+            constructorBinding,
+            []);
+
+        var literalMetadata = LIRInstructionInfo.GetMetadata(
+            new LIRGetInferredMember(
+                literalShape,
+                "value",
+                new TempVariable(0),
+                new TempVariable(1)));
+        var constructorMetadata = LIRInstructionInfo.GetMetadata(
+            new LIRGetInferredMember(
+                constructorShape,
+                "value",
+                new TempVariable(0),
+                new TempVariable(1)));
+
+        AssertEffects(
+            literalMetadata,
+            LIRInstructionEffects.ReadsHeap
+                | LIRInstructionEffects.MayThrow);
+        AssertEffects(
+            constructorMetadata,
+            LIRInstructionEffects.EmitsInternalControlFlow
+                | LIRInstructionEffects.Calls
+                | LIRInstructionEffects.MayThrow
+                | LIRInstructionEffects.ReadsHeap
+                | LIRInstructionEffects.WritesHeap);
+    }
+
+    [Fact]
     public void TdzCheckedScopeLoad_IsMayThrowAndOrderingSensitive()
     {
         var parser = new JavaScriptParser();

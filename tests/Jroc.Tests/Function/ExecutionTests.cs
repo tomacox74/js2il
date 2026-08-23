@@ -336,5 +336,17 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Function_ExplicitReceiverAbi() { var testName = nameof(Function_ExplicitReceiverAbi); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_GraphNode() { var testName = nameof(Function_ConstructorShape_GraphNode); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_GuardedParameterRead() { var testName = nameof(Function_ConstructorShape_GuardedParameterRead); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_MutationFallback() { var testName = nameof(Function_ConstructorShape_MutationFallback); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_PrototypeSetSemantics() { var testName = nameof(Function_ConstructorShape_PrototypeSetSemantics); return ExecutionTest(testName); }
     }
 }

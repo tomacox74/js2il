@@ -40,6 +40,57 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (TryGetDirectConstructorMember(
+                propAccessExpr.Object,
+                propAccessExpr.PropertyName,
+                out var directConstructorShape,
+                out var directConstructorMember))
+        {
+            if (!TryLowerExpression(
+                    propAccessExpr.Object,
+                    out var directReceiver))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRGetInferredMember(
+                directConstructorShape,
+                directConstructorMember.Name,
+                EnsureObject(directReceiver),
+                resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                GetInferredMemberStorage(directConstructorMember));
+            return true;
+        }
+
+        if (TryGetGuardedConstructorMember(
+                propAccessExpr.Object,
+                propAccessExpr.PropertyName,
+                out var guardedConstructorShape,
+                out var guardedConstructorMember))
+        {
+            if (!TryLowerExpression(
+                    propAccessExpr.Object,
+                    out var guardedReceiver))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(
+                new LIRGetGuardedInferredMember(
+                    guardedConstructorShape,
+                    guardedConstructorMember.Name,
+                    EnsureObject(guardedReceiver),
+                    resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(object)));
+            return true;
+        }
+
         // Intrinsic object property read: support well-known Symbol properties (e.g., Symbol.iterator).
         // We lower this as a static intrinsic call so `Symbol` does not need to be representable
         // as a normal runtime value.
@@ -884,6 +935,94 @@ public sealed partial class HIRToLIRLowerer
         return clrType == typeof(double) || clrType == typeof(bool)
             ? new ValueStorage(ValueStorageKind.UnboxedValue, clrType)
             : new ValueStorage(ValueStorageKind.Reference, clrType);
+    }
+
+    private bool TryGetDirectConstructorMember(
+        HIRExpression objectExpression,
+        string propertyName,
+        out ConstructorShapeInfo shape,
+        out ObjectLiteralMemberInfo member)
+    {
+        shape = null!;
+        member = null!;
+        ConstructorShapeInfo? candidate = objectExpression switch
+        {
+            HIRVariableExpression variable
+                when variable.Name.BindingInfo.Kind is
+                    BindingKind.Const or BindingKind.Let =>
+                variable.Name.BindingInfo.ConstructedShape,
+            _ => null
+        };
+        if (candidate is not { IsEligible: true }
+            || candidate.GeneratedClrTypeHandle.IsNil
+            || !candidate.TryGetMember(propertyName, out member))
+        {
+            return false;
+        }
+
+        shape = candidate;
+        return true;
+    }
+
+    private bool TryGetGuardedConstructorMember(
+        HIRExpression objectExpression,
+        string propertyName,
+        out ConstructorShapeInfo shape,
+        out ObjectLiteralMemberInfo member)
+    {
+        shape = null!;
+        member = null!;
+        var candidates = new HashSet<ConstructorShapeInfo>(
+            ReferenceEqualityComparer.Instance);
+
+        if (objectExpression is HIRThisExpression
+            && _scope?.ConstructorShape is { } thisShape)
+        {
+            candidates.Add(thisShape);
+        }
+        else if (objectExpression is HIRVariableExpression variable)
+        {
+            foreach (var candidate in variable.Name.BindingInfo
+                         .ConstructorShapeCandidates)
+            {
+                candidates.Add(candidate);
+            }
+        }
+
+        if (_scope != null)
+        {
+            foreach (var binding in _scope.Bindings.Values)
+            {
+                if (!_scope.Parameters.Contains(binding.Name))
+                {
+                    continue;
+                }
+
+                foreach (var candidate in binding
+                             .ConstructorShapeCandidates)
+                {
+                    if (candidate.TryGetMember(propertyName, out _))
+                    {
+                        candidates.Add(candidate);
+                    }
+                }
+            }
+        }
+
+        var matching = candidates
+            .Where(candidate =>
+                candidate.IsEligible
+                && !candidate.GeneratedClrTypeHandle.IsNil
+                && candidate.TryGetMember(propertyName, out _))
+            .ToArray();
+        if (matching.Length != 1
+            || !matching[0].TryGetMember(propertyName, out member))
+        {
+            return false;
+        }
+
+        shape = matching[0];
+        return true;
     }
 
     /// <summary>

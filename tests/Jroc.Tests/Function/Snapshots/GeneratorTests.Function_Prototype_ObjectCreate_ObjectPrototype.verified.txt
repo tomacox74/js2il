@@ -221,7 +221,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 56 (0x38)
+			// Code size: 178 (0xb2)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -230,23 +230,67 @@
 			IL_0000: ldarg.1
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_000b: ldstr "type"
-			IL_0010: ldarg.2
-			IL_0011: ldc.i4.1
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0017: pop
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Date::now()
-			IL_001d: stloc.0
-			IL_001e: ldarg.1
-			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0029: ldstr "timeStamp"
-			IL_002e: ldloc.0
-			IL_002f: ldc.i4.1
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0035: pop
-			IL_0036: ldnull
-			IL_0037: ret
+			IL_000b: isinst Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent
+			IL_0010: dup
+			IL_0011: brfalse IL_003c
+
+			IL_0016: dup
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
+			IL_001c: brfalse IL_003c
+
+			IL_0021: dup
+			IL_0022: ldstr "type"
+			IL_0027: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
+			IL_002c: brfalse IL_003c
+
+			IL_0031: ldarg.2
+			IL_0032: callvirt instance void Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::set_type(object)
+			IL_0037: br IL_0055
+
+			IL_003c: pop
+			IL_003d: ldarg.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0048: ldstr "type"
+			IL_004d: ldarg.2
+			IL_004e: ldc.i4.1
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0054: pop
+
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Date::now()
+			IL_005a: stloc.0
+			IL_005b: ldarg.1
+			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0066: isinst Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent
+			IL_006b: dup
+			IL_006c: brfalse IL_0097
+
+			IL_0071: dup
+			IL_0072: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
+			IL_0077: brfalse IL_0097
+
+			IL_007c: dup
+			IL_007d: ldstr "timeStamp"
+			IL_0082: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
+			IL_0087: brfalse IL_0097
+
+			IL_008c: ldloc.0
+			IL_008d: callvirt instance void Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::set_timeStamp(object)
+			IL_0092: br IL_00b0
+
+			IL_0097: pop
+			IL_0098: ldarg.1
+			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_00a3: ldstr "timeStamp"
+			IL_00a8: ldloc.0
+			IL_00a9: ldc.i4.1
+			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_00af: pop
+
+			IL_00b0: ldnull
+			IL_00b1: ret
 		} // end of method MyEvent::__js_call__
 
 	} // end of class MyEvent
@@ -401,7 +445,7 @@
 			IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_000d: stloc.2
 			IL_000e: volatile.
-			IL_0010: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0010: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
 			IL_0015: brfalse IL_0033
 
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
@@ -414,7 +458,7 @@
 			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_003d: ldstr "type"
 			IL_0042: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:<TwoPhaseDummy_M5>:__js_call__:7"
-			IL_0047: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0047: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
 			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0051: stloc.1
@@ -454,6 +498,121 @@
 
 	} // end of class Scope
 
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Ctor_L3C1_MyEvent
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private object _type
+			.field private object _timeStamp
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method Ctor_L3C1_MyEvent::.ctor
+
+			.method public hidebysig 
+				instance object get_type () cil managed 
+			{
+				// Header size: 1
+				// Code size: 41 (0x29)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldstr "type"
+				IL_0006: ldarg.0
+				IL_0007: ldfld object Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::_type
+				IL_000c: call instance bool [JavaScriptRuntime]JavaScriptRuntime.JsObject::IsSpecializedDataPropertyCurrent(string, object)
+				IL_0011: brfalse IL_001d
+
+				IL_0016: ldarg.0
+				IL_0017: ldfld object Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::_type
+				IL_001c: ret
+
+				IL_001d: ldarg.0
+				IL_001e: ldstr "type"
+				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0028: ret
+			} // end of method Ctor_L3C1_MyEvent::get_type
+
+			.method public hidebysig 
+				instance void set_type (
+					object ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::_type
+				IL_0007: ldarg.0
+				IL_0008: ldstr "type"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method Ctor_L3C1_MyEvent::set_type
+
+			.method public hidebysig 
+				instance object get_timeStamp () cil managed 
+			{
+				// Header size: 1
+				// Code size: 41 (0x29)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldstr "timeStamp"
+				IL_0006: ldarg.0
+				IL_0007: ldfld object Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::_timeStamp
+				IL_000c: call instance bool [JavaScriptRuntime]JavaScriptRuntime.JsObject::IsSpecializedDataPropertyCurrent(string, object)
+				IL_0011: brfalse IL_001d
+
+				IL_0016: ldarg.0
+				IL_0017: ldfld object Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::_timeStamp
+				IL_001c: ret
+
+				IL_001d: ldarg.0
+				IL_001e: ldstr "timeStamp"
+				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0028: ret
+			} // end of method Ctor_L3C1_MyEvent::get_timeStamp
+
+			.method public hidebysig 
+				instance void set_timeStamp (
+					object ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::_timeStamp
+				IL_0007: ldarg.0
+				IL_0008: ldstr "timeStamp"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method Ctor_L3C1_MyEvent::set_timeStamp
+
+		} // end of class Ctor_L3C1_MyEvent
+
+
+	} // end of class ObjectLiterals
+
 
 	// Methods
 	.method public hidebysig static 
@@ -466,16 +625,17 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 264 (0x108)
+		// Code size: 273 (0x111)
 		.maxstack 12
 		.locals init (
 			[0] class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/Scope,
 			[1] class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/MyEvent/FunctionObject,
-			[2] object,
+			[2] class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent,
 			[3] object[],
 			[4] object,
 			[5] class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/dumpToConsole/FunctionObject,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[7] class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent
 		)
 
 		IL_0000: newobj instance void Modules.Function_Prototype_ObjectCreate_ObjectPrototype/Scope::.ctor()
@@ -500,7 +660,7 @@
 		IL_0027: ldstr "Object"
 		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0031: volatile.
-		IL_0033: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0033: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
 		IL_0038: brfalse IL_004c
 
 		IL_003d: ldstr "prototype"
@@ -509,7 +669,7 @@
 
 		IL_004c: ldstr "prototype"
 		IL_0051: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:Modules.Function_Prototype_ObjectCreate_ObjectPrototype:__js_module_init__:11"
-		IL_0056: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0056: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
 		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_0060: stloc.s 4
@@ -550,28 +710,31 @@
 		IL_00bd: ldc.i4.1
 		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_00c3: pop
-		IL_00c4: ldloc.1
-		IL_00c5: dup
-		IL_00c6: ldstr "click"
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
-		IL_00d0: stloc.2
-		IL_00d1: ldloc.2
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d7: volatile.
-		IL_00d9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_00de: brfalse IL_00f2
+		IL_00c4: newobj instance void Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent::.ctor()
+		IL_00c9: stloc.s 7
+		IL_00cb: ldloc.1
+		IL_00cc: ldloc.s 7
+		IL_00ce: ldloc.1
+		IL_00cf: ldstr "click"
+		IL_00d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionWithReceiver1<class Modules.Function_Prototype_ObjectCreate_ObjectPrototype/ObjectLiterals/Ctor_L3C1_MyEvent>(object, object, object, object)
+		IL_00d9: stloc.2
+		IL_00da: ldloc.2
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e0: volatile.
+		IL_00e2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00e7: brfalse IL_00fb
 
-		IL_00e3: ldstr "dumpToConsole"
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00ed: br IL_0106
+		IL_00ec: ldstr "dumpToConsole"
+		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00f6: br IL_010f
 
-		IL_00f2: ldstr "dumpToConsole"
-		IL_00f7: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:Modules.Function_Prototype_ObjectCreate_ObjectPrototype:__js_module_init__:25"
-		IL_00fc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_00fb: ldstr "dumpToConsole"
+		IL_0100: ldstr "Function_Prototype_ObjectCreate_ObjectPrototype:Modules.Function_Prototype_ObjectCreate_ObjectPrototype:__js_module_init__:26"
+		IL_0105: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0106: pop
-		IL_0107: ret
+		IL_010f: pop
+		IL_0110: ret
 	} // end of method Function_Prototype_ObjectCreate_ObjectPrototype::__js_module_init__
 
 } // end of class Modules.Function_Prototype_ObjectCreate_ObjectPrototype
@@ -601,9 +764,9 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field assembly static int32 __jroc_dynamicLookup_3
-	.field assembly static int32 __jroc_dynamicLookup_4
 	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

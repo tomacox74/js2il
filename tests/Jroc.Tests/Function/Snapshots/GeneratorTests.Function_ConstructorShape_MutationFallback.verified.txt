@@ -1,0 +1,1055 @@
+﻿// IL code: Function_ConstructorShape_MutationFallback
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi abstract sealed beforefieldinit Function_ConstructorShape_MutationFallback
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit Scripts
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit Function_ConstructorShape_MutationFallback
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig static 
+				void Run (
+					string[] args
+				) cil managed 
+			{
+				.param [1]
+					.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+						01 00 00 00
+					)
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldftn void Modules.Function_ConstructorShape_MutationFallback::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_000c: ldstr "Function_ConstructorShape_MutationFallback"
+				IL_0011: ldarg.0
+				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+				IL_0017: ret
+			} // end of method Function_ConstructorShape_MutationFallback::Run
+
+		} // end of class Function_ConstructorShape_MutationFallback
+
+
+	} // end of class Scripts
+
+
+	// Methods
+	.method public hidebysig static 
+		void Run (
+			string[] args
+		) cil managed 
+	{
+		.param [1]
+			.custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+				01 00 00 00
+			)
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Modules.Function_ConstructorShape_MutationFallback::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_000c: ldstr "Function_ConstructorShape_MutationFallback"
+		IL_0011: ldarg.0
+		IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
+		IL_0017: ret
+	} // end of method Function_ConstructorShape_MutationFallback::Run
+
+} // end of class Function_ConstructorShape_MutationFallback
+
+.class private auto ansi beforefieldinit Modules.Function_ConstructorShape_MutationFallback
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit GraphNode
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 15 (0xf)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.1
+				IL_0008: ldc.i4.1
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 29 (0x1d)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldc.i4.1
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldnull
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: call object Modules.Function_ConstructorShape_MutationFallback/GraphNode::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001c: ret
+			} // end of method FunctionObject::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 29 (0x1d)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldc.i4.1
+				IL_0002: ldarg.1
+				IL_0003: ldarg.2
+				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0009: ldarg.0
+				IL_000a: ldarg.3
+				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+				IL_0010: ldarg.2
+				IL_0011: ldc.i4.0
+				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0017: call object Modules.Function_ConstructorShape_MutationFallback/GraphNode::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+				IL_001c: ret
+			} // end of method FunctionObject::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject::ConstructCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
+				object pos
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 12
+			// Code size: 87 (0x57)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_000b: isinst Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode
+			IL_0010: dup
+			IL_0011: brfalse IL_003c
+
+			IL_0016: dup
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
+			IL_001c: brfalse IL_003c
+
+			IL_0021: dup
+			IL_0022: ldstr "pos"
+			IL_0027: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
+			IL_002c: brfalse IL_003c
+
+			IL_0031: ldarg.2
+			IL_0032: callvirt instance void Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::set_pos(object)
+			IL_0037: br IL_0055
+
+			IL_003c: pop
+			IL_003d: ldarg.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0048: ldstr "pos"
+			IL_004d: ldarg.2
+			IL_004e: ldc.i4.0
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0054: pop
+
+			IL_0055: ldnull
+			IL_0056: ret
+		} // end of method GraphNode::__js_call__
+
+	} // end of class GraphNode
+
+	.class nested public auto ansi abstract sealed beforefieldinit readPos
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject::ConstructCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object obj
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 12
+			// Code size: 38 (0x26)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: isinst Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode
+			IL_0006: dup
+			IL_0007: brfalse IL_0017
+
+			IL_000c: callvirt instance object Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::get_pos()
+			IL_0011: stloc.0
+			IL_0012: br IL_0024
+
+			IL_0017: pop
+			IL_0018: ldarg.1
+			IL_0019: ldstr "pos"
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0023: stloc.0
+
+			IL_0024: ldloc.0
+			IL_0025: ret
+		} // end of method readPos::__js_call__
+
+	} // end of class readPos
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L22C9
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_ConstructorShape_MutationFallback/Scope _environment0_Function_ConstructorShape_MutationFallback
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_ConstructorShape_MutationFallback/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_ConstructorShape_MutationFallback/Scope Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject::_environment0_Function_ConstructorShape_MutationFallback
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_ConstructorShape_MutationFallback/Scope Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject::_environment0_Function_ConstructorShape_MutationFallback
+				IL_0006: ldnull
+				IL_0007: call object Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9::__js_call__(class Modules.Function_ConstructorShape_MutationFallback/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_ConstructorShape_MutationFallback/Scope Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject::_environment0_Function_ConstructorShape_MutationFallback
+				IL_0006: ldarg.3
+				IL_0007: call object Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9::__js_call__(class Modules.Function_ConstructorShape_MutationFallback/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject::ConstructCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_ConstructorShape_MutationFallback/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 09 00 00 02
+			)
+			// Header size: 12
+			// Code size: 42 (0x2a)
+			.maxstack 8
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Function_ConstructorShape_MutationFallback/Scope::getterCalls
+			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000b: ldc.r8 1
+			IL_0014: add
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: box [System.Runtime]System.Double
+			IL_001c: stloc.1
+			IL_001d: ldarg.0
+			IL_001e: ldloc.1
+			IL_001f: stfld object Modules.Function_ConstructorShape_MutationFallback/Scope::getterCalls
+			IL_0024: ldstr "accessor"
+			IL_0029: ret
+		} // end of method FunctionExpression_L22C9::__js_call__
+
+	} // end of class FunctionExpression_L22C9
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 49 53 63 6f 70 65 20 47 72 61 70 68 4e 6f
+			64 65 3d 7b 47 72 61 70 68 4e 6f 64 65 7d 2c 20
+			72 65 61 64 50 6f 73 3d 7b 72 65 61 64 50 6f 73
+			7d 2c 20 67 65 74 74 65 72 43 61 6c 6c 73 3d 7b
+			67 65 74 74 65 72 43 61 6c 6c 73 7d 00 00
+		)
+		// Fields
+		.field public object GraphNode
+		.field public object readPos
+		.field public object getterCalls
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Ctor_L1C1_GraphNode
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private object _pos
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method Ctor_L1C1_GraphNode::.ctor
+
+			.method public hidebysig 
+				instance object get_pos () cil managed 
+			{
+				// Header size: 1
+				// Code size: 41 (0x29)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldstr "pos"
+				IL_0006: ldarg.0
+				IL_0007: ldfld object Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::_pos
+				IL_000c: call instance bool [JavaScriptRuntime]JavaScriptRuntime.JsObject::IsSpecializedDataPropertyCurrent(string, object)
+				IL_0011: brfalse IL_001d
+
+				IL_0016: ldarg.0
+				IL_0017: ldfld object Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::_pos
+				IL_001c: ret
+
+				IL_001d: ldarg.0
+				IL_001e: ldstr "pos"
+				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0028: ret
+			} // end of method Ctor_L1C1_GraphNode::get_pos
+
+			.method public hidebysig 
+				instance void set_pos (
+					object ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::_pos
+				IL_0007: ldarg.0
+				IL_0008: ldstr "pos"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method Ctor_L1C1_GraphNode::set_pos
+
+		} // end of class Ctor_L1C1_GraphNode
+
+
+	} // end of class ObjectLiterals
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Header size: 12
+		// Code size: 758 (0x2f6)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_ConstructorShape_MutationFallback/Scope,
+			[1] class Modules.Function_ConstructorShape_MutationFallback/GraphNode/FunctionObject,
+			[2] class Modules.Function_ConstructorShape_MutationFallback/readPos/FunctionObject,
+			[3] class Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode,
+			[4] object[],
+			[5] class Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[7] object,
+			[8] bool,
+			[9] class Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[11] object
+		)
+
+		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
+		IL_0005: newobj instance void Modules.Function_ConstructorShape_MutationFallback/Scope::.ctor()
+		IL_000a: stloc.0
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: dup
+		IL_0012: ldc.i4.0
+		IL_0013: ldloc.0
+		IL_0014: stelem.ref
+		IL_0015: stloc.s 4
+		IL_0017: newobj instance void Modules.Function_ConstructorShape_MutationFallback/GraphNode/FunctionObject::.ctor()
+		IL_001c: ldc.i4.1
+		IL_001d: conv.r8
+		IL_001e: ldstr "GraphNode"
+		IL_0023: ldc.i4.0
+		IL_0024: ldc.i4.0
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ConstructorShape_MutationFallback/GraphNode/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_002a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_ConstructorShape_MutationFallback/GraphNode/FunctionObject>(!!0)
+		IL_002f: stloc.1
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: stloc.s 4
+		IL_003c: newobj instance void Modules.Function_ConstructorShape_MutationFallback/readPos/FunctionObject::.ctor()
+		IL_0041: ldc.i4.1
+		IL_0042: conv.r8
+		IL_0043: ldstr "readPos"
+		IL_0048: ldc.i4.0
+		IL_0049: ldc.i4.0
+		IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ConstructorShape_MutationFallback/readPos/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_ConstructorShape_MutationFallback/readPos/FunctionObject>(!!0)
+		IL_0054: stloc.2
+		IL_0055: nop
+		IL_0056: nop
+		IL_0057: newobj instance void Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::.ctor()
+		IL_005c: stloc.s 5
+		IL_005e: ldloc.1
+		IL_005f: ldloc.s 5
+		IL_0061: ldloc.1
+		IL_0062: ldstr "initial"
+		IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionWithReceiver1<class Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode>(object, object, object, object)
+		IL_006c: stloc.3
+		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0072: stloc.s 6
+		IL_0074: ldnull
+		IL_0075: ldloc.3
+		IL_0076: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_007b: stloc.s 7
+		IL_007d: ldloc.s 6
+		IL_007f: ldloc.s 7
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0086: pop
+		IL_0087: ldloc.3
+		IL_0088: ldstr "pos"
+		IL_008d: ldstr "plain-write"
+		IL_0092: ldc.i4.0
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0098: pop
+		IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009e: stloc.s 6
+		IL_00a0: ldnull
+		IL_00a1: ldloc.3
+		IL_00a2: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_00a7: stloc.s 7
+		IL_00a9: ldloc.s 6
+		IL_00ab: ldloc.s 7
+		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b2: pop
+		IL_00b3: ldloc.3
+		IL_00b4: ldstr "pos"
+		IL_00b9: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeletePropertyNonStrict(object, object)
+		IL_00be: stloc.s 8
+		IL_00c0: volatile.
+		IL_00c2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00c7: brfalse IL_00dc
+
+		IL_00cc: ldloc.1
+		IL_00cd: ldstr "prototype"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d7: br IL_00f1
+
+		IL_00dc: ldloc.1
+		IL_00dd: ldstr "prototype"
+		IL_00e2: ldstr "Function_ConstructorShape_MutationFallback:Modules.Function_ConstructorShape_MutationFallback:__js_module_init__:34"
+		IL_00e7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00f1: stloc.s 7
+		IL_00f3: ldloc.s 7
+		IL_00f5: ldstr "pos"
+		IL_00fa: ldstr "prototype"
+		IL_00ff: ldc.i4.0
+		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0105: pop
+		IL_0106: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010b: stloc.s 6
+		IL_010d: ldnull
+		IL_010e: ldloc.3
+		IL_010f: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_0114: stloc.s 7
+		IL_0116: ldloc.s 6
+		IL_0118: ldloc.s 7
+		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_011f: pop
+		IL_0120: ldloc.0
+		IL_0121: ldc.r8 0.0
+		IL_012a: box [System.Runtime]System.Double
+		IL_012f: stfld object Modules.Function_ConstructorShape_MutationFallback/Scope::getterCalls
+		IL_0134: ldc.i4.1
+		IL_0135: newarr [System.Runtime]System.Object
+		IL_013a: dup
+		IL_013b: ldc.i4.0
+		IL_013c: ldloc.0
+		IL_013d: stelem.ref
+		IL_013e: stloc.s 4
+		IL_0140: ldloc.s 4
+		IL_0142: ldc.i4.0
+		IL_0143: ldelem.ref
+		IL_0144: castclass Modules.Function_ConstructorShape_MutationFallback/Scope
+		IL_0149: newobj instance void Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject::.ctor(class Modules.Function_ConstructorShape_MutationFallback/Scope)
+		IL_014e: ldc.i4.0
+		IL_014f: conv.r8
+		IL_0150: ldstr ""
+		IL_0155: ldc.i4.0
+		IL_0156: ldc.i4.0
+		IL_0157: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_015c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_ConstructorShape_MutationFallback/FunctionExpression_L22C9/FunctionObject>(!!0)
+		IL_0161: stloc.s 9
+		IL_0163: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0168: dup
+		IL_0169: ldstr "configurable"
+		IL_016e: ldc.i4.1
+		IL_016f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0174: dup
+		IL_0175: ldstr "get"
+		IL_017a: ldloc.s 9
+		IL_017c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0181: stloc.s 10
+		IL_0183: ldloc.3
+		IL_0184: ldstr "pos"
+		IL_0189: ldloc.s 10
+		IL_018b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_0190: pop
+		IL_0191: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0196: stloc.s 6
+		IL_0198: ldnull
+		IL_0199: ldloc.3
+		IL_019a: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_019f: stloc.s 7
+		IL_01a1: ldloc.s 6
+		IL_01a3: ldloc.s 7
+		IL_01a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01aa: pop
+		IL_01ab: ldloc.3
+		IL_01ac: isinst Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_01b1: dup
+		IL_01b2: brfalse IL_01c2
+
+		IL_01b7: callvirt instance object Modules.Function_ConstructorShape_MutationFallback/ObjectLiterals/Ctor_L1C1_GraphNode::get_pos()
+		IL_01bc: pop
+		IL_01bd: br IL_01cf
+
+		IL_01c2: pop
+		IL_01c3: ldloc.3
+		IL_01c4: ldstr "pos"
+		IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01ce: pop
+
+		IL_01cf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01d4: stloc.s 6
+		IL_01d6: ldloc.0
+		IL_01d7: ldfld object Modules.Function_ConstructorShape_MutationFallback/Scope::getterCalls
+		IL_01dc: stloc.s 7
+		IL_01de: ldloc.s 6
+		IL_01e0: ldloc.s 7
+		IL_01e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01e7: pop
+		IL_01e8: ldloc.3
+		IL_01e9: ldstr "pos"
+		IL_01ee: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01f3: dup
+		IL_01f4: ldstr "configurable"
+		IL_01f9: ldc.i4.1
+		IL_01fa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_01ff: dup
+		IL_0200: ldstr "enumerable"
+		IL_0205: ldc.i4.1
+		IL_0206: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_020b: dup
+		IL_020c: ldstr "writable"
+		IL_0211: ldc.i4.1
+		IL_0212: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0217: dup
+		IL_0218: ldstr "value"
+		IL_021d: ldstr "descriptor-data"
+		IL_0222: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0227: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_022c: pop
+		IL_022d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0232: stloc.s 6
+		IL_0234: ldnull
+		IL_0235: ldloc.3
+		IL_0236: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_023b: stloc.s 7
+		IL_023d: ldloc.s 6
+		IL_023f: ldloc.s 7
+		IL_0241: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0246: pop
+		IL_0247: ldloc.3
+		IL_0248: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_024d: dup
+		IL_024e: ldstr "pos"
+		IL_0253: ldstr "other-prototype"
+		IL_0258: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_0262: pop
+		IL_0263: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0268: stloc.s 6
+		IL_026a: ldnull
+		IL_026b: ldloc.3
+		IL_026c: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_0271: stloc.s 7
+		IL_0273: ldloc.s 6
+		IL_0275: ldloc.s 7
+		IL_0277: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_027c: pop
+		IL_027d: ldloc.3
+		IL_027e: ldstr "extra"
+		IL_0283: ldc.r8 1
+		IL_028c: ldc.i4.0
+		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0292: pop
+		IL_0293: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0298: stloc.s 6
+		IL_029a: ldnull
+		IL_029b: ldloc.3
+		IL_029c: call object Modules.Function_ConstructorShape_MutationFallback/readPos::__js_call__(object, object)
+		IL_02a1: stloc.s 7
+		IL_02a3: ldloc.3
+		IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02ae: volatile.
+		IL_02b0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_02b5: brfalse IL_02ce
+
+		IL_02ba: ldstr "join"
+		IL_02bf: ldstr ","
+		IL_02c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02c9: br IL_02e7
+
+		IL_02ce: ldstr "join"
+		IL_02d3: ldstr ","
+		IL_02d8: ldstr "Function_ConstructorShape_MutationFallback:Modules.Function_ConstructorShape_MutationFallback:__js_module_init__:98"
+		IL_02dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_02e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_02e7: stloc.s 11
+		IL_02e9: ldloc.s 6
+		IL_02eb: ldloc.s 7
+		IL_02ed: ldloc.s 11
+		IL_02ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02f4: pop
+		IL_02f5: ret
+	} // end of method Function_ConstructorShape_MutationFallback::__js_module_init__
+
+} // end of class Modules.Function_ConstructorShape_MutationFallback
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			string[] args
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: ldarg.0
+		IL_0001: call void Function_ConstructorShape_MutationFallback::Run(string[])
+		IL_0006: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+
+} // end of class Jroc.Generated.DynamicLookupSites
+

@@ -3,7 +3,6 @@
 
 const childProcess = require("node:child_process");
 const fs = require("node:fs");
-const os = require("node:os");
 const path = require("node:path");
 
 const TARGET_SCENARIO = "kracken-ai-astar";
@@ -676,6 +675,10 @@ function inspectHotMethodIl(il, source) {
       body,
       /ObjectRuntime::(?:GetItem|GetProperty)\(/g
     ),
+    guardedConstructorFieldReads: countMatches(
+      body,
+      /isinst [^\r\n]*\/ObjectLiterals\/Ctor_[^\r\n]+[\s\S]{0,160}?callvirt instance object [^\r\n]*::get_[A-Za-z_$][A-Za-z0-9_$]*\(\)/g
+    ),
     arrayLengthGenericNumericReads: countMatches(
       body,
       /ObjectRuntime::GetItemAsNumber\(/g
@@ -708,8 +711,10 @@ function inspectHotMethodIl(il, source) {
 
 function runIlInspection(repoRoot, keepArtifacts) {
   runChecked("ilspycmd", ["--version"], { cwd: repoRoot, stdio: "pipe" });
+  const artifactsDirectory = path.join(repoRoot, "artifacts");
+  fs.mkdirSync(artifactsDirectory, { recursive: true });
   const artifactRoot = fs.mkdtempSync(
-    path.join(os.tmpdir(), "jroc-kracken-ai-astar-")
+    path.join(artifactsDirectory, "jroc-kracken-ai-astar-")
   );
   try {
     const source = composeFixture(repoRoot);
@@ -763,6 +768,9 @@ function printIlCounters(result) {
   );
   console.log(
     `Generic item/property reads:              ${result.genericItemPropertyReads}`
+  );
+  console.log(
+    `Guarded constructor field reads:          ${result.guardedConstructorFieldReads}`
   );
   console.log(
     `Generic numeric Array.length reads:       ${result.arrayLengthGenericNumericReads}`

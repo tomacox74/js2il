@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using Jroc.IR;
+using Jroc.SymbolTables;
 
 namespace Jroc.IL;
 
@@ -176,6 +177,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRExpNumber),
         typeof(LIRGeneratorStateSwitch),
         typeof(LIRGetInferredMember),
+        typeof(LIRGetGuardedInferredMember),
         typeof(LIRGetInt32ArrayElement),
         typeof(LIRGetInt32ArrayLength),
         typeof(LIRGetIntrinsicGlobal),
@@ -225,6 +227,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRRightShift),
         typeof(LIRSequencePoint),
         typeof(LIRSetInferredMember),
+        typeof(LIRSetGuardedInferredMember),
         typeof(LIRSetInt32ArrayElement),
         typeof(LIRSetItem),
         typeof(LIRSetJsArrayElement),
@@ -404,6 +407,15 @@ internal static partial class LIRInstructionInfo
                     : LIRInstructionEffects.None);
         }
 
+        if (instruction is LIRGetInferredMember
+            {
+                Shape: ConstructorShapeInfo
+            })
+        {
+            return LIRInstructionEffects.EmitsInternalControlFlow
+                | CallEffects;
+        }
+
         return _staticEffectsByType.GetOrAdd(
             instruction.GetType(),
             static (_, value) => GetStaticEffects(value),
@@ -517,6 +529,8 @@ internal static partial class LIRInstructionInfo
 
             LIRCallGuardedStringIntrinsic
                 or LIRCallGuardedIntrinsicMember
+                or LIRGetGuardedInferredMember
+                or LIRSetGuardedInferredMember
                 => LIRInstructionEffects.EmitsInternalControlFlow
                     | CallEffects,
 

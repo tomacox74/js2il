@@ -4452,6 +4452,54 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Returns whether a generated constructor-shape setter can create an ordinary
+        /// own data property without bypassing observable ECMAScript [[Set]] behavior.
+        /// </summary>
+        public static bool CanUseSpecializedDataPropertySetter(object receiver, string propName)
+        {
+            if (receiver is not JsObject
+                || receiver is JavaScriptRuntime.Proxy
+                || !IsExtensibleInternal(receiver)
+                || PropertyDescriptorStore.TryGetOwn(receiver, propName, out _)
+                || HasOwnValue(receiver, propName))
+            {
+                return false;
+            }
+
+            const int MaxPrototypeChainDepth = 1024;
+            var prototype = PrototypeChain.GetPrototypeOrNull(receiver);
+            for (var depth = 0;
+                 prototype is not null && prototype is not JsNull;
+                 prototype = PrototypeChain.GetPrototypeOrNull(prototype))
+            {
+                if (ReferenceEquals(prototype, receiver)
+                    || ++depth > MaxPrototypeChainDepth
+                    || prototype is JavaScriptRuntime.Proxy
+                    || prototype is IExoticJsObject)
+                {
+                    return false;
+                }
+
+                if (PropertyDescriptorStore.TryGetOwn(
+                        prototype,
+                        propName,
+                        out var descriptor))
+                {
+                    return descriptor.Kind == JsPropertyDescriptorKind.Data
+                        && descriptor.Writable;
+                }
+
+                if (prototype is IDictionary<string, object?> dictionary
+                    && dictionary.ContainsKey(propName))
+                {
+                    return true;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Gets an iterator for for..of using the iterator protocol.
         /// Supports:
         ///  - Arrays, strings, typed arrays

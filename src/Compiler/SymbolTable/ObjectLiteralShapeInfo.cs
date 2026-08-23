@@ -40,25 +40,24 @@ public sealed class ObjectLiteralMemberInfo
 }
 
 /// <summary>
-/// Result of the compile-time eligibility analysis for a single object literal bound
-/// to a local/module binding. When <see cref="IsEligible"/> is true, later phases may
-/// generate a specialized CLR type and early-bind member accesses; otherwise the
-/// literal must compile exactly as today (plain JsObject).
+/// Shared metadata for JavaScript object layouts that may use generated CLR storage.
 /// </summary>
-public sealed class ObjectLiteralShapeInfo
+public abstract class InferredObjectShapeInfo
 {
-    public ObjectLiteralShapeInfo(ObjectExpression literal, BindingInfo binding, IReadOnlyList<ObjectLiteralMemberInfo> members)
+    protected InferredObjectShapeInfo(
+        Node sourceNode,
+        BindingInfo binding,
+        IReadOnlyList<ObjectLiteralMemberInfo> members)
     {
-        Literal = literal;
+        SourceNode = sourceNode;
         Binding = binding;
         Members = members;
         IsEligible = true;
     }
 
-    /// <summary>The object literal expression this shape describes.</summary>
-    public ObjectExpression Literal { get; }
+    public Node SourceNode { get; }
 
-    /// <summary>The binding the literal is assigned to at its declaration.</summary>
+    /// <summary>The binding that introduces this layout.</summary>
     public BindingInfo Binding { get; }
 
     /// <summary>Members in literal source order.</summary>
@@ -141,4 +140,46 @@ public sealed class ObjectLiteralShapeInfo
         member = null!;
         return false;
     }
+}
+
+/// <summary>
+/// Result of the compile-time eligibility analysis for a single object literal bound
+/// to a local/module binding. When <see cref="InferredObjectShapeInfo.IsEligible"/> is
+/// true, later phases may generate a specialized CLR type and early-bind member access.
+/// </summary>
+public sealed class ObjectLiteralShapeInfo : InferredObjectShapeInfo
+{
+    public ObjectLiteralShapeInfo(
+        ObjectExpression literal,
+        BindingInfo binding,
+        IReadOnlyList<ObjectLiteralMemberInfo> members)
+        : base(literal, binding, members)
+    {
+        Literal = literal;
+    }
+
+    /// <summary>The object literal expression this shape describes.</summary>
+    public ObjectExpression Literal { get; }
+}
+
+/// <summary>
+/// Layout inferred from the unconditional initialization prefix of an ES5-style
+/// constructor function.
+/// </summary>
+public sealed class ConstructorShapeInfo : InferredObjectShapeInfo
+{
+    public ConstructorShapeInfo(
+        Node constructorNode,
+        Scope constructorScope,
+        BindingInfo binding,
+        IReadOnlyList<ObjectLiteralMemberInfo> members)
+        : base(constructorNode, binding, members)
+    {
+        ConstructorNode = constructorNode;
+        ConstructorScope = constructorScope;
+    }
+
+    public Node ConstructorNode { get; }
+
+    public Scope ConstructorScope { get; }
 }

@@ -250,6 +250,48 @@ namespace Jroc.Utilities.Ecma335
             return methodSpec;
         }
 
+        public MethodSpecificationHandle GetOrAddGenericMethod(
+            MethodInfo method,
+            EntityHandle typeArgument,
+            bool isValueType)
+        {
+            ArgumentNullException.ThrowIfNull(method);
+            if (!method.IsGenericMethodDefinition
+                || method.GetGenericArguments().Length != 1)
+            {
+                throw new ArgumentException(
+                    $"Method '{method}' must define exactly one generic parameter.",
+                    nameof(method));
+            }
+
+            var declaringType = method.DeclaringType
+                ?? throw new ArgumentException(
+                    $"Method '{method}' has no declaring type.",
+                    nameof(method));
+            var key =
+                $"{declaringType.FullName}::{method}<{typeArgument.Kind}:{MetadataTokens.GetToken(typeArgument)}>";
+            if (_methodSpecCache.TryGetValue(key, out var cached))
+            {
+                return cached;
+            }
+
+            var methodRef = _metadataBuilder.AddMemberReference(
+                GetOrAddDeclaringTypeHandle(declaringType),
+                _metadataBuilder.GetOrAddString(method.Name),
+                BuildMethodSignature(method));
+
+            var specificationBuilder = new BlobBuilder();
+            new BlobEncoder(specificationBuilder)
+                .MethodSpecificationSignature(1)
+                .AddArgument()
+                .Type(typeArgument, isValueType);
+            var methodSpec = _metadataBuilder.AddMethodSpecification(
+                methodRef,
+                _metadataBuilder.GetOrAddBlob(specificationBuilder));
+            _methodSpecCache[key] = methodSpec;
+            return methodSpec;
+        }
+
         /// <summary>
         /// Gets or creates a closed reference to
         /// <c>T RequireObject&lt;T&gt;(RequireDelegate, object)</c>.
@@ -595,22 +637,7 @@ namespace Jroc.Utilities.Ecma335
                         }
                     });
 
-            var signature =  _metadataBuilder.GetOrAddBlob(sigBuilder);
-
-            if (genericParamCount > 0)
-            {
-                // For generic methods, we need to wrap the signature in a GenericMethodSignature
-                var genericSigBuilder = new BlobBuilder();
-                var genericTypeArgumentsEncoder = new BlobEncoder(genericSigBuilder).MethodSpecificationSignature(genericParamCount);
-                for (int genericTypeIndex = 0; genericTypeIndex < genericParamCount; genericTypeIndex++)
-                {
-                    genericTypeArgumentsEncoder.AddArgument().Object();
-                }
-
-                signature = _metadataBuilder.GetOrAddBlob(genericSigBuilder);
-            }
-
-            return signature;
+            return _metadataBuilder.GetOrAddBlob(sigBuilder);
         }
 
         private BlobHandle BuildConstructorSignature(ConstructorInfo ctor)
@@ -664,10 +691,19 @@ namespace Jroc.Utilities.Ecma335
 
         private void EncodeSignatureType(SignatureTypeEncoder encoder, Type type)
         {
-            // Generic type parameters (e.g., T, TResult from Func<T, TResult>)
+            // Generic parameters declared by methods use !!n; parameters declared
+            // by generic types use !n.
             if (type.IsGenericParameter)
             {
-                encoder.GenericTypeParameter(type.GenericParameterPosition);
+                if (type.DeclaringMethod is not null)
+                {
+                    encoder.GenericMethodTypeParameter(
+                        type.GenericParameterPosition);
+                }
+                else
+                {
+                    encoder.GenericTypeParameter(type.GenericParameterPosition);
+                }
                 return;
             }
 

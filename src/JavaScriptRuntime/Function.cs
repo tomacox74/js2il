@@ -14,6 +14,9 @@ namespace JavaScriptRuntime
 [IntrinsicObject("Function")]
 public static class Function
 {
+        [ThreadStatic]
+        private static Stack<object>? _generatedConstructionReceivers;
+
     private static readonly BuiltinFunction0 _restrictedPropertyThrower =
         static _ => throw new TypeError("Cannot access restricted function property");
 
@@ -722,6 +725,152 @@ public static class Function
                 RuntimeServices.SetCurrentThis(previousThis);
             }
         }
+
+        public static T ConstructGeneratedFunctionWithReceiver0<T>(
+            object constructor,
+            object receiver,
+            object? newTarget)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.Empty,
+                newTarget)!;
+
+        public static T ConstructGeneratedFunctionWithReceiver1<T>(
+            object constructor,
+            object receiver,
+            object? newTarget,
+            object? argument0)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.From(argument0),
+                newTarget)!;
+
+        public static T ConstructGeneratedFunctionWithReceiver2<T>(
+            object constructor,
+            object receiver,
+            object? newTarget,
+            object? argument0,
+            object? argument1)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.From(argument0, argument1),
+                newTarget)!;
+
+        public static T ConstructGeneratedFunctionWithReceiver3<T>(
+            object constructor,
+            object receiver,
+            object? newTarget,
+            object? argument0,
+            object? argument1,
+            object? argument2)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.From(argument0, argument1, argument2),
+                newTarget)!;
+
+        public static T ConstructGeneratedFunctionWithReceiver4<T>(
+            object constructor,
+            object receiver,
+            object? newTarget,
+            object? argument0,
+            object? argument1,
+            object? argument2,
+            object? argument3)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.From(
+                    argument0,
+                    argument1,
+                    argument2,
+                    argument3),
+                newTarget)!;
+
+        public static T ConstructGeneratedFunctionWithReceiver5<T>(
+            object constructor,
+            object receiver,
+            object? newTarget,
+            object? argument0,
+            object? argument1,
+            object? argument2,
+            object? argument3,
+            object? argument4)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.From(
+                    argument0,
+                    argument1,
+                    argument2,
+                    argument3,
+                    argument4),
+                newTarget)!;
+
+        public static T ConstructGeneratedFunctionWithReceiverArray<T>(
+            object constructor,
+            object receiver,
+            object? newTarget,
+            object?[]? arguments)
+            => (T)ConstructGeneratedFunctionWithReceiver(
+                constructor,
+                receiver,
+                JsCallArguments.FromArray(arguments),
+                newTarget)!;
+
+        private static object? ConstructGeneratedFunctionWithReceiver(
+            object constructor,
+            object receiver,
+            in JsCallArguments arguments,
+            object? newTarget)
+        {
+            if (constructor is not JsFunctionObject functionObject
+                || !functionObject.IsConstructor)
+            {
+                throw new TypeError("Value is not a constructor");
+            }
+
+            PrototypeChain.SetPrototype(
+                receiver,
+                GlobalThis.ObjectPrototypeValue);
+            var prototypeSource = newTarget is null or JsNull
+                ? constructor
+                : newTarget;
+            var prototype = ObjectRuntime.GetItem(
+                prototypeSource,
+                "prototype");
+            if (TypeUtilities.IsConstructorReturnOverride(prototype))
+            {
+                PrototypeChain.SetPrototype(receiver, prototype);
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            (_generatedConstructionReceivers ??= new()).Push(receiver);
+            try
+            {
+                return CallableOperations.ConstructWithReceiver(
+                    functionObject,
+                    receiver,
+                    arguments,
+                    newTarget);
+            }
+            finally
+            {
+                _generatedConstructionReceivers.Pop();
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        public static bool IsCurrentGeneratedConstructionReceiver(
+            object receiver)
+            => _generatedConstructionReceivers is
+                {
+                    Count: > 0
+                } receivers
+                && ReferenceEquals(receivers.Peek(), receiver);
 
         internal static void DefineMetadataProperty(object target, string propName, object? value)
         {

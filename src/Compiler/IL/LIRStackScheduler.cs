@@ -1802,7 +1802,9 @@ internal static class LIRStackScheduler
             return true;
         }
 
-        return instruction is LIRCallTypedMember typed
+        return instruction is LIRCallIntrinsicStatic genericIntrinsic
+                && IsGeneratedReceiverConstruction(genericIntrinsic)
+            || instruction is LIRCallTypedMember typed
                 && typed.ReturnClrType != typeof(void)
             || instruction is LIRCallUserClassInstanceMethod
             {
@@ -1810,6 +1812,17 @@ internal static class LIRStackScheduler
                 RequiresPrivateBrandCheck: false
             };
     }
+
+    private static bool IsGeneratedReceiverConstruction(
+        LIRCallIntrinsicStatic instruction)
+        => instruction.GenericTypeArgument is not null
+            && string.Equals(
+                instruction.IntrinsicName,
+                nameof(JavaScriptRuntime.Function),
+                StringComparison.Ordinal)
+            && instruction.MethodName.StartsWith(
+                "ConstructGeneratedFunctionWithReceiver",
+                StringComparison.Ordinal);
 
     internal static bool IsSupportedScheduledInlineCallProducer(
         LIRInstruction instruction)

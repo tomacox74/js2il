@@ -317,40 +317,61 @@ internal sealed partial class LIRToILCompiler
         MethodDescriptor methodDescriptor,
         bool leaveResultOnStack)
     {
-        if (instruction.Arguments.Count != 1)
+        var methods = intrinsicType
+            .GetMethods(
+                System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.Static)
+            .Where(method =>
+                method.IsGenericMethodDefinition
+                && method.GetGenericArguments().Length == 1
+                && string.Equals(
+                    method.Name,
+                    instruction.MethodName,
+                    StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        var chosen = ResolveIntrinsicStaticMethod(
+            methods,
+            instruction.Arguments);
+        if (chosen is null)
         {
             throw new InvalidOperationException(
-                $"Generic intrinsic call {intrinsicType.FullName}.{instruction.MethodName} must have exactly one argument.");
+                $"No matching generic static method found: {intrinsicType.FullName}.{instruction.MethodName} with {instruction.Arguments.Count} argument(s)");
         }
 
-        EmitLoadTemp(instruction.Arguments[0], ilEncoder, allocation, methodDescriptor);
-
-        MethodSpecificationHandle methodSpec;
-        if (genericTypeArgument.TypeHandle.Kind == HandleKind.TypeSpecification
-            && genericTypeArgument.ClrType is { } constructedType)
+        var parameters = chosen.GetParameters();
+        for (var i = 0; i < instruction.Arguments.Count; i++)
         {
-            methodSpec = _memberRefRegistry.GetOrAddGenericUnaryMethod(
-                intrinsicType,
-                instruction.MethodName,
-                constructedType);
-        }
-        else
-        {
-            var typeHandle = genericTypeArgument.TypeHandle;
-            var isValueType = false;
-            if (typeHandle.IsNil)
+            if (parameters[i].ParameterType.IsGenericParameter)
             {
-                var clrType = genericTypeArgument.ClrType ?? typeof(object);
-                typeHandle = _memberRefRegistry.GetOrAddTypeHandle(clrType);
-                isValueType = clrType.IsValueType;
+                EmitLoadTemp(
+                    instruction.Arguments[i],
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
             }
-
-            methodSpec = _memberRefRegistry.GetOrAddGenericUnaryMethod(
-                intrinsicType,
-                instruction.MethodName,
-                typeHandle,
-                isValueType);
+            else
+            {
+                EmitLoadTempForParameter(
+                    instruction.Arguments[i],
+                    parameters[i].ParameterType,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+            }
         }
+
+        var typeHandle = genericTypeArgument.TypeHandle;
+        var isValueType = false;
+        if (typeHandle.IsNil)
+        {
+            var clrType = genericTypeArgument.ClrType ?? typeof(object);
+            typeHandle = _memberRefRegistry.GetOrAddTypeHandle(clrType);
+            isValueType = clrType.IsValueType;
+        }
+        var methodSpec = _memberRefRegistry.GetOrAddGenericMethod(
+            chosen,
+            typeHandle,
+            isValueType);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodSpec);
 

@@ -401,6 +401,18 @@ namespace Jroc.Tests.Function
         [Fact]
         public Task Function_ExplicitReceiverAbi() { var testName = nameof(Function_ExplicitReceiverAbi); return GenerateTest(testName); }
 
+        [Fact]
+        public Task Function_ConstructorShape_GraphNode() { var testName = nameof(Function_ConstructorShape_GraphNode); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_GuardedParameterRead() { var testName = nameof(Function_ConstructorShape_GuardedParameterRead); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_MutationFallback() { var testName = nameof(Function_ConstructorShape_MutationFallback); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ConstructorShape_PrototypeSetSemantics() { var testName = nameof(Function_ConstructorShape_PrototypeSetSemantics); return GenerateTest(testName); }
+
         private static void AssertSignature(
             Type moduleType,
             string functionName,

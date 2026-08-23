@@ -24,7 +24,7 @@ namespace Jroc.Services.VariableBindings
         private readonly ScopeMetadataRegistry _scopeMetadata;
         // Track uncaptured variables (no scope backing field, will use local variables)
         private readonly Dictionary<string, HashSet<string>> _uncapturedVariables = new();
-        private readonly Dictionary<ObjectLiteralShapeInfo, ObjectLiteralTypeMetadata> _objectLiteralTypes = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<InferredObjectShapeInfo, ObjectLiteralTypeMetadata> _objectLiteralTypes = new(ReferenceEqualityComparer.Instance);
 
         /// <summary>
         /// Creates a new VariableRegistry with an internal ScopeMetadataRegistry.
@@ -51,7 +51,7 @@ namespace Jroc.Services.VariableBindings
         /// Registers the generated CLR metadata for an eligible object literal shape.
         /// </summary>
         public void RegisterObjectLiteralType(
-            ObjectLiteralShapeInfo shape,
+            InferredObjectShapeInfo shape,
             string typeName,
             TypeDefinitionHandle typeHandle,
             MethodDefinitionHandle constructorHandle,
@@ -63,7 +63,7 @@ namespace Jroc.Services.VariableBindings
             if (shape == null) throw new ArgumentNullException(nameof(shape));
             if (!shape.IsEligible)
             {
-                throw new ArgumentException("Only eligible object literal shapes can be registered.", nameof(shape));
+                throw new ArgumentException("Only eligible inferred object shapes can be registered.", nameof(shape));
             }
             if (typeHandle.IsNil)
             {
@@ -87,7 +87,7 @@ namespace Jroc.Services.VariableBindings
             _objectLiteralTypes[shape] = metadata;
         }
 
-        public bool TryGetObjectLiteralType(ObjectLiteralShapeInfo shape, out ObjectLiteralTypeMetadata metadata)
+        public bool TryGetObjectLiteralType(InferredObjectShapeInfo shape, out ObjectLiteralTypeMetadata metadata)
             => _objectLiteralTypes.TryGetValue(shape, out metadata!);
 
         public IReadOnlyCollection<ObjectLiteralTypeMetadata> GetObjectLiteralTypes()

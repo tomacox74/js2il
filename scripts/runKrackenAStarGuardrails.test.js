@@ -223,9 +223,12 @@ test("counts only the canonical findGraphNode method and its call sites", () => 
     codeSize: 42,
     dynamicCachePropertyReads: 2,
     genericItemPropertyReads: 1,
+    guardedConstructorFieldReads: 0,
     arrayLengthGenericNumericReads: 1,
     boxInstructions: 0,
     arity1MemberDispatches: 0,
+    cachedArity1MemberDispatches: 0,
     findGraphNodeArity1CallSites: 1,
+    cachedFindGraphNodeArity1CallSites: 0,
   });
 });
