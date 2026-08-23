@@ -229,7 +229,7 @@
 			)
 
 			IL_0000: volatile.
-			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
 			IL_0007: brfalse IL_0026
 
 			IL_000c: ldarg.1
@@ -244,7 +244,7 @@
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_0031: ldstr "base"
 			IL_0036: ldstr "Function_Bind_ThisBinding_IgnoresCallReceiver:<TwoPhaseDummy_M4>:__js_call__:3"
-			IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
 			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0045: stloc.0
@@ -296,7 +296,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 164 (0xa4)
+		// Code size: 256 (0x100)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Bind_ThisBinding_IgnoresCallReceiver/Scope,
@@ -334,34 +334,61 @@
 		IL_0033: ldc.r8 7
 		IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0041: stloc.2
-		IL_0042: ldloc.1
-		IL_0043: ldstr "bind"
-		IL_0048: ldloc.2
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004e: stloc.3
-		IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0054: dup
-		IL_0055: ldstr "base"
-		IL_005a: ldc.r8 100
-		IL_0063: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0068: dup
-		IL_0069: ldstr "m"
-		IL_006e: ldloc.3
-		IL_006f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0074: stloc.s 4
-		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007b: stloc.s 6
-		IL_007d: ldloc.s 4
-		IL_007f: ldstr "m"
-		IL_0084: ldc.r8 5
-		IL_008d: box [System.Runtime]System.Double
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0097: stloc.s 7
-		IL_0099: ldloc.s 6
-		IL_009b: ldloc.s 7
-		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a2: pop
-		IL_00a3: ret
+		IL_0042: volatile.
+		IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0049: brfalse IL_005f
+
+		IL_004e: ldloc.1
+		IL_004f: ldstr "bind"
+		IL_0054: ldloc.2
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_005a: br IL_0075
+
+		IL_005f: ldloc.1
+		IL_0060: ldstr "bind"
+		IL_0065: ldloc.2
+		IL_0066: ldstr "Function_Bind_ThisBinding_IgnoresCallReceiver:Modules.Function_Bind_ThisBinding_IgnoresCallReceiver:__js_module_init__:12"
+		IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0075: stloc.3
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007b: dup
+		IL_007c: ldstr "base"
+		IL_0081: ldc.r8 100
+		IL_008a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_008f: dup
+		IL_0090: ldstr "m"
+		IL_0095: ldloc.3
+		IL_0096: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_009b: stloc.s 4
+		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a2: stloc.s 6
+		IL_00a4: volatile.
+		IL_00a6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00ab: brfalse IL_00cf
+
+		IL_00b0: ldloc.s 4
+		IL_00b2: ldstr "m"
+		IL_00b7: ldc.r8 5
+		IL_00c0: box [System.Runtime]System.Double
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ca: br IL_00f3
+
+		IL_00cf: ldloc.s 4
+		IL_00d1: ldstr "m"
+		IL_00d6: ldc.r8 5
+		IL_00df: box [System.Runtime]System.Double
+		IL_00e4: ldstr "Function_Bind_ThisBinding_IgnoresCallReceiver:Modules.Function_Bind_ThisBinding_IgnoresCallReceiver:__js_module_init__:22"
+		IL_00e9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00f3: stloc.s 7
+		IL_00f5: ldloc.s 6
+		IL_00f7: ldloc.s 7
+		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fe: pop
+		IL_00ff: ret
 	} // end of method Function_Bind_ThisBinding_IgnoresCallReceiver::__js_module_init__
 
 } // end of class Modules.Function_Bind_ThisBinding_IgnoresCallReceiver
@@ -392,6 +419,8 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -235,7 +235,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 508 (0x1fc)
+		// Code size: 547 (0x223)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.GlobalTimers_AsValues_WindowLikeAssignment/Scope,
@@ -411,18 +411,31 @@
 		IL_01cf: box [System.Runtime]System.Double
 		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_01d9: stloc.2
-		IL_01da: ldloc.1
-		IL_01db: ldstr "clearTimeout"
-		IL_01e0: ldloc.2
-		IL_01e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01e6: pop
-		IL_01e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01ec: stloc.s 4
-		IL_01ee: ldloc.s 4
-		IL_01f0: ldstr "ok"
-		IL_01f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01fa: pop
-		IL_01fb: ret
+		IL_01da: volatile.
+		IL_01dc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_01e1: brfalse IL_01f7
+
+		IL_01e6: ldloc.1
+		IL_01e7: ldstr "clearTimeout"
+		IL_01ec: ldloc.2
+		IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01f2: br IL_020d
+
+		IL_01f7: ldloc.1
+		IL_01f8: ldstr "clearTimeout"
+		IL_01fd: ldloc.2
+		IL_01fe: ldstr "GlobalTimers_AsValues_WindowLikeAssignment:Modules.GlobalTimers_AsValues_WindowLikeAssignment:__js_module_init__:58"
+		IL_0203: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_020d: pop
+		IL_020e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0213: stloc.s 4
+		IL_0215: ldloc.s 4
+		IL_0217: ldstr "ok"
+		IL_021c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0221: pop
+		IL_0222: ret
 	} // end of method GlobalTimers_AsValues_WindowLikeAssignment::__js_module_init__
 
 } // end of class Modules.GlobalTimers_AsValues_WindowLikeAssignment
@@ -456,6 +469,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_2
 	.field assembly static int32 __jroc_dynamicLookup_3
 	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

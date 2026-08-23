@@ -229,7 +229,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 60 (0x3c)
+				// Code size: 102 (0x66)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -245,22 +245,34 @@
 				IL_000d: stloc.0
 				IL_000e: ldarg.2
 				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0014: ldstr "toString"
-				IL_0019: ldstr "utf8"
-				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0023: stloc.1
-				IL_0024: ldloc.0
-				IL_0025: ldloc.1
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002b: stloc.2
-				IL_002c: ldarg.0
-				IL_002d: ldc.i4.1
-				IL_002e: ldelem.ref
-				IL_002f: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_server/Scope
-				IL_0034: ldloc.2
-				IL_0035: stfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_server/Scope::received
-				IL_003a: ldnull
-				IL_003b: ret
+				IL_0014: volatile.
+				IL_0016: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+				IL_001b: brfalse IL_0034
+
+				IL_0020: ldstr "toString"
+				IL_0025: ldstr "utf8"
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_002f: br IL_004d
+
+				IL_0034: ldstr "toString"
+				IL_0039: ldstr "utf8"
+				IL_003e: ldstr "Net_CreateServer_AllowHalfOpen_Delayed_Response:<TwoPhaseDummy_M6>:__js_call__:5"
+				IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_004d: stloc.1
+				IL_004e: ldloc.0
+				IL_004f: ldloc.1
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0055: stloc.2
+				IL_0056: ldarg.0
+				IL_0057: ldc.i4.1
+				IL_0058: ldelem.ref
+				IL_0059: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_server/Scope
+				IL_005e: ldloc.2
+				IL_005f: stfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_server/Scope::received
+				IL_0064: ldnull
+				IL_0065: ret
 			} // end of method FunctionExpression_server::__js_call__
 
 		} // end of class FunctionExpression_server
@@ -415,7 +427,7 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 217 (0xd9)
+					// Code size: 256 (0x100)
 					.maxstack 8
 					.locals init (
 						[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -432,7 +444,7 @@
 					IL_0009: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_server/Scope
 					IL_000e: ldfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_server/Scope::socket
 					IL_0013: volatile.
-					IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+					IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
 					IL_001a: brfalse IL_002e
 
 					IL_001f: ldstr "writable"
@@ -441,7 +453,7 @@
 
 					IL_002e: ldstr "writable"
 					IL_0033: ldstr "Net_CreateServer_AllowHalfOpen_Delayed_Response:<TwoPhaseDummy_M11>:__js_call__:5"
-					IL_0038: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+					IL_0038: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
 					IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 					IL_0042: stloc.1
@@ -498,13 +510,26 @@
 					IL_00c3: ldloc.3
 					IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 					IL_00c9: stloc.2
-					IL_00ca: ldloc.1
-					IL_00cb: ldstr "end"
-					IL_00d0: ldloc.2
-					IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_00d6: pop
-					IL_00d7: ldnull
-					IL_00d8: ret
+					IL_00ca: volatile.
+					IL_00cc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
+					IL_00d1: brfalse IL_00e7
+
+					IL_00d6: ldloc.1
+					IL_00d7: ldstr "end"
+					IL_00dc: ldloc.2
+					IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+					IL_00e2: br IL_00fd
+
+					IL_00e7: ldloc.1
+					IL_00e8: ldstr "end"
+					IL_00ed: ldloc.2
+					IL_00ee: ldstr "Net_CreateServer_AllowHalfOpen_Delayed_Response:<TwoPhaseDummy_M11>:__js_call__:16"
+					IL_00f3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
+					IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+					IL_00fd: pop
+					IL_00fe: ldnull
+					IL_00ff: ret
 				} // end of method FunctionExpression_server::__js_call__
 
 			} // end of class FunctionExpression_server
@@ -1156,8 +1181,8 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Header size: 1
-				// Code size: 46 (0x2e)
+				// Header size: 12
+				// Code size: 88 (0x58)
 				.maxstack 8
 
 				IL_0000: ldarg.0
@@ -1168,12 +1193,24 @@
 				IL_000d: ldstr "Cannot access 'client' before initialization"
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_001c: ldstr "end"
-				IL_0021: ldstr "ping"
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_002b: pop
-				IL_002c: ldnull
-				IL_002d: ret
+				IL_001c: volatile.
+				IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+				IL_0023: brfalse IL_003c
+
+				IL_0028: ldstr "end"
+				IL_002d: ldstr "ping"
+				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0037: br IL_0055
+
+				IL_003c: ldstr "end"
+				IL_0041: ldstr "ping"
+				IL_0046: ldstr "Net_CreateServer_AllowHalfOpen_Delayed_Response:<TwoPhaseDummy_M8>:__js_call__:4"
+				IL_004b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0055: pop
+				IL_0056: ldnull
+				IL_0057: ret
 			} // end of method FunctionExpression_client::__js_call__
 
 		} // end of class FunctionExpression_client
@@ -1647,7 +1684,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 116 (0x74)
+				// Code size: 156 (0x9c)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L34C19/Scope,
@@ -1700,13 +1737,26 @@
 				IL_005c: ldc.i4.1
 				IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L34C19/FunctionExpression_L36C17/FunctionObject>(!!0, float64, string, bool, bool)
 				IL_0062: stloc.s 5
-				IL_0064: ldloc.2
-				IL_0065: ldstr "close"
-				IL_006a: ldloc.s 5
-				IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0071: pop
-				IL_0072: ldnull
-				IL_0073: ret
+				IL_0064: volatile.
+				IL_0066: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+				IL_006b: brfalse IL_0082
+
+				IL_0070: ldloc.2
+				IL_0071: ldstr "close"
+				IL_0076: ldloc.s 5
+				IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_007d: br IL_0099
+
+				IL_0082: ldloc.2
+				IL_0083: ldstr "close"
+				IL_0088: ldloc.s 5
+				IL_008a: ldstr "Net_CreateServer_AllowHalfOpen_Delayed_Response:<TwoPhaseDummy_M10>:__js_call__:12"
+				IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
+				IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0099: pop
+				IL_009a: ldnull
+				IL_009b: ret
 			} // end of method FunctionExpression_L34C19::__js_call__
 
 		} // end of class FunctionExpression_L34C19
@@ -1857,7 +1907,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 496 (0x1f0)
+			// Code size: 538 (0x21a)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope,
@@ -1965,95 +2015,107 @@
 			IL_0100: ldstr "Cannot access 'client' before initialization"
 			IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_010f: ldstr "setEncoding"
-			IL_0114: ldstr "utf8"
-			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_011e: pop
-			IL_011f: ldloc.0
-			IL_0120: ldstr ""
-			IL_0125: stfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope::reply
-			IL_012a: ldloc.0
-			IL_012b: ldfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope::client
-			IL_0130: ldstr "Cannot access 'client' before initialization"
-			IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_013f: stloc.3
-			IL_0140: ldc.i4.2
-			IL_0141: newarr [System.Runtime]System.Object
-			IL_0146: dup
-			IL_0147: ldc.i4.0
-			IL_0148: ldarg.0
-			IL_0149: stelem.ref
-			IL_014a: dup
-			IL_014b: ldc.i4.1
-			IL_014c: ldloc.0
-			IL_014d: stelem.ref
-			IL_014e: stloc.s 4
-			IL_0150: ldloc.s 4
-			IL_0152: ldc.i4.0
-			IL_0153: ldelem.ref
-			IL_0154: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope
-			IL_0159: ldloc.s 4
-			IL_015b: ldc.i4.1
-			IL_015c: ldelem.ref
-			IL_015d: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope
-			IL_0162: ldloc.s 4
-			IL_0164: newobj instance void Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L30C20/FunctionObject::.ctor(class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope, class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope, object[])
-			IL_0169: ldc.i4.1
-			IL_016a: conv.r8
-			IL_016b: ldstr ""
-			IL_0170: ldc.i4.0
-			IL_0171: ldc.i4.1
-			IL_0172: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L30C20/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0177: stloc.s 6
-			IL_0179: ldloc.3
-			IL_017a: ldstr "on"
-			IL_017f: ldstr "data"
-			IL_0184: ldloc.s 6
-			IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_018b: pop
-			IL_018c: ldloc.0
-			IL_018d: ldfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope::client
-			IL_0192: ldstr "Cannot access 'client' before initialization"
-			IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01a1: stloc.3
-			IL_01a2: ldc.i4.2
-			IL_01a3: newarr [System.Runtime]System.Object
-			IL_01a8: dup
-			IL_01a9: ldc.i4.0
-			IL_01aa: ldarg.0
-			IL_01ab: stelem.ref
-			IL_01ac: dup
-			IL_01ad: ldc.i4.1
-			IL_01ae: ldloc.0
-			IL_01af: stelem.ref
-			IL_01b0: stloc.s 4
-			IL_01b2: ldloc.s 4
-			IL_01b4: ldc.i4.0
-			IL_01b5: ldelem.ref
-			IL_01b6: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope
-			IL_01bb: ldloc.s 4
-			IL_01bd: ldc.i4.1
-			IL_01be: ldelem.ref
-			IL_01bf: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope
-			IL_01c4: ldloc.s 4
-			IL_01c6: newobj instance void Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L34C19/FunctionObject::.ctor(class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope, class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope, object[])
-			IL_01cb: ldc.i4.0
-			IL_01cc: conv.r8
-			IL_01cd: ldstr ""
-			IL_01d2: ldc.i4.0
-			IL_01d3: ldc.i4.1
-			IL_01d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L34C19/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_01d9: stloc.s 7
-			IL_01db: ldloc.3
-			IL_01dc: ldstr "on"
-			IL_01e1: ldstr "end"
-			IL_01e6: ldloc.s 7
-			IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_01ed: pop
-			IL_01ee: ldnull
-			IL_01ef: ret
+			IL_010f: volatile.
+			IL_0111: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+			IL_0116: brfalse IL_012f
+
+			IL_011b: ldstr "setEncoding"
+			IL_0120: ldstr "utf8"
+			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_012a: br IL_0148
+
+			IL_012f: ldstr "setEncoding"
+			IL_0134: ldstr "utf8"
+			IL_0139: ldstr "Net_CreateServer_AllowHalfOpen_Delayed_Response:<TwoPhaseDummy_M5>:__js_call__:20"
+			IL_013e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+			IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0148: pop
+			IL_0149: ldloc.0
+			IL_014a: ldstr ""
+			IL_014f: stfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope::reply
+			IL_0154: ldloc.0
+			IL_0155: ldfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope::client
+			IL_015a: ldstr "Cannot access 'client' before initialization"
+			IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0169: stloc.3
+			IL_016a: ldc.i4.2
+			IL_016b: newarr [System.Runtime]System.Object
+			IL_0170: dup
+			IL_0171: ldc.i4.0
+			IL_0172: ldarg.0
+			IL_0173: stelem.ref
+			IL_0174: dup
+			IL_0175: ldc.i4.1
+			IL_0176: ldloc.0
+			IL_0177: stelem.ref
+			IL_0178: stloc.s 4
+			IL_017a: ldloc.s 4
+			IL_017c: ldc.i4.0
+			IL_017d: ldelem.ref
+			IL_017e: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope
+			IL_0183: ldloc.s 4
+			IL_0185: ldc.i4.1
+			IL_0186: ldelem.ref
+			IL_0187: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope
+			IL_018c: ldloc.s 4
+			IL_018e: newobj instance void Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L30C20/FunctionObject::.ctor(class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope, class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope, object[])
+			IL_0193: ldc.i4.1
+			IL_0194: conv.r8
+			IL_0195: ldstr ""
+			IL_019a: ldc.i4.0
+			IL_019b: ldc.i4.1
+			IL_019c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L30C20/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_01a1: stloc.s 6
+			IL_01a3: ldloc.3
+			IL_01a4: ldstr "on"
+			IL_01a9: ldstr "data"
+			IL_01ae: ldloc.s 6
+			IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_01b5: pop
+			IL_01b6: ldloc.0
+			IL_01b7: ldfld object Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope::client
+			IL_01bc: ldstr "Cannot access 'client' before initialization"
+			IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01cb: stloc.3
+			IL_01cc: ldc.i4.2
+			IL_01cd: newarr [System.Runtime]System.Object
+			IL_01d2: dup
+			IL_01d3: ldc.i4.0
+			IL_01d4: ldarg.0
+			IL_01d5: stelem.ref
+			IL_01d6: dup
+			IL_01d7: ldc.i4.1
+			IL_01d8: ldloc.0
+			IL_01d9: stelem.ref
+			IL_01da: stloc.s 4
+			IL_01dc: ldloc.s 4
+			IL_01de: ldc.i4.0
+			IL_01df: ldelem.ref
+			IL_01e0: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope
+			IL_01e5: ldloc.s 4
+			IL_01e7: ldc.i4.1
+			IL_01e8: ldelem.ref
+			IL_01e9: castclass Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope
+			IL_01ee: ldloc.s 4
+			IL_01f0: newobj instance void Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L34C19/FunctionObject::.ctor(class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/Scope, class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/Scope, object[])
+			IL_01f5: ldc.i4.0
+			IL_01f6: conv.r8
+			IL_01f7: ldstr ""
+			IL_01fc: ldc.i4.0
+			IL_01fd: ldc.i4.1
+			IL_01fe: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_AllowHalfOpen_Delayed_Response/FunctionExpression_L22C30/FunctionExpression_L34C19/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0203: stloc.s 7
+			IL_0205: ldloc.3
+			IL_0206: ldstr "on"
+			IL_020b: ldstr "end"
+			IL_0210: ldloc.s 7
+			IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0217: pop
+			IL_0218: ldnull
+			IL_0219: ret
 		} // end of method FunctionExpression_L22C30::__js_call__
 
 	} // end of class FunctionExpression_L22C30
@@ -2221,6 +2283,11 @@
 	.field assembly static int32 __jroc_dynamicLookup_29
 	.field assembly static int32 __jroc_dynamicLookup_30
 	.field assembly static int32 __jroc_dynamicLookup_31
+	.field assembly static int32 __jroc_dynamicLookup_32
+	.field assembly static int32 __jroc_dynamicLookup_33
+	.field assembly static int32 __jroc_dynamicLookup_34
+	.field assembly static int32 __jroc_dynamicLookup_35
+	.field assembly static int32 __jroc_dynamicLookup_36
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

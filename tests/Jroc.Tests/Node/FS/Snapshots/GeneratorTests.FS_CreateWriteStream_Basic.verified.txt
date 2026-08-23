@@ -466,7 +466,7 @@
 			IL_000e: brfalse IL_004d
 
 			IL_0013: volatile.
-			IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_001a: brfalse IL_002f
 
 			IL_001f: ldarg.2
@@ -477,7 +477,7 @@
 			IL_002f: ldarg.2
 			IL_0030: ldstr "message"
 			IL_0035: ldstr "FS_CreateWriteStream_Basic:<TwoPhaseDummy_M6>:__js_call__:8"
-			IL_003a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_003a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0044: stloc.2
@@ -554,7 +554,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 575 (0x23f)
+		// Code size: 659 (0x293)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_CreateWriteStream_Basic/Scope,
@@ -760,17 +760,41 @@
 		IL_020f: pop
 		IL_0210: ldloc.s 4
 		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0217: ldstr "write"
-		IL_021c: ldstr "hello "
-		IL_0221: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0226: pop
-		IL_0227: ldloc.s 4
-		IL_0229: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_022e: ldstr "end"
-		IL_0233: ldstr "world"
-		IL_0238: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_023d: pop
-		IL_023e: ret
+		IL_0217: volatile.
+		IL_0219: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_021e: brfalse IL_0237
+
+		IL_0223: ldstr "write"
+		IL_0228: ldstr "hello "
+		IL_022d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0232: br IL_0250
+
+		IL_0237: ldstr "write"
+		IL_023c: ldstr "hello "
+		IL_0241: ldstr "FS_CreateWriteStream_Basic:Modules.FS_CreateWriteStream_Basic:__js_module_init__:76"
+		IL_0246: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_024b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0250: pop
+		IL_0251: ldloc.s 4
+		IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0258: volatile.
+		IL_025a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_025f: brfalse IL_0278
+
+		IL_0264: ldstr "end"
+		IL_0269: ldstr "world"
+		IL_026e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0273: br IL_0291
+
+		IL_0278: ldstr "end"
+		IL_027d: ldstr "world"
+		IL_0282: ldstr "FS_CreateWriteStream_Basic:Modules.FS_CreateWriteStream_Basic:__js_module_init__:80"
+		IL_0287: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_028c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0291: pop
+		IL_0292: ret
 	} // end of method FS_CreateWriteStream_Basic::__js_module_init__
 
 } // end of class Modules.FS_CreateWriteStream_Basic
@@ -801,6 +825,8 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

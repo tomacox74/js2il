@@ -199,18 +199,30 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 24 (0x18)
+			// Header size: 12
+			// Code size: 66 (0x42)
 			.maxstack 8
 
 			IL_0000: ldarg.1
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0006: ldstr "end"
-			IL_000b: ldstr "ctx-ok"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0015: pop
-			IL_0016: ldnull
-			IL_0017: ret
+			IL_0006: volatile.
+			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_000d: brfalse IL_0026
+
+			IL_0012: ldstr "end"
+			IL_0017: ldstr "ctx-ok"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0021: br IL_003f
+
+			IL_0026: ldstr "end"
+			IL_002b: ldstr "ctx-ok"
+			IL_0030: ldstr "Tls_CreateSecureContext_Server_Handshake:<TwoPhaseDummy_M6>:__js_call__:4"
+			IL_0035: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_003f: pop
+			IL_0040: ldnull
+			IL_0041: ret
 		} // end of method ArrowFunction_L9C52::__js_call__
 
 	} // end of class ArrowFunction_L9C52
@@ -328,8 +340,8 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Header size: 1
-				// Code size: 46 (0x2e)
+				// Header size: 12
+				// Code size: 88 (0x58)
 				.maxstack 8
 
 				IL_0000: ldarg.0
@@ -340,12 +352,24 @@
 				IL_000d: ldstr "Cannot access 'client' before initialization"
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_001c: ldstr "setEncoding"
-				IL_0021: ldstr "utf8"
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_002b: pop
-				IL_002c: ldnull
-				IL_002d: ret
+				IL_001c: volatile.
+				IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+				IL_0023: brfalse IL_003c
+
+				IL_0028: ldstr "setEncoding"
+				IL_002d: ldstr "utf8"
+				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0037: br IL_0055
+
+				IL_003c: ldstr "setEncoding"
+				IL_0041: ldstr "utf8"
+				IL_0046: ldstr "Tls_CreateSecureContext_Server_Handshake:<TwoPhaseDummy_M8>:__js_call__:4"
+				IL_004b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0055: pop
+				IL_0056: ldnull
+				IL_0057: ret
 			} // end of method ArrowFunction_L17C5::__js_call__
 
 		} // end of class ArrowFunction_L17C5
@@ -690,7 +714,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 78 (0x4e)
+				// Code size: 117 (0x75)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/Scope,
@@ -726,13 +750,26 @@
 				IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18/FunctionObject>(!!0, float64, string, bool, bool)
 				IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18/FunctionObject>(!!0)
 				IL_003e: stloc.3
-				IL_003f: ldloc.1
-				IL_0040: ldstr "close"
-				IL_0045: ldloc.3
-				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_004b: pop
-				IL_004c: ldnull
-				IL_004d: ret
+				IL_003f: volatile.
+				IL_0041: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+				IL_0046: brfalse IL_005c
+
+				IL_004b: ldloc.1
+				IL_004c: ldstr "close"
+				IL_0051: ldloc.3
+				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0057: br IL_0072
+
+				IL_005c: ldloc.1
+				IL_005d: ldstr "close"
+				IL_0062: ldloc.3
+				IL_0063: ldstr "Tls_CreateSecureContext_Server_Handshake:<TwoPhaseDummy_M10>:__js_call__:6"
+				IL_0068: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+				IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0072: pop
+				IL_0073: ldnull
+				IL_0074: ret
 			} // end of method ArrowFunction_L26C22::__js_call__
 
 		} // end of class ArrowFunction_L26C22
@@ -864,7 +901,7 @@
 			IL_0007: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::server
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0011: volatile.
-			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
 			IL_0018: brfalse IL_002c
 
 			IL_001d: ldstr "address"
@@ -873,14 +910,14 @@
 
 			IL_002c: ldstr "address"
 			IL_0031: ldstr "Tls_CreateSecureContext_Server_Handshake:<TwoPhaseDummy_M7>:__js_call__:4"
-			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
 			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
 			IL_0040: stloc.1
 			IL_0041: ldarg.0
 			IL_0042: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITlsModule Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
 			IL_0047: volatile.
-			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
 			IL_004e: brfalse IL_0063
 
 			IL_0053: ldloc.1
@@ -891,7 +928,7 @@
 			IL_0063: ldloc.1
 			IL_0064: ldstr "port"
 			IL_0069: ldstr "Tls_CreateSecureContext_Server_Handshake:<TwoPhaseDummy_M7>:__js_call__:9"
-			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
 			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0078: stloc.2
@@ -1341,6 +1378,9 @@
 	.field assembly static int32 __jroc_dynamicLookup_14
 	.field assembly static int32 __jroc_dynamicLookup_15
 	.field assembly static int32 __jroc_dynamicLookup_16
+	.field assembly static int32 __jroc_dynamicLookup_17
+	.field assembly static int32 __jroc_dynamicLookup_18
+	.field assembly static int32 __jroc_dynamicLookup_19
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

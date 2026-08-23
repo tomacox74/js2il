@@ -477,7 +477,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 192 (0xc0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_FunctionExpression_SimpleAwait/Scope,
@@ -536,18 +536,31 @@
 		IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_FunctionExpression_SimpleAwait/ArrowFunction_L11C18/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_FunctionExpression_SimpleAwait/ArrowFunction_L11C18/FunctionObject>(!!0)
 		IL_0071: stloc.s 5
-		IL_0073: ldloc.s 4
-		IL_0075: ldstr "then"
-		IL_007a: ldloc.s 5
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0081: pop
-		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0087: stloc.s 6
-		IL_0089: ldloc.s 6
-		IL_008b: ldstr "After calling async function expression"
-		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0095: pop
-		IL_0096: ret
+		IL_0073: volatile.
+		IL_0075: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_007a: brfalse IL_0092
+
+		IL_007f: ldloc.s 4
+		IL_0081: ldstr "then"
+		IL_0086: ldloc.s 5
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008d: br IL_00aa
+
+		IL_0092: ldloc.s 4
+		IL_0094: ldstr "then"
+		IL_0099: ldloc.s 5
+		IL_009b: ldstr "Async_FunctionExpression_SimpleAwait:Modules.Async_FunctionExpression_SimpleAwait:__js_module_init__:15"
+		IL_00a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00aa: pop
+		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b0: stloc.s 6
+		IL_00b2: ldloc.s 6
+		IL_00b4: ldstr "After calling async function expression"
+		IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00be: pop
+		IL_00bf: ret
 	} // end of method Async_FunctionExpression_SimpleAwait::__js_module_init__
 
 } // end of class Modules.Async_FunctionExpression_SimpleAwait
@@ -572,4 +585,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

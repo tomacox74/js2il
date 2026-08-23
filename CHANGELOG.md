@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): implement issue #1958 Phase 4 with shape-keyed
+  `CallMember1` caches for own methods and direct prototype methods, including
+  the hot `Array.prototype.findGraphNode` path. Generated sites use fixed-arity
+  cached invocation with terminal generic fallback, while own shadowing,
+  accessors, reassignment, prototype mutation, proxies, symbols, and unsupported
+  exotic receivers preserve full dynamic semantics.
 - perf(runtime): implement issue #1958 Phase 3 by replacing exact-receiver
   dynamic property-read cache entries with weak shape-and-slot entries.
   Distinct ordinary objects with the same `JsShape` now share one monomorphic

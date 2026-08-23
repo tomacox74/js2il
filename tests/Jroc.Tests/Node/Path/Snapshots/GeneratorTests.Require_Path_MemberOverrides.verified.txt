@@ -219,7 +219,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 25 (0x19)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -227,13 +227,26 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule Modules.Require_Path_MemberOverrides/Scope::path
-			IL_0006: ldstr "normalize"
-			IL_000b: ldarg.2
-			IL_000c: box [System.Runtime]System.Double
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0016: stloc.0
-			IL_0017: ldloc.0
-			IL_0018: ret
+			IL_0006: volatile.
+			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_000d: brfalse IL_0027
+
+			IL_0012: ldstr "normalize"
+			IL_0017: ldarg.2
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0022: br IL_0041
+
+			IL_0027: ldstr "normalize"
+			IL_002c: ldarg.2
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: ldstr "Require_Path_MemberOverrides:<TwoPhaseDummy_M4>:__js_call__:4"
+			IL_0037: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0041: stloc.0
+			IL_0042: ldloc.0
+			IL_0043: ret
 		} // end of method normalize::__js_call__
 
 	} // end of class normalize
@@ -993,6 +1006,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_4
 	.field assembly static int32 __jroc_dynamicLookup_5
 	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

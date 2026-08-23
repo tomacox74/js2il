@@ -171,7 +171,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 398 (0x18e)
+		// Code size: 438 (0x1b6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly/Scope,
@@ -260,76 +260,89 @@
 			IL_00d0: ldc.i4.1
 			IL_00d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
 			IL_00d6: stloc.s 9
-			IL_00d8: ldloc.1
-			IL_00d9: ldstr "createServer"
-			IL_00de: ldloc.s 9
-			IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00e5: pop
-			IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00eb: stloc.s 10
-			IL_00ed: ldloc.s 10
-			IL_00ef: ldstr "unexpected success"
-			IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00f9: pop
-			IL_00fa: leave IL_018a
+			IL_00d8: volatile.
+			IL_00da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_00df: brfalse IL_00f6
+
+			IL_00e4: ldloc.1
+			IL_00e5: ldstr "createServer"
+			IL_00ea: ldloc.s 9
+			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00f1: br IL_010d
+
+			IL_00f6: ldloc.1
+			IL_00f7: ldstr "createServer"
+			IL_00fc: ldloc.s 9
+			IL_00fe: ldstr "Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly:Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly:__js_module_init__:30"
+			IL_0103: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_010d: pop
+			IL_010e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0113: stloc.s 10
+			IL_0115: ldloc.s 10
+			IL_0117: ldstr "unexpected success"
+			IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0121: pop
+			IL_0122: leave IL_01b2
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00ff: stloc.s 4
-			IL_0101: ldloc.s 4
-			IL_0103: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0108: dup
-			IL_0109: brtrue IL_011f
+			IL_0127: stloc.s 4
+			IL_0129: ldloc.s 4
+			IL_012b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0130: dup
+			IL_0131: brtrue IL_0147
 
-			IL_010e: pop
-			IL_010f: ldloc.s 4
-			IL_0111: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0116: dup
-			IL_0117: brtrue IL_012b
+			IL_0136: pop
+			IL_0137: ldloc.s 4
+			IL_0139: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_013e: dup
+			IL_013f: brtrue IL_0153
 
-			IL_011c: pop
-			IL_011d: rethrow
+			IL_0144: pop
+			IL_0145: rethrow
 
-			IL_011f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0124: stloc.s 5
-			IL_0126: br IL_012d
+			IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_014c: stloc.s 5
+			IL_014e: br IL_0155
 
-			IL_012b: stloc.s 5
+			IL_0153: stloc.s 5
 
-			IL_012d: ldloc.s 5
-			IL_012f: stloc.s 6
-			IL_0131: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0136: stloc.s 10
-			IL_0138: volatile.
-			IL_013a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_013f: brfalse IL_0155
+			IL_0155: ldloc.s 5
+			IL_0157: stloc.s 6
+			IL_0159: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_015e: stloc.s 10
+			IL_0160: volatile.
+			IL_0162: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_0167: brfalse IL_017d
 
-			IL_0144: ldloc.s 6
-			IL_0146: ldstr "message"
-			IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0150: br IL_016b
+			IL_016c: ldloc.s 6
+			IL_016e: ldstr "message"
+			IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0178: br IL_0193
 
-			IL_0155: ldloc.s 6
-			IL_0157: ldstr "message"
-			IL_015c: ldstr "Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly:Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly:__js_module_init__:46"
-			IL_0161: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_017d: ldloc.s 6
+			IL_017f: ldstr "message"
+			IL_0184: ldstr "Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly:Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly:__js_module_init__:46"
+			IL_0189: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_016b: stloc.s 8
-			IL_016d: ldstr "message:"
-			IL_0172: ldloc.s 8
-			IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0179: stloc.s 11
-			IL_017b: ldloc.s 10
-			IL_017d: ldloc.s 11
-			IL_017f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0184: pop
-			IL_0185: leave IL_018a
+			IL_0193: stloc.s 8
+			IL_0195: ldstr "message:"
+			IL_019a: ldloc.s 8
+			IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_01a1: stloc.s 11
+			IL_01a3: ldloc.s 10
+			IL_01a5: ldloc.s 11
+			IL_01a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01ac: pop
+			IL_01ad: leave IL_01b2
 		} // end handler
 
-		IL_018a: ldnull
-		IL_018b: stloc.s 7
-		IL_018d: ret
+		IL_01b2: ldnull
+		IL_01b3: stloc.s 7
+		IL_01b5: ret
 	} // end of method Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly::__js_module_init__
 
 } // end of class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly
@@ -428,6 +441,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_1
 	.field assembly static int32 __jroc_dynamicLookup_2
 	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

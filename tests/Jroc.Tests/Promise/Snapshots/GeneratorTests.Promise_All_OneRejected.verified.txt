@@ -340,7 +340,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 214 (0xd6)
+		// Code size: 296 (0x128)
 		.maxstack 9
 		.locals init (
 			[0] class Modules.Promise_All_OneRejected/Scope,
@@ -397,36 +397,62 @@
 		IL_007b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_All_OneRejected/ArrowFunction_L8C11/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_All_OneRejected/ArrowFunction_L8C11/FunctionObject>(!!0)
 		IL_0085: stloc.s 6
-		IL_0087: ldloc.s 4
-		IL_0089: ldstr "then"
-		IL_008e: ldloc.s 6
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0095: stloc.s 4
-		IL_0097: ldloc.s 4
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009e: stloc.s 4
-		IL_00a0: ldc.i4.1
-		IL_00a1: newarr [System.Runtime]System.Object
-		IL_00a6: dup
-		IL_00a7: ldc.i4.0
-		IL_00a8: ldloc.0
-		IL_00a9: stelem.ref
-		IL_00aa: stloc.s 5
-		IL_00ac: newobj instance void Modules.Promise_All_OneRejected/ArrowFunction_L11C12/FunctionObject::.ctor()
-		IL_00b1: ldc.i4.1
-		IL_00b2: conv.r8
-		IL_00b3: ldstr ""
-		IL_00b8: ldc.i4.0
-		IL_00b9: ldc.i4.0
-		IL_00ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_All_OneRejected/ArrowFunction_L11C12/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00bf: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_All_OneRejected/ArrowFunction_L11C12/FunctionObject>(!!0)
-		IL_00c4: stloc.s 7
-		IL_00c6: ldloc.s 4
-		IL_00c8: ldstr "catch"
-		IL_00cd: ldloc.s 7
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d4: pop
-		IL_00d5: ret
+		IL_0087: volatile.
+		IL_0089: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_008e: brfalse IL_00a6
+
+		IL_0093: ldloc.s 4
+		IL_0095: ldstr "then"
+		IL_009a: ldloc.s 6
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a1: br IL_00be
+
+		IL_00a6: ldloc.s 4
+		IL_00a8: ldstr "then"
+		IL_00ad: ldloc.s 6
+		IL_00af: ldstr "Promise_All_OneRejected:Modules.Promise_All_OneRejected:__js_module_init__:23"
+		IL_00b4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00be: stloc.s 4
+		IL_00c0: ldloc.s 4
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c7: stloc.s 4
+		IL_00c9: ldc.i4.1
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldloc.0
+		IL_00d2: stelem.ref
+		IL_00d3: stloc.s 5
+		IL_00d5: newobj instance void Modules.Promise_All_OneRejected/ArrowFunction_L11C12/FunctionObject::.ctor()
+		IL_00da: ldc.i4.1
+		IL_00db: conv.r8
+		IL_00dc: ldstr ""
+		IL_00e1: ldc.i4.0
+		IL_00e2: ldc.i4.0
+		IL_00e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_All_OneRejected/ArrowFunction_L11C12/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_All_OneRejected/ArrowFunction_L11C12/FunctionObject>(!!0)
+		IL_00ed: stloc.s 7
+		IL_00ef: volatile.
+		IL_00f1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00f6: brfalse IL_010e
+
+		IL_00fb: ldloc.s 4
+		IL_00fd: ldstr "catch"
+		IL_0102: ldloc.s 7
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0109: br IL_0126
+
+		IL_010e: ldloc.s 4
+		IL_0110: ldstr "catch"
+		IL_0115: ldloc.s 7
+		IL_0117: ldstr "Promise_All_OneRejected:Modules.Promise_All_OneRejected:__js_module_init__:27"
+		IL_011c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0126: pop
+		IL_0127: ret
 	} // end of method Promise_All_OneRejected::__js_module_init__
 
 } // end of class Modules.Promise_All_OneRejected
@@ -451,4 +477,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

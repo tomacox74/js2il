@@ -185,7 +185,8 @@ npm run perf:phased:kracken-ai-astar:il
 
 The IL report records method size, dynamic-cache property reads, generic
 item/property reads, generic numeric `Array.length` reads, explicit boxing,
-arity-1 dispatch inside `findGraphNode`, and arity-1 calls to `findGraphNode`
+generic and cached arity-1 dispatch inside `findGraphNode`, and generic and
+cached arity-1 calls to `findGraphNode`
 from other generated callables. These are method/path counters rather than
 whole-assembly totals.
 
@@ -331,6 +332,34 @@ generic property algorithm, while accessors, inherited properties, Proxies,
 symbols, descriptor changes, deletion, and exotic receivers remain generic.
 The normal end-to-end comparisons show the resulting throughput is currently
 flat; later phases must not treat this foundation as a measured speedup.
+
+Phase 4 shape-keyed `CallMember1` candidate recorded on the same Intel host on
+2026-08-22:
+
+- source: Phase 3 merge `aa07cb174d980c8b59efba3cbe3fc86959d9b5a5`
+  plus the Phase 4 working-tree changes;
+- host: Intel Xeon 6975P-C, Ubuntu 24.04.4, 8 logical / 4 physical cores;
+  runtime: .NET 10.0.11; BenchmarkDotNet 0.15.8;
+- generated IL contains two
+  `DynamicLookupInlineCache.CallMember1(object, string, object, string,
+  int32&)` calls for the two `findGraphNode` sites and retains two
+  `ObjectRuntime.CallMember1` terminal fallback branches;
+- focused normal controls: direct-prototype hit 16.39 ns / 0 B, shared
+  `%Array.prototype%` hit 16.89 ns / 0 B, four-shape polymorphic hit 19.23 ns /
+  0 B, and generic `CallMember1` 104.05 ns / 32 B;
+- sequential JROC-only exact-scenario runs: parent 4.636 s mean / 4.676 s
+  median, N=21, 57,887,544 B/op; candidate 4.685 s mean / 4.712 s median,
+  N=20, 56,893,608 B/op. The 1.1% timing difference is within the overlapping
+  distributions and is not claimed as a throughput change; allocation is
+  993,936 B/op lower;
+- the 32 B generic-call allocation difference attributes approximately
+  31,060 cached arity-1 calls per operation. At the focused 87.16 ns
+  generic-versus-hit delta, the isolated expected saving is about 2.7 ms
+  (0.06% of the scenario), below this workload's observed run-to-run noise.
+  The original Phase 4 end-to-end speed gate is therefore not measurable
+  after the earlier phases reduced the scenario from 17.5 s and 2.31 GB/op;
+  the structural, fixed-arity, and zero-allocation gates remain directly
+  verified.
 
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:

@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 99 (0x63)
 		.maxstack 8
 		.locals (
 			[0] class Modules.Process_Exit_WithCode_GeneratesCall/Scope
@@ -115,12 +115,25 @@
 		IL_0007: ldstr "process"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: ldstr "exit"
-		IL_001b: ldc.r8 3
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_002e: pop
-		IL_002f: ret
+		IL_0016: volatile.
+		IL_0018: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_001d: brfalse IL_003f
+
+		IL_0022: ldstr "exit"
+		IL_0027: ldc.r8 3
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_003a: br IL_0061
+
+		IL_003f: ldstr "exit"
+		IL_0044: ldc.r8 3
+		IL_004d: box [System.Runtime]System.Double
+		IL_0052: ldstr "Process_Exit_WithCode_GeneratesCall:Modules.Process_Exit_WithCode_GeneratesCall:__js_module_init__:9"
+		IL_0057: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0061: pop
+		IL_0062: ret
 	} // end of method Process_Exit_WithCode_GeneratesCall::__js_module_init__
 
 } // end of class Modules.Process_Exit_WithCode_GeneratesCall
@@ -145,4 +158,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

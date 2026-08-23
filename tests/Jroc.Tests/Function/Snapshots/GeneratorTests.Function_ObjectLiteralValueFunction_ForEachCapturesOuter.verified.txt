@@ -224,7 +224,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 36 (0x24)
+				// Code size: 75 (0x4b)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -240,13 +240,26 @@
 				IL_000a: castclass Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_DocumentLike/Scope
 				IL_000f: ldfld object Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_DocumentLike/Scope::toBeRemoved
 				IL_0014: stloc.1
-				IL_0015: ldloc.0
-				IL_0016: ldstr "_preremove"
-				IL_001b: ldloc.1
-				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0021: pop
-				IL_0022: ldnull
-				IL_0023: ret
+				IL_0015: volatile.
+				IL_0017: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+				IL_001c: brfalse IL_0032
+
+				IL_0021: ldloc.0
+				IL_0022: ldstr "_preremove"
+				IL_0027: ldloc.1
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_002d: br IL_0048
+
+				IL_0032: ldloc.0
+				IL_0033: ldstr "_preremove"
+				IL_0038: ldloc.1
+				IL_0039: ldstr "Function_ObjectLiteralValueFunction_ForEachCapturesOuter:<TwoPhaseDummy_M6>:__js_call__:4"
+				IL_003e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0048: pop
+				IL_0049: ldnull
+				IL_004a: ret
 			} // end of method FunctionExpression_DocumentLike::__js_call__
 
 		} // end of class FunctionExpression_DocumentLike
@@ -440,7 +453,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 234 (0xea)
+			// Code size: 274 (0x112)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_DocumentLike/Scope,
@@ -479,7 +492,7 @@
 			IL_0054: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0059: stloc.2
 			IL_005a: ldloc.2
-			IL_005b: brfalse IL_00e8
+			IL_005b: brfalse IL_0110
 
 			IL_0060: volatile.
 			IL_0062: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
@@ -528,14 +541,27 @@
 			IL_00d2: ldc.i4.1
 			IL_00d3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_DocumentLike/FunctionExpression_DocumentLike/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_00d8: stloc.s 4
-			IL_00da: ldloc.1
-			IL_00db: ldstr "forEach"
-			IL_00e0: ldloc.s 4
-			IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00e7: pop
+			IL_00da: volatile.
+			IL_00dc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00e1: brfalse IL_00f8
 
-			IL_00e8: ldnull
-			IL_00e9: ret
+			IL_00e6: ldloc.1
+			IL_00e7: ldstr "forEach"
+			IL_00ec: ldloc.s 4
+			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00f3: br IL_010f
+
+			IL_00f8: ldloc.1
+			IL_00f9: ldstr "forEach"
+			IL_00fe: ldloc.s 4
+			IL_0100: ldstr "Function_ObjectLiteralValueFunction_ForEachCapturesOuter:<TwoPhaseDummy_M4>:__js_call__:16"
+			IL_0105: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_010f: pop
+
+			IL_0110: ldnull
+			IL_0111: ret
 		} // end of method FunctionExpression_DocumentLike::__js_call__
 
 	} // end of class FunctionExpression_DocumentLike
@@ -930,6 +956,8 @@
 	.field assembly static int32 __jroc_dynamicLookup_7
 	.field assembly static int32 __jroc_dynamicLookup_8
 	.field assembly static int32 __jroc_dynamicLookup_9
+	.field assembly static int32 __jroc_dynamicLookup_10
+	.field assembly static int32 __jroc_dynamicLookup_11
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

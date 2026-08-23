@@ -445,7 +445,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 116 (0x74)
+				// Code size: 158 (0x9e)
 				.maxstack 8
 				.locals init (
 					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -491,12 +491,24 @@
 				IL_0053: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope
 				IL_0058: ldfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope::res
 				IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0062: ldstr "end"
-				IL_0067: ldstr "ok"
-				IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0071: pop
-				IL_0072: ldnull
-				IL_0073: ret
+				IL_0062: volatile.
+				IL_0064: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+				IL_0069: brfalse IL_0082
+
+				IL_006e: ldstr "end"
+				IL_0073: ldstr "ok"
+				IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_007d: br IL_009b
+
+				IL_0082: ldstr "end"
+				IL_0087: ldstr "ok"
+				IL_008c: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M7>:__js_call__:16"
+				IL_0091: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_009b: pop
+				IL_009c: ldnull
+				IL_009d: ret
 			} // end of method FunctionExpression_server_L19C16::__js_call__
 
 		} // end of class FunctionExpression_server_L19C16
@@ -660,7 +672,7 @@
 				74 61 54 6f 6b 65 6e 0e 00 00 02
 			)
 			// Header size: 12
-			// Code size: 360 (0x168)
+			// Code size: 402 (0x192)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope,
@@ -679,135 +691,147 @@
 			IL_0008: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope::res
 			IL_000d: ldarg.2
 			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0013: ldstr "setEncoding"
-			IL_0018: ldstr "utf8"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0022: pop
-			IL_0023: ldloc.0
-			IL_0024: ldc.r8 0.0
-			IL_002d: box [System.Runtime]System.Double
-			IL_0032: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope::chunkCount
-			IL_0037: ldloc.0
-			IL_0038: ldstr ""
-			IL_003d: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope::body
-			IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0047: stloc.1
-			IL_0048: volatile.
-			IL_004a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-			IL_004f: brfalse IL_0064
+			IL_0013: volatile.
+			IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_001a: brfalse IL_0033
 
-			IL_0054: ldarg.2
-			IL_0055: ldstr "headers"
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005f: br IL_0079
+			IL_001f: ldstr "setEncoding"
+			IL_0024: ldstr "utf8"
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_002e: br IL_004c
 
-			IL_0064: ldarg.2
-			IL_0065: ldstr "headers"
-			IL_006a: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M4>:__js_call__:20"
-			IL_006f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0033: ldstr "setEncoding"
+			IL_0038: ldstr "utf8"
+			IL_003d: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M4>:__js_call__:7"
+			IL_0042: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_0079: stloc.2
-			IL_007a: volatile.
-			IL_007c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-			IL_0081: brfalse IL_0096
+			IL_004c: pop
+			IL_004d: ldloc.0
+			IL_004e: ldc.r8 0.0
+			IL_0057: box [System.Runtime]System.Double
+			IL_005c: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope::chunkCount
+			IL_0061: ldloc.0
+			IL_0062: ldstr ""
+			IL_0067: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope::body
+			IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0071: stloc.1
+			IL_0072: volatile.
+			IL_0074: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_0079: brfalse IL_008e
 
-			IL_0086: ldloc.2
-			IL_0087: ldstr "transfer-encoding"
-			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0091: br IL_00ab
+			IL_007e: ldarg.2
+			IL_007f: ldstr "headers"
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0089: br IL_00a3
 
-			IL_0096: ldloc.2
-			IL_0097: ldstr "transfer-encoding"
-			IL_009c: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M4>:__js_call__:22"
-			IL_00a1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_008e: ldarg.2
+			IL_008f: ldstr "headers"
+			IL_0094: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M4>:__js_call__:20"
+			IL_0099: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00ab: stloc.2
-			IL_00ac: ldstr "transfer:"
-			IL_00b1: ldloc.2
-			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00b7: stloc.3
-			IL_00b8: ldloc.1
-			IL_00b9: ldloc.3
-			IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00bf: pop
-			IL_00c0: ldarg.2
-			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00c6: stloc.2
-			IL_00c7: ldc.i4.2
-			IL_00c8: newarr [System.Runtime]System.Object
-			IL_00cd: dup
-			IL_00ce: ldc.i4.0
-			IL_00cf: ldarg.0
-			IL_00d0: stelem.ref
-			IL_00d1: dup
-			IL_00d2: ldc.i4.1
-			IL_00d3: ldloc.0
-			IL_00d4: stelem.ref
-			IL_00d5: stloc.s 4
-			IL_00d7: ldloc.s 4
-			IL_00d9: ldc.i4.0
-			IL_00da: ldelem.ref
-			IL_00db: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
-			IL_00e0: ldloc.s 4
-			IL_00e2: ldc.i4.1
-			IL_00e3: ldelem.ref
-			IL_00e4: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope
-			IL_00e9: ldloc.s 4
-			IL_00eb: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope, object[])
-			IL_00f0: ldc.i4.1
-			IL_00f1: conv.r8
-			IL_00f2: ldstr ""
-			IL_00f7: ldc.i4.0
-			IL_00f8: ldc.i4.1
-			IL_00f9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_00fe: stloc.s 5
-			IL_0100: ldloc.2
-			IL_0101: ldstr "on"
-			IL_0106: ldstr "data"
-			IL_010b: ldloc.s 5
-			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0112: pop
-			IL_0113: ldarg.2
-			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0119: stloc.2
-			IL_011a: ldc.i4.2
-			IL_011b: newarr [System.Runtime]System.Object
-			IL_0120: dup
+			IL_00a3: stloc.2
+			IL_00a4: volatile.
+			IL_00a6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_00ab: brfalse IL_00c0
+
+			IL_00b0: ldloc.2
+			IL_00b1: ldstr "transfer-encoding"
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00bb: br IL_00d5
+
+			IL_00c0: ldloc.2
+			IL_00c1: ldstr "transfer-encoding"
+			IL_00c6: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M4>:__js_call__:22"
+			IL_00cb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00d5: stloc.2
+			IL_00d6: ldstr "transfer:"
+			IL_00db: ldloc.2
+			IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00e1: stloc.3
+			IL_00e2: ldloc.1
+			IL_00e3: ldloc.3
+			IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00e9: pop
+			IL_00ea: ldarg.2
+			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00f0: stloc.2
+			IL_00f1: ldc.i4.2
+			IL_00f2: newarr [System.Runtime]System.Object
+			IL_00f7: dup
+			IL_00f8: ldc.i4.0
+			IL_00f9: ldarg.0
+			IL_00fa: stelem.ref
+			IL_00fb: dup
+			IL_00fc: ldc.i4.1
+			IL_00fd: ldloc.0
+			IL_00fe: stelem.ref
+			IL_00ff: stloc.s 4
+			IL_0101: ldloc.s 4
+			IL_0103: ldc.i4.0
+			IL_0104: ldelem.ref
+			IL_0105: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
+			IL_010a: ldloc.s 4
+			IL_010c: ldc.i4.1
+			IL_010d: ldelem.ref
+			IL_010e: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope
+			IL_0113: ldloc.s 4
+			IL_0115: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope, object[])
+			IL_011a: ldc.i4.1
+			IL_011b: conv.r8
+			IL_011c: ldstr ""
 			IL_0121: ldc.i4.0
-			IL_0122: ldarg.0
-			IL_0123: stelem.ref
-			IL_0124: dup
-			IL_0125: ldc.i4.1
-			IL_0126: ldloc.0
-			IL_0127: stelem.ref
-			IL_0128: stloc.s 4
-			IL_012a: ldloc.s 4
-			IL_012c: ldc.i4.0
-			IL_012d: ldelem.ref
-			IL_012e: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
-			IL_0133: ldloc.s 4
-			IL_0135: ldc.i4.1
-			IL_0136: ldelem.ref
-			IL_0137: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope
-			IL_013c: ldloc.s 4
-			IL_013e: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server_L19C16/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope, object[])
-			IL_0143: ldc.i4.0
-			IL_0144: conv.r8
-			IL_0145: ldstr ""
-			IL_014a: ldc.i4.0
-			IL_014b: ldc.i4.1
-			IL_014c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server_L19C16/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0151: stloc.s 6
-			IL_0153: ldloc.2
-			IL_0154: ldstr "on"
-			IL_0159: ldstr "end"
-			IL_015e: ldloc.s 6
-			IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0165: pop
-			IL_0166: ldnull
-			IL_0167: ret
+			IL_0122: ldc.i4.1
+			IL_0123: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0128: stloc.s 5
+			IL_012a: ldloc.2
+			IL_012b: ldstr "on"
+			IL_0130: ldstr "data"
+			IL_0135: ldloc.s 5
+			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_013c: pop
+			IL_013d: ldarg.2
+			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0143: stloc.2
+			IL_0144: ldc.i4.2
+			IL_0145: newarr [System.Runtime]System.Object
+			IL_014a: dup
+			IL_014b: ldc.i4.0
+			IL_014c: ldarg.0
+			IL_014d: stelem.ref
+			IL_014e: dup
+			IL_014f: ldc.i4.1
+			IL_0150: ldloc.0
+			IL_0151: stelem.ref
+			IL_0152: stloc.s 4
+			IL_0154: ldloc.s 4
+			IL_0156: ldc.i4.0
+			IL_0157: ldelem.ref
+			IL_0158: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
+			IL_015d: ldloc.s 4
+			IL_015f: ldc.i4.1
+			IL_0160: ldelem.ref
+			IL_0161: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope
+			IL_0166: ldloc.s 4
+			IL_0168: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server_L19C16/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/Scope, object[])
+			IL_016d: ldc.i4.0
+			IL_016e: conv.r8
+			IL_016f: ldstr ""
+			IL_0174: ldc.i4.0
+			IL_0175: ldc.i4.1
+			IL_0176: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_server/FunctionExpression_server_L19C16/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_017b: stloc.s 6
+			IL_017d: ldloc.2
+			IL_017e: ldstr "on"
+			IL_0183: ldstr "end"
+			IL_0188: ldloc.s 6
+			IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_018f: pop
+			IL_0190: ldnull
+			IL_0191: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server
@@ -1289,7 +1313,7 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 116 (0x74)
+					// Code size: 156 (0x9c)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req_L46C20/Scope,
@@ -1342,13 +1366,26 @@
 					IL_005c: ldc.i4.1
 					IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req_L46C20/FunctionExpression_req/FunctionObject>(!!0, float64, string, bool, bool)
 					IL_0062: stloc.s 5
-					IL_0064: ldloc.2
-					IL_0065: ldstr "close"
-					IL_006a: ldloc.s 5
-					IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_0071: pop
-					IL_0072: ldnull
-					IL_0073: ret
+					IL_0064: volatile.
+					IL_0066: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+					IL_006b: brfalse IL_0082
+
+					IL_0070: ldloc.2
+					IL_0071: ldstr "close"
+					IL_0076: ldloc.s 5
+					IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+					IL_007d: br IL_0099
+
+					IL_0082: ldloc.2
+					IL_0083: ldstr "close"
+					IL_0088: ldloc.s 5
+					IL_008a: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M10>:__js_call__:12"
+					IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
+					IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+					IL_0099: pop
+					IL_009a: ldnull
+					IL_009b: ret
 				} // end of method FunctionExpression_req_L46C20::__js_call__
 
 			} // end of class FunctionExpression_req_L46C20
@@ -1505,7 +1542,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 213 (0xd5)
+				// Code size: 255 (0xff)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope,
@@ -1519,105 +1556,117 @@
 				IL_0005: stloc.0
 				IL_0006: ldarg.2
 				IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000c: ldstr "setEncoding"
-				IL_0011: ldstr "utf8"
-				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001b: pop
-				IL_001c: ldloc.0
-				IL_001d: ldstr ""
-				IL_0022: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope::responseBody
-				IL_0027: ldarg.2
-				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_002d: stloc.1
-				IL_002e: ldc.i4.3
-				IL_002f: newarr [System.Runtime]System.Object
-				IL_0034: dup
-				IL_0035: ldc.i4.0
-				IL_0036: ldarg.0
-				IL_0037: ldc.i4.0
-				IL_0038: ldelem.ref
-				IL_0039: stelem.ref
-				IL_003a: dup
-				IL_003b: ldc.i4.1
-				IL_003c: ldarg.0
-				IL_003d: ldc.i4.1
-				IL_003e: ldelem.ref
-				IL_003f: stelem.ref
-				IL_0040: dup
-				IL_0041: ldc.i4.2
-				IL_0042: ldloc.0
-				IL_0043: stelem.ref
-				IL_0044: stloc.2
-				IL_0045: ldloc.2
-				IL_0046: ldc.i4.0
-				IL_0047: ldelem.ref
-				IL_0048: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
-				IL_004d: ldloc.2
-				IL_004e: ldc.i4.2
-				IL_004f: ldelem.ref
-				IL_0050: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope
-				IL_0055: ldloc.2
-				IL_0056: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope, object[])
-				IL_005b: ldc.i4.1
-				IL_005c: conv.r8
-				IL_005d: ldstr ""
-				IL_0062: ldc.i4.0
-				IL_0063: ldc.i4.1
-				IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req/FunctionObject>(!!0, float64, string, bool, bool)
-				IL_0069: stloc.3
-				IL_006a: ldloc.1
-				IL_006b: ldstr "on"
-				IL_0070: ldstr "data"
-				IL_0075: ldloc.3
-				IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_007b: pop
-				IL_007c: ldarg.2
-				IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0082: stloc.1
-				IL_0083: ldc.i4.3
-				IL_0084: newarr [System.Runtime]System.Object
-				IL_0089: dup
-				IL_008a: ldc.i4.0
-				IL_008b: ldarg.0
+				IL_000c: volatile.
+				IL_000e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+				IL_0013: brfalse IL_002c
+
+				IL_0018: ldstr "setEncoding"
+				IL_001d: ldstr "utf8"
+				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0027: br IL_0045
+
+				IL_002c: ldstr "setEncoding"
+				IL_0031: ldstr "utf8"
+				IL_0036: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M8>:__js_call__:5"
+				IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0045: pop
+				IL_0046: ldloc.0
+				IL_0047: ldstr ""
+				IL_004c: stfld object Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope::responseBody
+				IL_0051: ldarg.2
+				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0057: stloc.1
+				IL_0058: ldc.i4.3
+				IL_0059: newarr [System.Runtime]System.Object
+				IL_005e: dup
+				IL_005f: ldc.i4.0
+				IL_0060: ldarg.0
+				IL_0061: ldc.i4.0
+				IL_0062: ldelem.ref
+				IL_0063: stelem.ref
+				IL_0064: dup
+				IL_0065: ldc.i4.1
+				IL_0066: ldarg.0
+				IL_0067: ldc.i4.1
+				IL_0068: ldelem.ref
+				IL_0069: stelem.ref
+				IL_006a: dup
+				IL_006b: ldc.i4.2
+				IL_006c: ldloc.0
+				IL_006d: stelem.ref
+				IL_006e: stloc.2
+				IL_006f: ldloc.2
+				IL_0070: ldc.i4.0
+				IL_0071: ldelem.ref
+				IL_0072: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
+				IL_0077: ldloc.2
+				IL_0078: ldc.i4.2
+				IL_0079: ldelem.ref
+				IL_007a: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope
+				IL_007f: ldloc.2
+				IL_0080: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope, object[])
+				IL_0085: ldc.i4.1
+				IL_0086: conv.r8
+				IL_0087: ldstr ""
 				IL_008c: ldc.i4.0
-				IL_008d: ldelem.ref
-				IL_008e: stelem.ref
-				IL_008f: dup
-				IL_0090: ldc.i4.1
-				IL_0091: ldarg.0
-				IL_0092: ldc.i4.1
-				IL_0093: ldelem.ref
-				IL_0094: stelem.ref
-				IL_0095: dup
-				IL_0096: ldc.i4.2
-				IL_0097: ldloc.0
-				IL_0098: stelem.ref
-				IL_0099: stloc.2
-				IL_009a: ldloc.2
-				IL_009b: ldc.i4.0
-				IL_009c: ldelem.ref
-				IL_009d: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
-				IL_00a2: ldloc.2
-				IL_00a3: ldc.i4.2
-				IL_00a4: ldelem.ref
-				IL_00a5: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope
-				IL_00aa: ldloc.2
-				IL_00ab: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req_L46C20/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope, object[])
-				IL_00b0: ldc.i4.0
-				IL_00b1: conv.r8
-				IL_00b2: ldstr ""
-				IL_00b7: ldc.i4.0
-				IL_00b8: ldc.i4.1
-				IL_00b9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req_L46C20/FunctionObject>(!!0, float64, string, bool, bool)
-				IL_00be: stloc.s 4
-				IL_00c0: ldloc.1
-				IL_00c1: ldstr "on"
-				IL_00c6: ldstr "end"
-				IL_00cb: ldloc.s 4
-				IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00d2: pop
-				IL_00d3: ldnull
-				IL_00d4: ret
+				IL_008d: ldc.i4.1
+				IL_008e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_0093: stloc.3
+				IL_0094: ldloc.1
+				IL_0095: ldstr "on"
+				IL_009a: ldstr "data"
+				IL_009f: ldloc.3
+				IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00a5: pop
+				IL_00a6: ldarg.2
+				IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00ac: stloc.1
+				IL_00ad: ldc.i4.3
+				IL_00ae: newarr [System.Runtime]System.Object
+				IL_00b3: dup
+				IL_00b4: ldc.i4.0
+				IL_00b5: ldarg.0
+				IL_00b6: ldc.i4.0
+				IL_00b7: ldelem.ref
+				IL_00b8: stelem.ref
+				IL_00b9: dup
+				IL_00ba: ldc.i4.1
+				IL_00bb: ldarg.0
+				IL_00bc: ldc.i4.1
+				IL_00bd: ldelem.ref
+				IL_00be: stelem.ref
+				IL_00bf: dup
+				IL_00c0: ldc.i4.2
+				IL_00c1: ldloc.0
+				IL_00c2: stelem.ref
+				IL_00c3: stloc.2
+				IL_00c4: ldloc.2
+				IL_00c5: ldc.i4.0
+				IL_00c6: ldelem.ref
+				IL_00c7: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/Scope
+				IL_00cc: ldloc.2
+				IL_00cd: ldc.i4.2
+				IL_00ce: ldelem.ref
+				IL_00cf: castclass Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope
+				IL_00d4: ldloc.2
+				IL_00d5: newobj instance void Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req_L46C20/FunctionObject::.ctor(class Modules.Http_Request_Streaming_Chunked_RequestBody/Scope, class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/Scope, object[])
+				IL_00da: ldc.i4.0
+				IL_00db: conv.r8
+				IL_00dc: ldstr ""
+				IL_00e1: ldc.i4.0
+				IL_00e2: ldc.i4.1
+				IL_00e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/FunctionExpression_req/FunctionExpression_req_L46C20/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_00e8: stloc.s 4
+				IL_00ea: ldloc.1
+				IL_00eb: ldstr "on"
+				IL_00f0: ldstr "end"
+				IL_00f5: ldloc.s 4
+				IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00fc: pop
+				IL_00fd: ldnull
+				IL_00fe: ret
 			} // end of method FunctionExpression_req::__js_call__
 
 		} // end of class FunctionExpression_req
@@ -1756,7 +1805,7 @@
 				74 61 54 6f 6b 65 6e 0e 00 00 02
 			)
 			// Header size: 12
-			// Code size: 381 (0x17d)
+			// Code size: 465 (0x1d1)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Http_Request_Streaming_Chunked_RequestBody/FunctionExpression_L26C30/Scope,
@@ -1775,7 +1824,7 @@
 			IL_0007: ldfld object Modules.Http_Request_Streaming_Chunked_RequestBody/Scope::server
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0011: volatile.
-			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_0013: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
 			IL_0018: brfalse IL_002c
 
 			IL_001d: ldstr "address"
@@ -1784,14 +1833,14 @@
 
 			IL_002c: ldstr "address"
 			IL_0031: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M5>:__js_call__:4"
-			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
 			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
 			IL_0040: stloc.1
 			IL_0041: ldarg.0
 			IL_0042: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule Modules.Http_Request_Streaming_Chunked_RequestBody/Scope::http
 			IL_0047: volatile.
-			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
 			IL_004e: brfalse IL_0063
 
 			IL_0053: ldloc.1
@@ -1802,12 +1851,12 @@
 			IL_0063: ldloc.1
 			IL_0064: ldstr "address"
 			IL_0069: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M5>:__js_call__:9"
-			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
 			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0078: stloc.3
 			IL_0079: volatile.
-			IL_007b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+			IL_007b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
 			IL_0080: brfalse IL_0095
 
 			IL_0085: ldloc.1
@@ -1818,7 +1867,7 @@
 			IL_0095: ldloc.1
 			IL_0096: ldstr "port"
 			IL_009b: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M5>:__js_call__:11"
-			IL_00a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+			IL_00a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
 			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_00aa: stloc.s 4
@@ -1881,18 +1930,42 @@
 			IL_014e: stloc.2
 			IL_014f: ldloc.2
 			IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0155: ldstr "write"
-			IL_015a: ldstr "alpha"
-			IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0164: pop
-			IL_0165: ldloc.2
-			IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_016b: ldstr "end"
-			IL_0170: ldstr "beta"
-			IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_017a: pop
-			IL_017b: ldnull
-			IL_017c: ret
+			IL_0155: volatile.
+			IL_0157: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_015c: brfalse IL_0175
+
+			IL_0161: ldstr "write"
+			IL_0166: ldstr "alpha"
+			IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0170: br IL_018e
+
+			IL_0175: ldstr "write"
+			IL_017a: ldstr "alpha"
+			IL_017f: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M5>:__js_call__:24"
+			IL_0184: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_018e: pop
+			IL_018f: ldloc.2
+			IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0195: volatile.
+			IL_0197: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+			IL_019c: brfalse IL_01b5
+
+			IL_01a1: ldstr "end"
+			IL_01a6: ldstr "beta"
+			IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_01b0: br IL_01ce
+
+			IL_01b5: ldstr "end"
+			IL_01ba: ldstr "beta"
+			IL_01bf: ldstr "Http_Request_Streaming_Chunked_RequestBody:<TwoPhaseDummy_M5>:__js_call__:28"
+			IL_01c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+			IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_01ce: pop
+			IL_01cf: ldnull
+			IL_01d0: ret
 		} // end of method FunctionExpression_L26C30::__js_call__
 
 	} // end of class FunctionExpression_L26C30
@@ -2053,6 +2126,12 @@
 	.field assembly static int32 __jroc_dynamicLookup_25
 	.field assembly static int32 __jroc_dynamicLookup_26
 	.field assembly static int32 __jroc_dynamicLookup_27
+	.field assembly static int32 __jroc_dynamicLookup_28
+	.field assembly static int32 __jroc_dynamicLookup_29
+	.field assembly static int32 __jroc_dynamicLookup_30
+	.field assembly static int32 __jroc_dynamicLookup_31
+	.field assembly static int32 __jroc_dynamicLookup_32
+	.field assembly static int32 __jroc_dynamicLookup_33
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -196,14 +196,35 @@ internal sealed class DynamicLookupInlineCacheEntry
         Slot = slot;
     }
 
+    internal DynamicLookupInlineCacheEntry(
+        JsShape receiverShape,
+        string propertyName,
+        JsObject prototype,
+        long prototypeVersion,
+        object value)
+    {
+        _shape = new WeakReference<JsShape>(receiverShape);
+        _prototype = new WeakReference<JsObject>(prototype);
+        _prototypeValue = new WeakReference<object>(value);
+        _prototypeVersion = prototypeVersion;
+        PropertyName = propertyName;
+        Slot = -1;
+    }
+
     private readonly WeakReference<JsShape> _shape;
+    private readonly WeakReference<JsObject>? _prototype;
+    private readonly WeakReference<object>? _prototypeValue;
+    private readonly long _prototypeVersion;
 
     internal string PropertyName { get; }
 
     internal int Slot { get; }
 
     internal bool HasLiveShape
-        => _shape.TryGetTarget(out _);
+        => _shape.TryGetTarget(out _)
+            && (_prototype is null
+                || _prototype.TryGetTarget(out _)
+                && _prototypeValue!.TryGetTarget(out _));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool Matches(DynamicLookupInlineCacheEntry other)
@@ -213,7 +234,8 @@ internal sealed class DynamicLookupInlineCacheEntry
                 StringComparison.Ordinal)
             && _shape.TryGetTarget(out var shape)
             && other._shape.TryGetTarget(out var otherShape)
-            && ReferenceEquals(shape, otherShape);
+            && ReferenceEquals(shape, otherShape)
+            && WeakTargetsMatch(_prototype, other._prototype);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool TryGetValue(
@@ -231,10 +253,41 @@ internal sealed class DynamicLookupInlineCacheEntry
             return false;
         }
 
-        return receiver.TryGetOwnPlainDataSlotValue(
-            shape,
-            Slot,
-            out value);
+        if (_prototype is null)
+        {
+            return receiver.TryGetOwnPlainDataSlotValue(
+                shape,
+                Slot,
+                out value);
+        }
+
+        if (!ReferenceEquals(receiver.Shape, shape)
+            || !_prototype.TryGetTarget(out var prototype)
+            || prototype.LookupVersion != _prototypeVersion
+            || !_prototypeValue!.TryGetTarget(out value)
+            || !receiver.TryGetInlinePrototype(out var currentPrototype)
+            || !ReferenceEquals(currentPrototype, prototype))
+        {
+            value = null;
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool WeakTargetsMatch<T>(
+        WeakReference<T>? left,
+        WeakReference<T>? right)
+        where T : class
+    {
+        if (left is null || right is null)
+        {
+            return left is null && right is null;
+        }
+
+        return left.TryGetTarget(out var leftTarget)
+            && right.TryGetTarget(out var rightTarget)
+            && ReferenceEquals(leftTarget, rightTarget);
     }
 }
 
@@ -484,6 +537,136 @@ public static class DynamicLookupInlineCache
         return CallableOperations.Call0(resolvedValue!, receiver);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? CallMember1(
+        object receiver,
+        string propertyName,
+        object? argument0,
+        string siteKey)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName);
+        ArgumentNullException.ThrowIfNull(siteKey);
+
+        if (!CanCacheMemberReceiver(receiver))
+        {
+            return ObjectRuntime.CallMember1(
+                receiver,
+                propertyName,
+                argument0);
+        }
+
+        var caches = _currentCaches
+            ?? GetCurrentRealmCaches();
+        return CallMember1Cacheable(
+            (JsObject)receiver,
+            propertyName,
+            argument0,
+            siteKey,
+            caches,
+            out _);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? CallMember1(
+        object receiver,
+        string propertyName,
+        object? argument0,
+        string siteKey,
+        ref int terminalMegamorphic)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName);
+        ArgumentNullException.ThrowIfNull(siteKey);
+
+        if (Volatile.Read(ref terminalMegamorphic) != 0
+            || !CanCacheMemberReceiver(receiver))
+        {
+            return ObjectRuntime.CallMember1(
+                receiver,
+                propertyName,
+                argument0);
+        }
+
+        var caches = _currentCaches
+            ?? GetCurrentRealmCaches();
+        var result = CallMember1Cacheable(
+            (JsObject)receiver,
+            propertyName,
+            argument0,
+            siteKey,
+            caches,
+            out var isMegamorphic);
+        if (isMegamorphic)
+        {
+            Volatile.Write(ref terminalMegamorphic, 1);
+        }
+
+        return result;
+    }
+
+    private static object? CallMember1Cacheable(
+        JsObject receiver,
+        string propertyName,
+        object? argument0,
+        string siteKey,
+        RuntimeRealmValueCacheState caches,
+        out bool isMegamorphic)
+    {
+        isMegamorphic = false;
+        var site = GetSite(caches, siteKey);
+        object? cachedValue = null;
+        var probe = site is null
+            ? DynamicLookupInlineCacheProbeResult.Miss
+            : site.Probe(
+                receiver,
+                propertyName,
+                out cachedValue);
+        if (probe == DynamicLookupInlineCacheProbeResult.Hit
+            && CallableOperations.IsCallable(cachedValue))
+        {
+            return CallableOperations.Call1(
+                cachedValue!,
+                receiver,
+                argument0);
+        }
+
+        if (probe == DynamicLookupInlineCacheProbeResult.Megamorphic)
+        {
+            isMegamorphic = true;
+            return ObjectRuntime.CallMember1(
+                receiver,
+                propertyName,
+                argument0);
+        }
+
+        if (!TryResolvePlainDataMember(
+                receiver,
+                propertyName,
+                out var entry,
+                out var resolvedValue)
+            || !CallableOperations.IsCallable(resolvedValue))
+        {
+            return ObjectRuntime.CallMember1(
+                receiver,
+                propertyName,
+                argument0);
+        }
+
+        site ??= caches.DynamicLookupInlineCaches.GetOrAdd(
+            siteKey,
+            static _ => new DynamicLookupInlineCacheSite());
+        RememberSite(caches, siteKey, site);
+        site.Observe(entry);
+        if (site.State == DynamicLookupInlineCacheState.Megamorphic)
+        {
+            isMegamorphic = true;
+        }
+
+        return CallableOperations.Call1(
+            resolvedValue!,
+            receiver,
+            argument0);
+    }
+
     internal static DynamicLookupInlineCacheSite? GetSiteForTests(
         string siteKey)
     {
@@ -658,6 +841,73 @@ public static class DynamicLookupInlineCache
     private static bool CanCacheReceiver(object receiver)
         => receiver is not null
             && receiver.GetType() == typeof(JsObject);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool CanCacheMemberReceiver(object receiver)
+        => receiver is not null
+            && (receiver.GetType() == typeof(JsObject)
+                || receiver.GetType() == typeof(Array));
+
+    private static bool TryResolvePlainDataMember(
+        JsObject receiver,
+        string propertyName,
+        out DynamicLookupInlineCacheEntry entry,
+        out object? value)
+    {
+        entry = null!;
+        value = null;
+        if (ObjectRuntime.IsEncodedSymbolKey(propertyName))
+        {
+            return false;
+        }
+
+        if (receiver.TryGetOwnPlainDataSlot(
+                propertyName,
+                out var receiverShape,
+                out var receiverSlot,
+                out value))
+        {
+            entry = new DynamicLookupInlineCacheEntry(
+                receiverShape,
+                propertyName,
+                receiverSlot);
+            return true;
+        }
+
+        if (receiver.Shape.GetSlot(propertyName) >= 0
+            || PropertyDescriptorStore.GetOwnLookup(
+                receiver,
+                propertyName,
+                out _) != PropertyDescriptorLookup.None
+            || !receiver.TryGetInlinePrototype(out var prototypeValue)
+            || prototypeValue?.GetType() != typeof(JsObject))
+        {
+            return false;
+        }
+
+        var prototype = (JsObject)prototypeValue;
+        if (prototype.GetOwnPropertyDescriptor(
+                propertyName,
+                out var descriptor)
+                != PropertyDescriptorLookup.Found
+            || descriptor.Kind != JsPropertyDescriptorKind.Data
+            || !descriptor.Writable
+            || !descriptor.Enumerable
+            || !descriptor.Configurable
+            || descriptor.Value is null)
+        {
+            return false;
+        }
+
+        value = descriptor.Value;
+        entry = new DynamicLookupInlineCacheEntry(
+            receiver.Shape,
+            propertyName,
+            prototype,
+            prototype.LookupVersion,
+            value);
+        return true;
+    }
 
     /// <summary>
     /// Resolves an own, plain (default-attributed) data-property slot eligible for

@@ -314,7 +314,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 909 (0x38d)
+		// Code size: 990 (0x3de)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_DiagnosticsChannel/Scope,
@@ -503,144 +503,168 @@
 		IL_01d6: pop
 		IL_01d7: ldloc.3
 		IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01dd: ldstr "publish"
-		IL_01e2: ldstr "published"
-		IL_01e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01ec: pop
-		IL_01ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01f2: stloc.s 6
-		IL_01f4: ldloc.0
-		IL_01f5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_DiagnosticsChannel/Scope::messages
-		IL_01fa: ldc.i4.1
-		IL_01fb: newarr [System.Runtime]System.Object
-		IL_0200: dup
-		IL_0201: ldc.i4.0
-		IL_0202: ldstr ","
-		IL_0207: stelem.ref
-		IL_0208: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_020d: stloc.s 12
-		IL_020f: ldloc.s 6
-		IL_0211: ldstr "synchronous:"
-		IL_0216: ldloc.s 12
-		IL_0218: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_021d: pop
-		IL_021e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0223: stloc.s 6
-		IL_0225: ldloc.2
-		IL_0226: ldstr "unsubscribe"
-		IL_022b: ldstr "jroc:diagnostics"
-		IL_0230: ldloc.1
-		IL_0231: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0236: stloc.s 10
-		IL_0238: ldloc.s 6
-		IL_023a: ldstr "removed:"
-		IL_023f: ldloc.s 10
-		IL_0241: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0246: pop
-		IL_0247: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_024c: stloc.s 6
-		IL_024e: volatile.
-		IL_0250: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0255: brfalse IL_026a
+		IL_01dd: volatile.
+		IL_01df: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_01e4: brfalse IL_01fd
 
-		IL_025a: ldloc.3
-		IL_025b: ldstr "hasSubscribers"
-		IL_0260: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0265: br IL_027f
+		IL_01e9: ldstr "publish"
+		IL_01ee: ldstr "published"
+		IL_01f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01f8: br IL_0216
 
-		IL_026a: ldloc.3
-		IL_026b: ldstr "hasSubscribers"
-		IL_0270: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:72"
-		IL_0275: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_027a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01fd: ldstr "publish"
+		IL_0202: ldstr "published"
+		IL_0207: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:54"
+		IL_020c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_027f: stloc.s 10
-		IL_0281: ldloc.s 6
-		IL_0283: ldstr "final subscribers:"
-		IL_0288: ldloc.s 10
-		IL_028a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_028f: pop
-		IL_0290: ldloc.2
-		IL_0291: ldstr "channel"
-		IL_0296: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_029b: brtrue IL_02b2
+		IL_0216: pop
+		IL_0217: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_021c: stloc.s 6
+		IL_021e: ldloc.0
+		IL_021f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_DiagnosticsChannel/Scope::messages
+		IL_0224: ldc.i4.1
+		IL_0225: newarr [System.Runtime]System.Object
+		IL_022a: dup
+		IL_022b: ldc.i4.0
+		IL_022c: ldstr ","
+		IL_0231: stelem.ref
+		IL_0232: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0237: stloc.s 12
+		IL_0239: ldloc.s 6
+		IL_023b: ldstr "synchronous:"
+		IL_0240: ldloc.s 12
+		IL_0242: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0247: pop
+		IL_0248: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_024d: stloc.s 6
+		IL_024f: ldloc.2
+		IL_0250: ldstr "unsubscribe"
+		IL_0255: ldstr "jroc:diagnostics"
+		IL_025a: ldloc.1
+		IL_025b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0260: stloc.s 10
+		IL_0262: ldloc.s 6
+		IL_0264: ldstr "removed:"
+		IL_0269: ldloc.s 10
+		IL_026b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0270: pop
+		IL_0271: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0276: stloc.s 6
+		IL_0278: volatile.
+		IL_027a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_027f: brfalse IL_0294
 
-		IL_02a0: ldloc.2
-		IL_02a1: ldstr "undici:request:pending-requests"
-		IL_02a6: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDiagnosticsChannelModule::channel(object)
-		IL_02ab: stloc.s 4
-		IL_02ad: br IL_02cd
+		IL_0284: ldloc.3
+		IL_0285: ldstr "hasSubscribers"
+		IL_028a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_028f: br IL_02a9
 
-		IL_02b2: ldloc.2
-		IL_02b3: ldstr "channel"
-		IL_02b8: ldc.i4.1
-		IL_02b9: newarr [System.Runtime]System.Object
-		IL_02be: dup
-		IL_02bf: ldc.i4.0
-		IL_02c0: ldstr "undici:request:pending-requests"
-		IL_02c5: stelem.ref
-		IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-		IL_02cb: stloc.s 4
+		IL_0294: ldloc.3
+		IL_0295: ldstr "hasSubscribers"
+		IL_029a: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:72"
+		IL_029f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_02cd: volatile.
-		IL_02cf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_02d4: brfalse IL_02ea
+		IL_02a9: stloc.s 10
+		IL_02ab: ldloc.s 6
+		IL_02ad: ldstr "final subscribers:"
+		IL_02b2: ldloc.s 10
+		IL_02b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02b9: pop
+		IL_02ba: ldloc.2
+		IL_02bb: ldstr "channel"
+		IL_02c0: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_02c5: brtrue IL_02dc
 
-		IL_02d9: ldloc.s 4
-		IL_02db: ldstr "hasSubscribers"
-		IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02e5: br IL_0300
+		IL_02ca: ldloc.2
+		IL_02cb: ldstr "undici:request:pending-requests"
+		IL_02d0: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDiagnosticsChannelModule::channel(object)
+		IL_02d5: stloc.s 4
+		IL_02d7: br IL_02f7
 
-		IL_02ea: ldloc.s 4
-		IL_02ec: ldstr "hasSubscribers"
-		IL_02f1: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:80"
-		IL_02f6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_02dc: ldloc.2
+		IL_02dd: ldstr "channel"
+		IL_02e2: ldc.i4.1
+		IL_02e3: newarr [System.Runtime]System.Object
+		IL_02e8: dup
+		IL_02e9: ldc.i4.0
+		IL_02ea: ldstr "undici:request:pending-requests"
+		IL_02ef: stelem.ref
+		IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_02f5: stloc.s 4
 
-		IL_0300: stloc.s 10
-		IL_0302: ldloc.s 10
-		IL_0304: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0309: stloc.s 8
-		IL_030b: ldloc.s 8
-		IL_030d: brfalse IL_0341
+		IL_02f7: volatile.
+		IL_02f9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_02fe: brfalse IL_0314
 
-		IL_0312: ldloc.s 4
-		IL_0314: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0319: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_031e: dup
-		IL_031f: ldstr "size"
-		IL_0324: ldc.r8 1
-		IL_032d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0332: stloc.s 13
-		IL_0334: ldstr "publish"
-		IL_0339: ldloc.s 13
-		IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0340: pop
+		IL_0303: ldloc.s 4
+		IL_0305: ldstr "hasSubscribers"
+		IL_030a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_030f: br IL_032a
 
-		IL_0341: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0346: stloc.s 6
-		IL_0348: volatile.
-		IL_034a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_034f: brfalse IL_0365
+		IL_0314: ldloc.s 4
+		IL_0316: ldstr "hasSubscribers"
+		IL_031b: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:80"
+		IL_0320: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0325: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0354: ldloc.s 4
-		IL_0356: ldstr "hasSubscribers"
-		IL_035b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0360: br IL_037b
+		IL_032a: stloc.s 10
+		IL_032c: ldloc.s 10
+		IL_032e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0333: stloc.s 8
+		IL_0335: ldloc.s 8
+		IL_0337: brfalse IL_0392
 
-		IL_0365: ldloc.s 4
-		IL_0367: ldstr "hasSubscribers"
-		IL_036c: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:93"
-		IL_0371: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0376: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_033c: ldloc.s 4
+		IL_033e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0343: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0348: dup
+		IL_0349: ldstr "size"
+		IL_034e: ldc.r8 1
+		IL_0357: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_035c: stloc.s 13
+		IL_035e: volatile.
+		IL_0360: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0365: brfalse IL_037b
 
-		IL_037b: stloc.s 10
-		IL_037d: ldloc.s 6
-		IL_037f: ldstr "guarded publish:"
-		IL_0384: ldloc.s 10
-		IL_0386: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_038b: pop
-		IL_038c: ret
+		IL_036a: ldstr "publish"
+		IL_036f: ldloc.s 13
+		IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0376: br IL_0391
+
+		IL_037b: ldstr "publish"
+		IL_0380: ldloc.s 13
+		IL_0382: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:87"
+		IL_0387: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_038c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0391: pop
+
+		IL_0392: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0397: stloc.s 6
+		IL_0399: volatile.
+		IL_039b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_03a0: brfalse IL_03b6
+
+		IL_03a5: ldloc.s 4
+		IL_03a7: ldstr "hasSubscribers"
+		IL_03ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03b1: br IL_03cc
+
+		IL_03b6: ldloc.s 4
+		IL_03b8: ldstr "hasSubscribers"
+		IL_03bd: ldstr "Require_DiagnosticsChannel:Modules.Require_DiagnosticsChannel:__js_module_init__:93"
+		IL_03c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_03c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_03cc: stloc.s 10
+		IL_03ce: ldloc.s 6
+		IL_03d0: ldstr "guarded publish:"
+		IL_03d5: ldloc.s 10
+		IL_03d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03dc: pop
+		IL_03dd: ret
 	} // end of method Require_DiagnosticsChannel::__js_module_init__
 
 } // end of class Modules.Require_DiagnosticsChannel
@@ -674,6 +698,8 @@
 	.field assembly static int32 __jroc_dynamicLookup_5
 	.field assembly static int32 __jroc_dynamicLookup_6
 	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
 
 } // end of class Jroc.Generated.DynamicLookupSites
 
