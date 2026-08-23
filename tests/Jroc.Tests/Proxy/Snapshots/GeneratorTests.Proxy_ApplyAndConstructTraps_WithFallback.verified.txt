@@ -578,20 +578,42 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 26 (0x1a)
+			// Header size: 12
+			// Code size: 87 (0x57)
 			.maxstack 8
 
 			IL_0000: ldarg.1
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_000b: ldstr "value"
-			IL_0010: ldarg.2
-			IL_0011: ldc.i4.1
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0017: pop
-			IL_0018: ldnull
-			IL_0019: ret
+			IL_000b: isinst Modules.Proxy_ApplyAndConstructTraps_WithFallback/ObjectLiterals/Ctor_L19C1_Box
+			IL_0010: dup
+			IL_0011: brfalse IL_003c
+
+			IL_0016: dup
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
+			IL_001c: brfalse IL_003c
+
+			IL_0021: dup
+			IL_0022: ldstr "value"
+			IL_0027: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
+			IL_002c: brfalse IL_003c
+
+			IL_0031: ldarg.2
+			IL_0032: callvirt instance void Modules.Proxy_ApplyAndConstructTraps_WithFallback/ObjectLiterals/Ctor_L19C1_Box::set_value(object)
+			IL_0037: br IL_0055
+
+			IL_003c: pop
+			IL_003d: ldarg.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0048: ldstr "value"
+			IL_004d: ldarg.2
+			IL_004e: ldc.i4.1
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0054: pop
+
+			IL_0055: ldnull
+			IL_0056: ret
 		} // end of method Box::__js_call__
 
 	} // end of class Box
@@ -825,6 +847,77 @@
 
 	} // end of class Scope
 
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Ctor_L19C1_Box
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private object _value
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method Ctor_L19C1_Box::.ctor
+
+			.method public hidebysig 
+				instance object get_value () cil managed 
+			{
+				// Header size: 1
+				// Code size: 41 (0x29)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldstr "value"
+				IL_0006: ldarg.0
+				IL_0007: ldfld object Modules.Proxy_ApplyAndConstructTraps_WithFallback/ObjectLiterals/Ctor_L19C1_Box::_value
+				IL_000c: call instance bool [JavaScriptRuntime]JavaScriptRuntime.JsObject::IsSpecializedDataPropertyCurrent(string, object)
+				IL_0011: brfalse IL_001d
+
+				IL_0016: ldarg.0
+				IL_0017: ldfld object Modules.Proxy_ApplyAndConstructTraps_WithFallback/ObjectLiterals/Ctor_L19C1_Box::_value
+				IL_001c: ret
+
+				IL_001d: ldarg.0
+				IL_001e: ldstr "value"
+				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0028: ret
+			} // end of method Ctor_L19C1_Box::get_value
+
+			.method public hidebysig 
+				instance void set_value (
+					object ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Proxy_ApplyAndConstructTraps_WithFallback/ObjectLiterals/Ctor_L19C1_Box::_value
+				IL_0007: ldarg.0
+				IL_0008: ldstr "value"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method Ctor_L19C1_Box::set_value
+
+		} // end of class Ctor_L19C1_Box
+
+
+	} // end of class ObjectLiterals
+
 
 	// Methods
 	.method public hidebysig static 
@@ -1013,7 +1106,7 @@
 		IL_018b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0190: stloc.s 12
 		IL_0192: volatile.
-		IL_0194: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0194: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 		IL_0199: brfalse IL_01af
 
 		IL_019e: ldloc.s 4
@@ -1024,7 +1117,7 @@
 		IL_01af: ldloc.s 4
 		IL_01b1: ldstr "value"
 		IL_01b6: ldstr "Proxy_ApplyAndConstructTraps_WithFallback:Modules.Proxy_ApplyAndConstructTraps_WithFallback:__js_module_init__:53"
-		IL_01bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_01bb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
 		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_01c5: stloc.s 13
@@ -1035,7 +1128,7 @@
 		IL_01d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_01d6: stloc.s 12
 		IL_01d8: volatile.
-		IL_01da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_01da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 		IL_01df: brfalse IL_01f5
 
 		IL_01e4: ldloc.s 4
@@ -1046,7 +1139,7 @@
 		IL_01f5: ldloc.s 4
 		IL_01f7: ldstr "sameNewTarget"
 		IL_01fc: ldstr "Proxy_ApplyAndConstructTraps_WithFallback:Modules.Proxy_ApplyAndConstructTraps_WithFallback:__js_module_init__:58"
-		IL_0201: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0201: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
 		IL_0206: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_020b: stloc.s 13
@@ -1091,7 +1184,7 @@
 		IL_0290: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0295: stloc.s 12
 		IL_0297: volatile.
-		IL_0299: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0299: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
 		IL_029e: brfalse IL_02b4
 
 		IL_02a3: ldloc.s 7
@@ -1102,7 +1195,7 @@
 		IL_02b4: ldloc.s 7
 		IL_02b6: ldstr "value"
 		IL_02bb: ldstr "Proxy_ApplyAndConstructTraps_WithFallback:Modules.Proxy_ApplyAndConstructTraps_WithFallback:__js_module_init__:85"
-		IL_02c0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_02c0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
 		IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_02ca: stloc.s 13
@@ -1116,7 +1209,7 @@
 		IL_02df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
 		IL_02e4: stloc.s 13
 		IL_02e6: volatile.
-		IL_02e8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_02e8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
 		IL_02ed: brfalse IL_0302
 
 		IL_02f2: ldloc.2
@@ -1127,7 +1220,7 @@
 		IL_0302: ldloc.2
 		IL_0303: ldstr "prototype"
 		IL_0308: ldstr "Proxy_ApplyAndConstructTraps_WithFallback:Modules.Proxy_ApplyAndConstructTraps_WithFallback:__js_module_init__:91"
-		IL_030d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_030d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
 		IL_0312: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_0317: stloc.s 17
@@ -1172,10 +1265,10 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field assembly static int32 __jroc_dynamicLookup_7
 	.field assembly static int32 __jroc_dynamicLookup_8
 	.field assembly static int32 __jroc_dynamicLookup_9
 	.field assembly static int32 __jroc_dynamicLookup_10
+	.field assembly static int32 __jroc_dynamicLookup_11
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

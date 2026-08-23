@@ -659,10 +659,16 @@ internal sealed partial class LIRToILCompiler
                     // Early-bound member read: receiver load + castclass + callvirt getter.
                     LIRGetInferredMember getInferredMember => 1 + EstimateTempConstructionPeak(getInferredMember.Receiver),
 
+                    LIRGetGuardedInferredMember guarded => 1 + EstimateTempConstructionPeak(guarded.Receiver),
+
                     // Early-bound member write: receiver stays on stack while the value is built.
                     LIRSetInferredMember setInferredMember => Math.Max(
                         EstimateTempConstructionPeak(setInferredMember.Receiver),
                         1 + EstimateTempConstructionPeak(setInferredMember.Value)),
+
+                    LIRSetGuardedInferredMember guarded => Math.Max(
+                        EstimateTempConstructionPeak(guarded.Receiver),
+                        1 + EstimateTempConstructionPeak(guarded.Value)),
 
                     // Inline item get: receiver + index
                     // Load order matters because receiver remains on stack while index is evaluated.

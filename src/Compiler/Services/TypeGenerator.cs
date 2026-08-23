@@ -53,7 +53,8 @@ namespace Jroc.Services
             MethodDefinitionHandle ExpectedCtor,
             string? MemberName = null,
             FieldDefinitionHandle AccessorField = default,
-            Type? AccessorClrType = null);
+            Type? AccessorClrType = null,
+            bool ValidateSpecializedRead = false);
 
         public TypeGenerator(
             MetadataBuilder metadataBuilder,
@@ -124,7 +125,12 @@ namespace Jroc.Services
                 {
                     DeferredConstructorKind.Scope => EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator),
                     DeferredConstructorKind.ObjectLiteral => EmitObjectLiteralConstructor(tb),
-                    DeferredConstructorKind.ObjectLiteralGetter => EmitObjectLiteralGetter(tb, item.MemberName!, item.AccessorField, item.AccessorClrType!),
+                    DeferredConstructorKind.ObjectLiteralGetter => EmitObjectLiteralGetter(
+                        tb,
+                        item.MemberName!,
+                        item.AccessorField,
+                        item.AccessorClrType!,
+                        item.ValidateSpecializedRead),
                     DeferredConstructorKind.ObjectLiteralSetter => EmitObjectLiteralSetter(tb, item.MemberName!, item.AccessorField, item.AccessorClrType!),
                     _ => throw new InvalidOperationException($"Unknown deferred constructor kind '{item.Kind}'.")
                 };
@@ -202,6 +208,13 @@ namespace Jroc.Services
                 && !shape.GeneratedClrTypeHandle.IsNil)
             {
                 return shape.GeneratedClrTypeHandle;
+            }
+
+            if (!binding.RequiresRuntimeTemporalDeadZoneChecks
+                && binding.ConstructedShape is { IsEligible: true } constructedShape
+                && !constructedShape.GeneratedClrTypeHandle.IsNil)
+            {
+                return constructedShape.GeneratedClrTypeHandle;
             }
 
             return default;
@@ -444,7 +457,7 @@ namespace Jroc.Services
             TypeDefinitionHandle moduleTypeHandle,
             NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
-            var groups = GetObjectLiteralShapeGroups(root);
+            var groups = GetInferredObjectShapeGroups(root);
             if (groups.Count == 0)
             {
                 return;
@@ -470,7 +483,7 @@ namespace Jroc.Services
 
         private void PlanObjectLiteralTypeHandles(Scope root)
         {
-            var groups = GetObjectLiteralShapeGroups(root);
+            var groups = GetInferredObjectShapeGroups(root);
             if (groups.Count == 0)
             {
                 return;
@@ -490,11 +503,11 @@ namespace Jroc.Services
             }
         }
 
-        private static List<List<ObjectLiteralShapeInfo>> GetObjectLiteralShapeGroups(Scope root)
+        private static List<List<InferredObjectShapeInfo>> GetInferredObjectShapeGroups(Scope root)
         {
             // A single shape object can be referenced by more than one binding, so deduplicate by
             // reference. Structurally identical shapes share one generated CLR type.
-            return EnumerateEligibleObjectLiteralShapes(root)
+            var objectLiteralGroups = EnumerateEligibleObjectLiteralShapes(root)
                 .Distinct(ReferenceEqualityComparer.Instance)
                 .Cast<ObjectLiteralShapeInfo>()
                 .GroupBy(static shape => shape.GetStructuralSignatureKey(), StringComparer.Ordinal)
@@ -503,12 +516,24 @@ namespace Jroc.Services
                     .ThenBy(static shape => shape.Literal.Location.Start.Column)
                     .ThenBy(static shape => shape.Binding.Name, StringComparer.Ordinal)
                     .ThenBy(static shape => GetRegistryScopeName(shape.Binding.DeclaringScope), StringComparer.Ordinal)
+                    .Cast<InferredObjectShapeInfo>()
                     .ToList())
-                .OrderBy(static group => group[0].Literal.Location.Start.Line)
-                .ThenBy(static group => group[0].Literal.Location.Start.Column)
+                .OrderBy(static group => group[0].SourceNode.Location.Start.Line)
+                .ThenBy(static group => group[0].SourceNode.Location.Start.Column)
                 .ThenBy(static group => group[0].Binding.Name, StringComparer.Ordinal)
                 .ThenBy(static group => GetRegistryScopeName(group[0].Binding.DeclaringScope), StringComparer.Ordinal)
                 .ToList();
+
+            var constructorGroups = EnumerateEligibleConstructorShapes(root)
+                .Distinct(ReferenceEqualityComparer.Instance)
+                .Cast<ConstructorShapeInfo>()
+                .OrderBy(static shape => shape.SourceNode.Location.Start.Line)
+                .ThenBy(static shape => shape.SourceNode.Location.Start.Column)
+                .ThenBy(static shape => shape.Binding.Name, StringComparer.Ordinal)
+                .Select(static shape => new List<InferredObjectShapeInfo> { shape });
+
+            objectLiteralGroups.AddRange(constructorGroups);
+            return objectLiteralGroups;
         }
 
         private static int CountScopeTypeDefinitions(Scope root)
@@ -527,14 +552,16 @@ namespace Jroc.Services
         }
 
         private void CreateObjectLiteralType(
-            IReadOnlyList<ObjectLiteralShapeInfo> shapeGroup,
+            IReadOnlyList<InferredObjectShapeInfo> shapeGroup,
             TypeDefinitionHandle containerHandle,
             NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
             // The representative (first, deterministically ordered) shape names the type and drives
             // field/member layout; every shape in the group shares the generated type and metadata.
             var shape = shapeGroup[0];
-            var typeName = GetObjectLiteralTypeName(shape);
+            var typeName = GetInferredObjectTypeName(shape);
+            var validateSpecializedReads =
+                shape is ConstructorShapeInfo;
             var tb = new TypeBuilder(_metadataBuilder, string.Empty, typeName);
             var fieldHandlesByName = new Dictionary<string, FieldDefinitionHandle>(StringComparer.Ordinal);
             var fieldClrTypesByName = new Dictionary<string, Type>(StringComparer.Ordinal);
@@ -597,7 +624,8 @@ namespace Jroc.Services
                     ExpectedCtor: getterHandle,
                     MemberName: member.Name,
                     AccessorField: fieldHandle,
-                    AccessorClrType: fieldClrType));
+                    AccessorClrType: fieldClrType,
+                    ValidateSpecializedRead: validateSpecializedReads));
 
                 var setterHandle = MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow++);
                 setterHandlesByName[member.Name] = setterHandle;
@@ -676,7 +704,8 @@ namespace Jroc.Services
             TypeBuilder tb,
             string memberName,
             FieldDefinitionHandle fieldHandle,
-            Type fieldClrType)
+            Type fieldClrType,
+            bool validateSpecializedRead)
         {
             var sig = new BlobBuilder();
             new BlobEncoder(sig)
@@ -685,11 +714,54 @@ namespace Jroc.Services
             var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
 
             var ilBuilder = new BlobBuilder();
-            var encoder = new InstructionEncoder(ilBuilder);
-            encoder.OpCode(ILOpCode.Ldarg_0);
-            encoder.OpCode(ILOpCode.Ldfld);
-            encoder.Token(fieldHandle);
-            encoder.OpCode(ILOpCode.Ret);
+            var controlFlow = validateSpecializedRead
+                ? new ControlFlowBuilder()
+                : null;
+            var encoder = controlFlow == null
+                ? new InstructionEncoder(ilBuilder)
+                : new InstructionEncoder(ilBuilder, controlFlow);
+            if (validateSpecializedRead)
+            {
+                if (fieldClrType != typeof(object))
+                {
+                    throw new InvalidOperationException(
+                        "Constructor-shape fields must remain object-typed until typed fallback conversion is implemented.");
+                }
+
+                var fallback = encoder.DefineLabel();
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.Ldstr(_metadataBuilder, memberName);
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.OpCode(ILOpCode.Ldfld);
+                encoder.Token(fieldHandle);
+                encoder.OpCode(ILOpCode.Call);
+                encoder.Token(_memberReferenceRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.JsObject),
+                    nameof(JavaScriptRuntime.JsObject.IsSpecializedDataPropertyCurrent),
+                    new[] { typeof(string), typeof(object) }));
+                encoder.Branch(ILOpCode.Brfalse, fallback);
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.OpCode(ILOpCode.Ldfld);
+                encoder.Token(fieldHandle);
+                encoder.OpCode(ILOpCode.Ret);
+
+                encoder.MarkLabel(fallback);
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.Ldstr(_metadataBuilder, memberName);
+                encoder.OpCode(ILOpCode.Call);
+                encoder.Token(_memberReferenceRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.ObjectRuntime),
+                    nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                    new[] { typeof(object), typeof(string) }));
+                encoder.OpCode(ILOpCode.Ret);
+            }
+            else
+            {
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.OpCode(ILOpCode.Ldfld);
+                encoder.Token(fieldHandle);
+                encoder.OpCode(ILOpCode.Ret);
+            }
 
             var bodyOffset = _methodBodyStream.AddMethodBody(
                 encoder,
@@ -852,13 +924,43 @@ namespace Jroc.Services
             }
         }
 
-        private static string GetObjectLiteralTypeName(ObjectLiteralShapeInfo shape)
+        private static IEnumerable<ConstructorShapeInfo> EnumerateEligibleConstructorShapes(
+            Scope scope)
         {
+            foreach (var binding in scope.Bindings.Values)
+            {
+                if (binding.ConstructorShape is { IsEligible: true } shape)
+                {
+                    yield return shape;
+                }
+            }
+
+            foreach (var child in scope.Children)
+            {
+                foreach (var shape in EnumerateEligibleConstructorShapes(child))
+                {
+                    yield return shape;
+                }
+            }
+        }
+
+        private static string GetInferredObjectTypeName(
+            InferredObjectShapeInfo shape)
+        {
+            if (shape is ConstructorShapeInfo)
+            {
+                var constructorLocation = shape.SourceNode.Location.Start;
+                var constructorName = SanitizeClrIdentifier(
+                    shape.Binding.Name);
+                return $"Ctor_L{constructorLocation.Line}C{constructorLocation.Column + 1}_{constructorName}";
+            }
+
+            var literalShape = (ObjectLiteralShapeInfo)shape;
             // Nested under Modules.<Module>/ObjectLiterals, so the name only needs to be unique
             // within its module. The literal's start position guarantees that; the binding name
             // is included for readability.
-            var loc = shape.Literal.Location.Start;
-            var bindingName = SanitizeClrIdentifier(shape.Binding.Name);
+            var loc = literalShape.Literal.Location.Start;
+            var bindingName = SanitizeClrIdentifier(literalShape.Binding.Name);
             return $"L{loc.Line}C{loc.Column + 1}_{bindingName}";
         }
 

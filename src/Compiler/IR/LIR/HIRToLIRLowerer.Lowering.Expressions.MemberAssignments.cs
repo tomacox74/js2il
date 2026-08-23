@@ -136,6 +136,37 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (assignExpr.Object is HIRThisExpression
+            && _scope?.ConstructorShape is
+                {
+                    IsEligible: true
+                } constructorShape
+            && constructorShape.TryGetMember(
+                assignExpr.PropertyName,
+                out var constructorMember))
+        {
+            if (assignExpr.Operator != Acornima.Operator.Assignment
+                || !TryLowerExpression(
+                    assignExpr.Object,
+                    out var constructorReceiver)
+                || !TryLowerExpression(
+                    assignExpr.Value,
+                    out var constructorValue))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(
+                new LIRSetGuardedInferredMember(
+                    constructorShape,
+                    constructorMember.Name,
+                    EnsureObject(constructorReceiver),
+                    EnsureObject(constructorValue),
+                    UsesStrictAssignmentSemantics()));
+            resultTempVar = constructorValue;
+            return true;
+        }
+
         // Early-bound object-literal member write (phase 4, #1432). All write forms must go
         // through the generated setter so the typed backing field and JsObject storage stay
         // in sync; a generic SetItem would leave the backing field stale.
@@ -263,7 +294,7 @@ public sealed partial class HIRToLIRLowerer
     /// </summary>
     private bool TryLowerInferredMemberAssignment(
         HIRPropertyAssignmentExpression assignExpr,
-        ObjectLiteralShapeInfo shape,
+        InferredObjectShapeInfo shape,
         ObjectLiteralMemberInfo member,
         out TempVariable resultTempVar)
     {

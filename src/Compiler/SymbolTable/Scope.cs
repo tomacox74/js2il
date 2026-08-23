@@ -178,6 +178,11 @@ public class Scope
     public ClassSemantics? ClassSemantics { get; set; }
 
     /// <summary>
+    /// Eligible ES5 constructor layout for this function body, when present.
+    /// </summary>
+    public ConstructorShapeInfo? ConstructorShape { get; set; }
+
+    /// <summary>
     /// For synthetic dynamic functions created from <c>Function(...)</c> / <c>new Function(...)</c>,
     /// points at the original constructor call/new site in the source AST.
     /// </summary>

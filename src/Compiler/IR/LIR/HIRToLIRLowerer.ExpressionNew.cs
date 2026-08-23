@@ -73,6 +73,97 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
         }
 
+        if (calleeVar?.Name.BindingInfo.ConstructorShape is
+                {
+                    IsEligible: true
+                } constructorShape
+            && !constructorShape.GeneratedClrTypeHandle.IsNil)
+        {
+            if (!TryLowerExpression(calleeVar, out var constructorValue))
+            {
+                return false;
+            }
+            constructorValue = EnsureObject(constructorValue);
+
+            var useInlineArguments =
+                newExpr.Arguments.Count
+                    <= JavaScriptRuntime.JsCallArguments.InlineCapacity
+                && newExpr.Arguments.All(
+                    static argument =>
+                        argument is not HIRSpreadElement);
+            var arguments = new List<TempVariable>();
+            TempVariable? argumentsArray = null;
+            if (useInlineArguments)
+            {
+                arguments.Capacity = newExpr.Arguments.Count;
+                foreach (var argument in newExpr.Arguments)
+                {
+                    if (!TryLowerExpression(
+                            argument,
+                            out var argumentTemp))
+                    {
+                        return false;
+                    }
+                    arguments.Add(EnsureObject(argumentTemp));
+                }
+            }
+            else if (!TryLowerCallArgumentsToArgsArray(
+                         newExpr.Arguments,
+                         out var loweredArgumentsArray))
+            {
+                return false;
+            }
+            else
+            {
+                argumentsArray = loweredArgumentsArray;
+            }
+
+            var receiver = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRNewInferredJsObject(
+                    constructorShape,
+                    Array.Empty<InferredObjectProperty>(),
+                    receiver));
+            DefineTempStorage(
+                receiver,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(object),
+                    constructorShape.GeneratedClrTypeHandle));
+
+            resultTempVar = CreateTempVariable();
+            var helperArguments = new List<TempVariable>(
+                (argumentsArray.HasValue ? 1 : arguments.Count) + 3)
+            {
+                constructorValue,
+                receiver,
+                constructorValue
+            };
+            if (argumentsArray.HasValue)
+            {
+                helperArguments.Add(argumentsArray.Value);
+            }
+            else
+            {
+                helperArguments.AddRange(arguments);
+            }
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.Function),
+                argumentsArray.HasValue
+                    ? nameof(JavaScriptRuntime.Function
+                        .ConstructGeneratedFunctionWithReceiverArray)
+                    : $"ConstructGeneratedFunctionWithReceiver{arguments.Count}",
+                helperArguments,
+                resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(object),
+                    constructorShape.GeneratedClrTypeHandle));
+            return true;
+        }
+
         if (calleeVar?.Name.Kind == BindingKind.Global
             && string.Equals(ctorName, "Function", StringComparison.Ordinal)
             && TryGetDynamicFunctionSyntaxErrorMessage(newExpr.Arguments, out var syntaxErrorMessage)

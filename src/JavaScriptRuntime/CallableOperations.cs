@@ -121,6 +121,20 @@ public static class CallableOperations
         object?[]? arguments,
         object? newTarget)
     {
+        var callArguments = JsCallArguments.FromArray(arguments);
+        return ConstructWithReceiver(
+            functionObject,
+            receiver,
+            callArguments,
+            newTarget);
+    }
+
+    internal static object? ConstructWithReceiver(
+        JsFunctionObject functionObject,
+        object receiver,
+        in JsCallArguments arguments,
+        object? newTarget)
+    {
         ArgumentNullException.ThrowIfNull(functionObject);
         ArgumentNullException.ThrowIfNull(receiver);
         if (!functionObject.IsConstructor)
@@ -128,11 +142,10 @@ public static class CallableOperations
             throw new TypeError("Value is not a constructor");
         }
 
-        var callArguments = JsCallArguments.FromArray(arguments);
         var result = InvokeConstructBody(
             functionObject,
             receiver,
-            callArguments,
+            arguments,
             newTarget);
         return TypeUtilities.IsConstructorReturnOverride(result)
             ? result

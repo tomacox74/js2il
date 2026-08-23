@@ -601,6 +601,12 @@ internal sealed partial class LIRToILCompiler
             case LIRGetInferredMember getInferredMember:
                 throw new InvalidOperationException(
                     $"Early-bound object-literal member read '{getInferredMember.MemberName}' must be materialized.");
+            case LIRGetGuardedInferredMember guarded:
+                throw new InvalidOperationException(
+                    $"Guarded constructor member read '{guarded.MemberName}' must be materialized.");
+            case LIRSetGuardedInferredMember guarded:
+                throw new InvalidOperationException(
+                    $"Guarded constructor member write '{guarded.MemberName}' cannot define a temp.");
             case LIRGetLength getLength:
                 {
                     // Emit inline: call JavaScriptRuntime.ObjectRuntime.GetLength(object)
