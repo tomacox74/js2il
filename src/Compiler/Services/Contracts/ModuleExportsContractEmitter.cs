@@ -10,8 +10,12 @@ using Jroc.Utilities.Ecma335;
 
 namespace Jroc.Services.Contracts;
 
+internal sealed record ModuleExportsContractEmissionPlan(
+    IReadOnlyDictionary<string, TypeDefinitionHandle> ExportContractHandles,
+    int MethodDefinitionCount);
+
 /// <summary>
-/// Emits strongly-typed .NET contract interfaces for CommonJS <c>module.exports</c>.
+/// Emits strongly-typed .NET contract interfaces for public module exports.
 ///
 /// Design goals:
 /// - Minimal, conservative shape inference (safe defaults to <see cref="object"/>)
@@ -31,34 +35,136 @@ internal sealed class ModuleExportsContractEmitter
         _typeRefs = bclReferences.TypeReferenceRegistry;
     }
 
-    public void Emit(Modules modules, string assemblyName)
+    public IReadOnlyDictionary<string, TypeDefinitionHandle> Emit(
+        Modules modules,
+        string assemblyName,
+        IReadOnlyDictionary<string, PublicModuleExportShape> exportShapes,
+        ModuleExportsContractEmissionPlan plan,
+        IReadOnlyDictionary<string, TypeDefinitionHandle> moduleFacadeTypes,
+        NestedTypeRelationshipRegistry nestedTypes)
     {
         ArgumentNullException.ThrowIfNull(modules);
         ArgumentException.ThrowIfNullOrWhiteSpace(assemblyName);
+        ArgumentNullException.ThrowIfNull(exportShapes);
+        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(moduleFacadeTypes);
+        ArgumentNullException.ThrowIfNull(nestedTypes);
 
-        var rootModulePath = modules.rootModule.Path;
+        var emittedContracts = new Dictionary<string, TypeDefinitionHandle>(StringComparer.Ordinal);
+        var firstMethodRow = _metadata.GetRowCount(TableIndex.MethodDef);
 
         foreach (var module in modules._modules.Values)
         {
-            var moduleId = JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdForManifestFromPath(module.Path, rootModulePath);
-            var isRoot = ReferenceEquals(module, modules.rootModule);
-
-            if (!TryGetModuleExportsObject(module.Ast, out var exportsObject))
+            if (emittedContracts.ContainsKey(module.ModuleId))
             {
                 continue;
             }
 
-            EmitModuleContracts(module, assemblyName, moduleId, isRoot, exportsObject);
+            if (!exportShapes.TryGetValue(module.ModuleId, out var exportShape)
+                || !exportShape.HasExports)
+            {
+                continue;
+            }
+
+            if (!moduleFacadeTypes.TryGetValue(module.ModuleId, out var facadeType))
+            {
+                throw new InvalidOperationException(
+                    $"Could not resolve generated facade type for exported module '{module.ModuleId}'.");
+            }
+
+            var isRoot = ReferenceEquals(module, modules.rootModule);
+            var emittedContract = EmitModuleContracts(
+                module,
+                assemblyName,
+                module.ModuleId,
+                isRoot,
+                exportShape,
+                facadeType,
+                nestedTypes);
+            if (!plan.ExportContractHandles.TryGetValue(module.ModuleId, out var expectedContract)
+                || emittedContract != expectedContract)
+            {
+                throw new InvalidOperationException(
+                    $"Generated export contract TypeDef token mismatch for module '{module.ModuleId}'. " +
+                    $"Expected 0x{MetadataTokens.GetToken(expectedContract):X8}, " +
+                    $"got 0x{MetadataTokens.GetToken(emittedContract):X8}.");
+            }
+
+            emittedContracts[module.ModuleId] = emittedContract;
         }
+
+        var emittedMethodCount = _metadata.GetRowCount(TableIndex.MethodDef) - firstMethodRow;
+        if (emittedMethodCount != plan.MethodDefinitionCount)
+        {
+            throw new InvalidOperationException(
+                $"Generated export contract MethodDef count mismatch. " +
+                $"Expected {plan.MethodDefinitionCount}, emitted {emittedMethodCount}.");
+        }
+
+        return emittedContracts;
     }
 
-    private void EmitModuleContracts(ModuleDefinition module, string assemblyName, string moduleId, bool isRootModule, ObjectExpression exportsObject)
+    public ModuleExportsContractEmissionPlan Plan(
+        Modules modules,
+        IReadOnlyDictionary<string, PublicModuleExportShape> exportShapes,
+        int firstTypeDefinitionRow)
+    {
+        ArgumentNullException.ThrowIfNull(modules);
+        ArgumentNullException.ThrowIfNull(exportShapes);
+        if (firstTypeDefinitionRow <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(firstTypeDefinitionRow));
+        }
+
+        var handles = new Dictionary<string, TypeDefinitionHandle>(StringComparer.Ordinal);
+        var nextTypeDefinitionRow = firstTypeDefinitionRow;
+        var methodDefinitionCount = 0;
+
+        foreach (var module in modules._modules.Values)
+        {
+            if (handles.ContainsKey(module.ModuleId)
+                || !exportShapes.TryGetValue(module.ModuleId, out var exportShape)
+                || !exportShape.HasExports)
+            {
+                continue;
+            }
+
+            var topLevel = BuildTopLevelDeclarationIndex(module.Ast);
+            nextTypeDefinitionRow += topLevel.Classes.Count;
+            nextTypeDefinitionRow += exportShape.Members.Count(member => member.SourceNode is ObjectExpression);
+            handles[module.ModuleId] = MetadataTokens.TypeDefinitionHandle(nextTypeDefinitionRow++);
+            methodDefinitionCount += CountModuleContractMethods(module, exportShape, topLevel);
+        }
+
+        return new ModuleExportsContractEmissionPlan(handles, methodDefinitionCount);
+    }
+
+    private TypeDefinitionHandle EmitModuleContracts(
+        ModuleDefinition module,
+        string assemblyName,
+        string moduleId,
+        bool isRootModule,
+        PublicModuleExportShape exportShape,
+        TypeDefinitionHandle facadeType,
+        NestedTypeRelationshipRegistry nestedTypes)
     {
         var symbolTable = module.SymbolTable;
 
-        var (contractNamespace, exportsInterfaceName) = GetExportsContractName(assemblyName, moduleId, isRootModule);
+        var contractNamespace = GetContractNamespace(assemblyName, moduleId, isRootModule);
 
-        var topLevel = BuildTopLevelDeclarationIndex(module.Ast);
+        var topLevels = new Dictionary<ModuleDefinition, TopLevelIndex>();
+        TopLevelIndex GetTopLevel(ModuleDefinition sourceModule)
+        {
+            if (!topLevels.TryGetValue(sourceModule, out var topLevel))
+            {
+                topLevel = BuildTopLevelDeclarationIndex(sourceModule.Ast);
+                topLevels[sourceModule] = topLevel;
+            }
+
+            return topLevel;
+        }
+
+        var topLevel = GetTopLevel(module);
 
         // IMPORTANT: Metadata ordering. In ECMA-335, TypeDef.MethodList (and similar lists) must be non-decreasing.
         // If we emit MethodDefs for the exports interface before emitting the TypeDefs for instance/nested interfaces,
@@ -90,56 +196,99 @@ internal sealed class ModuleExportsContractEmitter
 
         // Emit nested-object interfaces that are directly exported (module.exports = { nested: { ... } }).
         var nestedInterfacesByExportName = new Dictionary<string, TypeDefinitionHandle>(StringComparer.Ordinal);
-        foreach (var prop in exportsObject.Properties)
+        foreach (var member in exportShape.Members)
         {
-            if (prop is not Property p)
+            if (member.SourceNode is ObjectExpression nestedObj)
             {
-                continue;
-            }
-
-            if (!TryGetPropertyName(p.Key, out var exportName))
-            {
-                continue;
-            }
-
-            if (p.Value is ObjectExpression nestedObj)
-            {
-                var nestedInterfaceName = "I" + ToPascalCase(exportName);
-                var nestedType = EmitHandleInterface(contractNamespace, nestedInterfaceName, members: nestedObj, symbolTable: symbolTable, classNameForFields: null);
-                nestedInterfacesByExportName[exportName] = nestedType;
+                var nestedInterfaceName = "I" + ToPascalCase(member.ExportName);
+                var nestedType = EmitHandleInterface(
+                    contractNamespace,
+                    nestedInterfaceName,
+                    members: nestedObj,
+                    symbolTable: member.SourceModule.SymbolTable,
+                    classNameForFields: null);
+                nestedInterfacesByExportName[member.ExportName] = nestedType;
             }
         }
 
         // Now emit the exports interface.
-        var exportsTypeBuilder = new TypeBuilder(_metadata, contractNamespace, exportsInterfaceName);
+        var exportsTypeBuilder = new TypeBuilder(_metadata, string.Empty, "IExports");
         PropertyDefinitionHandle firstExportsProperty = default;
 
         // Add members (methods + property getters) before adding the TypeDef.
-        foreach (var prop in exportsObject.Properties)
+        if (exportShape.DirectValueKind != PublicExportValueKind.None
+            || exportShape.Kind == PublicExportShapeKind.Unknown)
         {
-            if (prop is not Property p)
+            var fallbackPropertyName = GetAvailableContractMemberName(
+                "Value",
+                exportShape.Members.Select(member => ToPascalCase(member.ExportName)));
+            var valueType = exportShape.Kind == PublicExportShapeKind.Unknown
+                ? TypeOrHandle.FromClr(typeof(object))
+                : TypeOrHandle.FromClr(
+                    MapClrType(
+                        InferClrTypeFromExpression(
+                            exportShape.DirectValueSourceNode,
+                            topLevel,
+                            classFields: null,
+                            instanceInterfacesByClassName,
+                            ensureClassInstanceInterface: null)
+                        .ClrType ?? typeof(object)));
+            var valueProperty = EmitReadOnlyProperty(
+                exportsTypeBuilder,
+                fallbackPropertyName,
+                valueType,
+                exportName: null,
+                isExportValue: true);
+            if (firstExportsProperty.IsNil)
             {
-                continue;
+                firstExportsProperty = valueProperty;
             }
 
-            if (!TryGetPropertyName(p.Key, out var exportName))
+            if (exportShape.DirectValueKind == PublicExportValueKind.CallableOrConstructable)
             {
-                continue;
+                EmitInterfaceMethod(
+                    exportsTypeBuilder,
+                    new ContractMethod(
+                        "Call",
+                        ["arguments"],
+                        [TypeOrHandle.FromClr(typeof(object[]))],
+                        TypeOrHandle.FromClr(typeof(object))),
+                    exportName: null,
+                    isExportValue: true,
+                    isParamArray: true);
+                EmitInterfaceMethod(
+                    exportsTypeBuilder,
+                    new ContractMethod(
+                        "Construct",
+                        ["arguments"],
+                        [TypeOrHandle.FromClr(typeof(object[]))],
+                        TypeOrHandle.FromClr(typeof(object))),
+                    exportName: null,
+                    isExportValue: true,
+                    isParamArray: true);
             }
+        }
 
-            // Determine the exported value expression.
-            var valueNode = p.Value;
+        foreach (var member in exportShape.Members)
+        {
+            var exportName = member.ExportName;
+            var valueNode = member.SourceNode;
+            var memberTopLevel = GetTopLevel(member.SourceModule);
+            var memberSymbolTable = member.SourceModule.SymbolTable;
 
-            // Shorthand: { version } -> Property with key 'version' and value Identifier 'version'.
-            // We treat it the same as an explicit value.
-
-            if (TryResolveExportAsClass(valueNode, topLevel, out var className))
+            if (!member.HasUnknownSource
+                && TryResolveExportAsClass(valueNode, memberTopLevel, out var className))
             {
                 var instanceInterface = TryGetClassInstanceInterface(className);
                 if (!instanceInterface.HasValue)
                 {
                     // If we can't resolve the class instance interface, fall back to object.
-                    var phFallback = EmitReadOnlyProperty(exportsTypeBuilder, ToPascalCase(exportName), TypeOrHandle.FromClr(typeof(object)));
+                    var phFallback = EmitReadOnlyProperty(
+                        exportsTypeBuilder,
+                        ToPascalCase(exportName),
+                        TypeOrHandle.FromClr(typeof(object)),
+                        exportName,
+                        isExportValue: false);
                     if (firstExportsProperty.IsNil)
                     {
                         firstExportsProperty = phFallback;
@@ -151,7 +300,9 @@ internal sealed class ModuleExportsContractEmitter
                 var ph = EmitReadOnlyProperty(
                     exportsTypeBuilder,
                     ToPascalCase(exportName),
-                    TypeOrHandle.FromGenericInstantiation(openCtorRef, instanceInterface.Value));
+                    TypeOrHandle.FromGenericInstantiation(openCtorRef, instanceInterface.Value),
+                    exportName,
+                    isExportValue: false);
                 if (firstExportsProperty.IsNil)
                 {
                     firstExportsProperty = ph;
@@ -159,21 +310,33 @@ internal sealed class ModuleExportsContractEmitter
                 continue;
             }
 
-            if (TryResolveExportAsFunction(valueNode, topLevel, out var functionNode, out var functionNameForInference))
+            if (!member.HasUnknownSource
+                && TryResolveExportAsFunction(valueNode, memberTopLevel, out var functionNode, out _))
             {
                 var methodName = ToPascalCase(exportName);
-                var method = BuildContractMethodFromFunction(methodName, functionNode, topLevel, instanceInterfacesByClassName, ensureClassInstanceInterface: null, symbolTable: symbolTable);
-                EmitInterfaceMethod(exportsTypeBuilder, method);
+                var method = BuildContractMethodFromFunction(
+                    methodName,
+                    functionNode,
+                    memberTopLevel,
+                    instanceInterfacesByClassName,
+                    ensureClassInstanceInterface: null,
+                    symbolTable: memberSymbolTable);
+                EmitInterfaceMethod(exportsTypeBuilder, method, exportName, isExportValue: false);
                 continue;
             }
 
-            if (valueNode is ObjectExpression nestedObj)
+            if (!member.HasUnknownSource && valueNode is ObjectExpression)
             {
                 // Nested exported object: interface was emitted in the pre-pass.
                 if (!nestedInterfacesByExportName.TryGetValue(exportName, out var nestedType))
                 {
                     // Shouldn't happen, but fall back to object.
-                    var phFallback = EmitReadOnlyProperty(exportsTypeBuilder, ToPascalCase(exportName), TypeOrHandle.FromClr(typeof(object)));
+                    var phFallback = EmitReadOnlyProperty(
+                        exportsTypeBuilder,
+                        ToPascalCase(exportName),
+                        TypeOrHandle.FromClr(typeof(object)),
+                        exportName,
+                        isExportValue: false);
                     if (firstExportsProperty.IsNil)
                     {
                         firstExportsProperty = phFallback;
@@ -181,7 +344,12 @@ internal sealed class ModuleExportsContractEmitter
                     continue;
                 }
 
-                var ph = EmitReadOnlyProperty(exportsTypeBuilder, ToPascalCase(exportName), TypeOrHandle.FromHandle(nestedType));
+                var ph = EmitReadOnlyProperty(
+                    exportsTypeBuilder,
+                    ToPascalCase(exportName),
+                    TypeOrHandle.FromHandle(nestedType),
+                    exportName,
+                    isExportValue: false);
                 if (firstExportsProperty.IsNil)
                 {
                     firstExportsProperty = ph;
@@ -192,8 +360,12 @@ internal sealed class ModuleExportsContractEmitter
             // Default: exported value projected as a read-only property.
             // Prefer stable binding type from symbol table when available (e.g. const x = complexExpr).
             TypeOrHandle clrType;
-            if (valueNode is Identifier exportedId
-                && symbolTable?.Root is Jroc.SymbolTables.Scope globalScope
+            if (member.StableClrType != null)
+            {
+                clrType = TypeOrHandle.FromClr(MapClrType(member.StableClrType));
+            }
+            else if (valueNode is Identifier exportedId
+                && memberSymbolTable?.Root is Jroc.SymbolTables.Scope globalScope
                 && globalScope.Bindings.TryGetValue(exportedId.Name, out var exportedBinding)
                 && exportedBinding.IsStableType
                 && exportedBinding.ClrType != null)
@@ -202,9 +374,19 @@ internal sealed class ModuleExportsContractEmitter
             }
             else
             {
-                clrType = InferClrTypeFromExpression(valueNode, topLevel, classFields: null, instanceInterfacesByClassName, ensureClassInstanceInterface: null);
+                clrType = InferClrTypeFromExpression(
+                    valueNode,
+                    memberTopLevel,
+                    classFields: null,
+                    instanceInterfacesByClassName,
+                    ensureClassInstanceInterface: null);
             }
-            var propHandle = EmitReadOnlyProperty(exportsTypeBuilder, ToPascalCase(exportName), clrType);
+            var propHandle = EmitReadOnlyProperty(
+                exportsTypeBuilder,
+                ToPascalCase(exportName),
+                clrType,
+                exportName,
+                isExportValue: false);
             if (firstExportsProperty.IsNil)
             {
                 firstExportsProperty = propHandle;
@@ -212,8 +394,9 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         var exportsTypeDef = exportsTypeBuilder.AddTypeDefinition(
-            TypeAttributes.Public | TypeAttributes.Interface | TypeAttributes.Abstract,
+            TypeAttributes.NestedPublic | TypeAttributes.Interface | TypeAttributes.Abstract,
             default);
+        nestedTypes.Add(exportsTypeDef, facadeType);
 
         if (!firstExportsProperty.IsNil)
         {
@@ -224,6 +407,7 @@ internal sealed class ModuleExportsContractEmitter
         _metadata.AddInterfaceImplementation(exportsTypeDef, _typeRefs.GetOrAdd(typeof(IDisposable)));
 
         AddJsModuleAttribute(exportsTypeDef, moduleId);
+        return exportsTypeDef;
     }
 
     private TypeDefinitionHandle EmitHandleInterface(
@@ -409,62 +593,6 @@ internal sealed class ModuleExportsContractEmitter
         return new TopLevelIndex(functions, classes, vars);
     }
 
-    private static bool TryGetModuleExportsObject(Acornima.Ast.Program program, out ObjectExpression exports)
-    {
-        exports = null!;
-
-        // Walk top-level statements and take the last assignment to module.exports.
-        ObjectExpression? last = null;
-
-        foreach (var stmt in program.Body)
-        {
-            if (stmt is not ExpressionStatement es)
-            {
-                continue;
-            }
-
-            if (es.Expression is not AssignmentExpression assign)
-            {
-                continue;
-            }
-
-            if (!IsModuleExportsLValue(assign.Left))
-            {
-                continue;
-            }
-
-            if (assign.Right is ObjectExpression obj)
-            {
-                last = obj;
-            }
-        }
-
-        if (last == null)
-        {
-            return false;
-        }
-
-        exports = last;
-        return true;
-    }
-
-    private static bool IsModuleExportsLValue(Node left)
-    {
-        // module.exports = ...
-        if (left is MemberExpression { Object: Identifier { Name: "module" }, Property: Identifier { Name: "exports" } })
-        {
-            return true;
-        }
-
-        // module["exports"] = ...
-        if (left is MemberExpression { Object: Identifier { Name: "module" }, Property: Literal { Value: "exports" } })
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     private static bool TryGetPropertyName(Expression key, out string name)
     {
         switch (key)
@@ -481,40 +609,75 @@ internal sealed class ModuleExportsContractEmitter
         }
     }
 
-    private static (string Namespace, string ExportsInterfaceName) GetExportsContractName(string assemblyName, string moduleId, bool isRootModule)
+    private static string GetContractNamespace(string assemblyName, string moduleId, bool isRootModule)
     {
-        // See docs/runtime/DotNetLibraryHosting.md "Naming generated export contracts for nested modules".
-        var rootNamespace = $"Jroc.{assemblyName}";
+        var rootNamespace = $"Jroc.{JrocFacadeNamePlanner.NormalizeIdentifier(assemblyName, stripLeadingAtSign: true)}";
 
         if (isRootModule)
         {
-            return (rootNamespace, "I" + ToPascalCase(assemblyName) + "Exports");
+            return rootNamespace;
         }
 
         var segments = moduleId.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         if (segments.Length == 0)
         {
-            return (rootNamespace, "IExports");
+            return rootNamespace;
         }
 
         var namespaceSegments = segments.Length > 1
-            ? segments.Take(segments.Length - 1).Select(ToPascalCase).ToArray()
+            ? segments.Take(segments.Length - 1).Select(segment => ToPascalCase(JrocFacadeNamePlanner.NormalizeIdentifier(segment, stripLeadingAtSign: true))).ToArray()
             : Array.Empty<string>();
 
-        var ns = namespaceSegments.Length == 0
+        return namespaceSegments.Length == 0
             ? rootNamespace
             : rootNamespace + "." + string.Join(".", namespaceSegments);
-
-        var last = segments[^1];
-        var displayName = (string.Equals(last, "index", StringComparison.OrdinalIgnoreCase) && segments.Length > 1)
-            ? segments[^2]
-            : last;
-
-        var iface = "I" + ToPascalCase(displayName) + "Exports";
-        return (ns, iface);
     }
 
-    private static bool TryResolveExportAsClass(Node valueNode, TopLevelIndex topLevel, out string className)
+    private static int CountModuleContractMethods(
+        ModuleDefinition module,
+        PublicModuleExportShape exportShape,
+        TopLevelIndex topLevel)
+    {
+        var count = 0;
+        foreach (var (className, classDeclaration) in topLevel.Classes)
+        {
+            if (module.SymbolTable?.Root is Jroc.SymbolTables.Scope rootScope)
+            {
+                count += FindClassScope(rootScope, className)?.StableInstanceFieldClrTypes.Count ?? 0;
+            }
+
+            count += classDeclaration.Body.Body.Count(element =>
+                element is Acornima.Ast.MethodDefinition
+                {
+                    Kind: not PropertyKind.Constructor,
+                    Value: FunctionExpression
+                } method
+                && TryGetPropertyName(method.Key, out _));
+        }
+
+        foreach (var objectExpression in exportShape.Members
+                     .Select(member => member.SourceNode)
+                     .OfType<ObjectExpression>())
+        {
+            count += objectExpression.Properties.Count(property =>
+                property is Property objectProperty
+                && TryGetPropertyName(objectProperty.Key, out _));
+        }
+
+        if (exportShape.DirectValueKind != PublicExportValueKind.None
+            || exportShape.Kind == PublicExportShapeKind.Unknown)
+        {
+            count++;
+            if (exportShape.DirectValueKind == PublicExportValueKind.CallableOrConstructable)
+            {
+                count += 2;
+            }
+        }
+
+        return count + exportShape.Members.Count;
+    }
+
+    private static bool TryResolveExportAsClass(Node? valueNode, TopLevelIndex topLevel, out string className)
     {
         className = string.Empty;
 
@@ -530,22 +693,32 @@ internal sealed class ModuleExportsContractEmitter
             return true;
         }
 
+        if (valueNode is ClassDeclaration cd && cd.Id is Identifier did)
+        {
+            className = did.Name;
+            return true;
+        }
+
         return false;
     }
 
-    private static bool TryResolveExportAsFunction(Node valueNode, TopLevelIndex topLevel, out Node functionNode, out string? nameForInference)
+    private static bool TryResolveExportAsFunction(Node? valueNode, TopLevelIndex topLevel, out Node functionNode, out string? nameForInference)
     {
         nameForInference = null;
 
         switch (valueNode)
         {
+            case FunctionDeclaration fd:
+                functionNode = fd;
+                nameForInference = fd.Id is Identifier fid ? fid.Name : null;
+                return true;
             case Identifier id when topLevel.Functions.TryGetValue(id.Name, out var decl):
                 functionNode = decl;
                 nameForInference = id.Name;
                 return true;
             case FunctionExpression fe:
                 functionNode = fe;
-                nameForInference = fe.Id is Identifier fid ? fid.Name : null;
+                nameForInference = fe.Id is Identifier functionId ? functionId.Name : null;
                 return true;
             case ArrowFunctionExpression af:
                 functionNode = af;
@@ -734,7 +907,7 @@ internal sealed class ModuleExportsContractEmitter
     }
 
     private static TypeOrHandle InferClrTypeFromExpression(
-        Node expr,
+        Node? expr,
         TopLevelIndex? topLevelIndex,
         Dictionary<string, Type>? classFields,
         Dictionary<string, TypeDefinitionHandle>? instanceInterfacesByClassName,
@@ -748,6 +921,7 @@ internal sealed class ModuleExportsContractEmitter
                     string => TypeOrHandle.FromClr(typeof(string)),
                     bool => TypeOrHandle.FromClr(typeof(bool)),
                     int or long or float or double or decimal => TypeOrHandle.FromClr(typeof(double)),
+                    System.Numerics.BigInteger => TypeOrHandle.FromClr(typeof(System.Numerics.BigInteger)),
                     _ => TypeOrHandle.FromClr(typeof(object))
                 };
 
@@ -790,7 +964,10 @@ internal sealed class ModuleExportsContractEmitter
 
     private static Type MapClrType(Type type)
     {
-        if (type == typeof(double) || type == typeof(bool) || type == typeof(string))
+        if (type == typeof(double)
+            || type == typeof(bool)
+            || type == typeof(string)
+            || type == typeof(System.Numerics.BigInteger))
         {
             return type;
         }
@@ -798,7 +975,12 @@ internal sealed class ModuleExportsContractEmitter
         return typeof(object);
     }
 
-    private void EmitInterfaceMethod(TypeBuilder typeBuilder, ContractMethod method)
+    private void EmitInterfaceMethod(
+        TypeBuilder typeBuilder,
+        ContractMethod method,
+        string? exportName = null,
+        bool isExportValue = false,
+        bool isParamArray = false)
     {
         ArgumentNullException.ThrowIfNull(typeBuilder);
 
@@ -816,6 +998,14 @@ internal sealed class ModuleExportsContractEmitter
             {
                 firstParam = handle;
             }
+
+            if (isParamArray && i == method.ParamNames.Count - 1)
+            {
+                _metadata.AddCustomAttribute(
+                    handle,
+                    _bcl.ParamArrayAttribute_Ctor_Ref,
+                    CreateParameterlessAttributeValue());
+            }
         }
 
         var signature = BuildMethodSignature(
@@ -824,15 +1014,22 @@ internal sealed class ModuleExportsContractEmitter
             paramTypes: method.ParamTypes,
             returnType: method.ReturnType);
 
-        typeBuilder.AddMethodDefinition(
+        var methodHandle = typeBuilder.AddMethodDefinition(
             MethodAttributes.Public | MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.NewSlot,
             method.Name,
             signature,
             bodyOffset: -1,
             parameterList: firstParam);
+
+        AddExportMemberAttributes(methodHandle, exportName, isExportValue);
     }
 
-    private PropertyDefinitionHandle EmitReadOnlyProperty(TypeBuilder typeBuilder, string propertyName, TypeOrHandle propertyType)
+    private PropertyDefinitionHandle EmitReadOnlyProperty(
+        TypeBuilder typeBuilder,
+        string propertyName,
+        TypeOrHandle propertyType,
+        string? exportName = null,
+        bool isExportValue = false)
     {
         // get_PropertyName()
         var getterName = "get_" + propertyName;
@@ -848,6 +1045,7 @@ internal sealed class ModuleExportsContractEmitter
             getterName,
             getterSig,
             bodyOffset: -1);
+        AddExportMemberAttributes(getter, exportName, isExportValue);
 
         // Property signature
         var propSig = BuildPropertySignature(propertyType);
@@ -861,6 +1059,28 @@ internal sealed class ModuleExportsContractEmitter
         // No setters (exports are read-only).
 
         return propHandle;
+    }
+
+    private void AddExportMemberAttributes(
+        MethodDefinitionHandle method,
+        string? exportName,
+        bool isExportValue)
+    {
+        if (exportName != null)
+        {
+            _metadata.AddCustomAttribute(
+                method,
+                _bcl.JsExportNameAttribute_Ctor_Ref,
+                CreateSingleStringCustomAttributeValue(exportName));
+        }
+
+        if (isExportValue)
+        {
+            _metadata.AddCustomAttribute(
+                method,
+                _bcl.JsExportValueAttribute_Ctor_Ref,
+                CreateParameterlessAttributeValue());
+        }
     }
 
     private BlobHandle BuildPropertySignature(TypeOrHandle returnType)
@@ -927,6 +1147,12 @@ internal sealed class ModuleExportsContractEmitter
 
         if (type.ClrType != null)
         {
+            if (type.ClrType == typeof(object[]))
+            {
+                encoder.SZArray().Object();
+                return;
+            }
+
             if (type.ClrType == typeof(object)) { encoder.Object(); return; }
             if (type.ClrType == typeof(string)) { encoder.String(); return; }
             if (type.ClrType == typeof(double)) { encoder.Double(); return; }
@@ -960,6 +1186,14 @@ internal sealed class ModuleExportsContractEmitter
             parent: exportsTypeDef,
             constructor: _bcl.JsModuleAttribute_Ctor_Ref,
             value: valueBlob);
+    }
+
+    private BlobHandle CreateParameterlessAttributeValue()
+    {
+        var blob = new BlobBuilder();
+        blob.WriteUInt16(0x0001);
+        blob.WriteUInt16(0);
+        return _metadata.GetOrAddBlob(blob);
     }
 
     private BlobHandle CreateSingleStringCustomAttributeValue(string value)
@@ -1054,5 +1288,28 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         return result.ToString();
+    }
+
+    private static string GetAvailableContractMemberName(
+        string preferredName,
+        IEnumerable<string> existingNames)
+    {
+        var used = new HashSet<string>(existingNames, StringComparer.OrdinalIgnoreCase);
+        if (used.Add(preferredName))
+        {
+            return preferredName;
+        }
+
+        var index = 1;
+        while (true)
+        {
+            var candidate = preferredName + index.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (used.Add(candidate))
+            {
+                return candidate;
+            }
+
+            index++;
+        }
     }
 }

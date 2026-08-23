@@ -499,12 +499,11 @@ public class JrocSdkPackageTests
             """
             using System.Linq;
             using Jroc.Runtime;
-            using Jroc.HostedMathAssembly;
 
-            var moduleIds = JsEngine.GetModuleIds(typeof(IHostedMathAssemblyExports).Assembly);
+            var moduleIds = JsEngine.GetModuleIds(typeof(HostedMathAssembly).Assembly);
             Console.WriteLine($"hasModuleId={moduleIds.Contains("sample.math", StringComparer.Ordinal)}");
 
-            using var exports = JsEngine.LoadModule<IHostedMathAssemblyExports>();
+            using var exports = HostedMathAssembly.Import();
             Console.WriteLine($"version={exports.Version}");
             Console.WriteLine($"sum={exports.Add(1, 2)}");
             """);

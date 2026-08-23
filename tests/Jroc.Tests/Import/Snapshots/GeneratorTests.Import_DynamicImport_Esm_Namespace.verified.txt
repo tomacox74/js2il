@@ -42,6 +42,49 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Import_DynamicImport_Esm_Namespace_Lib
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 26 49 6d 70 6f 72 74 5f 44 79 6e 61 6d 69
+					63 49 6d 70 6f 72 74 5f 45 73 6d 5f 4e 61 6d 65
+					73 70 61 63 65 5f 4c 69 62 00 00
+				)
+				// Methods
+				.method public hidebysig newslot abstract virtual 
+					instance float64 Default () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 07 64 65 66 61 75 6c 74 00 00
+					)
+				} // end of method IExports::Default
+
+				.method public hidebysig newslot abstract virtual 
+					instance void Inc () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 03 69 6e 63 00 00
+					)
+				} // end of method IExports::Inc
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance float64 get_Value () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 05 76 61 6c 75 65 00 00
+					)
+				} // end of method IExports::get_Value
+
+				// Properties
+				.property instance float64 Value()
+				{
+					.get instance float64 Import_DynamicImport_Esm_Namespace/Scripts/Import_DynamicImport_Esm_Namespace_Lib/IExports::get_Value()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -64,6 +107,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Import_DynamicImport_Esm_Namespace_Lib::Run
+
+			.method public hidebysig static 
+				class Import_DynamicImport_Esm_Namespace/Scripts/Import_DynamicImport_Esm_Namespace_Lib/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Import_DynamicImport_Esm_Namespace/Scripts/Import_DynamicImport_Esm_Namespace_Lib/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_DynamicImport_Esm_Namespace_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_DynamicImport_Esm_Namespace_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Import_DynamicImport_Esm_Namespace/Scripts/Import_DynamicImport_Esm_Namespace_Lib/IExports
+				IL_0025: ret
+			} // end of method Import_DynamicImport_Esm_Namespace_Lib::Import
 
 		} // end of class Import_DynamicImport_Esm_Namespace_Lib
 
@@ -271,7 +332,7 @@
 				IL_0067: br IL_0080
 
 				IL_006c: ldstr "sort"
-				IL_0071: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M8>:__js_call__:14"
+				IL_0071: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M12>:__js_call__:14"
 				IL_0076: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
 				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -289,7 +350,7 @@
 
 				IL_00a7: ldstr "join"
 				IL_00ac: ldstr ","
-				IL_00b1: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M8>:__js_call__:17"
+				IL_00b1: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M12>:__js_call__:17"
 				IL_00b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
 				IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -315,7 +376,7 @@
 				IL_00f7: br IL_0110
 
 				IL_00fc: ldstr "value"
-				IL_0101: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M8>:__js_call__:24"
+				IL_0101: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M12>:__js_call__:24"
 				IL_0106: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
 				IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -340,7 +401,7 @@
 				IL_0146: br IL_015f
 
 				IL_014b: ldstr "inc"
-				IL_0150: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M8>:__js_call__:29"
+				IL_0150: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M12>:__js_call__:29"
 				IL_0155: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
 				IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -358,7 +419,7 @@
 
 				IL_0182: ldarg.2
 				IL_0183: ldstr "value"
-				IL_0188: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M8>:__js_call__:35"
+				IL_0188: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M12>:__js_call__:35"
 				IL_018d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 				IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -385,7 +446,7 @@
 				IL_01d3: br IL_01ec
 
 				IL_01d8: ldstr "default"
-				IL_01dd: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M8>:__js_call__:42"
+				IL_01dd: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M12>:__js_call__:42"
 				IL_01e2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 				IL_01e7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -507,7 +568,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 0d 00 00 02
+				74 61 54 6f 6b 65 6e 0e 00 00 02
 			)
 			// Header size: 12
 			// Code size: 141 (0x8d)
@@ -718,7 +779,7 @@
 
 			IL_0039: ldarg.1
 			IL_003a: ldstr "message"
-			IL_003f: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M7>:__js_call__:10"
+			IL_003f: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M11>:__js_call__:10"
 			IL_0044: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
 			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -747,7 +808,7 @@
 
 			IL_0084: ldarg.1
 			IL_0085: ldstr "message"
-			IL_008a: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M7>:__js_call__:20"
+			IL_008a: ldstr "Import_DynamicImport_Esm_Namespace:<TwoPhaseDummy_M11>:__js_call__:20"
 			IL_008f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
 			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1049,7 +1110,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 11 00 00 02
+				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
 			// Code size: 49 (0x31)
@@ -1215,7 +1276,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 11 00 00 02
+				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 1
 			// Code size: 7 (0x7)

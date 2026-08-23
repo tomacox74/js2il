@@ -14,6 +14,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   constructor fields without generic `Array.length` reads. The final
   same-run result was 4.356 s for JROC versus 5.968 s for YantraJS, 7.582 s
   for Jint, and 7.624 s for Okojo, with 56,971,416 B/op allocated by JROC.
+- compiler/runtime/hosting/docs: implement Phase 2 generated `Import` facades
+  for #1917 and issues #1934, #1935, #1936, and #1937. The compiler now shares
+  one ESM/CommonJS export-shape model, emits `Import()` only for exported or
+  unknown modules, supports direct/default/unknown fallback contracts, and
+  routes each import through an isolated disposable runtime. Each module
+  contract is exposed as `IExports` nested under that module's static facade.
 - perf(compiler/runtime): implement issue #1965 (Phase 5 of #1958) with
   conservative ES5 constructor-layout inference, generated `JsObject`
   subclasses, specialized static `new` allocation, direct typed reads, and

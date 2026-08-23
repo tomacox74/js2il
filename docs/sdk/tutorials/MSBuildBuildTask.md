@@ -47,16 +47,15 @@ The SDK compiles the module before assembly references are resolved. By default 
 ## 4) Call the generated contract
 
 ```csharp
-using Jroc.Runtime;
-using Jroc.math;
-
-using var exports = JsEngine.LoadModule<IMathExports>();
+using var exports = math.Import();
 
 Console.WriteLine(exports.Version);
 Console.WriteLine(exports.Add(1, 2));
 ```
 
-The generated contract interface lives in the compiled module assembly and is annotated with `[JsModule("math")]`, so the no-argument `LoadModule<TExports>()` overload can find the module id automatically.
+The generated `math.Scripts.math.IExports` interface lives in the compiled
+module assembly. Both `math.Import()` and `math.Scripts.math.Import()` return
+that exact contract.
 
 ## 5) Customize build output
 

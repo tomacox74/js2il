@@ -42,6 +42,44 @@
 		.class nested public auto ansi abstract sealed beforefieldinit Tls_TestCertificates
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class interface nested public auto ansi abstract IExports
+				implements [System.Runtime]System.IDisposable
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+					01 00 14 54 6c 73 5f 54 65 73 74 43 65 72 74 69
+					66 69 63 61 74 65 73 00 00
+				)
+				// Methods
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_CertPem () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 07 63 65 72 74 50 65 6d 00 00
+					)
+				} // end of method IExports::get_CertPem
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance object get_KeyPem () cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+						01 00 06 6b 65 79 50 65 6d 00 00
+					)
+				} // end of method IExports::get_KeyPem
+
+				// Properties
+				.property instance object CertPem()
+				{
+					.get instance object Https_Request_Post_Basic/Scripts/Tls_TestCertificates/IExports::get_CertPem()
+				}
+				.property instance object KeyPem()
+				{
+					.get instance object Https_Request_Post_Basic/Scripts/Tls_TestCertificates/IExports::get_KeyPem()
+				}
+
+			} // end of class IExports
+
+
 			// Methods
 			.method public hidebysig static 
 				void Run (
@@ -64,6 +102,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Tls_TestCertificates::Run
+
+			.method public hidebysig static 
+				class Https_Request_Post_Basic/Scripts/Tls_TestCertificates/IExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Https_Request_Post_Basic/Scripts/Tls_TestCertificates/IExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Tls_TestCertificates::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Tls_TestCertificates"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Https_Request_Post_Basic/Scripts/Tls_TestCertificates/IExports
+				IL_0025: ret
+			} // end of method Tls_TestCertificates::Import
 
 		} // end of class Tls_TestCertificates
 
@@ -389,7 +445,7 @@
 				IL_0029: br IL_0042
 
 				IL_002e: ldstr "method"
-				IL_0033: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M9>:__js_call__:5"
+				IL_0033: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M12>:__js_call__:5"
 				IL_0038: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
 				IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -416,7 +472,7 @@
 				IL_007e: br IL_0097
 
 				IL_0083: ldstr "url"
-				IL_0088: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M9>:__js_call__:11"
+				IL_0088: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M12>:__js_call__:11"
 				IL_008d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
 				IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -485,7 +541,7 @@
 				IL_0138: ldloc.1
 				IL_0139: ldstr "end"
 				IL_013e: ldloc.2
-				IL_013f: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M9>:__js_call__:29"
+				IL_013f: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M12>:__js_call__:29"
 				IL_0144: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
 				IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -610,7 +666,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 11 00 00 02
 			)
 			// Header size: 12
 			// Code size: 278 (0x116)
@@ -645,7 +701,7 @@
 
 			IL_003f: ldstr "setEncoding"
 			IL_0044: ldstr "utf8"
-			IL_0049: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M6>:__js_call__:9"
+			IL_0049: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M9>:__js_call__:9"
 			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
 			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1179,7 +1235,7 @@
 					IL_0087: ldloc.2
 					IL_0088: ldstr "close"
 					IL_008d: ldloc.s 5
-					IL_008f: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M12>:__js_call__:12"
+					IL_008f: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M15>:__js_call__:12"
 					IL_0094: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
 					IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1330,7 +1386,7 @@
 
 				IL_002c: ldstr "setEncoding"
 				IL_0031: ldstr "utf8"
-				IL_0036: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M10>:__js_call__:5"
+				IL_0036: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M13>:__js_call__:5"
 				IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
 				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1348,7 +1404,7 @@
 
 				IL_0068: ldarg.2
 				IL_0069: ldstr "statusCode"
-				IL_006e: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M10>:__js_call__:11"
+				IL_006e: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M13>:__js_call__:11"
 				IL_0073: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
 				IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1557,7 +1613,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 11 00 00 02
 			)
 			// Header size: 12
 			// Code size: 334 (0x14e)
@@ -1586,7 +1642,7 @@
 			IL_0027: br IL_0040
 
 			IL_002c: ldstr "address"
-			IL_0031: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M7>:__js_call__:4"
+			IL_0031: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M10>:__js_call__:4"
 			IL_0036: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
 			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
@@ -1604,7 +1660,7 @@
 
 			IL_0063: ldloc.1
 			IL_0064: ldstr "port"
-			IL_0069: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M7>:__js_call__:10"
+			IL_0069: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M10>:__js_call__:10"
 			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
 			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -1674,7 +1730,7 @@
 
 			IL_0132: ldstr "end"
 			IL_0137: ldstr "hello tls"
-			IL_013c: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M7>:__js_call__:22"
+			IL_013c: ldstr "Https_Request_Post_Basic:<TwoPhaseDummy_M10>:__js_call__:22"
 			IL_0141: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
 			IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
@@ -1980,34 +2036,4 @@
 	.field assembly static int32 __jroc_dynamicLookup_37
 
 } // end of class Jroc.Generated.DynamicLookupSites
-
-.class interface public auto ansi abstract Jroc.Https_Request_Post_Basic.ITlsTestCertificatesExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 14 54 6c 73 5f 54 65 73 74 43 65 72 74 69
-		66 69 63 61 74 65 73 00 00
-	)
-	// Methods
-	.method public hidebysig specialname newslot abstract virtual 
-		instance object get_CertPem () cil managed 
-	{
-	} // end of method ITlsTestCertificatesExports::get_CertPem
-
-	.method public hidebysig specialname newslot abstract virtual 
-		instance object get_KeyPem () cil managed 
-	{
-	} // end of method ITlsTestCertificatesExports::get_KeyPem
-
-	// Properties
-	.property instance object CertPem()
-	{
-		.get instance object Jroc.Https_Request_Post_Basic.ITlsTestCertificatesExports::get_CertPem()
-	}
-	.property instance object KeyPem()
-	{
-		.get instance object Jroc.Https_Request_Post_Basic.ITlsTestCertificatesExports::get_KeyPem()
-	}
-
-} // end of class Jroc.Https_Request_Post_Basic.ITlsTestCertificatesExports
 

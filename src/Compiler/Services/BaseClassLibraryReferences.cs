@@ -276,6 +276,15 @@ namespace Jroc.Services
         public MemberReferenceHandle JsModuleAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsModuleAttribute), new[] { typeof(string) });
 
+        public MemberReferenceHandle JsExportNameAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsExportNameAttribute), new[] { typeof(string) });
+
+        public MemberReferenceHandle JsExportValueAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsExportValueAttribute), Type.EmptyTypes);
+
+        public MemberReferenceHandle ParamArrayAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(ParamArrayAttribute), Type.EmptyTypes);
+
         public MemberReferenceHandle JsCallableScopeAbiAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsCallableScopeAbiAttribute), new[] { typeof(Jroc.Runtime.CallableScopeAbiKind) });
 

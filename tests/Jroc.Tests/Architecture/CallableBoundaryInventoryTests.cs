@@ -143,15 +143,15 @@ public sealed class CallableBoundaryInventoryTests
                     StringComparison.Ordinal)))
             .ToArray();
 
-        Assert.Equal(4, ldftnSites.Length);
+        Assert.Equal(5, ldftnSites.Length);
         Assert.Equal(
             3,
             ldftnSites.Count(site => site.RelativePath ==
                 "src/Compiler/IL/LIRToILCompiler.InstructionEmission.LeafScopeInstance.cs"));
-        Assert.Single(
-            ldftnSites,
-            site => site.RelativePath ==
-                "src/Compiler/Services/FacadeEmitter.cs");
+        Assert.Equal(
+            2,
+            ldftnSites.Count(site => site.RelativePath ==
+                "src/Compiler/Services/FacadeEmitter.cs"));
 
         var continuationEmitter = Assert.Single(
             compilerFiles,
@@ -173,7 +173,7 @@ public sealed class CallableBoundaryInventoryTests
             file => file.RelativePath ==
                 "src/Compiler/Services/FacadeEmitter.cs");
         Assert.Equal(
-            1,
+            2,
             CountOccurrences(
                 bootstrapEmitter.Content,
                 "_bclReferences.ModuleMainDelegate_Ctor_Ref"));

@@ -38,11 +38,7 @@ For build-integrated host projects, start with the `Jroc.SDK` NuGet package and 
 When contracts are generated into the compiled module assembly (default), the easiest pattern is:
 
 ```csharp
-using Jroc.Runtime;
-
-// The generated interface type lives in the compiled module assembly.
-// It is annotated with [JsModule("<moduleId>")] so no module id is needed here.
-using var exports = JsEngine.LoadModule<IMyModuleExports>();
+using var exports = MyModule.Import();
 
 Console.WriteLine(exports.Version);
 Console.WriteLine(exports.Add(1, 2));
@@ -62,10 +58,22 @@ runtime and maps its arguments to `process.argv[2..]`. See
 [generated script facades](api/GeneratedFacades.md) for naming, lifecycle,
 failure, and deployment details.
 
+If the entry module exports values, the same facade exposes a generated import
+contract without requiring host source to reference `Jroc.Runtime`:
+
+```csharp
+using var exports = HelloAssembly.Import();
+Console.WriteLine(exports.Version);
+```
+
+Side-effect-only modules expose `Run` only. Modules with dynamic or computed
+exports still expose `Import` through a safe fallback contract.
+
 If you need to target a specific module id in that same compiled assembly:
 
 ```csharp
-using var exports = JsEngine.LoadModule<IMyModuleExports>("calculator/index");
+using MyModule.Scripts.calculator.index.IExports exports =
+    MyModule.Scripts.calculator.index.Import();
 ```
 
 ## Quick start (dynamic)
