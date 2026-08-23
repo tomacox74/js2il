@@ -1,5 +1,3 @@
-using Jroc.Runtime;
-using Jroc.HostedCounterModule;
 using System.Threading.Tasks;
 
 namespace Typed;
@@ -13,7 +11,7 @@ internal static class Program
         // - Exported functions and values projected onto a strongly-typed exports interface.
         // - Exported ES class projected as IJsConstructor<T> and instances as IJsHandle (dispose when done).
         // - Invoking an async JS export that returns a Promise, then bridging it to Task.
-        using var exports = JsEngine.LoadModule<IHostedCounterModuleExports>();
+        using var exports = HostedCounterModule.Import();
 
         Console.WriteLine($"version={exports.Version}");
         Console.WriteLine($"add(1,2)={exports.Add(1, 2)}");
