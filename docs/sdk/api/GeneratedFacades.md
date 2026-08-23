@@ -98,3 +98,56 @@ exported callables/classes, `Call(params object[] args)` and
 Calls through the root contract or derived dynamic handles after disposal throw
 `ObjectDisposedException`. Each `Import` call creates an isolated runtime and
 module cache.
+
+## Rich export contracts
+
+Generated public signatures use only BCL types and types emitted into the
+compiled assembly. Runtime implementation types such as `IJsHandle`,
+`IJsConstructor<T>`, `JsCallable`, `Promise`, `JavaScriptRuntime`, and
+`Jroc.Runtime` attributes are not part of the facade contract. Runtime metadata
+needed by the proxy layer is emitted as generated implementation metadata.
+
+Class exports produce generated constructor and instance contracts:
+
+```csharp
+using var exports = HostedCounterModule.Import();
+using var counter = exports.Counter.Construct(10);
+
+Console.WriteLine(counter.Add(5));
+Console.WriteLine(counter.GetValue());
+```
+
+The constructor contract implements `IDisposable` and exposes `Construct(...)`
+plus supported static members. Instance contracts implement `IDisposable` and
+expose supported fields, methods, and accessors. Disposing the root exports
+object shuts down the owning runtime; derived constructor/object/instance
+handles then fail with `ObjectDisposedException`.
+
+Function declarations, function expressions, object methods, and arrow
+functions are emitted as C# methods where the shape is known. Simple required
+parameters are emitted as ordinary `object` parameters; default/rest/destructured
+parameters use a conservative `params object[]` signature so callers can supply
+the same argument list JavaScript would see. Regular exported object methods are
+called with the exporting object as their receiver, while arrows preserve their
+lexical `this` and `arguments` semantics.
+
+Callable return values use the generated nested `ICallable` contract, whose
+`Invoke(params object[] args)` method remains bound to the owning import.
+Classes returned from functions use either their generated class-specific
+constructor contract or the generated `IConstructor` fallback for anonymous
+class expressions.
+
+Async functions and async arrows are projected as `Task` or `Task<T>` when the
+result type can be safely inferred. Promise rejection becomes a faulted task
+with module/member context; disposing the owning import while a task is pending
+faults the task with `ObjectDisposedException`.
+
+Plain exported object literals produce generated object contracts. Nested object
+literals and array literals receive generated handle contracts, preserving
+identity, mutation visibility, and the owning import lifetime. Generated array
+contracts expose `Length`, `Get(index)`, `Set(index, value)`, `HasIndex(index)`
+to distinguish sparse holes from present `undefined` values, and `Push(...)`.
+Object contracts also expose `GetDynamicProperty`, `SetDynamicProperty`, and
+`HasDynamicProperty` as a BCL-only fallback for computed or otherwise unknown
+properties. These lookups are lazy, so aliases and cycles preserve identity
+without recursively materializing an object graph.

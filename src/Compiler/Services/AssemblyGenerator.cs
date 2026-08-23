@@ -91,6 +91,20 @@ namespace Jroc.Services
             var moduleList = modules._modules.Values.ToList();
             var compileOptions = _serviceProvider.GetRequiredService<CompilerOptions>();
             var exportShapes = PublicExportShapeAnalyzer.Analyze(modules);
+            var generatedContractMetadata = compileOptions.GenerateModuleExportContracts
+                && exportShapes.Values.Any(shape => shape.HasExports)
+                ? new GeneratedContractMetadataEmitter(
+                    _metadataBuilder,
+                    _bclReferences,
+                    _memberReferenceRegistry,
+                    methodBodyStream).Emit()
+                : new GeneratedContractMetadataReferences(
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default);
 
             // Phase 0: compute callable counts across all modules so we can assign stable
             // future ctor MethodDef tokens for ALL scope types (regardless of module processing order).
@@ -108,7 +122,10 @@ namespace Jroc.Services
                 _bclReferences,
                 _memberReferenceRegistry,
                 _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>());
-            var contractEmitter = new ModuleExportsContractEmitter(_metadataBuilder, _bclReferences);
+            var contractEmitter = new ModuleExportsContractEmitter(
+                _metadataBuilder,
+                _bclReferences,
+                generatedContractMetadata);
             var contractPlan = compileOptions.GenerateModuleExportContracts
                 ? contractEmitter.Plan(
                     modules,

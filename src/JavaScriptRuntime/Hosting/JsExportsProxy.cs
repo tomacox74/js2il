@@ -58,7 +58,12 @@ internal class JsExportsProxy : DispatchProxy
                         var value = IsExportValueMember(targetMethod)
                             ? runtime.Exports
                             : ExportMemberResolver.GetExportMember(runtime.Exports, name);
-                        return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
+                        return JsReturnConverter.ConvertReturn(
+                            runtime,
+                            value,
+                            targetMethod.ReturnType,
+                            name,
+                            targetMethod.DeclaringType);
                     });
                 }
                 catch (Exception ex)
@@ -104,7 +109,12 @@ internal class JsExportsProxy : DispatchProxy
                         runtime,
                         callable!,
                         UnpackParamsArray(targetMethod, args));
-                    return JsReturnConverter.ConvertReturn(runtime, constructed, targetMethod.ReturnType);
+                    return JsReturnConverter.ConvertReturn(
+                        runtime,
+                        constructed,
+                        targetMethod.ReturnType,
+                        exportName,
+                        targetMethod.DeclaringType);
                 }
 
                 if (!JavaScriptRuntime.CallableOperations.IsCallable(callable))
@@ -115,8 +125,14 @@ internal class JsExportsProxy : DispatchProxy
                 var result = ExportMemberResolver.InvokeJsCallable(
                     runtime,
                     callable!,
-                    UnpackParamsArray(targetMethod, args));
-                return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
+                    UnpackParamsArray(targetMethod, args),
+                    receiver: usesWholeExportsValue ? null : runtime.Exports);
+                return JsReturnConverter.ConvertReturn(
+                    runtime,
+                    result,
+                    targetMethod.ReturnType,
+                    exportName,
+                    targetMethod.DeclaringType);
             });
         }
         catch (Exception ex)
@@ -128,10 +144,10 @@ internal class JsExportsProxy : DispatchProxy
     }
 
     private static string GetContractExportName(MethodInfo targetMethod, string fallback)
-        => targetMethod.GetCustomAttribute<JsExportNameAttribute>()?.ExportName ?? fallback;
+        => GeneratedContractMetadata.GetExportName(targetMethod) ?? fallback;
 
     private static bool IsExportValueMember(MethodInfo targetMethod)
-        => targetMethod.GetCustomAttribute<JsExportValueAttribute>() != null;
+        => GeneratedContractMetadata.IsExportValue(targetMethod);
 
     private static object?[] UnpackParamsArray(MethodInfo targetMethod, object?[]? args)
     {

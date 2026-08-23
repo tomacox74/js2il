@@ -7,14 +7,16 @@ This page is the **canonical user documentation** for SDK consumers. The older d
 ## What the SDK gives you
 
 - **Build-integrated compilation**: declare `JrocCompile` items and let `Jroc.SDK` compile JavaScript during `dotnet build`.
-- **Library hosting**: load compiled JavaScript assemblies with `Jroc.Runtime.JsEngine` and call `module.exports` from C#.
+- **Library hosting**: import compiled JavaScript assemblies through generated
+  `Run`/`Import` facades and call `module.exports` from C#.
 - **Generated script facades**: run an assembly or published script directly through assembly-named static types without referencing runtime APIs from C#.
 - **In-memory compile-and-run**: use `Jroc.Core` to produce PE/PDB bytes and optionally load them into a collectible context without writing generated assemblies to disk.
 - A dedicated **script thread** per hosted runtime instance.
 - Optional **debug symbols**: emit Portable PDB (`.pdb`) data for stepping and better stack traces against the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code.
 - Two ways to call exports from hosted modules:
-  - **Typed**: use compiler-generated C# contract interfaces and `JsEngine.LoadModule<TExports>()`.
-  - **Dynamic**: use `dynamic` with
+  - **Generated typed facades**: use `MyModule.Import()` and compiler-generated
+    contracts with no runtime types in public signatures.
+  - **Advanced dynamic**: use `dynamic` with
     `JsEngine.LoadDynamicModule(Assembly, moduleId)`.
 - Stable SDK/runtime exception types (`JsModuleLoadException`, `JsInvocationException`, etc.).
 

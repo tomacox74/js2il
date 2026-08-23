@@ -26,7 +26,8 @@ Common causes:
 
 - missing export member
 - export shape mismatch (expected function but got object)
-- contract type missing required metadata (e.g., `[JsModule]` for the no-args overload)
+- contract type missing required module metadata (generated metadata for facade
+  contracts, or `[JsModule]` for legacy hand-authored contracts)
 
 ## JsInvocationException
 

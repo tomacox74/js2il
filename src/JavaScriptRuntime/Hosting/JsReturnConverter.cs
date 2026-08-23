@@ -11,7 +11,7 @@ internal static class JsReturnConverter
         .GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
         .Single(m => m.Name == nameof(JsPromiseTaskInterop.ToTask)
                      && m.IsGenericMethodDefinition
-                     && m.GetParameters().Length == 2
+                     && m.GetParameters().Length == 4
                      && m.GetParameters()[0].ParameterType == typeof(JsRuntimeInstance)
                      && m.GetParameters()[1].ParameterType == typeof(Promise));
 
@@ -23,16 +23,26 @@ internal static class JsReturnConverter
 
     private static readonly ConditionalWeakTable<Type, ResultConversionMethods> ResultConversions = new();
 
-    internal static object? ConvertReturn(JsRuntimeInstance runtime, object? value, Type returnType)
+    internal static object? ConvertReturn(
+        JsRuntimeInstance runtime,
+        object? value,
+        Type returnType,
+        string? memberName = null,
+        Type? contractType = null)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(returnType);
+        if (!GeneratedContractMetadata.IsGeneratedContractType(contractType))
+        {
+            memberName = null;
+            contractType = null;
+        }
 
         if (returnType == typeof(Task))
         {
             if (value is Promise p)
             {
-                return JsPromiseTaskInterop.ToTask(runtime, p);
+                return JsPromiseTaskInterop.ToTask(runtime, p, memberName, contractType);
             }
 
             // If the JS side returns a non-promise value but the contract expects a Task,
@@ -53,10 +63,10 @@ internal static class JsReturnConverter
             {
                 return conversionMethods.PromiseToTask.Invoke(
                     null,
-                    new object?[] { runtime, p });
+                    new object?[] { runtime, p, memberName, contractType });
             }
 
-            var converted = ConvertReturn(runtime, value, resultType);
+            var converted = ConvertReturn(runtime, value, resultType, memberName, contractType);
 
             return conversionMethods.TaskFromResult.Invoke(
                 null,
@@ -71,6 +81,11 @@ internal static class JsReturnConverter
         if (value == null)
         {
             return returnType.IsValueType ? Activator.CreateInstance(returnType) : null;
+        }
+
+        if (IsJsConstructorType(returnType))
+        {
+            return runtime.GetOrCreateConstructorProxy(returnType, value);
         }
 
         if (JavaScriptRuntime.CallableOperations.IsCallable(value))
@@ -96,18 +111,9 @@ internal static class JsReturnConverter
             return value;
         }
 
-        if (IsJsConstructorType(returnType))
+        if (typeof(IJsHandle).IsAssignableFrom(returnType) || IsGeneratedHandleType(returnType))
         {
-            var proxy = JsProxyFactory.CreateProxy(returnType, typeof(JsConstructorProxy));
-            ((JsConstructorProxy)proxy).Initialize(runtime, value);
-            return proxy;
-        }
-
-        if (typeof(IJsHandle).IsAssignableFrom(returnType))
-        {
-            var proxy = JsProxyFactory.CreateProxy(returnType, typeof(JsHandleProxy));
-            ((JsHandleProxy)proxy).Initialize(runtime, value);
-            return proxy;
+            return runtime.GetOrCreateHandleProxy(returnType, value);
         }
 
         if (returnType.IsEnum)
@@ -143,8 +149,20 @@ internal static class JsReturnConverter
             return true;
         }
 
-        return returnType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IJsConstructor<>));
+        return returnType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IJsConstructor<>))
+            || IsGeneratedConstructorType(returnType);
     }
+
+    private static bool IsGeneratedConstructorType(Type returnType)
+        => GeneratedContractMetadata.IsGeneratedContractType(returnType)
+           && returnType.IsInterface
+           && typeof(IDisposable).IsAssignableFrom(returnType)
+           && returnType.GetMethods().Any(method => method.Name == "Construct");
+
+    private static bool IsGeneratedHandleType(Type returnType)
+        => GeneratedContractMetadata.IsGeneratedContractType(returnType)
+           && returnType.IsInterface
+           && typeof(IDisposable).IsAssignableFrom(returnType);
 
     private sealed record ResultConversionMethods(
         MethodInfo PromiseToTask,

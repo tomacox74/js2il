@@ -55,8 +55,6 @@ Portable PDBs map back to the original `.js` / `.mjs` source path, including rew
 ```powershell
 dotnet new console -n HostApp
 cd .\HostApp
-
-dotnet add package JavaScriptRuntime
 ```
 
 Reference the compiled module assembly (`out\math.dll`):
@@ -73,7 +71,8 @@ Reference the compiled module assembly (`out\math.dll`):
 ## 4) Call exports (typed)
 
 If contract generation is enabled (it is **enabled by default**), `math.dll`
-contains `math.Scripts.math.IExports`, annotated with `[JsModule("math")]`.
+contains `math.Scripts.math.IExports` and an assembly-root `math.Import()`
+shortcut for the entry module.
 
 In your host app:
 
@@ -102,4 +101,6 @@ Console.WriteLine((double)exports.add(1, 2));
 ## Notes
 
 - **Threading**: calls from any host thread are marshalled to the module’s dedicated script thread.
-- **Disposal**: always dispose the object returned by `LoadModule(...)` to shut down the script thread.
+- **Disposal**: always dispose the object returned by `Import()`/`LoadModule(...)` to shut down the script thread.
+- **Deployment**: the runtime assembly is still required at run time, but it is
+  not part of the generated facade's public signatures.

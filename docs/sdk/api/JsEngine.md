@@ -10,7 +10,9 @@ Namespace: `Jroc.Runtime` (assembly: `JavaScriptRuntime.dll` / NuGet package: `J
 public static TExports LoadModule<TExports>() where TExports : class
 ```
 
-- Uses `[JsModule("<moduleId>")]` on `TExports` to resolve the module id.
+- Uses generated module metadata on `TExports` to resolve the module id. Older
+  hand-authored contracts can still use the runtime `[JsModule("<moduleId>")]`
+  attribute.
 - Uses `typeof(TExports).Assembly` as the target compiled module assembly.
 - Intended for **generated contracts**.
 

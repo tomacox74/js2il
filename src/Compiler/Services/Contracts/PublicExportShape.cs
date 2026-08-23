@@ -454,7 +454,7 @@ internal static class PublicExportShapeAnalyzer
                     exportName,
                     PublicExportMemberKind.Named,
                     module,
-                    property.Value,
+                    property,
                     InferLiteralClrType(property.Value),
                     hasUnknownSource: false));
         }

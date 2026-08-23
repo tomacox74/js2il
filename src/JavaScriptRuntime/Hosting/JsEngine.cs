@@ -71,8 +71,8 @@ public static class JsEngine
         where TExports : class
     {
         var contractType = typeof(TExports);
-        var moduleAttr = contractType.GetCustomAttribute<JsModuleAttribute>();
-        if (moduleAttr == null)
+        var moduleId = GeneratedContractMetadata.GetModuleId(contractType);
+        if (moduleId == null)
         {
             throw new JsContractProjectionException(
                 $"{contractType.FullName} does not have {nameof(JsModuleAttribute)}. " +
@@ -80,7 +80,7 @@ public static class JsEngine
                 contractType: contractType);
         }
 
-        return LoadModule<TExports>(contractType.Assembly, moduleAttr.ModuleId);
+        return LoadModule<TExports>(contractType.Assembly, moduleId);
     }
 
     /// <summary>

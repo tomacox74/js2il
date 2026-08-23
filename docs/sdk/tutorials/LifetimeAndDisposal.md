@@ -7,17 +7,18 @@ Hosting introduces two distinct lifetimes:
 
 ## What to dispose
 
-- Always dispose the object returned by `JsEngine.LoadModule(...)`.
+- Always dispose the object returned by generated `Import()` or `JsEngine.LoadModule(...)`.
   - For typed hosting, that’s the generated exports interface (it must implement `IDisposable`).
   - For dynamic hosting, that’s the dynamic exports proxy.
-- Dispose handle proxies (`IJsHandle`) when you’re done with them.
-- Do not dispose `JsCallable` values individually. They are identity-cached and
-  owned by the module runtime.
+- Dispose generated object/array/constructor/instance handle contracts when
+  you’re done with them.
+- Advanced dynamic `JsCallable` values are identity-cached and owned by the
+  module runtime.
 
 ## Typed example
 
 ```csharp
-using var exports = JsEngine.LoadModule<IMyExports>();
+using var exports = MyModule.Import();
 
 using var counter = exports.Counter.Construct(10);
 Console.WriteLine(counter.Add(5));
