@@ -9,6 +9,11 @@ any literal that could observe a behavioral difference is left on the generic
 path, and even specialized literals keep their `JsObject` base storage in sync so
 every dynamic runtime path still sees correct values.
 
+The same generated-type machinery also supports eligible ES5 constructor
+functions (issue #1965). Constructor layouts are described separately below
+because their receiver flow and mutation rules are more permissive than the
+closed-world object-literal proof.
+
 ## Phases
 
 | Phase | Issue | What it does |
@@ -45,6 +50,62 @@ class Modules.<Module>/ObjectLiterals/L1C18_eligible : JsObject
   generic-path reads (e.g. destructuring reads), and any access from bindings
   that do not qualify for early binding. Eliding the mirror for fully
   early-bound shapes is a follow-up (#1439).
+
+## ES5 constructor layouts (#1965)
+
+For an ordinary constructor such as:
+
+```js
+function GraphNode(x, y, wall) {
+    this.x = x;
+    this.y = y;
+    this.wall = wall;
+    this.pos = { x, y };
+}
+```
+
+the symbol table records a `ConstructorShapeInfo` when the body begins with a
+contiguous prefix of unconditional top-level `this.<identifier> = value`
+assignments. `TypeGenerator` emits a dedicated
+`ObjectLiterals/Ctor_L<line>C<column>_<name>` subclass of `JsObject` with
+object-typed fields and generated accessors.
+
+Statically known `new Constructor(...)` sites allocate that generated type,
+then invoke the normal generated function body with the allocated receiver.
+The runtime helper still resolves `newTarget.prototype`, establishes the
+constructor invocation context, and applies the ordinary object-return
+override rule. Calling the same function without `new` remains valid:
+constructor-body field stores require both an `isinst` hit and the active
+generated-construction receiver marker, and prove that no receiver or prototype
+descriptor can intercept the write. Otherwise they fall back to ordinary
+JavaScript assignment, including inherited setters/non-writable properties and
+normal calls on custom or previously specialized receivers. Constructor-body
+`this.member` reads are likewise guarded because the function remains callable
+with an arbitrary receiver.
+
+Constructor layouts are rejected conservatively for conditional or late
+initialization, computed `this` keys, deletion, `Object.defineProperty(this,
+...)`, `this` escaping before the initialization prefix completes, explicit
+return values, async/generator functions, or reassigned constructor bindings.
+Ineligible functions retain the existing construction path.
+
+Reads use two tiers:
+
+- **Tier 1:** a stable binding initialized directly by a known specialized
+  `new` uses the generated getter.
+- **Tier 2:** a parameter or other receiver with one known candidate layout
+  uses an `isinst`-guarded getter and ordinary `ObjectRuntime.GetItem` fallback.
+  Candidate layouts propagate through direct calls and prototype-method
+  parameters; a unique parameter member candidate can also specialize related
+  unknown receivers in the same callable. This covers both `obj.pos` and
+  `this[i].pos` in Kraken A* `findGraphNode`.
+
+Generated constructor getters validate that the mirrored base storage still
+contains the same plain default data property before returning a field.
+Delete, accessor/descriptor conversion, and plain dynamic writes therefore
+fall back to complete lookup rather than returning stale data. Shape storage
+continues to define own-key order, so enumeration and later dynamic additions
+preserve ordinary JavaScript ordering.
 
 ## Eligibility (phase 1)
 
@@ -188,13 +249,23 @@ Object-literal read microbenchmark (1000 literals × 20k iterations of
 ≈ **5× faster** and **44% fewer allocations** for literal-heavy read loops.
 Identical computed results confirm behavioral parity.
 
-Kraken `ai-astar` attribution note: its central `var astar = { … }` namespace
-literal does receive a specialized type, but it is constructed exactly once and
-is `var`-bound with method-invoked members, so its accesses stay on the dynamic
-path and this feature contributes little there; the constructor-created
-`GraphNode` objects that dominate `ai-astar` are covered by the
-constructor-shape work (#1426). Direct measured run of the compiled scenario:
-~2.9–3.8 s wall, ~70.6 MB allocated.
+Kraken `ai-astar` attribution note: issue #1965 now specializes the
+constructor-created `GraphNode` objects. The exact IL guardrail reports two
+guarded `pos` getters and zero `DynamicLookupInlineCache.GetItem` calls in
+`findGraphNode`.
+
+A sequential same-host BenchmarkDotNet comparison against Phase 4 commit
+`71bf78438` used three launches with three measured iterations each
+(`N = 9`) on an Intel Xeon 6975P-C, Ubuntu 24.04, .NET 10.0.11, and
+BenchmarkDotNet 0.15.8:
+
+| Variant | Mean | Median | Allocated |
+| --- | ---: | ---: | ---: |
+| Phase 4 baseline | 4.889 s | 4.900 s | 56,893,608 B |
+| Phase 5 candidate | 3.063 s | 2.946 s | 56,971,416 B |
+
+The candidate is **37.3% faster by mean** and **39.9% faster by median**.
+Managed allocation increased by 77,808 bytes (0.14%).
 
 ## Test coverage
 
@@ -207,3 +278,8 @@ constructor-shape work (#1426). Direct measured run of the compiled scenario:
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_DestructuredParameterInference_Parity.js` — config-style literal propagation into a simple object-destructuring parameter with unboxed numeric bindings
 - `tests/Jroc.Tests/SymbolTable/ObjectLiteralShapeAnalysisTests.cs` — phase 6 slot analysis: propagation, canonicalization (order-insensitive signature), safe/conflicting parameter writes, method-call and spread-shift fallback
 - `tests/Jroc.Tests/ObjectLiteralTypeGenerationGroundworkTests.cs` — generated type metadata contract, reordered same-shape literals sharing one generated type
+- `tests/Jroc.Tests/SymbolTable/ConstructorShapeAnalysisTests.cs` — constructor eligibility/disqualification and binding/parameter candidate propagation
+- `tests/Jroc.Tests/Function/JavaScript/Function_ConstructorShape_GraphNode.js` — typed allocation, body execution, prototype, ordinary-call, `new.target`, and return-override semantics
+- `tests/Jroc.Tests/Function/JavaScript/Function_ConstructorShape_GuardedParameterRead.js` — guarded parameter hit and plain-object fallback
+- `tests/Jroc.Tests/Function/JavaScript/Function_ConstructorShape_MutationFallback.js` — plain writes, delete, accessors/descriptors, prototype mutation, dynamic additions, and enumeration
+- `tests/Jroc.Tests/Function/JavaScript/Function_ConstructorShape_PrototypeSetSemantics.js` — inherited setters, inherited writable/non-writable data properties, strict failure, and custom-receiver constructor calls

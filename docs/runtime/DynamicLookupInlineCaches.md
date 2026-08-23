@@ -21,6 +21,12 @@ guard, so the unmodified
 Kraken A* `openList.findGraphNode(neighbor)` and
 `closedList.findGraphNode(neighbor)` sites resolve once and then invoke through
 `CallableOperations.Call1` without an argument array.
+Phase 5 (#1965) moves eligible ES5 constructor layouts ahead of these caches.
+Proven instances use generated typed getters; uncertain receivers with one
+known constructor layout use an `isinst` guard and the same generated getter,
+with `ObjectRuntime.GetItem` on a type miss. The getter revalidates mirrored
+plain-data storage before returning its field, so descriptor or value mutation
+falls back safely. These guarded hits never enter `DynamicLookupInlineCache`.
 Sections below describe this current contract; historical Phase 0/1 sections
 that still describe identity-only behavior are updated in place rather than
 kept as a separate legacy description, since the generated call surface and

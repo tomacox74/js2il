@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): implement issue #1965 (Phase 5 of #1958) with
+  conservative ES5 constructor-layout inference, generated `JsObject`
+  subclasses, specialized static `new` allocation, direct typed reads, and
+  `isinst`-guarded getters with full dynamic fallback. Generated fields mirror
+  ordinary storage, and live descriptor/value validation preserves delete,
+  accessor, plain-write, prototype, dynamic-addition, enumeration, `new.target`,
+  and constructor-return semantics. The exact Kraken A* guardrail now reports
+  two guarded `GraphNode.pos` reads and zero `DynamicLookupInlineCache.GetItem`
+  reads in `findGraphNode`.
 - perf(compiler/runtime): implement issue #1958 Phase 4 with shape-keyed
   `CallMember1` caches for own methods and direct prototype methods, including
   the hot `Array.prototype.findGraphNode` path. Generated sites use fixed-arity
