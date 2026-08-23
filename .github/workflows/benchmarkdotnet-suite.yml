@@ -12,11 +12,17 @@ on:
         description: 'Published Jroc package version to benchmark (for example 0.9.5)'
         required: false
         default: ''
+      kracken_final_validation:
+        description: 'Run only the exact Kraken ai-astar cross-runtime and IL closure gates'
+        required: false
+        type: boolean
+        default: false
   release:
     types: [published]
 
 jobs:
   benchmarkdotnet-suite:
+    if: github.event_name == 'release' || !inputs.kracken_final_validation
     name: ${{ matrix.benchmark_name }}
     runs-on: ubuntu-latest
     permissions:
@@ -294,3 +300,74 @@ jobs:
             }).catch(err => {
               console.log('Failed to post comment:', err);
             });
+
+  kracken-final-validation:
+    if: github.event_name == 'workflow_dispatch' && inputs.kracken_final_validation
+    name: Kraken ai-astar final validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore tools and dependencies
+        run: |
+          dotnet tool restore
+          dotnet restore tests/performance/Benchmarks/Benchmarks.csproj
+
+      - name: Build benchmark project
+        run: dotnet build tests/performance/Benchmarks/Benchmarks.csproj -c Release --no-restore
+
+      - name: Shutdown build server
+        run: dotnet build-server shutdown
+
+      - name: Run final validation
+        id: validation
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts/kracken-ai-astar-validation
+          node scripts/runKrackenAStarGuardrails.js \
+            --no-microbenchmarks \
+            --final-validation \
+            --candidate-sha "$GITHUB_SHA" \
+            --output-json artifacts/kracken-ai-astar-validation/summary.json \
+            2>&1 | tee artifacts/kracken-ai-astar-validation/console.txt
+
+      - name: Ingest benchmark results
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js \
+            --source benchmarkdotnet \
+            --input tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results
+
+      - name: Upload raw validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: kracken-ai-astar-final-validation
+          path: |
+            artifacts/kracken-ai-astar-validation/*
+            tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/**/*
+          retention-days: 90
+
+      - name: Enforce final validation result
+        if: steps.validation.outcome == 'failure'
+        run: exit 1
