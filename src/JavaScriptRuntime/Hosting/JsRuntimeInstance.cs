@@ -219,11 +219,19 @@ internal sealed class JsRuntimeInstance : IDisposable
         Exception? enumerationCleanupFailure = null;
         try
         {
-            enumerationCleanup.GetAwaiter().GetResult();
+            // Bound the wait like the thread join below: a JavaScript finally block
+            // awaiting a never-settling promise must not hang host Dispose forever.
+            if (!enumerationCleanup.Wait(DisposeJoinTimeout))
+            {
+                enumerationCleanupFailure = new TimeoutException(
+                    "Timed out waiting for JavaScript iterator cleanup during disposal.");
+            }
         }
-        catch (Exception exception)
+        catch (AggregateException exception)
         {
-            enumerationCleanupFailure = exception;
+            enumerationCleanupFailure = exception.InnerExceptions.Count == 1
+                ? exception.InnerException
+                : exception;
         }
 
         FinishShutdown();
@@ -290,14 +298,33 @@ internal sealed class JsRuntimeInstance : IDisposable
             });
     }
 
-    internal bool TryGetExistingHandleProxy(object target, out object proxy)
+    internal bool TryGetExistingHandleProxy(
+        object target,
+        Type? preferredContract,
+        out object proxy)
     {
         ArgumentNullException.ThrowIfNull(target);
-        if (_handleProxies.TryGetValue(target, out var proxies)
-            && proxies.Values.FirstOrDefault() is { } existing)
+        if (_handleProxies.TryGetValue(target, out var proxies))
         {
-            proxy = existing;
-            return true;
+            // Selection must be deterministic so repeated object-typed reads of the
+            // same JS value keep returning a reference-identical proxy even after
+            // additional contract projections are cached for the target.
+            if (preferredContract != null
+                && proxies.TryGetValue(preferredContract, out var preferred))
+            {
+                proxy = preferred;
+                return true;
+            }
+
+            var existing = proxies
+                .OrderBy(pair => pair.Key.FullName, StringComparer.Ordinal)
+                .Select(pair => pair.Value)
+                .FirstOrDefault();
+            if (existing != null)
+            {
+                proxy = existing;
+                return true;
+            }
         }
 
         proxy = null!;
@@ -422,6 +449,15 @@ internal sealed class JsRuntimeInstance : IDisposable
         {
             FailWorkItem(item);
             throw CreateDisposedException();
+        }
+
+        // The script thread fails pending items before disposing the queue and only
+        // then completes _terminated; an item enqueued inside that window would
+        // otherwise never execute, so fail it once termination is observed.
+        _ = Task.WhenAny(completion.Task, _terminated.Task).GetAwaiter().GetResult();
+        if (!completion.Task.IsCompleted)
+        {
+            FailWorkItem(item);
         }
 
         return completion.Task.GetAwaiter().GetResult();

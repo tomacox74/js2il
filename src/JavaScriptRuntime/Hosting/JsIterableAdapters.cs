@@ -96,8 +96,10 @@ internal sealed class JsEnumerator<T> : IEnumerator<T>, IRuntimeDisposalParticip
     private readonly IJavaScriptIterator _iterator;
     private readonly string? _memberName;
     private readonly Type? _contractType;
+    private readonly object _disposeGate = new();
+    private Task? _disposeTask;
     private bool _completed;
-    private bool _disposed;
+    private volatile bool _disposed;
     private bool _hasCurrent;
     private T? _current;
 
@@ -168,13 +170,26 @@ internal sealed class JsEnumerator<T> : IEnumerator<T>, IRuntimeDisposalParticip
         => throw new NotSupportedException("JavaScript iterators cannot be reset.");
 
     public void Dispose()
-        => DisposeCore(forRuntimeShutdown: false);
+        => GetOrStartDisposeTask(forRuntimeShutdown: false).GetAwaiter().GetResult();
 
     Task IRuntimeDisposalParticipant.DisposeForRuntimeShutdownAsync()
+        => GetOrStartDisposeTask(forRuntimeShutdown: true);
+
+    // Host disposal and runtime-shutdown disposal can race from different threads;
+    // both paths share one cleanup so iterator return() runs exactly once.
+    private Task GetOrStartDisposeTask(bool forRuntimeShutdown)
+    {
+        lock (_disposeGate)
+        {
+            return _disposeTask ??= RunDisposeCore(forRuntimeShutdown);
+        }
+    }
+
+    private Task RunDisposeCore(bool forRuntimeShutdown)
     {
         try
         {
-            DisposeCore(forRuntimeShutdown: true);
+            DisposeCore(forRuntimeShutdown);
             return Task.CompletedTask;
         }
         catch (Exception exception)
@@ -185,11 +200,6 @@ internal sealed class JsEnumerator<T> : IEnumerator<T>, IRuntimeDisposalParticip
 
     private void DisposeCore(bool forRuntimeShutdown)
     {
-        if (_disposed)
-        {
-            return;
-        }
-
         _disposed = true;
         _hasCurrent = false;
         try
@@ -202,7 +212,18 @@ internal sealed class JsEnumerator<T> : IEnumerator<T>, IRuntimeDisposalParticip
                 }
                 else
                 {
-                    _runtime.Invoke(_iterator.Return);
+                    try
+                    {
+                        _runtime.Invoke(_iterator.Return);
+                    }
+                    catch (ObjectDisposedException)
+                        when (!_runtime.IsShutdown)
+                    {
+                        // Runtime shutdown was signaled after this enumerator won the
+                        // cleanup race; the script thread is still draining disposal
+                        // work, so route return() through the disposal queue.
+                        _runtime.InvokeDuringDisposal(_iterator.Return);
+                    }
                 }
             }
         }

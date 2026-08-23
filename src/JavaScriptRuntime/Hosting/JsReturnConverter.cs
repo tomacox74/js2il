@@ -116,15 +116,15 @@ internal static class JsReturnConverter
         {
             if (!TypeUtilities.IsPrimitive(value))
             {
-                if (runtime.TryGetExistingHandleProxy(value, out var existingHandle))
-                {
-                    return existingHandle;
-                }
-
                 var canonicalContract =
                     JavaScriptRuntime.CallableOperations.IsCallable(value)
                         ? GeneratedContractMetadata.GetSiblingCallableContract(contractType)
                         : GeneratedContractMetadata.GetSiblingObjectContract(contractType);
+                if (runtime.TryGetExistingHandleProxy(value, canonicalContract, out var existingHandle))
+                {
+                    return existingHandle;
+                }
+
                 if (canonicalContract != null)
                 {
                     return runtime.GetOrCreateHandleProxy(canonicalContract, value);
