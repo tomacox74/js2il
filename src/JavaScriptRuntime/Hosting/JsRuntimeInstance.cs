@@ -49,6 +49,9 @@ internal sealed class JsRuntimeInstance : IDisposable
     private readonly ConditionalWeakTable<object, ConcurrentDictionary<(MethodInfo Method, Type DelegateType), HostedDelegateFunctionObject>> _hostInstanceDelegateAdapters = new();
     private readonly ConditionalWeakTable<JsHostFunction, HostedCallbackFunctionObject> _hostFunctionAdapters = new();
     private readonly ConditionalWeakTable<object, ConcurrentDictionary<MethodInfo, HostedMethodFunctionObject>> _hostMethodAdapters = new();
+    private readonly ConditionalWeakTable<object, ConcurrentDictionary<Type, object>> _handleProxies = new();
+    private readonly ConditionalWeakTable<object, ConcurrentDictionary<Type, object>> _constructorProxies = new();
+    private readonly ConditionalWeakTable<object, JsDynamicValueProxy> _dynamicValueProxies = new();
 
     public JsRuntimeInstance(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options = null)
     {
@@ -244,6 +247,44 @@ internal sealed class JsRuntimeInstance : IDisposable
         return _callableWrappers.GetValue(
             callable,
             target => new JsCallable(this, target));
+    }
+
+    internal object GetOrCreateHandleProxy(Type interfaceType, object target)
+    {
+        ArgumentNullException.ThrowIfNull(interfaceType);
+        ArgumentNullException.ThrowIfNull(target);
+
+        return _handleProxies
+            .GetOrCreateValue(target)
+            .GetOrAdd(interfaceType, type =>
+            {
+                var proxy = JsProxyFactory.CreateProxy(type, typeof(JsHandleProxy));
+                ((JsHandleProxy)proxy).Initialize(this, target);
+                return proxy;
+            });
+    }
+
+    internal object GetOrCreateConstructorProxy(Type interfaceType, object constructor)
+    {
+        ArgumentNullException.ThrowIfNull(interfaceType);
+        ArgumentNullException.ThrowIfNull(constructor);
+
+        return _constructorProxies
+            .GetOrCreateValue(constructor)
+            .GetOrAdd(interfaceType, type =>
+            {
+                var proxy = JsProxyFactory.CreateProxy(type, typeof(JsConstructorProxy));
+                ((JsConstructorProxy)proxy).Initialize(this, constructor);
+                return proxy;
+            });
+    }
+
+    internal JsDynamicValueProxy GetOrCreateDynamicValueProxy(object target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        return _dynamicValueProxies.GetValue(
+            target,
+            value => new JsDynamicValueProxy(this, value));
     }
 
     internal HostedMethodFunctionObject GetOrCreateHostMethodAdapter(

@@ -3,6 +3,118 @@
 {
 } // end of class <Module>
 
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsModuleAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			string 'value'
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsModuleAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsModuleAttribute
+
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsExportNameAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			string 'value'
+		) cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsExportNameAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsExportNameAttribute
+
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsExportValueAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsExportValueAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsExportValueAttribute
+
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsObjectContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsObjectContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsObjectContractAttribute
+
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsArrayContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsArrayContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsArrayContractAttribute
+
+.class private auto ansi sealed beforefieldinit Jroc.Generated.Metadata.JsCallableContractAttribute
+	extends [System.Runtime]System.Attribute
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Attribute::.ctor()
+		IL_0006: ret
+	} // end of method JsCallableContractAttribute::.ctor
+
+} // end of class Jroc.Generated.Metadata.JsCallableContractAttribute
+
 .class public auto ansi abstract sealed beforefieldinit Import_ExportNamedFrom
 	extends [System.Runtime]System.Object
 {
@@ -46,7 +158,7 @@
 			.class interface nested public auto ansi abstract IExports
 				implements [System.Runtime]System.IDisposable
 			{
-				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+				.custom instance void Jroc.Generated.Metadata.JsModuleAttribute::.ctor(string) = (
 					01 00 1b 49 6d 70 6f 72 74 5f 45 78 70 6f 72 74
 					4e 61 6d 65 64 46 72 6f 6d 5f 4c 69 62 41 00 00
 				)
@@ -54,17 +166,27 @@
 				.method public hidebysig specialname newslot abstract virtual 
 					instance float64 get_Value () cil managed 
 				{
-					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+					.custom instance void Jroc.Generated.Metadata.JsExportNameAttribute::.ctor(string) = (
 						01 00 05 76 61 6c 75 65 00 00
 					)
 				} // end of method IExports::get_Value
 
-				.method public hidebysig newslot abstract virtual 
-					instance float64 Doubled (
-						float64 x
+				.method public hidebysig specialname newslot abstract virtual 
+					instance void set_Value (
+						float64 'value'
 					) cil managed 
 				{
-					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+					.custom instance void Jroc.Generated.Metadata.JsExportNameAttribute::.ctor(string) = (
+						01 00 05 76 61 6c 75 65 00 00
+					)
+				} // end of method IExports::set_Value
+
+				.method public hidebysig newslot abstract virtual 
+					instance float64 Doubled (
+						object x
+					) cil managed 
+				{
+					.custom instance void Jroc.Generated.Metadata.JsExportNameAttribute::.ctor(string) = (
 						01 00 07 64 6f 75 62 6c 65 64 00 00
 					)
 				} // end of method IExports::Doubled
@@ -73,6 +195,7 @@
 				.property instance float64 Value()
 				{
 					.get instance float64 Import_ExportNamedFrom/Scripts/Import_ExportNamedFrom_LibA/IExports::get_Value()
+					.set instance void Import_ExportNamedFrom/Scripts/Import_ExportNamedFrom_LibA/IExports::set_Value(float64)
 				}
 
 			} // end of class IExports
@@ -128,17 +251,17 @@
 			.class interface nested public auto ansi abstract IExports
 				implements [System.Runtime]System.IDisposable
 			{
-				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+				.custom instance void Jroc.Generated.Metadata.JsModuleAttribute::.ctor(string) = (
 					01 00 1b 49 6d 70 6f 72 74 5f 45 78 70 6f 72 74
 					4e 61 6d 65 64 46 72 6f 6d 5f 4c 69 62 42 00 00
 				)
 				// Methods
 				.method public hidebysig newslot abstract virtual 
 					instance float64 Doubled (
-						float64 x
+						object x
 					) cil managed 
 				{
-					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+					.custom instance void Jroc.Generated.Metadata.JsExportNameAttribute::.ctor(string) = (
 						01 00 07 64 6f 75 62 6c 65 64 00 00
 					)
 				} // end of method IExports::Doubled
@@ -146,15 +269,26 @@
 				.method public hidebysig specialname newslot abstract virtual 
 					instance float64 get_Value () cil managed 
 				{
-					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+					.custom instance void Jroc.Generated.Metadata.JsExportNameAttribute::.ctor(string) = (
 						01 00 05 76 61 6c 75 65 00 00
 					)
 				} // end of method IExports::get_Value
+
+				.method public hidebysig specialname newslot abstract virtual 
+					instance void set_Value (
+						float64 'value'
+					) cil managed 
+				{
+					.custom instance void Jroc.Generated.Metadata.JsExportNameAttribute::.ctor(string) = (
+						01 00 05 76 61 6c 75 65 00 00
+					)
+				} // end of method IExports::set_Value
 
 				// Properties
 				.property instance float64 Value()
 				{
 					.get instance float64 Import_ExportNamedFrom/Scripts/Import_ExportNamedFrom_LibB/IExports::get_Value()
+					.set instance void Import_ExportNamedFrom/Scripts/Import_ExportNamedFrom_LibB/IExports::set_Value(float64)
 				}
 
 			} // end of class IExports

@@ -92,9 +92,7 @@ public sealed class GeneratedFacadePhaseTwoTests
         Assert.Equal("IExports", rootImport.ReturnType.Name);
         Assert.Equal(entryFacade, rootImport.ReturnType.DeclaringType);
         Assert.True(typeof(IDisposable).IsAssignableFrom(rootImport.ReturnType));
-        Assert.Equal(
-            "entry",
-            rootImport.ReturnType.GetCustomAttribute<JsModuleAttribute>()!.ModuleId);
+        Assert.Equal("entry", GetGeneratedModuleId(rootImport.ReturnType));
         Assert.DoesNotContain("JavaScriptRuntime", rootImport.ReturnType.FullName);
         Assert.DoesNotContain("Jroc.Runtime", rootImport.ReturnType.FullName);
     }
@@ -217,12 +215,12 @@ public sealed class GeneratedFacadePhaseTwoTests
 
             Console.WriteLine(primitive.Value);
             Console.WriteLine(fn.Call(41));
-            dynamic instance = klass.Construct(7);
-            Console.WriteLine(instance.read());
+            var instance = klass.Construct(7);
+            Console.WriteLine(instance.Read());
             Console.WriteLine(nullValue.Value != null);
             Console.WriteLine(undefinedValue.Value == null);
             klass.Dispose();
-            try { Console.WriteLine(instance.read()); }
+            try { Console.WriteLine(instance.Read()); }
             catch (ObjectDisposedException) { Console.WriteLine("nested-disposed"); }
             dynamic dynamicExports = unknown.Value;
             Console.WriteLine(dynamicExports.late);
@@ -359,6 +357,22 @@ public sealed class GeneratedFacadePhaseTwoTests
                 method.ToString());
         }
     }
+
+    private static string? GetGeneratedModuleId(Type contractType)
+        => contractType
+            .GetCustomAttributesData()
+            .FirstOrDefault(attribute =>
+                string.Equals(
+                    attribute.AttributeType.FullName,
+                    "Jroc.Generated.Metadata.JsModuleAttribute",
+                    StringComparison.Ordinal)
+                || string.Equals(
+                    attribute.AttributeType.FullName,
+                    typeof(JsModuleAttribute).FullName,
+                    StringComparison.Ordinal))
+            ?.ConstructorArguments
+            .FirstOrDefault()
+            .Value as string;
 
     private static bool IsGeneratedOrBcl(Type type, Assembly generatedAssembly)
     {

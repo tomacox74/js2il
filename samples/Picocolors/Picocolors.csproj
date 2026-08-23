@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>PicocolorsHost</AssemblyName>
+    <JrocAssemblyName>picocolors</JrocAssemblyName>
 
     <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\jroc\picocolors</ModuleOutputDirectory>
   </PropertyGroup>
@@ -15,8 +16,9 @@
     <PackageReference Include="Jroc.SDK" Version="$(JrocSdkPackageVersion)" />
     <PackageReference Include="Jroc.Runtime" Version="$(JrocRuntimePackageVersion)" />
 
-    <JrocCompile Include="picocolors"
+    <JrocCompile Include="$(MSBuildProjectDirectory)\index.js"
                   OutputDirectory="$(ModuleOutputDirectory)"
+                  RootModuleId="picocolors"
                   CopyToOutputDirectory="true" />
   </ItemGroup>
 

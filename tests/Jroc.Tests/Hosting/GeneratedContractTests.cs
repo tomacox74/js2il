@@ -24,9 +24,7 @@ public class GeneratedContractTests
             "hosting+Scripts+hosting+IExports",
             throwOnError: true)!;
 
-        var attr = contractType.GetCustomAttribute<Jroc.Runtime.JsModuleAttribute>();
-        Assert.NotNull(attr);
-        Assert.Equal("hosting", attr!.ModuleId);
+        Assert.Equal("hosting", GetGeneratedModuleId(contractType));
 
         var loadNoArgs = typeof(Jroc.Runtime.JsEngine)
             .GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -51,7 +49,7 @@ public class GeneratedContractTests
         Assert.NotNull(counterCtor);
 
         var construct = counterCtor!.GetType().GetMethod("Construct")!;
-        var counterObj = construct.Invoke(counterCtor, new object?[] { new object?[] { 10.0 } });
+        var counterObj = construct.Invoke(counterCtor, new object?[] { 10.0 });
         Assert.NotNull(counterObj);
 
         var counterType = module.Assembly.GetType("Jroc.hosting.ICounter", throwOnError: true)!;
@@ -89,7 +87,7 @@ public class GeneratedContractTests
         var contractType = module.Assembly
             .GetTypes()
             .Single(t => t.IsInterface
-                      && t.GetCustomAttribute<Jroc.Runtime.JsModuleAttribute>()?.ModuleId == "hostingAsync");
+                      && GetGeneratedModuleId(t) == "hostingAsync");
 
         var addAsync = contractType.GetMethod("AddAsync", BindingFlags.Public | BindingFlags.Instance);
         Assert.NotNull(addAsync);
@@ -125,7 +123,7 @@ public class GeneratedContractTests
         var contractType = module.Assembly
             .GetTypes()
             .Single(t => t.IsInterface
-                      && t.GetCustomAttribute<Jroc.Runtime.JsModuleAttribute>()?.ModuleId == "stableTypes");
+                      && GetGeneratedModuleId(t) == "stableTypes");
 
         // The return type of calculateSum should be double (not object) because
         // stable type inference knows `sum` is always a double even though the
@@ -160,7 +158,7 @@ public class GeneratedContractTests
         var contractType = module.Assembly
             .GetTypes()
             .Single(t => t.IsInterface
-                      && t.GetCustomAttribute<Jroc.Runtime.JsModuleAttribute>()?.ModuleId == "stableClassTypes");
+                      && GetGeneratedModuleId(t) == "stableClassTypes");
 
         var classInterfaceType = module.Assembly.GetType("Jroc.stableClassTypes.ICounterSum", throwOnError: true)!;
         var calculateSum = classInterfaceType.GetMethod("CalculateSum", BindingFlags.Public | BindingFlags.Instance);
@@ -182,7 +180,9 @@ public class GeneratedContractTests
         Assert.NotNull(ctor);
 
         var construct = ctor!.GetType().GetMethod("Construct")!;
-        var counter = construct.Invoke(ctor, new object?[] { System.Array.Empty<object?>() });
+        var counter = construct.GetParameters().Length == 0
+            ? construct.Invoke(ctor, System.Array.Empty<object?>())
+            : construct.Invoke(ctor, new object?[] { System.Array.Empty<object?>() });
         Assert.NotNull(counter);
 
         var result = calculateSum.Invoke(counter, new object?[] { 10.0 });
@@ -240,6 +240,22 @@ public class GeneratedContractTests
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
+
+    private static string? GetGeneratedModuleId(Type contractType)
+        => contractType
+            .GetCustomAttributesData()
+            .FirstOrDefault(attribute =>
+                string.Equals(
+                    attribute.AttributeType.FullName,
+                    "Jroc.Generated.Metadata.JsModuleAttribute",
+                    StringComparison.Ordinal)
+                || string.Equals(
+                    attribute.AttributeType.FullName,
+                    typeof(Jroc.Runtime.JsModuleAttribute).FullName,
+                    StringComparison.Ordinal))
+            ?.ConstructorArguments
+            .FirstOrDefault()
+            .Value as string;
 
     private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(string rootModuleName, string scriptResourcePath)
     {

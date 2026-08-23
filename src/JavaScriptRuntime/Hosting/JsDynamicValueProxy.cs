@@ -60,7 +60,7 @@ internal sealed class JsDynamicValueProxy : DynamicObject
 
         // Wrap other reference values so dynamic member access is marshalled to the runtime
         // thread and uses JavaScript semantics.
-        return new JsDynamicValueProxy(runtime, value);
+        return runtime.GetOrCreateDynamicValueProxy(value);
     }
 
     internal object Unwrap() => _target;

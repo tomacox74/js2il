@@ -5,7 +5,11 @@ namespace Jroc.Runtime;
 
 internal static class JsPromiseTaskInterop
 {
-    internal static Task ToTask(JsRuntimeInstance runtime, Promise promise)
+    internal static Task ToTask(
+        JsRuntimeInstance runtime,
+        Promise promise,
+        string? memberName = null,
+        Type? contractType = null)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(promise);
@@ -29,7 +33,7 @@ internal static class JsPromiseTaskInterop
                     }),
                     onRejected: new Func<object[]?, object?, object?>((_, reason) =>
                     {
-                        completion.TrySetException(ToException(reason));
+                        completion.TrySetException(ToException(runtime, reason, memberName, contractType));
                         return null;
                     }));
 
@@ -44,7 +48,11 @@ internal static class JsPromiseTaskInterop
         return completion.Task;
     }
 
-    internal static Task<T> ToTask<T>(JsRuntimeInstance runtime, Promise promise)
+    internal static Task<T> ToTask<T>(
+        JsRuntimeInstance runtime,
+        Promise promise,
+        string? memberName = null,
+        Type? contractType = null)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(promise);
@@ -64,7 +72,7 @@ internal static class JsPromiseTaskInterop
                     {
                         try
                         {
-                            var converted = JsReturnConverter.ConvertReturn(runtime, value, typeof(T));
+                            var converted = JsReturnConverter.ConvertReturn(runtime, value, typeof(T), memberName, contractType);
                             completion.TrySetResult((T)converted!);
                         }
                         catch (Exception ex)
@@ -76,7 +84,7 @@ internal static class JsPromiseTaskInterop
                     }),
                     onRejected: new Func<object[]?, object?, object?>((_, reason) =>
                     {
-                        completion.TrySetException(ToException(reason));
+                        completion.TrySetException(ToException(runtime, reason, memberName, contractType));
                         return null;
                     }));
 
@@ -91,14 +99,47 @@ internal static class JsPromiseTaskInterop
         return completion.Task;
     }
 
-    private static Exception ToException(object? reason)
+    private static Exception ToException(
+        JsRuntimeInstance runtime,
+        object? reason,
+        string? memberName,
+        Type? contractType)
     {
+        if (memberName == null && contractType == null)
+        {
+            return reason is Exception existingException
+                ? existingException
+                : new JsThrownValueException(reason);
+        }
+
+        if (reason is Error jsError)
+        {
+            return new JsErrorException(
+                $"JavaScript {jsError.Name}: {jsError.Message} rejected async operation '{memberName ?? "<promise>"}'.",
+                innerException: jsError,
+                moduleId: runtime.ModuleId,
+                memberName: memberName,
+                contractType: contractType,
+                compiledAssemblyName: runtime.CompiledAssemblyName,
+                jsName: jsError.Name,
+                jsMessage: jsError.Message,
+                jsStack: jsError.stack);
+        }
+
         if (reason is Exception ex)
         {
             return ex;
         }
 
-        return new JsThrownValueException(reason);
+        var thrown = new JsThrownValueException(reason);
+        return new JsErrorException(
+            $"JavaScript threw non-error value '{reason}' while rejecting async operation '{memberName ?? "<promise>"}'.",
+            innerException: thrown,
+            moduleId: runtime.ModuleId,
+            memberName: memberName,
+            contractType: contractType,
+            compiledAssemblyName: runtime.CompiledAssemblyName,
+            thrownValue: reason);
     }
 
     private sealed class RuntimeTaskCompletion<T> : IRuntimeDependentOperation
