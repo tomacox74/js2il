@@ -339,6 +339,7 @@ jobs:
         id: validation
         continue-on-error: true
         run: |
+          set -o pipefail
           mkdir -p artifacts/kracken-ai-astar-validation
           node scripts/runKrackenAStarGuardrails.js \
             --no-microbenchmarks \

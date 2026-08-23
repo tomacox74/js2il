@@ -878,7 +878,26 @@ function inspectHotMethodIl(il, source) {
 }
 
 function runIlInspection(repoRoot, keepArtifacts) {
-  runChecked("ilspycmd", ["--version"], { cwd: repoRoot, stdio: "pipe" });
+  let runIlSpy;
+  try {
+    runChecked("ilspycmd", ["--version"], { cwd: repoRoot, stdio: "pipe" });
+    runIlSpy = (args) =>
+      runChecked("ilspycmd", args, { cwd: repoRoot, stdio: "pipe" });
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      throw error;
+    }
+    const localToolPrefix = ["tool", "run", "ilspycmd", "--"];
+    runChecked("dotnet", [...localToolPrefix, "--version"], {
+      cwd: repoRoot,
+      stdio: "pipe",
+    });
+    runIlSpy = (args) =>
+      runChecked("dotnet", [...localToolPrefix, ...args], {
+        cwd: repoRoot,
+        stdio: "pipe",
+      });
+  }
   const artifactsDirectory = path.join(repoRoot, "artifacts");
   fs.mkdirSync(artifactsDirectory, { recursive: true });
   const artifactRoot = fs.mkdtempSync(
@@ -906,10 +925,7 @@ function runIlInspection(repoRoot, keepArtifacts) {
       { cwd: repoRoot, stdio: "pipe" }
     );
     const dllPath = path.join(outputDirectory, `${TARGET_SCENARIO}.dll`);
-    const il = runChecked("ilspycmd", ["-il", dllPath], {
-      cwd: repoRoot,
-      stdio: "pipe",
-    }).stdout;
+    const il = runIlSpy(["-il", dllPath]).stdout;
     fs.writeFileSync(path.join(artifactRoot, `${TARGET_SCENARIO}.il`), il, "utf8");
 
     const result = inspectHotMethodIl(il, source);
