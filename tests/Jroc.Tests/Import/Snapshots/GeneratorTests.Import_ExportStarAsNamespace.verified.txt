@@ -3,6 +3,80 @@
 {
 } // end of class <Module>
 
+.class interface public auto ansi abstract Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceReexportExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 25 49 6d 70 6f 72 74 5f 45 78 70 6f 72 74
+		53 74 61 72 41 73 4e 61 6d 65 73 70 61 63 65 5f
+		52 65 65 78 70 6f 72 74 00 00
+	)
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance object get_Inner () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 05 69 6e 6e 65 72 00 00
+		)
+	} // end of method IImportExportStarAsNamespaceReexportExports::get_Inner
+
+	// Properties
+	.property instance object Inner()
+	{
+		.get instance object Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceReexportExports::get_Inner()
+	}
+
+} // end of class Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceReexportExports
+
+.class interface public auto ansi abstract Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 20 49 6d 70 6f 72 74 5f 45 78 70 6f 72 74
+		53 74 61 72 41 73 4e 61 6d 65 73 70 61 63 65 5f
+		4c 69 62 00 00
+	)
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance float64 get_A () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 01 61 00 00
+		)
+	} // end of method IImportExportStarAsNamespaceLibExports::get_A
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance float64 get_B () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 01 62 00 00
+		)
+	} // end of method IImportExportStarAsNamespaceLibExports::get_B
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance string get_Default () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 07 64 65 66 61 75 6c 74 00 00
+		)
+	} // end of method IImportExportStarAsNamespaceLibExports::get_Default
+
+	// Properties
+	.property instance float64 A()
+	{
+		.get instance float64 Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports::get_A()
+	}
+	.property instance float64 B()
+	{
+		.get instance float64 Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports::get_B()
+	}
+	.property instance string Default()
+	{
+		.get instance string Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports::get_Default()
+	}
+
+} // end of class Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports
+
 .class public auto ansi abstract sealed beforefieldinit Import_ExportStarAsNamespace
 	extends [System.Runtime]System.Object
 {
@@ -65,6 +139,24 @@
 				IL_0017: ret
 			} // end of method Import_ExportStarAsNamespace_Lib::Run
 
+			.method public hidebysig static 
+				class Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_ExportStarAsNamespace_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_ExportStarAsNamespace_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceLibExports
+				IL_0025: ret
+			} // end of method Import_ExportStarAsNamespace_Lib::Import
+
 		} // end of class Import_ExportStarAsNamespace_Lib
 
 		.class nested public auto ansi abstract sealed beforefieldinit Import_ExportStarAsNamespace_Reexport
@@ -92,6 +184,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Import_ExportStarAsNamespace_Reexport::Run
+
+			.method public hidebysig static 
+				class Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceReexportExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceReexportExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_ExportStarAsNamespace_Reexport::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_ExportStarAsNamespace_Reexport"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.Import_ExportStarAsNamespace.IImportExportStarAsNamespaceReexportExports
+				IL_0025: ret
+			} // end of method Import_ExportStarAsNamespace_Reexport::Import
 
 		} // end of class Import_ExportStarAsNamespace_Reexport
 

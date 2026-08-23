@@ -89,6 +89,15 @@ namespace Jroc.Services
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
             var moduleList = modules._modules.Values.ToList();
+            var compileOptions = _serviceProvider.GetRequiredService<CompilerOptions>();
+            var exportShapes = PublicExportShapeAnalyzer.Analyze(modules);
+            IReadOnlyDictionary<string, TypeDefinitionHandle> moduleExportContracts =
+                new Dictionary<string, TypeDefinitionHandle>(StringComparer.Ordinal);
+            if (compileOptions.GenerateModuleExportContracts)
+            {
+                moduleExportContracts = new ModuleExportsContractEmitter(_metadataBuilder, _bclReferences)
+                    .Emit(modules, assemblyName, exportShapes);
+            }
 
             // Phase 0: compute callable counts across all modules so we can assign stable
             // future ctor MethodDef tokens for ALL scope types (regardless of module processing order).
@@ -107,7 +116,7 @@ namespace Jroc.Services
                 _memberReferenceRegistry,
                 _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>());
             var moduleInitMethodRow = _metadataBuilder.GetRowCount(TableIndex.MethodDef)
-                + facadeEmitter.GetRunMethodCount(facadeNames)
+                + facadeEmitter.GetMethodCount(facadeNames, moduleExportContracts)
                 + 1;
             foreach (var module in moduleList)
             {
@@ -124,12 +133,12 @@ namespace Jroc.Services
                 facadeNames,
                 moduleList,
                 expectedModuleInitHandles,
+                moduleExportContracts,
                 methodBodyStream);
 
             // Scope types are generated before callables are compiled (so variable binding has FieldDef handles),
             // but scope constructors are emitted later. We create a single TypeGenerator instance so it can
             // remember deferred ctor plans across all modules.
-            var compileOptions = _serviceProvider.GetRequiredService<CompilerOptions>();
             var typeGenerator = new TypeGenerator(
                 _metadataBuilder,
                 _bclReferences,
@@ -296,14 +305,6 @@ namespace Jroc.Services
                 .GetRequiredService<
                     DynamicLookupTerminalFieldRegistry>()
                 .Emit(_metadataBuilder, _bclReferences);
-
-            // Emit strongly-typed hosting contracts for module.exports (interfaces) if enabled.
-            var options = _serviceProvider.GetRequiredService<CompilerOptions>();
-            if (options.GenerateModuleExportContracts)
-            {
-                new ModuleExportsContractEmitter(_metadataBuilder, _bclReferences)
-                    .Emit(modules, assemblyName);
-            }
 
             // Emit NestedClass table rows in one globally sorted pass.
             // This must happen after all TypeDefs have been created.

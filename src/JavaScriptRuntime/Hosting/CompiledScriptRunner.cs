@@ -13,6 +13,19 @@ namespace Jroc.Runtime;
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class CompiledScriptRunner
 {
+    public static object Import(
+        Type exportsContractType,
+        ModuleMainDelegate scriptEntryPoint,
+        string moduleId)
+    {
+        ArgumentNullException.ThrowIfNull(exportsContractType);
+        ArgumentNullException.ThrowIfNull(scriptEntryPoint);
+        ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
+
+        var compiledAssembly = scriptEntryPoint.Method.Module.Assembly;
+        return JsEngine.LoadModule(exportsContractType, compiledAssembly, moduleId);
+    }
+
     public static void Run(
         ModuleMainDelegate scriptEntryPoint,
         string moduleId,

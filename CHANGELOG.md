@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/hosting/docs: implement Phase 2 generated `Import` facades
+  for #1917 and issues #1934, #1935, #1936, and #1937. The compiler now shares
+  one ESM/CommonJS export-shape model, emits `Import()` only for exported or
+  unknown modules, supports direct/default/unknown fallback contracts, and
+  routes each import through an isolated disposable runtime.
 - perf(runtime): implement issue #1958 Phase 3 by replacing exact-receiver
   dynamic property-read cache entries with weak shape-and-slot entries.
   Distinct ordinary objects with the same `JsShape` now share one monomorphic

@@ -3,6 +3,39 @@
 {
 } // end of class <Module>
 
+.class interface public auto ansi abstract Jroc.Import_DefaultAnonFunction.IImportDefaultAnonFunctionLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 1e 49 6d 70 6f 72 74 5f 44 65 66 61 75 6c
+		74 41 6e 6f 6e 46 75 6e 63 74 69 6f 6e 5f 4c 69
+		62 00 00
+	)
+	// Methods
+	.method public hidebysig newslot abstract virtual 
+		instance string Default () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 07 64 65 66 61 75 6c 74 00 00
+		)
+	} // end of method IImportDefaultAnonFunctionLibExports::Default
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance string get_Label () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 05 6c 61 62 65 6c 00 00
+		)
+	} // end of method IImportDefaultAnonFunctionLibExports::get_Label
+
+	// Properties
+	.property instance string Label()
+	{
+		.get instance string Jroc.Import_DefaultAnonFunction.IImportDefaultAnonFunctionLibExports::get_Label()
+	}
+
+} // end of class Jroc.Import_DefaultAnonFunction.IImportDefaultAnonFunctionLibExports
+
 .class public auto ansi abstract sealed beforefieldinit Import_DefaultAnonFunction
 	extends [System.Runtime]System.Object
 {
@@ -64,6 +97,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Import_DefaultAnonFunction_Lib::Run
+
+			.method public hidebysig static 
+				class Jroc.Import_DefaultAnonFunction.IImportDefaultAnonFunctionLibExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.Import_DefaultAnonFunction.IImportDefaultAnonFunctionLibExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_DefaultAnonFunction_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_DefaultAnonFunction_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.Import_DefaultAnonFunction.IImportDefaultAnonFunctionLibExports
+				IL_0025: ret
+			} // end of method Import_DefaultAnonFunction_Lib::Import
 
 		} // end of class Import_DefaultAnonFunction_Lib
 

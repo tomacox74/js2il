@@ -3,6 +3,39 @@
 {
 } // end of class <Module>
 
+.class interface public auto ansi abstract Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 1d 49 6d 70 6f 72 74 5f 4c 69 76 65 42 69
+		6e 64 69 6e 67 73 5f 4e 61 6d 65 64 5f 4c 69 62
+		00 00
+	)
+	// Methods
+	.method public hidebysig newslot abstract virtual 
+		instance void Inc () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 03 69 6e 63 00 00
+		)
+	} // end of method IImportLiveBindingsNamedLibExports::Inc
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance float64 get_X () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 01 78 00 00
+		)
+	} // end of method IImportLiveBindingsNamedLibExports::get_X
+
+	// Properties
+	.property instance float64 X()
+	{
+		.get instance float64 Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports::get_X()
+	}
+
+} // end of class Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
+
 .class public auto ansi abstract sealed beforefieldinit Import_LiveBindings_Named
 	extends [System.Runtime]System.Object
 {
@@ -64,6 +97,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method Import_LiveBindings_Named_Lib::Run
+
+			.method public hidebysig static 
+				class Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.Import_LiveBindings_Named_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "Import_LiveBindings_Named_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.Import_LiveBindings_Named.IImportLiveBindingsNamedLibExports
+				IL_0025: ret
+			} // end of method Import_LiveBindings_Named_Lib::Import
 
 		} // end of class Import_LiveBindings_Named_Lib
 
@@ -340,7 +391,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 0a 00 00 02
+				74 61 54 6f 6b 65 6e 0b 00 00 02
 			)
 			// Header size: 12
 			// Code size: 49 (0x31)

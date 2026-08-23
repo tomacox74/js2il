@@ -3,6 +3,113 @@
 {
 } // end of class <Module>
 
+.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.IMath
+	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
+{
+	// Methods
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Add (
+			float64 a,
+			float64 b
+		) cil managed 
+	{
+	} // end of method IMath::Add
+
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Multiply (
+			float64 a,
+			float64 b
+		) cil managed 
+	{
+	} // end of method IMath::Multiply
+
+} // end of class Jroc.CommonJS_Export_NestedObjects.IMath
+
+.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.IUtils
+	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
+{
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance string get_Prefix () cil managed 
+	{
+	} // end of method IUtils::get_Prefix
+
+	.method public hidebysig newslot abstract virtual 
+		instance float64 FormatNum (
+			float64 'value'
+		) cil managed 
+	{
+	} // end of method IUtils::FormatNum
+
+	// Properties
+	.property instance string Prefix()
+	{
+		.get instance string Jroc.CommonJS_Export_NestedObjects.IUtils::get_Prefix()
+	}
+
+} // end of class Jroc.CommonJS_Export_NestedObjects.IUtils
+
+.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 21 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
+		72 74 5f 4e 65 73 74 65 64 4f 62 6a 65 63 74 73
+		5f 4c 69 62 00 00
+	)
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance string get_Name () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 04 6e 61 6d 65 00 00
+		)
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Name
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance float64 get_Version () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 07 76 65 72 73 69 6f 6e 00 00
+		)
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Version
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance class Jroc.CommonJS_Export_NestedObjects.IMath get_Math () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 04 6d 61 74 68 00 00
+		)
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Math
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance class Jroc.CommonJS_Export_NestedObjects.IUtils get_Utils () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 05 75 74 69 6c 73 00 00
+		)
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Utils
+
+	// Properties
+	.property instance string Name()
+	{
+		.get instance string Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Name()
+	}
+	.property instance float64 Version()
+	{
+		.get instance float64 Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Version()
+	}
+	.property instance class Jroc.CommonJS_Export_NestedObjects.IMath Math()
+	{
+		.get instance class Jroc.CommonJS_Export_NestedObjects.IMath Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Math()
+	}
+	.property instance class Jroc.CommonJS_Export_NestedObjects.IUtils Utils()
+	{
+		.get instance class Jroc.CommonJS_Export_NestedObjects.IUtils Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Utils()
+	}
+
+} // end of class Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
+
 .class public auto ansi abstract sealed beforefieldinit CommonJS_Export_NestedObjects
 	extends [System.Runtime]System.Object
 {
@@ -64,6 +171,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method CommonJS_Export_NestedObjects_Lib::Run
+
+			.method public hidebysig static 
+				class Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.CommonJS_Export_NestedObjects_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "CommonJS_Export_NestedObjects_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
+				IL_0025: ret
+			} // end of method CommonJS_Export_NestedObjects_Lib::Import
 
 		} // end of class CommonJS_Export_NestedObjects_Lib
 
@@ -959,99 +1084,4 @@
 	.field assembly static int32 __jroc_dynamicLookup_7
 
 } // end of class Jroc.Generated.DynamicLookupSites
-
-.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.IMath
-	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
-{
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance float64 Add (
-			float64 a,
-			float64 b
-		) cil managed 
-	{
-	} // end of method IMath::Add
-
-	.method public hidebysig newslot abstract virtual 
-		instance float64 Multiply (
-			float64 a,
-			float64 b
-		) cil managed 
-	{
-	} // end of method IMath::Multiply
-
-} // end of class Jroc.CommonJS_Export_NestedObjects.IMath
-
-.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.IUtils
-	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
-{
-	// Methods
-	.method public hidebysig specialname newslot abstract virtual 
-		instance string get_Prefix () cil managed 
-	{
-	} // end of method IUtils::get_Prefix
-
-	.method public hidebysig newslot abstract virtual 
-		instance float64 FormatNum (
-			float64 'value'
-		) cil managed 
-	{
-	} // end of method IUtils::FormatNum
-
-	// Properties
-	.property instance string Prefix()
-	{
-		.get instance string Jroc.CommonJS_Export_NestedObjects.IUtils::get_Prefix()
-	}
-
-} // end of class Jroc.CommonJS_Export_NestedObjects.IUtils
-
-.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 21 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
-		72 74 5f 4e 65 73 74 65 64 4f 62 6a 65 63 74 73
-		5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig specialname newslot abstract virtual 
-		instance string get_Name () cil managed 
-	{
-	} // end of method ICommonJSExportNestedObjectsLibExports::get_Name
-
-	.method public hidebysig specialname newslot abstract virtual 
-		instance float64 get_Version () cil managed 
-	{
-	} // end of method ICommonJSExportNestedObjectsLibExports::get_Version
-
-	.method public hidebysig specialname newslot abstract virtual 
-		instance class Jroc.CommonJS_Export_NestedObjects.IMath get_Math () cil managed 
-	{
-	} // end of method ICommonJSExportNestedObjectsLibExports::get_Math
-
-	.method public hidebysig specialname newslot abstract virtual 
-		instance class Jroc.CommonJS_Export_NestedObjects.IUtils get_Utils () cil managed 
-	{
-	} // end of method ICommonJSExportNestedObjectsLibExports::get_Utils
-
-	// Properties
-	.property instance string Name()
-	{
-		.get instance string Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Name()
-	}
-	.property instance float64 Version()
-	{
-		.get instance float64 Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Version()
-	}
-	.property instance class Jroc.CommonJS_Export_NestedObjects.IMath Math()
-	{
-		.get instance class Jroc.CommonJS_Export_NestedObjects.IMath Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Math()
-	}
-	.property instance class Jroc.CommonJS_Export_NestedObjects.IUtils Utils()
-	{
-		.get instance class Jroc.CommonJS_Export_NestedObjects.IUtils Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Utils()
-	}
-
-} // end of class Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
 

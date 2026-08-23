@@ -3,6 +3,31 @@
 {
 } // end of class <Module>
 
+.class interface public auto ansi abstract Jroc.CommonJS_Global_ErrorPrototype_Read.ICommonJSGlobalErrorPrototypeReadLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 27 43 6f 6d 6d 6f 6e 4a 53 5f 47 6c 6f 62
+		61 6c 5f 45 72 72 6f 72 50 72 6f 74 6f 74 79 70
+		65 5f 52 65 61 64 5f 4c 69 62 00 00
+	)
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance object get_Value () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportValueAttribute::.ctor() = (
+			01 00 00 00
+		)
+	} // end of method ICommonJSGlobalErrorPrototypeReadLibExports::get_Value
+
+	// Properties
+	.property instance object Value()
+	{
+		.get instance object Jroc.CommonJS_Global_ErrorPrototype_Read.ICommonJSGlobalErrorPrototypeReadLibExports::get_Value()
+	}
+
+} // end of class Jroc.CommonJS_Global_ErrorPrototype_Read.ICommonJSGlobalErrorPrototypeReadLibExports
+
 .class public auto ansi abstract sealed beforefieldinit CommonJS_Global_ErrorPrototype_Read
 	extends [System.Runtime]System.Object
 {
@@ -64,6 +89,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method CommonJS_Global_ErrorPrototype_Read_Lib::Run
+
+			.method public hidebysig static 
+				class Jroc.CommonJS_Global_ErrorPrototype_Read.ICommonJSGlobalErrorPrototypeReadLibExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.CommonJS_Global_ErrorPrototype_Read.ICommonJSGlobalErrorPrototypeReadLibExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.CommonJS_Global_ErrorPrototype_Read_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "CommonJS_Global_ErrorPrototype_Read_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.CommonJS_Global_ErrorPrototype_Read.ICommonJSGlobalErrorPrototypeReadLibExports
+				IL_0025: ret
+			} // end of method CommonJS_Global_ErrorPrototype_Read_Lib::Import
 
 		} // end of class CommonJS_Global_ErrorPrototype_Read_Lib
 

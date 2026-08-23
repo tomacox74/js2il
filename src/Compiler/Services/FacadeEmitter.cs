@@ -25,17 +25,33 @@ internal sealed class FacadeEmitter
         _nestedTypes = nestedTypes;
     }
 
-    internal int GetRunMethodCount(JrocFacadeNamePlan plan) => plan.Modules.Count + 1;
+    internal int GetMethodCount(
+        JrocFacadeNamePlan plan,
+        IReadOnlyDictionary<string, TypeDefinitionHandle> moduleExportContracts)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(moduleExportContracts);
+
+        var importMethodCount = plan.Modules.Count(module => moduleExportContracts.ContainsKey(module.ModuleId));
+        if (moduleExportContracts.ContainsKey(plan.EntryModuleId))
+        {
+            importMethodCount++;
+        }
+
+        return plan.Modules.Count + 1 + importMethodCount;
+    }
 
     internal MethodDefinitionHandle Emit(
         JrocFacadeNamePlan plan,
         IReadOnlyList<ModuleDefinition> modules,
         IReadOnlyDictionary<string, MethodDefinitionHandle> moduleInitializers,
+        IReadOnlyDictionary<string, TypeDefinitionHandle> moduleExportContracts,
         MethodBodyStreamEncoder methodBodyStream)
     {
         ArgumentNullException.ThrowIfNull(plan);
         ArgumentNullException.ThrowIfNull(modules);
         ArgumentNullException.ThrowIfNull(moduleInitializers);
+        ArgumentNullException.ThrowIfNull(moduleExportContracts);
 
         var root = new FacadeType(plan.RootTypeName, plan.EntryModuleId, parent: null);
         var scripts = new FacadeType("Scripts", moduleId: null, root);
@@ -80,6 +96,14 @@ internal sealed class FacadeEmitter
                 methodBodyStream,
                 moduleInitializer,
                 moduleId);
+            if (moduleExportContracts.TryGetValue(moduleId, out var exportContract))
+            {
+                type.ImportMethod = EmitImportMethod(
+                    methodBodyStream,
+                    moduleInitializer,
+                    moduleId,
+                    exportContract);
+            }
         }
 
         var nextMethod = MetadataTokens.MethodDefinitionHandle(
@@ -87,10 +111,10 @@ internal sealed class FacadeEmitter
         for (var index = 0; index < types.Length; index++)
         {
             var type = types[index];
-            var firstMethod = !type.RunMethod.IsNil
-                ? type.RunMethod
+            var firstMethod = !type.FirstMethod.IsNil
+                ? type.FirstMethod
                 : types.Skip(index + 1)
-                    .Select(candidate => candidate.RunMethod)
+                    .Select(candidate => candidate.FirstMethod)
                     .FirstOrDefault(handle => !handle.IsNil);
             if (firstMethod.IsNil)
             {
@@ -182,6 +206,60 @@ internal sealed class FacadeEmitter
             parameter);
     }
 
+    private MethodDefinitionHandle EmitImportMethod(
+        MethodBodyStreamEncoder methodBodyStream,
+        MethodDefinitionHandle moduleInitializer,
+        string moduleId,
+        TypeDefinitionHandle exportContract)
+    {
+        var signatureBuilder = new BlobBuilder();
+        new BlobEncoder(signatureBuilder)
+            .MethodSignature(isInstanceMethod: false)
+            .Parameters(
+                parameterCount: 0,
+                returnType => returnType.Type().Type(exportContract, false),
+                parameters => { });
+
+        var bodyBuilder = new BlobBuilder();
+        var il = new InstructionEncoder(bodyBuilder);
+        il.OpCode(ILOpCode.Ldtoken);
+        il.Token(exportContract);
+        il.OpCode(ILOpCode.Call);
+        il.Token(_bclReferences.Type_GetTypeFromHandle_Ref);
+        il.OpCode(ILOpCode.Ldnull);
+        il.OpCode(ILOpCode.Ldftn);
+        il.Token(moduleInitializer);
+        il.OpCode(ILOpCode.Newobj);
+        il.Token(_bclReferences.ModuleMainDelegate_Ctor_Ref);
+        il.LoadString(_metadata.GetOrAddUserString(moduleId));
+        il.OpCode(ILOpCode.Call);
+        il.Token(_memberReferences.GetOrAddMethod(
+            typeof(CompiledScriptRunner),
+            nameof(CompiledScriptRunner.Import),
+            [
+                typeof(Type),
+                typeof(JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate),
+                typeof(string)
+            ]));
+        il.OpCode(ILOpCode.Castclass);
+        il.Token(exportContract);
+        il.OpCode(ILOpCode.Ret);
+
+        var bodyOffset = methodBodyStream.AddMethodBody(
+            il,
+            maxStack: 4,
+            localVariablesSignature: default,
+            attributes: MethodBodyAttributes.None);
+
+        return _metadata.AddMethodDefinition(
+            MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig,
+            MethodImplAttributes.IL,
+            _metadata.GetOrAddString("Import"),
+            _metadata.GetOrAddBlob(signatureBuilder),
+            bodyOffset,
+            parameterList: MetadataTokens.ParameterHandle(_metadata.GetRowCount(TableIndex.Param) + 1));
+    }
+
     private BlobHandle CreateParameterlessAttributeValue()
     {
         var blob = new BlobBuilder();
@@ -225,6 +303,11 @@ internal sealed class FacadeEmitter
         internal List<FacadeType> Children { get; } = [];
 
         internal MethodDefinitionHandle RunMethod { get; set; }
+
+        internal MethodDefinitionHandle ImportMethod { get; set; }
+
+        internal MethodDefinitionHandle FirstMethod
+            => !RunMethod.IsNil ? RunMethod : ImportMethod;
 
         internal TypeDefinitionHandle TypeHandle { get; set; }
     }

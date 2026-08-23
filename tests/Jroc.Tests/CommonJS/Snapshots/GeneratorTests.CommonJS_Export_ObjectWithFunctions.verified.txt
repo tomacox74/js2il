@@ -3,6 +3,47 @@
 {
 } // end of class <Module>
 
+.class interface public auto ansi abstract Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 27 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
+		72 74 5f 4f 62 6a 65 63 74 57 69 74 68 46 75 6e
+		63 74 69 6f 6e 73 5f 4c 69 62 00 00
+	)
+	// Methods
+	.method public hidebysig newslot abstract virtual 
+		instance string Foo () cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 03 66 6f 6f 00 00
+		)
+	} // end of method ICommonJSExportObjectWithFunctionsLibExports::Foo
+
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Add (
+			float64 a,
+			float64 b
+		) cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 03 61 64 64 00 00
+		)
+	} // end of method ICommonJSExportObjectWithFunctionsLibExports::Add
+
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Multiply (
+			float64 a,
+			float64 b
+		) cil managed 
+	{
+		.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsExportNameAttribute::.ctor(string) = (
+			01 00 08 6d 75 6c 74 69 70 6c 79 00 00
+		)
+	} // end of method ICommonJSExportObjectWithFunctionsLibExports::Multiply
+
+} // end of class Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
+
 .class public auto ansi abstract sealed beforefieldinit CommonJS_Export_ObjectWithFunctions
 	extends [System.Runtime]System.Object
 {
@@ -64,6 +105,24 @@
 				IL_0012: call void [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Run(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string, string[])
 				IL_0017: ret
 			} // end of method CommonJS_Export_ObjectWithFunctions_Lib::Run
+
+			.method public hidebysig static 
+				class Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports Import () cil managed 
+			{
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldtoken Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
+				IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000a: ldnull
+				IL_000b: ldftn void Modules.CommonJS_Export_ObjectWithFunctions_Lib::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+				IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+				IL_0016: ldstr "CommonJS_Export_ObjectWithFunctions_Lib"
+				IL_001b: call object [JavaScriptRuntime]Jroc.Runtime.CompiledScriptRunner::Import(class [System.Runtime]System.Type, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate, string)
+				IL_0020: castclass Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
+				IL_0025: ret
+			} // end of method CommonJS_Export_ObjectWithFunctions_Lib::Import
 
 		} // end of class CommonJS_Export_ObjectWithFunctions_Lib
 
@@ -804,36 +863,4 @@
 	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
-
-.class interface public auto ansi abstract Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
-	implements [System.Runtime]System.IDisposable
-{
-	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
-		01 00 27 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
-		72 74 5f 4f 62 6a 65 63 74 57 69 74 68 46 75 6e
-		63 74 69 6f 6e 73 5f 4c 69 62 00 00
-	)
-	// Methods
-	.method public hidebysig newslot abstract virtual 
-		instance string Foo () cil managed 
-	{
-	} // end of method ICommonJSExportObjectWithFunctionsLibExports::Foo
-
-	.method public hidebysig newslot abstract virtual 
-		instance float64 Add (
-			float64 a,
-			float64 b
-		) cil managed 
-	{
-	} // end of method ICommonJSExportObjectWithFunctionsLibExports::Add
-
-	.method public hidebysig newslot abstract virtual 
-		instance float64 Multiply (
-			float64 a,
-			float64 b
-		) cil managed 
-	{
-	} // end of method ICommonJSExportObjectWithFunctionsLibExports::Multiply
-
-} // end of class Jroc.CommonJS_Export_ObjectWithFunctions.ICommonJSExportObjectWithFunctionsLibExports
 

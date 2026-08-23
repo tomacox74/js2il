@@ -20,6 +20,9 @@ The API described here is intentionally geared toward C# developers.
 - A dedicated **script thread** per module runtime instance.
 - Strongly typed projections for `module.exports` (interfaces/classes generated per module).
 - A `JsEngine` entry point provided by **JavaScriptRuntime** (not generated into each compiled assembly).
+- Assembly-named generated facades that call the same hosting path without host
+  source referencing `Jroc.Runtime`:
+  `MyAssembly.Run()` and, for modules with exports, `MyAssembly.Import()`.
 
 ### Core concept: a runtime instance
 
@@ -125,6 +128,27 @@ Console.WriteLine(sum2);
 ### Quick start
 
 Load a module that exports an object:
+
+```csharp
+// Simplest generated-facade form.
+using var exports = MyAssembly.Import();
+var answer = exports.Add(40, 2);
+```
+
+The assembly-root `Import()` targets the manifest entry module and returns the
+same generated contract as `MyAssembly.Scripts.<entry>.Import()`. Dependency
+modules exposed under `Scripts` can be imported directly:
+
+```csharp
+using var css = MyAssembly.Scripts.api.css.Import();
+```
+
+No `Import()` method is emitted for side-effect-only modules. Conditional or
+computed CommonJS export assignments and incomplete static inference still emit
+`Import()` with a generated fallback contract whose public signatures use BCL
+types such as `object`, `object[]`, and `IDisposable`.
+
+Advanced hosts can still use `JsEngine` directly:
 
 ```csharp
 // Option A: no module id needed if the contract type is annotated with module metadata

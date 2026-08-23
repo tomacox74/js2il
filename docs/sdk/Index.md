@@ -62,6 +62,17 @@ runtime and maps its arguments to `process.argv[2..]`. See
 [generated script facades](api/GeneratedFacades.md) for naming, lifecycle,
 failure, and deployment details.
 
+If the entry module exports values, the same facade exposes a generated import
+contract without requiring host source to reference `Jroc.Runtime`:
+
+```csharp
+using var exports = HelloAssembly.Import();
+Console.WriteLine(exports.Version);
+```
+
+Side-effect-only modules expose `Run` only. Modules with dynamic or computed
+exports still expose `Import` through a safe fallback contract.
+
 If you need to target a specific module id in that same compiled assembly:
 
 ```csharp
