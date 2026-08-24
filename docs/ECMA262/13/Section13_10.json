@@ -30,9 +30,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-relational-operators-runtime-semantics-evaluation",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/language/expressions/greater-than/PortExpressionsBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/greater-than/PortExpressionsBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/less-than/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/greater-than/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/less-than-or-equal/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/greater-than-or-equal/ExecutionTests.cs"
         ],
-        "notes": "The current relational operator slice exercises `>` evaluation order, abrupt-completion propagation, primitive/object coercion, and representative comparison cases from test262. The broader relational family remains marked limited because only the currently imported operator matrix is tracked here."
+        "notes": "The relational operator coverage exercises evaluation order, abrupt-completion propagation, primitive/object coercion, UTF-16 string ordering, and mixed BigInt comparisons with numeric, boolean, and comparable or incomparable string operands. Remaining limitations concern proxy and other exotic coercion paths."
       },
       {
         "clause": "13.10.1",

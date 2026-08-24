@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-17T23:42:44Z
+> Last generated (UTC): 2026-08-24T07:03:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -134,7 +134,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Indices_Exec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js)<br>[`String_RegExp_NamedGroups_Indices.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors lastIndex for both /g and /y regexes. Named captures produce null-prototype JsObject records in .groups and .indices.groups, with source-order keys and present undefined values for unmatched captures. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited. |
+| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Indices_Exec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js)<br>[`String_RegExp_NamedGroups_Indices.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/exec/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Named and nested captures preserve participation semantics. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited. |
 
 ### 22.2.6.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll))
 
@@ -218,7 +218,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| RegExp.prototype.test | Supported with Limitations | [`IntrinsicCallables_RegExp_Test_LastIndex_Global.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js)<br>[`IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) |  | Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for both global (/g) and sticky (/y) regexes using the same matching rules as exec(), and participates in the runtime's limited unicode-aware empty-match advancement for /u regexes. Complete Unicode mode parity is still not implemented. |
+| RegExp.prototype.test | Supported with Limitations | [`IntrinsicCallables_RegExp_Test_LastIndex_Global.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js)<br>[`IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/test/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.RegExp.test. Uses the same observable lastIndex coercion, success update, failure reset, sticky matching, and Unicode code-point boundary rules as exec(). Complete Unicode mode parity is still not implemented. |
 
 ### 22.2.6.17 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.tostring))
 

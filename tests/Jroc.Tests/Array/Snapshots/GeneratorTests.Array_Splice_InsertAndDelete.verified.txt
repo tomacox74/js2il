@@ -103,14 +103,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 212 (0xd4)
+		// Code size: 255 (0xff)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Splice_InsertAndDelete/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[4] string
+			[4] object,
+			[5] string
 		)
 
 		IL_0000: newobj instance void Modules.Array_Splice_InsertAndDelete/Scope::.ctor()
@@ -152,39 +153,48 @@
 		IL_007c: ldc.i4.3
 		IL_007d: ldstr "b"
 		IL_0082: stelem.ref
-		IL_0083: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
+		IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
 		IL_0088: stloc.2
 		IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_008e: stloc.3
 		IL_008f: ldloc.2
-		IL_0090: ldc.i4.1
-		IL_0091: newarr [System.Runtime]System.Object
-		IL_0096: dup
-		IL_0097: ldc.i4.0
-		IL_0098: ldstr ","
-		IL_009d: stelem.ref
-		IL_009e: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00a3: stloc.s 4
-		IL_00a5: ldloc.3
-		IL_00a6: ldloc.s 4
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ad: pop
-		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b3: stloc.3
-		IL_00b4: ldloc.1
-		IL_00b5: ldc.i4.1
-		IL_00b6: newarr [System.Runtime]System.Object
-		IL_00bb: dup
-		IL_00bc: ldc.i4.0
-		IL_00bd: ldstr ","
-		IL_00c2: stelem.ref
-		IL_00c3: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00c8: stloc.s 4
-		IL_00ca: ldloc.3
-		IL_00cb: ldloc.s 4
-		IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d2: pop
-		IL_00d3: ret
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0095: volatile.
+		IL_0097: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_009c: brfalse IL_00b5
+
+		IL_00a1: ldstr "join"
+		IL_00a6: ldstr ","
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b0: br IL_00ce
+
+		IL_00b5: ldstr "join"
+		IL_00ba: ldstr ","
+		IL_00bf: ldstr "Array_Splice_InsertAndDelete:Modules.Array_Splice_InsertAndDelete:__js_module_init__:23"
+		IL_00c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00ce: stloc.s 4
+		IL_00d0: ldloc.3
+		IL_00d1: ldloc.s 4
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00de: stloc.3
+		IL_00df: ldloc.1
+		IL_00e0: ldc.i4.1
+		IL_00e1: newarr [System.Runtime]System.Object
+		IL_00e6: dup
+		IL_00e7: ldc.i4.0
+		IL_00e8: ldstr ","
+		IL_00ed: stelem.ref
+		IL_00ee: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00f3: stloc.s 5
+		IL_00f5: ldloc.3
+		IL_00f6: ldloc.s 5
+		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fd: pop
+		IL_00fe: ret
 	} // end of method Array_Splice_InsertAndDelete::__js_module_init__
 
 } // end of class Modules.Array_Splice_InsertAndDelete
@@ -209,4 +219,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

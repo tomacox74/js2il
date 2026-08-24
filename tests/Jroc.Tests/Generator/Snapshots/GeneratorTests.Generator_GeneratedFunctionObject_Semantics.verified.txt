@@ -3361,7 +3361,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 33 (0x21)
+			// Code size: 38 (0x26)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -3369,22 +3369,23 @@
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldstr "run"
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
-			IL_000b: stloc.0
-			IL_000c: ldc.i4.1
-			IL_000d: newarr [System.Runtime]System.Object
-			IL_0012: dup
-			IL_0013: ldc.i4.0
-			IL_0014: ldarg.1
-			IL_0015: stelem.ref
-			IL_0016: stloc.1
-			IL_0017: ldloc.0
-			IL_0018: ldloc.1
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
-			IL_001e: stloc.0
-			IL_001f: ldloc.0
-			IL_0020: ret
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0006: ldstr "run"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0010: stloc.0
+			IL_0011: ldc.i4.1
+			IL_0012: newarr [System.Runtime]System.Object
+			IL_0017: dup
+			IL_0018: ldc.i4.0
+			IL_0019: ldarg.1
+			IL_001a: stelem.ref
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldloc.1
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0023: stloc.0
+			IL_0024: ldloc.0
+			IL_0025: ret
 		} // end of method GeneratorClass::callRun
 
 		.method public hidebysig static 
@@ -3826,7 +3827,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 143 (0x8f)
+			// Code size: 148 (0x94)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Type,
@@ -3880,11 +3881,12 @@
 			IL_0083: stloc.2
 			IL_0084: ldloc.1
 			IL_0085: ldarg.0
-			IL_0086: ldloc.2
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
-			IL_008c: stloc.1
-			IL_008d: ldloc.1
-			IL_008e: ret
+			IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_008b: ldloc.2
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_0091: stloc.1
+			IL_0092: ldloc.1
+			IL_0093: ret
 		} // end of method DerivedGeneratorClass::callSuper
 
 	} // end of class DerivedGeneratorClass
@@ -4948,7 +4950,7 @@
 		IL_0a1f: conv.r8
 		IL_0a20: ldstr "run"
 		IL_0a25: ldc.i4.1
-		IL_0a26: ldc.i4.1
+		IL_0a26: ldc.i4.0
 		IL_0a27: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass/Scope_run/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0a2c: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
 		IL_0a31: castclass Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass/Scope_run/FunctionObject
@@ -4963,7 +4965,7 @@
 		IL_0a50: conv.r8
 		IL_0a51: ldstr "callRun"
 		IL_0a56: ldc.i4.1
-		IL_0a57: ldc.i4.1
+		IL_0a57: ldc.i4.0
 		IL_0a58: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass/Scope_callRun/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0a5d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass/Scope_callRun/FunctionObject>(!!0)
 		IL_0a62: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
@@ -4978,7 +4980,7 @@
 		IL_0a7e: conv.r8
 		IL_0a7f: ldstr "twice"
 		IL_0a84: ldc.i4.1
-		IL_0a85: ldc.i4.1
+		IL_0a85: ldc.i4.0
 		IL_0a86: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass/Scope_twice/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0a8b: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
 		IL_0a90: castclass Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass/Scope_twice/FunctionObject
@@ -5036,7 +5038,7 @@
 		IL_0b2c: conv.r8
 		IL_0b2d: ldstr "callSuper"
 		IL_0b32: ldc.i4.1
-		IL_0b33: ldc.i4.1
+		IL_0b33: ldc.i4.0
 		IL_0b34: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass/Scope_callSuper/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0b39: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass/Scope_callSuper/FunctionObject>(!!0)
 		IL_0b3e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)

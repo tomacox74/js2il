@@ -53,6 +53,9 @@ namespace Jroc.Tests.ControlFlow
         public Task ControlFlow_LabeledStatement_CapturesParentVar() { var testName = nameof(ControlFlow_LabeledStatement_CapturesParentVar); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_NestedExplicitFinally_BreakContinue() { var testName = nameof(ControlFlow_NestedExplicitFinally_BreakContinue); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForLoop_GreaterThanOrEqual() { var testName = nameof(ControlFlow_ForLoop_GreaterThanOrEqual); return ExecutionTest(testName); }
 
         [Fact]

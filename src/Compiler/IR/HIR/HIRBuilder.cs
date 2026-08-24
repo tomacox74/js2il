@@ -267,6 +267,19 @@ public static class HIRBuilder
                     || ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Index),
                 HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
                 HIROptionalPropertyAccessExpression optionalPropertyAccessExpression => ExpressionContainsDirectSuperCall(optionalPropertyAccessExpression.Object),
+                HIRChainExpression chainExpression =>
+                    (chainExpression.BaseExpression is HIRSuperExpression
+                        && chainExpression.Segments.FirstOrDefault()
+                            is HIRChainCallSegment)
+                    || ExpressionContainsDirectSuperCall(chainExpression.BaseExpression)
+                    || chainExpression.Segments.Any(segment => segment switch
+                    {
+                        HIRChainIndexSegment index =>
+                            ExpressionContainsDirectSuperCall(index.Index),
+                        HIRChainCallSegment call =>
+                            call.Arguments.Any(ExpressionContainsDirectSuperCall),
+                        _ => false
+                    }),
                 HIRArrowFunctionExpression arrowFunctionExpression =>
                     arrowFunctionExpression.ContainsSuperConstructorCallInBody,
                 _ => false
@@ -313,11 +326,11 @@ public static class HIRBuilder
                     var isDerivedConstructor = superClassNode != null && superClassNode is not ArrowFunctionExpression;
                     var emitImplicitSuperCall = isDerivedConstructor;
 
-                    static int GetMaxSuperCtorArgCount(Scope classScope, Node classNode)
+                    static int? GetMaxSuperCtorArgCount(Scope classScope, Node classNode)
                     {
                         if (GetClassSuperClass(classNode) is not Identifier superId)
                         {
-                            return 0;
+                            return null;
                         }
 
                         var superSymbol = classScope.FindSymbol(superId.Name);
@@ -330,7 +343,7 @@ public static class HIRBuilder
 
                         if (baseBody == null)
                         {
-                            return 0;
+                            return null;
                         }
 
                         var baseCtor = baseBody.Body
@@ -352,9 +365,9 @@ public static class HIRBuilder
                         return baseCtorFunc.Params.Count;
                     }
 
-                    // Default derived constructors in JS forward received args to super(...).
-                    // We approximate by synthesizing N parameters (N = base ctor max param count when resolvable)
-                    // and passing them through to the implicit super call.
+                    // Default derived constructors forward every received argument to super(...).
+                    // For statically known user classes, retain the direct fixed-arity constructor path.
+                    // Dynamic and intrinsic bases use a rest parameter so the complete argument list is preserved.
                     var parameterPatterns = new List<HIRPattern>();
                     var superArgs = new List<HIRExpression>();
                     HIRExpression? superClassExpression = null;
@@ -366,20 +379,40 @@ public static class HIRBuilder
                             return false;
                         }
 
-                        var argCount = GetMaxSuperCtorArgCount(enclosingClassScope, enclosingClassNode);
-                        for (int i = 0; i < argCount; i++)
+                        var argCount = GetMaxSuperCtorArgCount(
+                            enclosingClassScope,
+                            enclosingClassNode);
+                        if (argCount.HasValue)
                         {
-                            var paramName = $"__arg{i}";
+                            for (int i = 0; i < argCount.Value; i++)
+                            {
+                                var paramName = $"__arg{i}";
+                                if (!scope.Bindings.TryGetValue(paramName, out var binding))
+                                {
+                                    binding = new BindingInfo(paramName, BindingKind.Var, scope, classBody);
+                                    scope.Bindings[paramName] = binding;
+                                }
+
+                                scope.Parameters.Add(paramName);
+                                var sym = new Symbol(binding);
+                                parameterPatterns.Add(new HIRIdentifierPattern(sym));
+                                superArgs.Add(new HIRVariableExpression(sym));
+                            }
+                        }
+                        else
+                        {
+                            const string paramName = "__args";
                             if (!scope.Bindings.TryGetValue(paramName, out var binding))
                             {
                                 binding = new BindingInfo(paramName, BindingKind.Var, scope, classBody);
                                 scope.Bindings[paramName] = binding;
                             }
 
-                            scope.Parameters.Add(paramName);
                             var sym = new Symbol(binding);
-                            parameterPatterns.Add(new HIRIdentifierPattern(sym));
-                            superArgs.Add(new HIRVariableExpression(sym));
+                            parameterPatterns.Add(
+                                new HIRRestPattern(new HIRIdentifierPattern(sym)));
+                            superArgs.Add(
+                                new HIRSpreadElement(new HIRVariableExpression(sym)));
                         }
                     }
 
@@ -1643,6 +1676,19 @@ partial class HIRMethodBuilder
             HIRIndexAccessExpression indexAccessExpression => ExpressionContainsDirectSuperCall(indexAccessExpression.Object)
                 || ExpressionContainsDirectSuperCall(indexAccessExpression.Index),
             HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
+            HIRChainExpression chainExpression =>
+                (chainExpression.BaseExpression is HIRSuperExpression
+                    && chainExpression.Segments.FirstOrDefault()
+                        is HIRChainCallSegment)
+                || ExpressionContainsDirectSuperCall(chainExpression.BaseExpression)
+                || chainExpression.Segments.Any(segment => segment switch
+                {
+                    HIRChainIndexSegment index =>
+                        ExpressionContainsDirectSuperCall(index.Index),
+                    HIRChainCallSegment call =>
+                        call.Arguments.Any(ExpressionContainsDirectSuperCall),
+                    _ => false
+                }),
             HIRArrowFunctionExpression arrowFunctionExpression =>
                 arrowFunctionExpression.ContainsSuperConstructorCallInBody,
             _ => false
@@ -3548,9 +3594,7 @@ partial class HIRMethodBuilder
         switch (expr)
         {
             case ChainExpression chainExpr:
-                // Optional chaining is represented by ChainExpression wrapping a chain element
-                // (MemberExpression/CallExpression) with Optional=true.
-                return TryParseExpression(chainExpr.Expression, out hirExpr);
+                return TryParseChainExpression(chainExpr, out hirExpr);
 
             case SequenceExpression seqExpr:
                 {
@@ -3793,7 +3837,11 @@ partial class HIRMethodBuilder
                 // Handle call expressions
                 HIRExpression? calleeExpr;
                 var argExprs = new List<HIRExpression>();
-                var normalizedCallee = UnwrapExpression(callExpr.Callee) ?? callExpr.Callee;
+                Acornima.Ast.Expression normalizedCallee = callExpr.Callee;
+                while (normalizedCallee is ParenthesizedExpression parenthesizedCallee)
+                {
+                    normalizedCallee = parenthesizedCallee.Expression;
+                }
 
                 if (!TryParseExpression(normalizedCallee, out calleeExpr))
                 {
@@ -3824,6 +3872,22 @@ partial class HIRMethodBuilder
                         return false;
                     }
                     argExprs.Add(argHirExpr);
+                }
+
+                if (callExpr.Optional
+                    && calleeExpr is HIRChainExpression calleeChain)
+                {
+                    hirExpr = new HIRChainExpression(
+                        calleeChain.BaseExpression,
+                        calleeChain.Segments
+                            .Concat(new[]
+                            {
+                                new HIRChainCallSegment(
+                                    argExprs,
+                                    callExpr.Optional)
+                            })
+                            .ToArray());
+                    return true;
                 }
 
                 if (callExpr.Optional)
@@ -4096,7 +4160,39 @@ partial class HIRMethodBuilder
                             return false;
                         }
 
-                        if (TryResolvePrivateAccessorOrMethod(privateMemberId, out _, out _, out var setterMethodName, out var privateMethodName, out var hasAccessor))
+                        var hasPrivateAccessorOrMethod = TryResolvePrivateAccessorOrMethod(
+                            privateMemberId,
+                            out _,
+                            out var getterMethodName,
+                            out var setterMethodName,
+                            out var privateMethodName,
+                            out var hasAccessor);
+
+                        if (assignExpr.Operator is Acornima.Operator.LogicalAndAssignment
+                            or Acornima.Operator.LogicalOrAssignment
+                            or Acornima.Operator.NullishCoalescingAssignment)
+                        {
+                            hirExpr = new HIRPrivateLogicalAssignmentExpression
+                            {
+                                Operator = assignExpr.Operator,
+                                Receiver = memberObjectExpr!,
+                                RegistryClassName =
+                                    GetRegistryClassName(
+                                        privateClassScope),
+                                FieldName =
+                                    hasPrivateAccessorOrMethod
+                                        ? null
+                                        : privateMemberId.Name,
+                                GetterMethodName = getterMethodName,
+                                SetterMethodName = setterMethodName,
+                                MethodName = privateMethodName,
+                                HasAccessor = hasAccessor,
+                                Value = assignValueExpr!,
+                            };
+                            return true;
+                        }
+
+                        if (hasPrivateAccessorOrMethod)
                         {
                             if (setterMethodName != null)
                             {
@@ -4308,6 +4404,7 @@ partial class HIRMethodBuilder
                                 return false;
                             }
                         }
+
                     }
 
                     var explicitClassName = (classExpr.Id as Identifier)?.Name;
@@ -4661,6 +4758,159 @@ partial class HIRMethodBuilder
             default:
                 return false;
         }
+    }
+
+    private bool TryParseChainExpression(
+        ChainExpression chainExpression,
+        out HIRExpression? hirExpression)
+    {
+        hirExpression = null;
+        var segments = new List<HIRChainSegment>();
+        if (!TryParseChainElement(
+                chainExpression.Expression,
+                segments,
+                out var baseExpression)
+            || baseExpression == null)
+        {
+            return false;
+        }
+
+        hirExpression = new HIRChainExpression(baseExpression, segments);
+        return true;
+    }
+
+    private bool TryParseChainElement(
+        Acornima.Ast.Expression expression,
+        List<HIRChainSegment> segments,
+        out HIRExpression? baseExpression)
+    {
+        switch (expression)
+        {
+            case MemberExpression memberExpression:
+                if (!memberExpression.Optional
+                    && !memberExpression.Computed
+                    && memberExpression.Property is PrivateIdentifier)
+                {
+                    return TryParseExpression(
+                        memberExpression,
+                        out baseExpression);
+                }
+
+                if (!TryParseChainElement(
+                        memberExpression.Object,
+                        segments,
+                        out baseExpression))
+                {
+                    return false;
+                }
+
+                if (memberExpression.Computed)
+                {
+                    if (!TryParseExpression(
+                            memberExpression.Property,
+                            out var indexExpression)
+                        || indexExpression == null)
+                    {
+                        return false;
+                    }
+
+                    segments.Add(new HIRChainIndexSegment(
+                        indexExpression,
+                        memberExpression.Optional));
+                    return true;
+                }
+
+                if (memberExpression.Property is not Identifier propertyIdentifier)
+                {
+                    return false;
+                }
+
+                segments.Add(new HIRChainPropertySegment(
+                    propertyIdentifier.Name,
+                    memberExpression.Optional));
+                return true;
+
+            case CallExpression callExpression:
+                if (!callExpression.Optional
+                    && !ContainsOptionalChainElement(callExpression.Callee))
+                {
+                    return TryParseExpression(callExpression, out baseExpression);
+                }
+
+                if (!TryParseChainElement(
+                        callExpression.Callee,
+                        segments,
+                        out baseExpression)
+                    || !TryParseChainCallArguments(
+                        callExpression,
+                        out var arguments))
+                {
+                    return false;
+                }
+
+                if (callExpression.Optional
+                    && baseExpression is HIRChainExpression nestedChain)
+                {
+                    segments.AddRange(nestedChain.Segments);
+                    baseExpression = nestedChain.BaseExpression;
+                }
+
+                segments.Add(new HIRChainCallSegment(
+                    arguments,
+                    callExpression.Optional));
+                return true;
+
+            default:
+                return TryParseExpression(expression, out baseExpression);
+        }
+    }
+
+    private static bool ContainsOptionalChainElement(
+        Acornima.Ast.Expression expression)
+        => expression switch
+        {
+            MemberExpression member =>
+                member.Optional
+                || ContainsOptionalChainElement(member.Object),
+            CallExpression call =>
+                call.Optional
+                || ContainsOptionalChainElement(call.Callee),
+            ChainExpression => true,
+            _ => false
+        };
+
+    private bool TryParseChainCallArguments(
+        CallExpression callExpression,
+        out IReadOnlyList<HIRExpression> arguments)
+    {
+        var parsedArguments = new List<HIRExpression>(callExpression.Arguments.Count);
+        foreach (var argument in callExpression.Arguments)
+        {
+            if (argument is SpreadElement spread)
+            {
+                if (!TryParseExpression(spread.Argument, out var spreadArgument)
+                    || spreadArgument == null)
+                {
+                    arguments = Array.Empty<HIRExpression>();
+                    return false;
+                }
+
+                parsedArguments.Add(new HIRSpreadElement(spreadArgument));
+                continue;
+            }
+
+            if (!TryParseExpression(argument, out var parsedArgument)
+                || parsedArgument == null)
+            {
+                arguments = Array.Empty<HIRExpression>();
+                return false;
+            }
+
+            parsedArguments.Add(parsedArgument);
+        }
+
+        arguments = parsedArguments;
+        return true;
     }
 
     private bool TryCreateBigIntLiteralExpression(Literal literal, out HIRExpression? hirExpr)

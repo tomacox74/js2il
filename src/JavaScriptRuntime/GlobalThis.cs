@@ -255,8 +255,10 @@ namespace JavaScriptRuntime
         };
         private static readonly BuiltinFunction1 _promiseResolveValue = static (thisArgument, value) =>
             global::JavaScriptRuntime.Promise.ResolveForConstructor(thisArgument, value);
-        private static readonly BuiltinFunction1 _promiseAllValue = static (_, iterable) =>
-            global::JavaScriptRuntime.Promise.all(iterable);
+        private static readonly BuiltinFunction1 _promiseAllValue = static (thisArgument, iterable) =>
+            global::JavaScriptRuntime.Promise.AllForConstructor(
+                thisArgument,
+                iterable);
         private static readonly BuiltinFunction1 _promiseRaceValue = static (_, iterable) =>
             global::JavaScriptRuntime.Promise.race(iterable);
         private static readonly BuiltinFunction1 _promiseRejectValue = static (_, reason) =>
@@ -413,6 +415,7 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction0 _typedArrayToReversedValue = TypedArrayPrototypeToReversed;
         private static readonly BuiltinFunction0 _typedArrayEntriesValue = TypedArrayPrototypeEntries;
         private static readonly BuiltinFunction0 _typedArrayKeysValue = TypedArrayPrototypeKeys;
+        private static readonly BuiltinFunction0 _typedArrayValuesValue = TypedArrayPrototypeValues;
         private static readonly BuiltinFunction3 _typedArrayFromValue = TypedArrayFrom;
         private static readonly BuiltinFunctionVariadic _typedArrayOfValue = TypedArrayOf;
 
@@ -461,10 +464,10 @@ namespace JavaScriptRuntime
             static (_, args) => ConstructTypedArray(args, static () => new Uint8Array(), static a => new Uint8Array(a), static (a, b) => new Uint8Array(a, b), static (a, b, c) => new Uint8Array(a, b, c));
         private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue =
             static (_, args) => ConstructTypedArray(args, static () => new Uint8ClampedArray(), static a => new Uint8ClampedArray(a), static (a, b) => new Uint8ClampedArray(a, b), static (a, b, c) => new Uint8ClampedArray(a, b, c));
-        private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in jroc.");
-        private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The BigUint64Array constructor is not yet supported in jroc.");
+        private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new BigInt64Array(), static a => new BigInt64Array(a), static (a, b) => new BigInt64Array(a, b), static (a, b, c) => new BigInt64Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new BigUint64Array(), static a => new BigUint64Array(a), static (a, b) => new BigUint64Array(a, b), static (a, b, c) => new BigUint64Array(a, b, c));
 
         private void InitializeIntrinsics()
         {
@@ -996,6 +999,18 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toReversed", _typedArrayToReversedValue, 0d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "entries", _typedArrayEntriesValue, 0d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "keys", _typedArrayKeysValue, 0d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "values", _typedArrayValuesValue, 0d);
+            PropertyDescriptorStore.DefineOrUpdate(
+                _typedArrayPrototypeValue,
+                global::JavaScriptRuntime.Symbol.iterator.DebugId,
+                new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = _typedArrayValuesValue
+                });
             ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue, 8d);
             ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue, 4d);
             ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue, 4d);
@@ -1016,6 +1031,8 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayInstancePrototype(_int8ArrayConstructorValue, _int8ArrayPrototypeValue);
             ConfigureTypedArrayInstancePrototype(_uint32ArrayConstructorValue, _uint32ArrayPrototypeValue);
             ConfigureTypedArrayInstancePrototype(_uint16ArrayConstructorValue, _uint16ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_bigInt64ArrayConstructorValue, JavaScriptRuntime.BigInt64Array.Prototype);
+            ConfigureTypedArrayInstancePrototype(_bigUint64ArrayConstructorValue, JavaScriptRuntime.BigUint64Array.Prototype);
             JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
             ConfigureArrayBufferIntrinsicSurface();
             ConfigureSharedArrayBufferIntrinsicSurface();
@@ -1050,9 +1067,29 @@ namespace JavaScriptRuntime
         private static void ConfigureTypedArrayConstructorValue(object constructorValue, double bytesPerElement)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                constructorValue,
+                3d,
+                GetTypedArrayConstructorName(constructorValue));
             JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(constructorValue, _typedArrayConstructorValue);
             DefineIntrinsicConstantDataProperty(constructorValue, "BYTES_PER_ELEMENT", bytesPerElement);
+        }
+
+        private static string GetTypedArrayConstructorName(object constructorValue)
+        {
+            if (ReferenceEquals(constructorValue, _float64ArrayConstructorValue)) return nameof(Float64Array);
+            if (ReferenceEquals(constructorValue, _float32ArrayConstructorValue)) return nameof(Float32Array);
+            if (ReferenceEquals(constructorValue, _int32ArrayConstructorValue)) return nameof(Int32Array);
+            if (ReferenceEquals(constructorValue, _int16ArrayConstructorValue)) return nameof(Int16Array);
+            if (ReferenceEquals(constructorValue, _int8ArrayConstructorValue)) return nameof(Int8Array);
+            if (ReferenceEquals(constructorValue, _uint32ArrayConstructorValue)) return nameof(Uint32Array);
+            if (ReferenceEquals(constructorValue, _uint16ArrayConstructorValue)) return nameof(Uint16Array);
+            if (ReferenceEquals(constructorValue, _uint8ArrayConstructorValue)) return nameof(Uint8Array);
+            if (ReferenceEquals(constructorValue, _uint8ClampedArrayConstructorValue)) return nameof(Uint8ClampedArray);
+            if (ReferenceEquals(constructorValue, _bigInt64ArrayConstructorValue)) return nameof(BigInt64Array);
+            if (ReferenceEquals(constructorValue, _bigUint64ArrayConstructorValue)) return nameof(BigUint64Array);
+            throw new ArgumentOutOfRangeException(nameof(constructorValue));
         }
 
         private void ConfigureTypedArrayInstancePrototype(object constructorValue, object prototypeValue)
@@ -1143,6 +1180,16 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.keys();
+        }
+
+        private static object? TypedArrayPrototypeValues(object? thisArgument)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.values called on incompatible receiver");
+            }
+
+            return typedArray.values();
         }
 
         private static object? TypedArrayFrom(object? thisArgument, object? source, object? mapFn, object? thisArg)
@@ -2903,6 +2950,8 @@ namespace JavaScriptRuntime
                 JavaScriptRuntime.Uint16Array => current.Uint16ArrayPrototype,
                 JavaScriptRuntime.Uint8Array => JavaScriptRuntime.Uint8Array.Prototype,
                 JavaScriptRuntime.Uint8ClampedArray => JavaScriptRuntime.Uint8ClampedArray.Prototype,
+                JavaScriptRuntime.BigInt64Array => JavaScriptRuntime.BigInt64Array.Prototype,
+                JavaScriptRuntime.BigUint64Array => JavaScriptRuntime.BigUint64Array.Prototype,
                 _ => current.TypedArrayPrototype
             };
         }

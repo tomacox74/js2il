@@ -228,6 +228,9 @@ public sealed partial class HIRToLIRLowerer
             var hasPendingReturn = CreateBooleanSlotTemp("$tryFinally_hasReturn", false);
             var hasPendingException = CreateBooleanSlotTemp("$tryFinally_hasException", false);
             var pendingException = CreateObjectSlotTemp("$tryFinally_exception");
+            var pendingAbruptTarget = CreateNumberSlotTemp("$tryFinally_abruptTarget", 0d);
+            var abruptTargets =
+                new Dictionary<int, SyncAbruptTarget>();
 
             var outerTryStart = CreateLabel();
             var outerTryEnd = CreateLabel();
@@ -256,6 +259,9 @@ public sealed partial class HIRToLIRLowerer
                 hasPendingReturn,
                 hasPendingException,
                 pendingException,
+                pendingAbruptTarget,
+                abruptTargets,
+                _controlFlowStack.Count,
                 IsInFinally: false);
 
             _syncTryFinallyStack.Push(ctx);
@@ -327,6 +333,7 @@ public sealed partial class HIRToLIRLowerer
                 StoreExceptionToExistingSlot(pendingException);
                 StoreBooleanToExistingSlot(hasPendingException, true);
                 StoreBooleanToExistingSlot(hasPendingReturn, false);
+                StoreNumberToExistingSlot(pendingAbruptTarget, 0d);
                 lirInstructions.Add(new LIRLeave(finallyStart));
                 lirInstructions.Add(new LIRLabel(outerCatchEnd));
 
@@ -347,6 +354,40 @@ public sealed partial class HIRToLIRLowerer
                 lirInstructions.Add(new LIRThrow(pendingException));
                 lirInstructions.Add(new LIRLabel(noPendingException));
                 lirInstructions.Add(new LIRBranchIfTrue(hasPendingReturn, pendingReturnLabel));
+                foreach (var (targetLabelId, target) in abruptTargets)
+                {
+                    var targetIdTemp = CreateTempVariable();
+                    lirInstructions.Add(
+                        new LIRConstNumber(
+                            target.Id,
+                            targetIdTemp));
+                    DefineTempStorage(
+                        targetIdTemp,
+                        new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+                    var matchesTarget = CreateTempVariable();
+                    lirInstructions.Add(new LIRCompareNumberEqual(
+                        pendingAbruptTarget,
+                        targetIdTemp,
+                        matchesTarget));
+                    DefineTempStorage(
+                        matchesTarget,
+                        new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    var nextTargetLabel = CreateLabel();
+                    lirInstructions.Add(
+                        new LIRBranchIfFalse(
+                            matchesTarget,
+                            nextTargetLabel));
+                    if (!TryEmitAbruptThroughEnclosingSyncFinally(
+                            targetLabelId,
+                            target.MatchedAbsoluteIndex))
+                    {
+                        lirInstructions.Add(
+                            new LIRBranch(targetLabelId));
+                    }
+                    lirInstructions.Add(
+                        new LIRLabel(nextTargetLabel));
+                }
                 lirInstructions.Add(new LIRBranch(endLabel));
                 lirInstructions.Add(new LIRLabel(pendingReturnLabel));
                 if (!_methodBodyIR.ReturnEpilogueLabelId.HasValue)
@@ -354,7 +395,14 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
                 _needsReturnEpilogueBlock = true;
-                lirInstructions.Add(new LIRLeave(_methodBodyIR.ReturnEpilogueLabelId.Value));
+                if (!TryEmitReturnThroughEnclosingSyncFinally())
+                {
+                    lirInstructions.Add(
+                        new LIRLeave(
+                            _methodBodyIR
+                                .ReturnEpilogueLabelId
+                                .Value));
+                }
                 lirInstructions.Add(new LIRLabel(endLabel));
 
                 if (hasCatch)

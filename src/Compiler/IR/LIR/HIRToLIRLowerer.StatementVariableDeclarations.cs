@@ -35,15 +35,26 @@ public sealed partial class HIRToLIRLowerer
     }
 
     private bool TryApplyInferredNameToDeclarationValue(HIRVariableDeclaration declaration, TempVariable value, out TempVariable namedValue)
+        => TryApplyInferredNameToValue(
+            declaration.Initializer,
+            declaration.Name.Name,
+            value,
+            out namedValue);
+
+    private bool TryApplyInferredNameToValue(
+        HIRExpression? initializer,
+        string inferredName,
+        TempVariable value,
+        out TempVariable namedValue)
     {
         namedValue = value;
 
-        if (string.IsNullOrWhiteSpace(declaration.Name.Name))
+        if (string.IsNullOrWhiteSpace(inferredName))
         {
             return true;
         }
 
-        string? runtimeMethodName = declaration.Initializer switch
+        string? runtimeMethodName = initializer switch
         {
             HIRInitializedUserClassTypeExpression initializedClassExpr
                 when initializedClassExpr.IsClassExpression
@@ -67,7 +78,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var inferredNameTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstString(declaration.Name.Name, inferredNameTemp));
+        _methodBodyIR.Instructions.Add(new LIRConstString(inferredName, inferredNameTemp));
         DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
         namedValue = CreateTempVariable();

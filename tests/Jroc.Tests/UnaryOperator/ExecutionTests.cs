@@ -62,6 +62,9 @@ namespace Jroc.Tests.UnaryOperator
         public Task UnaryOperator_DoubleNot_NaNTruthiness() => ExecutionTest(nameof(UnaryOperator_DoubleNot_NaNTruthiness));
 
         [Fact]
+        public Task UnaryOperator_DeleteOptionalChain() => ExecutionTest(nameof(UnaryOperator_DeleteOptionalChain));
+
+        [Fact]
         public Task UnaryOperator_VoidOperator() => ExecutionTest(nameof(UnaryOperator_VoidOperator));
 
         [Fact]

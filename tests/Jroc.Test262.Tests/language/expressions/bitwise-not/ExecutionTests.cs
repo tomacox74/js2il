@@ -47,4 +47,8 @@ public class ExecutionTests
     [Fact(DisplayName = "bigint")]
     public Task bigint()
         => ExecutionTestFromFile("bigint");
+
+    [Fact(DisplayName = "bigint-non-primitive")]
+    public Task bigint_non_primitive()
+        => ExecutionTestFromFile("bigint-non-primitive");
 }

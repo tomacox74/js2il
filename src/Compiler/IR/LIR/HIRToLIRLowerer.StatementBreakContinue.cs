@@ -16,6 +16,11 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        if (TryEmitAbruptThroughSyncFinally(target, matchedAbsoluteIndex))
+        {
+            return true;
+        }
+
         if (_protectedControlFlowDepthStack.Count > 0 && matchedAbsoluteIndex < _protectedControlFlowDepthStack.Peek())
         {
             _methodBodyIR.Instructions.Add(new LIRLeave(target));
@@ -33,6 +38,11 @@ public sealed partial class HIRToLIRLowerer
         if (!TryResolveControlFlowTarget(continueStmt.Label, out var target, out var matchedAbsoluteIndex, isBreak: false))
         {
             return false;
+        }
+
+        if (TryEmitAbruptThroughSyncFinally(target, matchedAbsoluteIndex))
+        {
+            return true;
         }
 
         if (_protectedControlFlowDepthStack.Count > 0 && matchedAbsoluteIndex < _protectedControlFlowDepthStack.Peek())

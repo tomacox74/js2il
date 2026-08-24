@@ -2964,7 +2964,7 @@
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 52 (0x34)
+				// Code size: 62 (0x3e)
 				.maxstack 8
 				.locals init (
 					[0] object
@@ -2972,22 +2972,24 @@
 
 				IL_0000: volatile.
 				IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-				IL_0007: brfalse IL_001c
+				IL_0007: brfalse IL_0021
 
 				IL_000c: ldarg.0
-				IL_000d: ldstr "value"
-				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0017: br IL_0031
+				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+				IL_0012: ldstr "value"
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_001c: br IL_003b
 
-				IL_001c: ldarg.0
-				IL_001d: ldstr "value"
-				IL_0022: ldstr "Function_StableConstCallable_Direct:<TwoPhaseDummy_M22>:read:3"
-				IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-				IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_0021: ldarg.0
+				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+				IL_0027: ldstr "value"
+				IL_002c: ldstr "Function_StableConstCallable_Direct:<TwoPhaseDummy_M22>:read:3"
+				IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+				IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0031: stloc.0
-				IL_0032: ldloc.0
-				IL_0033: ret
+				IL_003b: stloc.0
+				IL_003c: ldloc.0
+				IL_003d: ret
 			} // end of method ReadsOwnThis::read
 
 		} // end of class ReadsOwnThis
@@ -3169,7 +3171,7 @@
 			IL_0060: conv.r8
 			IL_0061: ldstr "read"
 			IL_0066: ldc.i4.1
-			IL_0067: ldc.i4.1
+			IL_0067: ldc.i4.0
 			IL_0068: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_StableConstCallable_Direct/FunctionExpression_nestedOrdinaryClass/ReadsOwnThis/Scope_read/FunctionObject>(!!0)
 			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
@@ -3315,7 +3317,7 @@
 		IL_003d: conv.r8
 		IL_003e: ldstr "readsStrictDirectThis"
 		IL_0043: ldc.i4.0
-		IL_0044: ldc.i4.1
+		IL_0044: ldc.i4.0
 		IL_0045: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_StableConstCallable_Direct/readsStrictDirectThis/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_004a: stloc.2
 		IL_004b: ldc.i4.1

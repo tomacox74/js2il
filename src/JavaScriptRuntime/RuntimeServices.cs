@@ -112,6 +112,8 @@ public class RuntimeServices
         => GetCurrentRealmValueCaches().LazyClassMetadata;
     private static ConcurrentDictionary<ClassConstructorCacheKey, JsClassConstructorObject> _classConstructorValues
         => GetCurrentRealmValueCaches().MaterializedClassConstructors;
+    private static readonly ConditionalWeakTable<object, GeneratedClassMethodReceiverSlot>
+        _generatedClassMethodReceivers = new();
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -156,6 +158,11 @@ public class RuntimeServices
     private sealed class DerivedConstructorThisBinding
     {
         public object? Value = TemporalDeadZoneSentinel;
+    }
+
+    private sealed class GeneratedClassMethodReceiverSlot(object receiver)
+    {
+        public object Receiver { get; } = receiver;
     }
 
     internal sealed class LazyClassMetadataSlot
@@ -466,7 +473,16 @@ public class RuntimeServices
     {
         var newTarget = GetCurrentNewTarget() ?? constructor;
         object? constructed;
-        if (constructor is JsFunctionObject functionObject
+        if (constructor is BuiltinDelegateFunctionAdapter builtinConstructor
+            && builtinConstructor.IsConstructor)
+        {
+            constructed = Function.ConstructWithReceiver(
+                builtinConstructor,
+                receiver,
+                args,
+                newTarget);
+        }
+        else if (constructor is JsFunctionObject functionObject
             && functionObject.IsConstructor)
         {
             constructed = CallableOperations.ConstructWithReceiver(
@@ -1204,8 +1220,16 @@ public class RuntimeServices
                 "_scopes",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             ?.SetValue(instance, scopes);
+        _generatedClassMethodReceivers.Add(
+            instance,
+            new GeneratedClassMethodReceiverSlot(receiver!));
         return instance;
     }
+
+    public static object ResolveGeneratedClassMethodThis(object instance)
+        => _generatedClassMethodReceivers.TryGetValue(instance, out var slot)
+            ? slot.Receiver
+            : instance;
 
     public static object ValidateGeneratedStaticMethodReceiver(
         object? receiver,
@@ -1345,6 +1369,58 @@ public class RuntimeServices
         }
 
         return receiver!;
+    }
+
+    public static object? CallDirectClassPrivateMethod(
+        object? receiver,
+        Type ownerType,
+        string methodName,
+        object?[] args)
+    {
+        var instance = ValidateDirectClassPrivateMethodReceiver(
+            receiver,
+            ownerType);
+        var method = ownerType.GetMethod(
+            methodName,
+            BindingFlags.Instance
+                | BindingFlags.Public
+                | BindingFlags.NonPublic)
+            ?? throw new TypeError(
+                $"Private method '{methodName}' was not found");
+        var scopes = ownerType.GetField(
+                "_scopes",
+                BindingFlags.Instance
+                    | BindingFlags.Public
+                    | BindingFlags.NonPublic)
+            ?.GetValue(instance) as object[]
+            ?? EmptyScopes;
+        var invokeArgs = BuildClassMethodInvokeArguments(
+            method,
+            scopes,
+            args);
+        try
+        {
+            return method.Invoke(instance, invokeArgs);
+        }
+        catch (TargetInvocationException tie)
+            when (tie.InnerException != null)
+        {
+            ExceptionDispatchInfo
+                .Capture(tie.InnerException)
+                .Throw();
+            throw;
+        }
+    }
+
+    public static object? GetDirectClassPrivateMethodValue(
+        object? receiver,
+        Type ownerType,
+        string propertyName)
+    {
+        var instance = ValidateDirectClassPrivateMethodReceiver(
+            receiver,
+            ownerType);
+        return ObjectRuntime.GetItem(instance, propertyName);
     }
 
     private static bool IsPrototypeObjectForClass(object? receiver, Type ownerType)
@@ -1739,6 +1815,73 @@ public class RuntimeServices
 
         return defaultValue;
     }
+
+    public static bool HasBoundWithBinding(object? nameValue)
+    {
+        var callee = _currentInvocation.Value?.CurrentCallee;
+        return callee is not null
+            && JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
+            && withObject is not null
+            && JavaScriptRuntime.ObjectRuntime.HasPropertyIn(
+                nameValue as string ?? DotNet2JSConversions.ToString(nameValue),
+                withObject);
+    }
+
+    public static object BindWithCurrentWithObject(object functionValue)
+    {
+        var callee = _currentInvocation.Value?.CurrentCallee;
+        return callee is not null
+            && JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
+            && withObject is not null
+                ? JavaScriptRuntime.Function.BindWithObject(functionValue, withObject)
+                : functionValue;
+    }
+
+    public static object? GetBoundWithBindingValue(object? nameValue)
+    {
+        var callee = _currentInvocation.Value?.CurrentCallee;
+        if (callee is null
+            || !JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
+            || withObject is null)
+        {
+            throw new ReferenceError("Bound with-environment is unavailable");
+        }
+
+        return JavaScriptRuntime.ObjectRuntime.GetProperty(
+            withObject,
+            nameValue as string ?? DotNet2JSConversions.ToString(nameValue));
+    }
+
+    public static object? SetBoundWithBindingValue(
+        object? nameValue,
+        object? value,
+        bool strict)
+    {
+        var callee = _currentInvocation.Value?.CurrentCallee;
+        if (callee is null
+            || !JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
+            || withObject is null)
+        {
+            throw new ReferenceError("Bound with-environment is unavailable");
+        }
+
+        var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
+        if (strict && !JavaScriptRuntime.ObjectRuntime.HasPropertyIn(name, withObject))
+        {
+            throw new ReferenceError($"{name} is not defined");
+        }
+
+        return JavaScriptRuntime.ObjectRuntime.SetItem(withObject, name, value, strict);
+    }
+
+    public static bool IsNullish(object? value)
+        => value is null or JsNull;
+
+    public static object? CallWithThis(
+        object target,
+        object? thisArgument,
+        object?[] arguments)
+        => CallableOperations.Call(target, thisArgument, arguments);
 
     public static object ToNumeric(object? value)
         => TypeUtilities.ToNumeric(value);

@@ -704,7 +704,7 @@ internal sealed partial class LIRToILCompiler
                     LIRMulNumber value => EstimateBinaryPeak(value.Left, value.Right),
                     LIRDivNumber value => EstimateBinaryPeak(value.Left, value.Right),
                     LIRModNumber value => EstimateBinaryPeak(value.Left, value.Right),
-                    LIRExpNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRExpNumber => 2,
                     LIRConcatStrings value => EstimateBinaryPeak(value.Left, value.Right),
                     LIRCompareNumberLessThan value => EstimateBinaryPeak(value.Left, value.Right),
                     LIRCompareNumberGreaterThan value => EstimateBinaryPeak(value.Left, value.Right),

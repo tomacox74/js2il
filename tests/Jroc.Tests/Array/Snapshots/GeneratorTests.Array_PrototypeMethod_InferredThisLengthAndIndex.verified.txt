@@ -886,19 +886,36 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 25 (0x19)
+			// Header size: 12
+			// Code size: 56 (0x38)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[1] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[3] object[]
+			)
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldc.i4.0
-			IL_0008: newarr [System.Runtime]System.Object
-			IL_000d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
-			IL_0012: ldarg.0
-			IL_0013: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_0018: ret
+			IL_0000: ldc.r8 0.0
+			IL_0009: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(float64)
+			IL_000e: stloc.0
+			IL_000f: ldstr "Array"
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0019: stloc.1
+			IL_001a: ldc.i4.0
+			IL_001b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0020: stloc.2
+			IL_0021: ldloc.2
+			IL_0022: ldloc.0
+			IL_0023: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+			IL_0028: ldloc.2
+			IL_0029: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+			IL_002e: stloc.3
+			IL_002f: ldarg.0
+			IL_0030: ldloc.1
+			IL_0031: ldloc.3
+			IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0037: ret
 		} // end of method DerivedArray::.ctor
 
 	} // end of class DerivedArray
@@ -994,7 +1011,7 @@
 		IL_005d: conv.r8
 		IL_005e: ldstr ""
 		IL_0063: ldc.i4.0
-		IL_0064: ldc.i4.1
+		IL_0064: ldc.i4.0
 		IL_0065: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/FunctionExpression_L3C31/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_006a: stloc.s 10
 		IL_006c: ldloc.s 8
@@ -1033,7 +1050,7 @@
 		IL_00be: conv.r8
 		IL_00bf: ldstr ""
 		IL_00c4: ldc.i4.0
-		IL_00c5: ldc.i4.1
+		IL_00c5: ldc.i4.0
 		IL_00c6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/FunctionExpression_L15C32/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_00cb: stloc.s 12
 		IL_00cd: volatile.
@@ -1083,7 +1100,7 @@
 		IL_0147: conv.r8
 		IL_0148: ldstr ""
 		IL_014d: ldc.i4.0
-		IL_014e: ldc.i4.1
+		IL_014e: ldc.i4.0
 		IL_014f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/FunctionExpression_L24C7/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0154: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/FunctionExpression_L24C7/FunctionObject>(!!0)
 		IL_0159: stloc.s 14
@@ -1281,7 +1298,7 @@
 		IL_03e7: conv.r8
 		IL_03e8: ldstr ""
 		IL_03ed: ldc.i4.0
-		IL_03ee: ldc.i4.1
+		IL_03ee: ldc.i4.0
 		IL_03ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/FunctionExpression_proxy/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_03f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/FunctionExpression_proxy/FunctionObject>(!!0)
 		IL_03f9: stloc.s 17

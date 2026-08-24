@@ -190,6 +190,17 @@
           "tests/Jroc.Tests/String/JavaScript/String_PlusEquals_Append.js"
         ],
         "notes": "+= on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot."
+      },
+      {
+        "clause": "13.15.2",
+        "feature": "Logical assignment reference preservation and NamedEvaluation",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/logical-assignment/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/assignment/ExecutionTests.cs"
+        ],
+        "notes": "&&=, ||=, and ??= short-circuit without invoking private setters or writing private fields when the existing value determines the result. The left-hand reference and receiver are evaluated once, anonymous function/class RHS values receive inferred names, and assignment through with-environment references updates the resolved binding."
       }
     ]
   }

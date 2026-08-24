@@ -79,6 +79,36 @@ public sealed class RegExpObjectRepresentationTests
         Assert.Equal($"true{Environment.NewLine}", result.Output);
     }
 
+    [Fact]
+    public void UnicodeExec_LastIndexInsideSurrogatePair_NormalizesToCodePointBoundary()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "regexp-unicode-last-index-surrogate-pair",
+            "RegExp.UnicodeLastIndex",
+            static _ => ("""
+                const regexp = /./gu;
+                regexp.lastIndex = 1;
+                const match = regexp.exec('𝌆');
+                console.log(match.index + ":" + match[0] + ":" + regexp.lastIndex);
+                """, null));
+
+        Assert.Equal($"0:𝌆:2{Environment.NewLine}", result.Output);
+    }
+
+    [Fact]
+    public void Exec_QuantifiedLookaheadCapture_RemainsParticipating()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "regexp-quantified-lookahead-capture",
+            "RegExp.LookaheadCapture",
+            static _ => ("""
+                const match = /((?=(ab))a)+/.exec('ab');
+                console.log(match[1] + ":" + match[2]);
+                """, null));
+
+        Assert.Equal($"a:ab{Environment.NewLine}", result.Output);
+    }
+
     private static (string Script, string? SourcePath) GetDescriptorIsolationScript(string testName)
         => testName switch
         {

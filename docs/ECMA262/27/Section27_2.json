@@ -2,7 +2,7 @@
     "$schema":  "../SectionDoc.schema.json",
     "clause":  "27.2",
     "title":  "Promise Objects",
-    "status":  "Supported",
+    "status":  "Supported with Limitations",
     "specUrl":  "https://tc39.es/ecma262/#sec-promise-objects",
     "parent":  {
                    "clause":  "27"
@@ -383,10 +383,12 @@
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/all/JavaScript/length.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/all/JavaScript/name.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/all/JavaScript/prop-desc.js",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/all/ExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/length.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/name.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/prop-desc.js"
-                                                        ]
+                                                        ],
+                                        "notes":  "Promise.all uses the receiver constructor, creates and validates a promise capability, obtains the constructor's resolve method once, guards each resolve-element closure against repeated calls, preserves result ordering, and closes iterators on abrupt completion. Cross-realm and remaining exotic constructor cases are limited."
                                     }
                                 ]
                 },

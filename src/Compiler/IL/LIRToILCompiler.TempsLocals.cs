@@ -1679,7 +1679,12 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
-                    if (methodDescriptor.IsStatic)
+                    if (methodDescriptor.IsStatic
+                        || methodDescriptor.HasInvocationContextParameter
+                        || (!methodDescriptor.IsStatic
+                            && !methodDescriptor.IsConstructor)
+                        || (methodDescriptor.InvocationRequirements
+                            & JavaScriptRuntime.InvocationContextRequirements.This) != 0)
                     {
                         var getCurrentThis = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.RuntimeServices),
@@ -2206,39 +2211,62 @@ internal sealed partial class LIRToILCompiler
                     methodDescriptor);
                 return true;
             case LIRLoadThis:
-                if (methodDescriptor.IsStatic)
+                if (methodDescriptor.HasInvocationContextParameter)
                 {
-                    if (methodDescriptor.HasInvocationContextParameter)
+                    ilEncoder.LoadArgument(
+                        GetIlArgIndexForInvocationContext(
+                            methodDescriptor));
+                    ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                        nameof(JavaScriptRuntime.GeneratedInvocationContext.GetThis),
+                        new[]
+                        {
+                            typeof(JavaScriptRuntime.GeneratedInvocationContext)
+                        }));
+                    ilEncoder.Call(
+                        _bclReferences
+                            .RuntimeServices_ResolveLexicalThis_Ref);
+                    return true;
+                }
+                if (!methodDescriptor.IsStatic
+                    && !methodDescriptor.IsConstructor)
+                {
+                    ilEncoder.LoadArgument(0);
+                    ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedClassMethodThis),
+                        new[] { typeof(object) }));
+                    return true;
+                }
+                if (!methodDescriptor.IsStatic
+                    && methodDescriptor.IsConstructor)
+                {
+                    if (methodDescriptor.IsDerivedConstructor)
                     {
-                        ilEncoder.LoadArgument(
-                            GetIlArgIndexForInvocationContext(
-                                methodDescriptor));
-                        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.GeneratedInvocationContext),
-                            nameof(JavaScriptRuntime.GeneratedInvocationContext.GetThis),
-                            new[]
-                            {
-                                typeof(JavaScriptRuntime.GeneratedInvocationContext)
-                            }));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis)));
                         ilEncoder.Call(
                             _bclReferences
                                 .RuntimeServices_ResolveLexicalThis_Ref);
-                        return true;
                     }
-
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
+                    return true;
+                }
+                if (methodDescriptor.IsStatic
+                    || (methodDescriptor.InvocationRequirements
+                        & JavaScriptRuntime.InvocationContextRequirements.This) != 0)
+                {
                     EmitLoadCurrentThis(
                         ilEncoder,
                         methodDescriptor);
-                    ilEncoder.Call(_bclReferences.RuntimeServices_ResolveLexicalThis_Ref);
-                    return true;
-                }
-                if (methodDescriptor.IsDerivedConstructor)
-                {
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.RuntimeServices),
-                        nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis)));
-                    ilEncoder.Call(_bclReferences.RuntimeServices_ResolveLexicalThis_Ref);
+                    ilEncoder.Call(
+                        _bclReferences
+                            .RuntimeServices_ResolveLexicalThis_Ref);
                     return true;
                 }
                 ilEncoder.LoadArgument(0);
@@ -2661,6 +2689,8 @@ internal sealed partial class LIRToILCompiler
                 return true;
             case LIRExpNumber expNumber:
                 EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitNormalizeExponentiationBase(ilEncoder);
                 EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
                 EmitMathPow(ilEncoder);
                 return true;

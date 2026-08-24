@@ -25,4 +25,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "iterator-not-closed-for-throwing-done-accessor")]
     public Task iterator_not_closed_for_throwing_done_accessor()
         => ExecutionTestFromFile("iterator-not-closed-for-throwing-done-accessor");
+
+    [Fact(DisplayName = "iterator-closed-for-string-entry")]
+    public Task iterator_closed_for_string_entry()
+        => ExecutionTestFromFile("iterator-closed-for-string-entry");
+
+    [Fact(DisplayName = "string-entry-primitive-throws")]
+    public Task string_entry_primitive_throws()
+        => ExecutionTestFromFile("string-entry-primitive-throws");
 }

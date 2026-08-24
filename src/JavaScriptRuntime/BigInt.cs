@@ -203,6 +203,9 @@ public static class BigInt
         return ConvertPrimitiveToBigInt(primitive);
     }
 
+    internal static BigInteger ToBigIntForTypedArray(object? value)
+        => ToBigInt(value);
+
     /// <summary>
     /// ToPrimitive(value, hint number), without applying any BigInt-specific
     /// conversion yet. Non-object primitives (including Symbol) pass through

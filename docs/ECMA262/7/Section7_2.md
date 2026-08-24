@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-09T18:38:42Z
+> Last generated (UTC): 2026-08-24T07:03:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -109,13 +109,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsLessThan relational comparison | Supported with Limitations | [`BinaryOperator_LessThan.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js)<br>[`BinaryOperator_GreaterThan.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js)<br>[`BinaryOperator_LessThanOrEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js)<br>[`BinaryOperator_GreaterThanOrEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js) |  | Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete. |
+| IsLessThan relational comparison | Supported with Limitations | [`BinaryOperator_LessThan.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js)<br>[`BinaryOperator_GreaterThan.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js)<br>[`BinaryOperator_LessThanOrEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js)<br>[`BinaryOperator_GreaterThanOrEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js)<br>`tests/Jroc.Test262.Tests/language/expressions/less-than/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/greater-than/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/less-than-or-equal/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/greater-than-or-equal/ExecutionTests.cs` |  | Implements numeric, string, object-to-primitive, and mixed BigInt relational behavior, including incomparable string operands returning false instead of throwing. Proxy and remaining exotic coercion-order cases are incomplete. |
 
 ### 7.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-islooselyequal))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsLooselyEqual (==) | Supported with Limitations | [`BinaryOperator_Equal.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js)<br>[`BinaryOperator_NotEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js)<br>[`BinaryOperator_EqualBoolean.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js) |  | Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented. |
+| IsLooselyEqual (==) | Supported with Limitations | [`BinaryOperator_Equal.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js)<br>[`BinaryOperator_NotEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js)<br>[`BinaryOperator_EqualBoolean.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js)<br>`tests/Jroc.Test262.Tests/language/expressions/equals/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/does-not-equals/ExecutionTests.cs` |  | Covers nullish, numeric, BigInt, and object-to-primitive loose-equality coercions in both equality and inequality forms. Complete proxy and host-object edge-case parity is not yet implemented. |
 
 ### 7.2.14 ([tc39.es](https://tc39.es/ecma262/#sec-isstrictlyequal))
 

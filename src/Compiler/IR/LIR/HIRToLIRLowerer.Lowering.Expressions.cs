@@ -132,6 +132,9 @@ public sealed partial class HIRToLIRLowerer
                     return TryLowerExpression(seqExpr.Expressions[seqExpr.Expressions.Count - 1], out resultTempVar);
                 }
 
+            case HIRChainExpression chainExpression:
+                return TryLowerChainExpression(chainExpression, out resultTempVar);
+
             case HIROptionalPropertyAccessExpression optionalPropAccessExpr:
                 return TryLowerOptionalPropertyAccessExpression(optionalPropAccessExpr, out resultTempVar);
 
@@ -468,6 +471,310 @@ public sealed partial class HIRToLIRLowerer
                     EnsureObject(privateStoreReceiver),
                     privateStoreValue));
                 resultTempVar = privateStoreValue;
+                return true;
+
+            case HIRPrivateLogicalAssignmentExpression privateLogicalAssignment:
+                if (!TryLowerExpression(
+                        privateLogicalAssignment.Receiver,
+                        out var privateReceiver))
+                {
+                    return false;
+                }
+
+                privateReceiver = EnsureObject(privateReceiver);
+                var privateOwnerType = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(
+                    new LIRGetUserClassType(
+                        privateLogicalAssignment.RegistryClassName,
+                        privateOwnerType));
+                DefineTempStorage(
+                    privateOwnerType,
+                    new ValueStorage(
+                        ValueStorageKind.Reference,
+                        typeof(Type)));
+
+                TempVariable privateCurrentValue;
+                if (privateLogicalAssignment.GetterMethodName
+                    is { } getterMethodName)
+                {
+                    var getterName = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRConstString(
+                            getterMethodName,
+                            getterName));
+                    DefineTempStorage(
+                        getterName,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(string)));
+
+                    var getterArguments = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRBuildArray(
+                            Array.Empty<TempVariable>(),
+                            getterArguments));
+                    DefineTempStorage(
+                        getterArguments,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object[])));
+
+                    privateCurrentValue = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRCallRuntimeServicesStatic(
+                            nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
+                            new[]
+                            {
+                                privateReceiver,
+                                privateOwnerType,
+                                getterName,
+                                getterArguments
+                            },
+                            privateCurrentValue,
+                            new[]
+                            {
+                                typeof(object),
+                                typeof(Type),
+                                typeof(string),
+                                typeof(object[])
+                            }));
+                    DefineTempStorage(
+                        privateCurrentValue,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object)));
+                }
+                else if (privateLogicalAssignment.MethodName
+                    is { } methodName)
+                {
+                    var methodPropertyName = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRConstString(
+                            methodName,
+                            methodPropertyName));
+                    DefineTempStorage(
+                        methodPropertyName,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(string)));
+
+                    privateCurrentValue = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRCallRuntimeServicesStatic(
+                            nameof(JavaScriptRuntime.RuntimeServices.GetDirectClassPrivateMethodValue),
+                            new[]
+                            {
+                                privateReceiver,
+                                privateOwnerType,
+                                methodPropertyName
+                            },
+                            privateCurrentValue,
+                            new[]
+                            {
+                                typeof(object),
+                                typeof(Type),
+                                typeof(string)
+                            }));
+                    DefineTempStorage(
+                        privateCurrentValue,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object)));
+                }
+                else if (privateLogicalAssignment.HasAccessor)
+                {
+                    var validatedReceiver = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRCallRuntimeServicesStatic(
+                            nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
+                            new[]
+                            {
+                                privateReceiver,
+                                privateOwnerType
+                            },
+                            validatedReceiver,
+                            new[]
+                            {
+                                typeof(object),
+                                typeof(Type)
+                            }));
+                    DefineTempStorage(
+                        validatedReceiver,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object)));
+
+                    privateCurrentValue = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRConstUndefined(
+                            privateCurrentValue));
+                    DefineTempStorage(
+                        privateCurrentValue,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object)));
+                }
+                else if (privateLogicalAssignment.FieldName
+                    is { } fieldName)
+                {
+                    privateCurrentValue = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRLoadPrivateReceiverField(
+                            privateLogicalAssignment
+                                .RegistryClassName,
+                            fieldName,
+                            privateReceiver,
+                            privateCurrentValue));
+                    DefineTempStorage(
+                        privateCurrentValue,
+                        GetPreferredFieldReadStorage(
+                            _classRegistry != null
+                            && _classRegistry
+                                .TryGetPrivateFieldClrType(
+                                    privateLogicalAssignment
+                                        .RegistryClassName,
+                                    fieldName,
+                                    out var privateFieldType)
+                                ? privateFieldType
+                                : typeof(object)));
+                }
+                else
+                {
+                    return false;
+                }
+
+                var privateCurrentBoxed = EnsureObject(privateCurrentValue);
+                var privateShortCircuitLabel = CreateLabel();
+                var privateEndLabel = CreateLabel();
+                resultTempVar = CreateTempVariable();
+
+                switch (privateLogicalAssignment.Operator)
+                {
+                    case Acornima.Operator.LogicalAndAssignment:
+                    {
+                        var isTruthy = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(privateCurrentBoxed, isTruthy));
+                        DefineTempStorage(isTruthy, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthy, privateShortCircuitLabel));
+                        break;
+                    }
+
+                    case Acornima.Operator.LogicalOrAssignment:
+                    {
+                        var isTruthy = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(privateCurrentBoxed, isTruthy));
+                        DefineTempStorage(isTruthy, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isTruthy, privateShortCircuitLabel));
+                        break;
+                    }
+
+                    case Acornima.Operator.NullishCoalescingAssignment:
+                    {
+                        var isNullish = EmitIsNullish(privateCurrentBoxed);
+                        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isNullish, privateShortCircuitLabel));
+                        break;
+                    }
+
+                    default:
+                        return false;
+                }
+
+                if (!TryLowerExpression(
+                        privateLogicalAssignment.Value,
+                        out var privateAssignedValue))
+                {
+                    return false;
+                }
+                privateAssignedValue = EnsureObject(privateAssignedValue);
+
+                if (privateLogicalAssignment.SetterMethodName
+                    is { } setterMethodName)
+                {
+                    var setterName = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRConstString(
+                            setterMethodName,
+                            setterName));
+                    DefineTempStorage(
+                        setterName,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(string)));
+
+                    var setterArguments = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRBuildArray(
+                            new[] { privateAssignedValue },
+                            setterArguments));
+                    DefineTempStorage(
+                        setterArguments,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object[])));
+
+                    var setterResult = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRCallRuntimeServicesStatic(
+                            nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
+                            new[]
+                            {
+                                privateReceiver,
+                                privateOwnerType,
+                                setterName,
+                                setterArguments
+                            },
+                            setterResult,
+                            new[]
+                            {
+                                typeof(object),
+                                typeof(Type),
+                                typeof(string),
+                                typeof(object[])
+                            }));
+                    DefineTempStorage(
+                        setterResult,
+                        new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object)));
+                }
+                else if (privateLogicalAssignment.HasAccessor
+                    || privateLogicalAssignment.MethodName != null)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError(
+                        "Private member was defined without a setter"));
+                }
+                else if (privateLogicalAssignment.FieldName
+                    is { } writableFieldName)
+                {
+                    _methodBodyIR.Instructions.Add(
+                        new LIRStorePrivateReceiverField(
+                            privateLogicalAssignment
+                                .RegistryClassName,
+                            writableFieldName,
+                            privateReceiver,
+                            privateAssignedValue));
+                }
+                else
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(
+                    new LIRCopyTemp(
+                        privateAssignedValue,
+                        resultTempVar));
+                _methodBodyIR.Instructions.Add(
+                    new LIRBranch(privateEndLabel));
+
+                _methodBodyIR.Instructions.Add(new LIRLabel(privateShortCircuitLabel));
+                ClearNumericRefinementsAtLabel();
+                _methodBodyIR.Instructions.Add(
+                    new LIRCopyTemp(privateCurrentBoxed, resultTempVar));
+                _methodBodyIR.Instructions.Add(new LIRLabel(privateEndLabel));
+                ClearNumericRefinementsAtLabel();
+                DefineTempStorage(
+                    resultTempVar,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
 
             case HIRPrivateFieldAssignmentExpression privateFieldAssignExpr:

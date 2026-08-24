@@ -17,4 +17,12 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "bigint-and-non-finite")]
     public Task bigint_and_non_finite()
         => ExecutionTest("bigint-and-non-finite");
+
+    [Fact(DisplayName = "S11.9.1_A7.8")]
+    public Task S11_9_1_A7_8()
+        => ExecutionTest("S11.9.1_A7.8");
+
+    [Fact(DisplayName = "S11.9.1_A7.9")]
+    public Task S11_9_1_A7_9()
+        => ExecutionTest("S11.9.1_A7.9");
 }

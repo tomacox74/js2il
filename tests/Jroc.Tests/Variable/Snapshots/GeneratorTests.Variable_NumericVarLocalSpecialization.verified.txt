@@ -2017,13 +2017,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 74 (0x4a)
+			// Code size: 69 (0x45)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
-				[2] object,
-				[3] object[]
+				[2] bool,
+				[3] object,
+				[4] object[],
+				[5] object
 			)
 
 			IL_0000: ldc.i4.0
@@ -2032,33 +2034,32 @@
 			IL_0007: ldnull
 			IL_0008: stloc.1
 			IL_0009: ldloc.0
-			IL_000a: brfalse IL_0048
+			IL_000a: call bool [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::IsNullish(object)
+			IL_000f: stloc.2
+			IL_0010: ldloc.2
+			IL_0011: brtrue IL_0043
 
-			IL_000f: ldloc.0
-			IL_0010: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0015: brtrue IL_0048
+			IL_0016: ldc.r8 1
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: stloc.3
+			IL_0025: ldloc.3
+			IL_0026: stloc.1
+			IL_0027: ldc.i4.1
+			IL_0028: newarr [System.Runtime]System.Object
+			IL_002d: dup
+			IL_002e: ldc.i4.0
+			IL_002f: ldloc.1
+			IL_0030: stelem.ref
+			IL_0031: stloc.s 4
+			IL_0033: ldloc.0
+			IL_0034: ldnull
+			IL_0035: ldloc.s 4
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
+			IL_003c: stloc.s 5
+			IL_003e: br IL_0043
 
-			IL_001a: ldc.r8 1
-			IL_0023: box [System.Runtime]System.Double
-			IL_0028: stloc.2
-			IL_0029: ldloc.2
-			IL_002a: stloc.1
-			IL_002b: ldc.i4.1
-			IL_002c: newarr [System.Runtime]System.Object
-			IL_0031: dup
-			IL_0032: ldc.i4.0
-			IL_0033: ldloc.1
-			IL_0034: stelem.ref
-			IL_0035: stloc.3
-			IL_0036: ldloc.0
-			IL_0037: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_003c: ldloc.3
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0042: pop
-			IL_0043: br IL_0048
-
-			IL_0048: ldloc.1
-			IL_0049: ret
+			IL_0043: ldloc.1
+			IL_0044: ret
 		} // end of method optionalWrite::__js_call__
 
 	} // end of class optionalWrite

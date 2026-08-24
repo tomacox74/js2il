@@ -1399,7 +1399,7 @@
 				IL_0048: ldc.r8 0.0
 				IL_0051: box [System.Runtime]System.Double
 				IL_0056: ldloc.3
-				IL_0057: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object, object)
+				IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object, object)
 				IL_005c: pop
 				IL_005d: ldloc.0
 				IL_005e: ldc.r8 1
@@ -1535,10 +1535,10 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 74 (0x4a)
+			// Code size: 121 (0x79)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] float64,
 				[3] object
@@ -1546,7 +1546,7 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-			IL_0006: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
+			IL_0006: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
 			IL_000b: stloc.0
 			IL_000c: ldc.r8 0.0
 			IL_0015: stloc.1
@@ -1556,23 +1556,36 @@
 				IL_0018: ldloc.2
 				IL_0019: ldc.r8 1024
 				IL_0022: clt
-				IL_0024: brfalse IL_0048
+				IL_0024: brfalse IL_0077
 
 				IL_0029: ldloc.0
-				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::shift()
-				IL_002f: stloc.3
-				IL_0030: ldarg.0
-				IL_0031: ldloc.3
-				IL_0032: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
-				IL_0037: ldloc.1
-				IL_0038: ldc.r8 1
-				IL_0041: add
-				IL_0042: stloc.1
-				IL_0043: br IL_0016
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_002f: volatile.
+				IL_0031: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+				IL_0036: brfalse IL_004a
+
+				IL_003b: ldstr "shift"
+				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0045: br IL_005e
+
+				IL_004a: ldstr "shift"
+				IL_004f: ldstr "Compile_Performance_Dromaeo_Object_Array_Modern:<TwoPhaseDummy_M12>:__js_call__:14"
+				IL_0054: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+				IL_005e: stloc.3
+				IL_005f: ldarg.0
+				IL_0060: ldloc.3
+				IL_0061: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
+				IL_0066: ldloc.1
+				IL_0067: ldc.r8 1
+				IL_0070: add
+				IL_0071: stloc.1
+				IL_0072: br IL_0016
 			// end loop
 
-			IL_0048: ldnull
-			IL_0049: ret
+			IL_0077: ldnull
+			IL_0078: ret
 		} // end of method ArrowFunction_L39C37::__js_call__
 
 	} // end of class ArrowFunction_L39C37
@@ -1698,18 +1711,18 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 102 (0x66)
+			// Code size: 112 (0x70)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] float64,
-				[3] class [JavaScriptRuntime]JavaScriptRuntime.Array
+				[3] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-			IL_0006: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
+			IL_0006: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
 			IL_000b: stloc.0
 			IL_000c: ldc.r8 0.0
 			IL_0015: stloc.1
@@ -1719,27 +1732,29 @@
 				IL_0018: ldloc.2
 				IL_0019: ldc.r8 1024
 				IL_0022: clt
-				IL_0024: brfalse IL_0064
+				IL_0024: brfalse IL_006e
 
 				IL_0029: ldloc.0
-				IL_002a: ldc.r8 0.0
-				IL_0033: box [System.Runtime]System.Double
-				IL_0038: ldc.r8 1
-				IL_0041: box [System.Runtime]System.Double
-				IL_0046: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object)
-				IL_004b: stloc.3
-				IL_004c: ldarg.0
-				IL_004d: ldloc.3
-				IL_004e: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
-				IL_0053: ldloc.1
-				IL_0054: ldc.r8 1
-				IL_005d: add
-				IL_005e: stloc.1
-				IL_005f: br IL_0016
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_002f: ldstr "splice"
+				IL_0034: ldc.r8 0.0
+				IL_003d: box [System.Runtime]System.Double
+				IL_0042: ldc.r8 1
+				IL_004b: box [System.Runtime]System.Double
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0055: stloc.3
+				IL_0056: ldarg.0
+				IL_0057: ldloc.3
+				IL_0058: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
+				IL_005d: ldloc.1
+				IL_005e: ldc.r8 1
+				IL_0067: add
+				IL_0068: stloc.1
+				IL_0069: br IL_0016
 			// end loop
 
-			IL_0064: ldnull
-			IL_0065: ret
+			IL_006e: ldnull
+			IL_006f: ret
 		} // end of method ArrowFunction_L45C38::__js_call__
 
 	} // end of class ArrowFunction_L45C38
@@ -2034,10 +2049,10 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 74 (0x4a)
+			// Code size: 121 (0x79)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] float64,
 				[3] object
@@ -2045,7 +2060,7 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-			IL_0006: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
+			IL_0006: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
 			IL_000b: stloc.0
 			IL_000c: ldc.r8 0.0
 			IL_0015: stloc.1
@@ -2055,23 +2070,36 @@
 				IL_0018: ldloc.2
 				IL_0019: ldc.r8 25600
 				IL_0022: clt
-				IL_0024: brfalse IL_0048
+				IL_0024: brfalse IL_0077
 
 				IL_0029: ldloc.0
-				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::'pop'()
-				IL_002f: stloc.3
-				IL_0030: ldarg.0
-				IL_0031: ldloc.3
-				IL_0032: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
-				IL_0037: ldloc.1
-				IL_0038: ldc.r8 1
-				IL_0041: add
-				IL_0042: stloc.1
-				IL_0043: br IL_0016
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_002f: volatile.
+				IL_0031: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+				IL_0036: brfalse IL_004a
+
+				IL_003b: ldstr "pop"
+				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0045: br IL_005e
+
+				IL_004a: ldstr "pop"
+				IL_004f: ldstr "Compile_Performance_Dromaeo_Object_Array_Modern:<TwoPhaseDummy_M15>:__js_call__:14"
+				IL_0054: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+				IL_005e: stloc.3
+				IL_005f: ldarg.0
+				IL_0060: ldloc.3
+				IL_0061: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
+				IL_0066: ldloc.1
+				IL_0067: ldc.r8 1
+				IL_0070: add
+				IL_0071: stloc.1
+				IL_0072: br IL_0016
 			// end loop
 
-			IL_0048: ldnull
-			IL_0049: ret
+			IL_0077: ldnull
+			IL_0078: ret
 		} // end of method ArrowFunction_L57C35::__js_call__
 
 	} // end of class ArrowFunction_L57C35
@@ -2160,7 +2188,7 @@
 		IL_0018: conv.r8
 		IL_0019: ldstr "startTest"
 		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.1
+		IL_001f: ldc.i4.0
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_Dromaeo_Object_Array_Modern/startTest/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
 		IL_0026: ldc.i4.1
@@ -2175,7 +2203,7 @@
 		IL_0038: conv.r8
 		IL_0039: ldstr "endTest"
 		IL_003e: ldc.i4.0
-		IL_003f: ldc.i4.1
+		IL_003f: ldc.i4.0
 		IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_Dromaeo_Object_Array_Modern/endTest/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0045: stloc.2
 		IL_0046: ldc.i4.1
@@ -2190,7 +2218,7 @@
 		IL_0058: conv.r8
 		IL_0059: ldstr "prep"
 		IL_005e: ldc.i4.0
-		IL_005f: ldc.i4.1
+		IL_005f: ldc.i4.0
 		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_Dromaeo_Object_Array_Modern/prep/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0065: stloc.3
 		IL_0066: ldc.i4.1
@@ -2205,7 +2233,7 @@
 		IL_0078: conv.r8
 		IL_0079: ldstr "test"
 		IL_007e: ldc.i4.0
-		IL_007f: ldc.i4.1
+		IL_007f: ldc.i4.0
 		IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Performance_Dromaeo_Object_Array_Modern/test/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0085: stloc.s 4
 		IL_0087: nop
@@ -2485,4 +2513,13 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_15
+	.field assembly static int32 __jroc_dynamicLookup_16
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

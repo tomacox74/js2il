@@ -240,9 +240,13 @@
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js",
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js",
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js",
-          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js",
+          "tests/Jroc.Test262.Tests/language/expressions/less-than/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/greater-than/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/less-than-or-equal/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/greater-than-or-equal/ExecutionTests.cs"
         ],
-        "notes": "Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete."
+        "notes": "Implements numeric, string, object-to-primitive, and mixed BigInt relational behavior, including incomparable string operands returning false instead of throwing. Proxy and remaining exotic coercion-order cases are incomplete."
       },
       {
         "clause": "7.2.13",
@@ -252,9 +256,11 @@
         "testScripts": [
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
-          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js",
+          "tests/Jroc.Test262.Tests/language/expressions/equals/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/does-not-equals/ExecutionTests.cs"
         ],
-        "notes": "Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented."
+        "notes": "Covers nullish, numeric, BigInt, and object-to-primitive loose-equality coercions in both equality and inequality forms. Complete proxy and host-object edge-case parity is not yet implemented."
       },
       {
         "clause": "7.2.14",

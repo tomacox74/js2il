@@ -165,4 +165,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.7-5-b-112")]
     public Task _15_2_3_7_5_b_112()
         => ExecutionTestFromFile("15.2.3.7-5-b-112");
+
+    [Fact(DisplayName = "15.2.3.7-1-3")]
+    public Task _15_2_3_7_1_3()
+        => ExecutionTestFromFile("15.2.3.7-1-3");
+
+    [Fact(DisplayName = "15.2.3.7-1-4")]
+    public Task _15_2_3_7_1_4()
+        => ExecutionTestFromFile("15.2.3.7-1-4");
+
+    [Fact(DisplayName = "15.2.3.7-1")]
+    public Task _15_2_3_7_1()
+        => ExecutionTestFromFile("15.2.3.7-1");
 }

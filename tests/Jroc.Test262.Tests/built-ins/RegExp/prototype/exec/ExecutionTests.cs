@@ -57,4 +57,35 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_10_6_2_A5_T1()
         => ExecutionTestFromFile("S15.10.6.2_A5_T1");
 
+    [Fact(DisplayName = "S15.10.6.2_A1_T6")]
+    public Task S15_10_6_2_A1_T6()
+        => ExecutionTestFromFile("S15.10.6.2_A1_T6");
+
+    [Fact(DisplayName = "S15.10.6.2_A4_T11")]
+    public Task S15_10_6_2_A4_T11()
+        => ExecutionTestFromFile("S15.10.6.2_A4_T11");
+
+    [Fact(DisplayName = "failure-g-lastindex-reset")]
+    public Task failure_g_lastindex_reset()
+        => ExecutionTestFromFile("failure-g-lastindex-reset");
+
+    [Fact(DisplayName = "failure-lastindex-access")]
+    public Task failure_lastindex_access()
+        => ExecutionTestFromFile("failure-lastindex-access");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "success-lastindex-access")]
+    public Task success_lastindex_access()
+        => ExecutionTestFromFile("success-lastindex-access");
+
+    [Fact(DisplayName = "u-lastindex-adv")]
+    public Task u_lastindex_adv()
+        => ExecutionTestFromFile("u-lastindex-adv");
+
+    [Fact(DisplayName = "y-fail-lastindex-no-write")]
+    public Task y_fail_lastindex_no_write()
+        => ExecutionTestFromFile("y-fail-lastindex-no-write");
 }

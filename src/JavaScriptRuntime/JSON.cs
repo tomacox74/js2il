@@ -20,6 +20,36 @@ namespace JavaScriptRuntime
             public string Text { get; }
         }
 
+        private sealed class JsonParseNode
+        {
+            private readonly Dictionary<string, JsonParseNode>? _children;
+
+            public JsonParseNode(object? value, string source)
+            {
+                Value = value;
+                Source = source;
+            }
+
+            public JsonParseNode(object value, Dictionary<string, JsonParseNode> children)
+            {
+                Value = value;
+                _children = children;
+            }
+
+            public object? Value { get; }
+            public string? Source { get; }
+
+            public bool Matches(object? value)
+                => Source is not null
+                    ? Operators.SameValue(Value, value)
+                    : ReferenceEquals(Value, value);
+
+            public JsonParseNode? GetChild(string key)
+                => _children is not null && _children.TryGetValue(key, out var child)
+                    ? child
+                    : null;
+        }
+
         private static readonly ConditionalWeakTable<JsObject, RawJsonData> RawJsonObjects = new();
 
         // JSON.parse(text[, reviver])
@@ -33,7 +63,7 @@ namespace JavaScriptRuntime
             try
             {
                 using var doc = JsonDocument.Parse(s ?? "undefined");
-                var parsed = FromElement(doc.RootElement);
+                var parsed = FromElement(doc.RootElement, out var parseNode);
                 if (!CallableOperations.IsCallable(reviver))
                 {
                     return parsed;
@@ -41,7 +71,7 @@ namespace JavaScriptRuntime
 
                 var root = ObjectRuntime.CreateOrdinaryObject();
                 root.SetBoxedValue(string.Empty, parsed);
-                return InternalizeJsonProperty(root, string.Empty, reviver!, doc.RootElement.GetRawText());
+                return InternalizeJsonProperty(root, string.Empty, reviver!, parseNode);
             }
             catch (JsonException ex)
             {
@@ -54,16 +84,25 @@ namespace JavaScriptRuntime
             object holder,
             string name,
             object reviver,
-            string? source = null)
+            JsonParseNode? parseNode)
         {
             var value = ObjectRuntime.GetItem(holder, name);
+            if (parseNode is not null && !parseNode.Matches(value))
+            {
+                parseNode = null;
+            }
+
             if (value is Array array)
             {
                 var length = (int)array.length;
                 for (var i = 0; i < length; i++)
                 {
                     var key = i.ToString(CultureInfo.InvariantCulture);
-                    var revived = InternalizeJsonProperty(array, key, reviver);
+                    var revived = InternalizeJsonProperty(
+                        array,
+                        key,
+                        reviver,
+                        parseNode?.GetChild(key));
                     if (revived is null)
                     {
                         // Spec: Perform ? val.[[Delete]](key) - a failed (non-configurable)
@@ -78,18 +117,15 @@ namespace JavaScriptRuntime
                     }
                 }
             }
-            else if (value is not null and not JsNull
-                     && value is not string
-                     && value is not bool
-                     && value is not double
-                     && value is not float
-                     && value is not int
-                     && value is not long
-                     && value is not decimal)
+            else if (!TypeUtilities.IsPrimitive(value))
             {
                 foreach (var key in ObjectRuntime.GetOwnEnumerableKeysInOrder(value))
                 {
-                    var revived = InternalizeJsonProperty(value, key, reviver);
+                    var revived = InternalizeJsonProperty(
+                        value,
+                        key,
+                        reviver,
+                        parseNode?.GetChild(key));
                     if (revived is null)
                     {
                         // Spec: Perform ? val.[[Delete]](P) - a failed (non-configurable)
@@ -105,13 +141,12 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (source is null)
+            var context = ObjectRuntime.CreateOrdinaryObject();
+            if (parseNode?.Source is string source)
             {
-                return CallableOperations.Call2(reviver, holder, name, value);
+                context.SetBoxedValue("source", source);
             }
 
-            var context = ObjectRuntime.CreateOrdinaryObject();
-            context.SetBoxedValue("source", source);
             return CallableOperations.Call3(reviver, holder, name, value, context);
         }
 
@@ -599,45 +634,61 @@ namespace JavaScriptRuntime
         private static bool IsJsonWhitespace(char value)
             => value is '\t' or '\n' or '\r' or ' ';
 
-        private static object? FromElement(JsonElement el)
+        private static object? FromElement(JsonElement el, out JsonParseNode node)
         {
             switch (el.ValueKind)
             {
                 case JsonValueKind.Object:
                     var obj = ObjectRuntime.CreateOrdinaryObject();
+                    var properties = new Dictionary<string, JsonParseNode>(StringComparer.Ordinal);
                     foreach (var prop in el.EnumerateObject())
                     {
-                        obj.SetBoxedValue(prop.Name, FromElement(prop.Value));
+                        obj.SetBoxedValue(prop.Name, FromElement(prop.Value, out var child));
+                        properties[prop.Name] = child;
                     }
+                    node = new JsonParseNode(obj, properties);
                     return obj;
 
                 case JsonValueKind.Array:
                     var arr = new Array();
+                    var elements = new Dictionary<string, JsonParseNode>(StringComparer.Ordinal);
+                    var index = 0;
                     foreach (var item in el.EnumerateArray())
                     {
-                        arr.Add(FromElement(item)!);
+                        arr.Add(FromElement(item, out var child)!);
+                        elements[index.ToString(CultureInfo.InvariantCulture)] = child;
+                        index++;
                     }
+                    node = new JsonParseNode(arr, elements);
                     return arr;
 
                 case JsonValueKind.String:
-                    return el.GetString();
+                    var stringValue = el.GetString();
+                    node = new JsonParseNode(stringValue, el.GetRawText());
+                    return stringValue;
 
                 case JsonValueKind.Number:
                     // Use double to model JS number
-                    return el.GetDouble();
+                    var numberValue = el.GetDouble();
+                    node = new JsonParseNode(numberValue, el.GetRawText());
+                    return numberValue;
 
                 case JsonValueKind.True:
+                    node = new JsonParseNode(true, el.GetRawText());
                     return true;
 
                 case JsonValueKind.False:
+                    node = new JsonParseNode(false, el.GetRawText());
                     return false;
 
                 case JsonValueKind.Null:
                     // Represent JavaScript null distinctly from CLR null (undefined)
+                    node = new JsonParseNode(JsNull.Null, el.GetRawText());
                     return JsNull.Null;
 
                 default:
                     // JSON doesn't produce Undefined; treat anything else as null
+                    node = new JsonParseNode(null, el.GetRawText());
                     return null;
             }
         }

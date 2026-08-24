@@ -325,7 +325,7 @@ internal sealed partial class LIRToILCompiler
             _metadataBuilder,
             functionName ?? GetFunctionName(callableId));
         ilEncoder.LoadConstantI4(metadata.Plan.RequiresInvocationContext ? 1 : 0);
-        ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
+        ilEncoder.LoadConstantI4(0);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(_memberRefRegistry.GetOrAddGenericFunctionInitializer(
             isAsync

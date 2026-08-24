@@ -1074,7 +1074,12 @@ public static class Function
                 result =
                     BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
                         result);
-                return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
+                return TypeUtilities.IsConstructorReturnOverride(result)
+                    ? ApplyBuiltinNewTargetPrototype(
+                        result,
+                        constructor,
+                        newTarget)
+                    : instance;
             }
             finally
             {
@@ -1106,12 +1111,40 @@ public static class Function
                 result =
                     BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
                         result);
-                return TypeUtilities.IsConstructorReturnOverride(result) ? result : receiver;
+                return TypeUtilities.IsConstructorReturnOverride(result)
+                    ? ApplyBuiltinNewTargetPrototype(
+                        result,
+                        constructor,
+                        newTarget)
+                    : receiver;
             }
             finally
             {
                 RuntimeServices.SetCurrentThis(previousThis);
             }
+        }
+
+        private static object? ApplyBuiltinNewTargetPrototype(
+            object? result,
+            BuiltinDelegateFunctionAdapter constructor,
+            object? newTarget)
+        {
+            if (result is null
+                || result is JsNull
+                || newTarget is null
+                || newTarget is JsNull
+                || ReferenceEquals(newTarget, constructor))
+            {
+                return result;
+            }
+
+            var prototype = ObjectRuntime.GetItem(newTarget, "prototype");
+            if (!TypeUtilities.IsPrimitive(prototype))
+            {
+                PrototypeChain.SetPrototype(result, prototype!);
+            }
+
+            return result;
         }
 
         public static double GetLength(Delegate target)

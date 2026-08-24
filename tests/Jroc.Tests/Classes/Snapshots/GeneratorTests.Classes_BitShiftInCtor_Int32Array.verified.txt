@@ -405,7 +405,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 88 (0x58)
+			// Code size: 94 (0x5e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -423,29 +423,27 @@
 			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_001b: stloc.0
 			IL_001c: ldarg.1
-			IL_001d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0022: stloc.3
-			IL_0023: ldloc.3
-			IL_0024: conv.i4
-			IL_0025: ldc.r8 31
-			IL_002e: conv.i4
-			IL_002f: and
-			IL_0030: conv.r8
-			IL_0031: stloc.1
-			IL_0032: ldc.r8 1
-			IL_003b: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_0040: ldloc.1
-			IL_0041: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
-			IL_0046: shl
-			IL_0047: conv.r8
-			IL_0048: stloc.3
-			IL_0049: ldarg.0
-			IL_004a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Classes_BitShiftInCtor_Int32Array/BitBag::buf
-			IL_004f: ldloc.0
-			IL_0050: ldloc.3
-			IL_0051: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-			IL_0056: ldnull
-			IL_0057: ret
+			IL_001d: ldc.r8 31
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
+			IL_0030: stloc.2
+			IL_0031: ldloc.2
+			IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0037: stloc.1
+			IL_0038: ldc.r8 1
+			IL_0041: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_0046: ldloc.1
+			IL_0047: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+			IL_004c: shl
+			IL_004d: conv.r8
+			IL_004e: stloc.3
+			IL_004f: ldarg.0
+			IL_0050: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Classes_BitShiftInCtor_Int32Array/BitBag::buf
+			IL_0055: ldloc.0
+			IL_0056: ldloc.3
+			IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+			IL_005c: ldnull
+			IL_005d: ret
 		} // end of method BitBag::set
 
 		.method public hidebysig 
@@ -457,7 +455,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 99 (0x63)
+			// Code size: 105 (0x69)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -476,36 +474,34 @@
 			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_001b: stloc.0
 			IL_001c: ldarg.1
-			IL_001d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0022: stloc.3
-			IL_0023: ldloc.3
-			IL_0024: conv.i4
-			IL_0025: ldc.r8 31
-			IL_002e: conv.i4
-			IL_002f: and
-			IL_0030: conv.r8
-			IL_0031: stloc.1
-			IL_0032: ldarg.0
-			IL_0033: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Classes_BitShiftInCtor_Int32Array/BitBag::buf
-			IL_0038: ldloc.0
-			IL_0039: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_003e: stloc.3
-			IL_003f: ldc.r8 1
-			IL_0048: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_004d: ldloc.1
-			IL_004e: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
-			IL_0053: shl
-			IL_0054: conv.r8
-			IL_0055: stloc.s 4
-			IL_0057: ldloc.3
-			IL_0058: conv.i4
-			IL_0059: ldloc.s 4
-			IL_005b: conv.i4
-			IL_005c: and
-			IL_005d: conv.r8
-			IL_005e: stloc.s 4
-			IL_0060: ldloc.s 4
-			IL_0062: ret
+			IL_001d: ldc.r8 31
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
+			IL_0030: stloc.2
+			IL_0031: ldloc.2
+			IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0037: stloc.1
+			IL_0038: ldarg.0
+			IL_0039: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Classes_BitShiftInCtor_Int32Array/BitBag::buf
+			IL_003e: ldloc.0
+			IL_003f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_0044: stloc.3
+			IL_0045: ldc.r8 1
+			IL_004e: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_0053: ldloc.1
+			IL_0054: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToUint32AsInt32(float64)
+			IL_0059: shl
+			IL_005a: conv.r8
+			IL_005b: stloc.s 4
+			IL_005d: ldloc.3
+			IL_005e: conv.i4
+			IL_005f: ldloc.s 4
+			IL_0061: conv.i4
+			IL_0062: and
+			IL_0063: conv.r8
+			IL_0064: stloc.s 4
+			IL_0066: ldloc.s 4
+			IL_0068: ret
 		} // end of method BitBag::test
 
 	} // end of class BitBag
