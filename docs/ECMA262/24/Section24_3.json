@@ -60,13 +60,13 @@
     {
       "clause": "24.3.3.4",
       "title": "WeakMap.prototype.getOrInsert ( key , value )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert"
     },
     {
       "clause": "24.3.3.5",
       "title": "WeakMap.prototype.getOrInsertComputed ( key , callback )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsertcomputed"
     },
     {
@@ -165,9 +165,13 @@
       {
         "clause": "24.3.3.4",
         "feature": "WeakMap.prototype.getOrInsert / getOrInsertComputed",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert",
-        "notes": "The newer WeakMap insertion helpers are not implemented."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/getOrInsert/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/getOrInsertComputed/ExecutionTests.cs"
+        ],
+        "notes": "The insertion helpers support object keys, existing-key short circuiting, callback invocation and abrupt completion, mutation overwrite semantics, and standard name/length metadata for the covered test262 cases. Symbol weak keys and broader exotic callback behavior remain limited."
       },
       {
         "clause": "24.3.3.8",

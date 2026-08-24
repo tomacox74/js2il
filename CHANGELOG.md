@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262/docs: port 200 additional previously failing ES2025
+  tests across generic Array methods, numeric and string coercion, Object and
+  Reflect descriptors, Function invocation, BigInt, Promise, WeakMap upsert,
+  ArrayBuffer, TypedArray, and Iterator surfaces; implement the shared
+  specification fixes required for the complete batch.
 - compiler/runtime/test262/docs: port 100 previously failing ES2025
   compatibility tests covering collection method metadata, Symbol and
   TypedArray prototype behavior, Array concat/species semantics, Boolean and

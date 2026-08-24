@@ -119,9 +119,14 @@
           "test/built-ins/BigInt/constructor-from-hex-string.js",
           "test/built-ins/BigInt/constructor-from-octal-string.js",
           "test/built-ins/BigInt/constructor-from-string-syntax-errors.js",
-          "test/built-ins/BigInt/constructor-trailing-leading-spaces.js"
+          "test/built-ins/BigInt/constructor-trailing-leading-spaces.js",
+          "test/built-ins/BigInt/infinity-throws-rangeerror.js",
+          "test/built-ins/BigInt/nan-throws-rangeerror.js",
+          "test/built-ins/BigInt/negative-infinity-throws.rangeerror.js",
+          "test/built-ins/BigInt/is-a-constructor.js",
+          "test/built-ins/BigInt/wrapper-object-ordinary-toprimitive.js"
         ],
-        "notes": "Supports BigInt(value) with basic conversion from integral Numbers and from decimal, binary, octal, and hexadecimal strings, including empty/trimmed strings and representative string syntax errors; typeof === 'bigint'. The full BigInt constructor/prototype surface remains incomplete."
+        "notes": "Supports BigInt(value) with ordinary ToPrimitive conversion, integral Number conversion, RangeError for non-integral and non-finite Numbers, and decimal, binary, octal, and hexadecimal strings. BigInt remains callable but rejects construction. The remaining BigInt surface is still incomplete."
       },
       {
         "clause": "21.2.2.1",
@@ -139,7 +144,7 @@
           "test/built-ins/BigInt/asIntN/name.js",
           "test/built-ins/BigInt/asIntN/not-a-constructor.js"
         ],
-        "notes": "Supports `BigInt.asIntN` arithmetic truncation, callable metadata (name/length, non-constructible), primitive and wrapper coercion, and bits-before-bigint coercion order for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported."
+        "notes": "Supports `BigInt.asIntN` arithmetic truncation, callable metadata, strict ToBigInt conversion and abrupt completion, primitive and wrapper coercion, and bits-before-bigint coercion order for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported."
       },
       {
         "clause": "21.2.2.2",
@@ -157,7 +162,7 @@
           "test/built-ins/BigInt/asUintN/name.js",
           "test/built-ins/BigInt/asUintN/not-a-constructor.js"
         ],
-        "notes": "Supports `BigInt.asUintN` modulo truncation, callable metadata (name/length, non-constructible), primitive and wrapper coercion, and bits-before-bigint coercion order for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported."
+        "notes": "Supports `BigInt.asUintN` modulo truncation, callable metadata, strict ToBigInt conversion and abrupt completion, primitive and wrapper coercion, and bits-before-bigint coercion order for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported."
       },
       {
         "clause": "21.2",

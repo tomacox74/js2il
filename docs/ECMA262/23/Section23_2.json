@@ -894,9 +894,12 @@
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.from",
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js",
-          "tests/Jroc.Test262.Tests/built-ins/TypedArray/from/JavaScript/iterated-array-changed-by-tonumber.js"
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/from/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/of/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/entries/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/keys/ExecutionTests.cs"
         ],
-        "notes": "Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. Current checked-in test262 coverage also exercises the built-in array-iterator path where later numeric coercion mutates the original source after iteration materialization. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete.",
+        "notes": "Supported non-BigInt TypedArray families expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks and standard name/length/property descriptors. TypedArray entries() and keys() share the intrinsic array-iterator prototype and expose standard metadata. BigInt TypedArray families and remaining constructor edge cases are still incomplete.",
         "test262Paths": [
           "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js"
         ]

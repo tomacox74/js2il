@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-18T05:14:52Z
+> Last generated (UTC): 2026-08-24T01:15:54Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -207,7 +207,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype (constructor property) | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) |  | Object.prototype is available as a value via the global Object function value (JavaScriptRuntime.GlobalThis.Object). The runtime currently exposes a minimal placeholder object to support patterns like Object.create(Object.prototype, ...); the full Object.prototype API surface is not implemented. |
+| Object.prototype (constructor property) | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/ExecutionTests.cs` |  | Object.prototype is a concrete intrinsic object with the covered constructor descriptor, legacy accessor methods, immutable-prototype behavior, and ordinary prototype-chain participation. Remaining host and exotic object surface details are still incomplete. |
 
 ### 20.1.2.22 ([tc39.es](https://tc39.es/ecma262/#sec-object.seal))
 
@@ -273,13 +273,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Legacy __proto__ getter/setter | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js) |  | Supported via special-casing the "__proto__" key in runtime property get/set helpers when prototype-chain mode is enabled. This approximates legacy accessor semantics but does not fully implement Object.prototype as an actual intrinsic object with accessor descriptors. |
+| Legacy __proto__ getter/setter | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__proto__/ExecutionTests.cs` |  | Object.prototype exposes a real __proto__ accessor with standard metadata, receiver coercion, invalid-prototype no-op behavior, and ordinary cycle, extensibility, and immutable-prototype enforcement for the covered test262 cases. |
 
 ### 20.1.3.9 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype-legacy-accessor-methods))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Legacy Object.prototype accessor methods | Supported with Limitations | [`Object_Prototype_LegacyAccessors.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js) |  | Legacy getter/setter lookup/definition APIs are available via Object.prototype.* call forms and descriptor store integration. |
+| Legacy Object.prototype accessor methods | Supported with Limitations | [`Object_Prototype_LegacyAccessors.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__defineGetter__/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__defineSetter__/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupGetter__/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupSetter__/ExecutionTests.cs` |  | Legacy getter/setter definition and lookup APIs use ordinary descriptor and prototype-chain semantics, including existing, non-configurable, non-extensible, own-data, and inherited-data cases plus standard function metadata. |
 
 ### 20.1.3.9.1 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.__defineGetter__))
 
