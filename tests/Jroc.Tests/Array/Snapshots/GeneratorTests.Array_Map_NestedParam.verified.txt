@@ -692,7 +692,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 243 (0xf3)
+		// Code size: 240 (0xf0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Map_NestedParam/Scope,
@@ -731,74 +731,73 @@
 		IL_002e: stloc.1
 		IL_002f: nop
 		IL_0030: nop
-		IL_0031: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0036: stloc.s 4
-		IL_0038: ldc.i4.3
-		IL_0039: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_003e: dup
-		IL_003f: ldstr "a"
-		IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0049: dup
-		IL_004a: ldstr "bb"
-		IL_004f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0054: dup
-		IL_0055: ldstr "ccc"
-		IL_005a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_005f: stloc.s 5
-		IL_0061: ldloc.1
-		IL_0062: ldloc.s 4
-		IL_0064: ldloc.s 5
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_006b: stloc.2
-		IL_006c: ldc.r8 0.0
-		IL_0075: stloc.3
-		// loop start (head: IL_0076)
-			IL_0076: ldloc.3
-			IL_0077: stloc.s 6
-			IL_0079: volatile.
-			IL_007b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_0080: brfalse IL_0095
+		IL_0031: ldc.i4.3
+		IL_0032: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0037: dup
+		IL_0038: ldstr "a"
+		IL_003d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0042: dup
+		IL_0043: ldstr "bb"
+		IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_004d: dup
+		IL_004e: ldstr "ccc"
+		IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0058: stloc.s 5
+		IL_005a: ldloc.0
+		IL_005b: castclass Modules.Array_Map_NestedParam/Scope
+		IL_0060: ldnull
+		IL_0061: ldloc.s 5
+		IL_0063: call object Modules.Array_Map_NestedParam/outer::__js_call__(class Modules.Array_Map_NestedParam/Scope, object, object)
+		IL_0068: stloc.2
+		IL_0069: ldc.r8 0.0
+		IL_0072: stloc.3
+		// loop start (head: IL_0073)
+			IL_0073: ldloc.3
+			IL_0074: stloc.s 6
+			IL_0076: volatile.
+			IL_0078: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_007d: brfalse IL_0092
 
-			IL_0085: ldloc.2
-			IL_0086: ldstr "length"
-			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0090: br IL_00aa
+			IL_0082: ldloc.2
+			IL_0083: ldstr "length"
+			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_008d: br IL_00a7
 
-			IL_0095: ldloc.2
-			IL_0096: ldstr "length"
-			IL_009b: ldstr "Array_Map_NestedParam:Modules.Array_Map_NestedParam:__js_module_init__:21"
-			IL_00a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0092: ldloc.2
+			IL_0093: ldstr "length"
+			IL_0098: ldstr "Array_Map_NestedParam:Modules.Array_Map_NestedParam:__js_module_init__:21"
+			IL_009d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00aa: stloc.s 7
-			IL_00ac: ldloc.s 6
-			IL_00ae: box [System.Runtime]System.Double
-			IL_00b3: stloc.s 8
-			IL_00b5: ldloc.s 8
-			IL_00b7: ldloc.s 7
-			IL_00b9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
-			IL_00be: stloc.s 9
-			IL_00c0: ldloc.s 9
-			IL_00c2: brfalse IL_00f2
+			IL_00a7: stloc.s 7
+			IL_00a9: ldloc.s 6
+			IL_00ab: box [System.Runtime]System.Double
+			IL_00b0: stloc.s 8
+			IL_00b2: ldloc.s 8
+			IL_00b4: ldloc.s 7
+			IL_00b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_00bb: stloc.s 9
+			IL_00bd: ldloc.s 9
+			IL_00bf: brfalse IL_00ef
 
-			IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00cc: stloc.s 10
-			IL_00ce: ldloc.2
-			IL_00cf: ldloc.3
-			IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00d5: stloc.s 7
-			IL_00d7: ldloc.s 10
-			IL_00d9: ldloc.s 7
-			IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00e0: pop
-			IL_00e1: ldloc.3
-			IL_00e2: ldc.r8 1
-			IL_00eb: add
-			IL_00ec: stloc.3
-			IL_00ed: br IL_0076
+			IL_00c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c9: stloc.s 10
+			IL_00cb: ldloc.2
+			IL_00cc: ldloc.3
+			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00d2: stloc.s 7
+			IL_00d4: ldloc.s 10
+			IL_00d6: ldloc.s 7
+			IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00dd: pop
+			IL_00de: ldloc.3
+			IL_00df: ldc.r8 1
+			IL_00e8: add
+			IL_00e9: stloc.3
+			IL_00ea: br IL_0073
 		// end loop
 
-		IL_00f2: ret
+		IL_00ef: ret
 	} // end of method Array_Map_NestedParam::__js_module_init__
 
 } // end of class Modules.Array_Map_NestedParam

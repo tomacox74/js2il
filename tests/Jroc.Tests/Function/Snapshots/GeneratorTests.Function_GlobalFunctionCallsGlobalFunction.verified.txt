@@ -210,11 +210,10 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 58 (0x3a)
+			// Code size: 41 (0x29)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[1] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -225,20 +224,11 @@
 			IL_0015: box [System.Runtime]System.Double
 			IL_001a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_001f: pop
-			IL_0020: ldarg.0
-			IL_0021: ldfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
-			IL_0026: stloc.1
-			IL_0027: ldloc.1
-			IL_0028: ldc.i4.1
-			IL_0029: newarr [System.Runtime]System.Object
-			IL_002e: dup
-			IL_002f: ldc.i4.0
-			IL_0030: ldarg.0
-			IL_0031: stelem.ref
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0037: pop
-			IL_0038: ldnull
-			IL_0039: ret
+			IL_0020: ldnull
+			IL_0021: call object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object)
+			IL_0026: pop
+			IL_0027: ldnull
+			IL_0028: ret
 		} // end of method helloWorldProxy::__js_call__
 
 	} // end of class helloWorldProxy
@@ -428,7 +418,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 134 (0x86)
+		// Code size: 135 (0x87)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope,
@@ -478,22 +468,23 @@
 		IL_004d: ldloc.3
 		IL_004e: stfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
 		IL_0053: nop
-		IL_0054: ldloc.1
-		IL_0055: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_005f: pop
-		IL_0060: nop
+		IL_0054: ldloc.0
+		IL_0055: castclass Modules.Function_GlobalFunctionCallsGlobalFunction/Scope
+		IL_005a: ldnull
+		IL_005b: call object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope, object)
+		IL_0060: pop
 		IL_0061: nop
 		IL_0062: nop
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: stloc.s 4
-		IL_006a: ldloc.s 4
-		IL_006c: ldstr "finally is now"
-		IL_0071: ldc.r8 3
-		IL_007a: box [System.Runtime]System.Double
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0084: pop
-		IL_0085: ret
+		IL_0063: nop
+		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0069: stloc.s 4
+		IL_006b: ldloc.s 4
+		IL_006d: ldstr "finally is now"
+		IL_0072: ldc.r8 3
+		IL_007b: box [System.Runtime]System.Double
+		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0085: pop
+		IL_0086: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionCallsGlobalFunction

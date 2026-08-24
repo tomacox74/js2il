@@ -442,14 +442,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Call_Spread_StringIterable/Scope,
 			[1] class Modules.Function_Call_Spread_StringIterable/dump/FunctionObject,
 			[2] object[],
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[4] object[]
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
 		IL_0000: newobj instance void Modules.Function_Call_Spread_StringIterable/Scope::.ctor()
@@ -475,23 +474,27 @@
 		IL_002c: stloc.1
 		IL_002d: nop
 		IL_002e: nop
-		IL_002f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0034: stloc.2
-		IL_0035: ldc.i4.0
-		IL_0036: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_003b: stloc.3
-		IL_003c: ldloc.3
-		IL_003d: ldstr "ab"
-		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_0047: ldloc.3
-		IL_0048: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-		IL_004d: stloc.s 4
-		IL_004f: ldloc.1
-		IL_0050: ldloc.2
-		IL_0051: ldloc.s 4
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0058: pop
-		IL_0059: ret
+		IL_002f: ldc.i4.0
+		IL_0030: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0035: stloc.3
+		IL_0036: ldloc.3
+		IL_0037: ldstr "ab"
+		IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_0041: ldloc.3
+		IL_0042: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+		IL_0047: stloc.2
+		IL_0048: ldloc.1
+		IL_0049: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		IL_004e: ldc.i4.1
+		IL_004f: newarr [System.Runtime]System.Object
+		IL_0054: dup
+		IL_0055: ldc.i4.0
+		IL_0056: ldloc.0
+		IL_0057: stelem.ref
+		IL_0058: ldloc.2
+		IL_0059: call object Modules.Function_Call_Spread_StringIterable/dump/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method Function_Call_Spread_StringIterable::__js_module_init__
 
 } // end of class Modules.Function_Call_Spread_StringIterable

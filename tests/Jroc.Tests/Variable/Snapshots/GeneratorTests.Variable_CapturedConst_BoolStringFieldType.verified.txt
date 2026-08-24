@@ -273,7 +273,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 95 (0x5f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_BoolStringFieldType/Scope,
@@ -314,15 +314,16 @@
 		IL_0040: nop
 		IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0046: stloc.3
-		IL_0047: ldloc.1
-		IL_0048: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.3
-		IL_0055: ldloc.s 4
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005c: pop
-		IL_005d: ret
+		IL_0047: ldloc.0
+		IL_0048: castclass Modules.Variable_CapturedConst_BoolStringFieldType/Scope
+		IL_004d: ldnull
+		IL_004e: call object Modules.Variable_CapturedConst_BoolStringFieldType/run::__js_call__(class Modules.Variable_CapturedConst_BoolStringFieldType/Scope, object)
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.3
+		IL_0056: ldloc.s 4
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005d: pop
+		IL_005e: ret
 	} // end of method Variable_CapturedConst_BoolStringFieldType::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_BoolStringFieldType

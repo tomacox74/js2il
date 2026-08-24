@@ -659,11 +659,13 @@ public sealed partial class HIRToLIRLowerer
 
             var callableId = symbol.BindingInfo.Callable;
 
-            // Strict bare calls must preserve undefined `this`; route them through the function-value
-            // dispatch path instead of the direct static-call fast path.
+            // Strict bare calls only require function-value dispatch when the
+            // undefined `this` binding is observable.
             // Non-function bindings also use runtime dispatch (e.g., locals/consts holding closures).
             if (symbol.Kind != BindingKind.Function
-                || callableId?.HasRestrictedFunctionProperties == true
+                || (callableId?.HasRestrictedFunctionProperties == true
+                    && (callableId.Semantics.UsesThis
+                        || callableId.Semantics.NestedArrowUsesThis))
                 || RequiresFunctionObjectInvocation(callableId))
             {
                 // Lower callee value

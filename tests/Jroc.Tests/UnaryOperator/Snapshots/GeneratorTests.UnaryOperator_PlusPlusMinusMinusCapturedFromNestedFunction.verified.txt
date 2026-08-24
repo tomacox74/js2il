@@ -481,7 +481,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 113 (0x71)
+			// Code size: 119 (0x77)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope,
@@ -522,26 +522,32 @@
 			IL_003c: box [System.Runtime]System.Double
 			IL_0041: stfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
 			IL_0046: nop
-			IL_0047: ldloc.1
-			IL_0048: ldc.i4.1
-			IL_0049: newarr [System.Runtime]System.Object
-			IL_004e: dup
-			IL_004f: ldc.i4.0
-			IL_0050: ldarg.0
-			IL_0051: stelem.ref
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0057: pop
-			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005d: stloc.3
-			IL_005e: ldloc.0
-			IL_005f: ldfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
-			IL_0064: stloc.s 4
-			IL_0066: ldloc.3
-			IL_0067: ldloc.s 4
-			IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_006e: pop
-			IL_006f: ldnull
-			IL_0070: ret
+			IL_0047: ldc.i4.2
+			IL_0048: newarr [System.Runtime]System.Object
+			IL_004d: dup
+			IL_004e: ldc.i4.0
+			IL_004f: ldarg.0
+			IL_0050: stelem.ref
+			IL_0051: dup
+			IL_0052: ldc.i4.1
+			IL_0053: ldloc.0
+			IL_0054: stelem.ref
+			IL_0055: stloc.2
+			IL_0056: ldloc.2
+			IL_0057: ldnull
+			IL_0058: call object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/inner::__js_call__(object[], object)
+			IL_005d: pop
+			IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0063: stloc.3
+			IL_0064: ldloc.0
+			IL_0065: ldfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
+			IL_006a: stloc.s 4
+			IL_006c: ldloc.3
+			IL_006d: ldloc.s 4
+			IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0074: pop
+			IL_0075: ldnull
+			IL_0076: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -584,7 +590,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 61 (0x3d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope,
@@ -615,11 +621,12 @@
 		IL_002c: stloc.1
 		IL_002d: nop
 		IL_002e: nop
-		IL_002f: ldloc.1
-		IL_0030: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_003a: pop
-		IL_003b: ret
+		IL_002f: ldloc.0
+		IL_0030: castclass Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope
+		IL_0035: ldnull
+		IL_0036: call object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer::__js_call__(class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope, object)
+		IL_003b: pop
+		IL_003c: ret
 	} // end of method UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction::__js_module_init__
 
 } // end of class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction

@@ -147,6 +147,9 @@ namespace Jroc.Tests.Function
         public Task Function_CommonArityDynamicDispatch() { var testName = nameof(Function_CommonArityDynamicDispatch); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_StrictBareCalls_PreserveThisAndDirectFastPath() { var testName = nameof(Function_StrictBareCalls_PreserveThisAndDirectFastPath); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return ExecutionTest(testName); }
 
         [Fact]
