@@ -1122,7 +1122,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 77 (0x4d)
+			// Code size: 92 (0x5c)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_Basics/g/Scope,
@@ -1143,18 +1143,25 @@
 			IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Basics/g/inner/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_001f: stloc.1
 			IL_0020: nop
-			IL_0021: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0026: stloc.2
-			IL_0027: ldloc.1
-			IL_0028: ldloc.2
-			IL_0029: ldc.r8 1
-			IL_0032: box [System.Runtime]System.Double
-			IL_0037: ldc.r8 2
-			IL_0040: box [System.Runtime]System.Double
-			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_004a: pop
-			IL_004b: ldnull
-			IL_004c: ret
+			IL_0021: ldloc.1
+			IL_0022: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			IL_0027: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_002c: ldc.i4.2
+			IL_002d: newarr [System.Runtime]System.Object
+			IL_0032: dup
+			IL_0033: ldc.i4.0
+			IL_0034: ldc.r8 1
+			IL_003d: box [System.Runtime]System.Double
+			IL_0042: stelem.ref
+			IL_0043: dup
+			IL_0044: ldc.i4.1
+			IL_0045: ldc.r8 2
+			IL_004e: box [System.Runtime]System.Double
+			IL_0053: stelem.ref
+			IL_0054: call object Modules.Function_Arguments_Basics/g/inner/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+			IL_0059: pop
+			IL_005a: ldnull
+			IL_005b: ret
 		} // end of method g::__js_call__
 
 	} // end of class g
@@ -1200,7 +1207,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 320 (0x140)
+		// Code size: 326 (0x146)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Arguments_Basics/Scope,
@@ -1263,53 +1270,83 @@
 		IL_006e: stloc.3
 		IL_006f: nop
 		IL_0070: nop
-		IL_0071: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0076: stloc.s 4
-		IL_0078: ldloc.1
-		IL_0079: ldloc.s 4
-		IL_007b: ldc.r8 1
-		IL_0084: box [System.Runtime]System.Double
-		IL_0089: ldc.r8 2
+		IL_0071: ldloc.1
+		IL_0072: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		IL_0077: ldc.i4.1
+		IL_0078: newarr [System.Runtime]System.Object
+		IL_007d: dup
+		IL_007e: ldc.i4.0
+		IL_007f: ldloc.0
+		IL_0080: stelem.ref
+		IL_0081: ldc.i4.3
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldc.r8 1
 		IL_0092: box [System.Runtime]System.Double
-		IL_0097: ldc.r8 3
-		IL_00a0: box [System.Runtime]System.Double
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_00aa: pop
-		IL_00ab: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00b0: stloc.s 4
-		IL_00b2: ldloc.1
-		IL_00b3: ldloc.s 4
-		IL_00b5: ldc.r8 1
-		IL_00be: box [System.Runtime]System.Double
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_00c8: pop
-		IL_00c9: nop
-		IL_00ca: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00cf: stloc.s 4
-		IL_00d1: ldloc.2
-		IL_00d2: ldloc.s 4
-		IL_00d4: ldc.r8 7
-		IL_00dd: box [System.Runtime]System.Double
-		IL_00e2: ldc.r8 8
-		IL_00eb: box [System.Runtime]System.Double
-		IL_00f0: ldc.r8 9
-		IL_00f9: box [System.Runtime]System.Double
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_0103: pop
-		IL_0104: nop
-		IL_0105: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_010a: stloc.s 4
-		IL_010c: ldloc.3
-		IL_010d: ldloc.s 4
-		IL_010f: ldc.r8 1
-		IL_0118: box [System.Runtime]System.Double
-		IL_011d: ldc.r8 2
-		IL_0126: box [System.Runtime]System.Double
-		IL_012b: ldc.r8 3
-		IL_0134: box [System.Runtime]System.Double
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_013e: pop
-		IL_013f: ret
+		IL_0097: stelem.ref
+		IL_0098: dup
+		IL_0099: ldc.i4.1
+		IL_009a: ldc.r8 2
+		IL_00a3: box [System.Runtime]System.Double
+		IL_00a8: stelem.ref
+		IL_00a9: dup
+		IL_00aa: ldc.i4.2
+		IL_00ab: ldc.r8 3
+		IL_00b4: box [System.Runtime]System.Double
+		IL_00b9: stelem.ref
+		IL_00ba: call object Modules.Function_Arguments_Basics/f/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_00bf: pop
+		IL_00c0: ldloc.1
+		IL_00c1: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		IL_00c6: ldc.i4.1
+		IL_00c7: newarr [System.Runtime]System.Object
+		IL_00cc: dup
+		IL_00cd: ldc.i4.0
+		IL_00ce: ldloc.0
+		IL_00cf: stelem.ref
+		IL_00d0: ldc.i4.1
+		IL_00d1: newarr [System.Runtime]System.Object
+		IL_00d6: dup
+		IL_00d7: ldc.i4.0
+		IL_00d8: ldc.r8 1
+		IL_00e1: box [System.Runtime]System.Double
+		IL_00e6: stelem.ref
+		IL_00e7: call object Modules.Function_Arguments_Basics/f/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_00ec: pop
+		IL_00ed: nop
+		IL_00ee: ldloc.2
+		IL_00ef: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		IL_00f4: ldc.i4.1
+		IL_00f5: newarr [System.Runtime]System.Object
+		IL_00fa: dup
+		IL_00fb: ldc.i4.0
+		IL_00fc: ldloc.0
+		IL_00fd: stelem.ref
+		IL_00fe: ldc.i4.3
+		IL_00ff: newarr [System.Runtime]System.Object
+		IL_0104: dup
+		IL_0105: ldc.i4.0
+		IL_0106: ldc.r8 7
+		IL_010f: box [System.Runtime]System.Double
+		IL_0114: stelem.ref
+		IL_0115: dup
+		IL_0116: ldc.i4.1
+		IL_0117: ldc.r8 8
+		IL_0120: box [System.Runtime]System.Double
+		IL_0125: stelem.ref
+		IL_0126: dup
+		IL_0127: ldc.i4.2
+		IL_0128: ldc.r8 9
+		IL_0131: box [System.Runtime]System.Double
+		IL_0136: stelem.ref
+		IL_0137: call object Modules.Function_Arguments_Basics/outer/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_013c: pop
+		IL_013d: nop
+		IL_013e: ldnull
+		IL_013f: call object Modules.Function_Arguments_Basics/g::__js_call__(object)
+		IL_0144: pop
+		IL_0145: ret
 	} // end of method Function_Arguments_Basics::__js_module_init__
 
 } // end of class Modules.Function_Arguments_Basics

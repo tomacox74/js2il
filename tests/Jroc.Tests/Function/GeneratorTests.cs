@@ -239,6 +239,9 @@ namespace Jroc.Tests.Function
         public Task Function_CommonArityDynamicDispatch() { var testName = nameof(Function_CommonArityDynamicDispatch); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_StrictBareCalls_PreserveThisAndDirectFastPath() { var testName = nameof(Function_StrictBareCalls_PreserveThisAndDirectFastPath); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_NewExpression_CapturesOuterCtor() { var testName = nameof(Function_NewExpression_CapturesOuterCtor); return GenerateTest(testName); }
 
         [Fact]

@@ -273,7 +273,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 146 (0x92)
+		// Code size: 147 (0x93)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope,
@@ -319,32 +319,33 @@
 		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_004e: stloc.s 4
 		IL_0050: ldloc.s 4
-		IL_0052: brfalse IL_006d
+		IL_0052: brfalse IL_006e
 
-		IL_0057: ldloc.1
-		IL_0058: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0062: stloc.s 5
-		IL_0064: ldloc.s 5
-		IL_0066: stloc.s 7
-		IL_0068: br IL_0075
+		IL_0057: ldloc.0
+		IL_0058: castclass Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope
+		IL_005d: ldnull
+		IL_005e: call object Modules.BinaryOperator_LogicalAnd_ShortCircuit/inc::__js_call__(class Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope, object)
+		IL_0063: stloc.s 5
+		IL_0065: ldloc.s 5
+		IL_0067: stloc.s 7
+		IL_0069: br IL_0076
 
-		IL_006d: ldc.i4.0
-		IL_006e: box [System.Runtime]System.Boolean
-		IL_0073: stloc.s 7
+		IL_006e: ldc.i4.0
+		IL_006f: box [System.Runtime]System.Boolean
+		IL_0074: stloc.s 7
 
-		IL_0075: ldloc.s 7
-		IL_0077: stloc.2
-		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007d: stloc.s 8
-		IL_007f: ldloc.0
-		IL_0080: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
-		IL_0085: stloc.s 5
-		IL_0087: ldloc.s 8
-		IL_0089: ldloc.s 5
-		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0090: pop
-		IL_0091: ret
+		IL_0076: ldloc.s 7
+		IL_0078: stloc.2
+		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007e: stloc.s 8
+		IL_0080: ldloc.0
+		IL_0081: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
+		IL_0086: stloc.s 5
+		IL_0088: ldloc.s 8
+		IL_008a: ldloc.s 5
+		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0091: pop
+		IL_0092: ret
 	} // end of method BinaryOperator_LogicalAnd_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalAnd_ShortCircuit

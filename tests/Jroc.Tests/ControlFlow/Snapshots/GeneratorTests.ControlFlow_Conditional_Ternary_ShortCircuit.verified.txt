@@ -273,7 +273,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 178 (0xb2)
+		// Code size: 180 (0xb4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope,
@@ -318,41 +318,43 @@
 		IL_0053: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_0058: stloc.s 5
 		IL_005a: ldloc.s 5
-		IL_005c: brfalse IL_0076
+		IL_005c: brfalse IL_0077
 
-		IL_0061: ldloc.1
-		IL_0062: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_006c: stloc.s 6
-		IL_006e: ldloc.s 6
-		IL_0070: stloc.2
-		IL_0071: br IL_0086
+		IL_0061: ldloc.0
+		IL_0062: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
+		IL_0067: ldnull
+		IL_0068: call object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope, object)
+		IL_006d: stloc.s 6
+		IL_006f: ldloc.s 6
+		IL_0071: stloc.2
+		IL_0072: br IL_0088
 
-		IL_0076: ldloc.1
-		IL_0077: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0081: stloc.s 6
-		IL_0083: ldloc.s 6
-		IL_0085: stloc.2
+		IL_0077: ldloc.0
+		IL_0078: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
+		IL_007d: ldnull
+		IL_007e: call object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope, object)
+		IL_0083: stloc.s 6
+		IL_0085: ldloc.s 6
+		IL_0087: stloc.2
 
-		IL_0086: ldloc.2
-		IL_0087: stloc.3
-		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008d: stloc.s 7
-		IL_008f: ldloc.s 7
-		IL_0091: ldloc.3
-		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0097: pop
-		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009d: stloc.s 7
-		IL_009f: ldloc.0
-		IL_00a0: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-		IL_00a5: stloc.s 6
-		IL_00a7: ldloc.s 7
-		IL_00a9: ldloc.s 6
-		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b0: pop
-		IL_00b1: ret
+		IL_0088: ldloc.2
+		IL_0089: stloc.3
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: stloc.s 7
+		IL_0091: ldloc.s 7
+		IL_0093: ldloc.3
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0099: pop
+		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009f: stloc.s 7
+		IL_00a1: ldloc.0
+		IL_00a2: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+		IL_00a7: stloc.s 6
+		IL_00a9: ldloc.s 7
+		IL_00ab: ldloc.s 6
+		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b2: pop
+		IL_00b3: ret
 	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary_ShortCircuit

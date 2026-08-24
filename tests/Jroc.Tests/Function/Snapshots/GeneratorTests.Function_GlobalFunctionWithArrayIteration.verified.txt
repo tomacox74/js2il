@@ -317,16 +317,16 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 203 (0xcb)
+		// Code size: 160 (0xa0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithArrayIteration/Scope,
 			[1] class Modules.Function_GlobalFunctionWithArrayIteration/processArray/FunctionObject,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[4] object[],
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[6] object
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration/Scope::.ctor()
@@ -363,36 +363,27 @@
 		IL_005c: ldc.r8 4
 		IL_0065: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
 		IL_006a: stloc.2
-		IL_006b: ldloc.1
-		IL_006c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0071: ldloc.2
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_006b: ldnull
+		IL_006c: ldloc.2
+		IL_006d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array)
 		IL_0077: stloc.3
 		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_007d: stloc.s 5
 		IL_007f: ldloc.3
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0085: volatile.
-		IL_0087: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_008c: brfalse IL_00a5
-
-		IL_0091: ldstr "join"
-		IL_0096: ldstr ","
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a0: br IL_00be
-
-		IL_00a5: ldstr "join"
-		IL_00aa: ldstr ","
-		IL_00af: ldstr "Function_GlobalFunctionWithArrayIteration:Modules.Function_GlobalFunctionWithArrayIteration:__js_module_init__:22"
-		IL_00b4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_00be: stloc.s 6
-		IL_00c0: ldloc.s 5
-		IL_00c2: ldloc.s 6
-		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c9: pop
-		IL_00ca: ret
+		IL_0080: ldc.i4.1
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldstr ","
+		IL_008d: stelem.ref
+		IL_008e: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0093: stloc.s 6
+		IL_0095: ldloc.s 5
+		IL_0097: ldloc.s 6
+		IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009e: pop
+		IL_009f: ret
 	} // end of method Function_GlobalFunctionWithArrayIteration::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithArrayIteration
@@ -417,12 +408,4 @@
 	} // end of method Program::Main
 
 } // end of class Program
-
-.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field assembly static int32 __jroc_dynamicLookup_2
-
-} // end of class Jroc.Generated.DynamicLookupSites
 

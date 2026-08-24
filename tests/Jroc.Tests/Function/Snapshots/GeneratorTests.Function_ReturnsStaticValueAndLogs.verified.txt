@@ -254,16 +254,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 91 (0x5b)
+		// Code size: 77 (0x4d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
 			[1] class Modules.Function_ReturnsStaticValueAndLogs/returnsFive/FunctionObject,
 			[2] float64,
 			[3] object[],
-			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[6] object
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ReturnsStaticValueAndLogs/Scope::.ctor()
@@ -285,24 +284,20 @@
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: nop
-		IL_0027: ldloc.1
-		IL_0028: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0032: stloc.s 4
-		IL_0034: ldloc.s 4
-		IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003b: stloc.2
-		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0041: stloc.s 5
-		IL_0043: ldloc.2
-		IL_0044: box [System.Runtime]System.Double
-		IL_0049: stloc.s 6
-		IL_004b: ldloc.s 5
-		IL_004d: ldstr "Output:"
-		IL_0052: ldloc.s 6
-		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0059: pop
-		IL_005a: ret
+		IL_0027: ldnull
+		IL_0028: call float64 Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object)
+		IL_002d: stloc.2
+		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0033: stloc.s 4
+		IL_0035: ldloc.2
+		IL_0036: box [System.Runtime]System.Double
+		IL_003b: stloc.s 5
+		IL_003d: ldloc.s 4
+		IL_003f: ldstr "Output:"
+		IL_0044: ldloc.s 5
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_004b: pop
+		IL_004c: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs

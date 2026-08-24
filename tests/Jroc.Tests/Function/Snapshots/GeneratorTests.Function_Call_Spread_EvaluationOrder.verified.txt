@@ -750,7 +750,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 252 (0xfc)
+		// Code size: 225 (0xe1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Call_Spread_EvaluationOrder/Scope,
@@ -758,8 +758,8 @@
 			[2] class Modules.Function_Call_Spread_EvaluationOrder/arg/FunctionObject,
 			[3] class Modules.Function_Call_Spread_EvaluationOrder/spread/FunctionObject,
 			[4] object[],
-			[5] object[],
-			[6] object,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
@@ -818,49 +818,44 @@
 		IL_0070: nop
 		IL_0071: nop
 		IL_0072: nop
-		IL_0073: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0078: stloc.s 4
-		IL_007a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007f: stloc.s 5
-		IL_0081: ldloc.2
-		IL_0082: ldloc.s 5
-		IL_0084: ldc.r8 1
-		IL_008d: box [System.Runtime]System.Double
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0097: stloc.s 6
-		IL_0099: ldc.i4.1
-		IL_009a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_009f: dup
-		IL_00a0: ldloc.s 6
-		IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00a7: stloc.s 7
-		IL_00a9: ldloc.3
-		IL_00aa: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00b4: stloc.s 6
-		IL_00b6: ldloc.s 7
-		IL_00b8: ldloc.s 6
-		IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_00bf: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00c4: stloc.s 5
-		IL_00c6: ldloc.2
-		IL_00c7: ldloc.s 5
-		IL_00c9: ldc.r8 4
-		IL_00d2: box [System.Runtime]System.Double
-		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_00dc: stloc.s 6
-		IL_00de: ldloc.s 7
-		IL_00e0: ldloc.s 6
-		IL_00e2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00e7: ldloc.s 7
-		IL_00e9: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-		IL_00ee: stloc.s 5
-		IL_00f0: ldloc.1
-		IL_00f1: ldloc.s 4
-		IL_00f3: ldloc.s 5
-		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_00fa: pop
-		IL_00fb: ret
+		IL_0073: ldnull
+		IL_0074: ldc.r8 1
+		IL_007d: call object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, float64)
+		IL_0082: stloc.s 5
+		IL_0084: ldc.i4.1
+		IL_0085: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_008a: dup
+		IL_008b: ldloc.s 5
+		IL_008d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0092: stloc.s 6
+		IL_0094: ldnull
+		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_Call_Spread_EvaluationOrder/spread::__js_call__(object)
+		IL_009a: stloc.s 7
+		IL_009c: ldloc.s 6
+		IL_009e: ldloc.s 7
+		IL_00a0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_00a5: ldnull
+		IL_00a6: ldc.r8 4
+		IL_00af: call object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, float64)
+		IL_00b4: stloc.s 5
+		IL_00b6: ldloc.s 6
+		IL_00b8: ldloc.s 5
+		IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00bf: ldloc.s 6
+		IL_00c1: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+		IL_00c6: stloc.s 4
+		IL_00c8: ldloc.1
+		IL_00c9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		IL_00ce: ldc.i4.1
+		IL_00cf: newarr [System.Runtime]System.Object
+		IL_00d4: dup
+		IL_00d5: ldc.i4.0
+		IL_00d6: ldloc.0
+		IL_00d7: stelem.ref
+		IL_00d8: ldloc.s 4
+		IL_00da: call object Modules.Function_Call_Spread_EvaluationOrder/dump/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_00df: pop
+		IL_00e0: ret
 	} // end of method Function_Call_Spread_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.Function_Call_Spread_EvaluationOrder

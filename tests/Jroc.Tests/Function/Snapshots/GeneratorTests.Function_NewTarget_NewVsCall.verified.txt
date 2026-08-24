@@ -309,7 +309,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 89 (0x59)
+		// Code size: 83 (0x53)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewTarget_NewVsCall/Scope,
@@ -352,13 +352,11 @@
 		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
 		IL_0044: pop
 		IL_0045: ldloc.0
-		IL_0046: ldfld object Modules.Function_NewTarget_NewVsCall/Scope::C
-		IL_004b: stloc.3
-		IL_004c: ldloc.3
-		IL_004d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0057: pop
-		IL_0058: ret
+		IL_0046: castclass Modules.Function_NewTarget_NewVsCall/Scope
+		IL_004b: ldnull
+		IL_004c: call object Modules.Function_NewTarget_NewVsCall/C::__js_call__(class Modules.Function_NewTarget_NewVsCall/Scope, object)
+		IL_0051: pop
+		IL_0052: ret
 	} // end of method Function_NewTarget_NewVsCall::__js_module_init__
 
 } // end of class Modules.Function_NewTarget_NewVsCall

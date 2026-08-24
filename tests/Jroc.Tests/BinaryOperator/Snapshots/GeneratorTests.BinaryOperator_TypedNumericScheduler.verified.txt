@@ -1523,7 +1523,7 @@
 				74 61 54 6f 6b 65 6e 10 00 00 02
 			)
 			// Header size: 12
-			// Code size: 54 (0x36)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1532,31 +1532,21 @@
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::left
-			IL_0006: ldc.i4.1
-			IL_0007: newarr [System.Runtime]System.Object
-			IL_000c: dup
-			IL_000d: ldc.i4.0
-			IL_000e: ldarg.0
-			IL_000f: stelem.ref
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0015: stloc.0
-			IL_0016: ldarg.0
-			IL_0017: ldfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::right
-			IL_001c: ldc.i4.1
-			IL_001d: newarr [System.Runtime]System.Object
-			IL_0022: dup
-			IL_0023: ldc.i4.0
-			IL_0024: ldarg.0
-			IL_0025: stelem.ref
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_002b: stloc.1
-			IL_002c: ldloc.0
-			IL_002d: ldloc.1
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0033: stloc.2
-			IL_0034: ldloc.2
-			IL_0035: ret
+			IL_0001: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
+			IL_0006: ldnull
+			IL_0007: call object Modules.BinaryOperator_TypedNumericScheduler/left::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
+			IL_000c: stloc.0
+			IL_000d: ldarg.0
+			IL_000e: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
+			IL_0013: ldnull
+			IL_0014: call object Modules.BinaryOperator_TypedNumericScheduler/right::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
+			IL_0019: stloc.1
+			IL_001a: ldloc.0
+			IL_001b: ldloc.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0021: stloc.2
+			IL_0022: ldloc.2
+			IL_0023: ret
 		} // end of method calls::__js_call__
 
 	} // end of class calls
@@ -1781,7 +1771,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1199 (0x4af)
+		// Code size: 970 (0x3ca)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypedNumericScheduler/Scope,
@@ -1801,7 +1791,9 @@
 			[14] object,
 			[15] float64,
 			[16] object,
-			[17] object
+			[17] object,
+			[18] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[19] string
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_TypedNumericScheduler/Scope::.ctor()
@@ -1990,211 +1982,156 @@
 		IL_018d: nop
 		IL_018e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0193: stloc.s 12
-		IL_0195: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_019a: stloc.s 9
-		IL_019c: ldloc.1
-		IL_019d: ldloc.s 9
-		IL_019f: ldc.r8 4
-		IL_01a8: box [System.Runtime]System.Double
-		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_01b2: stloc.s 13
-		IL_01b4: ldloc.s 12
-		IL_01b6: ldloc.s 13
-		IL_01b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01bd: pop
-		IL_01be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01c3: stloc.s 12
-		IL_01c5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01ca: stloc.s 9
-		IL_01cc: ldloc.2
-		IL_01cd: ldloc.s 9
-		IL_01cf: ldc.r8 1
-		IL_01d8: box [System.Runtime]System.Double
-		IL_01dd: ldc.r8 2
-		IL_01e6: box [System.Runtime]System.Double
-		IL_01eb: ldc.r8 3
-		IL_01f4: box [System.Runtime]System.Double
-		IL_01f9: ldc.r8 4
-		IL_0202: box [System.Runtime]System.Double
-		IL_0207: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
-		IL_020c: stloc.s 13
-		IL_020e: ldloc.s 12
-		IL_0210: ldloc.s 13
-		IL_0212: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0217: pop
-		IL_0218: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_021d: stloc.s 12
-		IL_021f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0224: stloc.s 9
-		IL_0226: ldloc.3
-		IL_0227: ldloc.s 9
-		IL_0229: ldc.r8 2
-		IL_0232: box [System.Runtime]System.Double
-		IL_0237: ldc.r8 3
-		IL_0240: box [System.Runtime]System.Double
-		IL_0245: ldc.r8 4
-		IL_024e: box [System.Runtime]System.Double
-		IL_0253: ldc.r8 5
-		IL_025c: box [System.Runtime]System.Double
-		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
-		IL_0266: stloc.s 13
-		IL_0268: ldloc.s 12
-		IL_026a: ldloc.s 13
-		IL_026c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0271: pop
-		IL_0272: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0277: stloc.s 12
-		IL_0279: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_027e: stloc.s 9
-		IL_0280: ldloc.s 4
-		IL_0282: ldloc.s 9
-		IL_0284: ldc.r8 10
-		IL_028d: box [System.Runtime]System.Double
-		IL_0292: ldc.r8 3
-		IL_029b: box [System.Runtime]System.Double
-		IL_02a0: ldc.r8 2
-		IL_02a9: box [System.Runtime]System.Double
-		IL_02ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_02b3: stloc.s 13
-		IL_02b5: ldloc.s 12
-		IL_02b7: ldloc.s 13
-		IL_02b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02be: pop
-		IL_02bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02c4: stloc.s 12
-		IL_02c6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02cb: stloc.s 9
-		IL_02cd: ldloc.s 5
-		IL_02cf: ldloc.s 9
-		IL_02d1: ldc.r8 20
-		IL_02da: box [System.Runtime]System.Double
-		IL_02df: ldc.r8 3
-		IL_02e8: box [System.Runtime]System.Double
-		IL_02ed: ldc.r8 2
-		IL_02f6: box [System.Runtime]System.Double
-		IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_0300: stloc.s 13
-		IL_0302: ldloc.s 12
-		IL_0304: ldloc.s 13
-		IL_0306: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_030b: pop
-		IL_030c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0311: stloc.s 12
-		IL_0313: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0318: stloc.s 9
-		IL_031a: ldloc.s 6
-		IL_031c: ldloc.s 9
-		IL_031e: ldc.r8 2
-		IL_0327: box [System.Runtime]System.Double
-		IL_032c: ldc.r8 3
-		IL_0335: box [System.Runtime]System.Double
-		IL_033a: ldc.r8 1
-		IL_0343: box [System.Runtime]System.Double
-		IL_0348: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_034d: stloc.s 13
-		IL_034f: ldloc.s 12
-		IL_0351: ldloc.s 13
-		IL_0353: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0358: pop
-		IL_0359: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_035e: stloc.s 12
-		IL_0360: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0365: stloc.s 9
-		IL_0367: ldloc.1
-		IL_0368: ldloc.s 9
-		IL_036a: ldc.r8 (00 00 00 00 00 00 F8 FF)
-		IL_0373: box [System.Runtime]System.Double
-		IL_0378: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_037d: stloc.s 13
-		IL_037f: ldloc.s 13
-		IL_0381: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
-		IL_0386: box [System.Runtime]System.Boolean
-		IL_038b: stloc.s 14
-		IL_038d: ldloc.s 12
-		IL_038f: ldloc.s 14
-		IL_0391: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0396: pop
-		IL_0397: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_039c: stloc.s 12
-		IL_039e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03a3: stloc.s 9
-		IL_03a5: ldc.r8 0.0
-		IL_03ae: neg
-		IL_03af: stloc.s 15
-		IL_03b1: ldloc.s 15
-		IL_03b3: box [System.Runtime]System.Double
-		IL_03b8: stloc.s 16
-		IL_03ba: ldloc.s 5
-		IL_03bc: ldloc.s 9
-		IL_03be: ldloc.s 16
-		IL_03c0: ldc.r8 1
-		IL_03c9: box [System.Runtime]System.Double
-		IL_03ce: ldc.r8 2
-		IL_03d7: box [System.Runtime]System.Double
-		IL_03dc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_03e1: stloc.s 13
-		IL_03e3: ldc.r8 0.0
-		IL_03ec: neg
-		IL_03ed: stloc.s 15
-		IL_03ef: ldloc.s 15
-		IL_03f1: box [System.Runtime]System.Double
-		IL_03f6: stloc.s 16
-		IL_03f8: ldloc.s 13
-		IL_03fa: ldloc.s 16
-		IL_03fc: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::is(object, object)
-		IL_0401: box [System.Runtime]System.Boolean
-		IL_0406: stloc.s 14
-		IL_0408: ldloc.s 12
-		IL_040a: ldloc.s 14
-		IL_040c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0411: pop
-		IL_0412: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0417: stloc.s 12
-		IL_0419: ldloc.s 7
-		IL_041b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0420: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0425: stloc.s 13
-		IL_0427: ldloc.0
-		IL_0428: ldfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::order
-		IL_042d: stloc.s 17
-		IL_042f: ldloc.s 12
-		IL_0431: ldloc.s 13
-		IL_0433: ldloc.s 17
-		IL_0435: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_043a: pop
-		IL_043b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0440: stloc.s 12
-		IL_0442: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0447: stloc.s 9
-		IL_0449: ldloc.s 8
-		IL_044b: ldloc.s 9
-		IL_044d: ldc.r8 3
-		IL_0456: box [System.Runtime]System.Double
-		IL_045b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0460: stloc.s 17
-		IL_0462: ldloc.s 17
-		IL_0464: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0469: volatile.
-		IL_046b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0470: brfalse IL_0489
-
-		IL_0475: ldstr "join"
-		IL_047a: ldstr ","
-		IL_047f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0484: br IL_04a2
-
-		IL_0489: ldstr "join"
-		IL_048e: ldstr ","
-		IL_0493: ldstr "BinaryOperator_TypedNumericScheduler:Modules.BinaryOperator_TypedNumericScheduler:__js_module_init__:152"
-		IL_0498: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_049d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_04a2: stloc.s 17
-		IL_04a4: ldloc.s 12
-		IL_04a6: ldloc.s 17
-		IL_04a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04ad: pop
-		IL_04ae: ret
+		IL_0195: ldnull
+		IL_0196: ldc.r8 4
+		IL_019f: box [System.Runtime]System.Double
+		IL_01a4: call object Modules.BinaryOperator_TypedNumericScheduler/mulAdd::__js_call__(object, object)
+		IL_01a9: stloc.s 13
+		IL_01ab: ldloc.s 12
+		IL_01ad: ldloc.s 13
+		IL_01af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b4: pop
+		IL_01b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01ba: stloc.s 12
+		IL_01bc: ldnull
+		IL_01bd: ldc.r8 1
+		IL_01c6: ldc.r8 2
+		IL_01cf: ldc.r8 3
+		IL_01d8: ldc.r8 4
+		IL_01e1: call object Modules.BinaryOperator_TypedNumericScheduler/addChain::__js_call__(object, float64, float64, float64, float64)
+		IL_01e6: stloc.s 13
+		IL_01e8: ldloc.s 12
+		IL_01ea: ldloc.s 13
+		IL_01ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01f1: pop
+		IL_01f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01f7: stloc.s 12
+		IL_01f9: ldnull
+		IL_01fa: ldc.r8 2
+		IL_0203: ldc.r8 3
+		IL_020c: ldc.r8 4
+		IL_0215: ldc.r8 5
+		IL_021e: call object Modules.BinaryOperator_TypedNumericScheduler/tree::__js_call__(object, float64, float64, float64, float64)
+		IL_0223: stloc.s 13
+		IL_0225: ldloc.s 12
+		IL_0227: ldloc.s 13
+		IL_0229: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_022e: pop
+		IL_022f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0234: stloc.s 12
+		IL_0236: ldnull
+		IL_0237: ldc.r8 10
+		IL_0240: ldc.r8 3
+		IL_0249: ldc.r8 2
+		IL_0252: call object Modules.BinaryOperator_TypedNumericScheduler/subChain::__js_call__(object, float64, float64, float64)
+		IL_0257: stloc.s 13
+		IL_0259: ldloc.s 12
+		IL_025b: ldloc.s 13
+		IL_025d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0262: pop
+		IL_0263: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0268: stloc.s 12
+		IL_026a: ldnull
+		IL_026b: ldc.r8 20
+		IL_0274: ldc.r8 3
+		IL_027d: ldc.r8 2
+		IL_0286: call object Modules.BinaryOperator_TypedNumericScheduler/divMod::__js_call__(object, float64, float64, float64)
+		IL_028b: stloc.s 13
+		IL_028d: ldloc.s 12
+		IL_028f: ldloc.s 13
+		IL_0291: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0296: pop
+		IL_0297: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_029c: stloc.s 12
+		IL_029e: ldnull
+		IL_029f: ldc.r8 2
+		IL_02a8: ldc.r8 3
+		IL_02b1: ldc.r8 1
+		IL_02ba: call object Modules.BinaryOperator_TypedNumericScheduler/expAdd::__js_call__(object, float64, float64, float64)
+		IL_02bf: stloc.s 13
+		IL_02c1: ldloc.s 12
+		IL_02c3: ldloc.s 13
+		IL_02c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02ca: pop
+		IL_02cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d0: stloc.s 12
+		IL_02d2: ldnull
+		IL_02d3: ldc.r8 (00 00 00 00 00 00 F8 FF)
+		IL_02dc: box [System.Runtime]System.Double
+		IL_02e1: call object Modules.BinaryOperator_TypedNumericScheduler/mulAdd::__js_call__(object, object)
+		IL_02e6: stloc.s 13
+		IL_02e8: ldloc.s 13
+		IL_02ea: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
+		IL_02ef: box [System.Runtime]System.Boolean
+		IL_02f4: stloc.s 14
+		IL_02f6: ldloc.s 12
+		IL_02f8: ldloc.s 14
+		IL_02fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02ff: pop
+		IL_0300: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0305: stloc.s 12
+		IL_0307: ldc.r8 0.0
+		IL_0310: neg
+		IL_0311: stloc.s 15
+		IL_0313: ldloc.s 15
+		IL_0315: box [System.Runtime]System.Double
+		IL_031a: stloc.s 16
+		IL_031c: ldnull
+		IL_031d: ldloc.s 15
+		IL_031f: ldc.r8 1
+		IL_0328: ldc.r8 2
+		IL_0331: call object Modules.BinaryOperator_TypedNumericScheduler/divMod::__js_call__(object, float64, float64, float64)
+		IL_0336: stloc.s 13
+		IL_0338: ldc.r8 0.0
+		IL_0341: neg
+		IL_0342: stloc.s 15
+		IL_0344: ldloc.s 15
+		IL_0346: box [System.Runtime]System.Double
+		IL_034b: stloc.s 16
+		IL_034d: ldloc.s 13
+		IL_034f: ldloc.s 16
+		IL_0351: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::is(object, object)
+		IL_0356: box [System.Runtime]System.Boolean
+		IL_035b: stloc.s 14
+		IL_035d: ldloc.s 12
+		IL_035f: ldloc.s 14
+		IL_0361: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0366: pop
+		IL_0367: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_036c: stloc.s 12
+		IL_036e: ldloc.0
+		IL_036f: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
+		IL_0374: ldnull
+		IL_0375: call object Modules.BinaryOperator_TypedNumericScheduler/calls::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
+		IL_037a: stloc.s 13
+		IL_037c: ldloc.0
+		IL_037d: ldfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::order
+		IL_0382: stloc.s 17
+		IL_0384: ldloc.s 12
+		IL_0386: ldloc.s 13
+		IL_0388: ldloc.s 17
+		IL_038a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_038f: pop
+		IL_0390: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0395: stloc.s 12
+		IL_0397: ldnull
+		IL_0398: ldc.r8 3
+		IL_03a1: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.BinaryOperator_TypedNumericScheduler/postfix::__js_call__(object, float64)
+		IL_03a6: stloc.s 18
+		IL_03a8: ldloc.s 18
+		IL_03aa: ldc.i4.1
+		IL_03ab: newarr [System.Runtime]System.Object
+		IL_03b0: dup
+		IL_03b1: ldc.i4.0
+		IL_03b2: ldstr ","
+		IL_03b7: stelem.ref
+		IL_03b8: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_03bd: stloc.s 19
+		IL_03bf: ldloc.s 12
+		IL_03c1: ldloc.s 19
+		IL_03c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_03c8: pop
+		IL_03c9: ret
 	} // end of method BinaryOperator_TypedNumericScheduler::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypedNumericScheduler
@@ -2219,12 +2156,4 @@
 	} // end of method Program::Main
 
 } // end of class Program
-
-.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field assembly static int32 __jroc_dynamicLookup_15
-
-} // end of class Jroc.Generated.DynamicLookupSites
 
