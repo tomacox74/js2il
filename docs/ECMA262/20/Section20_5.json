@@ -356,9 +356,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.iserror",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js",
+          "tests/Jroc.Test262.Tests/built-ins/Error/isError/ExecutionTests.cs"
         ],
-        "notes": "Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented."
+        "notes": "Returns true for JavaScriptRuntime.Error instances, built-in NativeError subclasses, and user subclasses constructed through the Error intrinsic while returning false for non-error objects. Cross-realm [[ErrorData]] fidelity remains limited."
       },
       {
         "clause": "20.5.3.1",

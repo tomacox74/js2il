@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:56Z
+> Last generated (UTC): 2026-08-24T07:03:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -80,7 +80,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Error.isError(arg) basic predicate | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented. |
+| Error.isError(arg) basic predicate | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/isError/ExecutionTests.cs` |  | Returns true for JavaScriptRuntime.Error instances, built-in NativeError subclasses, and user subclasses constructed through the Error intrinsic while returning false for non-error objects. Cross-realm [[ErrorData]] fidelity remains limited. |
 
 ### 20.5.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype))
 

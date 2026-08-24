@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T01:15:54Z
+> Last generated (UTC): 2026-08-24T07:03:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -87,7 +87,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.defineProperties | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) |  | Implemented in JavaScriptRuntime.Object.defineProperties with a best-effort all-or-throw behavior (enumerates descriptor keys first, then applies). Supports defining data/accessor descriptors and enumerable filtering. Full validation, ordering rules, and invariant checks are not implemented. |
+| Object.defineProperties | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. Proxy and exotic invariant coverage remains limited. |
 
 ### 20.1.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-objectdefineproperties))
 
@@ -117,7 +117,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.fromEntries | Supported with Limitations | [`Object_FromEntries_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/fromEntries/ExecutionTests.cs` | `test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-accessor.js`<br>`test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-tostring.js`<br>`test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-value-accessor.js`<br>`test/built-ins/Object/fromEntries/iterator-not-closed-for-next-returning-non-object.js`<br>`test/built-ins/Object/fromEntries/iterator-not-closed-for-throwing-done-accessor.js` | Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator, now preserving the original abrupt completion while still closing the iterator for entry/key/value extraction failures and avoiding IteratorClose on IteratorStep failures where the spec forbids it. Supports array-like entries. Symbol keys and broader iterator/proxy edge cases are still partial. |
+| Object.fromEntries | Supported with Limitations | [`Object_FromEntries_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/fromEntries/ExecutionTests.cs` | `test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-accessor.js`<br>`test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-tostring.js`<br>`test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-value-accessor.js`<br>`test/built-ins/Object/fromEntries/iterator-not-closed-for-next-returning-non-object.js`<br>`test/built-ins/Object/fromEntries/iterator-not-closed-for-throwing-done-accessor.js` | Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from iterable object entries using indexed Get operations, rejects primitive entries, and preserves the original abrupt completion while closing the iterator for entry/key/value extraction failures. Symbol keys and broader iterator/proxy edge cases remain partial. |
 
 ### 20.1.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptor))
 
@@ -195,7 +195,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.keys | Supported with Limitations | [`Object_Keys_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Keys_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/keys/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.keys. Returns an array of own enumerable string keys, including the covered primitive-boxing and ordinary ordering cases from test262. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
+| Object.keys | Supported with Limitations | [`Object_Keys_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Keys_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/keys/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.keys. Returns own enumerable string keys in ordinary property order, including primitive boxing, descriptor-backed properties, inherited-key omission, and mutation-sensitive enumeration covered by test262. Symbol-keyed properties and exotic ordering guarantees remain limited. |
 
 ### 20.1.2.20 ([tc39.es](https://tc39.es/ecma262/#sec-object.preventextensions))
 

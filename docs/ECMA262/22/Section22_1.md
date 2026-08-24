@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-18T04:40:35Z
+> Last generated (UTC): 2026-08-24T07:03:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -187,7 +187,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.match | Supported with Limitations | [`String_Match_NonGlobal.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_Match_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_Global.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/match/ExecutionTests.cs` | `test/built-ins/String/prototype/match/cstm-matcher-on-bigint-primitive.js`<br>`test/built-ins/String/prototype/match/cstm-matcher-on-boolean-primitive.js`<br>`test/built-ins/String/prototype/match/cstm-matcher-on-number-primitive.js`<br>`test/built-ins/String/prototype/match/cstm-matcher-on-string-primitive.js` | Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with .index, .input, and null-prototype named .groups metadata. Symbol.match dispatch excludes primitive matchers before coercion, while broader RegExp exotic behavior remains limited. |
+| String.prototype.match | Supported with Limitations | [`String_Match_NonGlobal.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_Match_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_Global.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/match/ExecutionTests.cs` | `test/built-ins/String/prototype/match/cstm-matcher-on-bigint-primitive.js`<br>`test/built-ins/String/prototype/match/cstm-matcher-on-boolean-primitive.js`<br>`test/built-ins/String/prototype/match/cstm-matcher-on-number-primitive.js`<br>`test/built-ins/String/prototype/match/cstm-matcher-on-string-primitive.js` | Implemented via JavaScriptRuntime.String.Match. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with .index, .input, and null-prototype named .groups metadata. Symbol.match dispatch, receiver coercion, and built-in invocation ordering cover the checked-in legacy and modern test262 cases; broader RegExp exotic behavior remains limited. |
 
 ### 22.1.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall))
 
@@ -259,7 +259,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.search | Supported with Limitations | [`String_Search_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Search_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/search/ExecutionTests.cs` | `test/built-ins/String/prototype/search/cstm-search-on-bigint-primitive.js`<br>`test/built-ins/String/prototype/search/cstm-search-on-boolean-primitive.js`<br>`test/built-ins/String/prototype/search/cstm-search-on-number-primitive.js`<br>`test/built-ins/String/prototype/search/cstm-search-on-string-primitive.js`<br>`test/built-ins/String/prototype/search/invoke-builtin-search.js`<br>`test/built-ins/String/prototype/search/invoke-builtin-search-searcher-undef.js` | Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Primitive search values do not observe prototype @@search hooks, and internally created RegExps invoke their observable @@search method. Broader RegExp exotic behavior remains limited. |
+| String.prototype.search | Supported with Limitations | [`String_Search_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Search_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/search/ExecutionTests.cs` | `test/built-ins/String/prototype/search/cstm-search-on-bigint-primitive.js`<br>`test/built-ins/String/prototype/search/cstm-search-on-boolean-primitive.js`<br>`test/built-ins/String/prototype/search/cstm-search-on-number-primitive.js`<br>`test/built-ins/String/prototype/search/cstm-search-on-string-primitive.js`<br>`test/built-ins/String/prototype/search/invoke-builtin-search.js`<br>`test/built-ins/String/prototype/search/invoke-builtin-search-searcher-undef.js` | Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Receiver coercion, built-in search invocation, observable @@search dispatch, and lastIndex preservation follow the covered test262 cases. Broader RegExp exotic behavior remains limited. |
 
 ### 22.1.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice))
 

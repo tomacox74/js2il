@@ -742,7 +742,7 @@
           "test/built-ins/String/prototype/match/cstm-matcher-on-number-primitive.js",
           "test/built-ins/String/prototype/match/cstm-matcher-on-string-primitive.js"
         ],
-        "notes": "Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with .index, .input, and null-prototype named .groups metadata. Symbol.match dispatch excludes primitive matchers before coercion, while broader RegExp exotic behavior remains limited."
+        "notes": "Implemented via JavaScriptRuntime.String.Match. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with .index, .input, and null-prototype named .groups metadata. Symbol.match dispatch, receiver coercion, and built-in invocation ordering cover the checked-in legacy and modern test262 cases; broader RegExp exotic behavior remains limited."
       },
       {
         "clause": "22.1.3.14",
@@ -949,7 +949,7 @@
           "test/built-ins/String/prototype/search/invoke-builtin-search.js",
           "test/built-ins/String/prototype/search/invoke-builtin-search-searcher-undef.js"
         ],
-        "notes": "Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Primitive search values do not observe prototype @@search hooks, and internally created RegExps invoke their observable @@search method. Broader RegExp exotic behavior remains limited."
+        "notes": "Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Receiver coercion, built-in search invocation, observable @@search dispatch, and lastIndex preservation follow the covered test262 cases. Broader RegExp exotic behavior remains limited."
       },
       {
         "clause": "22.1.3.22",
