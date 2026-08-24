@@ -25,4 +25,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "not-a-constructor")]
     public Task not_a_constructor()
         => ExecutionTestFromFile("not-a-constructor");
+
+    [Fact(DisplayName = "bigint-tobigint-errors")]
+    public Task bigint_tobigint_errors()
+        => ExecutionTestFromFile("bigint-tobigint-errors");
 }

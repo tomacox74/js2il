@@ -2983,7 +2983,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 219 (0xdb)
+				// Code size: 222 (0xde)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -3039,54 +3039,54 @@
 
 				IL_0079: stloc.0
 				IL_007a: ldloc.0
-				IL_007b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0080: ldc.r8 0.0
-				IL_0089: cgt
-				IL_008b: stloc.1
-				IL_008c: ldloc.1
-				IL_008d: box [System.Runtime]System.Boolean
-				IL_0092: stloc.2
-				IL_0093: ldloc.2
-				IL_0094: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0099: stloc.1
-				IL_009a: ldloc.1
-				IL_009b: brfalse IL_00d9
+				IL_007b: ldc.r8 0.0
+				IL_0084: box [System.Runtime]System.Double
+				IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
+				IL_008e: stloc.1
+				IL_008f: ldloc.1
+				IL_0090: box [System.Runtime]System.Boolean
+				IL_0095: stloc.2
+				IL_0096: ldloc.2
+				IL_0097: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_009c: stloc.1
+				IL_009d: ldloc.1
+				IL_009e: brfalse IL_00dc
 
-				IL_00a0: ldarg.0
-				IL_00a1: ldc.i4.0
-				IL_00a2: ldelem.ref
-				IL_00a3: castclass Modules.Compile_Scripts_BumpVersion/Scope
-				IL_00a8: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::isPlaceholder
-				IL_00ad: ldc.i4.2
-				IL_00ae: newarr [System.Runtime]System.Object
-				IL_00b3: dup
-				IL_00b4: ldc.i4.0
-				IL_00b5: ldarg.0
-				IL_00b6: ldc.i4.0
-				IL_00b7: ldelem.ref
-				IL_00b8: stelem.ref
-				IL_00b9: dup
-				IL_00ba: ldc.i4.1
-				IL_00bb: ldarg.0
-				IL_00bc: ldc.i4.1
-				IL_00bd: ldelem.ref
-				IL_00be: stelem.ref
-				IL_00bf: stloc.3
-				IL_00c0: ldloc.3
-				IL_00c1: ldarg.2
-				IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-				IL_00c7: stloc.0
-				IL_00c8: ldloc.0
-				IL_00c9: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-				IL_00ce: ldc.i4.0
-				IL_00cf: ceq
-				IL_00d1: stloc.1
-				IL_00d2: ldloc.1
-				IL_00d3: box [System.Runtime]System.Boolean
-				IL_00d8: ret
+				IL_00a3: ldarg.0
+				IL_00a4: ldc.i4.0
+				IL_00a5: ldelem.ref
+				IL_00a6: castclass Modules.Compile_Scripts_BumpVersion/Scope
+				IL_00ab: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::isPlaceholder
+				IL_00b0: ldc.i4.2
+				IL_00b1: newarr [System.Runtime]System.Object
+				IL_00b6: dup
+				IL_00b7: ldc.i4.0
+				IL_00b8: ldarg.0
+				IL_00b9: ldc.i4.0
+				IL_00ba: ldelem.ref
+				IL_00bb: stelem.ref
+				IL_00bc: dup
+				IL_00bd: ldc.i4.1
+				IL_00be: ldarg.0
+				IL_00bf: ldc.i4.1
+				IL_00c0: ldelem.ref
+				IL_00c1: stelem.ref
+				IL_00c2: stloc.3
+				IL_00c3: ldloc.3
+				IL_00c4: ldarg.2
+				IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+				IL_00ca: stloc.0
+				IL_00cb: ldloc.0
+				IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+				IL_00d1: ldc.i4.0
+				IL_00d2: ceq
+				IL_00d4: stloc.1
+				IL_00d5: ldloc.1
+				IL_00d6: box [System.Runtime]System.Boolean
+				IL_00db: ret
 
-				IL_00d9: ldloc.2
-				IL_00da: ret
+				IL_00dc: ldloc.2
+				IL_00dd: ret
 			} // end of method ArrowFunction_L113C44::__js_call__
 
 		} // end of class ArrowFunction_L113C44

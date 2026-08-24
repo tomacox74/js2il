@@ -69,4 +69,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S15.3.4.4_A3_T10", Skip = "Blocked: eval is not supported yet.")]
     public Task S15_3_4_4_A3_T10()
         => ExecutionTestFromFile("S15.3.4.4_A3_T10");
+
+    [Fact(DisplayName = "S15.3.4.4_A5_T1")]
+    public Task S15_3_4_4_A5_T1()
+        => ExecutionTestFromFile("S15.3.4.4_A5_T1");
+
+    [Fact(DisplayName = "S15.3.4.4_A5_T2")]
+    public Task S15_3_4_4_A5_T2()
+        => ExecutionTestFromFile("S15.3.4.4_A5_T2");
+
+    [Fact(DisplayName = "S15.3.4.4_A5_T3")]
+    public Task S15_3_4_4_A5_T3()
+        => ExecutionTestFromFile("S15.3.4.4_A5_T3");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

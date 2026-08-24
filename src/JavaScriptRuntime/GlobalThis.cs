@@ -147,11 +147,8 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction0 _bigIntPrototypeValueOfValue = static thisArgument =>
             global::JavaScriptRuntime.BigInt.ThisBigIntValue(thisArgument);
 
-        private static readonly BuiltinFunction0 _numberPrototypeToStringValue = static thisArgument =>
-        {
-            var numberValue = JavaScriptRuntime.Number.ThisNumberValue(thisArgument);
-            return JavaScriptRuntime.DotNet2JSConversions.ToString(numberValue);
-        };
+        private static readonly BuiltinFunction1 _numberPrototypeToStringValue = static (thisArgument, radix) =>
+            JavaScriptRuntime.Number.ToStringWithRadix(thisArgument, radix);
 
         private static readonly BuiltinFunction0 _numberPrototypeValueOfValue = static thisArgument =>
             JavaScriptRuntime.Number.ThisNumberValue(thisArgument);
@@ -414,6 +411,10 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunctionVariadic _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
         private static readonly BuiltinFunctionVariadic _typedArrayReduceRightValue = TypedArrayPrototypeReduceRight;
         private static readonly BuiltinFunction0 _typedArrayToReversedValue = TypedArrayPrototypeToReversed;
+        private static readonly BuiltinFunction0 _typedArrayEntriesValue = TypedArrayPrototypeEntries;
+        private static readonly BuiltinFunction0 _typedArrayKeysValue = TypedArrayPrototypeKeys;
+        private static readonly BuiltinFunction3 _typedArrayFromValue = TypedArrayFrom;
+        private static readonly BuiltinFunctionVariadic _typedArrayOfValue = TypedArrayOf;
 
         // Typed array constructor values - supported and unsupported
         private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue =
@@ -428,8 +429,26 @@ namespace JavaScriptRuntime
                 : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly Func<object[], object?, bool> _arrayBufferIsViewValue =
             static (_, value) => JavaScriptRuntime.ArrayBuffer.isView(value);
+        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.slice called on incompatible receiver");
+            }
+
+            return buffer.slice(start, end);
+        };
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly BuiltinFunction2 _sharedArrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.SharedArrayBuffer buffer)
+            {
+                throw new TypeError("SharedArrayBuffer.prototype.slice called on incompatible receiver");
+            }
+
+            return buffer.slice(start, end);
+        };
         private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue =
             static (_, args) => ConstructTypedArray(args, static () => new Int16Array(), static a => new Int16Array(a), static (a, b) => new Int16Array(a, b), static (a, b, c) => new Int16Array(a, b, c));
         private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue =
@@ -675,17 +694,14 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = false
             });
-            PropertyDescriptorStore.DefineOrUpdate(_bigIntPrototypeValue, ObjectRuntime.PrimitiveValuePropertyName, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = true,
-                Value = global::System.Numerics.BigInteger.Zero
-            });
+            // Unlike Number.prototype/Boolean.prototype, the BigInt prototype object is
+            // *not* a BigInt object and must not carry a [[BigIntData]] internal slot
+            // (sec-properties-of-the-bigint-prototype-object), so no PrimitiveValue data
+            // property is defined here; ThisBigIntValue(BigInt.prototype) must throw.
             DefineBuiltinFunctionProperty(_jsonValue, "parse", _jsonParseValue, 2d);
             DefineBuiltinFunctionProperty(_jsonValue, "rawJSON", _jsonRawJsonValue, 1d);
             DefineBuiltinFunctionProperty(_jsonValue, "isRawJSON", _jsonIsRawJsonValue, 1d);
+            PropertyDescriptorStore.Delete(_jsonParseValue, "prototype");
             PropertyDescriptorStore.Delete(_jsonRawJsonValue, "prototype");
             PropertyDescriptorStore.Delete(_jsonIsRawJsonValue, "prototype");
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
@@ -752,6 +768,8 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(_numberFunctionValue, "parseFloat", _parseFloatValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "parseInt", _parseIntValue);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_bigIntFunctionValue, 1d, "BigInt");
+            JavaScriptRuntime.Function.MarkConstructible(
+                _bigIntFunctionValue);
             PropertyDescriptorStore.DefineOrUpdate(_bigIntFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -764,7 +782,9 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asUintN", _bigIntAsUintNValue, 2d);
             DefineIntrinsicDataProperty(_bigIntPrototypeValue, "constructor", _bigIntFunctionValue);
             DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "toLocaleString", _bigIntPrototypeToLocaleStringValue, 0d);
-            DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "toString", _bigIntPrototypeToStringValue, 1d);
+            // BigInt.prototype.toString ( [ radix ] ): radix is an optional parameter,
+            // so per the built-in function length convention its "length" is 0.
+            DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "toString", _bigIntPrototypeToStringValue, 0d);
             DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "valueOf", _bigIntPrototypeValueOfValue, 0d);
             DefineIntrinsicToStringTagProperty(_bigIntPrototypeValue, "BigInt");
             JavaScriptRuntime.Date.InitializeIntrinsicSurface(_objectPrototypeValue);
@@ -780,8 +800,8 @@ namespace JavaScriptRuntime
             ConfigureBuiltinFunctionObject(_encodeURIValue);
             ConfigureBuiltinFunctionObject(_decodeURIComponentValue);
             ConfigureBuiltinFunctionObject(_encodeURIComponentValue);
-            DefineUndefinedPrototypeProperty(_parseIntValue);
-            DefineUndefinedPrototypeProperty(_parseFloatValue);
+            // ECMAScript: parseInt/parseFloat are ordinary (non-constructor) built-in functions
+            // and therefore must not expose an own "prototype" property (sec-parseint-string-radix).
             DefineUndefinedPrototypeProperty(_isFiniteValue);
             DefineUndefinedPrototypeProperty(_isNaNValue);
             DefineUndefinedPrototypeProperty(_decodeURIValue);
@@ -814,22 +834,8 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _booleanFunctionValue
             });
-            PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "toString", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _booleanPrototypeToStringValue
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "valueOf", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _booleanPrototypeValueOfValue
-            });
+            DefineBuiltinFunctionProperty(_booleanPrototypeValue, "toString", _booleanPrototypeToStringValue, 0d);
+            DefineBuiltinFunctionProperty(_booleanPrototypeValue, "valueOf", _booleanPrototypeValueOfValue, 0d);
             DefineIntrinsicDataProperty(_booleanPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Boolean");
 
             PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "constructor", new JsPropertyDescriptor
@@ -886,7 +892,7 @@ namespace JavaScriptRuntime
                         Writable = false,
                         Value = _symbolPrototypeToPrimitiveValue
                 });
-            DefineIntrinsicDataProperty(_symbolPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Symbol");
+            DefineIntrinsicToStringTagProperty(_symbolPrototypeValue, "Symbol");
             DefineIntrinsicDataProperty(_symbolFunctionValue, "for", (Func<object?, object>)global::JavaScriptRuntime.Symbol.@for);
             DefineIntrinsicDataProperty(_symbolFunctionValue, "keyFor", (Func<object?, object?>)global::JavaScriptRuntime.Symbol.keyFor);
             DefineWellKnownSymbolProperty("iterator", global::JavaScriptRuntime.Symbol.iterator);
@@ -905,14 +911,7 @@ namespace JavaScriptRuntime
             DefineWellKnownSymbolProperty("dispose", global::JavaScriptRuntime.Symbol.dispose);
             DefineWellKnownSymbolProperty("asyncDispose", global::JavaScriptRuntime.Symbol.asyncDispose);
 
-            PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "isError", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _errorIsErrorValue
-            });
+            DefineBuiltinFunctionProperty(_errorConstructorValue, "isError", _errorIsErrorValue, 1d);
 
             PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "message", new JsPropertyDescriptor
             {
@@ -930,49 +929,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = "Error"
             });
-            PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "toString", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (BuiltinFunction0)ErrorPrototypeToString
-            });
-            ConfigureBuiltinFunctionObject(_typeErrorConstructorValue);
-            PropertyDescriptorStore.DefineOrUpdate(_typeErrorConstructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _typeErrorPrototypeValue
-            });
-            PrototypeChain.SetPrototype(_typeErrorPrototypeValue, _errorPrototypeValue);
-            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _typeErrorConstructorValue
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "message", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = string.Empty
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = "TypeError"
-            });
-            PrototypeChain.SetPrototype(_typeErrorConstructorValue, _errorConstructorValue);
+            DefineBuiltinFunctionProperty(_errorPrototypeValue, "toString", (BuiltinFunction0)ErrorPrototypeToString, 0d);
 
             ConfigureBuiltinFunctionObject(_typedArrayConstructorValue);
             PrototypeChain.SetPrototype(_typedArrayPrototypeValue, _objectPrototypeValue);
@@ -985,6 +942,8 @@ namespace JavaScriptRuntime
                 Value = _typedArrayPrototypeValue
             });
             DefineSpeciesAccessorProperty(_typedArrayConstructorValue);
+            DefineBuiltinFunctionProperty(_typedArrayConstructorValue, "from", _typedArrayFromValue, 1d);
+            DefineBuiltinFunctionProperty(_typedArrayConstructorValue, "of", _typedArrayOfValue, 0d);
             PropertyDescriptorStore.DefineOrUpdate(_typedArrayPrototypeValue, "constructor", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1035,6 +994,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "reduceRight", _typedArrayReduceRightValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toReversed", _typedArrayToReversedValue, 0d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "entries", _typedArrayEntriesValue, 0d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "keys", _typedArrayKeysValue, 0d);
             ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue, 8d);
             ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue, 4d);
             ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue, 4d);
@@ -1162,6 +1123,130 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.at(index);
+        }
+
+        private static object? TypedArrayPrototypeEntries(object? thisArgument)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.entries called on incompatible receiver");
+            }
+
+            return typedArray.entries();
+        }
+
+        private static object? TypedArrayPrototypeKeys(object? thisArgument)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.keys called on incompatible receiver");
+            }
+
+            return typedArray.keys();
+        }
+
+        private static object? TypedArrayFrom(object? thisArgument, object? source, object? mapFn, object? thisArg)
+        {
+            if (!CallableOperations.IsConstructor(thisArgument))
+            {
+                throw new TypeError("%TypedArray%.from called on a value that is not a constructor");
+            }
+
+            var mapping = mapFn is not null && mapFn is not JsNull;
+            if (mapping && !CallableOperations.IsCallable(mapFn))
+            {
+                throw new TypeError("%TypedArray%.from: mapfn is not callable");
+            }
+
+            if (source is null || source is JsNull)
+            {
+                throw new TypeError("%TypedArray%.from called with null or undefined source");
+            }
+
+            object? iteratorMethod = ObjectRuntime.GetItem(source, global::JavaScriptRuntime.Symbol.iterator);
+            if (iteratorMethod is JsNull)
+            {
+                iteratorMethod = null;
+            }
+
+            List<object?> values;
+            if (iteratorMethod is not null)
+            {
+                if (!CallableOperations.IsCallable(iteratorMethod))
+                {
+                    throw new TypeError("Symbol.iterator is not a function");
+                }
+
+                values = new List<object?>();
+                var iterator = ObjectRuntime.GetIteratorFromMethod(source, iteratorMethod);
+                while (true)
+                {
+                    var step = iterator.Next();
+                    if (step.done)
+                    {
+                        break;
+                    }
+
+                    values.Add(step.value);
+                }
+            }
+            else
+            {
+                var length = ToArrayLikeLength(ObjectRuntime.GetItem(source, "length"));
+                values = new List<object?>(length);
+                for (var i = 0; i < length; i++)
+                {
+                    values.Add(ObjectRuntime.GetItem(source, (double)i));
+                }
+            }
+
+            var target = CallableOperations.Construct1(thisArgument, thisArgument, (double)values.Count);
+            for (var i = 0; i < values.Count; i++)
+            {
+                var value = mapping
+                    ? CallableOperations.Call2(mapFn, thisArg, values[i], (double)i)
+                    : values[i];
+                ObjectRuntime.SetProperty(
+                    target!,
+                    i.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    value,
+                    throwOnError: true);
+            }
+
+            return target;
+        }
+
+        private static object? TypedArrayOf(object? thisArgument, in JsCallArguments arguments)
+        {
+            if (!CallableOperations.IsConstructor(thisArgument))
+            {
+                throw new TypeError("%TypedArray%.of called on a value that is not a constructor");
+            }
+
+            var items = arguments.ToArray();
+            var target = CallableOperations.Construct1(thisArgument, thisArgument, (double)items.Length);
+            for (var i = 0; i < items.Length; i++)
+            {
+                ObjectRuntime.SetProperty(
+                    target!,
+                    i.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    items[i],
+                    throwOnError: true);
+            }
+
+            return target;
+        }
+
+        private static int ToArrayLikeLength(object? lengthValue)
+        {
+            var number = TypeUtilities.ToNumber(lengthValue);
+            if (double.IsNaN(number) || number <= 0)
+            {
+                return 0;
+            }
+
+            var truncated = System.Math.Min(System.Math.Truncate(number), 9007199254740991d);
+            return (int)System.Math.Min(truncated, int.MaxValue);
         }
 
         private static object? TypedArrayPrototypeSort(object? thisArgument, in JsCallArguments arguments)
@@ -1778,6 +1863,10 @@ namespace JavaScriptRuntime
             => ReferenceEquals(target, _stringFunctionValue)
                 || target.Method == _stringFunctionValue.Method;
 
+        internal static bool IsBigIntConstructorTarget(Delegate target)
+            => ReferenceEquals(target, _bigIntFunctionValue)
+                || target.Method == _bigIntFunctionValue.Method;
+
         internal static bool IsPromiseConstructorValue(object? value)
             => ReferenceEquals(value, _promiseConstructorValue)
                 || value is BuiltinDelegateFunctionAdapter adapter
@@ -2140,7 +2229,7 @@ namespace JavaScriptRuntime
             }
 
             bool sawDigit = false;
-            while (i < text.Length && char.IsDigit(text[i]))
+            while (i < text.Length && char.IsAsciiDigit(text[i]))
             {
                 sawDigit = true;
                 i++;
@@ -2149,7 +2238,7 @@ namespace JavaScriptRuntime
             if (i < text.Length && text[i] == '.')
             {
                 i++;
-                while (i < text.Length && char.IsDigit(text[i]))
+                while (i < text.Length && char.IsAsciiDigit(text[i]))
                 {
                     sawDigit = true;
                     i++;
@@ -2167,7 +2256,7 @@ namespace JavaScriptRuntime
                 }
 
                 int expDigits = 0;
-                while (i < text.Length && char.IsDigit(text[i]))
+                while (i < text.Length && char.IsAsciiDigit(text[i]))
                 {
                     expDigits++;
                     i++;
@@ -2526,9 +2615,11 @@ namespace JavaScriptRuntime
                 Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = "ArrayBuffer"
             });
             DefineBuiltinFunctionProperty(_arrayBufferConstructorValue, "isView", _arrayBufferIsViewValue, 1d);
+            DefineSpeciesAccessorProperty(_arrayBufferConstructorValue);
             DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
             DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
         }
 
@@ -2548,6 +2639,11 @@ namespace JavaScriptRuntime
             DefineSharedArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
             DefineSharedArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineSharedArrayBufferAccessor("growable", static _ => false);
+            DefineBuiltinFunctionProperty(
+                JavaScriptRuntime.SharedArrayBuffer.SharedPrototype,
+                "slice",
+                _sharedArrayBufferPrototypeSliceValue,
+                2d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.SharedArrayBuffer.SharedPrototype, "SharedArrayBuffer");
         }
 
@@ -2839,12 +2935,23 @@ namespace JavaScriptRuntime
             };
         }
 
-        private static void ConfigureErrorIntrinsicSurface(object constructorValue, object prototypeValue, string name, object parentPrototype)
+        private static void ConfigureErrorIntrinsicSurface(object constructorValue, object prototypeValue, string name, object parentPrototype, double length = 1d)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, parentPrototype);
 
+            // Error and the NativeError constructors (EvalError, RangeError, ReferenceError,
+            // SyntaxError, TypeError, URIError) all have a length of 1; AggregateError and
+            // SuppressedError pass their own larger arities via the length parameter.
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = length
+            });
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

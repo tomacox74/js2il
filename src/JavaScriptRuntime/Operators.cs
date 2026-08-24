@@ -86,6 +86,11 @@ namespace JavaScriptRuntime
             a = ToPrimitiveForRelationalComparison(a);
             b = ToPrimitiveForRelationalComparison(b);
 
+            if (a is string leftString && b is string rightString)
+            {
+                return string.CompareOrdinal(leftString, rightString);
+            }
+
             if (a is BigInteger leftBigInt)
             {
                 if (b is BigInteger rightBigInt)
@@ -504,9 +509,15 @@ namespace JavaScriptRuntime
                 return leftDouble - rightDouble;
             }
 
-            if (a is BigInteger leftBigInt)
+            // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
+            // (which applies ToPrimitive first, e.g. for BigInt wrapper objects) before the
+            // BigInt/Number type-mismatch check.
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     return leftBigInt - rightBigInt;
                 }
@@ -514,14 +525,12 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var da = ToNumber(a);
-            var db = ToNumber(b);
-            return da - db;
+            return (double)leftNumeric - (double)rightNumeric;
         }
 
         /// <summary>
@@ -535,9 +544,15 @@ namespace JavaScriptRuntime
                 return leftDouble * rightDouble;
             }
 
-            if (a is BigInteger leftBigInt)
+            // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
+            // (which applies ToPrimitive first, e.g. for BigInt wrapper objects) before the
+            // BigInt/Number type-mismatch check.
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     return leftBigInt * rightBigInt;
                 }
@@ -545,14 +560,12 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var da = ToNumber(a);
-            var db = ToNumber(b);
-            return da * db;
+            return (double)leftNumeric * (double)rightNumeric;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -563,9 +576,15 @@ namespace JavaScriptRuntime
                 return leftDouble / rightDouble;
             }
 
-            if (a is BigInteger leftBigInt)
+            // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
+            // (which applies ToPrimitive first, e.g. for BigInt wrapper objects) before the
+            // BigInt/Number type-mismatch check.
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     if (rightBigInt == BigInteger.Zero)
                     {
@@ -578,14 +597,12 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var da = ToNumber(a);
-            var db = ToNumber(b);
-            return da / db;
+            return (double)leftNumeric / (double)rightNumeric;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -596,9 +613,15 @@ namespace JavaScriptRuntime
                 return leftDouble % rightDouble;
             }
 
-            if (a is BigInteger leftBigInt)
+            // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
+            // (which applies ToPrimitive first, e.g. for BigInt wrapper objects) before the
+            // BigInt/Number type-mismatch check.
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     if (rightBigInt == BigInteger.Zero)
                     {
@@ -611,19 +634,23 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var da = ToNumber(a);
-            var db = ToNumber(b);
-            return da % db;
+            return (double)leftNumeric % (double)rightNumeric;
         }
 
         public static object Exponentiate(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
+            // (which applies ToPrimitive first, e.g. for BigInt wrapper objects) before the
+            // BigInt/Number type-mismatch check.
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt && rightNumeric is BigInteger rightBigInt)
             {
                 if (rightBigInt < BigInteger.Zero)
                 {
@@ -638,14 +665,12 @@ namespace JavaScriptRuntime
                 return BigInteger.Pow(leftBigInt, (int)rightBigInt);
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (leftNumeric is BigInteger || rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var da = ToNumber(a);
-            var db = ToNumber(b);
-            return global::System.Math.Pow(da, db);
+            return global::System.Math.Pow((double)leftNumeric, (double)rightNumeric);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

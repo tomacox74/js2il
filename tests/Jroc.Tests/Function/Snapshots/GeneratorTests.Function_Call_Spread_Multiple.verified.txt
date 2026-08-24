@@ -305,7 +305,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 178 (0xb2)
+			// Code size: 229 (0xe5)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Call_Spread_Multiple/dump/Scope,
@@ -313,7 +313,8 @@
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[3] object,
 				[4] float64,
-				[5] float64
+				[5] object,
+				[6] bool
 			)
 
 			IL_0000: newobj instance void Modules.Function_Call_Spread_Multiple/dump/Scope::.ctor()
@@ -355,34 +356,50 @@
 				IL_0065: stloc.s 4
 				IL_0067: ldloc.0
 				IL_0068: ldfld object Modules.Function_Call_Spread_Multiple/dump/Scope::arguments
-				IL_006d: ldstr "length"
-				IL_0072: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0077: stloc.s 5
-				IL_0079: ldloc.s 4
-				IL_007b: ldloc.s 5
-				IL_007d: clt
-				IL_007f: brfalse IL_00b0
+				IL_006d: volatile.
+				IL_006f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+				IL_0074: brfalse IL_0088
 
-				IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0089: stloc.2
-				IL_008a: ldloc.0
-				IL_008b: ldfld object Modules.Function_Call_Spread_Multiple/dump/Scope::arguments
-				IL_0090: ldloc.1
-				IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0096: stloc.3
-				IL_0097: ldloc.2
-				IL_0098: ldloc.3
-				IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_009e: pop
-				IL_009f: ldloc.1
-				IL_00a0: ldc.r8 1
-				IL_00a9: add
-				IL_00aa: stloc.1
-				IL_00ab: br IL_0064
+				IL_0079: ldstr "length"
+				IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0083: br IL_009c
+
+				IL_0088: ldstr "length"
+				IL_008d: ldstr "Function_Call_Spread_Multiple:<TwoPhaseDummy_M4>:__js_call__:14"
+				IL_0092: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_009c: stloc.3
+				IL_009d: ldloc.s 4
+				IL_009f: box [System.Runtime]System.Double
+				IL_00a4: stloc.s 5
+				IL_00a6: ldloc.s 5
+				IL_00a8: ldloc.3
+				IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+				IL_00ae: stloc.s 6
+				IL_00b0: ldloc.s 6
+				IL_00b2: brfalse IL_00e3
+
+				IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00bc: stloc.2
+				IL_00bd: ldloc.0
+				IL_00be: ldfld object Modules.Function_Call_Spread_Multiple/dump/Scope::arguments
+				IL_00c3: ldloc.1
+				IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00c9: stloc.3
+				IL_00ca: ldloc.2
+				IL_00cb: ldloc.3
+				IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00d1: pop
+				IL_00d2: ldloc.1
+				IL_00d3: ldc.r8 1
+				IL_00dc: add
+				IL_00dd: stloc.1
+				IL_00de: br IL_0064
 			// end loop
 
-			IL_00b0: ldnull
-			IL_00b1: ret
+			IL_00e3: ldnull
+			IL_00e4: ret
 		} // end of method dump::__js_call__
 
 	} // end of class dump
@@ -527,6 +544,7 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

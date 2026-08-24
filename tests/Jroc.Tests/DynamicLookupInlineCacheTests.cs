@@ -75,6 +75,7 @@ public sealed class DynamicLookupInlineCacheTests
             {
                 var prototype = new JsObject();
                 var receiver = new JsObject();
+                PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);
                 PrototypeChain.SetPrototype(receiver, prototype);
 
                 Assert.Same(
@@ -87,8 +88,8 @@ public sealed class DynamicLookupInlineCacheTests
                 prototype.SetValue(
                     "__proto__",
                     "inherited-shadow");
-                Assert.Same(
-                    prototype,
+                Assert.Equal(
+                    "inherited-shadow",
                     DynamicLookupInlineCache.GetItem(
                         receiver,
                         "__proto__",

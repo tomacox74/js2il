@@ -9,4 +9,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "invalid-receiver")]
     public Task invalid_receiver()
         => ExecutionTestFromFile("invalid-receiver");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
 }

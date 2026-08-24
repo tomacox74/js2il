@@ -13,4 +13,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S15.6.4.2_A1_T2")]
     public Task S15_6_4_2_A1_T2()
         => ExecutionTestFromFile("S15.6.4.2_A1_T2");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

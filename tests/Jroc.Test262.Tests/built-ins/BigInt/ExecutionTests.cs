@@ -45,4 +45,24 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "tostring-throws")]
     public Task tostring_throws()
         => ExecutionTestFromFile("tostring-throws");
+
+    [Fact(DisplayName = "infinity-throws-rangeerror")]
+    public Task infinity_throws_rangeerror()
+        => ExecutionTestFromFile("infinity-throws-rangeerror");
+
+    [Fact(DisplayName = "nan-throws-rangeerror")]
+    public Task nan_throws_rangeerror()
+        => ExecutionTestFromFile("nan-throws-rangeerror");
+
+    [Fact(DisplayName = "negative-infinity-throws.rangeerror")]
+    public Task negative_infinity_throws_rangeerror()
+        => ExecutionTestFromFile("negative-infinity-throws.rangeerror");
+
+    [Fact(DisplayName = "is-a-constructor")]
+    public Task is_a_constructor()
+        => ExecutionTestFromFile("is-a-constructor");
+
+    [Fact(DisplayName = "wrapper-object-ordinary-toprimitive")]
+    public Task wrapper_object_ordinary_toprimitive()
+        => ExecutionTestFromFile("wrapper-object-ordinary-toprimitive");
 }

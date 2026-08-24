@@ -186,7 +186,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 112 (0x70)
+				// Code size: 117 (0x75)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -222,22 +222,24 @@
 				IL_0034: ldelem.ref
 				IL_0035: castclass Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope
 				IL_003a: ldfld object Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope::i
-				IL_003f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0044: ldc.r8 3
-				IL_004d: cgt
-				IL_004f: stloc.2
-				IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0055: dup
-				IL_0056: ldstr "value"
-				IL_005b: ldloc.1
-				IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0061: dup
-				IL_0062: ldstr "done"
-				IL_0067: ldloc.2
-				IL_0068: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_006d: stloc.3
-				IL_006e: ldloc.3
-				IL_006f: ret
+				IL_003f: stloc.0
+				IL_0040: ldloc.0
+				IL_0041: ldc.r8 3
+				IL_004a: box [System.Runtime]System.Double
+				IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
+				IL_0054: stloc.2
+				IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_005a: dup
+				IL_005b: ldstr "value"
+				IL_0060: ldloc.1
+				IL_0061: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0066: dup
+				IL_0067: ldstr "done"
+				IL_006c: ldloc.2
+				IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_0072: stloc.3
+				IL_0073: ldloc.3
+				IL_0074: ret
 			} // end of method ArrowFunction_L9C19::__js_call__
 
 		} // end of class ArrowFunction_L9C19

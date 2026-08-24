@@ -17,4 +17,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "this-is-not-constructor")]
     public Task this_is_not_constructor()
         => ExecutionTestFromFile("this-is-not-constructor");
+
+    [Fact(DisplayName = "invoked-as-func")]
+    public Task invoked_as_func()
+        => ExecutionTestFromFile("invoked-as-func");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "prop-desc")]
+    public Task prop_desc()
+        => ExecutionTestFromFile("prop-desc");
 }

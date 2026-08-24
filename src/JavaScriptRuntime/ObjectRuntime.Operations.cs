@@ -891,7 +891,7 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
             Function.MarkConstructible(objectConstructorValue);
 
-            DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: false, writable: false);
 
             DefineBuiltinDataProperty(objectConstructorValue, "assign", _objectAssignValue);
             InitializeBuiltinStaticFunction(_objectAssignValue, "assign", 2);
@@ -950,9 +950,46 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectPrototypeValue, "toString", _objectPrototypeToStringValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "valueOf", _objectPrototypeValueOfValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "__defineGetter__", _objectPrototypeDefineGetterValue, enumerable: false, configurable: true, writable: true);
+            InitializeBuiltinStaticFunction(_objectPrototypeDefineGetterValue, "__defineGetter__", 2);
             DefineBuiltinDataProperty(objectPrototypeValue, "__defineSetter__", _objectPrototypeDefineSetterValue, enumerable: false, configurable: true, writable: true);
+            InitializeBuiltinStaticFunction(_objectPrototypeDefineSetterValue, "__defineSetter__", 2);
             DefineBuiltinDataProperty(objectPrototypeValue, "__lookupGetter__", _objectPrototypeLookupGetterValue, enumerable: false, configurable: true, writable: true);
+            InitializeBuiltinStaticFunction(_objectPrototypeLookupGetterValue, "__lookupGetter__", 1);
             DefineBuiltinDataProperty(objectPrototypeValue, "__lookupSetter__", _objectPrototypeLookupSetterValue, enumerable: false, configurable: true, writable: true);
+            InitializeBuiltinStaticFunction(_objectPrototypeLookupSetterValue, "__lookupSetter__", 1);
+            DefineObjectPrototypeProtoAccessor(objectPrototypeValue);
+        }
+
+        private static readonly BuiltinFunction0 _objectPrototypeGetProtoValue = PrototypeGetProto;
+        private static readonly BuiltinFunction1 _objectPrototypeSetProtoValue = PrototypeSetProto;
+
+        /// <summary>
+        /// Defines the legacy <c>Object.prototype.__proto__</c> accessor property (Annex B.2.2.1)
+        /// with named "get __proto__"/"set __proto__" functions, so that
+        /// <c>Object.getOwnPropertyDescriptor(Object.prototype, "__proto__")</c> observes a real
+        /// accessor descriptor instead of ad-hoc special-cased property access.
+        /// </summary>
+        private static void DefineObjectPrototypeProtoAccessor(object objectPrototypeValue)
+        {
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                _objectPrototypeGetProtoValue,
+                0d,
+                "get __proto__",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(_objectPrototypeGetProtoValue));
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                _objectPrototypeSetProtoValue,
+                1d,
+                "set __proto__",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(_objectPrototypeSetProtoValue));
+
+            PropertyDescriptorStore.DefineOrUpdate(objectPrototypeValue, "__proto__", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = _objectPrototypeGetProtoValue,
+                Set = _objectPrototypeSetProtoValue
+            });
         }
 
         private static void DefineBuiltinFunctionName(object functionValue, string name)
@@ -1077,7 +1114,7 @@ namespace JavaScriptRuntime
                     return GlobalThis.ObjectPrototypeValue;
                 }
 
-                if (ReferenceEquals(obj, GlobalThis.Math))
+                if (ReferenceEquals(obj, GlobalThis.Math) || ReferenceEquals(obj, GlobalThis.Reflect))
                 {
                     return GlobalThis.ObjectPrototypeValue;
                 }
@@ -1121,20 +1158,12 @@ namespace JavaScriptRuntime
             {
                 return obj;
             }
-            if (WouldCreatePrototypeCycle(obj, prototype))
-            {
-                throw new TypeError("Cyclic __proto__ value");
-            }
 
-            // OrdinarySetPrototypeOf returns false for a non-extensible target whose prototype
-            // would actually change, and Object.setPrototypeOf turns that failure into a TypeError.
-            if (!IsExtensibleInternal(obj) && !SamePrototypeValue(GetCurrentPrototypeValue(obj), prototype))
+            if (!OrdinarySetPrototypeOfInternal(obj, prototype))
             {
                 throw new TypeError("#<Object> is not extensible");
             }
 
-            InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(obj);
-            PrototypeChain.SetPrototype(obj, prototype);
             return obj;
         }
 
@@ -1345,9 +1374,11 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(wrapper, prototype);
             PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, CreatePrimitiveValueDescriptor(primitiveValue));
 
-            // Symbol wrappers must inherit these methods. Defining them on each
-            // wrapper would prevent Symbol.prototype mutations from participating
-            // in OrdinaryToPrimitive.
+            // Primitive wrapper objects (Number, BigInt, Symbol, ...) must inherit
+            // "toString"/"valueOf" from their prototype rather than shadow them with
+            // own properties: per spec these methods live only on e.g.
+            // %BigInt.prototype%, so overriding the prototype method (or its getter)
+            // must be observable through OrdinaryToPrimitive on the wrapper.
             if (includeOwnStringMethods && primitiveValue is not JavaScriptRuntime.Symbol)
             {
                 PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
@@ -1357,18 +1388,6 @@ namespace JavaScriptRuntime
                     Configurable = true,
                     Writable = true,
                     Value = (BuiltinFunction0)(_ => DotNet2JSConversions.ToString(primitiveValue))
-                });
-            }
-
-            if (primitiveValue is not JavaScriptRuntime.Symbol)
-            {
-                PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = true,
-                    Value = (BuiltinFunction0)(_ => primitiveValue)
                 });
             }
 
@@ -1489,12 +1508,13 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object.defineProperty called on non-object");
             }
 
+            var key = ToPropertyKeyString(prop);
+
             if (!IsPropertyDescriptorObject(attributes))
             {
                 throw new TypeError("Property description must be an object");
             }
 
-            var key = ToPropertyKeyString(prop);
             InvalidateRegExpWellKnownSymbolFastPath(obj, key);
             var requested = ParseRequestedPropertyDescriptor(attributes!);
             double? validatedArrayLength = null;
@@ -1581,6 +1601,62 @@ namespace JavaScriptRuntime
             {
                 PropertyDescriptorStore.DefineOrUpdate(obj, key, appliedDescriptor);
             }
+            return true;
+        }
+
+        /// <summary>
+        /// ECMA-262 CreateDataProperty(O, P, V): defines an own data property with default
+        /// attributes {writable:true, enumerable:true, configurable:true}. Unlike
+        /// <see cref="defineProperty"/>, this never throws when the operation fails (e.g.
+        /// attempting to overwrite a non-configurable own property); callers that need the
+        /// success/failure result (such as JSON.parse's InternalizeJSONProperty) should inspect
+        /// the returned boolean and silently ignore a <c>false</c> result per spec.
+        /// </summary>
+        internal static bool CreateDataProperty(object target, string key, object? value)
+        {
+            var requested = new RequestedPropertyDescriptor
+            {
+                HasWritable = true,
+                Writable = true,
+                HasEnumerable = true,
+                Enumerable = true,
+                HasConfigurable = true,
+                Configurable = true,
+                HasValue = true,
+                Value = value
+            };
+
+            var hasOwnProperty = TryGetOwnPropertyDescriptor(target, key, out var existingDescriptor);
+            if (!hasOwnProperty && !IsExtensibleInternal(target))
+            {
+                return false;
+            }
+
+            JsPropertyDescriptor appliedDescriptor;
+            if (hasOwnProperty)
+            {
+                if (!TryApplyRequestedDescriptorToExisting(existingDescriptor, requested, out appliedDescriptor))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                appliedDescriptor = CreateDescriptorForNewProperty(requested);
+            }
+
+            if (target is JsObject jsObject)
+            {
+                return jsObject.DefineOwnProperty(key, appliedDescriptor);
+            }
+
+            if (target is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(target))
+            {
+                dict[key] = value;
+                return true;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, appliedDescriptor);
             return true;
         }
 
@@ -2116,47 +2192,17 @@ namespace JavaScriptRuntime
             }
 
             var key = ToPropertyKeyString(prop);
-            var enumerable = true;
-            var configurable = true;
-            object? setter = null;
-
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing))
+            var requested = new RequestedPropertyDescriptor
             {
-                enumerable = existing.Enumerable;
-                configurable = existing.Configurable;
-                if (existing.Kind == JsPropertyDescriptorKind.Accessor)
-                {
-                    setter = existing.Set;
-                }
-            }
-
-            var descriptor = new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = enumerable,
-                Configurable = configurable,
+                HasGet = true,
                 Get = getter,
-                Set = setter
+                HasEnumerable = true,
+                Enumerable = true,
+                HasConfigurable = true,
+                Configurable = true
             };
 
-            if (target is JsObject jsObject)
-            {
-                if (!jsObject.DefineOwnProperty(key, descriptor))
-                {
-                    throw new TypeError($"Cannot define property: {key}");
-                }
-            }
-            else
-            {
-                PropertyDescriptorStore.DefineOrUpdate(target, key, descriptor);
-                if (target is IDictionary<string, object?> dict
-                    && !PropertyDescriptorStore.HasIntrinsicProperties(target)
-                    && !dict.ContainsKey(key))
-                {
-                    dict[key] = null;
-                }
-            }
-
+            DefinePropertyOrThrowForLegacyAccessor(target, key, requested);
             return null;
         }
 
@@ -2169,39 +2215,58 @@ namespace JavaScriptRuntime
             }
 
             var key = ToPropertyKeyString(prop);
-            var enumerable = true;
-            var configurable = true;
-            object? getter = null;
-
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing))
+            var requested = new RequestedPropertyDescriptor
             {
-                enumerable = existing.Enumerable;
-                configurable = existing.Configurable;
-                if (existing.Kind == JsPropertyDescriptorKind.Accessor)
-                {
-                    getter = existing.Get;
-                }
-            }
-
-            var descriptor = new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = enumerable,
-                Configurable = configurable,
-                Get = getter,
-                Set = setter
+                HasSet = true,
+                Set = setter,
+                HasEnumerable = true,
+                Enumerable = true,
+                HasConfigurable = true,
+                Configurable = true
             };
 
-            if (target is JsObject jsObject)
+            DefinePropertyOrThrowForLegacyAccessor(target, key, requested);
+            return null;
+        }
+
+        /// <summary>
+        /// Shared <c>DefinePropertyOrThrow(O, key, desc)</c> application for the legacy
+        /// <c>__defineGetter__</c>/<c>__defineSetter__</c> methods (ES Annex B.2.2.2/B.2.2.3):
+        /// validates extensibility for new properties, merges the requested accessor fields
+        /// with any existing descriptor (honoring [[Configurable]]), and throws a TypeError on
+        /// failure just like <c>Object.defineProperty</c>.
+        /// </summary>
+        private static void DefinePropertyOrThrowForLegacyAccessor(object target, string key, RequestedPropertyDescriptor requested)
+        {
+            var hasOwnProperty = HasOwnProperty(target, key);
+            if (!IsExtensibleInternal(target) && !hasOwnProperty)
             {
-                if (!jsObject.DefineOwnProperty(key, descriptor))
+                throw new TypeError($"Cannot define property: {key}");
+            }
+
+            JsPropertyDescriptor appliedDescriptor;
+            if (TryGetOwnPropertyDescriptor(target, key, out var existingDescriptor))
+            {
+                if (!TryApplyRequestedDescriptorToExisting(existingDescriptor, requested, out appliedDescriptor))
                 {
                     throw new TypeError($"Cannot define property: {key}");
                 }
             }
             else
             {
-                PropertyDescriptorStore.DefineOrUpdate(target, key, descriptor);
+                appliedDescriptor = CreateDescriptorForNewProperty(requested);
+            }
+
+            if (target is JsObject jsObject)
+            {
+                if (!jsObject.DefineOwnProperty(key, appliedDescriptor))
+                {
+                    throw new TypeError($"Cannot define property: {key}");
+                }
+            }
+            else
+            {
+                PropertyDescriptorStore.DefineOrUpdate(target, key, appliedDescriptor);
                 if (target is IDictionary<string, object?> dict
                     && !PropertyDescriptorStore.HasIntrinsicProperties(target)
                     && !dict.ContainsKey(key))
@@ -2209,37 +2274,50 @@ namespace JavaScriptRuntime
                     dict[key] = null;
                 }
             }
-
-            return null;
         }
 
         private static object? PrototypeLookupGetter(object? thisArgument, object? prop)
         {
             var target = RequireObjectCoercibleReceiver(thisArgument);
             var key = ToPropertyKeyString(prop);
+            return LookupAccessorInPrototypeChain(target, key, isGetter: true);
+        }
 
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var own) && own.Kind == JsPropertyDescriptorKind.Accessor)
-            {
-                return own.Get;
-            }
+        private static object? PrototypeLookupSetter(object? thisArgument, object? prop)
+        {
+            var target = RequireObjectCoercibleReceiver(thisArgument);
+            var key = ToPropertyKeyString(prop);
+            return LookupAccessorInPrototypeChain(target, key, isGetter: false);
+        }
 
-            if (!PrototypeChain.Enabled)
-            {
-                return null;
-            }
-
+        /// <summary>
+        /// Implements the common walk used by <c>__lookupGetter__</c>/<c>__lookupSetter__</c>
+        /// (ES Annex B.2.2.4/B.2.2.5): at each level of the prototype chain, an own property
+        /// (of either kind) stops the search; only a missing own property continues to the
+        /// next [[Prototype]].
+        /// </summary>
+        private static object? LookupAccessorInPrototypeChain(object target, string key, bool isGetter)
+        {
             var current = target;
-            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance) { current };
-            while (PrototypeChain.TryGetPrototype(current, out var proto) && proto is not null && proto is not JsNull)
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+
+            while (current is not null)
             {
-                if (!visited.Add(proto))
+                if (!visited.Add(current))
                 {
-                    break;
+                    return null;
                 }
 
-                if (PropertyDescriptorStore.TryGetOwn(proto, key, out var descriptor) && descriptor.Kind == JsPropertyDescriptorKind.Accessor)
+                if (TryGetOwnPropertyDescriptor(current, key, out var descriptor))
                 {
-                    return descriptor.Get;
+                    return descriptor.Kind == JsPropertyDescriptorKind.Accessor
+                        ? (isGetter ? descriptor.Get : descriptor.Set)
+                        : null;
+                }
+
+                if (!PrototypeChain.TryGetPrototype(current, out var proto) || proto is null || proto is JsNull)
+                {
+                    return null;
                 }
 
                 current = proto;
@@ -2248,36 +2326,40 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        private static object? PrototypeLookupSetter(object? thisArgument, object? prop)
+        /// <summary>
+        /// <c>get Object.prototype.__proto__</c> (Annex B.2.2.1.1): <c>Let O be ? ToObject(this
+        /// value). Return ? O.[[GetPrototypeOf]]().</c>
+        /// </summary>
+        private static object? PrototypeGetProto(object? thisArgument)
+        {
+            return getPrototypeOf(thisArgument!);
+        }
+
+        /// <summary>
+        /// <c>set Object.prototype.__proto__</c> (Annex B.2.2.1.2): coerces <c>this</c>,
+        /// silently ignores non-object/non-null values and non-object receivers, and otherwise
+        /// invokes [[SetPrototypeOf]], throwing a TypeError when the operation reports failure
+        /// (including the immutable-prototype behavior of the realm's own %Object.prototype%).
+        /// </summary>
+        private static object? PrototypeSetProto(object? thisArgument, object? proto)
         {
             var target = RequireObjectCoercibleReceiver(thisArgument);
-            var key = ToPropertyKeyString(prop);
 
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var own) && own.Kind == JsPropertyDescriptorKind.Accessor)
-            {
-                return own.Set;
-            }
-
-            if (!PrototypeChain.Enabled)
+            if (proto is null || (proto is not JsNull && !IsObjectLikeForPrototype(proto)))
             {
                 return null;
             }
 
-            var current = target;
-            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance) { current };
-            while (PrototypeChain.TryGetPrototype(current, out var proto) && proto is not null && proto is not JsNull)
+            if (!IsObjectLikeForPrototype(target))
             {
-                if (!visited.Add(proto))
-                {
-                    break;
-                }
+                return null;
+            }
 
-                if (PropertyDescriptorStore.TryGetOwn(proto, key, out var descriptor) && descriptor.Kind == JsPropertyDescriptorKind.Accessor)
-                {
-                    return descriptor.Set;
-                }
+            PrototypeChain.Enable();
 
-                current = proto;
+            if (!OrdinarySetPrototypeOfInternal(target, proto))
+            {
+                throw new TypeError("#<Object> is not extensible");
             }
 
             return null;
@@ -4075,24 +4157,37 @@ namespace JavaScriptRuntime
                 int scopeOffset = hasScopes ? 1 : 0;
                 int newTargetOffset = hasNewTarget ? 1 : 0;
                 int jsParamStart = scopeOffset + newTargetOffset;
-                int expectedJsParamCount = parameters.Length - jsParamStart;
-                bool hasParamsArray = expectedJsParamCount > 0
-                    && parameters.Length > 0
-                    && (Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
-                        || (parameters[^1].ParameterType.IsArray
-                            && parameters[^1].ParameterType.GetElementType() == typeof(object)));
 
-                return System.Math.Max(0, hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount);
+                // Mirrors HostedClrInvocation.GetVisibleLength: stop counting at the first
+                // parameter with a default value (C#-optional trailing params such as
+                // Reflect.construct's newTarget) or a params/object[] array, since those
+                // parameters are not part of the visible ECMAScript "length".
+                var length = 0;
+                for (var index = jsParamStart; index < parameters.Length; index++)
+                {
+                    if (parameters[index].HasDefaultValue
+                        || Attribute.IsDefined(parameters[index], typeof(ParamArrayAttribute))
+                        || parameters[index].ParameterType == typeof(object[]))
+                    {
+                        break;
+                    }
+
+                    length++;
+                }
+
+                return length;
             }
         }
 
         private static bool TryGetEcmaScriptStaticMethodLengthOverride(Type staticClassType, string propName, out double length)
         {
-            // ECMAScript specifies Math.max/min.length as 2 even though the operations accept
-            // additional variadic arguments, so the CLR params-array shape cannot be used directly.
+            // ECMAScript specifies Math.max/min/hypot.length as 2 even though the operations
+            // accept additional variadic arguments, so the CLR params-array shape cannot be
+            // used directly.
             if (staticClassType == typeof(JavaScriptRuntime.Math)
                 && (string.Equals(propName, nameof(JavaScriptRuntime.Math.max), StringComparison.Ordinal)
-                    || string.Equals(propName, nameof(JavaScriptRuntime.Math.min), StringComparison.Ordinal)))
+                    || string.Equals(propName, nameof(JavaScriptRuntime.Math.min), StringComparison.Ordinal)
+                    || string.Equals(propName, nameof(JavaScriptRuntime.Math.hypot), StringComparison.Ordinal)))
             {
                 length = 2d;
                 return true;
@@ -5654,12 +5749,6 @@ namespace JavaScriptRuntime
                 return indexedTypedArray[(double)typedArrayIndex];
             }
 
-            // Legacy __proto__ accessor (opt-in) only applies when there is no own "__proto__" property.
-            if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
-            {
-                return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
-            }
-
             if (obj is string && JavaScriptRuntime.String.TryGetPrototypeProperty(obj, name, out var stringPrototypeValue))
             {
                 return stringPrototypeValue;
@@ -5767,21 +5856,32 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value)
             => SetProperty(obj, name, value, throwOnError: true);
 
-        internal static bool ReflectSet(object target, object? propertyKey, object? value)
+        internal static bool ReflectSet(object target, object? propertyKey, object? value, object? receiver)
         {
             var key = ToPropertyKeyString(propertyKey);
+            return ReflectSetOrdinary(target, key, value, receiver);
+        }
+
+        /// <summary>
+        /// ECMA-262 OrdinarySet(O, P, V, Receiver) (9.1.9) as used by <c>Reflect.set</c>. Walks
+        /// <paramref name="target"/>'s own-property/prototype chain to find the descriptor that
+        /// governs the write, but performs the resulting accessor invocation or data-property
+        /// write against <paramref name="receiver"/>, which may differ from <paramref name="target"/>.
+        /// </summary>
+        private static bool ReflectSetOrdinary(object target, string key, object? value, object? receiver)
+        {
             if (target is Proxy proxy)
             {
                 if (proxy.TryInvokeTrap(
                     "set",
                     "set",
-                    new object?[] { proxy.GetTarget("set"), ToExternalPropertyKey(key), value, target },
+                    new object?[] { proxy.GetTarget("set"), ToExternalPropertyKey(key), value, receiver },
                     out var trapResult))
                 {
                     return Operators.IsTruthy(trapResult);
                 }
 
-                return ReflectSet(proxy.GetTarget("set"), propertyKey, value);
+                return ReflectSetOrdinary(proxy.GetTarget("set"), key, value, receiver);
             }
 
             if (target is TypedArrayBase typedArray
@@ -5802,66 +5902,74 @@ namespace JavaScriptRuntime
 
             if (TryGetOwnPropertyDescriptor(target, key, out var ownDescriptor))
             {
-                if (ownDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
-                {
-                    if (ownDescriptor.Set is null || ownDescriptor.Set is JsNull)
-                    {
-                        return false;
-                    }
+                return ApplyReflectSetOwnDescriptor(ownDescriptor, key, value, receiver);
+            }
 
-                    SetProperty(target, key, value, throwOnError: false);
-                    return true;
-                }
+            var parent = PrototypeChain.GetPrototypeOrNull(target);
+            if (parent is not null)
+            {
+                return ReflectSetOrdinary(parent, key, value, receiver);
+            }
 
-                if (!ownDescriptor.Writable)
+            // 9.1.9.2 step 1.d: no descriptor was found anywhere in the chain, so [[Set]]
+            // behaves as though O had the default writable/enumerable/configurable data
+            // descriptor with an undefined value.
+            var defaultDescriptor = new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = null,
+                Writable = true,
+                Enumerable = true,
+                Configurable = true,
+            };
+
+            return ApplyReflectSetOwnDescriptor(defaultDescriptor, key, value, receiver);
+        }
+
+        /// <summary>
+        /// ECMA-262 OrdinarySetWithOwnDescriptor(O, P, V, Receiver, ownDesc) (9.1.9.2) steps 2-11,
+        /// given the descriptor already located on <c>target</c> or one of its prototypes.
+        /// </summary>
+        private static bool ApplyReflectSetOwnDescriptor(JsPropertyDescriptor ownDescriptor, string key, object? value, object? receiver)
+        {
+            if (ownDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                if (ownDescriptor.Set is null || ownDescriptor.Set is JsNull)
                 {
                     return false;
                 }
+
+                JavaScriptRuntime.Function.Call(ownDescriptor.Set, receiver, new object?[] { value });
+                return true;
             }
-            else
+
+            if (!ownDescriptor.Writable)
             {
-                for (var prototype = PrototypeChain.GetPrototypeOrNull(target);
-                     prototype is not null;
-                     prototype = PrototypeChain.GetPrototypeOrNull(prototype))
-                {
-                    if (!TryGetOwnPropertyDescriptor(prototype, key, out var inheritedDescriptor))
-                    {
-                        continue;
-                    }
+                return false;
+            }
 
-                    if (inheritedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
-                    {
-                        if (inheritedDescriptor.Set is null || inheritedDescriptor.Set is JsNull)
-                        {
-                            return false;
-                        }
+            if (!Proxy.IsObjectLikeValue(receiver))
+            {
+                return false;
+            }
 
-                        SetProperty(target, key, value, throwOnError: false);
-                        return true;
-                    }
-
-                    if (!inheritedDescriptor.Writable)
-                    {
-                        return false;
-                    }
-
-                    break;
-                }
-
-                if (!isExtensible(target))
+            if (TryGetOwnPropertyDescriptor(receiver!, key, out var existingDescriptor))
+            {
+                if (existingDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
                 {
                     return false;
                 }
+
+                if (!existingDescriptor.Writable)
+                {
+                    return false;
+                }
+
+                SetProperty(receiver!, key, value, throwOnError: false);
+                return true;
             }
 
-            if (target is Array array
-                && TryParseCanonicalIndexString(key, out var arrayIndex))
-            {
-                return array.TrySetIndexValue(arrayIndex, value, throwOnError: false);
-            }
-
-            SetItem(target, propertyKey!, value, throwOnError: false);
-            return true;
+            return CreateDataProperty(receiver!, key, value);
         }
 
         /// <summary>
@@ -5928,7 +6036,28 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (SamePrototypeValue(GetCurrentPrototypeValue(target), prototype))
+            return OrdinarySetPrototypeOfInternal(target, prototype);
+        }
+
+        /// <summary>
+        /// Shared OrdinarySetPrototypeOf(O, V) algorithm (ES 10.1.2.1), used by
+        /// <c>Object.setPrototypeOf</c>, <c>Reflect.setPrototypeOf</c>, and the legacy
+        /// <c>__proto__</c> setter (Annex B.2.2.1.2). Also implements the realm's own
+        /// <c>%Object.prototype%</c> immutable-prototype exotic behavior (ES 10.4.7.1
+        /// SetImmutablePrototype): any actual change is rejected, and setting the same
+        /// value is a no-op success. Assumes <paramref name="target"/> is already known
+        /// to be an ordinary, non-Proxy, object-like value.
+        /// </summary>
+        private static bool OrdinarySetPrototypeOfInternal(object target, object? prototype)
+        {
+            var current = GetCurrentPrototypeValue(target);
+
+            if (ReferenceEquals(target, GlobalThis.ObjectPrototypeValue))
+            {
+                return SamePrototypeValue(current, prototype);
+            }
+
+            if (SamePrototypeValue(current, prototype))
             {
                 return true;
             }
@@ -6057,17 +6186,6 @@ namespace JavaScriptRuntime
                 return SetProperty(proxy.GetTarget("set"), name, value, throwOnError);
             }
 
-            // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]
-            // when the RHS is an object or null; otherwise it is ignored.
-            if (!hasOwn && PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
-            {
-                if (IsValidPrototypeValue(value))
-                {
-                    InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(obj);
-                    PrototypeChain.SetPrototype(obj, value);
-                }
-                return value;
-            }
             if (IsReadOnlyStringObjectIndex(obj, name))
             {
                 if (!throwOnError)

@@ -90,10 +90,9 @@ public sealed class IntrinsicPrototypeEpochTests
                         objectPrototype,
                         "stringAncestorMutation",
                         true));
-                AssertAdvances(
-                    () => JavaScriptRuntime.Object.setPrototypeOf(
-                        objectPrototype,
-                        new JsObject()));
+                // Note: Object.prototype is an immutable-prototype exotic object (ES
+                // 10.4.7), so Object.setPrototypeOf(Object.prototype, ...) always
+                // throws and is intentionally not exercised here.
                 AssertAdvances(
                     () => JavaScriptRuntime.Object.setPrototypeOf(
                         stringPrototype,

@@ -62,7 +62,7 @@ public static class Function
 
     private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method, double length)
     {
-        var value = CreateBuiltinPrototypeFunction(method, length);
+        var value = CreateBuiltinPrototypeFunction(method, length, name);
         PrototypeChain.SetPrototype(value, prototype);
         PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
         {
@@ -87,7 +87,7 @@ public static class Function
         return false;
     }
 
-    private static Delegate CreateBuiltinPrototypeFunction(Delegate method, double length)
+    private static Delegate CreateBuiltinPrototypeFunction(Delegate method, double length, string name)
     {
         ConfigureCallableObject(method, hasRestrictedProperties: false);
         PropertyDescriptorStore.DefineOrUpdate(method, "length", new JsPropertyDescriptor
@@ -97,6 +97,14 @@ public static class Function
             Configurable = true,
             Writable = false,
             Value = length
+        });
+        PropertyDescriptorStore.DefineOrUpdate(method, "name", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = name
         });
         PropertyDescriptorStore.DefineOrUpdate(method, "prototype", new JsPropertyDescriptor
         {
@@ -239,9 +247,16 @@ public static class Function
     }
 
     public static object? ResolveOrdinaryThisArgument(object? thisArg)
-        => thisArg is null or JsNull
-            ? GlobalThis.globalThis
-            : thisArg;
+    {
+        if (thisArg is null or JsNull)
+        {
+            return GlobalThis.globalThis;
+        }
+
+        // OrdinaryCallBindThis (10.2.1.2) step 7.b: box a non-object thisArg via ToObject
+        // when binding a non-strict function's `this`.
+        return Proxy.IsObjectLikeValue(thisArg) ? thisArg : ObjectRuntime.Construct(thisArg);
+    }
 
         private static bool IsCallableObject(object? target)
             => CallableOperations.IsCallable(target);
@@ -351,6 +366,31 @@ public static class Function
                 return arguments;
             }
 
+            if (Proxy.IsObjectLikeValue(argArray))
+            {
+                // Generic array-like objects (CreateListFromArrayLike, ECMA-262 7.3.17): read
+                // "length" and every index through ordinary [[Get]] so that accessor getters
+                // (and any abrupt completion they raise) are observed, rather than falling
+                // through to the raw IEnumerable branch below, which would silently enumerate
+                // JsObject's backing dictionary instead of invoking property getters.
+                var lengthValue = ObjectRuntime.GetProperty(argArray!, "length");
+                var numericLength = TypeUtilities.ToNumber(lengthValue);
+                var length = double.IsNaN(numericLength) || numericLength <= 0d
+                    ? 0
+                    : (int)global::System.Math.Min(
+                        global::System.Math.Truncate(numericLength),
+                        int.MaxValue);
+                var arguments = new object?[length];
+                for (var index = 0; index < length; index++)
+                {
+                    arguments[index] = ObjectRuntime.GetProperty(
+                        argArray!,
+                        index.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                }
+
+                return arguments;
+            }
+
             if (argArray is IEnumerable enumerable && argArray is not string)
             {
                 var list = new List<object?>();
@@ -414,15 +454,62 @@ public static class Function
                 : boundArgs.ToArray();
             var bound = new BoundFunctionObject(target, thisArg, copiedArguments);
 
-            var targetLength = TypeUtilities.ToNumber(ObjectRuntime.GetProperty(target, "length"));
+            var boundLength = ComputeBoundFunctionLength(target, copiedArguments.Length);
             var targetName = ObjectRuntime.GetProperty(target, "name") as string ?? string.Empty;
             InitializeFunctionInstance(
                 bound,
-                System.Math.Max(targetLength - copiedArguments.Length, 0d),
+                boundLength,
                 $"bound {targetName}",
                 requiresInvocationContext: false);
             MarkUndefinedPrototype(bound);
             return bound;
+        }
+
+        /// <summary>
+        /// ECMA-262 Function.prototype.bind steps 5-7: computes the bound function's "length"
+        /// from the target's own "length" (0 when absent or not a Number), applying
+        /// ToIntegerOrInfinity and subtracting the bound-argument count, floored at 0.
+        /// </summary>
+        private static double ComputeBoundFunctionLength(object target, int boundArgumentCount)
+        {
+            if (target is JsClassConstructorObject classConstructor)
+            {
+                _ = RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(
+                    classConstructor,
+                    "length",
+                    out _);
+            }
+
+            if (!ObjectRuntime.hasOwn(target, "length"))
+            {
+                return 0d;
+            }
+
+            var lengthValue = ObjectRuntime.GetProperty(target, "length");
+            if (lengthValue is not double targetLength)
+            {
+                return 0d;
+            }
+
+            var integerLength = ToIntegerOrInfinity(targetLength);
+            return global::System.Math.Max(integerLength - boundArgumentCount, 0d);
+        }
+
+        /// <summary>ECMA-262 ToIntegerOrInfinity, given an already-Number input.</summary>
+        private static double ToIntegerOrInfinity(double number)
+        {
+            if (double.IsNaN(number) || number == 0d)
+            {
+                return 0d;
+            }
+
+            if (double.IsPositiveInfinity(number) || double.IsNegativeInfinity(number))
+            {
+                return number;
+            }
+
+            var integer = global::System.Math.Sign(number) * global::System.Math.Floor(global::System.Math.Abs(number));
+            return integer == 0d ? 0d : integer;
         }
 
         public static T InitializeFunctionInstance<T>(T functionValue)
@@ -953,6 +1040,13 @@ public static class Function
             if (GlobalThis.IsStringConstructorTarget(constructor.Target))
             {
                 return JavaScriptRuntime.String.Construct(
+                    arguments.ToArray(),
+                    newTarget);
+            }
+
+            if (GlobalThis.IsBigIntConstructorTarget(constructor.Target))
+            {
+                return JavaScriptRuntime.BigInt.Construct(
                     arguments.ToArray(),
                     newTarget);
             }

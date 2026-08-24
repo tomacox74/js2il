@@ -66,11 +66,15 @@ namespace JavaScriptRuntime
                     var revived = InternalizeJsonProperty(array, key, reviver);
                     if (revived is null)
                     {
-                        ObjectRuntime.DeleteProperty(array, key);
+                        // Spec: Perform ? val.[[Delete]](key) - a failed (non-configurable)
+                        // deletion completes normally without throwing.
+                        ObjectRuntime.DeletePropertyNonStrict(array, key);
                     }
                     else
                     {
-                        ObjectRuntime.SetItem(array, key, revived);
+                        // Spec: Perform ? CreateDataProperty(val, key, newElement) - a failed
+                        // (e.g. non-configurable) definition completes normally without throwing.
+                        ObjectRuntime.CreateDataProperty(array, key, revived);
                     }
                 }
             }
@@ -88,11 +92,15 @@ namespace JavaScriptRuntime
                     var revived = InternalizeJsonProperty(value, key, reviver);
                     if (revived is null)
                     {
-                        ObjectRuntime.DeleteProperty(value, key);
+                        // Spec: Perform ? val.[[Delete]](P) - a failed (non-configurable)
+                        // deletion completes normally without throwing.
+                        ObjectRuntime.DeletePropertyNonStrict(value, key);
                     }
                     else
                     {
-                        ObjectRuntime.SetItem(value, key, revived);
+                        // Spec: Perform ? CreateDataProperty(val, P, newElement) - a failed
+                        // (e.g. non-configurable) definition completes normally without throwing.
+                        ObjectRuntime.CreateDataProperty(value, key, revived);
                     }
                 }
             }

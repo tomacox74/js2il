@@ -17,4 +17,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "thisbigintvalue-not-valid-throws")]
     public Task thisbigintvalue_not_valid_throws()
         => ExecutionTestFromFile("thisbigintvalue-not-valid-throws");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "prototype-call")]
+    public Task prototype_call()
+        => ExecutionTestFromFile("prototype-call");
 }

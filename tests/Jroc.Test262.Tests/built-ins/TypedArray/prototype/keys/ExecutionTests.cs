@@ -9,4 +9,12 @@ public class ExecutionTests : DiskExecutionTestsBase
         [Fact(DisplayName = "iter-prototype")]
     public Task iter_prototype()
         => ExecutionTestFromFile("iter-prototype");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

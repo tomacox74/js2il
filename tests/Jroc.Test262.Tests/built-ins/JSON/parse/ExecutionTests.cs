@@ -211,4 +211,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "reviver-wrapper.js")]
     public Task reviver_wrapper()
         => ExecutionTestFromFile("reviver-wrapper");
+
+    [Fact(DisplayName = "builtin")]
+    public Task builtin()
+        => ExecutionTestFromFile("builtin");
+
+    [Fact(DisplayName = "reviver-array-non-configurable-prop-create")]
+    public Task reviver_array_non_configurable_prop_create()
+        => ExecutionTestFromFile("reviver-array-non-configurable-prop-create");
+
+    [Fact(DisplayName = "reviver-array-non-configurable-prop-delete")]
+    public Task reviver_array_non_configurable_prop_delete()
+        => ExecutionTestFromFile("reviver-array-non-configurable-prop-delete");
 }

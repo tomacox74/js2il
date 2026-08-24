@@ -499,17 +499,20 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 20 (0x14)
+			// Header size: 12
+			// Code size: 15 (0xf)
 			.maxstack 8
+			.locals init (
+				[0] bool
+			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldarg.2
-			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000c: clt
-			IL_000e: box [System.Runtime]System.Boolean
-			IL_0013: ret
+			IL_0001: ldarg.2
+			IL_0002: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: box [System.Runtime]System.Boolean
+			IL_000e: ret
 		} // end of method less::__js_call__
 
 	} // end of class less
@@ -1461,7 +1464,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1214 (0x4be)
+		// Code size: 1210 (0x4ba)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypedComparisonScheduler/Scope,
@@ -1804,107 +1807,105 @@
 		IL_03b7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 		IL_03bc: stloc.s 20
 		IL_03be: ldloc.s 21
-		IL_03c0: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_03c5: ldloc.s 20
-		IL_03c7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_03cc: clt
-		IL_03ce: stloc.s 22
-		IL_03d0: ldloc.s 22
-		IL_03d2: box [System.Runtime]System.Boolean
-		IL_03d7: stloc.s 19
-		IL_03d9: ldloc.0
-		IL_03da: ldfld object Modules.BinaryOperator_TypedComparisonScheduler/Scope::order
-		IL_03df: stloc.s 20
-		IL_03e1: ldloc.s 15
-		IL_03e3: ldloc.s 19
-		IL_03e5: ldloc.s 20
-		IL_03e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_03ec: pop
+		IL_03c0: ldloc.s 20
+		IL_03c2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+		IL_03c7: stloc.s 22
+		IL_03c9: ldloc.s 22
+		IL_03cb: box [System.Runtime]System.Boolean
+		IL_03d0: stloc.s 19
+		IL_03d2: ldloc.0
+		IL_03d3: ldfld object Modules.BinaryOperator_TypedComparisonScheduler/Scope::order
+		IL_03d8: stloc.s 20
+		IL_03da: ldloc.s 15
+		IL_03dc: ldloc.s 19
+		IL_03de: ldloc.s 20
+		IL_03e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03e5: pop
 		.try
 		{
-			IL_03ed: nop
-			IL_03ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03f3: stloc.s 15
-			IL_03f5: ldstr "Cannot access 'tdzValue' before initialization"
-			IL_03fa: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_03ff: stloc.s 23
-			IL_0401: ldloc.s 23
-			IL_0403: isinst [System.Runtime]System.Exception
-			IL_0408: dup
-			IL_0409: brtrue IL_0417
+			IL_03e6: nop
+			IL_03e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03ec: stloc.s 15
+			IL_03ee: ldstr "Cannot access 'tdzValue' before initialization"
+			IL_03f3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_03f8: stloc.s 23
+			IL_03fa: ldloc.s 23
+			IL_03fc: isinst [System.Runtime]System.Exception
+			IL_0401: dup
+			IL_0402: brtrue IL_0410
 
-			IL_040e: pop
-			IL_040f: ldloc.s 23
-			IL_0411: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0416: throw
+			IL_0407: pop
+			IL_0408: ldloc.s 23
+			IL_040a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_040f: throw
 
-			IL_0417: throw
+			IL_0410: throw
 
-			IL_0418: ldnull
-			IL_0419: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_041e: ldc.r8 1
-			IL_0427: clt
-			IL_0429: stloc.s 22
-			IL_042b: ldloc.s 22
-			IL_042d: box [System.Runtime]System.Boolean
-			IL_0432: stloc.s 19
-			IL_0434: ldloc.s 15
-			IL_0436: ldloc.s 19
-			IL_0438: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_043d: pop
-			IL_043e: leave IL_04af
+			IL_0411: ldnull
+			IL_0412: ldc.r8 1
+			IL_041b: box [System.Runtime]System.Double
+			IL_0420: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_0425: stloc.s 22
+			IL_0427: ldloc.s 22
+			IL_0429: box [System.Runtime]System.Boolean
+			IL_042e: stloc.s 19
+			IL_0430: ldloc.s 15
+			IL_0432: ldloc.s 19
+			IL_0434: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0439: pop
+			IL_043a: leave IL_04ab
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0443: stloc.s 9
-			IL_0445: ldloc.s 9
-			IL_0447: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_044c: dup
-			IL_044d: brtrue IL_0463
+			IL_043f: stloc.s 9
+			IL_0441: ldloc.s 9
+			IL_0443: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0448: dup
+			IL_0449: brtrue IL_045f
 
-			IL_0452: pop
-			IL_0453: ldloc.s 9
-			IL_0455: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_045a: dup
-			IL_045b: brtrue IL_046f
+			IL_044e: pop
+			IL_044f: ldloc.s 9
+			IL_0451: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0456: dup
+			IL_0457: brtrue IL_046b
 
-			IL_0460: pop
-			IL_0461: rethrow
+			IL_045c: pop
+			IL_045d: rethrow
 
-			IL_0463: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0468: stloc.s 10
-			IL_046a: br IL_0471
+			IL_045f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0464: stloc.s 10
+			IL_0466: br IL_046d
 
-			IL_046f: stloc.s 10
+			IL_046b: stloc.s 10
 
-			IL_0471: ldloc.s 10
-			IL_0473: stloc.s 11
-			IL_0475: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_047a: stloc.s 15
-			IL_047c: ldloc.s 11
-			IL_047e: stloc.s 20
-			IL_0480: ldstr "ReferenceError"
-			IL_0485: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_048a: stloc.s 21
-			IL_048c: ldloc.s 20
-			IL_048e: ldloc.s 21
-			IL_0490: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_0495: stloc.s 22
-			IL_0497: ldloc.s 22
-			IL_0499: box [System.Runtime]System.Boolean
-			IL_049e: stloc.s 19
-			IL_04a0: ldloc.s 15
-			IL_04a2: ldloc.s 19
-			IL_04a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_04a9: pop
-			IL_04aa: leave IL_04af
+			IL_046d: ldloc.s 10
+			IL_046f: stloc.s 11
+			IL_0471: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0476: stloc.s 15
+			IL_0478: ldloc.s 11
+			IL_047a: stloc.s 20
+			IL_047c: ldstr "ReferenceError"
+			IL_0481: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0486: stloc.s 21
+			IL_0488: ldloc.s 20
+			IL_048a: ldloc.s 21
+			IL_048c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0491: stloc.s 22
+			IL_0493: ldloc.s 22
+			IL_0495: box [System.Runtime]System.Boolean
+			IL_049a: stloc.s 19
+			IL_049c: ldloc.s 15
+			IL_049e: ldloc.s 19
+			IL_04a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_04a5: pop
+			IL_04a6: leave IL_04ab
 		} // end handler
 
-		IL_04af: ldc.r8 0.0
-		IL_04b8: stloc.s 12
-		IL_04ba: ldnull
-		IL_04bb: stloc.s 13
-		IL_04bd: ret
+		IL_04ab: ldc.r8 0.0
+		IL_04b4: stloc.s 12
+		IL_04b6: ldnull
+		IL_04b7: stloc.s 13
+		IL_04b9: ret
 	} // end of method BinaryOperator_TypedComparisonScheduler::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypedComparisonScheduler

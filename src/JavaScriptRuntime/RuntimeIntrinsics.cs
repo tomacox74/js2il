@@ -23,6 +23,7 @@ internal enum RuntimeIntrinsicSlot
     FunctionRestrictedPropertiesPrototype,
     ArrayImmutablePrototype,
     ArrayPrototype,
+    ArrayIteratorPrototype,
     StringPrototype,
     StringIteratorPrototype,
     NumberPrototype,

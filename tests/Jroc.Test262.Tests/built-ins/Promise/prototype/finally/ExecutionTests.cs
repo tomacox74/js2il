@@ -29,4 +29,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "rejection-reason-no-fulfill")]
     public Task rejection_reason_no_fulfill()
         => ExecutionTestFromFile("rejection-reason-no-fulfill");
+
+    [Fact(DisplayName = "invokes-then-with-function")]
+    public Task invokes_then_with_function()
+        => ExecutionTestFromFile("invokes-then-with-function");
+
+    [Fact(DisplayName = "invokes-then-with-non-function")]
+    public Task invokes_then_with_non_function()
+        => ExecutionTestFromFile("invokes-then-with-non-function");
 }

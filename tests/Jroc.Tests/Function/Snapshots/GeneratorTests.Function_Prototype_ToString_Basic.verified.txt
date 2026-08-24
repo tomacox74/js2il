@@ -438,11 +438,9 @@
 		IL_01d9: stloc.s 4
 
 		IL_01db: ldloc.s 4
-		IL_01dd: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_01e2: ldc.r8 0.0
-		IL_01eb: clt
-		IL_01ed: ldc.i4.0
-		IL_01ee: ceq
+		IL_01dd: ldc.r8 0.0
+		IL_01e6: box [System.Runtime]System.Double
+		IL_01eb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, object)
 		IL_01f0: stloc.s 7
 		IL_01f2: ldloc.s 7
 		IL_01f4: box [System.Runtime]System.Boolean

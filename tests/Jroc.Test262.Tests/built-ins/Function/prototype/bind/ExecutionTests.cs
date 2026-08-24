@@ -68,5 +68,17 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "15.3.4.5-2-4")]
     public Task _15_3_4_5_2_4()
-        => ExecutionTestFromFile("15.3.4.5-2-4");
-}
+        => ExecutionTestFromFile("15.3.4.5-2-4");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "instance-length-default-value")]
+    public Task instance_length_default_value()
+        => ExecutionTestFromFile("instance-length-default-value");
+
+    [Fact(DisplayName = "instance-length-tointeger")]
+    public Task instance_length_tointeger()
+        => ExecutionTestFromFile("instance-length-tointeger");
+}

@@ -703,7 +703,22 @@ namespace JavaScriptRuntime
             => Slice(ThisStringValue(thisArgument), start, end);
 
         private static object? PrototypeSplit(object? thisArgument, object? separator, object? limit)
-            => Split(ThisStringValue(thisArgument), separator, limit);
+        {
+            // Steps 1-2: RequireObjectCoercible(this) happens before any separator handling,
+            // and — critically — before ToString(this). A custom @@split method (or the
+            // built-in RegExp.prototype[@@split]) must receive the *raw*, unconverted this
+            // value, so this value must not be stringified until after the @@split dispatch
+            // below has been ruled out.
+            RequireObjectCoercible(thisArgument);
+
+            if (TryInvokeWellKnownSymbol(separator, Symbol.split, thisArgument!, limit, out var symbolResult))
+            {
+                return symbolResult;
+            }
+
+            var input = ToSearchString(thisArgument);
+            return Split(input, separator, limit);
+        }
 
         private static object? PrototypeStartsWith(object? thisArgument, object? searchString, object? position)
             => StartsWith(ThisStringValue(thisArgument), searchString, position);
@@ -2138,37 +2153,45 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Split with optional limit. Separator can be string, Regex, or null/undefined.
+        /// Any @@split dispatch for object separators must already have happened in the
+        /// caller (see <see cref="PrototypeSplit"/>) using the raw, unconverted receiver;
+        /// by the time execution reaches here the receiver has already been converted to a
+        /// string and only the literal-separator algorithm below applies.
         /// </summary>
         public static object Split(string input, object? separatorOrPattern, object? limit)
         {
             input ??= string.Empty;
+
+            // Step 5: lim = ToUint32(limit), or 2^32-1 when limit is undefined.
             int maxCount = ToSplitLimit(limit);
+
+            // Internal fast path used by the compiler for statically-known regular
+            // expression separators; this is not a JS-observable value, so it is exempt
+            // from the ToString(separator) ordering requirements below.
+            if (separatorOrPattern is Regex rx)
+            {
+                return maxCount == 0 ? new JavaScriptRuntime.Array() : SplitWithRegex(input, rx, maxCount);
+            }
+
+            // Step 6: separatorString = ? ToString(separator). This must run unconditionally
+            // — even when separator is undefined or lim is 0 — so that a poisoned separator's
+            // ToString still throws before the short-circuits in steps 7-8 below.
+            var sep = separatorOrPattern == null ? null : DotNet2JSConversions.ToString(separatorOrPattern);
+
+            // Step 7: If lim = 0, return [].
             if (maxCount == 0)
             {
                 return new JavaScriptRuntime.Array();
             }
 
-            // Undefined/null separator => return [input]
+            // Step 8: If separator is undefined, return [string].
             if (separatorOrPattern == null)
             {
                 var one = new JavaScriptRuntime.Array(1) { input };
                 return one;
             }
 
-            if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, input, limit, out var splitResult))
-            {
-                return splitResult!;
-            }
-
-            // Regex separator path
-            if (separatorOrPattern is Regex rx)
-            {
-                return SplitWithRegex(input, rx, maxCount);
-            }
-
-            // String (or coercible) separator
-            var sep = DotNet2JSConversions.ToString(separatorOrPattern);
-            if (sep.Length == 0)
+            if (sep!.Length == 0)
             {
                 // Empty string => split into UTF-16 code units
                 int take = global::System.Math.Min(input.Length, maxCount);
@@ -2411,12 +2434,81 @@ namespace JavaScriptRuntime
                     return SplitWithLiteralSeparator(input, literalPattern, ToSplitLimit(limit));
                 }
 
-                return SplitWithRegex(input, regExp.Regex, ToSplitLimit(limit));
+                return SplitWithRegexGeneral(input, regExp, ToSplitLimit(limit));
             }
             finally
             {
                 regExp.lastIndex = savedLastIndex;
             }
+        }
+
+        /// <summary>
+        /// General-purpose RegExp.prototype[@@split] algorithm (ECMA-262 22.2.6.13). Probes the
+        /// pattern for an exact-position ("sticky") match at each candidate index, independent of
+        /// the RegExp instance's own lastIndex/global/sticky state — matching .NET's
+        /// <see cref="global::System.Text.RegularExpressions.Regex.Split(string)"/> does not
+        /// implement JS zero-width-match/anchor semantics correctly, so this walks the string
+        /// itself rather than delegating to it.
+        /// </summary>
+        private static JavaScriptRuntime.Array SplitWithRegexGeneral(string input, JavaScriptRuntime.RegExp regExp, int maxCount)
+        {
+            var result = new JavaScriptRuntime.Array();
+            int size = input.Length;
+
+            if (maxCount == 0)
+            {
+                return result;
+            }
+
+            if (size == 0)
+            {
+                if (!regExp.TryExactMatchAt(input, 0, out _))
+                {
+                    result.Add(input);
+                }
+
+                return result;
+            }
+
+            int p = 0;
+            int q = p;
+            while (q < size)
+            {
+                if (!regExp.TryExactMatchAt(input, q, out var match))
+                {
+                    q = AdvanceSplitIndex(input, q, regExp.unicode);
+                    continue;
+                }
+
+                int e = global::System.Math.Min(size, q + match.Length);
+                if (e == p)
+                {
+                    q = AdvanceSplitIndex(input, q, regExp.unicode);
+                    continue;
+                }
+
+                result.Add(input.Substring(p, q - p));
+                if (result.Count == maxCount)
+                {
+                    return result;
+                }
+
+                for (int i = 1; i < match.Groups.Count; i++)
+                {
+                    var group = match.Groups[i];
+                    result.Add(group.Success ? group.Value : null);
+                    if (result.Count == maxCount)
+                    {
+                        return result;
+                    }
+                }
+
+                p = e;
+                q = p;
+            }
+
+            result.Add(input.Substring(p, size - p));
+            return result;
         }
 
         private static JavaScriptRuntime.Array SplitWithEmptyRegExp(string input, bool unicode, int maxCount)
