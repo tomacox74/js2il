@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T01:16:21Z
+> Last generated (UTC): 2026-08-24T07:03:45Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -173,11 +173,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Array.prototype.flat / flatMap | Supported with Limitations | [`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>[`Array_CallbackOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_CallbackOps_Basic.js) |  | Supports core flattening and map+flatten workflows for dense arrays; full species/holes/exotic edge behavior is not exhaustive. |
 
-### 23.1.3.15 / 23.1.3.28 / 23.1.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object))
+### 23.1.3.15 / 23.1.3.26-31 / 23.1.3.37 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Generic Array.prototype forEach, slice, and splice semantics | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs` |  | The methods now apply their generic algorithms to primitive wrappers and ordinary array-like receivers, observe inherited indexed properties, use spec coercion for lengths and indexes, bind callback thisArg correctly, preserve sparse holes, and create species-aware results for the covered test262 cases. Proxy and remaining exotic descriptor interactions remain limited. |
+| Generic Array.prototype mutation and copying semantics | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/reverse/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/shift/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/sort/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/unshift/ExecutionTests.cs` |  | The methods apply their generic algorithms to primitive wrappers and ordinary array-like receivers, observe inherited indexed properties, preserve sparse holes, enforce non-extensible/non-writable invariants, use safe-integer length checks, and create species-aware results. Sort is stable and observes indexed mutations in specification order. Remaining limitations concern some proxy and exotic descriptor interactions. |
 
 ### 23.1.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.includes))
 
@@ -225,13 +225,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.prototype.sort | Supported with Limitations | [`Array_Sort_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Sort_Basic.js)<br>[`Array_Sort_WithComparatorArrow.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js)<br>[`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>[`S15.4.4.11_A1.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/sort/JavaScript/S15.4.4.11_A1.1_T1.js) | `test/built-ins/Array/prototype/sort/S15.4.4.11_A1.1_T1.js` | Supports default and callback comparator paths. Current checked-in test262 coverage also exercises sparse ordinary-array sorting behavior; full spec stability/exotic-object details are not fully modeled. |
+| Array.prototype.sort | Supported with Limitations | [`Array_Sort_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Sort_Basic.js)<br>[`Array_Sort_WithComparatorArrow.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js)<br>[`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/sort/ExecutionTests.cs` |  | Supports stable default and callback comparator paths on arrays and generic array-like receivers, including sparse values, inherited indices, primitive receivers, precise getter/setter mutation ordering, and standard built-in metadata. Remaining proxy/exotic-object details are limited. |
 
 ### 23.1.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.splice))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.prototype.splice / toSpliced | Supported with Limitations | [`Array_Splice_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Splice_Basic.js)<br>[`Array_Splice_InsertAndDelete.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js)<br>[`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>[`15.4.4.12-9-a-1.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/JavaScript/15.4.4.12-9-a-1.js) | `test/built-ins/Array/prototype/splice/15.4.4.12-9-a-1.js` | Core insertion/deletion semantics are implemented. Current checked-in test262 coverage also exercises negative-start deletion on ordinary arrays; complete exotic length/property descriptor interactions are not exhaustive. |
+| Array.prototype.splice / toSpliced | Supported with Limitations | [`Array_Splice_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Splice_Basic.js)<br>[`Array_Splice_InsertAndDelete.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js)<br>[`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs` |  | Insertion/deletion semantics include generic receivers, species-created deleted-element arrays, safe-integer length limits, sparse property movement, and failures on non-extensible or non-configurable targets. Complete proxy and other exotic descriptor interactions are not exhaustive. |
 
 ### 23.1.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.toreversed))
 

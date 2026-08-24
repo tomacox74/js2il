@@ -15,5 +15,21 @@
       "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-binary-bitwise-operators-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.12.1",
+        "feature": "Number and BigInt binary bitwise operators",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-bitwise-operators-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/bitwise-and/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/bitwise-or/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/bitwise-xor/ExecutionTests.cs"
+        ],
+        "notes": "Bitwise AND, OR, and XOR use ToNumeric and preserve BigInt operands after object-to-primitive coercion, including wrapped BigInt values and custom conversion hooks."
+      }
+    ]
+  }
 }

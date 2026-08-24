@@ -53,4 +53,3 @@ public class SymbolTable
             .FirstOrDefault(found => found != null);
     }
 }
-

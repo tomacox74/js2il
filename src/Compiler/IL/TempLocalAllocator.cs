@@ -415,7 +415,10 @@ internal static partial class LIRInstructionInfo
             case LIRModNumber value:
                 visitor.Visit(value.Left); visitor.Visit(value.Right); break;
             case LIRExpNumber value:
-                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+                visitor.Visit(value.Left);
+                visitor.Visit(value.Right);
+                visitor.Visit(value.Right);
+                break;
             case LIRBitwiseAnd value:
                 visitor.Visit(value.Left); visitor.Visit(value.Right); break;
             case LIRBitwiseOr value:

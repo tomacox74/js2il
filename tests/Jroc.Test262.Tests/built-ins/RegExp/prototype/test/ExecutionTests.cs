@@ -44,4 +44,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_10_6_3_A1_T9()
         => ExecutionTestFromFile("S15.10.6.3_A1_T9");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "y-fail-lastindex-no-write")]
+    public Task y_fail_lastindex_no_write()
+        => ExecutionTestFromFile("y-fail-lastindex-no-write");
 }

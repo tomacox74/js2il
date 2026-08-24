@@ -41,4 +41,44 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "S15.4.4.10_A2_T6")]
     public Task S15_4_4_10_A2_T6()
         => ExecutionTestFromFile("S15.4.4.10_A2_T6");
+
+    [Fact(DisplayName = "create-ctor-non-object")]
+    public Task create_ctor_non_object()
+        => ExecutionTestFromFile("create-ctor-non-object");
+
+    [Fact(DisplayName = "create-ctor-poisoned")]
+    public Task create_ctor_poisoned()
+        => ExecutionTestFromFile("create-ctor-poisoned");
+
+    [Fact(DisplayName = "create-species-abrupt")]
+    public Task create_species_abrupt()
+        => ExecutionTestFromFile("create-species-abrupt");
+
+    [Fact(DisplayName = "create-species-neg-zero")]
+    public Task create_species_neg_zero()
+        => ExecutionTestFromFile("create-species-neg-zero");
+
+    [Fact(DisplayName = "create-species-non-ctor")]
+    public Task create_species_non_ctor()
+        => ExecutionTestFromFile("create-species-non-ctor");
+
+    [Fact(DisplayName = "create-species-poisoned")]
+    public Task create_species_poisoned()
+        => ExecutionTestFromFile("create-species-poisoned");
+
+    [Fact(DisplayName = "create-species")]
+    public Task create_species()
+        => ExecutionTestFromFile("create-species");
+
+    [Fact(DisplayName = "length-exceeding-integer-limit")]
+    public Task length_exceeding_integer_limit()
+        => ExecutionTestFromFile("length-exceeding-integer-limit");
+
+    [Fact(DisplayName = "target-array-non-extensible")]
+    public Task target_array_non_extensible()
+        => ExecutionTestFromFile("target-array-non-extensible");
+
+    [Fact(DisplayName = "target-array-with-non-configurable-property")]
+    public Task target_array_with_non_configurable_property()
+        => ExecutionTestFromFile("target-array-with-non-configurable-property");
 }

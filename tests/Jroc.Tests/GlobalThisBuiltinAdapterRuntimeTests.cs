@@ -104,9 +104,14 @@ public sealed class GlobalThisBuiltinAdapterRuntimeTests
             Assert.IsType<BuiltinFunction1>(reject.Target);
 
             var source = new JavaScriptRuntime.Array { 1d, 2d };
-            Assert.IsType<JavaScriptRuntime.Promise>(CallableOperations.Call1(all, null, source));
-            Assert.IsType<JavaScriptRuntime.Promise>(CallableOperations.Call1(race, null, source));
-            Assert.IsType<JavaScriptRuntime.Promise>(CallableOperations.Call1(reject, null, "boom"));
+            var promiseConstructor =
+                BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise);
+            Assert.IsType<JavaScriptRuntime.Promise>(
+                CallableOperations.Call1(all, promiseConstructor, source));
+            Assert.IsType<JavaScriptRuntime.Promise>(
+                CallableOperations.Call1(race, promiseConstructor, source));
+            Assert.IsType<JavaScriptRuntime.Promise>(
+                CallableOperations.Call1(reject, promiseConstructor, "boom"));
         });
     }
 

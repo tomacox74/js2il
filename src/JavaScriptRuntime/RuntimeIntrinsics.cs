@@ -56,6 +56,8 @@ internal enum RuntimeIntrinsicSlot
     Uint16ArrayPrototype,
     Uint8ArrayPrototype,
     Uint8ClampedArrayPrototype,
+    BigInt64ArrayPrototype,
+    BigUint64ArrayPrototype,
     MapPrototype,
     MapIteratorPrototype,
     SetPrototype,
@@ -249,7 +251,7 @@ internal sealed class RuntimeIntrinsics
     private bool IsTypedArrayPrototype(object target)
     {
         for (var slot = RuntimeIntrinsicSlot.TypedArrayPrototype;
-             slot <= RuntimeIntrinsicSlot.Uint8ClampedArrayPrototype;
+             slot <= RuntimeIntrinsicSlot.BigUint64ArrayPrototype;
              slot++)
         {
             if (ReferenceEquals(

@@ -1592,14 +1592,19 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallRuntimeServicesStatic callRuntimeServices:
                 {
-                    if (!IsMaterialized(callRuntimeServices.Result, allocation))
-                    {
-                        break;
-                    }
+                    var materializeResult =
+                        IsMaterialized(callRuntimeServices.Result, allocation);
 
                     if (TryEmitOperatorsAddAndToNumber(callRuntimeServices, ilEncoder, allocation, methodDescriptor))
                     {
-                        EmitStoreTemp(callRuntimeServices.Result, ilEncoder, allocation);
+                        if (materializeResult)
+                        {
+                            EmitStoreTemp(callRuntimeServices.Result, ilEncoder, allocation);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
                         break;
                     }
 
@@ -1620,10 +1625,17 @@ internal sealed partial class LIRToILCompiler
                             {
                                 typeof(JavaScriptRuntime.GeneratedInvocationContext)
                             }));
-                        EmitStoreTemp(
-                            callRuntimeServices.Result,
-                            ilEncoder,
-                            allocation);
+                        if (materializeResult)
+                        {
+                            EmitStoreTemp(
+                                callRuntimeServices.Result,
+                                ilEncoder,
+                                allocation);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
                         break;
                     }
 
@@ -1675,8 +1687,14 @@ internal sealed partial class LIRToILCompiler
                         paramTypes);
                     ilEncoder.Token(methodRef);
 
-                    // Store result
-                    EmitStoreTemp(callRuntimeServices.Result, ilEncoder, allocation);
+                    if (materializeResult)
+                    {
+                        EmitStoreTemp(callRuntimeServices.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     break;
                 }
 

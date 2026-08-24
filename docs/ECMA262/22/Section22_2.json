@@ -636,9 +636,10 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js",
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/exec/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors lastIndex for both /g and /y regexes. Named captures produce null-prototype JsObject records in .groups and .indices.groups, with source-order keys and present undefined values for unmatched captures. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Named and nested captures preserve participation semantics. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited."
       },
       {
         "clause": "22.2.6.3",
@@ -801,9 +802,10 @@
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js",
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/test/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for both global (/g) and sticky (/y) regexes using the same matching rules as exec(), and participates in the runtime's limited unicode-aware empty-match advancement for /u regexes. Complete Unicode mode parity is still not implemented."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Uses the same observable lastIndex coercion, success update, failure reset, sticky matching, and Unicode code-point boundary rules as exec(). Complete Unicode mode parity is still not implemented."
       },
       {
         "clause": "22.2.6.17",

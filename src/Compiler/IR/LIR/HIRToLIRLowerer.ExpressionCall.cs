@@ -31,7 +31,8 @@ public sealed partial class HIRToLIRLowerer
             }
 
             // First try: user-defined base class in the ClassRegistry.
-            if (_classRegistry != null
+            if (!hasSpreadArgs
+                && _classRegistry != null
                 && TryGetEnclosingBaseClassRegistryName(out var baseRegistryClassName)
                 && baseRegistryClassName != null
                 && _classRegistry.TryGetConstructor(baseRegistryClassName, out var baseCtorHandle, out var baseCtorHasScopesParam, out var _, out var baseCtorMaxParamCount))
@@ -79,7 +80,7 @@ public sealed partial class HIRToLIRLowerer
                 // Fallback: intrinsic base class (e.g., `extends Array`).
                 // For intrinsics, we preserve JS argument list semantics (do not truncate/pad).
                 var intrinsicName = GetEnclosingSuperClassIntrinsicName();
-                if (intrinsicName != null)
+                if (intrinsicName != null && !hasSpreadArgs)
                 {
                     var callArgs = new List<TempVariable>();
                     for (int i = 0; i < callExpr.Arguments.Length; i++)
@@ -102,20 +103,13 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    var callArgs = new List<TempVariable>();
-                    for (int i = 0; i < callExpr.Arguments.Length; i++)
+                    if (!TryLowerCallArgumentsToArgsArray(
+                            callExpr.Arguments,
+                            out var argsArrayTemp))
                     {
-                        if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
-                        {
-                            return false;
-                        }
-
-                        callArgs.Add(EnsureObject(argTemp));
+                        return false;
                     }
 
-                    var argsArrayTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgs, argsArrayTemp));
-                    DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
                     _methodBodyIR.Instructions.Add(new LIRCallFunctionBaseConstructor(
                         EnsureObject(constructorTemp),
                         argsArrayTemp,
@@ -132,6 +126,43 @@ public sealed partial class HIRToLIRLowerer
             // In JS, super(...) returns the derived `this` value.
             _methodBodyIR.Instructions.Add(new LIRLoadThis(resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        if (callExpr.Callee is HIRChainExpression chainCallee)
+        {
+            if (!TryLowerChainReference(
+                    chainCallee,
+                    out var chainFunction,
+                    out var chainReceiver)
+                || !TryLowerCallArgumentsToArgsArray(
+                    callExpr.Arguments,
+                    out var chainArguments))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(
+                new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.CallWithThis),
+                    new[]
+                    {
+                        EnsureObject(chainFunction),
+                        EnsureObject(chainReceiver),
+                        chainArguments
+                    },
+                    resultTempVar,
+                    new[]
+                    {
+                        typeof(object),
+                        typeof(object),
+                        typeof(object[])
+                    }));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(object)));
             return true;
         }
 

@@ -9,4 +9,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "prop-desc")]
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
+
+    [Fact(DisplayName = "return-typedarrayname")]
+    public Task return_typedarrayname()
+        => ExecutionTestFromFile("return-typedarrayname");
 }

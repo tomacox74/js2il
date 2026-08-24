@@ -8,4 +8,8 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "constructor")]
     public Task constructor() => ExecutionTestFromFile("constructor");
+
+    [Fact(DisplayName = "Symbol.iterator")]
+    public Task Symbol_iterator()
+        => ExecutionTestFromFile("Symbol.iterator");
 }

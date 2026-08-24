@@ -55,7 +55,21 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitMathPow(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(System.Math), nameof(System.Math.Pow));
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(System.Math),
+            nameof(System.Math.Pow),
+            new[] { typeof(double), typeof(double) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitNormalizeExponentiationBase(
+        InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            nameof(JavaScriptRuntime.Operators.NormalizeExponentiationBase),
+            new[] { typeof(double), typeof(double) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

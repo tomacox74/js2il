@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262/docs: port 200 additional ES2025 tests covering
+  comparison and BigInt coercion, logical assignment, try/finally completion
+  routing, class/function semantics, generic Array mutation methods, RegExp and
+  String matching, Object and JSON operations, Promise.all, Error subclasses,
+  and BigInt TypedArrays; implement the shared specification fixes required by
+  the complete batch.
+
 - compiler/runtime/test262/docs: port 200 additional previously failing ES2025
   tests across generic Array methods, numeric and string coercion, Object and
   Reflect descriptors, Function invocation, BigInt, Promise, WeakMap upsert,

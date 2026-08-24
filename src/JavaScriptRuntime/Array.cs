@@ -156,8 +156,12 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "forEach", (BuiltinFunction2)PrototypeForEach, 1);
             DefinePrototypeMethod(prototype, "filter", (BuiltinFunction2)PrototypeFilter, 1);
             DefinePrototypeMethod(prototype, "map", (BuiltinFunction2)PrototypeMap, 1);
+            DefinePrototypeMethod(prototype, "reverse", (BuiltinFunction0)PrototypeReverse, 0);
+            DefinePrototypeMethod(prototype, "shift", (BuiltinFunction0)PrototypeShift, 0);
             DefinePrototypeMethod(prototype, "slice", (BuiltinFunction2)PrototypeSlice, 2);
+            DefinePrototypeMethod(prototype, "sort", (BuiltinFunction1)PrototypeSort, 1);
             DefinePrototypeMethod(prototype, "splice", (BuiltinFunctionVariadic)PrototypeSplice, 2);
+            DefinePrototypeMethod(prototype, "unshift", (BuiltinFunctionVariadic)PrototypeUnshift, 1);
             DefinePrototypeMethod(prototype, "find", (BuiltinFunction2)PrototypeFind, 1);
             DefinePrototypeMethod(prototype, "findIndex", (BuiltinFunction2)PrototypeFindIndex, 1);
             DefinePrototypeMethod(prototype, "includes", (BuiltinFunction2)PrototypeIncludes, 1);
@@ -455,7 +459,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            ObjectRuntime.SetProperty(result, "length", nextIndex, throwOnError: true);
+            SetArrayLikeLength(result, nextIndex);
             return result;
         }
 
@@ -471,9 +475,14 @@ namespace JavaScriptRuntime
 
         private static object ArraySpeciesCreate(object originalArray, double length = 0d)
         {
+            if (length == 0d)
+            {
+                length = 0d;
+            }
+
             if (!IsArrayForConcat(originalArray))
             {
-                return new Array();
+                return CreateDefaultArray(length);
             }
 
             var constructor = ObjectRuntime.GetProperty(originalArray, "constructor");
@@ -490,7 +499,7 @@ namespace JavaScriptRuntime
 
             if (constructor is null)
             {
-                return new Array();
+                return CreateDefaultArray(length);
             }
 
             if (!CallableOperations.IsConstructor(constructor))
@@ -508,6 +517,39 @@ namespace JavaScriptRuntime
             }
 
             return result!;
+        }
+
+        private static Array CreateDefaultArray(double length)
+        {
+            var result = new Array();
+            result.SetLength(length, throwOnError: true);
+            return result;
+        }
+
+        private static void SetArrayLikeLength(object receiver, double length)
+            => SetArrayLikePropertyOrThrow(receiver, "length", length);
+
+        private static void SetArrayLikePropertyOrThrow(
+            object receiver,
+            object propertyKey,
+            object? value)
+        {
+            if (!ObjectRuntime.ReflectSet(receiver, propertyKey, value, receiver))
+            {
+                throw new TypeError(
+                    $"Cannot set property '{DotNet2JSConversions.ToString(propertyKey)}'");
+            }
+        }
+
+        private static void DeleteArrayLikePropertyOrThrow(
+            object receiver,
+            object propertyKey)
+        {
+            if (!ObjectRuntime.DeleteProperty(receiver, propertyKey))
+            {
+                throw new TypeError(
+                    $"Cannot delete property '{DotNet2JSConversions.ToString(propertyKey)}'");
+            }
         }
 
         private static void AppendConcatItem(
@@ -1069,6 +1111,194 @@ namespace JavaScriptRuntime
             return result;
         }
 
+        private static object PrototypeReverse(object? thisArgument)
+        {
+            var receiver = ToArrayMethodObject(thisArgument, "reverse");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var middle = global::System.Math.Floor(length / 2d);
+
+            for (var lower = 0d; lower < middle; lower++)
+            {
+                var upper = length - lower - 1d;
+                var lowerExists = ObjectRuntime.HasPropertyForArrayLike(lower, receiver);
+                var lowerValue = lowerExists
+                    ? ObjectRuntime.GetItem(receiver, lower)
+                    : null;
+                var upperExists = ObjectRuntime.HasPropertyForArrayLike(upper, receiver);
+                var upperValue = upperExists
+                    ? ObjectRuntime.GetItem(receiver, upper)
+                    : null;
+
+                if (lowerExists && upperExists)
+                {
+                    SetArrayLikePropertyOrThrow(receiver, lower, upperValue);
+                    SetArrayLikePropertyOrThrow(receiver, upper, lowerValue);
+                }
+                else if (!lowerExists && upperExists)
+                {
+                    SetArrayLikePropertyOrThrow(receiver, lower, upperValue);
+                    DeleteArrayLikePropertyOrThrow(receiver, upper);
+                }
+                else if (lowerExists)
+                {
+                    DeleteArrayLikePropertyOrThrow(receiver, lower);
+                    SetArrayLikePropertyOrThrow(receiver, upper, lowerValue);
+                }
+            }
+
+            return receiver;
+        }
+
+        private static object? PrototypeShift(object? thisArgument)
+        {
+            var receiver = ToArrayMethodObject(thisArgument, "shift");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            if (length == 0d)
+            {
+                SetArrayLikeLength(receiver, 0d);
+                return null;
+            }
+
+            var first = ObjectRuntime.GetItem(receiver, 0d);
+            for (var k = 1d; k < length; k++)
+            {
+                var to = k - 1d;
+                if (ObjectRuntime.HasPropertyForArrayLike(k, receiver))
+                {
+                    SetArrayLikePropertyOrThrow(
+                        receiver,
+                        to,
+                        ObjectRuntime.GetItem(receiver, k));
+                }
+                else
+                {
+                    DeleteArrayLikePropertyOrThrow(receiver, to);
+                }
+            }
+
+            DeleteArrayLikePropertyOrThrow(receiver, length - 1d);
+            SetArrayLikeLength(receiver, length - 1d);
+            return first;
+        }
+
+        private static object PrototypeSort(object? thisArgument, object? compareFunction)
+        {
+            if (compareFunction is not null
+                && !CallableOperations.IsCallable(compareFunction))
+            {
+                throw new TypeError("Array.prototype.sort comparator is not a function");
+            }
+
+            var receiver = ToArrayMethodObject(thisArgument, "sort");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var values = new List<object?>();
+            for (var k = 0d; k < length; k++)
+            {
+                if (ObjectRuntime.HasPropertyForArrayLike(k, receiver))
+                {
+                    values.Add(ObjectRuntime.GetItem(receiver, k));
+                }
+            }
+
+            StableSort(values, (left, right) => CompareArrayElements(left, right, compareFunction));
+
+            var itemCount = (double)values.Count;
+            for (var j = 0; j < values.Count; j++)
+            {
+                SetArrayLikePropertyOrThrow(receiver, (double)j, values[j]);
+            }
+
+            for (var j = itemCount; j < length; j++)
+            {
+                DeleteArrayLikePropertyOrThrow(receiver, j);
+            }
+
+            return receiver;
+        }
+
+        private static int CompareArrayElements(
+            object? left,
+            object? right,
+            object? compareFunction)
+        {
+            if (left is null)
+            {
+                return right is null ? 0 : 1;
+            }
+
+            if (right is null)
+            {
+                return -1;
+            }
+
+            if (compareFunction is not null)
+            {
+                var result = TypeUtilities.ToNumber(
+                    CallableOperations.Call2(compareFunction, null, left, right));
+                if (double.IsNaN(result) || result == 0d)
+                {
+                    return 0;
+                }
+
+                return result < 0d ? -1 : 1;
+            }
+
+            return string.Compare(
+                DotNet2JSConversions.ToString(left),
+                DotNet2JSConversions.ToString(right),
+                StringComparison.Ordinal);
+        }
+
+        private static void StableSort(
+            List<object?> values,
+            Comparison<object?> comparison)
+        {
+            if (values.Count < 2)
+            {
+                return;
+            }
+
+            var source = values.ToArray();
+            var target = new object?[source.Length];
+            for (var width = 1; width < source.Length; width *= 2)
+            {
+                for (var start = 0; start < source.Length; start += width * 2)
+                {
+                    var middle = global::System.Math.Min(start + width, source.Length);
+                    var end = global::System.Math.Min(start + width * 2, source.Length);
+                    var left = start;
+                    var right = middle;
+                    var write = start;
+
+                    while (left < middle && right < end)
+                    {
+                        target[write++] = comparison(source[left], source[right]) <= 0
+                            ? source[left++]
+                            : source[right++];
+                    }
+
+                    while (left < middle)
+                    {
+                        target[write++] = source[left++];
+                    }
+
+                    while (right < end)
+                    {
+                        target[write++] = source[right++];
+                    }
+                }
+
+                (source, target) = (target, source);
+                if (width > source.Length / 2)
+                {
+                    break;
+                }
+            }
+
+            values.Clear();
+            values.AddRange(source);
+        }
+
         /// <summary>
         /// JavaScript Array.prototype.slice(start, end) - generic implementation (ECMA-262 23.1.3.28).
         /// The receiver need not be a real Array; array-like objects (and primitives coerced via
@@ -1077,38 +1307,31 @@ namespace JavaScriptRuntime
         /// </summary>
         private static object? PrototypeSlice(object? thisArgument, object? start, object? end)
         {
-            var receiver = RequireArrayLikeReceiver(thisArgument, "slice");
-
-            // Fast path: real JS array uses the existing optimized instance method.
-            if (receiver is JavaScriptRuntime.Array jsArray)
-            {
-                return jsArray.slice(new object[] { start!, end! });
-            }
-
-            int length = ToArrayLikeLength(receiver);
-            var k = (int)CoerceArrayLikeSearchStartIndex(start, length);
+            var receiver = ToArrayMethodObject(thisArgument, "slice");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var k = CoerceArrayLikeSearchStartIndex(start, length);
             var final = end is null
                 ? length
-                : (int)CoerceArrayLikeSearchStartIndex(end, length);
+                : CoerceArrayLikeSearchStartIndex(end, length);
 
             var count = global::System.Math.Max(final - k, 0);
             var result = ArraySpeciesCreate(receiver, count);
 
             double n = 0d;
-            for (var index = k; index < final; index++)
+            for (var index = k; index < final; index += 1d)
             {
-                if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)index, receiver))
+                if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(index, receiver))
                 {
                     CreateArrayLikeDataProperty(
                         result,
                         n,
-                        JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)index));
+                        JavaScriptRuntime.ObjectRuntime.GetItem(receiver, index));
                 }
 
-                n++;
+                n += 1d;
             }
 
-            ObjectRuntime.SetProperty(result, "length", n, throwOnError: true);
+            SetArrayLikeLength(result, n);
             return result;
         }
 
@@ -1119,26 +1342,17 @@ namespace JavaScriptRuntime
         /// </summary>
         private static object? PrototypeSplice(object? thisArgument, in JsCallArguments arguments)
         {
-            var receiver = RequireArrayLikeReceiver(thisArgument, "splice");
-
-            // Fast path: real JS array uses the existing optimized (dense-mutation-aware) instance method.
-            if (receiver is JavaScriptRuntime.Array jsArray)
-            {
-                return arguments.Count == 0
-                    ? jsArray.splice(System.Array.Empty<object>())
-                    : jsArray.splice(ToNonNullableObjectArray(arguments.ToArray())!);
-            }
-
-            int length = ToArrayLikeLength(receiver);
+            var receiver = ToArrayMethodObject(thisArgument, "splice");
+            var length = ToArrayLikeLengthAsDouble(receiver);
             var actualStart = arguments.Count > 0
-                ? (int)CoerceArrayLikeSearchStartIndex(arguments.GetArgument(0), length)
-                : 0;
+                ? CoerceArrayLikeSearchStartIndex(arguments.GetArgument(0), length)
+                : 0d;
 
             var itemCount = global::System.Math.Max(arguments.Count - 2, 0);
-            int actualDeleteCount;
+            double actualDeleteCount;
             if (arguments.Count == 0)
             {
-                actualDeleteCount = 0;
+                actualDeleteCount = 0d;
             }
             else if (arguments.Count == 1)
             {
@@ -1147,69 +1361,128 @@ namespace JavaScriptRuntime
             else
             {
                 var requestedDeleteCount = ToIntegerOrInfinity(arguments.GetArgument(1));
-                var maxDeleteCount = (double)(length - actualStart);
-                actualDeleteCount = (int)global::System.Math.Clamp(requestedDeleteCount, 0d, maxDeleteCount);
+                var maxDeleteCount = length - actualStart;
+                actualDeleteCount = global::System.Math.Clamp(requestedDeleteCount, 0d, maxDeleteCount);
+            }
+
+            var newLength = length - actualDeleteCount + itemCount;
+            if (newLength > 9007199254740991d)
+            {
+                throw new TypeError("Array.prototype.splice result exceeds the maximum safe integer");
             }
 
             var result = ArraySpeciesCreate(receiver, actualDeleteCount);
 
-            for (var k = 0; k < actualDeleteCount; k++)
+            for (var k = 0d; k < actualDeleteCount; k += 1d)
             {
-                var from = (double)(actualStart + k);
+                var from = actualStart + k;
                 if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
                 {
                     CreateArrayLikeDataProperty(result, k, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from));
                 }
             }
 
-            ObjectRuntime.SetProperty(result, "length", (double)actualDeleteCount, throwOnError: true);
+            SetArrayLikeLength(result, actualDeleteCount);
 
             if (itemCount < actualDeleteCount)
             {
-                for (var k = actualStart; k < length - actualDeleteCount; k++)
+                for (var k = actualStart; k < length - actualDeleteCount; k += 1d)
                 {
-                    var from = (double)(k + actualDeleteCount);
-                    var to = (double)(k + itemCount);
+                    var from = k + actualDeleteCount;
+                    var to = k + itemCount;
                     if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
                     {
-                        ObjectRuntime.SetItem(receiver, to, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from), throwOnError: true);
+                        SetArrayLikePropertyOrThrow(
+                            receiver,
+                            to,
+                            JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from));
                     }
                     else
                     {
-                        ObjectRuntime.DeleteProperty(receiver, to);
+                        DeleteArrayLikePropertyOrThrow(receiver, to);
                     }
                 }
 
-                for (var k = length; k > length - actualDeleteCount + itemCount; k--)
+                for (var k = length; k > newLength; k -= 1d)
                 {
-                    ObjectRuntime.DeleteProperty(receiver, (double)(k - 1));
+                    DeleteArrayLikePropertyOrThrow(receiver, k - 1d);
                 }
             }
             else if (itemCount > actualDeleteCount)
             {
-                for (var k = length - actualDeleteCount; k > actualStart; k--)
+                for (var k = length - actualDeleteCount; k > actualStart; k -= 1d)
                 {
-                    var from = (double)(k + actualDeleteCount - 1);
-                    var to = (double)(k + itemCount - 1);
+                    var from = k + actualDeleteCount - 1d;
+                    var to = k + itemCount - 1d;
                     if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
                     {
-                        ObjectRuntime.SetItem(receiver, to, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from), throwOnError: true);
+                        SetArrayLikePropertyOrThrow(
+                            receiver,
+                            to,
+                            JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from));
                     }
                     else
                     {
-                        ObjectRuntime.DeleteProperty(receiver, to);
+                        DeleteArrayLikePropertyOrThrow(receiver, to);
                     }
                 }
             }
 
             for (var i = 0; i < itemCount; i++)
             {
-                ObjectRuntime.SetItem(receiver, (double)(actualStart + i), arguments.GetArgument(i + 2), throwOnError: true);
+                SetArrayLikePropertyOrThrow(
+                    receiver,
+                    actualStart + i,
+                    arguments.GetArgument(i + 2));
             }
 
-            ObjectRuntime.SetProperty(receiver, "length", (double)(length - actualDeleteCount + itemCount), throwOnError: true);
+            SetArrayLikeLength(receiver, newLength);
 
             return result;
+        }
+
+        private static object PrototypeUnshift(object? thisArgument, in JsCallArguments arguments)
+        {
+            var receiver = ToArrayMethodObject(thisArgument, "unshift");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var argumentCount = arguments.Count;
+
+            if (argumentCount > 0)
+            {
+                if (length + argumentCount > 9007199254740991d)
+                {
+                    throw new TypeError("Array.prototype.unshift result exceeds the maximum safe integer");
+                }
+
+                for (var k = length; k > 0d; k -= 1d)
+                {
+                    var from = k - 1d;
+                    var to = k + argumentCount - 1d;
+                    if (ObjectRuntime.HasPropertyForArrayLike(from, receiver))
+                    {
+                        SetArrayLikePropertyOrThrow(
+                            receiver,
+                            to,
+                            ObjectRuntime.GetItem(receiver, from));
+                    }
+                    else
+                    {
+                        DeleteArrayLikePropertyOrThrow(receiver, to);
+                    }
+                }
+
+                for (var j = 0; j < argumentCount; j++)
+                {
+                    SetArrayLikePropertyOrThrow(
+                        receiver,
+                        (double)j,
+                        arguments.GetArgument(j));
+                }
+            }
+
+            var newLength = length + argumentCount;
+            SetArrayLikeLength(receiver, newLength);
+            return newLength;
         }
 
         private static object? PrototypeAt(object? thisArgument, object? index)
@@ -1285,6 +1558,9 @@ namespace JavaScriptRuntime
 
             return receiver;
         }
+
+        private static object ToArrayMethodObject(object? receiver, string methodName)
+            => ObjectRuntime.Construct(RequireArrayLikeReceiver(receiver, methodName));
 
         private static object RequireCallback(object? callback, string methodName)
         {
@@ -3309,12 +3585,10 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// JavaScript Array.sort() default behavior: sorts elements as strings in ascending order and returns the array.
-        /// Note: This is a minimal implementation to support tests; comparator overload is ignored if provided.
         /// </summary>
         public Array sort()
         {
-            this.Sort((a, b) => string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal));
-            return this;
+            return (Array)PrototypeSort(this, null);
         }
 
         /// <summary>
@@ -3322,100 +3596,11 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array sort(object[] args)
         {
-            // If a comparator function is provided, use it; otherwise fallback to default string sort
-            if (args != null && args.Length > 0 && args[0] != null)
-            {
-                var cb = args[0];
-                Func<object, object, object?>? compareCallback = null;
-
-                int CompareUsingCallback(object a, object b)
-                {
-                    compareCallback ??= CreateSortComparatorInvoker(cb, this);
-                    if (compareCallback == null)
-                    {
-                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
-                    }
-
-                    object? result = compareCallback(a, b);
-
-                    // Coerce result to a JS number (double) and map to -1/0/1
-                    double d;
-                    switch (result)
-                    {
-                        case null:
-                            d = 0d; break;
-                        case double dd:
-                            d = dd; break;
-                        case float ff:
-                            d = ff; break;
-                        case int ii:
-                            d = ii; break;
-                        case long ll:
-                            d = ll; break;
-                        case short ss:
-                            d = ss; break;
-                        case byte bb:
-                            d = bb; break;
-                        case bool bo:
-                            d = bo ? 1d : 0d; break;
-                        case string str:
-                            if (!double.TryParse(str, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out d)) d = double.NaN;
-                            break;
-                        default:
-                            try { d = Convert.ToDouble(result, System.Globalization.CultureInfo.InvariantCulture); }
-                            catch { d = double.NaN; }
-                            break;
-                    }
-
-                    if (double.IsNaN(d) || d == 0d) return 0;
-                    return d < 0d ? -1 : 1;
-                }
-
-                try
-                {
-                    this.Sort((a, b) => CompareUsingCallback(a!, b!));
-                }
-                catch (InvalidOperationException exception)
-                    when (exception.InnerException is SortComparisonException comparisonException)
-                {
-                    throw comparisonException.InnerException!;
-                }
-
-                return this;
-            }
-
-            return sort();
+            var compareFunction = args is { Length: > 0 } ? args[0] : null;
+            return (Array)PrototypeSort(this, compareFunction);
         }
 
         private delegate object? ArrayCallbackInvoker(object? a0, object? a1, object? a2, object? a3);
-
-        private sealed class SortComparisonException : Exception
-        {
-            public SortComparisonException(Exception innerException)
-                : base("JavaScript sort comparator threw an exception.", innerException)
-            {
-            }
-        }
-
-        private static Func<object, object, object?>? CreateSortComparatorInvoker(object? cb, Array array)
-        {
-            if (CallableOperations.IsCallable(cb))
-            {
-                return (a, b) =>
-                {
-                    try
-                    {
-                        return CallableOperations.Call2(cb, null, a, b);
-                    }
-                    catch (Exception exception)
-                    {
-                        throw new SortComparisonException(exception);
-                    }
-                };
-            }
-
-            return null;
-        }
 
         private static ArrayCallbackInvoker CreateArrayCallbackInvoker(object? cb, int argCount, string callbackKind)
         {
@@ -4005,272 +4190,67 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// JavaScript Array.slice([start[, end]]) implementation.
-        /// Returns a shallow copy of a portion of the array into a new Array object.
+        /// Returns a shallow copy of a portion of the array using ArraySpeciesCreate.
         /// Handles negative indices and defaults per JS spec.
         /// </summary>
-        public Array slice(object[]? args)
-        {
-            int len = this.Count;
-
-            // Defaults
-            int start = 0;
-            int end = len;
-
-            // Optional debug: print incoming argument shapes to stderr when enabled
-            try
-            {
-                if (System.Environment.GetEnvironmentVariable("JROC_DEBUG_SLICE") == "1")
-                {
-                    var alen = args?.Length ?? 0;
-                    string a0t = alen > 0 ? (args![0]?.GetType().FullName ?? "<null>") : "<none>";
-                    string a1t = alen > 1 ? (args![1]?.GetType().FullName ?? "<null>") : "<none>";
-                    string a0v = alen > 0 ? JavaScriptRuntime.DotNet2JSConversions.ToString(args![0]) : "<none>";
-                    string a1v = alen > 1 ? JavaScriptRuntime.DotNet2JSConversions.ToString(args![1]) : "<none>";
-                    System.Console.Error.WriteLine($"[slice dbg] len={len} argsLen={alen} a0Type={a0t} a0Val={a0v} a1Type={a1t} a1Val={a1v}");
-                }
-            }
-            catch { /* best-effort debug only */ }
-
-            // start argument
-            if (args != null && args.Length > 0)
-            {
-                start = CoerceStartIndex(args[0], len, 0);
-            }
-
-        // end argument
-            if (args != null && args.Length > 1)
-            {
-                var endArg = args[1];
-                if (endArg == null)
-                {
-                    // undefined => keep default end = len
-                }
-                else if (endArg is JsNull)
-                {
-                    end = 0; // null => +0
-                }
-                else
-                {
-            // Per spec, only undefined should keep len; other non-numeric => +0
-            try { end = ToInt(endArg, 0); }
-            catch { end = 0; }
-                }
-
-                if (end < 0)
-                {
-                    end = len + end;
-                    if (end < 0) end = 0;
-                }
-                else if (end > len)
-                {
-                    end = len;
-                }
-            }
-
-            int count = end - start;
-            if (count <= 0) return new Array();
-
-            var result = new Array(count);
-            for (int k = start; k < end; k++)
-            {
-                result.Add(this[k]);
-            }
-            return result;
-        }
+        public object slice(object[]? args)
+            => PrototypeSlice(
+                this,
+                args is { Length: > 0 } ? args[0] : null,
+                args is { Length: > 1 } ? args[1] : null)!;
 
         /// <summary>
         /// Overload without parameters to match potential direct dispatch.
         /// </summary>
-        public Array slice()
-        {
-            return slice(null);
-        }
+        public object slice()
+            => PrototypeSlice(this, null, null)!;
 
         /// <summary>
         /// Overload for one argument to align with dispatcher arity matching.
         /// </summary>
-        public Array slice(object start)
-        {
-            return slice(new object[] { start });
-        }
+        public object slice(object start)
+            => PrototypeSlice(this, start, null)!;
 
         /// <summary>
         /// Overload for two arguments to align with dispatcher arity matching.
         /// </summary>
-        public Array slice(object start, object end)
-        {
-            return slice(new object[] { start, end });
-        }
+        public object slice(object start, object end)
+            => PrototypeSlice(this, start, end)!;
 
         /// <summary>
         /// JavaScript Array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
-        /// Mutates the array by removing and/or inserting elements. Returns a new Array of removed elements.
+        /// Mutates the array by removing and/or inserting elements and returns the species-created removed collection.
         /// </summary>
-        public Array splice(object[]? args)
+        public object splice(object[]? args)
         {
-            int len = this.Count;
-
-            // No arguments => no-op; return empty array
-            if (args == null || args.Length == 0)
-            {
-                return new Array();
-            }
-
-            // Compute start index (clamped)
-            int start = CoerceStartIndex(args[0], len, 0);
-
-            // Determine deleteCount per spec
-            int deleteCount;
-            if (args.Length == 1)
-            {
-                // Omitted deleteCount => remove to end
-                deleteCount = len - start;
-            }
-            else
-            {
-                var delArg = args[1];
-                // When provided, undefined/null => 0; otherwise ToInt then clamp to [0, len-start]
-                int raw = 0;
-                try { raw = delArg == null ? 0 : ToInt(delArg, 0); } catch { raw = 0; }
-                if (raw < 0) raw = 0;
-                int max = len - start;
-                deleteCount = raw > max ? max : raw;
-            }
-
-            var insertCount = global::System.Math.Max(args.Length - 2, 0);
-            if (insertCount > int.MaxValue - (len - deleteCount))
-            {
-                throw new RangeError("Invalid array length");
-            }
-
-            var newLength = len - deleteCount + insertCount;
-            var canUseDenseFastPath = Count == len
-                && (insertCount <= deleteCount
-                    ? CanUseDenseMutationFastPath()
-                    : CanUseDenseGrowthFastPath());
-            if (canUseDenseFastPath)
-            {
-                var removedDense = new Array(deleteCount);
-                for (var i = 0; i < deleteCount; i++)
-                {
-                    if (_numberItems is not null)
-                    {
-                        removedDense.AddNumber(_numberItems[start + i]);
-                    }
-                    else
-                    {
-                        removedDense.AddDenseValue(_items![start + i]);
-                    }
-                }
-                removedDense.SynchronizeDenseLength();
-
-                RemoveDenseRange(start, deleteCount);
-                if (insertCount == 1)
-                {
-                    InsertDenseValue(start, args[2]);
-                }
-                else if (insertCount > 1)
-                {
-                    for (var i = 0; i < insertCount; i++)
-                    {
-                        InsertDenseValue(start + i, args[i + 2]);
-                    }
-                }
-
-                SynchronizeDenseLength();
-                return removedDense;
-            }
-
-            // Gather removed elements, preserving holes.
-            var removed = new Array();
-            removed.length = deleteCount;
-            for (int i = 0; i < deleteCount; i++)
-            {
-                var source = start + i;
-                if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
-                {
-                    removed.TrySetIndexValue(i, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
-                }
-            }
-
-            if (insertCount < deleteCount)
-            {
-                for (var target = start; target < len - deleteCount; target++)
-                {
-                    var source = target + deleteCount;
-                    var destination = target + insertCount;
-                    if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
-                    {
-                        TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
-                    }
-                    else
-                    {
-                        DeleteIndexOrThrow(destination);
-                    }
-                }
-
-                for (var indexToDelete = len - 1; indexToDelete >= len - deleteCount + insertCount; indexToDelete--)
-                {
-                    DeleteIndexOrThrow(indexToDelete);
-                }
-            }
-            else if (insertCount > deleteCount)
-            {
-                for (var source = len - 1; source >= start + deleteCount; source--)
-                {
-                    var destination = source - deleteCount + insertCount;
-                    if (ObjectRuntime.HasPropertyForArrayLike((double)source, this))
-                    {
-                        TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
-                    }
-                    else
-                    {
-                        DeleteIndexOrThrow(destination);
-                    }
-                }
-            }
-
-            for (var i = 0; i < insertCount; i++)
-            {
-                TrySetIndexValue(start + i, args[2 + i], throwOnError: true);
-            }
-
-            SetLength(newLength, throwOnError: true);
-            return removed;
+            var arguments = JsCallArguments.FromArray(args);
+            return PrototypeSplice(this, in arguments)!;
         }
 
         /// <summary>
         /// Overload without parameters
         /// </summary>
-        public Array splice()
-        {
-            return splice(null);
-        }
+        public object splice()
+            => splice(null);
 
         /// <summary>
         /// Overload with start only
         /// </summary>
-        public Array splice(object start)
-        {
-            return splice(new object[] { start });
-        }
+        public object splice(object start)
+            => splice(new object[] { start });
 
         /// <summary>
         /// Overload with start and deleteCount
         /// </summary>
-        public Array splice(object start, object deleteCount)
-        {
-            return splice(new object[] { start, deleteCount });
-        }
+        public object splice(object start, object deleteCount)
+            => splice(new object[] { start, deleteCount });
 
         /// <summary>
         /// Overload with start, deleteCount and one inserted item.
         /// Avoids params-array packing at common three-argument call sites.
         /// </summary>
-        public Array splice(object start, object deleteCount, object item1)
-        {
-            return splice(new object[] { start, deleteCount, item1 });
-        }
+        public object splice(object start, object deleteCount, object item1)
+            => splice(new object[] { start, deleteCount, item1 });
 
         private static int ToInt(object value, int defaultValue)
         {
@@ -4471,67 +4451,40 @@ namespace JavaScriptRuntime
         /// JavaScript Array.shift(): removes and returns first element; returns undefined when empty.
         /// </summary>
         public object? shift(object[]? args)
-        {
-            if (CanUseDenseMutationFastPath())
-            {
-                if (DenseCount == 0)
-                {
-                    return null;
-                }
-
-                var denseValue = GetDenseValue(0);
-                RemoveDenseRange(0, 1);
-                SynchronizeDenseLength();
-                return denseValue;
-            }
-
-            if (this.Count == 0) return null;
-            var v = this[0];
-            this.RemoveAt(0);
-            return v;
-        }
+            => PrototypeShift(this);
 
         public object? shift()
-        {
-            return shift(null);
-        }
+            => PrototypeShift(this);
 
         /// <summary>
         /// JavaScript Array.unshift(...items): prepends items and returns new length.
         /// </summary>
         public double unshift(object[]? args)
         {
-            if (args != null && args.Length > 0)
-            {
-                InsertRange(0, args);
-            }
-            return (double)this.Count;
+            var arguments = JsCallArguments.FromArray(args);
+            return (double)PrototypeUnshift(this, in arguments);
         }
 
         public double unshift()
         {
-            return (double)this.Count;
+            var arguments = JsCallArguments.Empty;
+            return (double)PrototypeUnshift(this, in arguments);
         }
 
         public double unshift(object item1)
         {
-            this.Insert(0, item1);
-            return (double)this.Count;
+            var arguments = JsCallArguments.From(item1);
+            return (double)PrototypeUnshift(this, in arguments);
         }
 
         /// <summary>
         /// JavaScript Array.reverse(): in-place reverse.
         /// </summary>
         public Array reverse(object[]? args)
-        {
-            this.Reverse();
-            return this;
-        }
+            => (Array)PrototypeReverse(this);
 
         public Array reverse()
-        {
-            return reverse(null);
-        }
+            => (Array)PrototypeReverse(this);
 
         /// <summary>
         /// JavaScript Array.concat(...items): returns a new array.

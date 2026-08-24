@@ -72,4 +72,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_2_3_14_1_5()
         => ExecutionTestFromFile("15.2.3.14-1-5");
 
+    [Fact(DisplayName = "15.2.3.14-6-3")]
+    public Task _15_2_3_14_6_3()
+        => ExecutionTestFromFile("15.2.3.14-6-3");
 }

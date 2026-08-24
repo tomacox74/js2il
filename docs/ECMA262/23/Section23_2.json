@@ -545,7 +545,7 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/at/ExecutionTests.cs"
         ],
-        "notes": "The supported TypedArray families share at(), includes(), indexOf(), and lastIndexOf(). at() is exposed on the shared prototype with standard metadata, validates its receiver, applies ToIntegerOrInfinity with abrupt-completion propagation, supports relative indices, and returns undefined out of bounds. BigInt TypedArrays plus detached and resizable ArrayBuffer behavior remain unsupported.",
+        "notes": "The supported numeric and BigInt TypedArray families share at(), includes(), indexOf(), and lastIndexOf(). at() is exposed on the shared prototype with standard metadata, validates its receiver, applies ToIntegerOrInfinity with abrupt-completion propagation, supports relative indices, and returns undefined out of bounds. Detached and resizable ArrayBuffer behavior remains unsupported.",
         "test262Paths": [
           "test/built-ins/TypedArray/prototype/at/returns-item-relative-index.js",
           "test/built-ins/TypedArray/prototype/at/name.js",
@@ -714,7 +714,7 @@
           "test/built-ins/TypedArray/prototype/sort/this-is-not-object.js",
           "test/built-ins/TypedArray/prototype/sort/this-is-not-typedarray-instance.js"
         ],
-        "notes": "Supported numeric TypedArray families sort in place with stable numeric ordering, including NaN and signed-zero handling, callable comparator coercion and abrupt-completion propagation, receiver validation, and standard built-in metadata. BigInt TypedArray families plus detached and resizable ArrayBuffer behavior remain unsupported."
+        "notes": "Supported numeric and BigInt TypedArray families sort in place with stable type-appropriate ordering, including numeric NaN and signed-zero handling, BigInt value preservation, callable comparator coercion and abrupt-completion propagation, receiver validation, and standard built-in metadata. Detached and resizable ArrayBuffer behavior remains unsupported."
       },
       {
         "clause": "23.2.3.33",
@@ -789,6 +789,17 @@
         "notes": "fill(), reverse(), join(), toString(), and toLocaleString() are shared across the supported families and return same-type results/views where applicable. Locale-aware formatting, species interactions, and the remaining prototype metadata surface are still limited."
       },
       {
+        "clause": "23.2.3.26 / 23.2.5",
+        "feature": "BigInt64Array and BigUint64Array construction, indexing, and sorting",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/sort/BigInt/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/Symbol.toStringTag/BigInt/ExecutionTests.cs"
+        ],
+        "notes": "BigInt64Array and BigUint64Array are ArrayBuffer-backed typed arrays with BigInt element coercion and wrapping, concrete @@toStringTag values, shared iterators, and BigInt-preserving sort and mutation paths. Detachable/resizable buffers and the full BigInt typed-array test matrix remain limited."
+      },
+      {
         "clause": "23.2.3.35",
         "feature": "TypedArray iterator, symbol-iterator, and toStringTag basics",
         "status": "Supported with Limitations",
@@ -804,7 +815,7 @@
           "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/Symbol.toStringTag/ExecutionTests.cs"
         ],
-        "notes": "values(), keys(), and entries() return callable iterator objects, and supported TypedArrays participate in for-of through the shared runtime iterator path. The shared %TypedArray%.prototype now exposes the configurable, non-enumerable @@toStringTag accessor with no setter and returns the concrete supported TypedArray name. BigInt TypedArrays and full exotic-buffer coverage remain unsupported.",
+        "notes": "values(), keys(), and entries() return callable iterator objects, and supported numeric and BigInt TypedArrays participate in for-of through the shared runtime iterator path. The shared %TypedArray%.prototype exposes the configurable, non-enumerable @@toStringTag accessor with no setter and returns the concrete TypedArray name. Detached, resizable, and other exotic-buffer coverage remains unsupported.",
         "test262Paths": [
           "test/built-ins/ArrayIteratorPrototype/next/Uint8Array.js",
           "test/built-ins/ArrayIteratorPrototype/next/Int8Array.js",

@@ -100,7 +100,7 @@
           "tests/Jroc.Test262.Tests/built-ins/JSON/parse/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/JSON/PortNext200Batch2ExecutionTests.cs"
         ],
-        "notes": "Implemented by JavaScriptRuntime.JSON.Parse with ECMAScript string coercion and SyntaxError translation for invalid input. Parsed objects and the reviver root wrapper are ordinary JsObject instances; arrays use JavaScriptRuntime.Array and numbers use double. Reviver processing walks properties post-order, calls the reviver with the current holder as this, supports deletion through an undefined result, and supports replacement values. Broader proxy, cross-realm, and extreme-depth behavior remains limited.",
+        "notes": "Implemented by JavaScriptRuntime.JSON.Parse with ECMAScript string coercion and SyntaxError translation for invalid input. Reviver processing walks properties post-order, observes forward object/array modifications, defines replacement properties, and supplies the ES2025 context object with exact source text for unmodified primitive parse nodes. Broader proxy, cross-realm, and extreme-depth behavior remains limited.",
         "test262Paths": [
           "test/built-ins/JSON/parse/15.12.1.1-0-1.js",
           "test/built-ins/JSON/parse/15.12.1.1-0-4.js",

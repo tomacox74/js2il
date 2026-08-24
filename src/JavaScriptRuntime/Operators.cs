@@ -27,9 +27,12 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            return TypeUtilities.TryCoerceObjectToPrimitive(value, "default", out var primitive)
-                ? primitive
-                : value;
+            if (TypeUtilities.TryCoerceObjectToPrimitive(value, "default", out var primitive))
+            {
+                return primitive;
+            }
+
+            throw new TypeError("Cannot convert object to primitive value");
         }
 
         private static object? ToPrimitiveForRelationalComparison(object? value)
@@ -98,9 +101,22 @@ namespace JavaScriptRuntime
                     return leftBigInt.CompareTo(rightBigInt);
                 }
 
-                if (IsEcmaNumber(b))
+                if (b is string rightBigIntString)
                 {
-                    return CompareBigIntAndNumber(leftBigInt, ToNumber(b));
+                    return BigInt.TryParseStringToBigInt(rightBigIntString, out var parsedRight)
+                        ? leftBigInt.CompareTo(parsedRight)
+                        : null;
+                }
+
+                var rightNumeric = TypeUtilities.ToNumeric(b);
+                if (rightNumeric is BigInteger rightNumericBigInt)
+                {
+                    return leftBigInt.CompareTo(rightNumericBigInt);
+                }
+
+                if (IsEcmaNumber(rightNumeric))
+                {
+                    return CompareBigIntAndNumber(leftBigInt, ToNumber(rightNumeric));
                 }
 
                 ThrowMixedBigIntTypeError();
@@ -108,9 +124,22 @@ namespace JavaScriptRuntime
 
             if (b is BigInteger rightBigIntOnly)
             {
-                if (IsEcmaNumber(a))
+                if (a is string leftBigIntString)
                 {
-                    var comparison = CompareBigIntAndNumber(rightBigIntOnly, ToNumber(a));
+                    return BigInt.TryParseStringToBigInt(leftBigIntString, out var parsedLeft)
+                        ? parsedLeft.CompareTo(rightBigIntOnly)
+                        : null;
+                }
+
+                var leftNumeric = TypeUtilities.ToNumeric(a);
+                if (leftNumeric is BigInteger leftNumericBigInt)
+                {
+                    return leftNumericBigInt.CompareTo(rightBigIntOnly);
+                }
+
+                if (IsEcmaNumber(leftNumeric))
+                {
+                    var comparison = CompareBigIntAndNumber(rightBigIntOnly, ToNumber(leftNumeric));
                     return comparison.HasValue ? -comparison.Value : null;
                 }
 
@@ -670,8 +699,23 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            return global::System.Math.Pow((double)leftNumeric, (double)rightNumeric);
+            return ExponentiateNumber((double)leftNumeric, (double)rightNumeric);
         }
+
+        public static double ExponentiateNumber(double leftNumber, double rightNumber)
+            => global::System.Math.Pow(
+                NormalizeExponentiationBase(
+                    leftNumber,
+                    rightNumber),
+                rightNumber);
+
+        public static double NormalizeExponentiationBase(
+            double leftNumber,
+            double rightNumber)
+            => global::System.Math.Abs(leftNumber) == 1d
+                && double.IsInfinity(rightNumber)
+                    ? double.NaN
+                    : leftNumber;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object BitwiseAnd(object? a, object? b)
@@ -683,9 +727,12 @@ namespace JavaScriptRuntime
                 return (double)(leftInt & rightInt);
             }
 
-            if (a is BigInteger leftBigInt)
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     return leftBigInt & rightBigInt;
                 }
@@ -693,13 +740,13 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var left = TypeUtilities.ToInt32(a);
-            var right = TypeUtilities.ToInt32(b);
+            var left = TypeUtilities.ToInt32((double)leftNumeric);
+            var right = TypeUtilities.ToInt32((double)rightNumeric);
             return (double)(left & right);
         }
 
@@ -713,9 +760,12 @@ namespace JavaScriptRuntime
                 return (double)(leftInt | rightInt);
             }
 
-            if (a is BigInteger leftBigInt)
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     return leftBigInt | rightBigInt;
                 }
@@ -723,13 +773,13 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var left = TypeUtilities.ToInt32(a);
-            var right = TypeUtilities.ToInt32(b);
+            var left = TypeUtilities.ToInt32((double)leftNumeric);
+            var right = TypeUtilities.ToInt32((double)rightNumeric);
             return (double)(left | right);
         }
 
@@ -743,9 +793,12 @@ namespace JavaScriptRuntime
                 return (double)(leftInt ^ rightInt);
             }
 
-            if (a is BigInteger leftBigInt)
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+
+            if (leftNumeric is BigInteger leftBigInt)
             {
-                if (b is BigInteger rightBigInt)
+                if (rightNumeric is BigInteger rightBigInt)
                 {
                     return leftBigInt ^ rightBigInt;
                 }
@@ -753,13 +806,13 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            if (b is BigInteger)
+            if (rightNumeric is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            var left = TypeUtilities.ToInt32(a);
-            var right = TypeUtilities.ToInt32(b);
+            var left = TypeUtilities.ToInt32((double)leftNumeric);
+            var right = TypeUtilities.ToInt32((double)rightNumeric);
             return (double)(left ^ right);
         }
 
@@ -904,7 +957,10 @@ namespace JavaScriptRuntime
                 return -bigInt;
             }
 
-            return -ToNumber(value);
+            var numeric = TypeUtilities.ToNumeric(value);
+            return numeric is BigInteger coercedBigInt
+                ? -coercedBigInt
+                : -(double)numeric;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -920,7 +976,13 @@ namespace JavaScriptRuntime
                 return ~bigInt;
             }
 
-            var intValue = TypeUtilities.ToInt32(value);
+            var numeric = TypeUtilities.ToNumeric(value);
+            if (numeric is BigInteger coercedBigInt)
+            {
+                return ~coercedBigInt;
+            }
+
+            var intValue = TypeUtilities.ToInt32((double)numeric);
             return (double)(~intValue);
         }
 

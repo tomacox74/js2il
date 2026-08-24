@@ -11,19 +11,30 @@ public sealed partial class HIRToLIRLowerer
     /// </summary>
     private TempVariable EmitBindWithObjectIfNeeded(TempVariable functionValueTemp)
     {
-        if (_activeWithObjects.Count == 0)
+        if (_activeWithObjects.Count > 0)
+        {
+            var boundTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                IntrinsicName: nameof(JavaScriptRuntime.Function),
+                MethodName: nameof(JavaScriptRuntime.Function.BindWithObject),
+                Arguments: new[] { EnsureObject(functionValueTemp), _activeWithObjects.Peek() },
+                Result: boundTemp));
+            DefineTempStorage(boundTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return boundTemp;
+        }
+
+        if (_scope?.MayUseBoundWithObject != true)
         {
             return functionValueTemp;
         }
 
-        var boundTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            IntrinsicName: nameof(JavaScriptRuntime.Function),
-            MethodName: nameof(JavaScriptRuntime.Function.BindWithObject),
-            Arguments: new[] { EnsureObject(functionValueTemp), _activeWithObjects.Peek() },
-            Result: boundTemp));
-        DefineTempStorage(boundTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        return boundTemp;
+        var inheritedBoundTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.BindWithCurrentWithObject),
+            new[] { EnsureObject(functionValueTemp) },
+            inheritedBoundTemp));
+        DefineTempStorage(inheritedBoundTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return inheritedBoundTemp;
     }
 
     /// <summary>
@@ -60,4 +71,9 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(resolvedTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return resolvedTemp;
     }
-} 
+
+    private bool MayUseBoundWithEnvironmentForIdentifier(BindingInfo binding)
+        => _scope?.MayUseBoundWithObject == true
+            && (binding.DeclaringScope is null
+                || !ReferenceEquals(binding.DeclaringScope, _scope));
+}

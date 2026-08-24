@@ -9,4 +9,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "error-subclass")]
+    public Task error_subclass()
+        => ExecutionTestFromFile("error-subclass");
 }

@@ -704,7 +704,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 64 (0x40)
+			// Code size: 74 (0x4a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -713,26 +713,28 @@
 
 			IL_0000: volatile.
 			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-			IL_0007: brfalse IL_001c
+			IL_0007: brfalse IL_0021
 
 			IL_000c: ldarg.0
-			IL_000d: ldstr "count"
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0017: br IL_0031
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0012: ldstr "count"
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001c: br IL_003b
 
-			IL_001c: ldarg.0
-			IL_001d: ldstr "count"
-			IL_0022: ldstr "Classes_AccessorMethods_InstanceAndStatic:<TwoPhaseDummy_M7>:get_label:4"
-			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0021: ldarg.0
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0027: ldstr "count"
+			IL_002c: ldstr "Classes_AccessorMethods_InstanceAndStatic:<TwoPhaseDummy_M7>:get_label:4"
+			IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0031: stloc.0
-			IL_0032: ldstr "count="
-			IL_0037: ldloc.0
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003d: stloc.1
-			IL_003e: ldloc.1
-			IL_003f: ret
+			IL_003b: stloc.0
+			IL_003c: ldstr "count="
+			IL_0041: ldloc.0
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0047: stloc.1
+			IL_0048: ldloc.1
+			IL_0049: ret
 		} // end of method Counter::get_label
 
 		.method public hidebysig static 
@@ -931,7 +933,7 @@
 		IL_00b4: conv.r8
 		IL_00b5: ldstr "get count"
 		IL_00ba: ldc.i4.1
-		IL_00bb: ldc.i4.1
+		IL_00bb: ldc.i4.0
 		IL_00bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_00c1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_count/FunctionObject>(!!0)
 		IL_00c6: ldnull
@@ -963,7 +965,7 @@
 		IL_0116: conv.r8
 		IL_0117: ldstr "set count"
 		IL_011c: ldc.i4.1
-		IL_011d: ldc.i4.1
+		IL_011d: ldc.i4.0
 		IL_011e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0123: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_count/FunctionObject>(!!0)
 		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)
@@ -993,7 +995,7 @@
 		IL_0176: conv.r8
 		IL_0177: ldstr "get label"
 		IL_017c: ldc.i4.1
-		IL_017d: ldc.i4.1
+		IL_017d: ldc.i4.0
 		IL_017e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0183: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_label/FunctionObject>(!!0)
 		IL_0188: ldnull
@@ -1019,7 +1021,7 @@
 		IL_01be: conv.r8
 		IL_01bf: ldstr "get total"
 		IL_01c4: ldc.i4.0
-		IL_01c5: ldc.i4.1
+		IL_01c5: ldc.i4.0
 		IL_01c6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_01cb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_get_total/FunctionObject>(!!0)
 		IL_01d0: ldnull
@@ -1046,7 +1048,7 @@
 		IL_0207: conv.r8
 		IL_0208: ldstr "set total"
 		IL_020d: ldc.i4.0
-		IL_020e: ldc.i4.1
+		IL_020e: ldc.i4.0
 		IL_020f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_AccessorMethods_InstanceAndStatic/Counter/Scope_set_total/FunctionObject>(!!0)
 		IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementAccessorProperty(object, object, object, object)

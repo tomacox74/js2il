@@ -223,4 +223,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "reviver-array-non-configurable-prop-delete")]
     public Task reviver_array_non_configurable_prop_delete()
         => ExecutionTestFromFile("reviver-array-non-configurable-prop-delete");
+
+    [Fact(DisplayName = "reviver-call-args-after-forward-modification")]
+    public Task reviver_call_args_after_forward_modification()
+        => ExecutionTestFromFile("reviver-call-args-after-forward-modification");
+
+    [Fact(DisplayName = "reviver-context-source-array-literal")]
+    public Task reviver_context_source_array_literal()
+        => ExecutionTestFromFile("reviver-context-source-array-literal");
+
+    [Fact(DisplayName = "reviver-context-source-object-literal")]
+    public Task reviver_context_source_object_literal()
+        => ExecutionTestFromFile("reviver-context-source-object-literal");
+
+    [Fact(DisplayName = "reviver-forward-modifies-object")]
+    public Task reviver_forward_modifies_object()
+        => ExecutionTestFromFile("reviver-forward-modifies-object");
 }

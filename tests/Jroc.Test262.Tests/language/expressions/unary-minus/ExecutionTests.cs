@@ -43,4 +43,8 @@ public class ExecutionTests
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;
     }
+
+    [Fact(DisplayName = "bigint-non-primitive")]
+    public Task bigint_non_primitive()
+        => ExecutionTestFromFile("bigint-non-primitive");
 }

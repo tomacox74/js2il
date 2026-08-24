@@ -353,7 +353,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 52 (0x34)
+			// Code size: 62 (0x3e)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -361,22 +361,24 @@
 
 			IL_0000: volatile.
 			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_0007: brfalse IL_001c
+			IL_0007: brfalse IL_0021
 
 			IL_000c: ldarg.0
-			IL_000d: ldstr "greet"
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0017: br IL_0031
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0012: ldstr "greet"
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001c: br IL_003b
 
-			IL_001c: ldarg.0
-			IL_001d: ldstr "greet"
-			IL_0022: ldstr "Classes_ClassMethod_MethodValueRequiresMetadata:<TwoPhaseDummy_M6>:getGreet:3"
-			IL_0027: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0021: ldarg.0
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0027: ldstr "greet"
+			IL_002c: ldstr "Classes_ClassMethod_MethodValueRequiresMetadata:<TwoPhaseDummy_M6>:getGreet:3"
+			IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0031: stloc.0
-			IL_0032: ldloc.0
-			IL_0033: ret
+			IL_003b: stloc.0
+			IL_003c: ldloc.0
+			IL_003d: ret
 		} // end of method Greeter::getGreet
 
 	} // end of class Greeter
@@ -459,7 +461,7 @@
 		IL_0062: conv.r8
 		IL_0063: ldstr "greet"
 		IL_0068: ldc.i4.0
-		IL_0069: ldc.i4.1
+		IL_0069: ldc.i4.0
 		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_006f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_greet/FunctionObject>(!!0)
 		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
@@ -473,7 +475,7 @@
 		IL_008e: conv.r8
 		IL_008f: ldstr "getGreet"
 		IL_0094: ldc.i4.1
-		IL_0095: ldc.i4.1
+		IL_0095: ldc.i4.0
 		IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_009b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/Scope_getGreet/FunctionObject>(!!0)
 		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
