@@ -173,8 +173,17 @@ jobs:
           output=$(dotnet run --project samples/Domino/Domino.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
-          echo "$output" | grep -i "title=JROC Domino Sample"
-          echo "$output" | grep -i "links=2"
+          echo "$output" | grep -F "title=JROC Domino Sample"
+          echo "$output" | grep -F "elements=12"
+          echo "$output" | grep -F "links=2"
+          set +e
+          diag_output=$(JROC_DOMINO_DIAG=1 JROC_DOMINO_HTML_PATH="$PWD/samples/Domino/missing-sample.html" \
+            dotnet run --project samples/Domino/Domino.csproj -c Release --no-build -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1)
+          diag_exit=$?
+          set -e
+          test "$diag_exit" -ne 0
+          echo "$diag_output" | grep -F "[diag] Domino failure"
+          echo "$diag_output" | grep -F "missing-sample.html"
 
       - name: Build and run Picocolors sample
         run: |
@@ -192,8 +201,8 @@ jobs:
           output=$(dotnet run --project samples/Basic/host/Basic.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
-          echo "$output" | grep "version="
-          echo "$output" | grep "1+2="
+          echo "$output" | grep -F "version=1.0.0"
+          echo "$output" | grep -F "1+2=3"
 
       - name: Build and run Typed sample
         run: |
@@ -201,12 +210,12 @@ jobs:
           output=$(dotnet run --project samples/Typed/host/Typed.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
-          echo "$output" | grep "version="
-          echo "$output" | grep "add(1,2)="
-          echo "$output" | grep "counter.add(5)="
-          echo "$output" | grep "counter.value="
-          echo "$output" | grep "addAsync(1,2)="
-          echo "$output" | grep "created.add(1)="
+          echo "$output" | grep -F "version=1.2.3"
+          echo "$output" | grep -F "add(1,2)=3"
+          echo "$output" | grep -F "counter.add(5)=15"
+          echo "$output" | grep -F "counter.value=15"
+          echo "$output" | grep -F "addAsync(1,2)=3"
+          echo "$output" | grep -F "created.add(1)=3"
 
       - name: Build and run NpmRunAll2 sample
         run: |

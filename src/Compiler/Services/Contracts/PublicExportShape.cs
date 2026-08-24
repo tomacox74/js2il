@@ -279,7 +279,7 @@ internal static class PublicExportShapeAnalyzer
         var sawExportAssignment = false;
         var exportsAliasStillTargetsModuleExports = true;
 
-        foreach (var statement in module.Ast.Body)
+        foreach (var statement in GetContractAst(module).Body)
         {
             if (statement is ExpressionStatement { Expression: AssignmentExpression topLevelAssignment }
                 && TryClassifyCommonJsAssignment(topLevelAssignment, out var assignment))
@@ -599,7 +599,7 @@ internal static class PublicExportShapeAnalyzer
             return null;
         }
 
-        foreach (var statement in module.Ast.Body)
+        foreach (var statement in GetContractAst(module).Body)
         {
             switch (statement)
             {
@@ -672,6 +672,9 @@ internal static class PublicExportShapeAnalyzer
 
         return MapClrType(binding.ClrType);
     }
+
+    private static Acornima.Ast.Program GetContractAst(ModuleDefinition module)
+        => module.ContractAst ?? module.Ast;
 
     private static Type? InferLiteralClrType(Node? node)
     {

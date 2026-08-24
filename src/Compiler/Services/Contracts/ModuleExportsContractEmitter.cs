@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Acornima;
 using Acornima.Ast;
 using Jroc.SymbolTables;
+using Jroc.Utilities;
 using Jroc.Utilities.Ecma335;
 
 namespace Jroc.Services.Contracts;
@@ -156,7 +157,7 @@ internal sealed class ModuleExportsContractEmitter
                 continue;
             }
 
-            var topLevel = BuildTopLevelDeclarationIndex(module.Ast);
+            var topLevel = BuildTopLevelDeclarationIndex(GetContractAst(module));
             nextTypeDefinitionRow += CountDependentContractTypes(module, exportShape, topLevel);
             handles[module.ModuleId] = MetadataTokens.TypeDefinitionHandle(nextTypeDefinitionRow++);
             methodDefinitionCount += CountModuleContractMethods(module, exportShape, topLevel);
@@ -183,7 +184,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             if (!topLevels.TryGetValue(sourceModule, out var topLevel))
             {
-                topLevel = BuildTopLevelDeclarationIndex(sourceModule.Ast);
+                topLevel = BuildTopLevelDeclarationIndex(GetContractAst(sourceModule));
                 topLevels[sourceModule] = topLevel;
             }
 
@@ -341,7 +342,7 @@ internal sealed class ModuleExportsContractEmitter
 
         // Emit class instance and constructor contracts first so function inference can reference them.
         var classContracts = BuildClassContractDefinitions(module, exportShape, topLevel);
-        foreach (var classContract in classContracts.OrderBy(contract => contract.ContractName, StringComparer.Ordinal))
+        foreach (var classContract in OrderClassContractsByDependencies(classContracts))
         {
             instanceInterfacesByClassName[classContract.ContractName] = EmitHandleInterface(
                 contractNamespace,
@@ -1875,7 +1876,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             var memberTopLevel = ReferenceEquals(member.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(member.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(member.SourceModule));
             if (TryResolveExportAsClass(
                     GetValueNode(member.SourceNode),
                     memberTopLevel,
@@ -1925,6 +1926,43 @@ internal sealed class ModuleExportsContractEmitter
         return results.Values.ToArray();
     }
 
+    private static IReadOnlyList<ClassContractDefinition> OrderClassContractsByDependencies(
+        IReadOnlyList<ClassContractDefinition> contracts)
+    {
+        var byName = contracts.ToDictionary(contract => contract.ContractName, StringComparer.Ordinal);
+        var ordered = new List<ClassContractDefinition>(contracts.Count);
+        var visiting = new HashSet<string>(StringComparer.Ordinal);
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+
+        void Visit(ClassContractDefinition contract)
+        {
+            if (!visited.Add(contract.ContractName))
+            {
+                return;
+            }
+
+            visiting.Add(contract.ContractName);
+            new AstWalker().Visit(contract.ClassNode, node =>
+            {
+                if (node is NewExpression { Callee: Identifier identifier }
+                    && byName.TryGetValue(identifier.Name, out var dependency)
+                    && !visiting.Contains(dependency.ContractName))
+                {
+                    Visit(dependency);
+                }
+            });
+            visiting.Remove(contract.ContractName);
+            ordered.Add(contract);
+        }
+
+        foreach (var contract in contracts.OrderBy(contract => contract.ContractName, StringComparer.Ordinal))
+        {
+            Visit(contract);
+        }
+
+        return ordered;
+    }
+
     private static TopLevelIndex BuildTopLevelDeclarationIndex(Acornima.Ast.Program program)
     {
         var functions = new Dictionary<string, FunctionDeclaration>(StringComparer.Ordinal);
@@ -1971,6 +2009,9 @@ internal sealed class ModuleExportsContractEmitter
         return new TopLevelIndex(functions, classes, vars);
     }
 
+    private static Acornima.Ast.Program GetContractAst(ModuleDefinition module)
+        => module.ContractAst ?? module.Ast;
+
     private static FallbackContractKind GetFallbackContractRequirements(
         ModuleDefinition module,
         PublicModuleExportShape exportShape,
@@ -1982,7 +2023,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             var classTopLevel = ReferenceEquals(classContract.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(classContract.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(classContract.SourceModule));
             foreach (var (method, _) in GetEffectiveClassMethods(
                          classContract.ClassNode,
                          classTopLevel,
@@ -2000,7 +2041,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             var memberTopLevel = ReferenceEquals(member.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(member.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(member.SourceModule));
             var valueNode = GetValueNode(member.SourceNode);
             requirements |= GetExpressionFallbackRequirement(valueNode, memberTopLevel);
             if (TryResolveExportAsFunction(valueNode, memberTopLevel, out var function, out _))
@@ -2549,7 +2590,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             var classTopLevel = ReferenceEquals(classContract.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(classContract.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(classContract.SourceModule));
             if (classContract.SourceModule.SymbolTable?.Root is Jroc.SymbolTables.Scope rootScope)
             {
                 count += (FindClassScope(rootScope, classContract.ScopeClassName)?.StableInstanceFieldClrTypes.Count ?? 0) * 2;
@@ -2563,7 +2604,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             var memberTopLevel = ReferenceEquals(member.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(member.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(member.SourceModule));
             var valueNode = GetValueNode(member.SourceNode);
             if (TryResolveObjectExpression(valueNode, memberTopLevel, out var objectExpression))
             {
@@ -2603,7 +2644,7 @@ internal sealed class ModuleExportsContractEmitter
             var valueNode = GetValueNode(member.SourceNode);
             var memberTopLevel = ReferenceEquals(member.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(member.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(member.SourceModule));
             if (!member.HasUnknownSource
                 && (TryResolveExportAsClass(valueNode, memberTopLevel, member.ExportName, out _, out _)
                     || TryResolveExportAsFunction(valueNode, memberTopLevel, out _, out _)
@@ -2636,7 +2677,7 @@ internal sealed class ModuleExportsContractEmitter
         {
             var memberTopLevel = ReferenceEquals(member.SourceModule, module)
                 ? topLevel
-                : BuildTopLevelDeclarationIndex(member.SourceModule.Ast);
+                : BuildTopLevelDeclarationIndex(GetContractAst(member.SourceModule));
             var valueNode = GetValueNode(member.SourceNode);
             if (TryResolveObjectExpression(valueNode, memberTopLevel, out var objectExpression))
             {

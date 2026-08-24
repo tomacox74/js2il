@@ -23,7 +23,8 @@ public sealed class GeneratedAssemblyConsumerHarness : IDisposable
         string javaScript,
         string assemblyName = "ConsumerFixture",
         IReadOnlyDictionary<string, string>? additionalScripts = null,
-        string entryFileName = "entry.js")
+        string entryFileName = "entry.js",
+        string? rootModuleId = null)
     {
         ArgumentNullException.ThrowIfNull(javaScript);
 
@@ -48,6 +49,7 @@ public sealed class GeneratedAssemblyConsumerHarness : IDisposable
                 new JrocInMemoryCompileRequest(entryPath)
                 {
                     AssemblyName = assemblyName,
+                    RootModuleIdOverride = rootModuleId,
                     FileSystem = fileSystem,
                     EmitPdb = true
                 });

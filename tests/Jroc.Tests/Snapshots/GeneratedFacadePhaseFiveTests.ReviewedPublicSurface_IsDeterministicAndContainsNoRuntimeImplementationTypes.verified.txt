@@ -1,0 +1,147 @@
+﻿type interface Jroc.PhaseFive_Surface.Deep.Package.Contracts.IDeepCounter : System.IDisposable
+  method System.Object Increment()
+type interface Jroc.PhaseFive_Surface.Deep.Package.Contracts.IDeepCounterConstructor : System.IDisposable
+  method Jroc.PhaseFive_Surface.Deep.Package.Contracts.IDeepCounter Construct(System.Object value)
+type interface Jroc.PhaseFive_Surface.ICounter : System.IDisposable
+  method System.Object Increment()
+  method PhaseFive_Surface.Scripts.entry.IArray Values()
+type interface Jroc.PhaseFive_Surface.ICounterConstructor : System.IDisposable
+  method Jroc.PhaseFive_Surface.ICounter Construct(System.Object value)
+type interface Jroc.PhaseFive_Surface.INested : System.IDisposable
+  property Jroc.PhaseFive_Surface.INestedValuesArray Values { get; set; }
+  method System.Object Callback(System.Object value)
+  method System.Object GetDynamicProperty(System.String name)
+  method System.Boolean HasDynamicProperty(System.String name)
+  method System.Void SetDynamicProperty(System.String name, System.Object value)
+type interface Jroc.PhaseFive_Surface.INestedValuesArray : System.IDisposable
+  property System.Double Length { get; set; }
+  method System.Object Get(System.Double index)
+  method System.Boolean HasIndex(System.Double index)
+  method System.Double Push(System.Object[] values)
+  method System.Void Set(System.Double index, System.Object value)
+type static class PhaseFive_Surface
+  method static PhaseFive_Surface.Scripts.entry.IExports Import()
+  method static System.Void Run(System.String[] args)
+type static class PhaseFive_Surface.Scripts
+type static class PhaseFive_Surface.Scripts.deep
+type static class PhaseFive_Surface.Scripts.deep.package
+type static class PhaseFive_Surface.Scripts.deep.package.contracts
+type static class PhaseFive_Surface.Scripts.deep.package.contracts.toolkit
+  method static PhaseFive_Surface.Scripts.deep.package.contracts.toolkit.IExports Import()
+  method static System.Void Run(System.String[] args)
+type interface PhaseFive_Surface.Scripts.deep.package.contracts.toolkit.ICallable : System.IDisposable
+  method System.Object Invoke(System.Object[] arguments)
+type interface PhaseFive_Surface.Scripts.deep.package.contracts.toolkit.IExports : System.IDisposable
+  property Jroc.PhaseFive_Surface.Deep.Package.Contracts.IDeepCounterConstructor DeepCounter { get; }
+  method System.Double Multiply(System.Object left, System.Object right)
+type static class PhaseFive_Surface.Scripts.entry
+  method static PhaseFive_Surface.Scripts.entry.IExports Import()
+  method static System.Void Run(System.String[] args)
+type interface PhaseFive_Surface.Scripts.entry.IArray : System.IDisposable
+  property System.Double Length { get; set; }
+  method System.Object Get(System.Double index)
+  method System.Boolean HasIndex(System.Double index)
+  method System.Double Push(System.Object[] values)
+  method System.Void Set(System.Double index, System.Object value)
+type interface PhaseFive_Surface.Scripts.entry.IArrayBuffer : System.IDisposable
+  property System.Double ByteLength { get; }
+  property System.Boolean IsShared { get; }
+  property System.Double MaxByteLength { get; }
+  property System.Boolean Resizable { get; }
+  method System.Void Resize(System.Object newLength)
+  method PhaseFive_Surface.Scripts.entry.IArrayBuffer Slice(System.Object[] arguments)
+type interface PhaseFive_Surface.Scripts.entry.ICallable : System.IDisposable
+  method System.Object Invoke(System.Object[] arguments)
+type interface PhaseFive_Surface.Scripts.entry.IDataView : System.IDisposable
+  property PhaseFive_Surface.Scripts.entry.IArrayBuffer Buffer { get; }
+  property System.Double ByteLength { get; }
+  property System.Double ByteOffset { get; }
+  method System.Double GetFloat32(System.Object byteOffset, System.Boolean littleEndian)
+  method System.Double GetFloat64(System.Object byteOffset, System.Boolean littleEndian)
+  method System.Double GetInt16(System.Object byteOffset, System.Boolean littleEndian)
+  method System.Double GetInt32(System.Object byteOffset, System.Boolean littleEndian)
+  method System.Double GetInt8(System.Object byteOffset)
+  method System.Double GetUint16(System.Object byteOffset, System.Boolean littleEndian)
+  method System.Double GetUint32(System.Object byteOffset, System.Boolean littleEndian)
+  method System.Double GetUint8(System.Object byteOffset)
+  method System.Void SetFloat32(System.Object byteOffset, System.Object value, System.Boolean littleEndian)
+  method System.Void SetFloat64(System.Object byteOffset, System.Object value, System.Boolean littleEndian)
+  method System.Void SetInt16(System.Object byteOffset, System.Object value, System.Boolean littleEndian)
+  method System.Void SetInt32(System.Object byteOffset, System.Object value, System.Boolean littleEndian)
+  method System.Void SetInt8(System.Object byteOffset, System.Object value)
+  method System.Void SetUint16(System.Object byteOffset, System.Object value, System.Boolean littleEndian)
+  method System.Void SetUint32(System.Object byteOffset, System.Object value, System.Boolean littleEndian)
+  method System.Void SetUint8(System.Object byteOffset, System.Object value)
+type interface PhaseFive_Surface.Scripts.entry.IDate : System.IDisposable
+  method System.Double GetTime()
+  method System.Double SetTime(System.Object value)
+  method System.String ToDisplayString()
+  method System.String ToISOString()
+  method System.String ToUtcString()
+type interface PhaseFive_Surface.Scripts.entry.IError : System.IDisposable
+  property System.Object Cause { get; set; }
+  property System.String Message { get; set; }
+  property System.String Name { get; set; }
+  property System.String Stack { get; }
+type interface PhaseFive_Surface.Scripts.entry.IExports : System.IDisposable
+  property PhaseFive_Surface.Scripts.entry.IArrayBuffer Buffer { get; set; }
+  property PhaseFive_Surface.Scripts.entry.ITypedArray Bytes { get; set; }
+  property Jroc.PhaseFive_Surface.ICounterConstructor Counter { get; }
+  property PhaseFive_Surface.Scripts.entry.IDate Date { get; set; }
+  property PhaseFive_Surface.Scripts.entry.IError Error { get; set; }
+  property PhaseFive_Surface.Scripts.entry.IMap Map { get; set; }
+  property Jroc.PhaseFive_Surface.INested Nested { get; }
+  property PhaseFive_Surface.Scripts.entry.IRegExp Pattern { get; set; }
+  property PhaseFive_Surface.Scripts.entry.ISet Set { get; set; }
+  property PhaseFive_Surface.Scripts.entry.ISymbol Symbol { get; set; }
+  property PhaseFive_Surface.Scripts.entry.IDataView View { get; set; }
+  method System.Double Add(System.Object left, System.Object right)
+  method System.Collections.Generic.IAsyncEnumerable<System.Object> AsyncSequence(System.Object prefix)
+  method Jroc.PhaseFive_Surface.ICounter CreateCounter(System.Object value)
+  method System.Threading.Tasks.Task<System.Double> Delayed(System.Object value)
+  method System.Collections.Generic.IEnumerable<System.Object> Sequence(System.Object prefix)
+type interface PhaseFive_Surface.Scripts.entry.IMap : System.Collections.Generic.IEnumerable<PhaseFive_Surface.Scripts.entry.IMapEntry>, System.Collections.IEnumerable, System.IDisposable
+  property System.Double Count { get; }
+  method System.Void Clear()
+  method System.Boolean Delete(System.Object key)
+  method System.Collections.Generic.IEnumerable<PhaseFive_Surface.Scripts.entry.IMapEntry> Entries()
+  method System.Object Get(System.Object key)
+  method System.Boolean Has(System.Object key)
+  method System.Collections.Generic.IEnumerable<System.Object> Keys()
+  method System.Void Set(System.Object key, System.Object value)
+  method System.Collections.Generic.IEnumerable<System.Object> Values()
+type interface PhaseFive_Surface.Scripts.entry.IMapEntry : System.IDisposable
+  property System.Object Key { get; }
+  property System.Object Value { get; }
+type interface PhaseFive_Surface.Scripts.entry.IObject : System.IDisposable
+  method System.Object GetDynamicProperty(System.String name)
+  method System.Boolean HasDynamicProperty(System.String name)
+  method System.Void SetDynamicProperty(System.String name, System.Object value)
+type interface PhaseFive_Surface.Scripts.entry.IRegExp : System.IDisposable
+  property System.String Flags { get; }
+  property System.Double LastIndex { get; set; }
+  property System.String Source { get; }
+  method PhaseFive_Surface.Scripts.entry.IArray Exec(System.Object input)
+  method System.Boolean Test(System.Object input)
+  method System.String ToDisplayString()
+type interface PhaseFive_Surface.Scripts.entry.ISet : System.Collections.Generic.IEnumerable<System.Object>, System.Collections.IEnumerable, System.IDisposable
+  property System.Double Count { get; }
+  method System.Void Add(System.Object value)
+  method System.Void Clear()
+  method System.Boolean Delete(System.Object value)
+  method System.Boolean Has(System.Object value)
+  method System.Collections.Generic.IEnumerable<System.Object> Values()
+type interface PhaseFive_Surface.Scripts.entry.ISymbol : System.IDisposable
+  property System.String Description { get; }
+  property System.String RegistryKey { get; }
+  property System.String WellKnownName { get; }
+  method System.String ToDisplayString()
+type interface PhaseFive_Surface.Scripts.entry.ITypedArray : System.Collections.Generic.IEnumerable<System.Object>, System.Collections.IEnumerable, System.IDisposable
+  property PhaseFive_Surface.Scripts.entry.IArrayBuffer Buffer { get; }
+  property System.Double ByteLength { get; }
+  property System.Double ByteOffset { get; }
+  property System.Double BytesPerElement { get; }
+  property System.String Kind { get; }
+  property System.Double Length { get; }
+  method System.Double Get(System.Double index)
+  method System.Void Set(System.Double index, System.Object value)
