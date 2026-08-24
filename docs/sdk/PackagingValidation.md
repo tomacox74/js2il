@@ -69,7 +69,9 @@ These workflows:
   - `samples\Basic`
   - `samples\Typed`
 
-Each hosted sample restores `Jroc.SDK` and `Jroc.Runtime` at the tagged version, so the release smoke validates the actual end-user NuGet flow rather than a source-only shortcut.
+Each hosted sample restores `Jroc.SDK` at the tagged version and receives
+`Jroc.Runtime` transitively, so release smoke validates the actual end-user
+NuGet flow rather than a source-only shortcut.
 
 ## Umbrella issue `#439` completion audit
 

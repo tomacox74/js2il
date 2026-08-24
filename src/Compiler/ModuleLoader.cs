@@ -431,6 +431,18 @@ public class ModuleLoader
             UsesNativeStaticEsm = usesNativeStaticEsm
         };
 
+        if (isPackageModule
+            && !string.IsNullOrWhiteSpace(requestedAliasModuleId)
+            && IsBarePackageSpecifier(requestedAliasModuleId)
+            && TypeScriptDeclarationContractLoader.TryCreateContractAst(
+                modulePath,
+                _fileSystem,
+                _parser,
+                out var contractAst))
+        {
+            module.ContractAst = contractAst;
+        }
+
         if (debugSequencePointOverrides != null)
         {
             foreach (var (node, span) in debugSequencePointOverrides)

@@ -2,12 +2,14 @@
 
 Minimal end-to-end hosting sample:
 - compile a JS module to a .NET assembly during `dotnet build` via `Jroc.SDK`
-- load that compiled assembly and call `module.exports` via typed C# interfaces
+- import the compiled module through the generated `HostedMathModule.Import()` facade
+- call generated export members without `JsEngine` or runtime-specific host APIs
 
 ## Layout
 
 - `compiler/JavaScript/` – source JS module compiled by the host project
-- `host/` – C# console app that restores `Jroc.SDK` + `Jroc.Runtime`, builds the JS module, and calls exports
+- `host/` – C# console app that restores `Jroc.SDK`, builds the JS module, and
+  calls exports through the generated facade; the runtime is transitive
 
 ## Prerequisites
 
@@ -29,4 +31,7 @@ dotnet run --project .\host
 
 ## Expected output
 
-Prints the module version and a sum result.
+```text
+version=1.0.0
+1+2=3
+```

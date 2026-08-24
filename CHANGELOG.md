@@ -6,6 +6,20 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- sdk/hosting/samples/docs: complete Phase 5 of #1917 and issues #1948 through
+  #1953. `Jroc.SDK` now references and deploys the compatible runtime
+  transitively, validates runtime assets with `JROCSDK1001`-`JROCSDK1004`, and
+  supports multiple generated assembly references through build and publish.
+  Basic, Typed, Picocolors, NpmRunAll2, and Domino now consume generated
+  facades without direct runtime references, reflection, module-id strings, or
+  `dynamic`. A deterministic public API snapshot and recursive
+  implementation-leak audit gate the supported facade boundary.
+- compiler/hosting/samples: use package `types` / `typings` metadata to enrich
+  generated facades for actual JavaScript package entrypoints, including
+  imported declaration interfaces, function aliases, nested object returns,
+  and standard Window/Document/HTMLCollection projections. Picocolors and
+  Domino now run through generated facades without runtime APIs, reflection,
+  module-id strings, conversions, or `dynamic`.
 - compiler/runtime/test262/docs: port 100 previously failing ES2025
   compatibility tests covering collection method metadata, Symbol and
   TypedArray prototype behavior, Array concat/species semantics, Boolean and

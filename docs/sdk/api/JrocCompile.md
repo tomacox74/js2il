@@ -9,13 +9,15 @@ Package: `Jroc.SDK`
 ```xml
 <ItemGroup>
   <PackageReference Include="Jroc.SDK" Version="VERSION" />
-  <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 
   <JrocCompile Include="JavaScript\math.js" />
 </ItemGroup>
 ```
 
 The target runs before `ResolveAssemblyReferences`, writes generated files under `$(IntermediateOutputPath)\jroc\<SourceFileName>\` by default, and adds the generated module assembly to `@(Reference)` when `ReferenceOutputAssembly` is enabled.
+The matching runtime implementation is a transitive SDK dependency and is
+validated before compilation, then deployed by normal .NET build and publish
+asset resolution.
 
 ## Item metadata and default properties
 
@@ -47,6 +49,12 @@ Per-item metadata wins over the matching project property.
 
 When `RootModuleId` is not set for a package-style entrypoint, the SDK preserves the item specifier as the root module id.
 
+If the resolved package declares a `types` or `typings` file, supported
+declaration shapes are used to enrich the generated C# facade. This does not
+change runtime resolution: the package's JavaScript entrypoint is still the
+compiled and executed module. Unsupported or ambiguous declaration shapes are
+ignored as a whole so runtime-AST inference remains conservative.
+
 The SDK derives a portable assembly identity for package ids (for example,
 `@mixmark-io/domino` becomes `mixmark-io.domino`). Set `AssemblyName` when the
 consumer-facing assembly identity must differ. The SDK passes this identity
@@ -73,3 +81,18 @@ After the target runs, MSBuild exposes:
 | `CleanJrocOutputs` | Removes generated output directories after `Clean`. |
 
 Set `JrocCompileOnBuild` to `false` to disable the automatic build target.
+
+## Runtime deployment diagnostics
+
+Generated facades do not expose runtime implementation types, and consumers do
+not need a direct `Jroc.Runtime` package reference. `Jroc.SDK` validates the
+runtime asset resolved by MSBuild:
+
+- `JROCSDK1001`: the runtime assembly is missing.
+- `JROCSDK1002`: the resolved runtime is invalid or incompatible.
+- `JROCSDK1003`: generated assemblies require conflicting runtime versions.
+- `JROCSDK1004`: a generated assembly is missing, invalid, or lacks its
+  expected runtime reference.
+
+Clean stale intermediate outputs, restore one consistent `Jroc.SDK` version,
+and rebuild when these diagnostics occur.

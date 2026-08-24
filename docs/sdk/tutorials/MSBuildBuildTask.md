@@ -7,11 +7,12 @@ This tutorial shows how to compile JavaScript as part of a .NET build with `Jroc
 ```xml
 <ItemGroup>
   <PackageReference Include="Jroc.SDK" Version="VERSION" />
-  <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 </ItemGroup>
 ```
 
-`Jroc.SDK` supplies the MSBuild task. `Jroc.Runtime` supplies `Jroc.Runtime.JsEngine` and the runtime support assembly used by compiled modules.
+`Jroc.SDK` supplies the MSBuild task and the matching runtime implementation
+transitively. Add `Jroc.Runtime` directly only when host source uses advanced
+runtime APIs such as `JsEngine`.
 
 ## 2) Add a JavaScript module
 

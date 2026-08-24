@@ -1,7 +1,3 @@
-using Jroc.Runtime;
-using System.Reflection;
-using System.Linq;
-
 namespace Domino;
 
 internal static class Program
@@ -10,48 +6,19 @@ internal static class Program
     {
         try
         {
-            var htmlPath = Path.Combine(AppContext.BaseDirectory, "sample.html");
+            var htmlPath = Environment.GetEnvironmentVariable("JROC_DOMINO_HTML_PATH")
+                ?? Path.Combine(AppContext.BaseDirectory, "sample.html");
             var html = File.ReadAllText(htmlPath);
 
-            var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "mixmark-io.domino.dll");
-            if (!File.Exists(compiledModulePath))
-            {
-                // Back-compat for older SDK package versions that still emit index.dll for module-id entrypoints.
-                compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
-            }
-            var asm = Assembly.LoadFrom(compiledModulePath);
+            using var exports = global::mixmark_io_domino.Import();
+            using var window = exports.CreateWindow(html);
+            var document = window.Document;
+            var allElements = document.GetElementsByTagName("*");
+            var links = document.GetElementsByTagName("a");
 
-            if (Environment.GetEnvironmentVariable("JROC_DOMINO_LISTMODULES") == "1")
-            {
-                var ids = JsEngine.GetModuleIds(asm);
-
-                Console.WriteLine($"manifest.count={ids.Count}");
-                Console.WriteLine($"manifest.has.@mixmark-io/domino={ids.Contains("@mixmark-io/domino", StringComparer.Ordinal)}");
-                Console.WriteLine($"manifest.has.@mixmark-io/domino/lib/index={ids.Contains("@mixmark-io/domino/lib/index", StringComparer.Ordinal)}");
-                Console.WriteLine($"manifest.has.index={ids.Contains("index", StringComparer.Ordinal)}");
-                foreach (var id in ids.Take(20))
-                {
-                    Console.WriteLine($"manifest.id={id}");
-                }
-                return;
-            }
-
-            using dynamic exports = JsEngine.LoadModule(asm, moduleId: "@mixmark-io/domino");
-
-            dynamic window = exports.createWindow(html);
-            dynamic document = window.document;
-
-            string title = Convert.ToString(document.title) ?? string.Empty;
-
-            dynamic allElements = document.getElementsByTagName("*");
-            dynamic links = document.getElementsByTagName("a");
-
-            var elementCount = Convert.ToInt32(allElements.length);
-            var linkCount = Convert.ToInt32(links.length);
-
-            Console.WriteLine($"title={title}");
-            Console.WriteLine($"elements={elementCount}");
-            Console.WriteLine($"links={linkCount}");
+            Console.WriteLine($"title={document.Title}");
+            Console.WriteLine($"elements={allElements.Length}");
+            Console.WriteLine($"links={links.Length}");
         }
         catch (Exception ex) when (Environment.GetEnvironmentVariable("JROC_DOMINO_DIAG") == "1")
         {
@@ -64,22 +31,5 @@ internal static class Program
     {
         Console.WriteLine("[diag] Domino failure");
         Console.WriteLine(ex);
-
-        var current = ex;
-        while (current != null)
-        {
-            if (current is JsErrorException jsErr)
-            {
-                Console.WriteLine($"[diag] JsErrorException.JsName: {jsErr.JsName}");
-                Console.WriteLine($"[diag] JsErrorException.JsMessage: {jsErr.JsMessage}");
-                if (!string.IsNullOrWhiteSpace(jsErr.JsStack))
-                {
-                    Console.WriteLine("[diag] JsErrorException.JsStack:");
-                    Console.WriteLine(jsErr.JsStack);
-                }
-            }
-
-            current = current.InnerException;
-        }
     }
 }
