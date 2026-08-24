@@ -808,7 +808,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 510 (0x1fe)
+		// Code size: 515 (0x203)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_ClassMethod_CallsOtherAsync/Scope,
@@ -994,45 +994,46 @@
 		IL_018d: stelem.ref
 		IL_018e: ldnull
 		IL_018f: callvirt instance object Modules.Async_ClassMethod_CallsOtherAsync/Service::processData(object[], object)
-		IL_0194: stloc.s 7
-		IL_0196: ldloc.s 7
-		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_019d: stloc.s 7
-		IL_019f: ldc.i4.1
-		IL_01a0: newarr [System.Runtime]System.Object
-		IL_01a5: dup
-		IL_01a6: ldc.i4.0
-		IL_01a7: ldloc.0
-		IL_01a8: stelem.ref
-		IL_01a9: stloc.s 4
-		IL_01ab: newobj instance void Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject::.ctor()
-		IL_01b0: ldc.i4.1
-		IL_01b1: conv.r8
-		IL_01b2: ldstr ""
-		IL_01b7: ldc.i4.0
-		IL_01b8: ldc.i4.0
-		IL_01b9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject>(!!0)
-		IL_01c3: stloc.s 8
-		IL_01c5: volatile.
-		IL_01c7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_01cc: brfalse IL_01e4
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0199: stloc.s 7
+		IL_019b: ldloc.s 7
+		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01a2: stloc.s 7
+		IL_01a4: ldc.i4.1
+		IL_01a5: newarr [System.Runtime]System.Object
+		IL_01aa: dup
+		IL_01ab: ldc.i4.0
+		IL_01ac: ldloc.0
+		IL_01ad: stelem.ref
+		IL_01ae: stloc.s 4
+		IL_01b0: newobj instance void Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject::.ctor()
+		IL_01b5: ldc.i4.1
+		IL_01b6: conv.r8
+		IL_01b7: ldstr ""
+		IL_01bc: ldc.i4.0
+		IL_01bd: ldc.i4.0
+		IL_01be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject>(!!0)
+		IL_01c8: stloc.s 8
+		IL_01ca: volatile.
+		IL_01cc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_01d1: brfalse IL_01e9
 
-		IL_01d1: ldloc.s 7
-		IL_01d3: ldstr "then"
-		IL_01d8: ldloc.s 8
-		IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01df: br IL_01fc
+		IL_01d6: ldloc.s 7
+		IL_01d8: ldstr "then"
+		IL_01dd: ldloc.s 8
+		IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01e4: br IL_0201
 
-		IL_01e4: ldloc.s 7
-		IL_01e6: ldstr "then"
-		IL_01eb: ldloc.s 8
-		IL_01ed: ldstr "Async_ClassMethod_CallsOtherAsync:Modules.Async_ClassMethod_CallsOtherAsync:__js_module_init__:49"
-		IL_01f2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_01e9: ldloc.s 7
+		IL_01eb: ldstr "then"
+		IL_01f0: ldloc.s 8
+		IL_01f2: ldstr "Async_ClassMethod_CallsOtherAsync:Modules.Async_ClassMethod_CallsOtherAsync:__js_module_init__:49"
+		IL_01f7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_01fc: pop
-		IL_01fd: ret
+		IL_0201: pop
+		IL_0202: ret
 	} // end of method Async_ClassMethod_CallsOtherAsync::__js_module_init__
 
 } // end of class Modules.Async_ClassMethod_CallsOtherAsync

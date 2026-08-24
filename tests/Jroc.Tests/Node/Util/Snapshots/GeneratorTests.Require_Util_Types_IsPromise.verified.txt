@@ -172,23 +172,28 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 30 (0x1e)
+			// Code size: 35 (0x23)
 			.maxstack 8
 			.locals init (
 				[0] object[],
 				[1] object
 			)
 
-			IL_0000: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0005: stloc.0
-			IL_0006: ldarg.1
-			IL_0007: ldloc.0
+			IL_0000: ldc.i4.1
+			IL_0001: newarr [System.Runtime]System.Object
+			IL_0006: dup
+			IL_0007: ldc.i4.0
 			IL_0008: ldc.r8 42
 			IL_0011: box [System.Runtime]System.Double
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_001b: stloc.1
-			IL_001c: ldloc.1
-			IL_001d: ret
+			IL_0016: stelem.ref
+			IL_0017: stloc.0
+			IL_0018: ldarg.1
+			IL_0019: ldnull
+			IL_001a: ldloc.0
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_0020: stloc.1
+			IL_0021: ldloc.1
+			IL_0022: ret
 		} // end of method ArrowFunction_L6C24::__js_call__
 
 	} // end of class ArrowFunction_L6C24

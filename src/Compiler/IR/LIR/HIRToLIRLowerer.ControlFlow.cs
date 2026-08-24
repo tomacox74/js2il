@@ -11,6 +11,20 @@ public sealed partial class HIRToLIRLowerer
 {
     private readonly Stack<ControlFlowContext> _controlFlowStack = new();
     private readonly Stack<int> _protectedControlFlowDepthStack = new();
+    private int _tailPositionSuppressionDepth;
+
+    private bool TryLowerWithoutTailCalls(HIRStatement statement)
+    {
+        _tailPositionSuppressionDepth++;
+        try
+        {
+            return TryLowerStatement(statement);
+        }
+        finally
+        {
+            _tailPositionSuppressionDepth--;
+        }
+    }
 
     private TempVariable EnsureConditionIsBoolean(TempVariable conditionTemp)
     {

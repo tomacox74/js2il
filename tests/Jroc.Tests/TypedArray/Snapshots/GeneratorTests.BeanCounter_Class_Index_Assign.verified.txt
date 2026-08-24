@@ -347,7 +347,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 342 (0x156)
+		// Code size: 347 (0x15b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BeanCounter_Class_Index_Assign/Scope,
@@ -439,34 +439,35 @@
 		IL_00eb: ldc.r8 42
 		IL_00f4: box [System.Runtime]System.Double
 		IL_00f9: callvirt instance object Modules.BeanCounter_Class_Index_Assign/BeanCounter::setBeanCount(object, object)
-		IL_00fe: pop
-		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0104: stloc.s 8
-		IL_0106: volatile.
-		IL_0108: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_010d: brfalse IL_0122
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0103: pop
+		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0109: stloc.s 8
+		IL_010b: volatile.
+		IL_010d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0112: brfalse IL_0127
 
-		IL_0112: ldloc.2
-		IL_0113: ldstr "beanCounts"
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_011d: br IL_0137
+		IL_0117: ldloc.2
+		IL_0118: ldstr "beanCounts"
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0122: br IL_013c
 
-		IL_0122: ldloc.2
-		IL_0123: ldstr "beanCounts"
-		IL_0128: ldstr "BeanCounter_Class_Index_Assign:Modules.BeanCounter_Class_Index_Assign:__js_module_init__:28"
-		IL_012d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0127: ldloc.2
+		IL_0128: ldstr "beanCounts"
+		IL_012d: ldstr "BeanCounter_Class_Index_Assign:Modules.BeanCounter_Class_Index_Assign:__js_module_init__:28"
+		IL_0132: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0137: stloc.s 4
-		IL_0139: ldloc.s 4
-		IL_013b: ldc.r8 1
-		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0149: stloc.s 4
-		IL_014b: ldloc.s 8
-		IL_014d: ldloc.s 4
-		IL_014f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0154: pop
-		IL_0155: ret
+		IL_013c: stloc.s 4
+		IL_013e: ldloc.s 4
+		IL_0140: ldc.r8 1
+		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_014e: stloc.s 4
+		IL_0150: ldloc.s 8
+		IL_0152: ldloc.s 4
+		IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0159: pop
+		IL_015a: ret
 	} // end of method BeanCounter_Class_Index_Assign::__js_module_init__
 
 } // end of class Modules.BeanCounter_Class_Index_Assign

@@ -341,7 +341,7 @@
 				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
 				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0018: volatile.
-				IL_001a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
+				IL_001a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
 				IL_001f: brfalse IL_0033
 
 				IL_0024: ldstr "getStore"
@@ -350,7 +350,7 @@
 
 				IL_0033: ldstr "getStore"
 				IL_0038: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M12>:__js_call__:5"
-				IL_003d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
+				IL_003d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
 				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
 				IL_0047: stloc.1
@@ -517,7 +517,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 209 (0xd1)
+			// Code size: 225 (0xe1)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/Scope,
@@ -569,45 +569,57 @@
 			IL_0071: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::captured
 			IL_0076: ldarg.0
 			IL_0077: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
-			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0081: stloc.2
-			IL_0082: ldc.i4.2
-			IL_0083: newarr [System.Runtime]System.Object
-			IL_0088: dup
-			IL_0089: ldc.i4.0
-			IL_008a: ldarg.0
-			IL_008b: stelem.ref
-			IL_008c: dup
-			IL_008d: ldc.i4.1
-			IL_008e: ldloc.0
-			IL_008f: stelem.ref
-			IL_0090: stloc.3
-			IL_0091: ldloc.3
-			IL_0092: ldc.i4.0
-			IL_0093: ldelem.ref
-			IL_0094: castclass Modules.Require_AsyncHooks_AsyncLocalStorage/Scope
-			IL_0099: ldloc.3
-			IL_009a: ldc.i4.1
-			IL_009b: ldelem.ref
-			IL_009c: castclass Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/Scope
-			IL_00a1: ldloc.3
-			IL_00a2: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/ArrowFunction_L17C33/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage/Scope, class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/Scope, object[])
-			IL_00a7: ldc.i4.0
-			IL_00a8: conv.r8
-			IL_00a9: ldstr ""
+			IL_007c: stloc.2
+			IL_007d: ldloc.2
+			IL_007e: ldstr "run"
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0088: stloc.2
+			IL_0089: ldc.i4.2
+			IL_008a: newarr [System.Runtime]System.Object
+			IL_008f: dup
+			IL_0090: ldc.i4.0
+			IL_0091: ldarg.0
+			IL_0092: stelem.ref
+			IL_0093: dup
+			IL_0094: ldc.i4.1
+			IL_0095: ldloc.0
+			IL_0096: stelem.ref
+			IL_0097: stloc.3
+			IL_0098: ldloc.3
+			IL_0099: ldc.i4.0
+			IL_009a: ldelem.ref
+			IL_009b: castclass Modules.Require_AsyncHooks_AsyncLocalStorage/Scope
+			IL_00a0: ldloc.3
+			IL_00a1: ldc.i4.1
+			IL_00a2: ldelem.ref
+			IL_00a3: castclass Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/Scope
+			IL_00a8: ldloc.3
+			IL_00a9: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/ArrowFunction_L17C33/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage/Scope, class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/Scope, object[])
 			IL_00ae: ldc.i4.0
-			IL_00af: ldc.i4.0
-			IL_00b0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/ArrowFunction_L17C33/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_00b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/ArrowFunction_L17C33/FunctionObject>(!!0)
-			IL_00ba: stloc.s 4
-			IL_00bc: ldloc.2
-			IL_00bd: ldstr "run"
-			IL_00c2: ldstr "inner"
-			IL_00c7: ldloc.s 4
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_00ce: stloc.2
-			IL_00cf: ldloc.2
-			IL_00d0: ret
+			IL_00af: conv.r8
+			IL_00b0: ldstr ""
+			IL_00b5: ldc.i4.0
+			IL_00b6: ldc.i4.0
+			IL_00b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/ArrowFunction_L17C33/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage/FunctionExpression_result/ArrowFunction_L17C33/FunctionObject>(!!0)
+			IL_00c1: stloc.s 4
+			IL_00c3: ldc.i4.2
+			IL_00c4: newarr [System.Runtime]System.Object
+			IL_00c9: dup
+			IL_00ca: ldc.i4.0
+			IL_00cb: ldstr "inner"
+			IL_00d0: stelem.ref
+			IL_00d1: dup
+			IL_00d2: ldc.i4.1
+			IL_00d3: ldloc.s 4
+			IL_00d5: stelem.ref
+			IL_00d6: stloc.3
+			IL_00d7: ldloc.2
+			IL_00d8: ldloc.3
+			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_00de: stloc.2
+			IL_00df: ldloc.2
+			IL_00e0: ret
 		} // end of method FunctionExpression_result::__js_call__
 
 	} // end of class FunctionExpression_result
@@ -714,31 +726,29 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 61 (0x3d)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: volatile.
-			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
-			IL_0012: brfalse IL_0026
-
-			IL_0017: ldstr "getStore"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0021: br IL_003a
-
-			IL_0026: ldstr "getStore"
-			IL_002b: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M6>:__js_call__:2"
-			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_003a: stloc.0
-			IL_003b: ldloc.0
-			IL_003c: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "getStore"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldc.i4.0
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: stloc.1
+			IL_001a: ldloc.0
+			IL_001b: ldloc.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: ret
 		} // end of method ArrowFunction_L25C51::__js_call__
 
 	} // end of class ArrowFunction_L25C51
@@ -845,31 +855,29 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 61 (0x3d)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: volatile.
-			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
-			IL_0012: brfalse IL_0026
-
-			IL_0017: ldstr "getStore"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0021: br IL_003a
-
-			IL_0026: ldstr "getStore"
-			IL_002b: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M7>:__js_call__:2"
-			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_003a: stloc.0
-			IL_003b: ldloc.0
-			IL_003c: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "getStore"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldc.i4.0
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: stloc.1
+			IL_001a: ldloc.0
+			IL_001b: ldloc.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: ret
 		} // end of method ArrowFunction_L27C38::__js_call__
 
 	} // end of class ArrowFunction_L27C38
@@ -986,7 +994,7 @@
 			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::AsyncLocalStorage
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: volatile.
-			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
 			IL_0012: brfalse IL_0026
 
 			IL_0017: ldstr "snapshot"
@@ -995,7 +1003,7 @@
 
 			IL_0026: ldstr "snapshot"
 			IL_002b: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M8>:__js_call__:3"
-			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
+			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_33
 			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
 			IL_003a: stloc.0
@@ -1110,31 +1118,29 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 61 (0x3d)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: volatile.
-			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
-			IL_0012: brfalse IL_0026
-
-			IL_0017: ldstr "getStore"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0021: br IL_003a
-
-			IL_0026: ldstr "getStore"
-			IL_002b: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M9>:__js_call__:2"
-			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_36
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_003a: stloc.0
-			IL_003b: ldloc.0
-			IL_003c: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "getStore"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldc.i4.0
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: stloc.1
+			IL_001a: ldloc.0
+			IL_001b: ldloc.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: ret
 		} // end of method ArrowFunction_L33C35::__js_call__
 
 	} // end of class ArrowFunction_L33C35
@@ -1241,31 +1247,29 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 61 (0x3d)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: volatile.
-			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
-			IL_0012: brfalse IL_0026
-
-			IL_0017: ldstr "getStore"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0021: br IL_003a
-
-			IL_0026: ldstr "getStore"
-			IL_002b: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M10>:__js_call__:2"
-			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_003a: stloc.0
-			IL_003b: ldloc.0
-			IL_003c: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "getStore"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldc.i4.0
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: stloc.1
+			IL_001a: ldloc.0
+			IL_001b: ldloc.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: ret
 		} // end of method ArrowFunction_L34C35::__js_call__
 
 	} // end of class ArrowFunction_L34C35
@@ -1372,31 +1376,29 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 61 (0x3d)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage/Scope::'storage'
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: volatile.
-			IL_000d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_38
-			IL_0012: brfalse IL_0026
-
-			IL_0017: ldstr "getStore"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0021: br IL_003a
-
-			IL_0026: ldstr "getStore"
-			IL_002b: ldstr "Require_AsyncHooks_AsyncLocalStorage:<TwoPhaseDummy_M11>:__js_call__:2"
-			IL_0030: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_38
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_003a: stloc.0
-			IL_003b: ldloc.0
-			IL_003c: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "getStore"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldc.i4.0
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: stloc.1
+			IL_001a: ldloc.0
+			IL_001b: ldloc.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: ret
 		} // end of method ArrowFunction_L38C60::__js_call__
 
 	} // end of class ArrowFunction_L38C60
@@ -2091,11 +2093,6 @@
 	.field assembly static int32 __jroc_dynamicLookup_32
 	.field assembly static int32 __jroc_dynamicLookup_33
 	.field assembly static int32 __jroc_dynamicLookup_34
-	.field assembly static int32 __jroc_dynamicLookup_35
-	.field assembly static int32 __jroc_dynamicLookup_36
-	.field assembly static int32 __jroc_dynamicLookup_37
-	.field assembly static int32 __jroc_dynamicLookup_38
-	.field assembly static int32 __jroc_dynamicLookup_39
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -76,6 +76,11 @@ public sealed record CallableSignature
     /// Null keeps the default object-typed JavaScript value ABI.
     /// </summary>
     public Type? ReturnClrType { get; init; }
+
+    /// <summary>
+    /// Whether the callable can return an internal tail-call transfer request.
+    /// </summary>
+    public bool MayReturnTailCall { get; init; }
     
     /// <summary>
     /// The invoke shape (delegate type) for this callable.

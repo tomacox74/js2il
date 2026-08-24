@@ -4062,7 +4062,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 72 (0x48)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -4070,31 +4070,43 @@
 				[2] bool,
 				[3] object,
 				[4] object,
-				[5] string
+				[5] object[]
 			)
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
 			IL_0005: stloc.1
 			IL_0006: ldloc.1
 			IL_0007: stloc.0
-			IL_0008: ldarg.1
-			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_000e: stloc.2
-			IL_000f: ldloc.2
-			IL_0010: brtrue IL_0021
+			IL_0008: ldstr "String"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0012: stloc.1
+			IL_0013: ldarg.1
+			IL_0014: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0019: stloc.2
+			IL_001a: ldloc.2
+			IL_001b: brtrue IL_002c
 
-			IL_0015: ldstr ""
-			IL_001a: stloc.s 4
-			IL_001c: br IL_0024
+			IL_0020: ldstr ""
+			IL_0025: stloc.s 4
+			IL_0027: br IL_002f
 
-			IL_0021: ldarg.1
-			IL_0022: stloc.s 4
+			IL_002c: ldarg.1
+			IL_002d: stloc.s 4
 
-			IL_0024: ldloc.s 4
-			IL_0026: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_002b: stloc.s 5
-			IL_002d: ldloc.s 5
-			IL_002f: ret
+			IL_002f: ldc.i4.1
+			IL_0030: newarr [System.Runtime]System.Object
+			IL_0035: dup
+			IL_0036: ldc.i4.0
+			IL_0037: ldloc.s 4
+			IL_0039: stelem.ref
+			IL_003a: stloc.s 5
+			IL_003c: ldloc.1
+			IL_003d: ldnull
+			IL_003e: ldloc.s 5
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_0045: stloc.1
+			IL_0046: ldloc.1
+			IL_0047: ret
 		} // end of method turndown::__js_call__
 
 	} // end of class turndown

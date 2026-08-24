@@ -503,7 +503,8 @@ internal sealed class JsMethodCompiler
         var dummyType = new TypeBuilder(_metadataBuilder, "", dummyTypeName);
 
         Type? inferredReturnClrType = null;
-        if (scope.Kind == ScopeKind.Function)
+        if (!callable.Semantics.MayReturnTailCall
+            && scope.Kind == ScopeKind.Function)
         {
             if (callableKind is ScopesCallableKind.ClassMethod or ScopesCallableKind.ClassStaticMethod)
             {

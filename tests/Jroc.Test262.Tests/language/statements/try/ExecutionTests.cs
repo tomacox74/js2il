@@ -123,4 +123,16 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_obj_init_null()
         => ExecutionTest(@"dstr\obj-init-null");
 
+    [Fact(DisplayName = "tco-catch")]
+    public Task tco_catch()
+        => ExecutionTest("tco-catch");
+
+    [Fact(DisplayName = "tco-catch-finally")]
+    public Task tco_catch_finally()
+        => ExecutionTest("tco-catch-finally");
+
+    [Fact(DisplayName = "tco-finally")]
+    public Task tco_finally()
+        => ExecutionTest("tco-finally");
+
 }

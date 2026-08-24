@@ -463,7 +463,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 332 (0x14c)
+			// Code size: 342 (0x156)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/Scope,
@@ -583,24 +583,26 @@
 			IL_011d: ldloc.3
 			IL_011e: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
 			IL_0123: dup
-			IL_0124: brfalse IL_0134
+			IL_0124: brfalse IL_0139
 
 			IL_0129: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
-			IL_012e: stloc.3
-			IL_012f: br IL_0141
+			IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+			IL_0133: stloc.3
+			IL_0134: br IL_014b
 
-			IL_0134: pop
-			IL_0135: ldloc.3
-			IL_0136: ldstr "n"
-			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0140: stloc.3
+			IL_0139: pop
+			IL_013a: ldloc.3
+			IL_013b: ldstr "n"
+			IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+			IL_014a: stloc.3
 
-			IL_0141: ldloc.s 6
-			IL_0143: ldloc.3
-			IL_0144: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0149: pop
-			IL_014a: ldnull
-			IL_014b: ret
+			IL_014b: ldloc.s 6
+			IL_014d: ldloc.3
+			IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0153: pop
+			IL_0154: ldnull
+			IL_0155: ret
 		} // end of method makeAndRun::__js_call__
 
 	} // end of class makeAndRun

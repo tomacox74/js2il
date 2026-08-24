@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262/docs: implement ECMA-262 proper tail calls for strict
+  ordinary functions with stack-safe dynamic/member/tagged-template transfer,
+  preserved receivers, arguments, closures, return values, exceptions, and
+  protected-region cleanup ordering. Deep test262 recursion now covers call,
+  comma, nullish-coalescing, catch/finally, and tagged-template tail positions.
 - compiler/runtime/test262/docs: port 200 additional previously failing ES2025
   tests across generic Array methods, numeric and string coercion, Object and
   Reflect descriptors, Function invocation, BigInt, Promise, WeakMap upsert,

@@ -248,6 +248,24 @@ public static class CallableOperations
         object? thisArgument,
         in JsCallArguments arguments)
     {
+        return RuntimeServices.ResolveTailCalls(
+            CallOnce(target, thisArgument, arguments));
+    }
+
+    internal static object? CallTailTarget(
+        object? target,
+        object? thisArgument,
+        object?[] arguments)
+    {
+        var callArguments = JsCallArguments.FromArray(arguments);
+        return CallOnce(target, thisArgument, callArguments);
+    }
+
+    private static object? CallOnce(
+        object? target,
+        object? thisArgument,
+        in JsCallArguments arguments)
+    {
         return target switch
         {
             JsFunctionObject functionObject => CallFunctionObject(

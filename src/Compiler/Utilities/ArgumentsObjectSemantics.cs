@@ -42,6 +42,11 @@ internal static class ArgumentsObjectSemantics
             return true;
         }
 
+        if (scope.EsModuleLink != null)
+        {
+            return true;
+        }
+
         if (!scope.UsesGlobalScopeSemantics && scope.Parent != null && IsStrictScope(scope.Parent))
         {
             return true;

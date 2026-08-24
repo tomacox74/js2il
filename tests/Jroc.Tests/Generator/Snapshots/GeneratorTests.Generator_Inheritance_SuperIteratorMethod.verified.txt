@@ -839,7 +839,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 468 (0x1d4)
+		// Code size: 478 (0x1de)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_Inheritance_SuperIteratorMethod/Scope,
@@ -1004,19 +1004,21 @@
 		IL_01af: ldloc.3
 		IL_01b0: isinst Modules.Generator_Inheritance_SuperIteratorMethod/Derived
 		IL_01b5: dup
-		IL_01b6: brfalse IL_01c6
+		IL_01b6: brfalse IL_01cb
 
 		IL_01bb: callvirt instance object Modules.Generator_Inheritance_SuperIteratorMethod/Derived::run()
-		IL_01c0: pop
-		IL_01c1: br IL_01d3
+		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_01c5: pop
+		IL_01c6: br IL_01dd
 
-		IL_01c6: pop
-		IL_01c7: ldloc.3
-		IL_01c8: ldstr "run"
-		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01d2: pop
+		IL_01cb: pop
+		IL_01cc: ldloc.3
+		IL_01cd: ldstr "run"
+		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_01dc: pop
 
-		IL_01d3: ret
+		IL_01dd: ret
 	} // end of method Generator_Inheritance_SuperIteratorMethod::__js_module_init__
 
 } // end of class Modules.Generator_Inheritance_SuperIteratorMethod

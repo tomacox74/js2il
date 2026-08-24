@@ -97,7 +97,8 @@ public sealed partial class HIRToLIRLowerer
             // - class methods/static methods may return stable primitive values directly
             // - function/arrow callables keep the historical string fast-path only
             Type? stableReturnClrType = null;
-            if (_scope is { Kind: ScopeKind.Function } functionScope)
+            if (_methodBodyIR.CallableId?.Semantics.MayReturnTailCall != true
+                && _scope is { Kind: ScopeKind.Function } functionScope)
             {
                 if (_callableKind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
                 {
@@ -130,6 +131,11 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
 
+        return TryEmitReturnCompletion(returnTempVar);
+    }
+
+    private bool TryEmitReturnCompletion(TempVariable returnTempVar)
+    {
         // Async try/finally lowering: a return inside a protected region must flow through finally.
         if (_isAsync
             && _methodBodyIR.AsyncInfo?.HasAwaits == true
@@ -228,7 +234,7 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        lirInstructions.Add(new LIRReturn(returnTempVar));
+        _methodBodyIR.Instructions.Add(new LIRReturn(returnTempVar));
         return true;
     }
 
@@ -236,8 +242,9 @@ public sealed partial class HIRToLIRLowerer
         => _callableKind != CallableKind.Constructor
             && !_isAsync
             && !_isGenerator
-            && _protectedControlFlowDepthStack.Count == 0
-            && !_methodBodyIR.ReturnEpilogueLabelId.HasValue;
+            && _tailPositionSuppressionDepth == 0
+            && (_scope == null
+                || ArgumentsObjectSemantics.IsStrictScope(_scope));
 
     private bool TryLowerTailPositionReturnExpression(HIRExpression expression)
     {
@@ -252,8 +259,17 @@ public sealed partial class HIRToLIRLowerer
             case HIRBinaryExpression { Operator: Acornima.Operator.LogicalOr } logicalOr:
                 return TryLowerTailPositionLogicalOrReturn(logicalOr);
 
+            case HIRBinaryExpression { Operator: Acornima.Operator.NullishCoalescing } coalesce:
+                return TryLowerTailPositionNullishReturn(coalesce);
+
+            case HIRSequenceExpression sequence:
+                return TryLowerTailPositionSequenceReturn(sequence);
+
             case HIRCallExpression callExpr:
                 return TryLowerTailCallFunctionReturn(callExpr);
+
+            case HIRTaggedTemplateExpression taggedTemplate:
+                return TryLowerTailTaggedTemplateReturn(taggedTemplate);
 
             default:
                 return false;
@@ -335,6 +351,59 @@ public sealed partial class HIRToLIRLowerer
         return EmitReturnTemp(leftBoxed);
     }
 
+    private bool TryLowerTailPositionNullishReturn(HIRBinaryExpression coalesce)
+    {
+        if (!TryLowerExpression(coalesce.Left, out var leftTemp))
+        {
+            return false;
+        }
+
+        var leftBoxed = EnsureObject(leftTemp);
+        int evalRightLabel = CreateLabel();
+
+        _methodBodyIR.Instructions.Add(
+            new LIRBranchIfFalse(leftBoxed, evalRightLabel));
+
+        var isJsNullTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(
+            typeof(JavaScriptRuntime.JsNull),
+            leftBoxed,
+            isJsNullTemp));
+        DefineTempStorage(
+            isJsNullTemp,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(
+            new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+
+        if (!EmitReturnTemp(leftBoxed))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
+        ClearNumericRefinementsAtLabel();
+        return TryLowerReturnExpressionOrTailReturn(coalesce.Right);
+    }
+
+    private bool TryLowerTailPositionSequenceReturn(HIRSequenceExpression sequence)
+    {
+        if (sequence.Expressions.Count == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < sequence.Expressions.Count - 1; i++)
+        {
+            if (!TryLowerExpressionDiscardResult(sequence.Expressions[i]))
+            {
+                return false;
+            }
+        }
+
+        return TryLowerReturnExpressionOrTailReturn(
+            sequence.Expressions[sequence.Expressions.Count - 1]);
+    }
+
     private bool TryLowerReturnExpressionOrTailReturn(HIRExpression expression)
     {
         if (TryLowerTailPositionReturnExpression(expression))
@@ -352,43 +421,444 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerTailCallFunctionReturn(HIRCallExpression callExpr)
     {
-        if (callExpr.Callee is not HIRVariableExpression { Name: var symbol }
-            || symbol.Kind != BindingKind.Function
-            || HasSpreadArguments(callExpr.Arguments)
-            || !FunctionHasSimpleParams(symbol))
+        if (TryPrepareSuperTailCallTarget(
+                callExpr.Callee,
+                out var superTarget,
+                out var superThisArgument))
         {
-            return false;
-        }
-
-        var callableId = symbol.BindingInfo.Callable;
-        if (callableId == null
-            || callableId.NeedsArgumentsObject
-            || callableId.HasRestParameters
-            || RequiresFunctionObjectInvocation(callableId))
-        {
-            return false;
-        }
-
-        var arguments = new List<TempVariable>(callExpr.Arguments.Length);
-        foreach (var arg in callExpr.Arguments)
-        {
-            if (!TryLowerExpression(arg, out var argTemp))
+            if (!TryLowerCallArgumentsToArgsArray(
+                    callExpr.Arguments,
+                    out var superArgumentsArray))
             {
                 return false;
             }
 
-            arguments.Add(EnsureObject(argTemp));
+            return EmitTailCallRequest(
+                superTarget,
+                superThisArgument,
+                superArgumentsArray);
         }
 
-        var scopesTempVar = CreateTempVariable();
-        if (!TryBuildScopesArrayForCallee(symbol, scopesTempVar))
+        if (callExpr.StableDirectCallableTarget is { } stableTarget
+            && callExpr.Callee is HIRVariableExpression stableCallee
+            && !HasSpreadArguments(callExpr.Arguments)
+            && !stableTarget.CallableId.NeedsArgumentsObject
+            && !stableTarget.CallableId.HasRestParameters
+            && _callableRegistry?.GetSignature(stableTarget.CallableId)
+                ?.ReturnClrType is null)
+        {
+            var arguments = new List<TempVariable>(
+                callExpr.Arguments.Length);
+            foreach (var argumentExpression in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(
+                        argumentExpression,
+                        out var argument))
+                {
+                    return false;
+                }
+
+                arguments.Add(EnsureObject(argument));
+            }
+
+            var scopes = CreateTempVariable();
+            if (!TryBuildScopesArrayForClosureBinding(
+                    stableTarget.CallableScope,
+                    scopes))
+            {
+                return false;
+            }
+            DefineTempStorage(
+                scopes,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(object[])));
+            _methodBodyIR.Instructions.Add(
+                new LIRTailCallFunctionReturn(
+                    stableCallee.Name,
+                    scopes,
+                    arguments,
+                    stableTarget.CallableId));
+            return true;
+        }
+
+        if (callExpr.Callee is HIRPropertyAccessExpression
+            {
+                Object: HIRVariableExpression globalVariable
+            } stableGlobalMember
+            && !HasSpreadArguments(callExpr.Arguments)
+            && _activeWithObjects.Count == 0
+            && globalVariable.Name.Kind == BindingKind.Global
+            && !globalVariable.Name.BindingInfo.HasWrite
+            && GlobalMemberIntrinsicRegistry.TryGet(
+                globalVariable.Name.Name,
+                stableGlobalMember.PropertyName,
+                out _))
+        {
+            var result = CreateTempVariable();
+            return TryLowerStableGlobalMemberCall(
+                    callExpr,
+                    stableGlobalMember,
+                    hasSpreadArgs: false,
+                    result)
+                && EmitReturnTemp(result);
+        }
+
+        if (callExpr.Callee is HIRPropertyAccessExpression
+            {
+                Object: HIRVariableExpression specializedReceiver
+            }
+            && (TryGetNodeModuleContractType(
+                    specializedReceiver.Name.BindingInfo.ClrType) != null
+                || !specializedReceiver.Name.BindingInfo.HasWrite
+                && specializedReceiver.Name.Kind == BindingKind.Global
+                && _runtimeIntrinsicCatalog.TryGetIntrinsicObject(
+                    specializedReceiver.Name.Name,
+                    out _)))
+        {
+            if (!TryLowerExpression(callExpr, out var result))
+            {
+                return false;
+            }
+
+            return EmitReturnTemp(result);
+        }
+
+        TempVariable target;
+        TempVariable thisArgument;
+        var isMemberCall = false;
+
+        if (callExpr.Callee is HIRPropertyAccessExpression propertyAccess)
+        {
+            if (!TryLowerExpression(propertyAccess.Object, out var receiver))
+            {
+                return false;
+            }
+
+            thisArgument = EnsureObject(receiver);
+            var propertyKey = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstString(propertyAccess.PropertyName, propertyKey));
+            DefineTempStorage(
+                propertyKey,
+                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            target = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.PrepareTailCallMember),
+                [thisArgument, propertyKey],
+                target,
+                [typeof(object), typeof(object)]));
+            DefineTempStorage(
+                target,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            isMemberCall = true;
+        }
+        else if (callExpr.Callee is HIRIndexAccessExpression indexAccess)
+        {
+            if (!TryLowerExpression(indexAccess.Object, out var receiver)
+                || !TryLowerExpression(indexAccess.Index, out var propertyKey))
+            {
+                return false;
+            }
+
+            thisArgument = EnsureObject(receiver);
+            target = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.PrepareTailCallMember),
+                [thisArgument, EnsureObject(propertyKey)],
+                target,
+                [typeof(object), typeof(object)]));
+            DefineTempStorage(
+                target,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            isMemberCall = true;
+        }
+        else
+        {
+            if (!TryLowerExpression(callExpr.Callee, out target))
+            {
+                return false;
+            }
+
+            target = EnsureObject(target);
+            thisArgument = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstUndefined(thisArgument));
+            DefineTempStorage(
+                thisArgument,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        if (!TryLowerCallArgumentsToArgsArray(
+                callExpr.Arguments,
+                out var argumentsArray))
         {
             return false;
         }
 
-        DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-        _methodBodyIR.Instructions.Add(new LIRTailCallFunctionReturn(symbol, scopesTempVar, arguments, callableId));
+        return isMemberCall
+            ? EmitTailCallMemberRequest(target, argumentsArray)
+            : EmitTailCallRequest(target, thisArgument, argumentsArray);
+    }
+
+    private bool TryLowerTailTaggedTemplateReturn(
+        HIRTaggedTemplateExpression taggedTemplate)
+    {
+        if (!TryPrepareTailTaggedTemplateTarget(
+                taggedTemplate.Tag,
+                out var target,
+                out var thisArgument,
+                out var isMemberReference))
+        {
+            return false;
+        }
+
+        if (!TryPrepareTaggedTemplateInvocation(
+                taggedTemplate,
+                out _,
+                out var argumentsArray,
+                evaluateTagExpression: false))
+        {
+            return false;
+        }
+
+        return isMemberReference
+            ? EmitTailCallMemberRequest(target, argumentsArray)
+            : EmitTailCallRequest(
+                EnsureObject(target),
+                thisArgument,
+                argumentsArray);
+    }
+
+    private bool TryPrepareTailTaggedTemplateTarget(
+        HIRExpression tag,
+        out TempVariable target,
+        out TempVariable thisArgument,
+        out bool isMemberReference)
+    {
+        target = default;
+        thisArgument = default;
+        isMemberReference = false;
+
+        if (TryPrepareSuperTailCallTarget(
+                tag,
+                out target,
+                out thisArgument))
+        {
+            return true;
+        }
+
+        if (tag is HIRPropertyAccessExpression propertyAccess)
+        {
+            if (!TryLowerExpression(propertyAccess.Object, out var receiver))
+            {
+                return false;
+            }
+
+            var propertyKey = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstString(propertyAccess.PropertyName, propertyKey));
+            DefineTempStorage(
+                propertyKey,
+                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            target = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.PrepareTailCallMember),
+                [EnsureObject(receiver), propertyKey],
+                target,
+                [typeof(object), typeof(object)]));
+            DefineTempStorage(
+                target,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            isMemberReference = true;
+            return true;
+        }
+
+        if (tag is HIRIndexAccessExpression indexAccess)
+        {
+            if (!TryLowerExpression(indexAccess.Object, out var receiver)
+                || !TryLowerExpression(indexAccess.Index, out var propertyKey))
+            {
+                return false;
+            }
+
+            target = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.PrepareTailCallMember),
+                [EnsureObject(receiver), EnsureObject(propertyKey)],
+                target,
+                [typeof(object), typeof(object)]));
+            DefineTempStorage(
+                target,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            isMemberReference = true;
+            return true;
+        }
+
+        if (!TryLowerExpression(tag, out target))
+        {
+            return false;
+        }
+
+        thisArgument = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(thisArgument));
+        DefineTempStorage(
+            thisArgument,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
+    }
+
+    private bool TryPrepareSuperTailCallTarget(
+        HIRExpression callee,
+        out TempVariable target,
+        out TempVariable thisArgument)
+    {
+        target = default;
+        thisArgument = default;
+
+        TempVariable propertyName;
+        if (callee is HIRPropertyAccessExpression
+            {
+                Object: HIRSuperExpression
+            } propertyAccess)
+        {
+            propertyName = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstString(propertyAccess.PropertyName, propertyName));
+            DefineTempStorage(
+                propertyName,
+                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        }
+        else if (callee is HIRIndexAccessExpression
+            {
+                Object: HIRSuperExpression
+            } indexAccess)
+        {
+            if (!TryLowerExpression(indexAccess.Index, out var propertyKey))
+            {
+                return false;
+            }
+
+            propertyName = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.ToPropertyKeyString),
+                [EnsureObject(propertyKey)],
+                propertyName));
+            DefineTempStorage(
+                propertyName,
+                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        }
+        else
+        {
+            return false;
+        }
+
+        target = CreateTempVariable();
+        if (_classRegistry != null
+            && TryGetEnclosingBaseClassRegistryName(out var baseClassRegistryName)
+            && baseClassRegistryName != null)
+        {
+            var baseConstructor = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRGetUserClassType(baseClassRegistryName, baseConstructor));
+            DefineTempStorage(
+                baseConstructor,
+                new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+            var superObject = baseConstructor;
+            if (!IsLexicallyEnclosedByStaticClassMethod())
+            {
+                var prototypeKey = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(
+                    new LIRConstString("prototype", prototypeKey));
+                DefineTempStorage(
+                    prototypeKey,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                superObject = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRGetItem(
+                    EnsureObject(baseConstructor),
+                    prototypeKey,
+                    superObject));
+                DefineTempStorage(
+                    superObject,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRGetItem(
+                EnsureObject(superObject),
+                propertyName,
+                target));
+        }
+        else
+        {
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.GetSuperProperty),
+                [propertyName],
+                target));
+        }
+        DefineTempStorage(
+            target,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        return TryLowerExpression(
+            new HIRThisExpression(),
+            out thisArgument);
+    }
+
+    private bool IsLexicallyEnclosedByStaticClassMethod()
+    {
+        for (var scope = _scope; scope != null; scope = scope.Parent)
+        {
+            if (scope.Callable?.Kind == TwoPhase.CallableKind.ClassStaticMethod)
+            {
+                return true;
+            }
+
+            if (scope.Callable?.Kind == TwoPhase.CallableKind.ClassMethod)
+            {
+                return false;
+            }
+        }
+
+        return _callableKind == CallableKind.ClassStaticMethod;
+    }
+
+    private bool EmitTailCallRequest(
+        TempVariable target,
+        TempVariable thisArgument,
+        TempVariable argumentsArray)
+    {
+        var request = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.CreateTailCall),
+            [target, thisArgument, argumentsArray],
+            request,
+            [typeof(object), typeof(object), typeof(object[])]));
+        DefineTempStorage(
+            request,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return TryEmitReturnCompletion(request);
+    }
+
+    private bool EmitTailCallMemberRequest(
+        TempVariable memberReference,
+        TempVariable argumentsArray)
+    {
+        var request = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.CreateTailCallMember),
+            [memberReference, argumentsArray],
+            request,
+            [typeof(object), typeof(object[])]));
+        DefineTempStorage(
+            request,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return TryEmitReturnCompletion(request);
     }
 
     private TempVariable EnsureBooleanCondition(TempVariable conditionTemp)
@@ -409,14 +879,14 @@ public sealed partial class HIRToLIRLowerer
     private bool EmitReturnTemp(TempVariable returnTempVar)
     {
         returnTempVar = ApplyReturnTypeCoercion(returnTempVar);
-        _methodBodyIR.Instructions.Add(new LIRReturn(returnTempVar));
-        return true;
+        return TryEmitReturnCompletion(returnTempVar);
     }
 
     private TempVariable ApplyReturnTypeCoercion(TempVariable returnTempVar)
     {
         Type? stableReturnClrType = null;
-        if (_scope is { Kind: ScopeKind.Function } functionScope)
+        if (_methodBodyIR.CallableId?.Semantics.MayReturnTailCall != true
+            && _scope is { Kind: ScopeKind.Function } functionScope)
         {
             if (_callableKind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
             {

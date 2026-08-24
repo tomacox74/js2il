@@ -1373,48 +1373,53 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 92 (0x5c)
+			// Code size: 101 (0x65)
 			.maxstack 8
 			.locals init (
-				[0] bool,
-				[1] float64,
-				[2] object,
+				[0] object,
+				[1] bool,
+				[2] float64,
 				[3] object,
-				[4] object
+				[4] object,
+				[5] object
 			)
 
 			IL_0000: ldarg.2
 			IL_0001: ldc.r8 0.0
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0014: stloc.0
-			IL_0015: ldloc.0
-			IL_0016: brfalse IL_002a
+			IL_0014: stloc.1
+			IL_0015: ldloc.1
+			IL_0016: brfalse IL_002f
 
 			IL_001b: ldc.r8 0.0
 			IL_0024: box [System.Runtime]System.Double
-			IL_0029: ret
+			IL_0029: stloc.0
+			IL_002a: br IL_0063
 
-			IL_002a: ldarg.2
-			IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0030: ldc.r8 1
-			IL_0039: sub
-			IL_003a: stloc.1
-			IL_003b: ldloc.1
-			IL_003c: box [System.Runtime]System.Double
-			IL_0041: stloc.2
-			IL_0042: ldarg.0
-			IL_0043: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-			IL_0048: ldnull
-			IL_0049: ldloc.2
-			IL_004a: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
-			IL_004f: stloc.3
-			IL_0050: ldarg.2
-			IL_0051: ldloc.3
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0057: stloc.s 4
-			IL_0059: ldloc.s 4
-			IL_005b: ret
+			IL_002f: ldarg.2
+			IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0035: ldc.r8 1
+			IL_003e: sub
+			IL_003f: stloc.2
+			IL_0040: ldloc.2
+			IL_0041: box [System.Runtime]System.Double
+			IL_0046: stloc.3
+			IL_0047: ldarg.0
+			IL_0048: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+			IL_004d: ldnull
+			IL_004e: ldloc.3
+			IL_004f: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+			IL_0054: stloc.s 4
+			IL_0056: ldarg.2
+			IL_0057: ldloc.s 4
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_005e: stloc.s 5
+			IL_0060: ldloc.s 5
+			IL_0062: stloc.0
+
+			IL_0063: ldloc.0
+			IL_0064: ret
 		} // end of method ArrowFunction_L48C19::__js_call__
 
 	} // end of class ArrowFunction_L48C19
@@ -1532,53 +1537,58 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 97 (0x61)
+			// Code size: 106 (0x6a)
 			.maxstack 8
 			.locals init (
-				[0] bool,
-				[1] object[],
-				[2] float64,
-				[3] object,
-				[4] object
+				[0] object,
+				[1] bool,
+				[2] object[],
+				[3] float64,
+				[4] object,
+				[5] object
 			)
 
 			IL_0000: ldarg.2
 			IL_0001: ldc.r8 0.0
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0014: stloc.0
-			IL_0015: ldloc.0
-			IL_0016: brfalse IL_0022
+			IL_0014: stloc.1
+			IL_0015: ldloc.1
+			IL_0016: brfalse IL_0027
 
 			IL_001b: ldc.i4.1
 			IL_001c: box [System.Runtime]System.Boolean
-			IL_0021: ret
+			IL_0021: stloc.0
+			IL_0022: br IL_0068
 
-			IL_0022: ldarg.0
-			IL_0023: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
-			IL_0028: ldstr "Cannot access 'odd' before initialization"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0032: ldc.i4.1
-			IL_0033: newarr [System.Runtime]System.Object
-			IL_0038: dup
-			IL_0039: ldc.i4.0
-			IL_003a: ldarg.0
-			IL_003b: stelem.ref
-			IL_003c: stloc.1
-			IL_003d: ldarg.2
-			IL_003e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0043: ldc.r8 1
-			IL_004c: sub
-			IL_004d: stloc.2
-			IL_004e: ldloc.2
-			IL_004f: box [System.Runtime]System.Double
-			IL_0054: stloc.3
-			IL_0055: ldloc.1
-			IL_0056: ldloc.3
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_005c: stloc.s 4
-			IL_005e: ldloc.s 4
-			IL_0060: ret
+			IL_0027: ldarg.0
+			IL_0028: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
+			IL_002d: ldstr "Cannot access 'odd' before initialization"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0037: ldc.i4.1
+			IL_0038: newarr [System.Runtime]System.Object
+			IL_003d: dup
+			IL_003e: ldc.i4.0
+			IL_003f: ldarg.0
+			IL_0040: stelem.ref
+			IL_0041: stloc.2
+			IL_0042: ldarg.2
+			IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0048: ldc.r8 1
+			IL_0051: sub
+			IL_0052: stloc.3
+			IL_0053: ldloc.3
+			IL_0054: box [System.Runtime]System.Double
+			IL_0059: stloc.s 4
+			IL_005b: ldloc.2
+			IL_005c: ldloc.s 4
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_0063: stloc.s 5
+			IL_0065: ldloc.s 5
+			IL_0067: stloc.0
+
+			IL_0068: ldloc.0
+			IL_0069: ret
 		} // end of method ArrowFunction_L51C14::__js_call__
 
 	} // end of class ArrowFunction_L51C14
@@ -1696,43 +1706,49 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 74 (0x4a)
+			// Code size: 88 (0x58)
 			.maxstack 8
 			.locals init (
-				[0] bool,
-				[1] float64,
-				[2] object,
-				[3] object
+				[0] object,
+				[1] bool,
+				[2] float64,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldarg.2
 			IL_0001: ldc.r8 0.0
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0014: stloc.0
-			IL_0015: ldloc.0
-			IL_0016: brfalse IL_0022
+			IL_0014: stloc.1
+			IL_0015: ldloc.1
+			IL_0016: brfalse IL_0027
 
 			IL_001b: ldc.i4.0
 			IL_001c: box [System.Runtime]System.Boolean
-			IL_0021: ret
+			IL_0021: stloc.0
+			IL_0022: br IL_0056
 
-			IL_0022: ldarg.2
-			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0028: ldc.r8 1
-			IL_0031: sub
-			IL_0032: stloc.1
-			IL_0033: ldloc.1
-			IL_0034: box [System.Runtime]System.Double
-			IL_0039: stloc.2
-			IL_003a: ldarg.0
-			IL_003b: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-			IL_0040: ldnull
-			IL_0041: ldloc.2
-			IL_0042: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
-			IL_0047: stloc.3
-			IL_0048: ldloc.3
-			IL_0049: ret
+			IL_0027: ldarg.2
+			IL_0028: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002d: ldc.r8 1
+			IL_0036: sub
+			IL_0037: stloc.2
+			IL_0038: ldloc.2
+			IL_0039: box [System.Runtime]System.Double
+			IL_003e: stloc.3
+			IL_003f: ldarg.0
+			IL_0040: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+			IL_0045: ldnull
+			IL_0046: ldloc.3
+			IL_0047: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+			IL_0051: stloc.s 4
+			IL_0053: ldloc.s 4
+			IL_0055: stloc.0
+
+			IL_0056: ldloc.0
+			IL_0057: ret
 		} // end of method ArrowFunction_L52C13::__js_call__
 
 	} // end of class ArrowFunction_L52C13
@@ -1951,7 +1967,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1466 (0x5ba)
+		// Code size: 1481 (0x5c9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope,
@@ -2265,268 +2281,271 @@
 		IL_02bd: ldnull
 		IL_02be: ldloc.s 8
 		IL_02c0: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown::__js_call__(object, object)
-		IL_02c5: stloc.s 17
-		IL_02c7: ldloc.s 14
-		IL_02c9: ldstr "higher-order"
-		IL_02ce: ldloc.s 17
-		IL_02d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02d5: pop
-		IL_02d6: ldc.i4.1
-		IL_02d7: newarr [System.Runtime]System.Object
-		IL_02dc: dup
-		IL_02dd: ldc.i4.0
-		IL_02de: ldloc.0
-		IL_02df: stelem.ref
-		IL_02e0: stloc.s 12
-		IL_02e2: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject::.ctor()
-		IL_02e7: ldc.i4.1
-		IL_02e8: conv.r8
-		IL_02e9: ldstr ""
-		IL_02ee: ldc.i4.0
-		IL_02ef: ldc.i4.0
-		IL_02f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02f5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject>(!!0)
-		IL_02fa: stloc.s 23
-		IL_02fc: ldloc.s 23
-		IL_02fe: ldstr "methods"
-		IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0308: stloc.s 9
-		IL_030a: ldloc.s 9
-		IL_030c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0311: ldstr "bind"
-		IL_0316: ldc.i4.0
-		IL_0317: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_031c: ldc.r8 18
-		IL_0325: box [System.Runtime]System.Double
-		IL_032a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_032f: stloc.s 10
-		IL_0331: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0336: stloc.s 14
-		IL_0338: ldloc.s 9
-		IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_033f: ldstr "call"
-		IL_0344: ldc.i4.0
-		IL_0345: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_034a: ldc.r8 19
-		IL_0353: box [System.Runtime]System.Double
-		IL_0358: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_035d: stloc.s 17
-		IL_035f: ldloc.s 9
-		IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0366: ldc.i4.1
-		IL_0367: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_036c: dup
-		IL_036d: ldc.r8 20
-		IL_0376: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_037b: stloc.s 24
-		IL_037d: ldstr "apply"
-		IL_0382: ldc.i4.0
-		IL_0383: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0388: ldloc.s 24
-		IL_038a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_038f: stloc.s 16
-		IL_0391: ldloc.s 10
-		IL_0393: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0398: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_039d: stloc.s 15
-		IL_039f: volatile.
-		IL_03a1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_03a6: brfalse IL_03bc
+		IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_02ca: stloc.s 17
+		IL_02cc: ldloc.s 14
+		IL_02ce: ldstr "higher-order"
+		IL_02d3: ldloc.s 17
+		IL_02d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02da: pop
+		IL_02db: ldc.i4.1
+		IL_02dc: newarr [System.Runtime]System.Object
+		IL_02e1: dup
+		IL_02e2: ldc.i4.0
+		IL_02e3: ldloc.0
+		IL_02e4: stelem.ref
+		IL_02e5: stloc.s 12
+		IL_02e7: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject::.ctor()
+		IL_02ec: ldc.i4.1
+		IL_02ed: conv.r8
+		IL_02ee: ldstr ""
+		IL_02f3: ldc.i4.0
+		IL_02f4: ldc.i4.0
+		IL_02f5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02fa: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject>(!!0)
+		IL_02ff: stloc.s 23
+		IL_0301: ldloc.s 23
+		IL_0303: ldstr "methods"
+		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_030d: stloc.s 9
+		IL_030f: ldloc.s 9
+		IL_0311: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0316: ldstr "bind"
+		IL_031b: ldc.i4.0
+		IL_031c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0321: ldc.r8 18
+		IL_032a: box [System.Runtime]System.Double
+		IL_032f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0334: stloc.s 10
+		IL_0336: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_033b: stloc.s 14
+		IL_033d: ldloc.s 9
+		IL_033f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0344: ldstr "call"
+		IL_0349: ldc.i4.0
+		IL_034a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_034f: ldc.r8 19
+		IL_0358: box [System.Runtime]System.Double
+		IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0362: stloc.s 17
+		IL_0364: ldloc.s 9
+		IL_0366: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_036b: ldc.i4.1
+		IL_036c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0371: dup
+		IL_0372: ldc.r8 20
+		IL_037b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0380: stloc.s 24
+		IL_0382: ldstr "apply"
+		IL_0387: ldc.i4.0
+		IL_0388: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_038d: ldloc.s 24
+		IL_038f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0394: stloc.s 16
+		IL_0396: ldloc.s 10
+		IL_0398: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_039d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_03a2: stloc.s 15
+		IL_03a4: volatile.
+		IL_03a6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_03ab: brfalse IL_03c1
 
-		IL_03ab: ldloc.s 9
-		IL_03ad: ldstr "name"
-		IL_03b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_03b7: br IL_03d2
+		IL_03b0: ldloc.s 9
+		IL_03b2: ldstr "name"
+		IL_03b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03bc: br IL_03d7
 
-		IL_03bc: ldloc.s 9
-		IL_03be: ldstr "name"
-		IL_03c3: ldstr "Function_CallableMaterialization_IdentityAndCaptures:Modules.Function_CallableMaterialization_IdentityAndCaptures:__js_module_init__:124"
-		IL_03c8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_03cd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_03c1: ldloc.s 9
+		IL_03c3: ldstr "name"
+		IL_03c8: ldstr "Function_CallableMaterialization_IdentityAndCaptures:Modules.Function_CallableMaterialization_IdentityAndCaptures:__js_module_init__:124"
+		IL_03cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_03d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_03d2: stloc.s 25
-		IL_03d4: ldloc.s 14
-		IL_03d6: ldc.i4.5
-		IL_03d7: newarr [System.Runtime]System.Object
-		IL_03dc: dup
-		IL_03dd: ldc.i4.0
-		IL_03de: ldstr "methods"
-		IL_03e3: stelem.ref
-		IL_03e4: dup
-		IL_03e5: ldc.i4.1
-		IL_03e6: ldloc.s 17
+		IL_03d7: stloc.s 25
+		IL_03d9: ldloc.s 14
+		IL_03db: ldc.i4.5
+		IL_03dc: newarr [System.Runtime]System.Object
+		IL_03e1: dup
+		IL_03e2: ldc.i4.0
+		IL_03e3: ldstr "methods"
 		IL_03e8: stelem.ref
 		IL_03e9: dup
-		IL_03ea: ldc.i4.2
-		IL_03eb: ldloc.s 16
+		IL_03ea: ldc.i4.1
+		IL_03eb: ldloc.s 17
 		IL_03ed: stelem.ref
 		IL_03ee: dup
-		IL_03ef: ldc.i4.3
-		IL_03f0: ldloc.s 15
+		IL_03ef: ldc.i4.2
+		IL_03f0: ldloc.s 16
 		IL_03f2: stelem.ref
 		IL_03f3: dup
-		IL_03f4: ldc.i4.4
-		IL_03f5: ldloc.s 25
+		IL_03f4: ldc.i4.3
+		IL_03f5: ldloc.s 15
 		IL_03f7: stelem.ref
-		IL_03f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_03fd: pop
-		IL_03fe: ldc.i4.1
-		IL_03ff: newarr [System.Runtime]System.Object
-		IL_0404: dup
-		IL_0405: ldc.i4.0
-		IL_0406: ldloc.0
-		IL_0407: stelem.ref
-		IL_0408: stloc.s 12
-		IL_040a: ldloc.s 12
-		IL_040c: ldc.i4.0
-		IL_040d: ldelem.ref
-		IL_040e: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-		IL_0413: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
-		IL_0418: ldc.i4.1
-		IL_0419: conv.r8
-		IL_041a: ldstr ""
-		IL_041f: ldc.i4.0
-		IL_0420: ldc.i4.0
-		IL_0421: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0426: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject>(!!0)
-		IL_042b: stloc.s 26
-		IL_042d: ldloc.s 26
-		IL_042f: ldstr "recursive"
-		IL_0434: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0439: stloc.s 25
-		IL_043b: ldloc.0
-		IL_043c: ldloc.s 25
-		IL_043e: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::recursive
-		IL_0443: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0448: stloc.s 14
-		IL_044a: ldloc.0
-		IL_044b: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-		IL_0450: ldnull
-		IL_0451: ldc.r8 4
-		IL_045a: box [System.Runtime]System.Double
-		IL_045f: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
-		IL_0464: stloc.s 25
-		IL_0466: ldloc.s 14
-		IL_0468: ldstr "recursive"
-		IL_046d: ldloc.s 25
-		IL_046f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0474: pop
-		IL_0475: ldc.i4.1
-		IL_0476: newarr [System.Runtime]System.Object
-		IL_047b: dup
-		IL_047c: ldc.i4.0
-		IL_047d: ldloc.0
-		IL_047e: stelem.ref
-		IL_047f: stloc.s 12
-		IL_0481: ldloc.s 12
-		IL_0483: ldc.i4.0
-		IL_0484: ldelem.ref
-		IL_0485: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-		IL_048a: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
-		IL_048f: ldc.i4.1
-		IL_0490: conv.r8
-		IL_0491: ldstr ""
-		IL_0496: ldc.i4.0
-		IL_0497: ldc.i4.0
-		IL_0498: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_049d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject>(!!0)
-		IL_04a2: stloc.s 27
-		IL_04a4: ldloc.s 27
-		IL_04a6: ldstr "even"
-		IL_04ab: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_04b0: stloc.s 25
-		IL_04b2: ldloc.0
-		IL_04b3: ldloc.s 25
-		IL_04b5: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::even
-		IL_04ba: ldc.i4.1
-		IL_04bb: newarr [System.Runtime]System.Object
-		IL_04c0: dup
-		IL_04c1: ldc.i4.0
-		IL_04c2: ldloc.0
-		IL_04c3: stelem.ref
-		IL_04c4: stloc.s 12
-		IL_04c6: ldloc.s 12
-		IL_04c8: ldc.i4.0
-		IL_04c9: ldelem.ref
-		IL_04ca: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-		IL_04cf: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
-		IL_04d4: ldc.i4.1
-		IL_04d5: conv.r8
-		IL_04d6: ldstr ""
-		IL_04db: ldc.i4.0
-		IL_04dc: ldc.i4.0
-		IL_04dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_04e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject>(!!0)
-		IL_04e7: stloc.s 28
-		IL_04e9: ldloc.s 28
-		IL_04eb: ldstr "odd"
-		IL_04f0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_04f5: stloc.s 25
-		IL_04f7: ldloc.0
-		IL_04f8: ldloc.s 25
-		IL_04fa: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
-		IL_04ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0504: stloc.s 14
-		IL_0506: ldloc.0
-		IL_0507: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-		IL_050c: ldnull
-		IL_050d: ldc.r8 6
-		IL_0516: box [System.Runtime]System.Double
-		IL_051b: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
-		IL_0520: stloc.s 25
-		IL_0522: ldloc.0
-		IL_0523: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
-		IL_0528: ldnull
-		IL_0529: ldc.r8 6
-		IL_0532: box [System.Runtime]System.Double
-		IL_0537: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
-		IL_053c: stloc.s 15
-		IL_053e: ldloc.s 14
-		IL_0540: ldstr "mutual"
-		IL_0545: ldloc.s 25
-		IL_0547: ldloc.s 15
-		IL_0549: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_054e: pop
-		IL_054f: ldc.i4.1
-		IL_0550: newarr [System.Runtime]System.Object
-		IL_0555: dup
-		IL_0556: ldc.i4.0
-		IL_0557: ldloc.0
-		IL_0558: stelem.ref
-		IL_0559: stloc.s 12
-		IL_055b: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject::.ctor()
-		IL_0560: ldc.i4.0
-		IL_0561: conv.r8
-		IL_0562: ldstr ""
-		IL_0567: ldc.i4.0
-		IL_0568: ldc.i4.0
-		IL_0569: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_056e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject>(!!0)
-		IL_0573: stloc.s 29
-		IL_0575: ldloc.s 29
-		IL_0577: ldstr "exported"
-		IL_057c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0581: stloc.s 11
-		IL_0583: ldarg.0
-		IL_0584: ldstr "exported"
-		IL_0589: ldloc.s 11
-		IL_058b: ldc.i4.0
-		IL_058c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0591: pop
-		IL_0592: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0597: stloc.s 14
-		IL_0599: ldnull
-		IL_059a: call float64 Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18::__js_call__(object)
-		IL_059f: stloc.s 30
-		IL_05a1: ldloc.s 30
-		IL_05a3: box [System.Runtime]System.Double
-		IL_05a8: stloc.s 31
-		IL_05aa: ldloc.s 14
-		IL_05ac: ldstr "export"
-		IL_05b1: ldloc.s 31
-		IL_05b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_05b8: pop
-		IL_05b9: ret
+		IL_03f8: dup
+		IL_03f9: ldc.i4.4
+		IL_03fa: ldloc.s 25
+		IL_03fc: stelem.ref
+		IL_03fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0402: pop
+		IL_0403: ldc.i4.1
+		IL_0404: newarr [System.Runtime]System.Object
+		IL_0409: dup
+		IL_040a: ldc.i4.0
+		IL_040b: ldloc.0
+		IL_040c: stelem.ref
+		IL_040d: stloc.s 12
+		IL_040f: ldloc.s 12
+		IL_0411: ldc.i4.0
+		IL_0412: ldelem.ref
+		IL_0413: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_0418: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_041d: ldc.i4.1
+		IL_041e: conv.r8
+		IL_041f: ldstr ""
+		IL_0424: ldc.i4.0
+		IL_0425: ldc.i4.0
+		IL_0426: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_042b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject>(!!0)
+		IL_0430: stloc.s 26
+		IL_0432: ldloc.s 26
+		IL_0434: ldstr "recursive"
+		IL_0439: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_043e: stloc.s 25
+		IL_0440: ldloc.0
+		IL_0441: ldloc.s 25
+		IL_0443: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::recursive
+		IL_0448: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_044d: stloc.s 14
+		IL_044f: ldloc.0
+		IL_0450: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_0455: ldnull
+		IL_0456: ldc.r8 4
+		IL_045f: box [System.Runtime]System.Double
+		IL_0464: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_0469: stloc.s 25
+		IL_046b: ldloc.s 14
+		IL_046d: ldstr "recursive"
+		IL_0472: ldloc.s 25
+		IL_0474: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0479: pop
+		IL_047a: ldc.i4.1
+		IL_047b: newarr [System.Runtime]System.Object
+		IL_0480: dup
+		IL_0481: ldc.i4.0
+		IL_0482: ldloc.0
+		IL_0483: stelem.ref
+		IL_0484: stloc.s 12
+		IL_0486: ldloc.s 12
+		IL_0488: ldc.i4.0
+		IL_0489: ldelem.ref
+		IL_048a: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_048f: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_0494: ldc.i4.1
+		IL_0495: conv.r8
+		IL_0496: ldstr ""
+		IL_049b: ldc.i4.0
+		IL_049c: ldc.i4.0
+		IL_049d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_04a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject>(!!0)
+		IL_04a7: stloc.s 27
+		IL_04a9: ldloc.s 27
+		IL_04ab: ldstr "even"
+		IL_04b0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_04b5: stloc.s 25
+		IL_04b7: ldloc.0
+		IL_04b8: ldloc.s 25
+		IL_04ba: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::even
+		IL_04bf: ldc.i4.1
+		IL_04c0: newarr [System.Runtime]System.Object
+		IL_04c5: dup
+		IL_04c6: ldc.i4.0
+		IL_04c7: ldloc.0
+		IL_04c8: stelem.ref
+		IL_04c9: stloc.s 12
+		IL_04cb: ldloc.s 12
+		IL_04cd: ldc.i4.0
+		IL_04ce: ldelem.ref
+		IL_04cf: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_04d4: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_04d9: ldc.i4.1
+		IL_04da: conv.r8
+		IL_04db: ldstr ""
+		IL_04e0: ldc.i4.0
+		IL_04e1: ldc.i4.0
+		IL_04e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_04e7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject>(!!0)
+		IL_04ec: stloc.s 28
+		IL_04ee: ldloc.s 28
+		IL_04f0: ldstr "odd"
+		IL_04f5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_04fa: stloc.s 25
+		IL_04fc: ldloc.0
+		IL_04fd: ldloc.s 25
+		IL_04ff: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
+		IL_0504: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0509: stloc.s 14
+		IL_050b: ldloc.0
+		IL_050c: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_0511: ldnull
+		IL_0512: ldc.r8 6
+		IL_051b: box [System.Runtime]System.Double
+		IL_0520: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_0525: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_052a: stloc.s 25
+		IL_052c: ldloc.0
+		IL_052d: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_0532: ldnull
+		IL_0533: ldc.r8 6
+		IL_053c: box [System.Runtime]System.Double
+		IL_0541: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_0546: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_054b: stloc.s 15
+		IL_054d: ldloc.s 14
+		IL_054f: ldstr "mutual"
+		IL_0554: ldloc.s 25
+		IL_0556: ldloc.s 15
+		IL_0558: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_055d: pop
+		IL_055e: ldc.i4.1
+		IL_055f: newarr [System.Runtime]System.Object
+		IL_0564: dup
+		IL_0565: ldc.i4.0
+		IL_0566: ldloc.0
+		IL_0567: stelem.ref
+		IL_0568: stloc.s 12
+		IL_056a: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject::.ctor()
+		IL_056f: ldc.i4.0
+		IL_0570: conv.r8
+		IL_0571: ldstr ""
+		IL_0576: ldc.i4.0
+		IL_0577: ldc.i4.0
+		IL_0578: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_057d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject>(!!0)
+		IL_0582: stloc.s 29
+		IL_0584: ldloc.s 29
+		IL_0586: ldstr "exported"
+		IL_058b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0590: stloc.s 11
+		IL_0592: ldarg.0
+		IL_0593: ldstr "exported"
+		IL_0598: ldloc.s 11
+		IL_059a: ldc.i4.0
+		IL_059b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_05a0: pop
+		IL_05a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05a6: stloc.s 14
+		IL_05a8: ldnull
+		IL_05a9: call float64 Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18::__js_call__(object)
+		IL_05ae: stloc.s 30
+		IL_05b0: ldloc.s 30
+		IL_05b2: box [System.Runtime]System.Double
+		IL_05b7: stloc.s 31
+		IL_05b9: ldloc.s 14
+		IL_05bb: ldstr "export"
+		IL_05c0: ldloc.s 31
+		IL_05c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_05c7: pop
+		IL_05c8: ret
 	} // end of method Function_CallableMaterialization_IdentityAndCaptures::__js_module_init__
 
 } // end of class Modules.Function_CallableMaterialization_IdentityAndCaptures

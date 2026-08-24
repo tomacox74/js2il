@@ -374,7 +374,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 276 (0x114)
+		// Code size: 296 (0x128)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_Class/Scope,
@@ -403,65 +403,69 @@
 		IL_0029: ldloc.s 4
 		IL_002b: isinst Modules.CommonJS_Export_Class_Lib/Calculator
 		IL_0030: dup
-		IL_0031: brfalse IL_005e
+		IL_0031: brfalse IL_0063
 
 		IL_0036: ldc.r8 2
 		IL_003f: box [System.Runtime]System.Double
 		IL_0044: ldc.r8 3
 		IL_004d: box [System.Runtime]System.Double
 		IL_0052: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::'add'(object, object)
-		IL_0057: stloc.s 4
-		IL_0059: br IL_0089
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_005c: stloc.s 4
+		IL_005e: br IL_0093
 
-		IL_005e: pop
-		IL_005f: ldloc.s 4
-		IL_0061: ldstr "add"
-		IL_0066: ldc.r8 2
-		IL_006f: box [System.Runtime]System.Double
-		IL_0074: ldc.r8 3
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0087: stloc.s 4
+		IL_0063: pop
+		IL_0064: ldloc.s 4
+		IL_0066: ldstr "add"
+		IL_006b: ldc.r8 2
+		IL_0074: box [System.Runtime]System.Double
+		IL_0079: ldc.r8 3
+		IL_0082: box [System.Runtime]System.Double
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0091: stloc.s 4
 
-		IL_0089: ldloc.3
-		IL_008a: ldstr "add:"
-		IL_008f: ldloc.s 4
-		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0096: pop
-		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009c: stloc.3
-		IL_009d: ldloc.2
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a3: stloc.s 4
-		IL_00a5: ldloc.s 4
-		IL_00a7: isinst Modules.CommonJS_Export_Class_Lib/Calculator
-		IL_00ac: dup
-		IL_00ad: brfalse IL_00da
+		IL_0093: ldloc.3
+		IL_0094: ldstr "add:"
+		IL_0099: ldloc.s 4
+		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00a0: pop
+		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a6: stloc.3
+		IL_00a7: ldloc.2
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ad: stloc.s 4
+		IL_00af: ldloc.s 4
+		IL_00b1: isinst Modules.CommonJS_Export_Class_Lib/Calculator
+		IL_00b6: dup
+		IL_00b7: brfalse IL_00e9
 
-		IL_00b2: ldc.r8 4
-		IL_00bb: box [System.Runtime]System.Double
-		IL_00c0: ldc.r8 5
-		IL_00c9: box [System.Runtime]System.Double
-		IL_00ce: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
-		IL_00d3: stloc.s 4
-		IL_00d5: br IL_0105
+		IL_00bc: ldc.r8 4
+		IL_00c5: box [System.Runtime]System.Double
+		IL_00ca: ldc.r8 5
+		IL_00d3: box [System.Runtime]System.Double
+		IL_00d8: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_00e2: stloc.s 4
+		IL_00e4: br IL_0119
 
-		IL_00da: pop
-		IL_00db: ldloc.s 4
-		IL_00dd: ldstr "multiply"
-		IL_00e2: ldc.r8 4
-		IL_00eb: box [System.Runtime]System.Double
-		IL_00f0: ldc.r8 5
-		IL_00f9: box [System.Runtime]System.Double
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0103: stloc.s 4
+		IL_00e9: pop
+		IL_00ea: ldloc.s 4
+		IL_00ec: ldstr "multiply"
+		IL_00f1: ldc.r8 4
+		IL_00fa: box [System.Runtime]System.Double
+		IL_00ff: ldc.r8 5
+		IL_0108: box [System.Runtime]System.Double
+		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0117: stloc.s 4
 
-		IL_0105: ldloc.3
-		IL_0106: ldstr "multiply:"
-		IL_010b: ldloc.s 4
-		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0112: pop
-		IL_0113: ret
+		IL_0119: ldloc.3
+		IL_011a: ldstr "multiply:"
+		IL_011f: ldloc.s 4
+		IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0126: pop
+		IL_0127: ret
 	} // end of method CommonJS_Export_Class::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Class

@@ -674,7 +674,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 173 (0xad)
+		// Code size: 183 (0xb7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope,
@@ -733,14 +733,16 @@
 		IL_0088: ldc.r8 5
 		IL_0091: box [System.Runtime]System.Double
 		IL_0096: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::addRange(object)
-		IL_009b: pop
-		IL_009c: ldloc.1
-		IL_009d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator>(!!0)
-		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.s 4
-		IL_00a6: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
-		IL_00ab: pop
-		IL_00ac: ret
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_00a0: pop
+		IL_00a1: ldloc.1
+		IL_00a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator>(!!0)
+		IL_00a7: stloc.s 4
+		IL_00a9: ldloc.s 4
+		IL_00ab: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_00b5: pop
+		IL_00b6: ret
 	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod

@@ -264,7 +264,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 186 (0xba)
+			// Code size: 191 (0xbf)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -309,52 +309,53 @@
 
 				IL_0056: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
 				IL_005b: pop
-				IL_005c: br IL_006f
+				IL_005c: br IL_0074
 
 				IL_0061: pop
 				IL_0062: ldloc.s 6
 				IL_0064: ldstr "read"
 				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_006e: pop
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+				IL_0073: pop
 
-				IL_006f: leave IL_00b6
+				IL_0074: leave IL_00bb
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0074: stloc.1
-				IL_0075: ldloc.1
-				IL_0076: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_007b: dup
-				IL_007c: brtrue IL_0091
+				IL_0079: stloc.1
+				IL_007a: ldloc.1
+				IL_007b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0080: dup
+				IL_0081: brtrue IL_0096
 
-				IL_0081: pop
-				IL_0082: ldloc.1
-				IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0088: dup
-				IL_0089: brtrue IL_009c
+				IL_0086: pop
+				IL_0087: ldloc.1
+				IL_0088: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_008d: dup
+				IL_008e: brtrue IL_00a1
 
-				IL_008e: pop
-				IL_008f: rethrow
+				IL_0093: pop
+				IL_0094: rethrow
 
-				IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0096: stloc.2
-				IL_0097: br IL_009d
+				IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_009b: stloc.2
+				IL_009c: br IL_00a2
 
-				IL_009c: stloc.2
+				IL_00a1: stloc.2
 
-				IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00a2: stloc.s 7
-				IL_00a4: ldloc.s 7
-				IL_00a6: ldstr "caught"
-				IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00b0: pop
-				IL_00b1: leave IL_00b6
+				IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00a7: stloc.s 7
+				IL_00a9: ldloc.s 7
+				IL_00ab: ldstr "caught"
+				IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00b5: pop
+				IL_00b6: leave IL_00bb
 			} // end handler
 
-			IL_00b6: ldnull
-			IL_00b7: stloc.3
-			IL_00b8: ldloc.3
-			IL_00b9: ret
+			IL_00bb: ldnull
+			IL_00bc: stloc.3
+			IL_00bd: ldloc.3
+			IL_00be: ret
 		} // end of method test::__js_call__
 
 	} // end of class test

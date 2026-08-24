@@ -101,7 +101,7 @@ public sealed partial class HIRToLIRLowerer
                 lirInstructions.Add(new LIRLabel(innerTryStart));
             }
 
-            if (!TryLowerStatement(tryStmt.TryBlock))
+            if (!TryLowerWithoutTailCalls(tryStmt.TryBlock))
             {
                 return false;
             }
@@ -157,7 +157,10 @@ public sealed partial class HIRToLIRLowerer
                             new ValueStorage(ValueStorageKind.Reference, typeof(object))));
                 }
 
-                if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                if (tryStmt.CatchBody != null
+                    && !(hasFinally
+                        ? TryLowerWithoutTailCalls(tryStmt.CatchBody)
+                        : TryLowerStatement(tryStmt.CatchBody)))
                 {
                     return false;
                 }
@@ -265,7 +268,7 @@ public sealed partial class HIRToLIRLowerer
                     lirInstructions.Add(new LIRLabel(innerTryStart));
                 }
 
-                if (!TryLowerStatement(tryStmt.TryBlock))
+                if (!TryLowerWithoutTailCalls(tryStmt.TryBlock))
                 {
                     return false;
                 }
@@ -308,7 +311,8 @@ public sealed partial class HIRToLIRLowerer
                                 new ValueStorage(ValueStorageKind.Reference, typeof(object))));
                     }
 
-                    if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                    if (tryStmt.CatchBody != null
+                        && !TryLowerWithoutTailCalls(tryStmt.CatchBody))
                     {
                         return false;
                     }

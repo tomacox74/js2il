@@ -281,6 +281,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
             && left.InvokeShape == right.InvokeShape
             && left.IsInstanceMethod == right.IsInstanceMethod
             && left.ReturnClrType == right.ReturnClrType
+            && left.MayReturnTailCall == right.MayReturnTailCall
             && left.SignatureBlob == right.SignatureBlob
             && left.ParameterClrTypes.SequenceEqual(right.ParameterClrTypes);
     }

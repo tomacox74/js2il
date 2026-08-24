@@ -598,24 +598,43 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0006: ldstr "runInAsyncScope"
-			IL_000b: ldarg.0
-			IL_000c: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::callback
-			IL_0011: ldarg.0
-			IL_0012: ldarg.1
-			IL_0013: ldarg.2
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
-			IL_0019: stloc.0
-			IL_001a: ldloc.0
-			IL_001b: ret
+			IL_0001: ldstr "runInAsyncScope"
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldc.i4.4
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldarg.0
+			IL_0015: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::callback
+			IL_001a: stelem.ref
+			IL_001b: dup
+			IL_001c: ldc.i4.1
+			IL_001d: ldarg.0
+			IL_001e: stelem.ref
+			IL_001f: dup
+			IL_0020: ldc.i4.2
+			IL_0021: ldarg.1
+			IL_0022: stelem.ref
+			IL_0023: dup
+			IL_0024: ldc.i4.3
+			IL_0025: ldarg.2
+			IL_0026: stelem.ref
+			IL_0027: stloc.1
+			IL_0028: ldloc.0
+			IL_0029: ldloc.1
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_002f: stloc.0
+			IL_0030: ldloc.0
+			IL_0031: ret
 		} // end of method UndiciStyleHandler::deliver
 
 	} // end of class UndiciStyleHandler
@@ -664,7 +683,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 690 (0x2b2)
+		// Code size: 700 (0x2bc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope,
@@ -901,30 +920,32 @@
 		IL_026a: ldloc.s 12
 		IL_026c: isinst Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
 		IL_0271: dup
-		IL_0272: brfalse IL_028b
+		IL_0272: brfalse IL_0290
 
 		IL_0277: ldc.i4.0
 		IL_0278: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_027d: ldloc.s 13
 		IL_027f: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
-		IL_0284: stloc.s 12
-		IL_0286: br IL_02a2
+		IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0289: stloc.s 12
+		IL_028b: br IL_02ac
 
-		IL_028b: pop
-		IL_028c: ldloc.s 12
-		IL_028e: ldstr "deliver"
-		IL_0293: ldc.i4.0
-		IL_0294: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0299: ldloc.s 13
-		IL_029b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02a0: stloc.s 12
+		IL_0290: pop
+		IL_0291: ldloc.s 12
+		IL_0293: ldstr "deliver"
+		IL_0298: ldc.i4.0
+		IL_0299: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_029e: ldloc.s 13
+		IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02a5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_02aa: stloc.s 12
 
-		IL_02a2: ldloc.s 9
-		IL_02a4: ldstr "status:"
-		IL_02a9: ldloc.s 12
-		IL_02ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02b0: pop
-		IL_02b1: ret
+		IL_02ac: ldloc.s 9
+		IL_02ae: ldstr "status:"
+		IL_02b3: ldloc.s 12
+		IL_02b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02ba: pop
+		IL_02bb: ret
 	} // end of method Require_AsyncHooks_AsyncResource_Subclass::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_AsyncResource_Subclass

@@ -324,7 +324,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 238 (0xee)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_DefaultAnonClass/Scope,
@@ -369,57 +369,59 @@
 		IL_004c: ldloc.3
 		IL_004d: isinst Modules.Import_DefaultAnonClass_Lib/Class1
 		IL_0052: dup
-		IL_0053: brfalse IL_0063
+		IL_0053: brfalse IL_0068
 
 		IL_0058: callvirt instance object Modules.Import_DefaultAnonClass_Lib/Class1::greet()
-		IL_005d: stloc.3
-		IL_005e: br IL_0070
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0062: stloc.3
+		IL_0063: br IL_007a
 
-		IL_0063: pop
-		IL_0064: ldloc.3
-		IL_0065: ldstr "greet"
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_006f: stloc.3
+		IL_0068: pop
+		IL_0069: ldloc.3
+		IL_006a: ldstr "greet"
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0079: stloc.3
 
-		IL_0070: ldloc.s 4
-		IL_0072: ldstr "greet:"
-		IL_0077: ldloc.3
-		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_007d: pop
-		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0083: stloc.s 4
-		IL_0085: volatile.
-		IL_0087: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_008c: brfalse IL_00a1
+		IL_007a: ldloc.s 4
+		IL_007c: ldstr "greet:"
+		IL_0081: ldloc.3
+		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0087: pop
+		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008d: stloc.s 4
+		IL_008f: volatile.
+		IL_0091: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0096: brfalse IL_00ab
 
-		IL_0091: ldloc.2
-		IL_0092: ldstr "kind"
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_009c: br IL_00b6
+		IL_009b: ldloc.2
+		IL_009c: ldstr "kind"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a6: br IL_00c0
 
-		IL_00a1: ldloc.2
-		IL_00a2: ldstr "kind"
-		IL_00a7: ldstr "Import_DefaultAnonClass:Modules.Import_DefaultAnonClass:__js_module_init__:27"
-		IL_00ac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00ab: ldloc.2
+		IL_00ac: ldstr "kind"
+		IL_00b1: ldstr "Import_DefaultAnonClass:Modules.Import_DefaultAnonClass:__js_module_init__:27"
+		IL_00b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00b6: stloc.3
-		IL_00b7: ldloc.s 4
-		IL_00b9: ldstr "kind:"
-		IL_00be: ldloc.3
-		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c4: pop
-		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ca: stloc.s 4
-		IL_00cc: ldloc.1
-		IL_00cd: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00d2: stloc.s 5
-		IL_00d4: ldloc.s 4
-		IL_00d6: ldstr "type:"
-		IL_00db: ldloc.s 5
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00e2: pop
-		IL_00e3: ret
+		IL_00c0: stloc.3
+		IL_00c1: ldloc.s 4
+		IL_00c3: ldstr "kind:"
+		IL_00c8: ldloc.3
+		IL_00c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ce: pop
+		IL_00cf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d4: stloc.s 4
+		IL_00d6: ldloc.1
+		IL_00d7: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00dc: stloc.s 5
+		IL_00de: ldloc.s 4
+		IL_00e0: ldstr "type:"
+		IL_00e5: ldloc.s 5
+		IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ec: pop
+		IL_00ed: ret
 	} // end of method Import_DefaultAnonClass::__js_module_init__
 
 } // end of class Modules.Import_DefaultAnonClass

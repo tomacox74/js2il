@@ -232,7 +232,7 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerWithoutTailCalls(forOfStmt.Body))
                     {
                         return false;
                     }
@@ -586,7 +586,7 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerWithoutTailCalls(forOfStmt.Body))
                     {
                         return false;
                     }
@@ -787,7 +787,7 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerWithoutTailCalls(forOfStmt.Body))
                     {
                         return false;
                     }
@@ -949,7 +949,7 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerWithoutTailCalls(forOfStmt.Body))
                     {
                         return false;
                     }

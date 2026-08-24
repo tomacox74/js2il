@@ -243,6 +243,10 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(
                             GetGeneratedArrayCallAdapterHandle(callableId));
+                        if (callableSignature?.MayReturnTailCall == true)
+                        {
+                            EmitResolveTailCalls(ilEncoder);
+                        }
 
                         if (IsMaterialized(callFunc.Result, allocation))
                         {
@@ -313,9 +317,21 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(methodHandle);
 
+                    var directReturnClrType = GetDirectFunctionReturnClrType(
+                        callableSignature,
+                        callFunc.FunctionSymbol.BindingInfo,
+                        callableId);
+                    if (callableSignature?.MayReturnTailCall == true)
+                    {
+                        EmitResolveTailCalls(ilEncoder);
+                    }
+
                     if (IsMaterialized(callFunc.Result, allocation))
                     {
-                        EmitBoxCallResultForObjectTarget(GetDirectFunctionReturnClrType(callableSignature, callFunc.FunctionSymbol.BindingInfo, callableId), callFunc.Result, ilEncoder);
+                        EmitBoxCallResultForObjectTarget(
+                            directReturnClrType,
+                            callFunc.Result,
+                            ilEncoder);
                         EmitStoreTemp(callFunc.Result, ilEncoder, allocation);
                     }
                     else
@@ -1538,6 +1554,11 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(methodHandle);
 
+                    if (signature?.MayReturnTailCall == true)
+                    {
+                        EmitResolveTailCalls(ilEncoder);
+                    }
+
                     if (IsMaterialized(callDeclared.Result, allocation))
                     {
                         EmitBoxCallResultForObjectTarget(signature?.ReturnClrType, callDeclared.Result, ilEncoder);
@@ -1713,6 +1734,16 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
+    private void EmitResolveTailCalls(InstructionEncoder ilEncoder)
+    {
+        var resolveRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.ResolveTailCalls),
+            new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(resolveRef);
+    }
+
     private void EmitAdaptObjectCallResult(
         TempVariable result,
         InstructionEncoder ilEncoder)
@@ -1851,7 +1882,10 @@ internal sealed partial class LIRToILCompiler
     }
 
     private static Type? GetDirectFunctionReturnClrType(CallableSignature? signature, BindingInfo symbol, CallableId callableId)
-        => signature?.ReturnClrType ?? GetStableDirectFunctionReturnClrType(symbol, callableId);
+        => signature?.MayReturnTailCall == true
+            ? typeof(object)
+            : signature?.ReturnClrType
+                ?? GetStableDirectFunctionReturnClrType(symbol, callableId);
 
     private static Type? GetStableDirectFunctionReturnClrType(BindingInfo symbol, CallableId callableId)
     {

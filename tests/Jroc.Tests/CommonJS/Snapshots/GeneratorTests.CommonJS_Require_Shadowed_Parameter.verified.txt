@@ -202,22 +202,27 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 21 (0x15)
+			// Code size: 26 (0x1a)
 			.maxstack 8
 			.locals init (
 				[0] object[],
 				[1] object
 			)
 
-			IL_0000: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0005: stloc.0
-			IL_0006: ldarg.1
-			IL_0007: ldloc.0
+			IL_0000: ldc.i4.1
+			IL_0001: newarr [System.Runtime]System.Object
+			IL_0006: dup
+			IL_0007: ldc.i4.0
 			IL_0008: ldstr "fs"
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_0012: stloc.1
-			IL_0013: ldloc.1
-			IL_0014: ret
+			IL_000d: stelem.ref
+			IL_000e: stloc.0
+			IL_000f: ldarg.1
+			IL_0010: ldnull
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_0017: stloc.1
+			IL_0018: ldloc.1
+			IL_0019: ret
 		} // end of method test::__js_call__
 
 	} // end of class test

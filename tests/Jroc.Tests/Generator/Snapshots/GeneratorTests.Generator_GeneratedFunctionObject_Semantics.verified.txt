@@ -3361,24 +3361,30 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 24 (0x18)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldstr "run"
-			IL_0006: ldc.i4.1
-			IL_0007: newarr [System.Runtime]System.Object
-			IL_000c: dup
-			IL_000d: ldc.i4.0
-			IL_000e: ldarg.1
-			IL_000f: stelem.ref
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: ret
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldc.i4.1
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldarg.1
+			IL_0015: stelem.ref
+			IL_0016: stloc.1
+			IL_0017: ldloc.0
+			IL_0018: ldloc.1
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_001e: stloc.0
+			IL_001f: ldloc.0
+			IL_0020: ret
 		} // end of method GeneratorClass::callRun
 
 		.method public hidebysig static 
@@ -3820,29 +3826,65 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 49 (0x31)
+			// Code size: 143 (0x8f)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [System.Runtime]System.Type,
+				[1] object,
+				[2] object[]
 			)
 
 			IL_0000: ldtoken Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
-			IL_0005: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_000a: ldstr "prototype"
-			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0014: ldstr "run"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001e: ldarg.0
-			IL_001f: ldc.i4.1
-			IL_0020: newarr [System.Runtime]System.Object
-			IL_0025: dup
-			IL_0026: ldc.i4.0
-			IL_0027: ldarg.1
-			IL_0028: stelem.ref
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Call(object, object, object[])
-			IL_002e: stloc.0
-			IL_002f: ldloc.0
-			IL_0030: ret
+			IL_0005: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_000a: ldtoken Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
+			IL_000f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0014: stloc.0
+			IL_0015: volatile.
+			IL_0017: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
+			IL_001c: brfalse IL_0031
+
+			IL_0021: ldloc.0
+			IL_0022: ldstr "prototype"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002c: br IL_0046
+
+			IL_0031: ldloc.0
+			IL_0032: ldstr "prototype"
+			IL_0037: ldstr "Generator_GeneratedFunctionObject_Semantics:<TwoPhaseDummy_M18>:callSuper:4"
+			IL_003c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0046: stloc.1
+			IL_0047: volatile.
+			IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
+			IL_004e: brfalse IL_0063
+
+			IL_0053: ldloc.1
+			IL_0054: ldstr "run"
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005e: br IL_0078
+
+			IL_0063: ldloc.1
+			IL_0064: ldstr "run"
+			IL_0069: ldstr "Generator_GeneratedFunctionObject_Semantics:<TwoPhaseDummy_M18>:callSuper:5"
+			IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
+			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0078: stloc.1
+			IL_0079: ldc.i4.1
+			IL_007a: newarr [System.Runtime]System.Object
+			IL_007f: dup
+			IL_0080: ldc.i4.0
+			IL_0081: ldarg.1
+			IL_0082: stelem.ref
+			IL_0083: stloc.2
+			IL_0084: ldloc.1
+			IL_0085: ldarg.0
+			IL_0086: ldloc.2
+			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_008c: stloc.1
+			IL_008d: ldloc.1
+			IL_008e: ret
 		} // end of method DerivedGeneratorClass::callSuper
 
 	} // end of class DerivedGeneratorClass
@@ -3985,7 +4027,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 4826 (0x12da)
+		// Code size: 4866 (0x1302)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_GeneratedFunctionObject_Semantics/Scope,
@@ -5027,7 +5069,7 @@
 		IL_0b80: ldloc.s 16
 		IL_0b82: isinst Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
 		IL_0b87: dup
-		IL_0b88: brfalse IL_0bb2
+		IL_0b88: brfalse IL_0bb7
 
 		IL_0b8d: ldc.i4.1
 		IL_0b8e: newarr [System.Runtime]System.Object
@@ -5039,587 +5081,595 @@
 		IL_0b98: ldc.r8 3
 		IL_0ba1: box [System.Runtime]System.Double
 		IL_0ba6: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::run(object[], object, object)
-		IL_0bab: stloc.s 34
-		IL_0bad: br IL_0bcf
+		IL_0bab: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0bb0: stloc.s 34
+		IL_0bb2: br IL_0bd9
 
-		IL_0bb2: pop
-		IL_0bb3: ldloc.s 16
-		IL_0bb5: ldstr "run"
-		IL_0bba: ldc.r8 3
-		IL_0bc3: box [System.Runtime]System.Double
-		IL_0bc8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0bcd: stloc.s 34
+		IL_0bb7: pop
+		IL_0bb8: ldloc.s 16
+		IL_0bba: ldstr "run"
+		IL_0bbf: ldc.r8 3
+		IL_0bc8: box [System.Runtime]System.Double
+		IL_0bcd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0bd2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0bd7: stloc.s 34
 
-		IL_0bcf: ldloc.s 34
-		IL_0bd1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0bd6: volatile.
-		IL_0bd8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
-		IL_0bdd: brfalse IL_0bf1
+		IL_0bd9: ldloc.s 34
+		IL_0bdb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0be0: volatile.
+		IL_0be2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
+		IL_0be7: brfalse IL_0bfb
 
-		IL_0be2: ldstr "next"
-		IL_0be7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0bec: br IL_0c05
+		IL_0bec: ldstr "next"
+		IL_0bf1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0bf6: br IL_0c0f
 
-		IL_0bf1: ldstr "next"
-		IL_0bf6: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:234"
-		IL_0bfb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
-		IL_0c00: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0bfb: ldstr "next"
+		IL_0c00: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:234"
+		IL_0c05: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
+		IL_0c0a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0c05: stloc.s 34
-		IL_0c07: volatile.
-		IL_0c09: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
-		IL_0c0e: brfalse IL_0c24
+		IL_0c0f: stloc.s 34
+		IL_0c11: volatile.
+		IL_0c13: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
+		IL_0c18: brfalse IL_0c2e
 
-		IL_0c13: ldloc.s 34
-		IL_0c15: ldstr "value"
-		IL_0c1a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0c1f: br IL_0c3a
+		IL_0c1d: ldloc.s 34
+		IL_0c1f: ldstr "value"
+		IL_0c24: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0c29: br IL_0c44
 
-		IL_0c24: ldloc.s 34
-		IL_0c26: ldstr "value"
-		IL_0c2b: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:236"
-		IL_0c30: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
-		IL_0c35: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0c2e: ldloc.s 34
+		IL_0c30: ldstr "value"
+		IL_0c35: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:236"
+		IL_0c3a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
+		IL_0c3f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0c3a: stloc.s 34
-		IL_0c3c: ldc.i4.1
-		IL_0c3d: newarr [System.Runtime]System.Object
-		IL_0c42: dup
-		IL_0c43: ldc.i4.0
-		IL_0c44: ldc.r8 40
-		IL_0c4d: box [System.Runtime]System.Double
-		IL_0c52: stelem.ref
-		IL_0c53: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0c58: ldc.r8 40
-		IL_0c61: box [System.Runtime]System.Double
-		IL_0c66: newobj instance void Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::.ctor(object)
-		IL_0c6b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0c70: stloc.s 46
-		IL_0c72: ldloc.s 46
-		IL_0c74: ldtoken Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
-		IL_0c79: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0c7e: ldstr "prototype"
-		IL_0c83: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0c88: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0c8d: ldloc.s 46
-		IL_0c8f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0c94: stloc.s 35
-		IL_0c96: ldloc.s 35
-		IL_0c98: isinst Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
-		IL_0c9d: dup
-		IL_0c9e: brfalse IL_0cc8
+		IL_0c44: stloc.s 34
+		IL_0c46: ldc.i4.1
+		IL_0c47: newarr [System.Runtime]System.Object
+		IL_0c4c: dup
+		IL_0c4d: ldc.i4.0
+		IL_0c4e: ldc.r8 40
+		IL_0c57: box [System.Runtime]System.Double
+		IL_0c5c: stelem.ref
+		IL_0c5d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0c62: ldc.r8 40
+		IL_0c6b: box [System.Runtime]System.Double
+		IL_0c70: newobj instance void Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::.ctor(object)
+		IL_0c75: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0c7a: stloc.s 46
+		IL_0c7c: ldloc.s 46
+		IL_0c7e: ldtoken Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
+		IL_0c83: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0c88: ldstr "prototype"
+		IL_0c8d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0c92: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0c97: ldloc.s 46
+		IL_0c99: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0c9e: stloc.s 35
+		IL_0ca0: ldloc.s 35
+		IL_0ca2: isinst Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
+		IL_0ca7: dup
+		IL_0ca8: brfalse IL_0cd7
 
-		IL_0ca3: ldc.i4.1
-		IL_0ca4: newarr [System.Runtime]System.Object
-		IL_0ca9: dup
-		IL_0caa: ldc.i4.0
-		IL_0cab: ldloc.0
-		IL_0cac: stelem.ref
-		IL_0cad: ldnull
-		IL_0cae: ldc.r8 4
-		IL_0cb7: box [System.Runtime]System.Double
-		IL_0cbc: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::run(object[], object, object)
-		IL_0cc1: stloc.s 35
-		IL_0cc3: br IL_0ce5
+		IL_0cad: ldc.i4.1
+		IL_0cae: newarr [System.Runtime]System.Object
+		IL_0cb3: dup
+		IL_0cb4: ldc.i4.0
+		IL_0cb5: ldloc.0
+		IL_0cb6: stelem.ref
+		IL_0cb7: ldnull
+		IL_0cb8: ldc.r8 4
+		IL_0cc1: box [System.Runtime]System.Double
+		IL_0cc6: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::run(object[], object, object)
+		IL_0ccb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0cd0: stloc.s 35
+		IL_0cd2: br IL_0cf9
 
-		IL_0cc8: pop
-		IL_0cc9: ldloc.s 35
-		IL_0ccb: ldstr "run"
-		IL_0cd0: ldc.r8 4
-		IL_0cd9: box [System.Runtime]System.Double
-		IL_0cde: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0ce3: stloc.s 35
+		IL_0cd7: pop
+		IL_0cd8: ldloc.s 35
+		IL_0cda: ldstr "run"
+		IL_0cdf: ldc.r8 4
+		IL_0ce8: box [System.Runtime]System.Double
+		IL_0ced: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0cf2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0cf7: stloc.s 35
 
-		IL_0ce5: ldloc.s 35
-		IL_0ce7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0cec: volatile.
-		IL_0cee: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
-		IL_0cf3: brfalse IL_0d07
+		IL_0cf9: ldloc.s 35
+		IL_0cfb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0d00: volatile.
+		IL_0d02: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
+		IL_0d07: brfalse IL_0d1b
 
-		IL_0cf8: ldstr "next"
-		IL_0cfd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0d02: br IL_0d1b
+		IL_0d0c: ldstr "next"
+		IL_0d11: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0d16: br IL_0d2f
 
-		IL_0d07: ldstr "next"
-		IL_0d0c: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:245"
-		IL_0d11: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
-		IL_0d16: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0d1b: ldstr "next"
+		IL_0d20: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:245"
+		IL_0d25: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
+		IL_0d2a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0d1b: stloc.s 35
-		IL_0d1d: volatile.
-		IL_0d1f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
-		IL_0d24: brfalse IL_0d3a
+		IL_0d2f: stloc.s 35
+		IL_0d31: volatile.
+		IL_0d33: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
+		IL_0d38: brfalse IL_0d4e
 
-		IL_0d29: ldloc.s 35
-		IL_0d2b: ldstr "value"
-		IL_0d30: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0d35: br IL_0d50
+		IL_0d3d: ldloc.s 35
+		IL_0d3f: ldstr "value"
+		IL_0d44: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0d49: br IL_0d64
 
-		IL_0d3a: ldloc.s 35
-		IL_0d3c: ldstr "value"
-		IL_0d41: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:247"
-		IL_0d46: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
-		IL_0d4b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0d4e: ldloc.s 35
+		IL_0d50: ldstr "value"
+		IL_0d55: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:247"
+		IL_0d5a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
+		IL_0d5f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0d50: stloc.s 35
-		IL_0d52: volatile.
-		IL_0d54: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
-		IL_0d59: brfalse IL_0d7d
+		IL_0d64: stloc.s 35
+		IL_0d66: volatile.
+		IL_0d68: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
+		IL_0d6d: brfalse IL_0d91
 
-		IL_0d5e: ldloc.s 44
-		IL_0d60: ldstr "twice"
-		IL_0d65: ldc.r8 5
-		IL_0d6e: box [System.Runtime]System.Double
-		IL_0d73: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0d78: br IL_0da1
+		IL_0d72: ldloc.s 44
+		IL_0d74: ldstr "twice"
+		IL_0d79: ldc.r8 5
+		IL_0d82: box [System.Runtime]System.Double
+		IL_0d87: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0d8c: br IL_0db5
 
-		IL_0d7d: ldloc.s 44
-		IL_0d7f: ldstr "twice"
-		IL_0d84: ldc.r8 5
-		IL_0d8d: box [System.Runtime]System.Double
-		IL_0d92: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:250"
-		IL_0d97: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
-		IL_0d9c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_0d91: ldloc.s 44
+		IL_0d93: ldstr "twice"
+		IL_0d98: ldc.r8 5
+		IL_0da1: box [System.Runtime]System.Double
+		IL_0da6: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:250"
+		IL_0dab: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
+		IL_0db0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0da1: stloc.s 33
-		IL_0da3: ldloc.s 33
-		IL_0da5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0daa: volatile.
-		IL_0dac: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
-		IL_0db1: brfalse IL_0dc5
+		IL_0db5: stloc.s 33
+		IL_0db7: ldloc.s 33
+		IL_0db9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0dbe: volatile.
+		IL_0dc0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
+		IL_0dc5: brfalse IL_0dd9
 
-		IL_0db6: ldstr "next"
-		IL_0dbb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0dc0: br IL_0dd9
+		IL_0dca: ldstr "next"
+		IL_0dcf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0dd4: br IL_0ded
 
-		IL_0dc5: ldstr "next"
-		IL_0dca: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:252"
-		IL_0dcf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
-		IL_0dd4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0dd9: ldstr "next"
+		IL_0dde: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:252"
+		IL_0de3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
+		IL_0de8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0dd9: stloc.s 33
-		IL_0ddb: volatile.
-		IL_0ddd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
-		IL_0de2: brfalse IL_0df8
+		IL_0ded: stloc.s 33
+		IL_0def: volatile.
+		IL_0df1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
+		IL_0df6: brfalse IL_0e0c
 
-		IL_0de7: ldloc.s 33
-		IL_0de9: ldstr "value"
-		IL_0dee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0df3: br IL_0e0e
+		IL_0dfb: ldloc.s 33
+		IL_0dfd: ldstr "value"
+		IL_0e02: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0e07: br IL_0e22
 
-		IL_0df8: ldloc.s 33
-		IL_0dfa: ldstr "value"
-		IL_0dff: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:254"
-		IL_0e04: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
-		IL_0e09: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0e0c: ldloc.s 33
+		IL_0e0e: ldstr "value"
+		IL_0e13: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:254"
+		IL_0e18: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
+		IL_0e1d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0e0e: stloc.s 33
-		IL_0e10: volatile.
-		IL_0e12: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
-		IL_0e17: brfalse IL_0e2d
+		IL_0e22: stloc.s 33
+		IL_0e24: volatile.
+		IL_0e26: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
+		IL_0e2b: brfalse IL_0e41
 
-		IL_0e1c: ldloc.s 16
-		IL_0e1e: ldstr "run"
-		IL_0e23: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0e28: br IL_0e43
+		IL_0e30: ldloc.s 16
+		IL_0e32: ldstr "run"
+		IL_0e37: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0e3c: br IL_0e57
 
-		IL_0e2d: ldloc.s 16
-		IL_0e2f: ldstr "run"
-		IL_0e34: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:256"
-		IL_0e39: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
-		IL_0e3e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0e41: ldloc.s 16
+		IL_0e43: ldstr "run"
+		IL_0e48: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:256"
+		IL_0e4d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
+		IL_0e52: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0e43: stloc.s 32
-		IL_0e45: ldloc.s 32
-		IL_0e47: ldstr "prototype"
-		IL_0e4c: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_0e51: box [System.Runtime]System.Boolean
-		IL_0e56: stloc.s 40
-		IL_0e58: volatile.
-		IL_0e5a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
-		IL_0e5f: brfalse IL_0e75
+		IL_0e57: stloc.s 32
+		IL_0e59: ldloc.s 32
+		IL_0e5b: ldstr "prototype"
+		IL_0e60: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_0e65: box [System.Runtime]System.Boolean
+		IL_0e6a: stloc.s 40
+		IL_0e6c: volatile.
+		IL_0e6e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
+		IL_0e73: brfalse IL_0e89
 
-		IL_0e64: ldloc.s 44
-		IL_0e66: ldstr "prototype"
-		IL_0e6b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0e70: br IL_0e8b
+		IL_0e78: ldloc.s 44
+		IL_0e7a: ldstr "prototype"
+		IL_0e7f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0e84: br IL_0e9f
 
-		IL_0e75: ldloc.s 44
-		IL_0e77: ldstr "prototype"
-		IL_0e7c: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:261"
-		IL_0e81: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
-		IL_0e86: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0e89: ldloc.s 44
+		IL_0e8b: ldstr "prototype"
+		IL_0e90: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:261"
+		IL_0e95: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
+		IL_0e9a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0e8b: stloc.s 32
-		IL_0e8d: volatile.
-		IL_0e8f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
-		IL_0e94: brfalse IL_0eaa
+		IL_0e9f: stloc.s 32
+		IL_0ea1: volatile.
+		IL_0ea3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
+		IL_0ea8: brfalse IL_0ebe
 
-		IL_0e99: ldloc.s 32
-		IL_0e9b: ldstr "run"
-		IL_0ea0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0ea5: br IL_0ec0
+		IL_0ead: ldloc.s 32
+		IL_0eaf: ldstr "run"
+		IL_0eb4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0eb9: br IL_0ed4
 
-		IL_0eaa: ldloc.s 32
-		IL_0eac: ldstr "run"
-		IL_0eb1: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:263"
-		IL_0eb6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
-		IL_0ebb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0ebe: ldloc.s 32
+		IL_0ec0: ldstr "run"
+		IL_0ec5: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:263"
+		IL_0eca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
+		IL_0ecf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0ec0: stloc.s 32
-		IL_0ec2: ldloc.s 32
-		IL_0ec4: ldstr "prototype"
-		IL_0ec9: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_0ece: box [System.Runtime]System.Boolean
-		IL_0ed3: stloc.s 38
-		IL_0ed5: volatile.
-		IL_0ed7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
-		IL_0edc: brfalse IL_0ef2
+		IL_0ed4: stloc.s 32
+		IL_0ed6: ldloc.s 32
+		IL_0ed8: ldstr "prototype"
+		IL_0edd: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_0ee2: box [System.Runtime]System.Boolean
+		IL_0ee7: stloc.s 38
+		IL_0ee9: volatile.
+		IL_0eeb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
+		IL_0ef0: brfalse IL_0f06
 
-		IL_0ee1: ldloc.s 44
-		IL_0ee3: ldstr "twice"
-		IL_0ee8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0eed: br IL_0f08
+		IL_0ef5: ldloc.s 44
+		IL_0ef7: ldstr "twice"
+		IL_0efc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0f01: br IL_0f1c
 
-		IL_0ef2: ldloc.s 44
-		IL_0ef4: ldstr "twice"
-		IL_0ef9: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:268"
-		IL_0efe: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
-		IL_0f03: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0f06: ldloc.s 44
+		IL_0f08: ldstr "twice"
+		IL_0f0d: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:268"
+		IL_0f12: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
+		IL_0f17: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0f08: stloc.s 32
-		IL_0f0a: ldloc.s 32
-		IL_0f0c: ldstr "prototype"
-		IL_0f11: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_0f16: box [System.Runtime]System.Boolean
-		IL_0f1b: stloc.s 37
-		IL_0f1d: ldloc.s 30
-		IL_0f1f: ldc.i4.7
-		IL_0f20: newarr [System.Runtime]System.Object
-		IL_0f25: dup
-		IL_0f26: ldc.i4.0
-		IL_0f27: ldstr "methods"
-		IL_0f2c: stelem.ref
-		IL_0f2d: dup
-		IL_0f2e: ldc.i4.1
-		IL_0f2f: ldloc.s 34
-		IL_0f31: stelem.ref
-		IL_0f32: dup
-		IL_0f33: ldc.i4.2
-		IL_0f34: ldloc.s 35
-		IL_0f36: stelem.ref
-		IL_0f37: dup
-		IL_0f38: ldc.i4.3
-		IL_0f39: ldloc.s 33
-		IL_0f3b: stelem.ref
-		IL_0f3c: dup
-		IL_0f3d: ldc.i4.4
-		IL_0f3e: ldloc.s 40
+		IL_0f1c: stloc.s 32
+		IL_0f1e: ldloc.s 32
+		IL_0f20: ldstr "prototype"
+		IL_0f25: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_0f2a: box [System.Runtime]System.Boolean
+		IL_0f2f: stloc.s 37
+		IL_0f31: ldloc.s 30
+		IL_0f33: ldc.i4.7
+		IL_0f34: newarr [System.Runtime]System.Object
+		IL_0f39: dup
+		IL_0f3a: ldc.i4.0
+		IL_0f3b: ldstr "methods"
 		IL_0f40: stelem.ref
 		IL_0f41: dup
-		IL_0f42: ldc.i4.5
-		IL_0f43: ldloc.s 38
+		IL_0f42: ldc.i4.1
+		IL_0f43: ldloc.s 34
 		IL_0f45: stelem.ref
 		IL_0f46: dup
-		IL_0f47: ldc.i4.6
-		IL_0f48: ldloc.s 37
+		IL_0f47: ldc.i4.2
+		IL_0f48: ldloc.s 35
 		IL_0f4a: stelem.ref
-		IL_0f4b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0f50: pop
-		IL_0f51: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0f56: stloc.s 18
-		IL_0f58: volatile.
-		IL_0f5a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
-		IL_0f5f: brfalse IL_0f75
+		IL_0f4b: dup
+		IL_0f4c: ldc.i4.3
+		IL_0f4d: ldloc.s 33
+		IL_0f4f: stelem.ref
+		IL_0f50: dup
+		IL_0f51: ldc.i4.4
+		IL_0f52: ldloc.s 40
+		IL_0f54: stelem.ref
+		IL_0f55: dup
+		IL_0f56: ldc.i4.5
+		IL_0f57: ldloc.s 38
+		IL_0f59: stelem.ref
+		IL_0f5a: dup
+		IL_0f5b: ldc.i4.6
+		IL_0f5c: ldloc.s 37
+		IL_0f5e: stelem.ref
+		IL_0f5f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0f64: pop
+		IL_0f65: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0f6a: stloc.s 18
+		IL_0f6c: volatile.
+		IL_0f6e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
+		IL_0f73: brfalse IL_0f89
 
-		IL_0f64: ldloc.s 44
-		IL_0f66: ldstr "prototype"
-		IL_0f6b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0f70: br IL_0f8b
+		IL_0f78: ldloc.s 44
+		IL_0f7a: ldstr "prototype"
+		IL_0f7f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0f84: br IL_0f9f
 
-		IL_0f75: ldloc.s 44
-		IL_0f77: ldstr "prototype"
-		IL_0f7c: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:278"
-		IL_0f81: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
-		IL_0f86: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0f89: ldloc.s 44
+		IL_0f8b: ldstr "prototype"
+		IL_0f90: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:278"
+		IL_0f95: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
+		IL_0f9a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0f8b: stloc.s 33
-		IL_0f8d: volatile.
-		IL_0f8f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
-		IL_0f94: brfalse IL_0faa
+		IL_0f9f: stloc.s 33
+		IL_0fa1: volatile.
+		IL_0fa3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
+		IL_0fa8: brfalse IL_0fbe
 
-		IL_0f99: ldloc.s 33
-		IL_0f9b: ldstr "run"
-		IL_0fa0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0fa5: br IL_0fc0
+		IL_0fad: ldloc.s 33
+		IL_0faf: ldstr "run"
+		IL_0fb4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0fb9: br IL_0fd4
 
-		IL_0faa: ldloc.s 33
-		IL_0fac: ldstr "run"
-		IL_0fb1: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:280"
-		IL_0fb6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
-		IL_0fbb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0fbe: ldloc.s 33
+		IL_0fc0: ldstr "run"
+		IL_0fc5: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:280"
+		IL_0fca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
+		IL_0fcf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0fc0: stloc.s 33
-		IL_0fc2: ldloc.s 33
-		IL_0fc4: ldstr "prototype"
-		IL_0fc9: ldloc.s 18
-		IL_0fcb: ldc.i4.0
-		IL_0fcc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0fd1: pop
-		IL_0fd2: ldc.i4.1
-		IL_0fd3: newarr [System.Runtime]System.Object
-		IL_0fd8: dup
-		IL_0fd9: ldc.i4.0
-		IL_0fda: ldc.r8 50
-		IL_0fe3: box [System.Runtime]System.Double
-		IL_0fe8: stelem.ref
-		IL_0fe9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0fd4: stloc.s 33
+		IL_0fd6: ldloc.s 33
+		IL_0fd8: ldstr "prototype"
+		IL_0fdd: ldloc.s 18
+		IL_0fdf: ldc.i4.0
+		IL_0fe0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0fe5: pop
+		IL_0fe6: ldc.i4.1
+		IL_0fe7: newarr [System.Runtime]System.Object
+		IL_0fec: dup
+		IL_0fed: ldc.i4.0
 		IL_0fee: ldc.r8 50
 		IL_0ff7: box [System.Runtime]System.Double
-		IL_0ffc: newobj instance void Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::.ctor(object)
-		IL_1001: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_1006: stloc.s 19
-		IL_1008: ldloc.s 19
-		IL_100a: ldtoken Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
-		IL_100f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_1014: ldstr "prototype"
-		IL_1019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_101e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_1023: ldc.i4.1
-		IL_1024: newarr [System.Runtime]System.Object
-		IL_1029: dup
-		IL_102a: ldc.i4.0
-		IL_102b: ldloc.0
-		IL_102c: stelem.ref
-		IL_102d: stloc.s 28
-		IL_102f: ldloc.s 28
-		IL_1031: ldc.i4.1
-		IL_1032: newarr [System.Runtime]System.Object
-		IL_1037: dup
-		IL_1038: ldc.i4.0
-		IL_1039: ldc.r8 60
-		IL_1042: box [System.Runtime]System.Double
-		IL_1047: stelem.ref
-		IL_1048: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_104d: ldloc.s 17
-		IL_104f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_1054: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_1059: ldc.r8 60
-		IL_1062: box [System.Runtime]System.Double
-		IL_1067: newobj instance void Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass::.ctor(object[], object)
-		IL_106c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_1071: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_1076: dup
-		IL_1077: ldloc.s 17
-		IL_1079: ldstr "prototype"
-		IL_107e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_1083: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_1088: stloc.s 20
-		IL_108a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_108f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_1094: stloc.s 20
-		IL_1096: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_109b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_10a0: stloc.s 30
-		IL_10a2: ldloc.s 19
-		IL_10a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass>(!!0)
-		IL_10a9: stloc.s 46
-		IL_10ab: ldloc.s 46
-		IL_10ad: ldc.r8 6
-		IL_10b6: box [System.Runtime]System.Double
-		IL_10bb: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::callRun(object)
-		IL_10c0: stloc.s 33
-		IL_10c2: ldloc.s 33
-		IL_10c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_10c9: stloc.s 33
-		IL_10cb: ldloc.s 33
-		IL_10cd: ldloc.s 18
-		IL_10cf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_10d4: stloc.s 36
-		IL_10d6: ldloc.s 36
-		IL_10d8: box [System.Runtime]System.Boolean
-		IL_10dd: stloc.s 37
-		IL_10df: ldloc.s 20
-		IL_10e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_10e6: stloc.s 33
-		IL_10e8: ldloc.s 33
-		IL_10ea: isinst Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass
-		IL_10ef: dup
-		IL_10f0: brfalse IL_110f
+		IL_0ffc: stelem.ref
+		IL_0ffd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_1002: ldc.r8 50
+		IL_100b: box [System.Runtime]System.Double
+		IL_1010: newobj instance void Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::.ctor(object)
+		IL_1015: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_101a: stloc.s 19
+		IL_101c: ldloc.s 19
+		IL_101e: ldtoken Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass
+		IL_1023: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_1028: ldstr "prototype"
+		IL_102d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_1032: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_1037: ldc.i4.1
+		IL_1038: newarr [System.Runtime]System.Object
+		IL_103d: dup
+		IL_103e: ldc.i4.0
+		IL_103f: ldloc.0
+		IL_1040: stelem.ref
+		IL_1041: stloc.s 28
+		IL_1043: ldloc.s 28
+		IL_1045: ldc.i4.1
+		IL_1046: newarr [System.Runtime]System.Object
+		IL_104b: dup
+		IL_104c: ldc.i4.0
+		IL_104d: ldc.r8 60
+		IL_1056: box [System.Runtime]System.Double
+		IL_105b: stelem.ref
+		IL_105c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_1061: ldloc.s 17
+		IL_1063: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_1068: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+		IL_106d: ldc.r8 60
+		IL_1076: box [System.Runtime]System.Double
+		IL_107b: newobj instance void Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass::.ctor(object[], object)
+		IL_1080: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_1085: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_108a: dup
+		IL_108b: ldloc.s 17
+		IL_108d: ldstr "prototype"
+		IL_1092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_1097: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_109c: stloc.s 20
+		IL_109e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_10a3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+		IL_10a8: stloc.s 20
+		IL_10aa: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_10af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_10b4: stloc.s 30
+		IL_10b6: ldloc.s 19
+		IL_10b8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass>(!!0)
+		IL_10bd: stloc.s 46
+		IL_10bf: ldloc.s 46
+		IL_10c1: ldc.r8 6
+		IL_10ca: box [System.Runtime]System.Double
+		IL_10cf: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/GeneratorClass::callRun(object)
+		IL_10d4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_10d9: stloc.s 33
+		IL_10db: ldloc.s 33
+		IL_10dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_10e2: stloc.s 33
+		IL_10e4: ldloc.s 33
+		IL_10e6: ldloc.s 18
+		IL_10e8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_10ed: stloc.s 36
+		IL_10ef: ldloc.s 36
+		IL_10f1: box [System.Runtime]System.Boolean
+		IL_10f6: stloc.s 37
+		IL_10f8: ldloc.s 20
+		IL_10fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_10ff: stloc.s 33
+		IL_1101: ldloc.s 33
+		IL_1103: isinst Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass
+		IL_1108: dup
+		IL_1109: brfalse IL_112d
 
-		IL_10f5: ldc.r8 7
-		IL_10fe: box [System.Runtime]System.Double
-		IL_1103: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass::callSuper(object)
-		IL_1108: stloc.s 33
-		IL_110a: br IL_112c
+		IL_110e: ldc.r8 7
+		IL_1117: box [System.Runtime]System.Double
+		IL_111c: callvirt instance object Modules.Generator_GeneratedFunctionObject_Semantics/DerivedGeneratorClass::callSuper(object)
+		IL_1121: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_1126: stloc.s 33
+		IL_1128: br IL_114f
 
-		IL_110f: pop
-		IL_1110: ldloc.s 33
-		IL_1112: ldstr "callSuper"
-		IL_1117: ldc.r8 7
-		IL_1120: box [System.Runtime]System.Double
-		IL_1125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_112a: stloc.s 33
+		IL_112d: pop
+		IL_112e: ldloc.s 33
+		IL_1130: ldstr "callSuper"
+		IL_1135: ldc.r8 7
+		IL_113e: box [System.Runtime]System.Double
+		IL_1143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_1148: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_114d: stloc.s 33
 
-		IL_112c: ldloc.s 33
-		IL_112e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_1133: stloc.s 33
-		IL_1135: ldloc.s 33
-		IL_1137: ldloc.s 18
-		IL_1139: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_113e: stloc.s 36
-		IL_1140: ldloc.s 36
-		IL_1142: box [System.Runtime]System.Boolean
-		IL_1147: stloc.s 38
-		IL_1149: ldloc.s 30
-		IL_114b: ldstr "internalMethods"
-		IL_1150: ldloc.s 37
-		IL_1152: ldloc.s 38
-		IL_1154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_1159: pop
-		IL_115a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_115f: stloc.s 21
-		IL_1161: ldloc.0
-		IL_1162: ldfld object Modules.Generator_GeneratedFunctionObject_Semantics/Scope::expression
-		IL_1167: ldstr "Cannot access 'expression' before initialization"
-		IL_116c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_1171: stloc.s 33
-		IL_1173: ldloc.s 33
-		IL_1175: ldstr "prototype"
-		IL_117a: ldloc.s 21
-		IL_117c: ldc.i4.0
-		IL_117d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_1182: pop
-		IL_1183: nop
-		IL_1184: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_1189: stloc.s 30
-		IL_118b: ldloc.0
-		IL_118c: castclass Modules.Generator_GeneratedFunctionObject_Semantics/Scope
-		IL_1191: ldnull
-		IL_1192: call object Modules.Generator_GeneratedFunctionObject_Semantics/tailCallGenerator::__js_call__(class Modules.Generator_GeneratedFunctionObject_Semantics/Scope, object)
-		IL_1197: stloc.s 33
-		IL_1199: ldloc.s 33
-		IL_119b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_11a0: stloc.s 33
-		IL_11a2: ldloc.s 33
-		IL_11a4: ldloc.s 21
-		IL_11a6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_11ab: stloc.s 36
-		IL_11ad: ldloc.s 36
-		IL_11af: box [System.Runtime]System.Boolean
-		IL_11b4: stloc.s 38
-		IL_11b6: ldloc.s 30
-		IL_11b8: ldstr "tail"
-		IL_11bd: ldloc.s 38
-		IL_11bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_11c4: pop
-		IL_11c5: nop
-		IL_11c6: ldc.i4.0
-		IL_11c7: stloc.s 22
-		IL_11c9: ldc.i4.0
-		IL_11ca: box [System.Runtime]System.Boolean
-		IL_11cf: stloc.s 23
+		IL_114f: ldloc.s 33
+		IL_1151: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_1156: stloc.s 33
+		IL_1158: ldloc.s 33
+		IL_115a: ldloc.s 18
+		IL_115c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_1161: stloc.s 36
+		IL_1163: ldloc.s 36
+		IL_1165: box [System.Runtime]System.Boolean
+		IL_116a: stloc.s 38
+		IL_116c: ldloc.s 30
+		IL_116e: ldstr "internalMethods"
+		IL_1173: ldloc.s 37
+		IL_1175: ldloc.s 38
+		IL_1177: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_117c: pop
+		IL_117d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_1182: stloc.s 21
+		IL_1184: ldloc.0
+		IL_1185: ldfld object Modules.Generator_GeneratedFunctionObject_Semantics/Scope::expression
+		IL_118a: ldstr "Cannot access 'expression' before initialization"
+		IL_118f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_1194: stloc.s 33
+		IL_1196: ldloc.s 33
+		IL_1198: ldstr "prototype"
+		IL_119d: ldloc.s 21
+		IL_119f: ldc.i4.0
+		IL_11a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_11a5: pop
+		IL_11a6: nop
+		IL_11a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_11ac: stloc.s 30
+		IL_11ae: ldloc.0
+		IL_11af: castclass Modules.Generator_GeneratedFunctionObject_Semantics/Scope
+		IL_11b4: ldnull
+		IL_11b5: call object Modules.Generator_GeneratedFunctionObject_Semantics/tailCallGenerator::__js_call__(class Modules.Generator_GeneratedFunctionObject_Semantics/Scope, object)
+		IL_11ba: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_11bf: stloc.s 33
+		IL_11c1: ldloc.s 33
+		IL_11c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_11c8: stloc.s 33
+		IL_11ca: ldloc.s 33
+		IL_11cc: ldloc.s 21
+		IL_11ce: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_11d3: stloc.s 36
+		IL_11d5: ldloc.s 36
+		IL_11d7: box [System.Runtime]System.Boolean
+		IL_11dc: stloc.s 38
+		IL_11de: ldloc.s 30
+		IL_11e0: ldstr "tail"
+		IL_11e5: ldloc.s 38
+		IL_11e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_11ec: pop
+		IL_11ed: nop
+		IL_11ee: ldc.i4.0
+		IL_11ef: stloc.s 22
+		IL_11f1: ldc.i4.0
+		IL_11f2: box [System.Runtime]System.Boolean
+		IL_11f7: stloc.s 23
 		.try
 		{
-			IL_11d1: nop
-			IL_11d2: ldloc.s 5
-			IL_11d4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_11d9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_11de: stloc.s 33
-			IL_11e0: ldloc.s 33
-			IL_11e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_11e7: volatile.
-			IL_11e9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
-			IL_11ee: brfalse IL_1202
+			IL_11f9: nop
+			IL_11fa: ldloc.s 5
+			IL_11fc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_1201: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_1206: stloc.s 33
+			IL_1208: ldloc.s 33
+			IL_120a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_120f: volatile.
+			IL_1211: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
+			IL_1216: brfalse IL_122a
 
-			IL_11f3: ldstr "next"
-			IL_11f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_11fd: br IL_1216
+			IL_121b: ldstr "next"
+			IL_1220: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_1225: br IL_123e
 
-			IL_1202: ldstr "next"
-			IL_1207: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:344"
-			IL_120c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
-			IL_1211: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_122a: ldstr "next"
+			IL_122f: ldstr "Generator_GeneratedFunctionObject_Semantics:Modules.Generator_GeneratedFunctionObject_Semantics:__js_module_init__:344"
+			IL_1234: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
+			IL_1239: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_1216: pop
-			IL_1217: leave IL_127b
+			IL_123e: pop
+			IL_123f: leave IL_12a3
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_121c: stloc.s 24
-			IL_121e: ldloc.s 24
-			IL_1220: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_1225: dup
-			IL_1226: brtrue IL_123c
+			IL_1244: stloc.s 24
+			IL_1246: ldloc.s 24
+			IL_1248: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_124d: dup
+			IL_124e: brtrue IL_1264
 
-			IL_122b: pop
-			IL_122c: ldloc.s 24
-			IL_122e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_1233: dup
-			IL_1234: brtrue IL_1248
+			IL_1253: pop
+			IL_1254: ldloc.s 24
+			IL_1256: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_125b: dup
+			IL_125c: brtrue IL_1270
 
-			IL_1239: pop
-			IL_123a: rethrow
+			IL_1261: pop
+			IL_1262: rethrow
 
-			IL_123c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_1241: stloc.s 25
-			IL_1243: br IL_124a
+			IL_1264: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_1269: stloc.s 25
+			IL_126b: br IL_1272
 
-			IL_1248: stloc.s 25
+			IL_1270: stloc.s 25
 
-			IL_124a: ldloc.s 25
-			IL_124c: stloc.s 26
-			IL_124e: ldloc.s 26
-			IL_1250: stloc.s 33
-			IL_1252: ldstr "ReferenceError"
-			IL_1257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_125c: stloc.s 35
-			IL_125e: ldloc.s 33
-			IL_1260: ldloc.s 35
-			IL_1262: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_1267: stloc.s 36
-			IL_1269: ldloc.s 36
-			IL_126b: box [System.Runtime]System.Boolean
-			IL_1270: stloc.s 38
-			IL_1272: ldloc.s 38
-			IL_1274: stloc.s 23
-			IL_1276: leave IL_127b
+			IL_1272: ldloc.s 25
+			IL_1274: stloc.s 26
+			IL_1276: ldloc.s 26
+			IL_1278: stloc.s 33
+			IL_127a: ldstr "ReferenceError"
+			IL_127f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_1284: stloc.s 35
+			IL_1286: ldloc.s 33
+			IL_1288: ldloc.s 35
+			IL_128a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_128f: stloc.s 36
+			IL_1291: ldloc.s 36
+			IL_1293: box [System.Runtime]System.Boolean
+			IL_1298: stloc.s 38
+			IL_129a: ldloc.s 38
+			IL_129c: stloc.s 23
+			IL_129e: leave IL_12a3
 		} // end handler
 
-		IL_127b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_1280: stloc.s 30
-		IL_1282: ldloc.s 22
-		IL_1284: box [System.Runtime]System.Boolean
-		IL_1289: stloc.s 38
-		IL_128b: ldloc.s 30
-		IL_128d: ldstr "parameterSetup"
-		IL_1292: ldloc.s 38
-		IL_1294: ldloc.s 23
-		IL_1296: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_129b: pop
-		IL_129c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_12a1: stloc.s 30
-		IL_12a3: ldnull
-		IL_12a4: call object Modules.Generator_GeneratedFunctionObject_Semantics/makeGenerator::__js_call__(object)
-		IL_12a9: stloc.s 35
-		IL_12ab: ldnull
-		IL_12ac: call object Modules.Generator_GeneratedFunctionObject_Semantics/makeGenerator::__js_call__(object)
-		IL_12b1: stloc.s 33
-		IL_12b3: ldloc.s 35
-		IL_12b5: ldloc.s 33
-		IL_12b7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_12bc: stloc.s 36
-		IL_12be: ldloc.s 36
-		IL_12c0: box [System.Runtime]System.Boolean
-		IL_12c5: stloc.s 38
-		IL_12c7: ldloc.s 30
-		IL_12c9: ldstr "identity"
-		IL_12ce: ldloc.s 38
-		IL_12d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_12d5: pop
-		IL_12d6: ldnull
-		IL_12d7: stloc.s 27
-		IL_12d9: ret
+		IL_12a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_12a8: stloc.s 30
+		IL_12aa: ldloc.s 22
+		IL_12ac: box [System.Runtime]System.Boolean
+		IL_12b1: stloc.s 38
+		IL_12b3: ldloc.s 30
+		IL_12b5: ldstr "parameterSetup"
+		IL_12ba: ldloc.s 38
+		IL_12bc: ldloc.s 23
+		IL_12be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_12c3: pop
+		IL_12c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_12c9: stloc.s 30
+		IL_12cb: ldnull
+		IL_12cc: call object Modules.Generator_GeneratedFunctionObject_Semantics/makeGenerator::__js_call__(object)
+		IL_12d1: stloc.s 35
+		IL_12d3: ldnull
+		IL_12d4: call object Modules.Generator_GeneratedFunctionObject_Semantics/makeGenerator::__js_call__(object)
+		IL_12d9: stloc.s 33
+		IL_12db: ldloc.s 35
+		IL_12dd: ldloc.s 33
+		IL_12df: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_12e4: stloc.s 36
+		IL_12e6: ldloc.s 36
+		IL_12e8: box [System.Runtime]System.Boolean
+		IL_12ed: stloc.s 38
+		IL_12ef: ldloc.s 30
+		IL_12f1: ldstr "identity"
+		IL_12f6: ldloc.s 38
+		IL_12f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_12fd: pop
+		IL_12fe: ldnull
+		IL_12ff: stloc.s 27
+		IL_1301: ret
 	} // end of method Generator_GeneratedFunctionObject_Semantics::__js_module_init__
 
 } // end of class Modules.Generator_GeneratedFunctionObject_Semantics
@@ -5692,6 +5742,8 @@
 	.field assembly static int32 __jroc_dynamicLookup_73
 	.field assembly static int32 __jroc_dynamicLookup_74
 	.field assembly static int32 __jroc_dynamicLookup_75
+	.field assembly static int32 __jroc_dynamicLookup_76
+	.field assembly static int32 __jroc_dynamicLookup_77
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

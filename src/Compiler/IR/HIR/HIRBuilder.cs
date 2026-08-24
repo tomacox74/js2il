@@ -2002,6 +2002,16 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
+                    if (CallableSemantics.FromNode(
+                            methodDefinition,
+                            CallableKind.ClassMethod,
+                            hasRestrictedFunctionProperties: true,
+                            isMethodDefinition: true)
+                        .MayReturnTailCall)
+                    {
+                        return false;
+                    }
+
                     directMethodNames.Add(methodIdentifier.Name);
                     break;
                 case PropertyDefinition propertyDefinition:

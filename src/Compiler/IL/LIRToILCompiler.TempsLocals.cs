@@ -1022,6 +1022,10 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(
                             GetGeneratedArrayCallAdapterHandle(callableId));
+                        if (signature?.MayReturnTailCall == true)
+                        {
+                            EmitResolveTailCalls(ilEncoder);
+                        }
                         EmitAdaptObjectCallResult(
                             callFunc.Result,
                             ilEncoder);
@@ -1083,6 +1087,10 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(methodHandle);
+                    if (signature?.MayReturnTailCall == true)
+                    {
+                        EmitResolveTailCalls(ilEncoder);
+                    }
                     // Result stays on stack
                     break;
                 }
@@ -1547,6 +1555,21 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(callUserClass.MethodHandle);
+                    if (_serviceProvider.GetService<ClassRegistry>()
+                            is { } returnClassRegistry
+                        && returnClassRegistry.TryGetMethod(
+                            callUserClass.RegistryClassName,
+                            callUserClass.MethodName,
+                            out _,
+                            out _,
+                            out var returnClrType,
+                            out _,
+                            out _,
+                            out _)
+                        && returnClrType == typeof(object))
+                    {
+                        EmitResolveTailCalls(ilEncoder);
+                    }
                     break;
                 }
 
@@ -1697,6 +1720,21 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callBaseMethod.MethodHandle);
+                    if (_serviceProvider.GetService<ClassRegistry>()
+                            is { } returnClassRegistry
+                        && returnClassRegistry.TryGetMethod(
+                            callBaseMethod.BaseRegistryClassName,
+                            callBaseMethod.MethodName,
+                            out _,
+                            out _,
+                            out var returnClrType,
+                            out _,
+                            out _,
+                            out _)
+                        && returnClrType == typeof(object))
+                    {
+                        EmitResolveTailCalls(ilEncoder);
+                    }
                     break;
                 }
 
@@ -1763,6 +1801,10 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(methodHandle);
+                    if (signature?.MayReturnTailCall == true)
+                    {
+                        EmitResolveTailCalls(ilEncoder);
+                    }
                     // Result stays on stack
                     break;
                 }

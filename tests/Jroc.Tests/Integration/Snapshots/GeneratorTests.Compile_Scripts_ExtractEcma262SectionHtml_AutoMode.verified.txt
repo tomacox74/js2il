@@ -1112,14 +1112,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 490 (0x1ea)
+			// Code size: 506 (0x1fa)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] bool,
 				[2] object,
 				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[5] object[]
 			)
 
 			IL_0000: ldarg.1
@@ -1281,20 +1282,30 @@
 			IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 			IL_01bc: stloc.0
 			IL_01bd: ldloc.0
-			IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01c3: stloc.0
-			IL_01c4: ldstr "\\r\\n"
-			IL_01c9: ldstr "g"
-			IL_01ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_01d3: stloc.s 4
-			IL_01d5: ldloc.0
-			IL_01d6: ldstr "replace"
-			IL_01db: ldloc.s 4
-			IL_01dd: ldstr "\n"
-			IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_01e7: stloc.0
-			IL_01e8: ldloc.0
-			IL_01e9: ret
+			IL_01be: ldstr "replace"
+			IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_01c8: stloc.0
+			IL_01c9: ldstr "\\r\\n"
+			IL_01ce: ldstr "g"
+			IL_01d3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_01d8: stloc.s 4
+			IL_01da: ldc.i4.2
+			IL_01db: newarr [System.Runtime]System.Object
+			IL_01e0: dup
+			IL_01e1: ldc.i4.0
+			IL_01e2: ldloc.s 4
+			IL_01e4: stelem.ref
+			IL_01e5: dup
+			IL_01e6: ldc.i4.1
+			IL_01e7: ldstr "\n"
+			IL_01ec: stelem.ref
+			IL_01ed: stloc.s 5
+			IL_01ef: ldloc.0
+			IL_01f0: ldloc.s 5
+			IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_01f7: stloc.0
+			IL_01f8: ldloc.0
+			IL_01f9: ret
 		} // end of method normalize::__js_call__
 
 	} // end of class normalize
@@ -3859,28 +3870,39 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 43 (0x2b)
+			// Code size: 57 (0x39)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[2] object[]
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0006: stloc.0
-			IL_0007: ldstr "[.*+?^${}()|[\\]\\\\]"
-			IL_000c: ldstr "g"
-			IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_0016: stloc.1
-			IL_0017: ldloc.0
-			IL_0018: ldstr "replace"
-			IL_001d: ldloc.1
-			IL_001e: ldstr "\\$&"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0028: stloc.0
-			IL_0029: ldloc.0
-			IL_002a: ret
+			IL_0001: ldstr "replace"
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldstr "[.*+?^${}()|[\\]\\\\]"
+			IL_0011: ldstr "g"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_001b: stloc.1
+			IL_001c: ldc.i4.2
+			IL_001d: newarr [System.Runtime]System.Object
+			IL_0022: dup
+			IL_0023: ldc.i4.0
+			IL_0024: ldloc.1
+			IL_0025: stelem.ref
+			IL_0026: dup
+			IL_0027: ldc.i4.1
+			IL_0028: ldstr "\\$&"
+			IL_002d: stelem.ref
+			IL_002e: stloc.2
+			IL_002f: ldloc.0
+			IL_0030: ldloc.2
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0036: stloc.0
+			IL_0037: ldloc.0
+			IL_0038: ret
 		} // end of method escapeRegExp::__js_call__
 
 	} // end of class escapeRegExp
@@ -4098,7 +4120,7 @@
 				74 61 54 6f 6b 65 6e 23 00 00 02
 			)
 			// Header size: 12
-			// Code size: 579 (0x243)
+			// Code size: 536 (0x218)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -4113,7 +4135,8 @@
 				[9] object,
 				[10] object,
 				[11] object,
-				[12] object
+				[12] object,
+				[13] object[]
 			)
 
 			IL_0000: ldarg.3
@@ -4308,45 +4331,30 @@
 			// end loop
 
 			IL_01db: ldarg.2
-			IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01e1: stloc.s 4
-			IL_01e3: ldarg.3
-			IL_01e4: ldc.r8 1
-			IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_01f2: stloc.s 8
-			IL_01f4: ldc.i4.0
-			IL_01f5: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_01fa: brfalse IL_022f
-
-			IL_01ff: ldloc.s 4
-			IL_0201: isinst [System.Runtime]System.String
-			IL_0206: dup
-			IL_0207: brtrue IL_021f
-
-			IL_020c: pop
-			IL_020d: ldloc.s 4
-			IL_020f: ldstr "substring"
-			IL_0214: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_0219: dup
-			IL_021a: brfalse IL_022e
-
-			IL_021f: ldloc.s 8
-			IL_0221: ldloc.0
-			IL_0222: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object, object)
-			IL_0227: stloc.s 4
-			IL_0229: br IL_0240
-
-			IL_022e: pop
-
-			IL_022f: ldloc.s 4
-			IL_0231: ldstr "substring"
-			IL_0236: ldloc.s 8
-			IL_0238: ldloc.0
-			IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_023e: stloc.s 4
-
-			IL_0240: ldloc.s 4
-			IL_0242: ret
+			IL_01dc: ldstr "substring"
+			IL_01e1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_01e6: stloc.s 4
+			IL_01e8: ldarg.3
+			IL_01e9: ldc.r8 1
+			IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_01f7: stloc.s 8
+			IL_01f9: ldc.i4.2
+			IL_01fa: newarr [System.Runtime]System.Object
+			IL_01ff: dup
+			IL_0200: ldc.i4.0
+			IL_0201: ldloc.s 8
+			IL_0203: stelem.ref
+			IL_0204: dup
+			IL_0205: ldc.i4.1
+			IL_0206: ldloc.0
+			IL_0207: stelem.ref
+			IL_0208: stloc.s 13
+			IL_020a: ldloc.s 4
+			IL_020c: ldloc.s 13
+			IL_020e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0213: stloc.s 4
+			IL_0215: ldloc.s 4
+			IL_0217: ret
 		} // end of method findTagNameAt::__js_call__
 
 	} // end of class findTagNameAt

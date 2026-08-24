@@ -1760,12 +1760,13 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 69 (0x45)
+			// Code size: 84 (0x54)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[3] object[]
 			)
 
 			IL_0000: ldarg.0
@@ -1789,10 +1790,17 @@
 			IL_003a: stloc.0
 			IL_003b: ldloc.2
 			IL_003c: ldloc.0
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember0(object, object)
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
 			IL_0042: stloc.0
-			IL_0043: ldloc.0
-			IL_0044: ret
+			IL_0043: ldc.i4.0
+			IL_0044: newarr [System.Runtime]System.Object
+			IL_0049: stloc.3
+			IL_004a: ldloc.0
+			IL_004b: ldloc.3
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0051: stloc.0
+			IL_0052: ldloc.0
+			IL_0053: ret
 		} // end of method FunctionExpression_spread::__js_call__
 
 	} // end of class FunctionExpression_spread

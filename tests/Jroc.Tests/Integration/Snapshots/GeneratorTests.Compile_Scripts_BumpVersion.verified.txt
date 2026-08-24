@@ -540,14 +540,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 215 (0xd7)
+			// Code size: 172 (0xac)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.Error,
 				[2] object,
 				[3] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[4] bool
+				[4] bool,
+				[5] object[]
 			)
 
 			IL_0000: ldarg.1
@@ -603,37 +604,18 @@
 			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
 			IL_008c: stloc.2
 			IL_008d: ldloc.2
-			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0093: stloc.2
-			IL_0094: ldc.i4.0
-			IL_0095: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_009a: brfalse IL_00c9
-
-			IL_009f: ldloc.2
-			IL_00a0: isinst [System.Runtime]System.String
-			IL_00a5: dup
-			IL_00a6: brtrue IL_00bd
-
-			IL_00ab: pop
-			IL_00ac: ldloc.2
-			IL_00ad: ldstr "trim"
-			IL_00b2: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_00b7: dup
-			IL_00b8: brfalse IL_00c8
-
-			IL_00bd: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-			IL_00c2: stloc.2
-			IL_00c3: br IL_00d5
-
-			IL_00c8: pop
-
-			IL_00c9: ldloc.2
-			IL_00ca: ldstr "trim"
-			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00d4: stloc.2
-
-			IL_00d5: ldloc.2
-			IL_00d6: ret
+			IL_008e: ldstr "trim"
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0098: stloc.2
+			IL_0099: ldc.i4.0
+			IL_009a: newarr [System.Runtime]System.Object
+			IL_009f: stloc.s 5
+			IL_00a1: ldloc.2
+			IL_00a2: ldloc.s 5
+			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_00a9: stloc.2
+			IL_00aa: ldloc.2
+			IL_00ab: ret
 		} // end of method parseCurrentVersion::__js_call__
 
 	} // end of class parseCurrentVersion
@@ -741,20 +723,35 @@
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 28 (0x1c)
+				// Code size: 50 (0x32)
 				.maxstack 8
 				.locals init (
-					[0] float64
+					[0] object,
+					[1] object[]
 				)
 
-				IL_0000: ldarg.1
-				IL_0001: ldc.r8 10
-				IL_000a: box [System.Runtime]System.Double
-				IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseInt(object, object)
-				IL_0014: stloc.0
-				IL_0015: ldloc.0
-				IL_0016: box [System.Runtime]System.Double
-				IL_001b: ret
+				IL_0000: ldstr "parseInt"
+				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_000a: stloc.0
+				IL_000b: ldc.i4.2
+				IL_000c: newarr [System.Runtime]System.Object
+				IL_0011: dup
+				IL_0012: ldc.i4.0
+				IL_0013: ldarg.1
+				IL_0014: stelem.ref
+				IL_0015: dup
+				IL_0016: ldc.i4.1
+				IL_0017: ldc.r8 10
+				IL_0020: box [System.Runtime]System.Double
+				IL_0025: stelem.ref
+				IL_0026: stloc.1
+				IL_0027: ldloc.0
+				IL_0028: ldnull
+				IL_0029: ldloc.1
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+				IL_002f: stloc.0
+				IL_0030: ldloc.0
+				IL_0031: ret
 			} // end of method ArrowFunction_L51C46::__js_call__
 
 		} // end of class ArrowFunction_L51C46
@@ -1574,7 +1571,7 @@
 				74 61 54 6f 6b 65 6e 15 00 00 02
 			)
 			// Header size: 12
-			// Code size: 186 (0xba)
+			// Code size: 202 (0xca)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Error,
@@ -1620,55 +1617,63 @@
 			IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0050: stloc.2
 			IL_0051: ldloc.2
-			IL_0052: brfalse IL_006e
+			IL_0052: brfalse IL_007e
 
-			IL_0057: ldc.i4.1
-			IL_0058: newarr [System.Runtime]System.Object
-			IL_005d: dup
-			IL_005e: ldc.i4.0
-			IL_005f: ldarg.0
-			IL_0060: stelem.ref
-			IL_0061: stloc.s 5
-			IL_0063: ldnull
-			IL_0064: ldarg.3
-			IL_0065: ldarg.2
-			IL_0066: tail.
-			IL_0068: call object Modules.Compile_Scripts_BumpVersion/incVersion::__js_call__(object, object, object)
-			IL_006d: ret
+			IL_0057: ldarg.0
+			IL_0058: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::incVersion
+			IL_005d: stloc.s 4
+			IL_005f: ldc.i4.2
+			IL_0060: newarr [System.Runtime]System.Object
+			IL_0065: dup
+			IL_0066: ldc.i4.0
+			IL_0067: ldarg.3
+			IL_0068: stelem.ref
+			IL_0069: dup
+			IL_006a: ldc.i4.1
+			IL_006b: ldarg.2
+			IL_006c: stelem.ref
+			IL_006d: stloc.s 5
+			IL_006f: ldloc.s 4
+			IL_0071: ldnull
+			IL_0072: ldloc.s 5
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_0079: stloc.s 4
+			IL_007b: ldloc.s 4
+			IL_007d: ret
 
-			IL_006e: ldstr "^\\d+\\.\\d+\\.\\d+$"
-			IL_0073: ldstr ""
-			IL_0078: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_007d: stloc.3
-			IL_007e: ldloc.3
-			IL_007f: ldarg.2
-			IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_0085: stloc.s 4
-			IL_0087: ldloc.s 4
-			IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_008e: ldc.i4.0
-			IL_008f: ceq
-			IL_0091: stloc.2
-			IL_0092: ldloc.2
-			IL_0093: brfalse IL_00b8
+			IL_007e: ldstr "^\\d+\\.\\d+\\.\\d+$"
+			IL_0083: ldstr ""
+			IL_0088: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_008d: stloc.3
+			IL_008e: ldloc.3
+			IL_008f: ldarg.2
+			IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_0095: stloc.s 4
+			IL_0097: ldloc.s 4
+			IL_0099: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_009e: ldc.i4.0
+			IL_009f: ceq
+			IL_00a1: stloc.2
+			IL_00a2: ldloc.2
+			IL_00a3: brfalse IL_00c8
 
-			IL_0098: ldstr "Explicit version must be major.minor.patch"
-			IL_009d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_00a2: stloc.1
-			IL_00a3: ldloc.1
-			IL_00a4: isinst [System.Runtime]System.Exception
-			IL_00a9: dup
-			IL_00aa: brtrue IL_00b7
+			IL_00a8: ldstr "Explicit version must be major.minor.patch"
+			IL_00ad: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_00b2: stloc.1
+			IL_00b3: ldloc.1
+			IL_00b4: isinst [System.Runtime]System.Exception
+			IL_00b9: dup
+			IL_00ba: brtrue IL_00c7
 
-			IL_00af: pop
-			IL_00b0: ldloc.1
-			IL_00b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_00b6: throw
+			IL_00bf: pop
+			IL_00c0: ldloc.1
+			IL_00c1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_00c6: throw
 
-			IL_00b7: throw
+			IL_00c7: throw
 
-			IL_00b8: ldarg.2
-			IL_00b9: ret
+			IL_00c8: ldarg.2
+			IL_00c9: ret
 		} // end of method resolveTargetVersion::__js_call__
 
 	} // end of class resolveTargetVersion
@@ -1831,13 +1836,14 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 236 (0xec)
+			// Code size: 268 (0x10c)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] bool,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[3] string
+				[3] string,
+				[4] object[]
 			)
 
 			IL_0000: ldarg.1
@@ -1877,57 +1883,77 @@
 			IL_0058: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_005d: stloc.1
 			IL_005e: ldloc.1
-			IL_005f: brfalse IL_00a8
+			IL_005f: brfalse IL_00b8
 
 			IL_0064: ldarg.1
-			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_006a: stloc.0
-			IL_006b: ldstr "<Version>[^<]+<\\/Version>"
-			IL_0070: ldstr ""
-			IL_0075: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_007a: stloc.2
-			IL_007b: ldarg.2
-			IL_007c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0081: stloc.3
-			IL_0082: ldstr "<Version>"
-			IL_0087: ldloc.3
-			IL_0088: call string [System.Runtime]System.String::Concat(string, string)
-			IL_008d: ldstr "</Version>"
-			IL_0092: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0097: stloc.3
-			IL_0098: ldloc.0
-			IL_0099: ldstr "replace"
-			IL_009e: ldloc.2
-			IL_009f: ldloc.3
-			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_00a5: stloc.0
-			IL_00a6: ldloc.0
-			IL_00a7: ret
+			IL_0065: ldstr "replace"
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_006f: stloc.0
+			IL_0070: ldstr "<Version>[^<]+<\\/Version>"
+			IL_0075: ldstr ""
+			IL_007a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_007f: stloc.2
+			IL_0080: ldarg.2
+			IL_0081: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0086: stloc.3
+			IL_0087: ldstr "<Version>"
+			IL_008c: ldloc.3
+			IL_008d: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0092: ldstr "</Version>"
+			IL_0097: call string [System.Runtime]System.String::Concat(string, string)
+			IL_009c: stloc.3
+			IL_009d: ldc.i4.2
+			IL_009e: newarr [System.Runtime]System.Object
+			IL_00a3: dup
+			IL_00a4: ldc.i4.0
+			IL_00a5: ldloc.2
+			IL_00a6: stelem.ref
+			IL_00a7: dup
+			IL_00a8: ldc.i4.1
+			IL_00a9: ldloc.3
+			IL_00aa: stelem.ref
+			IL_00ab: stloc.s 4
+			IL_00ad: ldloc.0
+			IL_00ae: ldloc.s 4
+			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_00b5: stloc.0
+			IL_00b6: ldloc.0
+			IL_00b7: ret
 
-			IL_00a8: ldarg.1
-			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ae: stloc.0
-			IL_00af: ldstr "(<PropertyGroup>\\s*\\n)"
-			IL_00b4: ldstr ""
-			IL_00b9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_00be: stloc.2
-			IL_00bf: ldarg.2
-			IL_00c0: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_00c5: stloc.3
-			IL_00c6: ldstr "$1    <Version>"
-			IL_00cb: ldloc.3
-			IL_00cc: call string [System.Runtime]System.String::Concat(string, string)
-			IL_00d1: ldstr "</Version>\n"
-			IL_00d6: call string [System.Runtime]System.String::Concat(string, string)
-			IL_00db: stloc.3
-			IL_00dc: ldloc.0
-			IL_00dd: ldstr "replace"
-			IL_00e2: ldloc.2
-			IL_00e3: ldloc.3
-			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_00e9: stloc.0
-			IL_00ea: ldloc.0
-			IL_00eb: ret
+			IL_00b8: ldarg.1
+			IL_00b9: ldstr "replace"
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_00c3: stloc.0
+			IL_00c4: ldstr "(<PropertyGroup>\\s*\\n)"
+			IL_00c9: ldstr ""
+			IL_00ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_00d3: stloc.2
+			IL_00d4: ldarg.2
+			IL_00d5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_00da: stloc.3
+			IL_00db: ldstr "$1    <Version>"
+			IL_00e0: ldloc.3
+			IL_00e1: call string [System.Runtime]System.String::Concat(string, string)
+			IL_00e6: ldstr "</Version>\n"
+			IL_00eb: call string [System.Runtime]System.String::Concat(string, string)
+			IL_00f0: stloc.3
+			IL_00f1: ldc.i4.2
+			IL_00f2: newarr [System.Runtime]System.Object
+			IL_00f7: dup
+			IL_00f8: ldc.i4.0
+			IL_00f9: ldloc.2
+			IL_00fa: stelem.ref
+			IL_00fb: dup
+			IL_00fc: ldc.i4.1
+			IL_00fd: ldloc.3
+			IL_00fe: stelem.ref
+			IL_00ff: stloc.s 4
+			IL_0101: ldloc.0
+			IL_0102: ldloc.s 4
+			IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0109: stloc.0
+			IL_010a: ldloc.0
+			IL_010b: ret
 		} // end of method updateCsprojVersion::__js_call__
 
 	} // end of class updateCsprojVersion
@@ -2090,14 +2116,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 128 (0x80)
+			// Code size: 144 (0x90)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.Error,
 				[2] object,
 				[3] bool,
-				[4] string
+				[4] string,
+				[5] object[]
 			)
 
 			IL_0000: ldstr "<JrocPackageVersion\\b([^>]*)>[^<]+<\\/JrocPackageVersion>"
@@ -2132,25 +2159,35 @@
 			IL_0047: throw
 
 			IL_0048: ldarg.1
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_004e: stloc.2
-			IL_004f: ldarg.2
-			IL_0050: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0055: stloc.s 4
-			IL_0057: ldstr "<JrocPackageVersion$1>"
-			IL_005c: ldloc.s 4
-			IL_005e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0063: ldstr "</JrocPackageVersion>"
-			IL_0068: call string [System.Runtime]System.String::Concat(string, string)
-			IL_006d: stloc.s 4
-			IL_006f: ldloc.2
-			IL_0070: ldstr "replace"
-			IL_0075: ldloc.0
-			IL_0076: ldloc.s 4
-			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_007d: stloc.2
-			IL_007e: ldloc.2
-			IL_007f: ret
+			IL_0049: ldstr "replace"
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_0053: stloc.2
+			IL_0054: ldarg.2
+			IL_0055: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_005a: stloc.s 4
+			IL_005c: ldstr "<JrocPackageVersion$1>"
+			IL_0061: ldloc.s 4
+			IL_0063: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0068: ldstr "</JrocPackageVersion>"
+			IL_006d: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0072: stloc.s 4
+			IL_0074: ldc.i4.2
+			IL_0075: newarr [System.Runtime]System.Object
+			IL_007a: dup
+			IL_007b: ldc.i4.0
+			IL_007c: ldloc.0
+			IL_007d: stelem.ref
+			IL_007e: dup
+			IL_007f: ldc.i4.1
+			IL_0080: ldloc.s 4
+			IL_0082: stelem.ref
+			IL_0083: stloc.s 5
+			IL_0085: ldloc.2
+			IL_0086: ldloc.s 5
+			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_008d: stloc.2
+			IL_008e: ldloc.2
+			IL_008f: ret
 		} // end of method updateSamplesPropsVersion::__js_call__
 
 	} // end of class updateSamplesPropsVersion
@@ -2813,53 +2850,66 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 98 (0x62)
+			// Code size: 121 (0x79)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[1] object
+				[1] object,
+				[2] object,
+				[3] object[]
 			)
 
 			IL_0000: ldstr "^_Nothing yet\\._"
 			IL_0005: ldstr "i"
 			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
 			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0016: stloc.1
-			IL_0017: ldc.i4.0
-			IL_0018: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_001d: brfalse IL_004c
+			IL_0010: ldloc.0
+			IL_0011: ldstr "test"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_001b: stloc.1
+			IL_001c: ldarg.1
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0022: stloc.2
+			IL_0023: ldc.i4.0
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_0029: brfalse IL_0058
 
-			IL_0022: ldloc.1
-			IL_0023: isinst [System.Runtime]System.String
-			IL_0028: dup
-			IL_0029: brtrue IL_0040
+			IL_002e: ldloc.2
+			IL_002f: isinst [System.Runtime]System.String
+			IL_0034: dup
+			IL_0035: brtrue IL_004c
 
-			IL_002e: pop
-			IL_002f: ldloc.1
-			IL_0030: ldstr "trim"
-			IL_0035: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_003a: dup
-			IL_003b: brfalse IL_004b
+			IL_003a: pop
+			IL_003b: ldloc.2
+			IL_003c: ldstr "trim"
+			IL_0041: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+			IL_0046: dup
+			IL_0047: brfalse IL_0057
 
-			IL_0040: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-			IL_0045: stloc.1
-			IL_0046: br IL_0058
+			IL_004c: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+			IL_0051: stloc.2
+			IL_0052: br IL_0064
 
-			IL_004b: pop
+			IL_0057: pop
 
-			IL_004c: ldloc.1
-			IL_004d: ldstr "trim"
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0057: stloc.1
+			IL_0058: ldloc.2
+			IL_0059: ldstr "trim"
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0063: stloc.2
 
-			IL_0058: ldloc.0
-			IL_0059: ldloc.1
-			IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_005f: stloc.1
-			IL_0060: ldloc.1
-			IL_0061: ret
+			IL_0064: ldc.i4.1
+			IL_0065: newarr [System.Runtime]System.Object
+			IL_006a: dup
+			IL_006b: ldc.i4.0
+			IL_006c: ldloc.2
+			IL_006d: stelem.ref
+			IL_006e: stloc.3
+			IL_006f: ldloc.1
+			IL_0070: ldloc.3
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0076: stloc.1
+			IL_0077: ldloc.1
+			IL_0078: ret
 		} // end of method isPlaceholder::__js_call__
 
 	} // end of class isPlaceholder

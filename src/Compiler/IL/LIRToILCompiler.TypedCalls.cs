@@ -120,6 +120,10 @@ internal sealed partial class LIRToILCompiler
 
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(instruction.MethodHandle);
+        if (instruction.ReturnClrType == typeof(object))
+        {
+            EmitResolveTailCalls(ilEncoder);
+        }
     }
 
     private void EmitCallTypedMemberWithFallback(
@@ -160,6 +164,10 @@ internal sealed partial class LIRToILCompiler
 
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(instruction.MethodHandle);
+        if (instruction.ReturnClrType == typeof(object))
+        {
+            EmitResolveTailCalls(ilEncoder);
+        }
 
         if (IsMaterialized(instruction.Result, allocation))
         {
@@ -229,6 +237,8 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Call);
             ilEncoder.Token(callMemberRef);
         }
+
+        EmitResolveTailCalls(ilEncoder);
 
         if (IsMaterialized(instruction.Result, allocation))
         {

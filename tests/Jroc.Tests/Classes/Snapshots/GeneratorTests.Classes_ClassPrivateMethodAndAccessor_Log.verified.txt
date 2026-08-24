@@ -721,7 +721,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 764 (0x2fc)
+		// Code size: 769 (0x301)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Scope,
@@ -914,88 +914,89 @@
 		IL_020b: stloc.s 7
 		IL_020d: ldloc.s 7
 		IL_020f: callvirt instance object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::log()
-		IL_0214: pop
-		IL_0215: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_021a: stloc.s 8
-		IL_021c: ldloc.2
-		IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_0222: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0227: stloc.s 4
-		IL_0229: ldc.i4.0
-		IL_022a: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_022f: brfalse IL_026b
+		IL_0214: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0219: pop
+		IL_021a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_021f: stloc.s 8
+		IL_0221: ldloc.2
+		IL_0222: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_0227: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_022c: stloc.s 4
+		IL_022e: ldc.i4.0
+		IL_022f: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0234: brfalse IL_0270
 
-		IL_0234: ldloc.s 4
-		IL_0236: isinst [System.Runtime]System.String
-		IL_023b: dup
-		IL_023c: brtrue IL_0254
+		IL_0239: ldloc.s 4
+		IL_023b: isinst [System.Runtime]System.String
+		IL_0240: dup
+		IL_0241: brtrue IL_0259
 
-		IL_0241: pop
-		IL_0242: ldloc.s 4
-		IL_0244: ldstr "includes"
-		IL_0249: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_024e: dup
-		IL_024f: brfalse IL_026a
+		IL_0246: pop
+		IL_0247: ldloc.s 4
+		IL_0249: ldstr "includes"
+		IL_024e: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_0253: dup
+		IL_0254: brfalse IL_026f
 
-		IL_0254: ldstr "#double"
-		IL_0259: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-		IL_025e: box [System.Runtime]System.Boolean
-		IL_0263: stloc.s 4
-		IL_0265: br IL_027e
+		IL_0259: ldstr "#double"
+		IL_025e: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+		IL_0263: box [System.Runtime]System.Boolean
+		IL_0268: stloc.s 4
+		IL_026a: br IL_0283
 
-		IL_026a: pop
+		IL_026f: pop
 
-		IL_026b: ldloc.s 4
-		IL_026d: ldstr "includes"
-		IL_0272: ldstr "#double"
-		IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_027c: stloc.s 4
+		IL_0270: ldloc.s 4
+		IL_0272: ldstr "includes"
+		IL_0277: ldstr "#double"
+		IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0281: stloc.s 4
 
-		IL_027e: ldloc.s 8
-		IL_0280: ldloc.s 4
-		IL_0282: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0287: pop
-		IL_0288: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_028d: stloc.s 8
-		IL_028f: ldloc.2
-		IL_0290: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_0295: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_029a: stloc.s 4
-		IL_029c: ldc.i4.0
-		IL_029d: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_02a2: brfalse IL_02de
+		IL_0283: ldloc.s 8
+		IL_0285: ldloc.s 4
+		IL_0287: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_028c: pop
+		IL_028d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0292: stloc.s 8
+		IL_0294: ldloc.2
+		IL_0295: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_029a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_029f: stloc.s 4
+		IL_02a1: ldc.i4.0
+		IL_02a2: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_02a7: brfalse IL_02e3
 
-		IL_02a7: ldloc.s 4
-		IL_02a9: isinst [System.Runtime]System.String
-		IL_02ae: dup
-		IL_02af: brtrue IL_02c7
+		IL_02ac: ldloc.s 4
+		IL_02ae: isinst [System.Runtime]System.String
+		IL_02b3: dup
+		IL_02b4: brtrue IL_02cc
 
-		IL_02b4: pop
-		IL_02b5: ldloc.s 4
-		IL_02b7: ldstr "includes"
-		IL_02bc: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_02c1: dup
-		IL_02c2: brfalse IL_02dd
+		IL_02b9: pop
+		IL_02ba: ldloc.s 4
+		IL_02bc: ldstr "includes"
+		IL_02c1: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_02c6: dup
+		IL_02c7: brfalse IL_02e2
 
-		IL_02c7: ldstr "#secret"
-		IL_02cc: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-		IL_02d1: box [System.Runtime]System.Boolean
-		IL_02d6: stloc.s 4
-		IL_02d8: br IL_02f1
+		IL_02cc: ldstr "#secret"
+		IL_02d1: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+		IL_02d6: box [System.Runtime]System.Boolean
+		IL_02db: stloc.s 4
+		IL_02dd: br IL_02f6
 
-		IL_02dd: pop
+		IL_02e2: pop
 
-		IL_02de: ldloc.s 4
-		IL_02e0: ldstr "includes"
-		IL_02e5: ldstr "#secret"
-		IL_02ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02ef: stloc.s 4
+		IL_02e3: ldloc.s 4
+		IL_02e5: ldstr "includes"
+		IL_02ea: ldstr "#secret"
+		IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02f4: stloc.s 4
 
-		IL_02f1: ldloc.s 8
-		IL_02f3: ldloc.s 4
-		IL_02f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02fa: pop
-		IL_02fb: ret
+		IL_02f6: ldloc.s 8
+		IL_02f8: ldloc.s 4
+		IL_02fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02ff: pop
+		IL_0300: ret
 	} // end of method Classes_ClassPrivateMethodAndAccessor_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateMethodAndAccessor_Log

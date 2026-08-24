@@ -63,6 +63,7 @@ public sealed class GeneratedFunctionObjectRegistry
             && left.JsParamCount == right.JsParamCount
             && left.ParameterClrTypes.SequenceEqual(right.ParameterClrTypes)
             && left.ReturnClrType == right.ReturnClrType
+            && left.MayReturnTailCall == right.MayReturnTailCall
             && left.InvokeShape == right.InvokeShape
             && left.IsInstanceMethod == right.IsInstanceMethod
             && left.ILMethodName == right.ILMethodName

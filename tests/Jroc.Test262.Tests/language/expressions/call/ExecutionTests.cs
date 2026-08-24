@@ -53,4 +53,8 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "tco-member-args")]
     public Task tco_member_args()
         => ExecutionTest("tco-member-args");
+
+    [Fact(DisplayName = "tco-call-args")]
+    public Task tco_call_args()
+        => ExecutionTest("tco-call-args");
 }

@@ -576,7 +576,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 410 (0x19a)
+		// Code size: 415 (0x19f)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_ClassMethod_WithThis/Scope,
@@ -713,45 +713,46 @@
 		IL_0129: stelem.ref
 		IL_012a: ldnull
 		IL_012b: callvirt instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[], object)
-		IL_0130: stloc.s 7
-		IL_0132: ldloc.s 7
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0139: stloc.s 7
-		IL_013b: ldc.i4.1
-		IL_013c: newarr [System.Runtime]System.Object
-		IL_0141: dup
-		IL_0142: ldc.i4.0
-		IL_0143: ldloc.0
-		IL_0144: stelem.ref
-		IL_0145: stloc.s 4
-		IL_0147: newobj instance void Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject::.ctor()
-		IL_014c: ldc.i4.1
-		IL_014d: conv.r8
-		IL_014e: ldstr ""
-		IL_0153: ldc.i4.0
-		IL_0154: ldc.i4.0
-		IL_0155: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_015a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0)
-		IL_015f: stloc.s 8
-		IL_0161: volatile.
-		IL_0163: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0168: brfalse IL_0180
+		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_0135: stloc.s 7
+		IL_0137: ldloc.s 7
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_013e: stloc.s 7
+		IL_0140: ldc.i4.1
+		IL_0141: newarr [System.Runtime]System.Object
+		IL_0146: dup
+		IL_0147: ldc.i4.0
+		IL_0148: ldloc.0
+		IL_0149: stelem.ref
+		IL_014a: stloc.s 4
+		IL_014c: newobj instance void Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject::.ctor()
+		IL_0151: ldc.i4.1
+		IL_0152: conv.r8
+		IL_0153: ldstr ""
+		IL_0158: ldc.i4.0
+		IL_0159: ldc.i4.0
+		IL_015a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_015f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0)
+		IL_0164: stloc.s 8
+		IL_0166: volatile.
+		IL_0168: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_016d: brfalse IL_0185
 
-		IL_016d: ldloc.s 7
-		IL_016f: ldstr "then"
-		IL_0174: ldloc.s 8
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_017b: br IL_0198
+		IL_0172: ldloc.s 7
+		IL_0174: ldstr "then"
+		IL_0179: ldloc.s 8
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0180: br IL_019d
 
-		IL_0180: ldloc.s 7
-		IL_0182: ldstr "then"
-		IL_0187: ldloc.s 8
-		IL_0189: ldstr "Async_ClassMethod_WithThis:Modules.Async_ClassMethod_WithThis:__js_module_init__:35"
-		IL_018e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_0185: ldloc.s 7
+		IL_0187: ldstr "then"
+		IL_018c: ldloc.s 8
+		IL_018e: ldstr "Async_ClassMethod_WithThis:Modules.Async_ClassMethod_WithThis:__js_module_init__:35"
+		IL_0193: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0198: pop
-		IL_0199: ret
+		IL_019d: pop
+		IL_019e: ret
 	} // end of method Async_ClassMethod_WithThis::__js_module_init__
 
 } // end of class Modules.Async_ClassMethod_WithThis

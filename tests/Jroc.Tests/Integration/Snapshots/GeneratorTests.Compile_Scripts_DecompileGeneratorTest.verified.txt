@@ -202,7 +202,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 357 (0x165)
+			// Code size: 387 (0x183)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -211,7 +211,8 @@
 				[3] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 				[4] object,
 				[5] bool,
-				[6] float64
+				[6] float64,
+				[7] object[]
 			)
 
 			IL_0000: ldarg.1
@@ -321,11 +322,23 @@
 			IL_0159: ldloc.s 4
 			IL_015b: ret
 
-			IL_015c: ldarg.1
-			IL_015d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0162: stloc.2
-			IL_0163: ldloc.2
-			IL_0164: ret
+			IL_015c: ldstr "String"
+			IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0166: stloc.s 4
+			IL_0168: ldc.i4.1
+			IL_0169: newarr [System.Runtime]System.Object
+			IL_016e: dup
+			IL_016f: ldc.i4.0
+			IL_0170: ldarg.1
+			IL_0171: stelem.ref
+			IL_0172: stloc.s 7
+			IL_0174: ldloc.s 4
+			IL_0176: ldnull
+			IL_0177: ldloc.s 7
+			IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_017e: stloc.s 4
+			IL_0180: ldloc.s 4
+			IL_0182: ret
 		} // end of method getAssemblyFileBaseName::__js_call__
 
 	} // end of class getAssemblyFileBaseName
@@ -987,7 +1000,7 @@
 				IL_0007: ldarg.2
 				IL_0008: ldc.i4.0
 				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots::__js_call__(class Modules.Compile_Scripts_DecompileGeneratorTest/Scope, object, object)
+				IL_000e: call object Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots::__js_call__(class Modules.Compile_Scripts_DecompileGeneratorTest/Scope, object, object)
 				IL_0013: ret
 			} // end of method FunctionObject::CallCore
 
@@ -1008,7 +1021,7 @@
 				IL_0007: ldarg.2
 				IL_0008: ldc.i4.0
 				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots::__js_call__(class Modules.Compile_Scripts_DecompileGeneratorTest/Scope, object, object)
+				IL_000e: call object Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots::__js_call__(class Modules.Compile_Scripts_DecompileGeneratorTest/Scope, object, object)
 				IL_0013: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
@@ -1035,7 +1048,7 @@
 
 		// Methods
 		.method public hidebysig static 
-			class [JavaScriptRuntime]JavaScriptRuntime.Array __js_call__ (
+			object __js_call__ (
 				class Modules.Compile_Scripts_DecompileGeneratorTest/Scope scope,
 				object newTarget,
 				object category
@@ -1047,7 +1060,7 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 260 (0x104)
+			// Code size: 278 (0x116)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/Scope,
@@ -1121,46 +1134,52 @@
 			IL_00a7: ldloc.s 5
 			IL_00a9: ldloc.1
 			IL_00aa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-			IL_00af: ldc.i4.2
-			IL_00b0: newarr [System.Runtime]System.Object
-			IL_00b5: dup
-			IL_00b6: ldc.i4.0
-			IL_00b7: ldarg.0
-			IL_00b8: stelem.ref
-			IL_00b9: dup
-			IL_00ba: ldc.i4.1
-			IL_00bb: ldloc.0
-			IL_00bc: stelem.ref
-			IL_00bd: stloc.s 6
-			IL_00bf: ldloc.s 6
-			IL_00c1: ldc.i4.0
-			IL_00c2: ldelem.ref
-			IL_00c3: castclass Modules.Compile_Scripts_DecompileGeneratorTest/Scope
-			IL_00c8: ldloc.s 6
-			IL_00ca: ldc.i4.1
-			IL_00cb: ldelem.ref
-			IL_00cc: castclass Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/Scope
-			IL_00d1: ldloc.s 6
-			IL_00d3: newobj instance void Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/ArrowFunction_L53C37/FunctionObject::.ctor(class Modules.Compile_Scripts_DecompileGeneratorTest/Scope, class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/Scope, object[])
+			IL_00af: ldloc.s 5
+			IL_00b1: ldstr "flatMap"
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_00bb: stloc.s 4
+			IL_00bd: ldc.i4.2
+			IL_00be: newarr [System.Runtime]System.Object
+			IL_00c3: dup
+			IL_00c4: ldc.i4.0
+			IL_00c5: ldarg.0
+			IL_00c6: stelem.ref
+			IL_00c7: dup
+			IL_00c8: ldc.i4.1
+			IL_00c9: ldloc.0
+			IL_00ca: stelem.ref
+			IL_00cb: stloc.s 6
+			IL_00cd: ldloc.s 6
+			IL_00cf: ldc.i4.0
+			IL_00d0: ldelem.ref
+			IL_00d1: castclass Modules.Compile_Scripts_DecompileGeneratorTest/Scope
+			IL_00d6: ldloc.s 6
 			IL_00d8: ldc.i4.1
-			IL_00d9: conv.r8
-			IL_00da: ldstr ""
-			IL_00df: ldc.i4.0
-			IL_00e0: ldc.i4.0
-			IL_00e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/ArrowFunction_L53C37/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_00e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/ArrowFunction_L53C37/FunctionObject>(!!0)
-			IL_00eb: stloc.s 7
-			IL_00ed: ldloc.s 5
-			IL_00ef: ldc.i4.1
-			IL_00f0: newarr [System.Runtime]System.Object
-			IL_00f5: dup
-			IL_00f6: ldc.i4.0
-			IL_00f7: ldloc.s 7
-			IL_00f9: stelem.ref
-			IL_00fa: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::flatMap(object[])
-			IL_00ff: stloc.s 5
-			IL_0101: ldloc.s 5
-			IL_0103: ret
+			IL_00d9: ldelem.ref
+			IL_00da: castclass Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/Scope
+			IL_00df: ldloc.s 6
+			IL_00e1: newobj instance void Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/ArrowFunction_L53C37/FunctionObject::.ctor(class Modules.Compile_Scripts_DecompileGeneratorTest/Scope, class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/Scope, object[])
+			IL_00e6: ldc.i4.1
+			IL_00e7: conv.r8
+			IL_00e8: ldstr ""
+			IL_00ed: ldc.i4.0
+			IL_00ee: ldc.i4.0
+			IL_00ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/ArrowFunction_L53C37/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_DecompileGeneratorTest/getCandidateCategoryRoots/ArrowFunction_L53C37/FunctionObject>(!!0)
+			IL_00f9: stloc.s 7
+			IL_00fb: ldc.i4.1
+			IL_00fc: newarr [System.Runtime]System.Object
+			IL_0101: dup
+			IL_0102: ldc.i4.0
+			IL_0103: ldloc.s 7
+			IL_0105: stelem.ref
+			IL_0106: stloc.s 6
+			IL_0108: ldloc.s 4
+			IL_010a: ldloc.s 6
+			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_0111: stloc.s 4
+			IL_0113: ldloc.s 4
+			IL_0115: ret
 		} // end of method getCandidateCategoryRoots::__js_call__
 
 	} // end of class getCandidateCategoryRoots
@@ -1268,30 +1287,26 @@
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 56 (0x38)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 				.locals init (
-					[0] object
+					[0] object,
+					[1] object[]
 				)
 
 				IL_0000: ldarg.1
-				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0006: volatile.
-				IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
-				IL_000d: brfalse IL_0021
-
-				IL_0012: ldstr "isDirectory"
-				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_001c: br IL_0035
-
-				IL_0021: ldstr "isDirectory"
-				IL_0026: ldstr "Compile_Scripts_DecompileGeneratorTest:<TwoPhaseDummy_M14>:__js_call__:2"
-				IL_002b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
-				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-				IL_0035: stloc.0
-				IL_0036: ldloc.0
-				IL_0037: ret
+				IL_0001: ldstr "isDirectory"
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+				IL_000b: stloc.0
+				IL_000c: ldc.i4.0
+				IL_000d: newarr [System.Runtime]System.Object
+				IL_0012: stloc.1
+				IL_0013: ldloc.0
+				IL_0014: ldloc.1
+				IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+				IL_001a: stloc.0
+				IL_001b: ldloc.0
+				IL_001c: ret
 			} // end of method ArrowFunction_L66C13::__js_call__
 
 		} // end of class ArrowFunction_L66C13
@@ -1437,7 +1452,7 @@
 				IL_0016: ldfld object Modules.Compile_Scripts_DecompileGeneratorTest/tryFindLatestGeneratedAssemblyInRoot/Scope::categoryRoot
 				IL_001b: stloc.1
 				IL_001c: volatile.
-				IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
+				IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
 				IL_0023: brfalse IL_0038
 
 				IL_0028: ldarg.2
@@ -1448,7 +1463,7 @@
 				IL_0038: ldarg.2
 				IL_0039: ldstr "name"
 				IL_003e: ldstr "Compile_Scripts_DecompileGeneratorTest:<TwoPhaseDummy_M15>:__js_call__:4"
-				IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
+				IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
 				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_004d: stloc.2
@@ -4953,7 +4968,6 @@
 	.field assembly static int32 __jroc_dynamicLookup_77
 	.field assembly static int32 __jroc_dynamicLookup_78
 	.field assembly static int32 __jroc_dynamicLookup_79
-	.field assembly static int32 __jroc_dynamicLookup_80
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

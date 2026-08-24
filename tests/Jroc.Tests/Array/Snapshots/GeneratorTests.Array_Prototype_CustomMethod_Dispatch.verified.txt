@@ -242,14 +242,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 220 (0xdc)
+			// Code size: 193 (0xc1)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] float64,
 				[3] object,
-				[4] bool
+				[4] bool,
+				[5] object[]
 			)
 
 			IL_0000: ldarg.1
@@ -301,25 +302,22 @@
 			IL_0090: ldarg.1
 			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a0: volatile.
-			IL_00a2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_00a7: brfalse IL_00c0
-
-			IL_00ac: ldstr "join"
-			IL_00b1: ldstr ","
-			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00bb: br IL_00d9
-
-			IL_00c0: ldstr "join"
-			IL_00c5: ldstr ","
-			IL_00ca: ldstr "Array_Prototype_CustomMethod_Dispatch:<TwoPhaseDummy_M4>:__js_call__:24"
-			IL_00cf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-			IL_00d9: stloc.1
-			IL_00da: ldloc.1
-			IL_00db: ret
+			IL_009b: ldstr "join"
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_00a5: stloc.1
+			IL_00a6: ldc.i4.1
+			IL_00a7: newarr [System.Runtime]System.Object
+			IL_00ac: dup
+			IL_00ad: ldc.i4.0
+			IL_00ae: ldstr ","
+			IL_00b3: stelem.ref
+			IL_00b4: stloc.s 5
+			IL_00b6: ldloc.1
+			IL_00b7: ldloc.s 5
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_00be: stloc.1
+			IL_00bf: ldloc.1
+			IL_00c0: ret
 		} // end of method FunctionExpression_L3C34::__js_call__
 
 	} // end of class FunctionExpression_L3C34
@@ -493,7 +491,6 @@
 	.field assembly static int32 __jroc_dynamicLookup_1
 	.field assembly static int32 __jroc_dynamicLookup_2
 	.field assembly static int32 __jroc_dynamicLookup_3
-	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -792,9 +792,31 @@ namespace Jroc.Services.ILGenerators
 
                 EntityHandle returnTypeHandle = default;
                 Type returnClrType = typeof(object);
+                var callableKind = member.Kind switch
+                {
+                    PropertyKind.Get => member.Static
+                        ? CallableKind.ClassStaticGetter
+                        : CallableKind.ClassGetter,
+                    PropertyKind.Set => member.Static
+                        ? CallableKind.ClassStaticSetter
+                        : CallableKind.ClassSetter,
+                    _ => member.Static
+                        ? CallableKind.ClassStaticMethod
+                        : CallableKind.ClassMethod
+                };
+                var mayReturnTailCall = CallableSemantics.FromNode(
+                        member,
+                        callableKind,
+                        hasRestrictedFunctionProperties: true,
+                        isMethodDefinition: true)
+                    .MayReturnTailCall;
                 if (isGeneratorMethod)
                 {
                     // Generator methods always return a GeneratorObject boxed as object.
+                    returnClrType = typeof(object);
+                }
+                else if (mayReturnTailCall)
+                {
                     returnClrType = typeof(object);
                 }
                 else if (methodScope?.StableReturnIsThis == true)

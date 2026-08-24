@@ -17,4 +17,12 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "chainable-with-bitwise-and")]
     public Task chainable_with_bitwise_and()
         => ExecutionTest("chainable-with-bitwise-and");
+
+    [Fact(DisplayName = "tco-pos-null")]
+    public Task tco_pos_null()
+        => ExecutionTest("tco-pos-null");
+
+    [Fact(DisplayName = "tco-pos-undefined")]
+    public Task tco_pos_undefined()
+        => ExecutionTest("tco-pos-undefined");
 }

@@ -590,20 +590,6 @@
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object ResolveThisArgumentCore (
-					object thisArgument
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.1
-				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
-				IL_0006: ret
-			} // end of method FunctionObject::ResolveThisArgumentCore
-
-			.method family hidebysig virtual 
 				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
@@ -712,7 +698,7 @@
 		IL_002e: conv.r8
 		IL_002f: ldstr "run"
 		IL_0034: ldc.i4.0
-		IL_0035: ldc.i4.0
+		IL_0035: ldc.i4.1
 		IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject>(!!0)
 		IL_0040: stloc.1

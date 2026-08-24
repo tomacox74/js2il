@@ -11,6 +11,98 @@ namespace JavaScriptRuntime;
 
 public class RuntimeServices
 {
+    private sealed record TailCallRequest(
+        object? Target,
+        object? ThisArgument,
+        object[] Arguments);
+
+    private sealed record TailCallMemberReference(
+        object Receiver,
+        string PropertyName,
+        object? Target);
+
+    private sealed record TailCallMemberRequest(
+        TailCallMemberReference Member,
+        object[] Arguments);
+
+    public static object CreateTailCall(
+        object? target,
+        object? thisArgument,
+        object[] arguments)
+    {
+        ArgumentNullException.ThrowIfNull(arguments);
+        return new TailCallRequest(target, thisArgument, arguments);
+    }
+
+    public static object PrepareTailCallMember(
+        object? receiver,
+        object? propertyKey)
+    {
+        if (receiver is null || receiver is JsNull)
+        {
+            throw new TypeError("Cannot read properties of null or undefined");
+        }
+
+        var propertyName = ObjectRuntime.ToPropertyKeyString(propertyKey);
+        var target = ObjectRuntime.GetItem(receiver, propertyName);
+        return new TailCallMemberReference(receiver, propertyName, target);
+    }
+
+    public static object CreateTailCallMember(
+        object memberReference,
+        object[] arguments)
+    {
+        ArgumentNullException.ThrowIfNull(arguments);
+        if (memberReference is not TailCallMemberReference member)
+        {
+            throw new ArgumentException(
+                "Invalid tail-call member reference.",
+                nameof(memberReference));
+        }
+
+        return new TailCallMemberRequest(member, arguments);
+    }
+
+    public static object? ResolveTailCalls(object? result)
+    {
+        while (true)
+        {
+            if (result is TailCallRequest request)
+            {
+                result = CallableOperations.CallTailTarget(
+                    request.Target,
+                    request.ThisArgument,
+                    request.Arguments);
+                continue;
+            }
+
+            if (result is TailCallMemberRequest memberRequest)
+            {
+                var member = memberRequest.Member;
+                if (CallableOperations.IsCallable(member.Target)
+                    || member.Target is not null and not JsNull
+                    || member.Receiver is JsObject or Proxy)
+                {
+                    result = CallableOperations.CallTailTarget(
+                        member.Target,
+                        member.Receiver,
+                        memberRequest.Arguments);
+                }
+                else
+                {
+                    result = ObjectRuntime.CallMember(
+                        member.Receiver,
+                        member.PropertyName,
+                        memberRequest.Arguments);
+                }
+
+                continue;
+            }
+
+            return result;
+        }
+    }
+
     private static readonly System.Threading.AsyncLocal<InvocationFrame?> _currentInvocation = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
     [ThreadStatic] private static Stack<GeneratedFunctionDirectCallState>? _generatedFunctionDirectCallStack;

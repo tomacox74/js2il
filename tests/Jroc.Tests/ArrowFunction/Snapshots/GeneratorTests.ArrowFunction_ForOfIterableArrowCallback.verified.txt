@@ -492,7 +492,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 84 (0x54)
+		// Code size: 89 (0x59)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_ForOfIterableArrowCallback/Scope,
@@ -523,12 +523,13 @@
 		IL_0043: ldnull
 		IL_0044: ldloc.2
 		IL_0045: call object Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26::__js_call__(object, object)
-		IL_004a: stloc.3
-		IL_004b: ldloc.1
-		IL_004c: ldloc.3
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0052: pop
-		IL_0053: ret
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveTailCalls(object)
+		IL_004f: stloc.3
+		IL_0050: ldloc.1
+		IL_0051: ldloc.3
+		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0057: pop
+		IL_0058: ret
 	} // end of method ArrowFunction_ForOfIterableArrowCallback::__js_module_init__
 
 } // end of class Modules.ArrowFunction_ForOfIterableArrowCallback

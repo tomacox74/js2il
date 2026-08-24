@@ -1564,13 +1564,55 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (!TryPrepareTaggedTemplateInvocation(
+                taggedTemplate,
+                out var tagTemp,
+                out var argsArrayTemp))
+        {
+            return false;
+        }
+
+        // Need to get the scopes array for the current context
+        var scopesArrayTemp = CreateTempVariable();
+        if (_callableKind is Services.ScopesAbi.CallableKind.Function)
+        {
+            // Load scopes from parameter
+            _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(scopesArrayTemp));
+            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        }
+        else
+        {
+            // No scopes available (e.g., in ModuleMain or class methods) - create empty array
+            var emptyList = new List<TempVariable>();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(emptyList, scopesArrayTemp));
+            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        }
+
+        var callResultTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(tagTemp, scopesArrayTemp, argsArrayTemp, callResultTemp));
+        DefineTempStorage(callResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        resultTempVar = callResultTemp;
+        return true;
+    }
+
+    private bool TryPrepareTaggedTemplateInvocation(
+        HIRTaggedTemplateExpression taggedTemplate,
+        out TempVariable tagTemp,
+        out TempVariable argsArrayTemp,
+        bool evaluateTagExpression = true)
+    {
+        tagTemp = default;
+        argsArrayTemp = default;
+
         var template = taggedTemplate.Template;
         var quasis = template.Quasis;
         var rawQuasis = template.RawQuasis;
         var exprs = template.Expressions;
 
         // 1. Evaluate the tag expression
-        if (!TryLowerExpression(taggedTemplate.Tag, out var tagTemp))
+        if (evaluateTagExpression
+            && !TryLowerExpression(taggedTemplate.Tag, out tagTemp))
         {
             return false;
         }
@@ -1642,32 +1684,9 @@ public sealed partial class HIRToLIRLowerer
         var allArgTemps = new List<TempVariable> { templateObjectTemp };
         allArgTemps.AddRange(substitutionTemps);
 
-        var argsArrayTemp = CreateTempVariable();
+        argsArrayTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRBuildArray(allArgTemps, argsArrayTemp));
         DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
-        // 5. Call the tag function with the arguments
-        // Need to get the scopes array for the current context
-        var scopesArrayTemp = CreateTempVariable();
-        if (_callableKind is Services.ScopesAbi.CallableKind.Function)
-        {
-            // Load scopes from parameter
-            _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(scopesArrayTemp));
-            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-        }
-        else
-        {
-            // No scopes available (e.g., in ModuleMain or class methods) - create empty array
-            var emptyList = new List<TempVariable>();
-            _methodBodyIR.Instructions.Add(new LIRBuildArray(emptyList, scopesArrayTemp));
-            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-        }
-
-        var callResultTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(tagTemp, scopesArrayTemp, argsArrayTemp, callResultTemp));
-        DefineTempStorage(callResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-        resultTempVar = callResultTemp;
         return true;
     }
 

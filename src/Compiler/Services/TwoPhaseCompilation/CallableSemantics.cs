@@ -42,6 +42,8 @@ public sealed record CallableSemantics
 
     public bool NestedArrowUsesSuper { get; init; }
 
+    public bool MayReturnTailCall { get; init; }
+
     public static CallableSemantics FromNode(
         Node? callableNode,
         CallableKind callableKind,
@@ -102,11 +104,87 @@ public sealed record CallableSemantics
             NestedArrowUsesNewTarget =
                 nestedArrowRequirements.UsesNewTarget,
             NestedArrowUsesSuper = nestedArrowRequirements.UsesSuper,
+            MayReturnTailCall = ContainsPotentialTailCall(callable),
             HasNestedArrowLexicalContext =
                 nestedArrowRequirements.UsesThis
                 || nestedArrowRequirements.UsesNewTarget
                 || nestedArrowRequirements.UsesSuper
         };
+    }
+
+    private static bool ContainsPotentialTailCall(Node? callable)
+    {
+        if (callable == null)
+        {
+            return false;
+        }
+
+        if (callable is ArrowFunctionExpression
+            {
+                Body: Expression expression
+            }
+            && HasCallInTailPosition(expression))
+        {
+            return true;
+        }
+
+        return Visit(callable, isRoot: true);
+
+        static bool Visit(Node node, bool isRoot)
+        {
+            if (!isRoot && node is FunctionDeclaration
+                or FunctionExpression
+                or ArrowFunctionExpression
+                or ClassDeclaration
+                or ClassExpression)
+            {
+                return false;
+            }
+
+            if (node is ReturnStatement { Argument: { } argument }
+                && HasCallInTailPosition(argument))
+            {
+                return true;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                if (Visit(child, isRoot: false))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool HasCallInTailPosition(Node node)
+        {
+            switch (node)
+            {
+                case CallExpression:
+                case TaggedTemplateExpression:
+                    return true;
+                case ConditionalExpression conditional:
+                    return HasCallInTailPosition(conditional.Consequent)
+                        || HasCallInTailPosition(conditional.Alternate);
+                case LogicalExpression logical
+                    when logical.Operator is Acornima.Operator.LogicalAnd
+                        or Acornima.Operator.LogicalOr
+                        or Acornima.Operator.NullishCoalescing:
+                    return HasCallInTailPosition(logical.Right);
+                case SequenceExpression sequence
+                    when sequence.Expressions.Count > 0:
+                    return HasCallInTailPosition(
+                        sequence.Expressions[sequence.Expressions.Count - 1]);
+                case ParenthesizedExpression parenthesized:
+                    return HasCallInTailPosition(parenthesized.Expression);
+                case ChainExpression chain:
+                    return HasCallInTailPosition(chain.Expression);
+                default:
+                    return false;
+            }
+        }
     }
 
     private static int CountExpectedFunctionLength(NodeList<Node> parameters)

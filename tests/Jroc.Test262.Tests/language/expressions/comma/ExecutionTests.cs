@@ -21,6 +21,10 @@ public class ExecutionTests
     public Task S11_14_A3()
         => ExecutionTestFromFile("S11.14_A3");
 
+    [Fact(DisplayName = "tco-final")]
+    public Task tco_final()
+        => ExecutionTestFromFile("tco-final");
+
     private Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
     {
         var sourceDirectory = Path.GetDirectoryName(sourceFilePath)

@@ -226,10 +226,11 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 93 (0x5d)
+				// Code size: 47 (0x2f)
 				.maxstack 8
 				.locals init (
-					[0] object
+					[0] object,
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -237,40 +238,24 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.String_StartsWith_NestedParam/outer/Scope
 				IL_0008: ldfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
-				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0012: stloc.0
-				IL_0013: ldc.i4.0
-				IL_0014: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_0019: brfalse IL_004e
-
-				IL_001e: ldloc.0
-				IL_001f: isinst [System.Runtime]System.String
-				IL_0024: dup
-				IL_0025: brtrue IL_003c
-
-				IL_002a: pop
-				IL_002b: ldloc.0
-				IL_002c: ldstr "startsWith"
-				IL_0031: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0036: dup
-				IL_0037: brfalse IL_004d
-
-				IL_003c: ldarg.2
-				IL_003d: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
-				IL_0042: box [System.Runtime]System.Boolean
-				IL_0047: stloc.0
-				IL_0048: br IL_005b
-
-				IL_004d: pop
-
-				IL_004e: ldloc.0
-				IL_004f: ldstr "startsWith"
-				IL_0054: ldarg.2
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_005a: stloc.0
-
-				IL_005b: ldloc.0
-				IL_005c: ret
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: ldstr "startsWith"
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+				IL_0019: stloc.0
+				IL_001a: ldc.i4.1
+				IL_001b: newarr [System.Runtime]System.Object
+				IL_0020: dup
+				IL_0021: ldc.i4.0
+				IL_0022: ldarg.2
+				IL_0023: stelem.ref
+				IL_0024: stloc.1
+				IL_0025: ldloc.0
+				IL_0026: ldloc.1
+				IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+				IL_002c: stloc.0
+				IL_002d: ldloc.0
+				IL_002e: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -424,12 +409,13 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 84 (0x54)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.String_StartsWith_NestedParam/outer/Scope,
 				[1] class Modules.String_StartsWith_NestedParam/outer/inner/FunctionObject,
-				[2] object[]
+				[2] object[],
+				[3] object
 			)
 
 			IL_0000: newobj instance void Modules.String_StartsWith_NestedParam/outer/Scope::.ctor()
@@ -462,26 +448,20 @@
 			IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_StartsWith_NestedParam/outer/inner/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_0038: stloc.1
 			IL_0039: nop
-			IL_003a: ldc.i4.2
+			IL_003a: ldc.i4.1
 			IL_003b: newarr [System.Runtime]System.Object
 			IL_0040: dup
 			IL_0041: ldc.i4.0
-			IL_0042: ldarg.0
-			IL_0043: stelem.ref
-			IL_0044: dup
-			IL_0045: ldc.i4.1
-			IL_0046: ldloc.0
+			IL_0042: ldstr "a"
 			IL_0047: stelem.ref
 			IL_0048: stloc.2
-			IL_0049: ldloc.2
+			IL_0049: ldloc.1
 			IL_004a: ldnull
-			IL_004b: ldstr "a"
-			IL_0050: tail.
-			IL_0052: call object Modules.String_StartsWith_NestedParam/outer/inner::__js_call__(object[], object, string)
-			IL_0057: ret
-
-			IL_0058: ldnull
-			IL_0059: ret
+			IL_004b: ldloc.2
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCall(object, object, object[])
+			IL_0051: stloc.3
+			IL_0052: ldloc.3
+			IL_0053: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer

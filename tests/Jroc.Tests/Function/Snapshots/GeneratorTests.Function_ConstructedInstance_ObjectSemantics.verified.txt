@@ -1849,30 +1849,26 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 56 (0x38)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0006: volatile.
-			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_38
-			IL_000d: brfalse IL_0021
-
-			IL_0012: ldstr "sum"
-			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_001c: br IL_0035
-
-			IL_0021: ldstr "sum"
-			IL_0026: ldstr "Function_ConstructedInstance_ObjectSemantics:<TwoPhaseDummy_M14>:read:3"
-			IL_002b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_38
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: ret
+			IL_0001: ldstr "sum"
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldc.i4.0
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: stloc.1
+			IL_0013: ldloc.0
+			IL_0014: ldloc.1
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: ret
 		} // end of method PointReader::read
 
 	} // end of class PointReader
@@ -3001,7 +2997,6 @@
 	.field assembly static int32 __jroc_dynamicLookup_35
 	.field assembly static int32 __jroc_dynamicLookup_36
 	.field assembly static int32 __jroc_dynamicLookup_37
-	.field assembly static int32 __jroc_dynamicLookup_38
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

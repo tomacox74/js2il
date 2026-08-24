@@ -133,5 +133,12 @@ namespace Jroc.Tests.Import
             var testName = nameof(Import_ImportMeta_Url);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task Import_ProperTailCall_ImplicitStrict()
+        {
+            var testName = nameof(Import_ProperTailCall_ImplicitStrict);
+            return GenerateTest(testName);
+        }
     }
 }

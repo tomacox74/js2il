@@ -1675,6 +1675,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 JsParamCount = callable.JsParamCount,
                 ParameterClrTypes = parameterClrTypes,
                 ReturnClrType = returnClrType,
+                MayReturnTailCall = callable.Semantics.MayReturnTailCall,
                 InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
                 IsInstanceMethod = callable.Kind is CallableKind.ClassMethod
                     or CallableKind.ClassGetter
@@ -1844,6 +1845,11 @@ public sealed class TwoPhaseCompilationCoordinator
         SymbolTable symbolTable,
         Jroc.Runtime.CallableScopeAbiKind scopeAbiKind)
     {
+        if (callable.Semantics.MayReturnTailCall)
+        {
+            return null;
+        }
+
         var scope = callable.AstNode != null
             ? symbolTable.FindScopeByAstNode(callable.AstNode)
             : null;
@@ -1861,7 +1867,9 @@ public sealed class TwoPhaseCompilationCoordinator
         if (callable.Kind is CallableKind.ClassMethod
             or CallableKind.ClassStaticMethod
             or CallableKind.ClassGetter
-            or CallableKind.ClassStaticGetter)
+            or CallableKind.ClassStaticGetter
+            or CallableKind.ClassSetter
+            or CallableKind.ClassStaticSetter)
         {
             return scope.StableReturnClrType;
         }

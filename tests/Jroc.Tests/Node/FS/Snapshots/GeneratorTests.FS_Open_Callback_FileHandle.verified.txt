@@ -186,10 +186,11 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 68 (0x44)
+				// Code size: 43 (0x2b)
 				.maxstack 8
 				.locals init (
-					[0] object
+					[0] object,
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -197,23 +198,20 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope
 				IL_0008: ldfld object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope::handle
-				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0012: volatile.
-				IL_0014: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-				IL_0019: brfalse IL_002d
-
-				IL_001e: ldstr "close"
-				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_0028: br IL_0041
-
-				IL_002d: ldstr "close"
-				IL_0032: ldstr "FS_Open_Callback_FileHandle:<TwoPhaseDummy_M5>:__js_call__:2"
-				IL_0037: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-				IL_0041: stloc.0
-				IL_0042: ldloc.0
-				IL_0043: ret
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: ldstr "close"
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PrepareTailCallMember(object, object)
+				IL_0019: stloc.0
+				IL_001a: ldc.i4.0
+				IL_001b: newarr [System.Runtime]System.Object
+				IL_0020: stloc.1
+				IL_0021: ldloc.0
+				IL_0022: ldloc.1
+				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTailCallMember(object, object[])
+				IL_0028: stloc.0
+				IL_0029: ldloc.0
+				IL_002a: ret
 			} // end of method ArrowFunction_L20C40::__js_call__
 
 		} // end of class ArrowFunction_L20C40
@@ -531,7 +529,7 @@
 				IL_000e: brfalse IL_004d
 
 				IL_0013: volatile.
-				IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+				IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 				IL_001a: brfalse IL_002f
 
 				IL_001f: ldarg.2
@@ -542,7 +540,7 @@
 				IL_002f: ldarg.2
 				IL_0030: ldstr "message"
 				IL_0035: ldstr "FS_Open_Callback_FileHandle:<TwoPhaseDummy_M7>:__js_call__:8"
-				IL_003a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+				IL_003a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0044: stloc.2
@@ -1165,7 +1163,6 @@
 	.field assembly static int32 __jroc_dynamicLookup_17
 	.field assembly static int32 __jroc_dynamicLookup_18
 	.field assembly static int32 __jroc_dynamicLookup_19
-	.field assembly static int32 __jroc_dynamicLookup_20
 
 } // end of class Jroc.Generated.DynamicLookupSites
 
