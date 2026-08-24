@@ -2,6 +2,8 @@
 
   <UsingTask TaskName="Jroc.SDK.BuildTasks.JrocCompileTask"
              AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\net10.0\Jroc.SDK.dll" />
+  <UsingTask TaskName="Jroc.SDK.BuildTasks.ValidateJrocRuntimeTask"
+             AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\net10.0\Jroc.SDK.dll" />
 
   <Target Name="_ResolveJrocCompileItems"
           Condition="'@(JrocCompile)' != ''">
@@ -50,7 +52,24 @@
         <HintPath>%(_JrocGeneratedAssembly.Identity)</HintPath>
         <Private>true</Private>
       </Reference>
+
+      <_JrocReferencedAssembly Include="@(_JrocGeneratedAssembly)"
+                               Condition="'%(_JrocGeneratedAssembly.ReferenceOutputAssembly)' == 'true'" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="ValidateJrocRuntimeReferences"
+          DependsOnTargets="JrocCompile;ResolveAssemblyReferences"
+          BeforeTargets="CoreCompile"
+          Condition="'$(JrocCompileOnBuild)' == 'true' and '@(_JrocReferencedAssembly)' != ''">
+    <ItemGroup>
+      <_JrocResolvedRuntimeAssembly Include="@(ReferencePath)"
+                                    Condition="'%(ReferencePath.Filename)%(ReferencePath.Extension)' == 'JavaScriptRuntime.dll'" />
+    </ItemGroup>
+
+    <Jroc.SDK.BuildTasks.ValidateJrocRuntimeTask
+        GeneratedAssemblies="@(_JrocReferencedAssembly)"
+        RuntimeAssemblies="@(_JrocResolvedRuntimeAssembly)" />
   </Target>
 
   <Target Name="CopyJrocOutputsToOutputDirectory"

@@ -10,6 +10,12 @@ public sealed class ModuleDefinition
 {
     // Module definition details would go here
     public required Acornima.Ast.Program Ast { get; set; }
+
+    /// <summary>
+    /// Optional JavaScript-shaped contract model synthesized from package declaration metadata.
+    /// Runtime compilation always uses <see cref="Ast"/>.
+    /// </summary>
+    internal Acornima.Ast.Program? ContractAst { get; set; }
     public required string Path { get; set; }
 
     /// <summary>

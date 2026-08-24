@@ -11,9 +11,9 @@ internal static class Program
 
         // --- Task header formatting (npm-run-all2/lib/create-header) ---
         Console.WriteLine("=== task headers ===");
-        Console.WriteLine(Convert.ToString(exports.TaskHeader("build")) ?? "");
-        Console.WriteLine(Convert.ToString(exports.TaskHeader("test:unit --reporter spec")) ?? "");
-        Console.WriteLine(Convert.ToString(exports.TaskHeader("lint")) ?? "");
+        Console.WriteLine(exports.TaskHeader("build"));
+        Console.WriteLine(exports.TaskHeader("test:unit --reporter spec"));
+        Console.WriteLine(exports.TaskHeader("lint"));
 
         // --- Pattern-based task filtering (npm-run-all2 glob rules) ---
         Console.WriteLine("\n=== pattern matching ===");
@@ -28,7 +28,7 @@ internal static class Program
 
         void PrintMatch(string pattern)
         {
-            string matched = Convert.ToString(exports.FilterTasks(available, pattern)) ?? string.Empty;
+            var matched = exports.FilterTasks(available, pattern);
             Console.WriteLine($"  {pattern,-18} => [{matched}]");
         }
     }

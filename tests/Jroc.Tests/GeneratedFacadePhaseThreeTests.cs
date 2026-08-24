@@ -6,6 +6,243 @@ namespace Jroc.Tests;
 public sealed class GeneratedFacadePhaseThreeTests
 {
     [Fact]
+    public void PackageTypesMetadata_GeneratesTypedFacadeForRuntimeEntrypoint()
+    {
+        using var harness = new GeneratedAssemblyConsumerHarness(
+            """
+            module.exports = {
+              format(value) { return String(value); },
+              enabled: true
+            };
+            """,
+            "DeclarationPackage",
+            new Dictionary<string, string>
+            {
+                ["node_modules/typed-package/package.json"] =
+                    """{"name":"typed-package","main":"index.js","types":"index.d.ts"}""",
+                ["node_modules/typed-package/index.d.ts"] =
+                    """
+                    import { Formatter } from "./types"
+                    interface Api {
+                      enabled: boolean
+                      format: Formatter
+                    }
+                    declare const api: Api
+                    export = api
+                    """,
+                ["node_modules/typed-package/types.d.ts"] =
+                    """export type Formatter = (input: string | number) => string"""
+            },
+            entryFileName: "node_modules/typed-package/index.js",
+            rootModuleId: "typed-package");
+
+        var result = harness.Build(
+            """
+            using var api = DeclarationPackage.Import();
+            Console.WriteLine(api.Enabled);
+            Console.WriteLine(api.Format(42));
+            """,
+            run: true);
+
+        AssertConsumerSucceeded(result);
+        Assert.Equal(
+            ["True", "42"],
+            OutputLines(result.RunStandardOutput));
+    }
+
+    [Fact]
+    public void PackageDeclarationReturnTypes_GenerateNestedStandardObjectContracts()
+    {
+        using var harness = new GeneratedAssemblyConsumerHarness(
+            """
+            exports.createWindow = function(html, address) {
+              return {
+                document: {
+                  title: "fixture",
+                  getElementsByTagName: function(name) { return { length: name === "*" ? 3 : 1 }; }
+                }
+              };
+            };
+            """,
+            "DeclaredGraphPackage",
+            new Dictionary<string, string>
+            {
+                ["node_modules/@scope/graph-package/package.json"] =
+                    """{"name":"@scope/graph-package","main":"index.js","typings":"index.d.ts"}""",
+                ["node_modules/@scope/graph-package/index.d.ts"] =
+                    """
+                    declare module "@scope/graph-package" {
+                      function createWindow(html?: string, address?: string): Window;
+                    }
+                    """
+            },
+            entryFileName: "node_modules/@scope/graph-package/index.js",
+            rootModuleId: "@scope/graph-package");
+
+        var result = harness.Build(
+            """
+            using var exports = DeclaredGraphPackage.Import();
+            using var window = exports.CreateWindow("<html></html>", "about:blank");
+            var document = window.Document;
+            Console.WriteLine(document.Title);
+            Console.WriteLine(document.GetElementsByTagName("*").Length);
+            """,
+            run: true);
+
+        AssertConsumerSucceeded(result);
+        Assert.Equal(
+            ["fixture", "3"],
+            OutputLines(result.RunStandardOutput));
+    }
+
+    [Fact]
+    public void PackageDeclarationParameters_PreserveOptionalAndRestCallShapes()
+    {
+        using var harness = CreatePackageDeclarationHarness(
+            """
+            module.exports = {
+              optional(value, suffix) { return suffix === undefined ? value : value + suffix; },
+              join(separator, ...values) { return values.join(separator); }
+            };
+            """,
+            """
+            interface Api {
+              optional(value: string, suffix?: string): string
+              join(separator: string, ...values: string[]): string
+            }
+            declare const api: Api
+            export = api
+            """,
+            "ParameterPackage");
+
+        var result = harness.Build(
+            """
+            using var api = ParameterPackage.Import();
+            Console.WriteLine(api.Optional("value"));
+            Console.WriteLine(api.Join(",", "a", "b"));
+            """,
+            run: true);
+
+        AssertConsumerSucceeded(result);
+        Assert.Equal(["value", "a,b"], OutputLines(result.RunStandardOutput));
+    }
+
+    [Fact]
+    public void PackageDeclarationOverloads_FallBackInsteadOfEmittingDuplicateMembers()
+    {
+        AssertRejectedDeclarationFallsBack(
+            """
+            declare module "fallback-package" {
+              function parse(value: string): string;
+              function parse(value: number): string;
+            }
+            """,
+            "OverloadFallbackPackage");
+    }
+
+    [Fact]
+    public void CallableIntersection_FallsBackInsteadOfDroppingCallableConstituent()
+    {
+        AssertRejectedDeclarationFallsBack(
+            """
+            type Callable = (value: string) => string
+            interface Properties { enabled: boolean }
+            declare const api: Callable & Properties
+            export = api
+            """,
+            "IntersectionFallbackPackage");
+    }
+
+    [Fact]
+    public void InterfaceInheritance_FallsBackInsteadOfDroppingBaseMembers()
+    {
+        AssertRejectedDeclarationFallsBack(
+            """
+            interface Base { inherited(): string }
+            interface Api extends Base { own(): string }
+            declare const api: Api
+            export = api
+            """,
+            "InheritedInterfaceFallbackPackage");
+    }
+
+    [Theory]
+    [InlineData("method?(): string")]
+    [InlineData("property?: string")]
+    public void OptionalInterfaceMembers_FallBackInsteadOfBecomingMandatory(string member)
+    {
+        AssertRejectedDeclarationFallsBack(
+            $$"""
+            interface Api { {{member}} }
+            declare const api: Api
+            export = api
+            """,
+            "OptionalMemberFallbackPackage");
+    }
+
+    [Fact]
+    public void NullableDeclarationReturns_RemainConservativeObjects()
+    {
+        using var harness = CreatePackageDeclarationHarness(
+            "module.exports = { maybeNumber() { return null; }, maybeObject() { return undefined; } };",
+            """
+            interface Result { value: string; }
+            interface Api {
+              maybeNumber(): number | null;
+              maybeObject(): Result | undefined;
+            }
+            declare const api: Api
+            export = api
+            """,
+            "NullablePackage");
+
+        using var loaded = JrocInMemoryAssemblyLoader.Load(harness.Artifact);
+        var maybeMethods = loaded.Assembly
+            .GetTypes()
+            .Where(type => type.IsInterface)
+            .SelectMany(type => type.GetMethods())
+            .Where(method => method.Name is "MaybeNumber" or "MaybeObject")
+            .ToArray();
+
+        Assert.Contains(maybeMethods, method => method.Name == "MaybeNumber");
+        Assert.Contains(maybeMethods, method => method.Name == "MaybeObject");
+        Assert.All(maybeMethods, method => Assert.Equal(typeof(object), method.ReturnType));
+    }
+
+    [Fact]
+    public void CompactPackageInterfaces_ParseEveryTopLevelMember()
+    {
+        using var harness = CreatePackageDeclarationHarness(
+            "module.exports = { enabled: true, format(value) { return String(value); } };",
+            """
+            interface Api { enabled: boolean; format(value: string): string; }
+            declare const api: Api
+            export = api
+            """,
+            "CompactInterfacePackage");
+
+        var result = harness.Build(
+            """
+            using var api = CompactInterfacePackage.Import();
+            Console.WriteLine(api.Enabled);
+            Console.WriteLine(api.Format("ok"));
+            """,
+            run: true);
+
+        AssertConsumerSucceeded(result);
+        Assert.Equal(["True", "ok"], OutputLines(result.RunStandardOutput));
+    }
+
+    [Theory]
+    [InlineData("interface Api { call($: string, _: string): string } declare const api: Api\nexport = api")]
+    [InlineData("interface Api { call(default: string): string } declare const api: Api\nexport = api")]
+    [InlineData("interface Api { value: class } declare const api: Api\nexport = api")]
+    public void InvalidSynthesizedIdentifiers_FallBackWithoutCompilerFailure(string declaration)
+    {
+        AssertRejectedDeclarationFallsBack(declaration, "IdentifierFallbackPackage");
+    }
+
+    [Fact]
     public void PublicContracts_RecursivelyUseOnlyGeneratedOrBclTypes()
     {
         using var harness = new GeneratedAssemblyConsumerHarness(
@@ -656,6 +893,40 @@ public sealed class GeneratedFacadePhaseThreeTests
             result.RunExitCode == 0,
             $"Consumer run failed.{Environment.NewLine}" +
             $"{result.RunStandardOutput}{Environment.NewLine}{result.RunStandardError}");
+    }
+
+    private static GeneratedAssemblyConsumerHarness CreatePackageDeclarationHarness(
+        string javaScript,
+        string declaration,
+        string assemblyName)
+        => new(
+            javaScript,
+            assemblyName,
+            new Dictionary<string, string>
+            {
+                ["node_modules/test-package/package.json"] =
+                    """{"name":"test-package","main":"index.js","types":"index.d.ts"}""",
+                ["node_modules/test-package/index.d.ts"] = declaration
+            },
+            entryFileName: "node_modules/test-package/index.js",
+            rootModuleId: "test-package");
+
+    private static void AssertRejectedDeclarationFallsBack(string declaration, string assemblyName)
+    {
+        using var harness = CreatePackageDeclarationHarness(
+            "const key = 'late'; exports[key] = 9;",
+            declaration,
+            assemblyName);
+
+        var result = harness.Build(
+            $$"""
+            using var exports = {{assemblyName}}.Import();
+            Console.WriteLine(exports.Value != null);
+            """,
+            run: true);
+
+        AssertConsumerSucceeded(result);
+        Assert.Equal(["True"], OutputLines(result.RunStandardOutput));
     }
 
     private static string[] OutputLines(string output) =>

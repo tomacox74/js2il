@@ -13,20 +13,23 @@ It imports MSBuild props/targets, invokes `Jroc.Core` in-process, and exposes th
 - [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core)
   - Use this when you need the compiler as a reusable .NET library.
 - [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime)
-  - Use this when your host application needs the runtime support library used by compiled modules.
+  - Use this directly only for advanced hosting APIs such as `JsEngine`;
+    generated-facade projects receive the implementation transitively from
+    `Jroc.SDK`.
 
-Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `Jroc.Runtime` into that feed because host projects reference it directly.
+Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK`
+together at the same version. Local-feed validation must include
+`Jroc.Runtime` because it is a transitive `Jroc.SDK` dependency.
 
 ## Install
 
 ```xml
 <ItemGroup>
   <PackageReference Include="Jroc.SDK" Version="VERSION" />
-  <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 </ItemGroup>
 ```
 
-`Jroc.Runtime` is the package your host references for `Jroc.Runtime.JsEngine` and the runtime support assembly.
+The SDK restores and deploys the compatible runtime automatically.
 
 ## Basic usage
 
@@ -38,7 +41,6 @@ Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` to
 
   <ItemGroup>
     <PackageReference Include="Jroc.SDK" Version="VERSION" />
-    <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 
     <JrocCompile Include="JavaScript\HostedMathModule.js" />
   </ItemGroup>
@@ -72,9 +74,9 @@ Console.WriteLine(exports.Version);
 Side-effect-only modules do not get `Import()`. Dynamic or computed CommonJS
 exports get a safe generated fallback contract rather than being hidden.
 
-Set `CopyToOutputDirectory="true"` when using this facade-only flow without a
-direct `Jroc.Runtime` package reference so the runtime implementation assembly
-is deployed with the generated assembly.
+Normal build and publish output receives the runtime implementation through the
+SDK dependency. `CopyToOutputDirectory` controls copying the generated JROC
+artifacts themselves; it is not a substitute for runtime package resolution.
 
 Package/module-id entrypoints work too. For example, if the host project restores the npm package in its own directory:
 

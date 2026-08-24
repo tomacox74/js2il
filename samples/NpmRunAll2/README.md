@@ -33,7 +33,7 @@ This will:
 
 1. Run `npm ci` to restore `npm-run-all2` into `node_modules`
 2. Compile `index.js` (and its `npm-run-all2` dependency) to `NpmRunAll2Module.dll` via `Jroc.SDK`
-3. Import `NpmRunAll2Module` through the generated facade and call `TaskHeader` and `FilterTasks`
+3. Import `NpmRunAll2Module` through the generated facade and call `TaskHeader` and `FilterTasks` without reflection, module-id strings, `dynamic`, or `Convert`
 
 ## Expected output
 

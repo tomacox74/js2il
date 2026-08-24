@@ -19,6 +19,12 @@ Compilation reports a facade-name collision when identifier normalization,
 case-insensitive paths, or reserved members such as `Run` and `Import` would
 make the C# surface ambiguous.
 
+Package assembly names are normalized into portable identifiers. For example,
+`@mixmark-io/domino` produces assembly identity `mixmark-io.domino` and facade
+`mixmark_io_domino`; an explicit `AssemblyName` overrides the package-derived
+identity. Normalization collisions fail compilation rather than silently
+choosing one facade.
+
 Each script exposes this C# execution method:
 
 ```csharp
@@ -52,9 +58,9 @@ translated JavaScript failure.
 
 Generated facade signatures use only BCL types. Calling `Run` therefore does
 not require C# source code to reference JROC runtime APIs. The runtime assembly
-is still an implementation dependency and must be deployed beside the compiled
-assembly. With `JrocCompile`, set `CopyToOutputDirectory="true"` when the host
-does not otherwise reference `Jroc.Runtime`.
+is still an implementation dependency. `Jroc.SDK` supplies and validates that
+dependency transitively, so normal build and publish output contains the
+compatible runtime without a direct consumer package reference.
 
 `Program.Main(string[] args)` uses the same root `Run` execution path. The
 internal module initializer ABI and generated `Modules`, `Packages`, scope, and
@@ -98,6 +104,30 @@ exported callables/classes, `Call(params object[] args)` and
 Calls through the root contract or derived dynamic handles after disposal throw
 `ObjectDisposedException`. Each `Import` call creates an isolated runtime and
 module cache.
+
+For package entrypoints, JROC also reads the package's `types` or `typings`
+metadata when present. Supported TypeScript declaration shapes—including
+interfaces, function type aliases, `export =` objects, and ambient module
+functions—supply the public facade contract while execution remains bound to
+the JavaScript entrypoint selected by Node-compatible resolution. Referenced
+object return types become generated nested contracts; supported standard DOM
+types include `Window`, `Document`, and `HTMLCollection`. Optional and rest
+parameters retain JavaScript variable-arity calling semantics. If a declaration
+contains unsupported overloads, callable intersections, unparsed members, or
+unsafe synthesized identifiers, JROC ignores that declaration contract and
+conservatively infers the facade from the runtime JavaScript instead. Interface
+inheritance and optional interface members also use this fallback until those
+shapes can be represented faithfully. Nullable unions remain `object` rather
+than being narrowed to a non-null contract.
+
+```csharp
+using var colors = picocolors.Import();
+Console.WriteLine(colors.Red("failed"));
+
+using var domino = mixmark_io_domino.Import();
+using var window = domino.CreateWindow("<title>Hello</title>");
+Console.WriteLine(window.Document.Title);
+```
 
 ## Rich export contracts
 
@@ -216,6 +246,16 @@ Constructor helper methods are looked up on the exported JavaScript constructor
 at call time. Replacing properties such as `Date.now`, `Date.parse`, `Date.UTC`,
 or `RegExp.escape` is therefore visible to generated-facade callers.
 
+```csharp
+using var exports = BuiltinsModule.Import();
+
+Console.WriteLine(exports.CreatedAt.ToISOString());
+exports.Pattern.LastIndex = 0;
+Console.WriteLine(exports.Pattern.Test("value-123"));
+Console.WriteLine($"{exports.Error.Name}: {exports.Error.Message}");
+Console.WriteLine(exports.Token.Description);
+```
+
 The same projection is used for direct/default exports, named properties,
 nested objects, aliases, and function return values. Invalid date ISO
 conversion, invalid regular-expression construction, and unsupported
@@ -236,6 +276,20 @@ entry/key/value iteration, or a direct generated object export share the
 runtime's canonical generated handle whenever their projection contracts are
 compatible. Callable keys and values use the same rule rather than switching to
 a separate dynamic callable wrapper.
+
+```csharp
+using var exports = CollectionsModule.Import();
+
+exports.Settings.Set("mode", "strict");
+Console.WriteLine(exports.Settings.Get("mode"));
+foreach (var entry in exports.Settings)
+{
+    Console.WriteLine($"{entry.Key}={entry.Value}");
+}
+
+exports.Names.Add("alpha");
+Console.WriteLine(exports.Names.Has("alpha"));
+```
 
 ## Binary values
 
@@ -259,8 +313,66 @@ Slicing a `SharedArrayBuffer` produces another shared buffer with copied,
 independent contents; it does not silently downgrade the result to an ordinary
 `ArrayBuffer`.
 
+```csharp
+using var exports = BinaryModule.Import();
+
+exports.Bytes.Set(0, 42);
+Console.WriteLine(exports.View.GetUint8(0));
+Console.WriteLine(exports.Bytes.ByteOffset);
+Console.WriteLine(exports.Bytes.Buffer.IsShared);
+```
+
 JROC does not currently implement ArrayBuffer detachment, BigInt typed arrays,
 typed-array `slice`/`subarray`, or growable `SharedArrayBuffer`. Generated
 contracts do not claim those operations. Fixed buffers reject `Resize`
 explicitly, and `SharedArrayBuffer` is exposed only for the runtime behavior
 JROC currently executes.
+
+## Supported compatibility boundary
+
+The supported C# API consists of:
+
+- assembly-root and `Scripts` facade types;
+- their public `Run` and conditional `Import` methods;
+- generated public contract interfaces reachable from those methods; and
+- BCL types appearing in those signatures.
+
+Generated `Modules`, `Packages`, scope classes, callable bodies, metadata
+attributes, proxy implementations, and module initializer methods are
+implementation details. Their names and layout may change without
+compatibility guarantees. The reviewed public-surface gate rejects runtime or
+compiler implementation types in the supported boundary and snapshots that
+surface deterministically.
+
+`Run` is the program-execution API: it owns a temporary runtime and returns
+after JavaScript asynchronous work drains. `Import` is the module-hosting API:
+it returns exports and keeps an isolated runtime alive until the returned
+contract is disposed.
+
+## Migrating from runtime hosting APIs
+
+Replace reflection and runtime-owned loading:
+
+```csharp
+using Jroc.Runtime;
+using System.Reflection;
+
+var assembly = Assembly.LoadFrom("HostedMathModule.dll");
+using dynamic exports = JsEngine.LoadDynamicModule(assembly, "math");
+Console.WriteLine(exports.add(1, 2));
+```
+
+with the generated facade:
+
+```csharp
+using var exports = HostedMathModule.Import();
+Console.WriteLine(exports.Add(1, 2));
+```
+
+Remove the direct `Jroc.Runtime` package reference when host source no longer
+uses advanced runtime APIs. Keep only `Jroc.SDK`; it supplies the compatible
+runtime implementation transitively. Replace module-id strings with the root
+facade or a nested `Scripts` path, replace `dynamic`/conversion calls with
+generated members, and use `using`/`await using` for exports, handles, and
+enumerators. `JsEngine` remains available for hosts that intentionally select
+assemblies or module ids at runtime.
