@@ -33,4 +33,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task returns_true_for_deleted_entry()
         => ExecutionTestFromFile("returns-true-for-deleted-entry");
 
-}
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

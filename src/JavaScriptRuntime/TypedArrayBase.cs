@@ -26,6 +26,7 @@ namespace JavaScriptRuntime
         protected abstract void WriteElementValue(int index, double value);
         protected abstract TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length);
 
+        internal string TypedArrayNameValue => TypedArrayName;
         protected ArrayBuffer BufferObject => _buffer;
         protected int ByteOffsetBytes => _byteOffset;
         protected int LengthElements => GetCurrentLengthOrZero();
@@ -106,10 +107,10 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        public double at()
+        public object? at()
             => AtCore(null);
 
-        public double at(object? index)
+        public object? at(object? index)
             => AtCore(index);
 
         public bool includes()
@@ -968,14 +969,6 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = new Func<IJavaScriptIterator>(values)
             });
-            PropertyDescriptorStore.DefineOrUpdate(this, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = TypedArrayName
-            });
         }
 
         internal override bool TryGetInvariantOwnPropertyValue(string key, out object? value)
@@ -1003,12 +996,6 @@ namespace JavaScriptRuntime
                 if (string.Equals(key, "BYTES_PER_ELEMENT", StringComparison.Ordinal))
                 {
                     value = BYTES_PER_ELEMENT;
-                    return true;
-                }
-
-                if (string.Equals(key, Symbol.toStringTag.DebugId, StringComparison.Ordinal))
-                {
-                    value = TypedArrayName;
                     return true;
                 }
             }
@@ -1194,41 +1181,20 @@ namespace JavaScriptRuntime
             return (_buffer.ByteLengthInt - _byteOffset) / BytesPerElement;
         }
 
-        private double AtCore(object? index)
+        private object? AtCore(object? index)
         {
-            int elementIndex;
-            if (index is null || index is JsNull)
+            var length = GetCurrentLengthOrZero();
+            var relativeIndex = ToIntegerOrInfinity(index);
+            var elementIndex = relativeIndex >= 0
+                ? relativeIndex
+                : length + relativeIndex;
+
+            if (elementIndex < 0 || elementIndex >= length)
             {
-                elementIndex = 0;
-            }
-            else
-            {
-                var number = TypeUtilities.ToNumber(index);
-                if (double.IsNaN(number))
-                {
-                    elementIndex = 0;
-                }
-                else if (double.IsNegativeInfinity(number))
-                {
-                    elementIndex = -1;
-                }
-                else if (double.IsPositiveInfinity(number))
-                {
-                    elementIndex = _length;
-                }
-                else
-                {
-                    var truncated = (int)global::System.Math.Truncate(number);
-                    elementIndex = truncated < 0 ? _length + truncated : truncated;
-                }
+                return null;
             }
 
-            if ((uint)elementIndex >= (uint)_length)
-            {
-                return 0.0;
-            }
-
-            return ReadElementValue(elementIndex);
+            return ReadElementValue((int)elementIndex);
         }
 
         private bool IncludesCore(object? searchElement, object? fromIndex)

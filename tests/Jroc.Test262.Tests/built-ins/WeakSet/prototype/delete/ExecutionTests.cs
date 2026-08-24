@@ -12,5 +12,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "returns-false-when-delete-is-noop")]
     public Task returns_false_when_delete_is_noop()
-        => ExecutionTestFromFile("returns-false-when-delete-is-noop");
-}
+        => ExecutionTestFromFile("returns-false-when-delete-is-noop");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

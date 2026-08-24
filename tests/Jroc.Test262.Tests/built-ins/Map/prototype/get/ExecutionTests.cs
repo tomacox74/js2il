@@ -37,4 +37,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task does_not_have_mapdata_internal_slot()
         => ExecutionTestFromFile("does-not-have-mapdata-internal-slot");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

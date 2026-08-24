@@ -1029,7 +1029,7 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 910 (0x38e)
+			// Code size: 906 (0x38a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1051,8 +1051,7 @@
 				[16] object,
 				[17] object,
 				[18] float64,
-				[19] object,
-				[20] object
+				[19] object
 			)
 
 			IL_0000: ldarg.2
@@ -1315,7 +1314,7 @@
 				IL_02dd: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 				IL_02e2: ldloc.s 15
 				IL_02e4: clt
-				IL_02e6: brfalse IL_0374
+				IL_02e6: brfalse IL_0370
 
 				IL_02eb: ldloc.s 13
 				IL_02ed: ldloc.s 14
@@ -1364,29 +1363,29 @@
 				IL_034b: ldloc.s 19
 				IL_034d: stloc.s 7
 				IL_034f: ldloc.s 16
-				IL_0351: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0356: ldc.r8 1
-				IL_035f: add
-				IL_0360: stloc.s 18
-				IL_0362: ldloc.s 18
-				IL_0364: box [System.Runtime]System.Double
-				IL_0369: stloc.s 20
-				IL_036b: ldloc.s 20
-				IL_036d: stloc.s 16
-				IL_036f: br IL_02d7
+				IL_0351: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+				IL_0356: stloc.s 17
+				IL_0358: ldloc.s 17
+				IL_035a: ldc.i4.1
+				IL_035b: box [System.Runtime]System.Boolean
+				IL_0360: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+				IL_0365: stloc.s 17
+				IL_0367: ldloc.s 17
+				IL_0369: stloc.s 16
+				IL_036b: br IL_02d7
 			// end loop
 
-			IL_0374: ldarg.0
-			IL_0375: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_037a: stloc.s 17
-			IL_037c: ldloc.s 17
-			IL_037e: ldstr "LastPx"
-			IL_0383: ldloc.s 15
-			IL_0385: ldc.i4.1
-			IL_0386: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_038b: pop
-			IL_038c: ldnull
-			IL_038d: ret
+			IL_0370: ldarg.0
+			IL_0371: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0376: stloc.s 17
+			IL_0378: ldloc.s 17
+			IL_037a: ldstr "LastPx"
+			IL_037f: ldloc.s 15
+			IL_0381: ldc.i4.1
+			IL_0382: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_0387: pop
+			IL_0388: ldnull
+			IL_0389: ret
 		} // end of method DrawLine::__js_call__
 
 	} // end of class DrawLine
@@ -7483,7 +7482,7 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 1431 (0x597)
+			// Code size: 1481 (0x5c9)
 			.maxstack 8
 			.locals init (
 				[0] string,
@@ -7945,34 +7944,50 @@
 			IL_054c: ldarg.0
 			IL_054d: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Testing
 			IL_0552: stloc.2
-			IL_0553: ldloc.2
-			IL_0554: ldstr "LoopCount"
-			IL_0559: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-			IL_055e: stloc.s 12
-			IL_0560: ldloc.s 12
-			IL_0562: ldc.r8 1
-			IL_056b: add
-			IL_056c: stloc.s 12
-			IL_056e: ldloc.2
-			IL_056f: ldstr "LoopCount"
-			IL_0574: ldloc.s 12
-			IL_0576: ldc.i4.1
-			IL_0577: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_057c: pop
-			IL_057d: ldarg.0
-			IL_057e: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Loop
-			IL_0583: stloc.2
-			IL_0584: ldloc.2
-			IL_0585: ldc.i4.1
-			IL_0586: newarr [System.Runtime]System.Object
-			IL_058b: dup
-			IL_058c: ldc.i4.0
-			IL_058d: ldarg.0
-			IL_058e: stelem.ref
-			IL_058f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0594: pop
-			IL_0595: ldnull
-			IL_0596: ret
+			IL_0553: volatile.
+			IL_0555: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_98
+			IL_055a: brfalse IL_056f
+
+			IL_055f: ldloc.2
+			IL_0560: ldstr "LoopCount"
+			IL_0565: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_056a: br IL_0584
+
+			IL_056f: ldloc.2
+			IL_0570: ldstr "LoopCount"
+			IL_0575: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M21>:__js_call__:158"
+			IL_057a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_98
+			IL_057f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0584: stloc.s 9
+			IL_0586: ldloc.s 9
+			IL_0588: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_058d: stloc.s 9
+			IL_058f: ldloc.s 9
+			IL_0591: ldc.i4.1
+			IL_0592: box [System.Runtime]System.Boolean
+			IL_0597: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_059c: stloc.s 9
+			IL_059e: ldloc.2
+			IL_059f: ldstr "LoopCount"
+			IL_05a4: ldloc.s 9
+			IL_05a6: ldc.i4.1
+			IL_05a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_05ac: pop
+			IL_05ad: ldarg.0
+			IL_05ae: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Loop
+			IL_05b3: stloc.s 9
+			IL_05b5: ldloc.s 9
+			IL_05b7: ldc.i4.1
+			IL_05b8: newarr [System.Runtime]System.Object
+			IL_05bd: dup
+			IL_05be: ldc.i4.0
+			IL_05bf: ldarg.0
+			IL_05c0: stelem.ref
+			IL_05c1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_05c6: pop
+			IL_05c7: ldnull
+			IL_05c8: ret
 		} // end of method Loop::__js_call__
 
 	} // end of class Loop
@@ -8866,7 +8881,7 @@
 				IL_0958: ldarg.0
 				IL_0959: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_095e: volatile.
-				IL_0960: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_98
+				IL_0960: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_99
 				IL_0965: brfalse IL_0979
 
 				IL_096a: ldstr "Edge"
@@ -8875,7 +8890,7 @@
 
 				IL_0979: ldstr "Edge"
 				IL_097e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:289"
-				IL_0983: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_98
+				IL_0983: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_99
 				IL_0988: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_098d: stloc.3
@@ -8891,7 +8906,7 @@
 				IL_09a6: ldarg.0
 				IL_09a7: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_09ac: volatile.
-				IL_09ae: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_99
+				IL_09ae: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
 				IL_09b3: brfalse IL_09c7
 
 				IL_09b8: ldstr "Normal"
@@ -8900,7 +8915,7 @@
 
 				IL_09c7: ldstr "Normal"
 				IL_09cc: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:297"
-				IL_09d1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_99
+				IL_09d1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
 				IL_09d6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_09db: stloc.3
@@ -8918,7 +8933,7 @@
 				IL_09f4: ldarg.0
 				IL_09f5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_09fa: volatile.
-				IL_09fc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
+				IL_09fc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_101
 				IL_0a01: brfalse IL_0a15
 
 				IL_0a06: ldstr "Edge"
@@ -8927,7 +8942,7 @@
 
 				IL_0a15: ldstr "Edge"
 				IL_0a1a: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:303"
-				IL_0a1f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
+				IL_0a1f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_101
 				IL_0a24: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0a29: stloc.1
@@ -8943,7 +8958,7 @@
 				IL_0a43: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 				IL_0a48: stloc.1
 				IL_0a49: volatile.
-				IL_0a4b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_101
+				IL_0a4b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_102
 				IL_0a50: brfalse IL_0a65
 
 				IL_0a55: ldloc.1
@@ -8954,7 +8969,7 @@
 				IL_0a65: ldloc.1
 				IL_0a66: ldstr "V"
 				IL_0a6b: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:309"
-				IL_0a70: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_101
+				IL_0a70: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_102
 				IL_0a75: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0a7a: stloc.1
@@ -8963,7 +8978,7 @@
 				IL_0a81: ldarg.0
 				IL_0a82: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_0a87: volatile.
-				IL_0a89: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_102
+				IL_0a89: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
 				IL_0a8e: brfalse IL_0aa2
 
 				IL_0a93: ldstr "Edge"
@@ -8972,7 +8987,7 @@
 
 				IL_0aa2: ldstr "Edge"
 				IL_0aa7: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:313"
-				IL_0aac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_102
+				IL_0aac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
 				IL_0ab1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0ab6: stloc.s 11
@@ -8988,7 +9003,7 @@
 				IL_0ad6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 				IL_0adb: stloc.s 11
 				IL_0add: volatile.
-				IL_0adf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
+				IL_0adf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_104
 				IL_0ae4: brfalse IL_0afa
 
 				IL_0ae9: ldloc.s 11
@@ -8999,7 +9014,7 @@
 				IL_0afa: ldloc.s 11
 				IL_0afc: ldstr "V"
 				IL_0b01: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:319"
-				IL_0b06: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
+				IL_0b06: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_104
 				IL_0b0b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0b10: stloc.s 11
@@ -9008,7 +9023,7 @@
 				IL_0b18: ldarg.0
 				IL_0b19: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_0b1e: volatile.
-				IL_0b20: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_104
+				IL_0b20: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_105
 				IL_0b25: brfalse IL_0b39
 
 				IL_0b2a: ldstr "Edge"
@@ -9017,7 +9032,7 @@
 
 				IL_0b39: ldstr "Edge"
 				IL_0b3e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:323"
-				IL_0b43: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_104
+				IL_0b43: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_105
 				IL_0b48: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0b4d: stloc.s 12
@@ -9033,7 +9048,7 @@
 				IL_0b6d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 				IL_0b72: stloc.s 12
 				IL_0b74: volatile.
-				IL_0b76: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_105
+				IL_0b76: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_106
 				IL_0b7b: brfalse IL_0b91
 
 				IL_0b80: ldloc.s 12
@@ -9044,7 +9059,7 @@
 				IL_0b91: ldloc.s 12
 				IL_0b93: ldstr "V"
 				IL_0b98: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:329"
-				IL_0b9d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_105
+				IL_0b9d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_106
 				IL_0ba2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0ba7: stloc.s 12
@@ -9195,7 +9210,7 @@
 			IL_0d4b: ldarg.0
 			IL_0d4c: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Origin
 			IL_0d51: volatile.
-			IL_0d53: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_106
+			IL_0d53: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_107
 			IL_0d58: brfalse IL_0d6c
 
 			IL_0d5d: ldstr "V"
@@ -9204,7 +9219,7 @@
 
 			IL_0d6c: ldstr "V"
 			IL_0d71: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:396"
-			IL_0d76: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_106
+			IL_0d76: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_107
 			IL_0d7b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0d80: stloc.3
@@ -9215,7 +9230,7 @@
 			IL_0d91: ldarg.0
 			IL_0d92: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Origin
 			IL_0d97: volatile.
-			IL_0d99: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_107
+			IL_0d99: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_108
 			IL_0d9e: brfalse IL_0db2
 
 			IL_0da3: ldstr "V"
@@ -9224,7 +9239,7 @@
 
 			IL_0db2: ldstr "V"
 			IL_0db7: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:401"
-			IL_0dbc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_107
+			IL_0dbc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_108
 			IL_0dc1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0dc6: stloc.s 11
@@ -9235,7 +9250,7 @@
 			IL_0dda: ldarg.0
 			IL_0ddb: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Origin
 			IL_0de0: volatile.
-			IL_0de2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_108
+			IL_0de2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_109
 			IL_0de7: brfalse IL_0dfb
 
 			IL_0dec: ldstr "V"
@@ -9244,7 +9259,7 @@
 
 			IL_0dfb: ldstr "V"
 			IL_0e00: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:406"
-			IL_0e05: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_108
+			IL_0e05: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_109
 			IL_0e0a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0e0f: stloc.1
@@ -9321,7 +9336,7 @@
 				IL_0eca: ldloc.0
 				IL_0ecb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 				IL_0ed0: volatile.
-				IL_0ed2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_109
+				IL_0ed2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_110
 				IL_0ed7: brfalse IL_0eeb
 
 				IL_0edc: ldstr "V"
@@ -9330,7 +9345,7 @@
 
 				IL_0eeb: ldstr "V"
 				IL_0ef0: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:436"
-				IL_0ef5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_109
+				IL_0ef5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_110
 				IL_0efa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 				IL_0eff: stloc.3
@@ -10343,6 +10358,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_107
 	.field assembly static int32 __jroc_dynamicLookup_108
 	.field assembly static int32 __jroc_dynamicLookup_109
+	.field assembly static int32 __jroc_dynamicLookup_110
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

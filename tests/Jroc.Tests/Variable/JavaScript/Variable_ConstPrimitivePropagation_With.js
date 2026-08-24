@@ -24,3 +24,12 @@ console.log(makeReader({ VALUE: "shadow" })());
 console.log(makeReader({})());
 console.log(makeIdentifierReader({ VALUE: "shadow" })());
 console.log(makeIdentifierReader({})());
+
+const NESTED_VALUE = 1;
+const outer = { NESTED_VALUE: 2 };
+with (outer) {
+  with ({}) {
+    ++NESTED_VALUE;
+  }
+}
+console.log(outer.NESTED_VALUE);

@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:09:52Z
+> Last generated (UTC): 2026-08-23T20:02:19Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -50,7 +50,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Prefix increment (++x) | Supported | [`UnaryOperator_PlusPlusPrefix.js`](../../../tests/Jroc.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js)<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs` |  | Prefix increment writes back the incremented ToNumber result and returns that updated value. The checked-in test262 port adds explicit primitive-coercion coverage alongside the existing project-local prefix regression. |
+| Prefix increment (++x) | Supported | [`UnaryOperator_PlusPlusPrefix.js`](../../../tests/Jroc.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js)<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-increment/ExecutionTests.cs` | `test/language/expressions/prefix-increment/S11.4.4_A5_T1.js`<br>`test/language/expressions/prefix-increment/S11.4.4_A5_T2.js`<br>`test/language/expressions/prefix-increment/S11.4.4_A6_T3.js` | Prefix increment evaluates its reference once, performs ToNumeric with abrupt completion, preserves BigInt results, writes the incremented value back (including with-environment references), and returns the updated value. |
 
 ### 13.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator))
 

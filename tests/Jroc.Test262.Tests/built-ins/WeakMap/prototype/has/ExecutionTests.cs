@@ -8,5 +8,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "returns-true-when-object-key-present")]
     public Task returns_true_when_object_key_present()
-        => ExecutionTestFromFile("returns-true-when-object-key-present");
-}
+        => ExecutionTestFromFile("returns-true-when-object-key-present");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

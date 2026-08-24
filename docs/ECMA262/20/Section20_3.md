@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-08-23T20:02:19Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -27,18 +27,18 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 20.3.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-boolean-constructor-boolean-value))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Boolean(value) (callable primitive conversion) | Supported | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) | Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean). |
-| new Boolean(value) | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Jroc.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) | Constructs a Boolean wrapper object with `Boolean.prototype` semantics. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Boolean(value) (callable primitive conversion) | Supported | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) |  | Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean). |
+| new Boolean(value) | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Jroc.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) |  | Constructs a Boolean wrapper object with `Boolean.prototype` semantics. |
 
 ### 20.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Boolean.prototype constructor/toString/valueOf | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Jroc.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) | Implements `Boolean.prototype.constructor`, `Boolean.prototype.toString()`, `Boolean.prototype.valueOf()`, and `ThisBooleanValue` behavior for primitives and Boolean wrapper instances. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Boolean.prototype constructor/toString/valueOf | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Jroc.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js)<br>`tests/Jroc.Test262.Tests/built-ins/Boolean/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Boolean/prototype/toString/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Boolean/prototype/valueOf/ExecutionTests.cs` | `test/built-ins/Boolean/prototype/S15.6.3.1_A1.js`<br>`test/built-ins/Boolean/prototype/toString/S15.6.4.2_A1_T1.js`<br>`test/built-ins/Boolean/prototype/toString/S15.6.4.2_A1_T2.js`<br>`test/built-ins/Boolean/prototype/valueOf/S15.6.4.3_A1_T1.js`<br>`test/built-ins/Boolean/prototype/valueOf/S15.6.4.3_A1_T2.js` | Implements Boolean.prototype.constructor, toString(), valueOf(), and ThisBooleanValue for primitive booleans, Boolean wrappers, and Boolean.prototype itself, with TypeError for incompatible receivers. |
 

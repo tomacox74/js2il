@@ -328,7 +328,8 @@ namespace JavaScriptRuntime
                 || CallableOperations.IsCallable(value)
                 || value is Symbol
                 || value is string
-                || value.GetType().IsValueType)
+                || (value.GetType().IsValueType
+                    && value is not global::System.Numerics.BigInteger))
             {
                 return value;
             }
@@ -410,6 +411,8 @@ namespace JavaScriptRuntime
                     return SerializeNumber(f);
                 case int or long or short or byte:
                     return DotNet2JSConversions.ToString(value);
+                case global::System.Numerics.BigInteger:
+                    throw new TypeError("Do not know how to serialize a BigInt");
             }
 
             if (Number.TryGetWrappedNumberValue(value, out var wrappedNumber))
@@ -426,6 +429,16 @@ namespace JavaScriptRuntime
             if (value is Boolean booleanObject)
             {
                 return booleanObject.valueOf() ? "true" : "false";
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(
+                    value!,
+                    ObjectRuntime.PrimitiveValuePropertyName,
+                    out var primitiveValue)
+                && primitiveValue.Kind == JsPropertyDescriptorKind.Data
+                && primitiveValue.Value is global::System.Numerics.BigInteger)
+            {
+                throw new TypeError("Do not know how to serialize a BigInt");
             }
 
             if (value is Array array)

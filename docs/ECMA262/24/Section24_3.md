@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-22T00:01:14Z
+> Last generated (UTC): 2026-08-23T20:02:19Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -50,7 +50,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakMap.prototype.set / get / has / delete | Supported with Limitations | [`WeakMap_Set_Get_Basic.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js)<br>[`WeakMap_Object_Keys.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js)<br>`tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/get/ExecutionTests.cs` | `test/built-ins/WeakMap/prototype/get/get.js`<br>`test/built-ins/WeakMap/prototype/get/returns-undefined-if-key-cannot-be-held-weakly.js`<br>`test/built-ins/WeakMap/prototype/get/returns-undefined-with-object-key.js`<br>`test/built-ins/WeakMap/prototype/get/this-not-object-throw.js` | Core WeakMap flows work for the object keys used in tests. Current checked-in coverage includes get() receiver checks, object-key lookup, and undefined results for missing or non-weakly-held keys. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value. |
+| WeakMap.prototype.set / get / has / delete | Supported with Limitations | [`WeakMap_Set_Get_Basic.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js)<br>[`WeakMap_Object_Keys.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js)<br>`tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/get/ExecutionTests.cs` | `test/built-ins/WeakMap/prototype/get/get.js`<br>`test/built-ins/WeakMap/prototype/get/returns-undefined-if-key-cannot-be-held-weakly.js`<br>`test/built-ins/WeakMap/prototype/get/returns-undefined-with-object-key.js`<br>`test/built-ins/WeakMap/prototype/get/this-not-object-throw.js`<br>`test/built-ins/WeakMap/prototype/delete/name.js`<br>`test/built-ins/WeakMap/prototype/get/name.js`<br>`test/built-ins/WeakMap/prototype/has/name.js`<br>`test/built-ins/WeakMap/prototype/set/name.js` | Core WeakMap flows work for valid weak keys, and the public prototype methods expose their standard JavaScript names. Current coverage includes receiver checks, object-key lookup, and undefined/false results for values that cannot be held weakly; broader weak-key and exotic behavior remains limited. |
 
 ### 24.3.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert))
 

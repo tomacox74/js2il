@@ -1281,36 +1281,36 @@
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 55 (0x37)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object,
-				[2] object,
-				[3] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::valueGetterCalls
-			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000b: ldc.r8 1
-			IL_0014: add
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: box [System.Runtime]System.Double
-			IL_001c: stloc.1
-			IL_001d: ldarg.0
-			IL_001e: ldloc.1
-			IL_001f: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::valueGetterCalls
-			IL_0024: ldarg.0
-			IL_0025: ldfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::valueGetterCalls
-			IL_002a: stloc.2
-			IL_002b: ldstr "accessor:"
-			IL_0030: ldloc.2
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0036: stloc.3
-			IL_0037: ldloc.3
-			IL_0038: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: ldc.i4.1
+			IL_0010: box [System.Runtime]System.Boolean
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_001a: stloc.0
+			IL_001b: ldarg.0
+			IL_001c: ldloc.0
+			IL_001d: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::valueGetterCalls
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::valueGetterCalls
+			IL_0028: stloc.0
+			IL_0029: ldstr "accessor:"
+			IL_002e: ldloc.0
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0034: stloc.1
+			IL_0035: ldloc.1
+			IL_0036: ret
 		} // end of method FunctionExpression_L56C7::__js_call__
 
 	} // end of class FunctionExpression_L56C7
@@ -1581,56 +1581,57 @@
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 86 (0x56)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/Scope,
-				[1] float64,
-				[2] object,
-				[3] object[],
-				[4] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/FunctionExpression_L65C15/FunctionObject
+				[1] object,
+				[2] object[],
+				[3] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/FunctionExpression_L65C15/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::methodGetterCalls
-			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0011: ldc.r8 1
-			IL_001a: add
-			IL_001b: stloc.1
-			IL_001c: ldloc.1
-			IL_001d: box [System.Runtime]System.Double
-			IL_0022: stloc.2
-			IL_0023: ldarg.0
-			IL_0024: ldloc.2
-			IL_0025: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::methodGetterCalls
-			IL_002a: ldc.i4.2
-			IL_002b: newarr [System.Runtime]System.Object
-			IL_0030: dup
-			IL_0031: ldc.i4.0
-			IL_0032: ldarg.0
-			IL_0033: stelem.ref
-			IL_0034: dup
-			IL_0035: ldc.i4.1
-			IL_0036: ldloc.0
-			IL_0037: stelem.ref
-			IL_0038: stloc.3
-			IL_0039: ldloc.3
-			IL_003a: ldc.i4.0
-			IL_003b: ldelem.ref
-			IL_003c: castclass Modules.Object_DynamicInlineCache_Invalidation/Scope
-			IL_0041: ldloc.3
-			IL_0042: newobj instance void Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/FunctionExpression_L65C15/FunctionObject::.ctor(class Modules.Object_DynamicInlineCache_Invalidation/Scope, object[])
-			IL_0047: ldc.i4.0
-			IL_0048: conv.r8
-			IL_0049: ldstr ""
-			IL_004e: ldc.i4.0
-			IL_004f: ldc.i4.1
-			IL_0050: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/FunctionExpression_L65C15/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0055: stloc.s 4
-			IL_0057: ldloc.s 4
-			IL_0059: ret
+			IL_000c: stloc.1
+			IL_000d: ldloc.1
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_0013: stloc.1
+			IL_0014: ldloc.1
+			IL_0015: ldc.i4.1
+			IL_0016: box [System.Runtime]System.Boolean
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_0020: stloc.1
+			IL_0021: ldarg.0
+			IL_0022: ldloc.1
+			IL_0023: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::methodGetterCalls
+			IL_0028: ldc.i4.2
+			IL_0029: newarr [System.Runtime]System.Object
+			IL_002e: dup
+			IL_002f: ldc.i4.0
+			IL_0030: ldarg.0
+			IL_0031: stelem.ref
+			IL_0032: dup
+			IL_0033: ldc.i4.1
+			IL_0034: ldloc.0
+			IL_0035: stelem.ref
+			IL_0036: stloc.2
+			IL_0037: ldloc.2
+			IL_0038: ldc.i4.0
+			IL_0039: ldelem.ref
+			IL_003a: castclass Modules.Object_DynamicInlineCache_Invalidation/Scope
+			IL_003f: ldloc.2
+			IL_0040: newobj instance void Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/FunctionExpression_L65C15/FunctionObject::.ctor(class Modules.Object_DynamicInlineCache_Invalidation/Scope, object[])
+			IL_0045: ldc.i4.0
+			IL_0046: conv.r8
+			IL_0047: ldstr ""
+			IL_004c: ldc.i4.0
+			IL_004d: ldc.i4.1
+			IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L63C7/FunctionExpression_L65C15/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0053: stloc.3
+			IL_0054: ldloc.3
+			IL_0055: ret
 		} // end of method FunctionExpression_L63C7::__js_call__
 
 	} // end of class FunctionExpression_L63C7
@@ -2036,55 +2037,56 @@
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
 			// Header size: 12
-			// Code size: 95 (0x5f)
+			// Code size: 91 (0x5b)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object,
-				[2] bool,
-				[3] object[],
-				[4] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_proxy/FunctionExpression_proxy/FunctionObject
+				[0] object,
+				[1] bool,
+				[2] object[],
+				[3] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_proxy/FunctionExpression_proxy/FunctionObject
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::proxyGetCalls
-			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000b: ldc.r8 1
-			IL_0014: add
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: box [System.Runtime]System.Double
-			IL_001c: stloc.1
-			IL_001d: ldarg.0
-			IL_001e: ldloc.1
-			IL_001f: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::proxyGetCalls
-			IL_0024: ldarg.3
-			IL_0025: ldstr "method"
-			IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_002f: stloc.2
-			IL_0030: ldloc.2
-			IL_0031: brfalse IL_0059
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: ldc.i4.1
+			IL_0010: box [System.Runtime]System.Boolean
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_001a: stloc.0
+			IL_001b: ldarg.0
+			IL_001c: ldloc.0
+			IL_001d: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope::proxyGetCalls
+			IL_0022: ldarg.3
+			IL_0023: ldstr "method"
+			IL_0028: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_002d: stloc.1
+			IL_002e: ldloc.1
+			IL_002f: brfalse IL_0055
 
-			IL_0036: ldc.i4.1
-			IL_0037: newarr [System.Runtime]System.Object
-			IL_003c: dup
-			IL_003d: ldc.i4.0
-			IL_003e: ldarg.0
-			IL_003f: stelem.ref
-			IL_0040: stloc.3
-			IL_0041: newobj instance void Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_proxy/FunctionExpression_proxy/FunctionObject::.ctor()
-			IL_0046: ldc.i4.0
-			IL_0047: conv.r8
-			IL_0048: ldstr ""
-			IL_004d: ldc.i4.0
-			IL_004e: ldc.i4.1
-			IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_proxy/FunctionExpression_proxy/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0054: stloc.s 4
-			IL_0056: ldloc.s 4
-			IL_0058: ret
+			IL_0034: ldc.i4.1
+			IL_0035: newarr [System.Runtime]System.Object
+			IL_003a: dup
+			IL_003b: ldc.i4.0
+			IL_003c: ldarg.0
+			IL_003d: stelem.ref
+			IL_003e: stloc.2
+			IL_003f: newobj instance void Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_proxy/FunctionExpression_proxy/FunctionObject::.ctor()
+			IL_0044: ldc.i4.0
+			IL_0045: conv.r8
+			IL_0046: ldstr ""
+			IL_004b: ldc.i4.0
+			IL_004c: ldc.i4.1
+			IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_proxy/FunctionExpression_proxy/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0052: stloc.3
+			IL_0053: ldloc.3
+			IL_0054: ret
 
-			IL_0059: ldstr "proxy"
-			IL_005e: ret
+			IL_0055: ldstr "proxy"
+			IL_005a: ret
 		} // end of method FunctionExpression_proxy::__js_call__
 
 	} // end of class FunctionExpression_proxy
@@ -2717,10 +2719,9 @@
 			[35] object,
 			[36] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_item/FunctionObject,
 			[37] class Modules.Object_DynamicInlineCache_Invalidation/Scope_For_L108C5,
-			[38] object,
-			[39] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L122C7/FunctionObject,
-			[40] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L126C33/FunctionObject,
-			[41] object
+			[38] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L122C7/FunctionObject,
+			[39] class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L126C33/FunctionObject,
+			[40] object
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
@@ -3387,16 +3388,18 @@
 			IL_0744: ldloc.s 12
 			IL_0746: castclass Modules.Object_DynamicInlineCache_Invalidation/Scope_For_L108C5
 			IL_074b: ldfld object Modules.Object_DynamicInlineCache_Invalidation/Scope_For_L108C5::index
-			IL_0750: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0755: ldc.r8 1
-			IL_075e: add
-			IL_075f: stloc.s 25
-			IL_0761: ldloc.s 25
-			IL_0763: box [System.Runtime]System.Double
-			IL_0768: stloc.s 38
+			IL_0750: stloc.s 27
+			IL_0752: ldloc.s 27
+			IL_0754: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_0759: stloc.s 27
+			IL_075b: ldloc.s 27
+			IL_075d: ldc.i4.1
+			IL_075e: box [System.Runtime]System.Boolean
+			IL_0763: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_0768: stloc.s 27
 			IL_076a: ldloc.s 12
 			IL_076c: castclass Modules.Object_DynamicInlineCache_Invalidation/Scope_For_L108C5
-			IL_0771: ldloc.s 38
+			IL_0771: ldloc.s 27
 			IL_0773: stfld object Modules.Object_DynamicInlineCache_Invalidation/Scope_For_L108C5::index
 			IL_0778: br IL_062c
 		// end loop
@@ -3427,10 +3430,10 @@
 		IL_07bd: ldc.i4.1
 		IL_07be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L122C7/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_07c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L122C7/FunctionObject>(!!0)
-		IL_07c8: stloc.s 39
+		IL_07c8: stloc.s 38
 		IL_07ca: ldloc.s 23
 		IL_07cc: ldstr "get"
-		IL_07d1: ldloc.s 39
+		IL_07d1: ldloc.s 38
 		IL_07d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
 		IL_07d8: pop
 		IL_07d9: ldloc.s 27
@@ -3456,10 +3459,10 @@
 		IL_0812: ldc.i4.0
 		IL_0813: ldc.i4.1
 		IL_0814: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_DynamicInlineCache_Invalidation/FunctionExpression_L126C33/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0819: stloc.s 40
+		IL_0819: stloc.s 39
 		IL_081b: ldloc.s 27
 		IL_081d: ldstr "method"
-		IL_0822: ldloc.s 40
+		IL_0822: ldloc.s 39
 		IL_0824: ldc.i4.1
 		IL_0825: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_082a: pop
@@ -3540,7 +3543,7 @@
 
 		IL_0917: ldloc.s 7
 		IL_0919: ldstr "__proto__"
-		IL_091e: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:337"
+		IL_091e: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:336"
 		IL_0923: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
 		IL_0928: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3551,9 +3554,9 @@
 		IL_0938: stloc.s 29
 		IL_093a: ldloc.s 29
 		IL_093c: box [System.Runtime]System.Boolean
-		IL_0941: stloc.s 41
+		IL_0941: stloc.s 40
 		IL_0943: ldloc.s 26
-		IL_0945: ldloc.s 41
+		IL_0945: ldloc.s 40
 		IL_0947: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_094c: pop
 		.try
@@ -3607,7 +3610,7 @@
 
 			IL_09bf: ldloc.s 17
 			IL_09c1: ldstr "name"
-			IL_09c6: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:359"
+			IL_09c6: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:358"
 			IL_09cb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
 			IL_09d0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3668,7 +3671,7 @@
 
 			IL_0a53: ldloc.s 20
 			IL_0a55: ldstr "name"
-			IL_0a5a: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:382"
+			IL_0a5a: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:381"
 			IL_0a5f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
 			IL_0a64: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 

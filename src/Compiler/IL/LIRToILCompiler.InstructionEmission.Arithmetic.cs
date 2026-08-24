@@ -547,9 +547,9 @@ internal sealed partial class LIRToILCompiler
             // Left shift: convert to int32, shift, convert back to double
             case LIRLeftShift leftShift:
                 EmitLoadTempAsNumber(leftShift.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitToInt32FromDouble(ilEncoder);
                 EmitLoadTempAsNumber(leftShift.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitToUint32FromDouble(ilEncoder);
                 ilEncoder.OpCode(ILOpCode.Shl);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(leftShift.Result, ilEncoder, allocation);
@@ -558,9 +558,9 @@ internal sealed partial class LIRToILCompiler
             // Right shift (signed): convert to int32, shift, convert back to double
             case LIRRightShift rightShift:
                 EmitLoadTempAsNumber(rightShift.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitToInt32FromDouble(ilEncoder);
                 EmitLoadTempAsNumber(rightShift.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitToUint32FromDouble(ilEncoder);
                 ilEncoder.OpCode(ILOpCode.Shr);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(rightShift.Result, ilEncoder, allocation);
@@ -569,10 +569,9 @@ internal sealed partial class LIRToILCompiler
             // Unsigned right shift: convert to int32 (to preserve negative values), reinterpret as uint32, shift, convert back to double
             case LIRUnsignedRightShift unsignedRightShift:
                 EmitLoadTempAsNumber(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);  // Convert to int32 first (handles negatives)
-                ilEncoder.OpCode(ILOpCode.Conv_u4);  // Then reinterpret as uint32 (no value change, just type)
+                EmitToUint32FromDouble(ilEncoder);
                 EmitLoadTempAsNumber(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitToUint32FromDouble(ilEncoder);
                 ilEncoder.OpCode(ILOpCode.Shr_un);
                 ilEncoder.OpCode(ILOpCode.Conv_r_un); // Convert unsigned to double
                 EmitStoreTemp(unsignedRightShift.Result, ilEncoder, allocation);
@@ -642,5 +641,25 @@ internal sealed partial class LIRToILCompiler
                 $"Scheduler-owned instruction {instruction.GetType().Name} "
                 + "cannot emit a stack value.");
         }
+    }
+
+    private void EmitToInt32FromDouble(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToInt32),
+            new[] { typeof(double) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitToUint32FromDouble(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToUint32AsInt32),
+            new[] { typeof(double) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
     }
 }

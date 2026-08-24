@@ -8,5 +8,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "toString")]
     public Task toString()
-        => ExecutionTestFromFile("toString");
-}
+        => ExecutionTestFromFile("toString");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

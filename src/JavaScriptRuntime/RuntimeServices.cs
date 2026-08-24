@@ -1648,6 +1648,23 @@ public class RuntimeServices
         return defaultValue;
     }
 
+    public static object ToNumeric(object? value)
+        => TypeUtilities.ToNumeric(value);
+
+    public static object ApplyNumericUpdate(object numericValue, object incrementValue)
+    {
+        var increment = incrementValue is true;
+        if (numericValue is System.Numerics.BigInteger bigInt)
+        {
+            return increment
+                ? bigInt + System.Numerics.BigInteger.One
+                : bigInt - System.Numerics.BigInteger.One;
+        }
+
+        var number = (double)numericValue;
+        return increment ? number + 1d : number - 1d;
+    }
+
     public static object EnsureTemporalDeadZoneInitialized(object value, string bindingName)
     {
         if (ReferenceEquals(value, TemporalDeadZoneSentinel))

@@ -33,4 +33,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "delete-entry-initial-iterable")]
     public Task delete_entry_initial_iterable()
         => ExecutionTestFromFile("delete-entry-initial-iterable");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

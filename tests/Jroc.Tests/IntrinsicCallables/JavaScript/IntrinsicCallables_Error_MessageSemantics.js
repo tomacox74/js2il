@@ -14,3 +14,9 @@ try {
 } catch (error) {
     console.log(error.name);
 }
+
+const AliasedError = Error;
+console.log(AliasedError(null).message);
+
+const cause = {};
+console.log(AliasedError("aliased", { cause }).cause === cause);

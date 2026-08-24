@@ -216,99 +216,99 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 248 (0xf8)
+			// Code size: 236 (0xec)
 			.maxstack 8
 			.locals init (
-				[0] float64,
+				[0] object,
 				[1] object,
-				[2] object,
-				[3] object,
-				[4] bool,
-				[5] object
+				[2] bool,
+				[3] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::calls
-			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000b: ldc.r8 1
-			IL_0014: add
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: box [System.Runtime]System.Double
-			IL_001c: stloc.1
-			IL_001d: ldarg.0
-			IL_001e: ldloc.1
-			IL_001f: stfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::calls
-			IL_0024: ldstr "console"
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0033: stloc.2
-			IL_0034: ldarg.0
-			IL_0035: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::lexicalThis
-			IL_003a: stloc.3
-			IL_003b: ldarg.2
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0046: ldloc.3
-			IL_0047: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_004c: stloc.s 4
-			IL_004e: ldloc.s 4
-			IL_0050: box [System.Runtime]System.Boolean
-			IL_0055: stloc.s 5
-			IL_0057: volatile.
-			IL_0059: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-			IL_005e: brfalse IL_0075
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: ldc.i4.1
+			IL_0010: box [System.Runtime]System.Boolean
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_001a: stloc.0
+			IL_001b: ldarg.0
+			IL_001c: ldloc.0
+			IL_001d: stfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::calls
+			IL_0022: ldstr "console"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0031: stloc.0
+			IL_0032: ldarg.0
+			IL_0033: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::lexicalThis
+			IL_0038: stloc.1
+			IL_0039: ldarg.2
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0044: ldloc.1
+			IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_004a: stloc.2
+			IL_004b: ldloc.2
+			IL_004c: box [System.Runtime]System.Boolean
+			IL_0051: stloc.3
+			IL_0052: volatile.
+			IL_0054: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_0059: brfalse IL_006f
 
-			IL_0063: ldloc.2
-			IL_0064: ldstr "log"
-			IL_0069: ldloc.s 5
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0070: br IL_008c
+			IL_005e: ldloc.0
+			IL_005f: ldstr "log"
+			IL_0064: ldloc.3
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_006a: br IL_0085
 
-			IL_0075: ldloc.2
-			IL_0076: ldstr "log"
-			IL_007b: ldloc.s 5
-			IL_007d: ldstr "ArrowFunction_LexicalThis_TopLevelCallback:<TwoPhaseDummy_M4>:__js_call__:15"
-			IL_0082: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+			IL_006f: ldloc.0
+			IL_0070: ldstr "log"
+			IL_0075: ldloc.3
+			IL_0076: ldstr "ArrowFunction_LexicalThis_TopLevelCallback:<TwoPhaseDummy_M4>:__js_call__:14"
+			IL_007b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_008c: pop
-			IL_008d: ldstr "console"
-			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009c: stloc.2
-			IL_009d: ldarg.0
-			IL_009e: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::usurper
-			IL_00a3: stloc.3
-			IL_00a4: ldarg.2
-			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_00af: ldloc.3
-			IL_00b0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00b5: stloc.s 4
-			IL_00b7: ldloc.s 4
-			IL_00b9: box [System.Runtime]System.Boolean
-			IL_00be: stloc.s 5
-			IL_00c0: volatile.
-			IL_00c2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_00c7: brfalse IL_00de
+			IL_0085: pop
+			IL_0086: ldstr "console"
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0095: stloc.0
+			IL_0096: ldarg.0
+			IL_0097: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::usurper
+			IL_009c: stloc.1
+			IL_009d: ldarg.2
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_00a8: ldloc.1
+			IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00ae: stloc.2
+			IL_00af: ldloc.2
+			IL_00b0: box [System.Runtime]System.Boolean
+			IL_00b5: stloc.3
+			IL_00b6: volatile.
+			IL_00b8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00bd: brfalse IL_00d3
 
-			IL_00cc: ldloc.2
-			IL_00cd: ldstr "log"
-			IL_00d2: ldloc.s 5
-			IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00d9: br IL_00f5
+			IL_00c2: ldloc.0
+			IL_00c3: ldstr "log"
+			IL_00c8: ldloc.3
+			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00ce: br IL_00e9
 
-			IL_00de: ldloc.2
-			IL_00df: ldstr "log"
-			IL_00e4: ldloc.s 5
-			IL_00e6: ldstr "ArrowFunction_LexicalThis_TopLevelCallback:<TwoPhaseDummy_M4>:__js_call__:24"
-			IL_00eb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+			IL_00d3: ldloc.0
+			IL_00d4: ldstr "log"
+			IL_00d9: ldloc.3
+			IL_00da: ldstr "ArrowFunction_LexicalThis_TopLevelCallback:<TwoPhaseDummy_M4>:__js_call__:23"
+			IL_00df: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_00f5: pop
-			IL_00f6: ldnull
-			IL_00f7: ret
+			IL_00e9: pop
+			IL_00ea: ldnull
+			IL_00eb: ret
 		} // end of method ArrowFunction_L7C13::__js_call__
 
 	} // end of class ArrowFunction_L7C13

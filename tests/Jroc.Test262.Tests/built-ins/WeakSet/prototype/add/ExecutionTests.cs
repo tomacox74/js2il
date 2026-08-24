@@ -12,5 +12,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "returns-this")]
     public Task returns_this()
-        => ExecutionTestFromFile("returns-this");
-}
+        => ExecutionTestFromFile("returns-this");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

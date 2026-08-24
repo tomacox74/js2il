@@ -732,99 +732,100 @@
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 238 (0xee)
+			// Code size: 231 (0xe7)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object,
-				[2] object,
-				[3] float64,
-				[4] object
+				[0] object,
+				[1] float64,
+				[2] float64,
+				[3] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000b: ldc.r8 1
-			IL_0014: add
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: box [System.Runtime]System.Double
-			IL_001c: stloc.1
-			IL_001d: ldarg.0
-			IL_001e: ldloc.1
-			IL_001f: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0024: ldarg.0
-			IL_0025: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_002a: stloc.2
-			IL_002b: ldarg.0
-			IL_002c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-			IL_0031: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_0036: stloc.0
-			IL_0037: ldloc.2
-			IL_0038: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003d: stloc.3
-			IL_003e: ldloc.3
-			IL_003f: ldloc.0
-			IL_0040: clt
-			IL_0042: brfalse IL_00a5
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: ldc.i4.1
+			IL_0010: box [System.Runtime]System.Boolean
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
+			IL_001a: stloc.0
+			IL_001b: ldarg.0
+			IL_001c: ldloc.0
+			IL_001d: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0028: stloc.0
+			IL_0029: ldarg.0
+			IL_002a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_002f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0034: stloc.1
+			IL_0035: ldloc.0
+			IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_003b: stloc.2
+			IL_003c: ldloc.2
+			IL_003d: ldloc.1
+			IL_003e: clt
+			IL_0040: brfalse IL_009e
 
-			IL_0047: ldarg.0
-			IL_0048: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0052: stloc.2
-			IL_0053: ldarg.0
-			IL_0054: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-			IL_0059: ldarg.0
-			IL_005a: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_005f: stloc.s 4
-			IL_0061: ldloc.s 4
-			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_0068: stloc.s 4
-			IL_006a: volatile.
-			IL_006c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_0071: brfalse IL_0088
+			IL_0045: ldarg.0
+			IL_0046: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0050: stloc.0
+			IL_0051: ldarg.0
+			IL_0052: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_0057: ldarg.0
+			IL_0058: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_005d: stloc.3
+			IL_005e: ldloc.3
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_0064: stloc.3
+			IL_0065: volatile.
+			IL_0067: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_006c: brfalse IL_0082
 
-			IL_0076: ldloc.2
-			IL_0077: ldstr "push"
-			IL_007c: ldloc.s 4
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0083: br IL_009f
+			IL_0071: ldloc.0
+			IL_0072: ldstr "push"
+			IL_0077: ldloc.3
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_007d: br IL_0098
 
-			IL_0088: ldloc.2
-			IL_0089: ldstr "push"
-			IL_008e: ldloc.s 4
-			IL_0090: ldstr "Stream_Pipe_Backpressure_Basic:<TwoPhaseDummy_M7>:__js_call__:20"
-			IL_0095: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+			IL_0082: ldloc.0
+			IL_0083: ldstr "push"
+			IL_0088: ldloc.3
+			IL_0089: ldstr "Stream_Pipe_Backpressure_Basic:<TwoPhaseDummy_M7>:__js_call__:19"
+			IL_008e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_009f: pop
-			IL_00a0: br IL_00ec
+			IL_0098: pop
+			IL_0099: br IL_00e5
 
-			IL_00a5: ldarg.0
-			IL_00a6: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00b0: volatile.
-			IL_00b2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-			IL_00b7: brfalse IL_00d1
+			IL_009e: ldarg.0
+			IL_009f: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a9: volatile.
+			IL_00ab: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_00b0: brfalse IL_00ca
 
-			IL_00bc: ldstr "push"
-			IL_00c1: ldc.i4.0
-			IL_00c2: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00cc: br IL_00eb
+			IL_00b5: ldstr "push"
+			IL_00ba: ldc.i4.0
+			IL_00bb: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00c5: br IL_00e4
 
-			IL_00d1: ldstr "push"
-			IL_00d6: ldc.i4.0
-			IL_00d7: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_00dc: ldstr "Stream_Pipe_Backpressure_Basic:<TwoPhaseDummy_M7>:__js_call__:28"
-			IL_00e1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+			IL_00ca: ldstr "push"
+			IL_00cf: ldc.i4.0
+			IL_00d0: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_00d5: ldstr "Stream_Pipe_Backpressure_Basic:<TwoPhaseDummy_M7>:__js_call__:27"
+			IL_00da: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_00eb: pop
+			IL_00e4: pop
 
-			IL_00ec: ldnull
-			IL_00ed: ret
+			IL_00e5: ldnull
+			IL_00e6: ret
 		} // end of method FunctionExpression_L27C21::__js_call__
 
 	} // end of class FunctionExpression_L27C21

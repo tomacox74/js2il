@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-16T07:53:52Z
+> Last generated (UTC): 2026-08-23T20:02:56Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -63,7 +63,7 @@
 | 20.5.8.3.3 | SuppressedError.prototype.name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror.prototype.name) |
 | 20.5.8.4 | Properties of SuppressedError Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-suppressederror-instances) |
 | 20.5.9 | Abstract Operations for Error Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-error-objects) |
-| 20.5.9.1 | InstallErrorCause ( O , options ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-installerrorcause) |
+| 20.5.9.1 | InstallErrorCause ( O , options ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-installerrorcause) |
 
 ## Support
 
@@ -73,7 +73,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js) |  | Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported. |
+| Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/ExecutionTests.cs` | `test/built-ins/Error/message_property.js`<br>`test/built-ins/Error/cause_property.js`<br>`test/built-ins/Error/error-message-tostring-symbol.js`<br>`test/built-ins/Error/error-message-tostring-toprimitive.js` | Error and native-error callables create JavaScriptRuntime error instances, coerce a provided message through JavaScript ToString with abrupt completion, define the own non-enumerable message property only when supplied, and install an own cause property when options.cause is present. |
 | new Error(message) and new NativeError(message) | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) |  | Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. Error instances intentionally remain CLR Exception instances for throw/catch and host exception translation, while their JavaScript prototype is realm-owned through the non-JsObject fallback path. |
 
 ### 20.5.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-error.iserror))
@@ -92,7 +92,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Error.prototype.constructor | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Error.prototype.constructor points to the global Error callable value. |
+| Error.prototype.constructor | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/prototype/ExecutionTests.cs` | `test/built-ins/Error/prototype/S15.11.3.1_A1_T1.js` | Error.prototype.constructor points to the global Error callable with the standard writable, non-enumerable, configurable descriptor. |
 
 ### 20.5.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.message))
 
@@ -110,14 +110,14 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Error.prototype.toString() basic formatting | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers. |
+| Error.prototype.toString() basic formatting | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Error/prototype/toString/ExecutionTests.cs` | `test/built-ins/Error/tostring-1.js`<br>`test/built-ins/Error/tostring-2.js`<br>`test/built-ins/Error/prototype/toString/invalid-receiver.js` | Formats object receivers from observable name and message reads, applies JavaScript ToString with abrupt completion (including Symbol rejection), supplies the standard defaults, and throws TypeError for primitive receivers. |
 
 ### 20.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-error-instances))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Error Exception representation and realm-owned prototype | Supported with Limitations | `tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs` |  | Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance still receives its current realm's Error.prototype through the non-JsObject fallback prototype storage. |
-| Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js) |  | name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
+| Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/ExecutionTests.cs` | `test/built-ins/Error/message_property.js`<br>`test/built-ins/Error/cause_property.js` | Error instances expose inherited name plus conditionally created own message and cause data properties with standard descriptors. stack remains backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
 
 ### 20.5.7.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-aggregate-error))
 

@@ -20,6 +20,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and standard Window/Document/HTMLCollection projections. Picocolors and
   Domino now run through generated facades without runtime APIs, reflection,
   module-id strings, conversions, or `dynamic`.
+- compiler/runtime/test262/docs: port 100 previously failing ES2025
+  compatibility tests covering collection method metadata, Symbol and
+  TypedArray prototype behavior, Array concat/species semantics, Boolean and
+  Error receivers, JSON BigInt handling, numeric shift coercion, update
+  expressions, and computed property keys; implement the shared runtime and
+  lowering fixes required for all 100 cases.
 - compiler/runtime/hosting/docs: implement Phase 4 iterable and built-in
   generated facades for #1917 and issues #1943, #1944, #1945, #1946, and
   #1947. Generator and custom iterator values now project through

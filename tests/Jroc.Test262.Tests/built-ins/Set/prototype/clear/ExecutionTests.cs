@@ -8,5 +8,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "returns-undefined")]
     public Task returns_undefined()
-        => ExecutionTestFromFile("returns-undefined");
-}
+        => ExecutionTestFromFile("returns-undefined");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

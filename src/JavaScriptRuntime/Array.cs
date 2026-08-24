@@ -116,6 +116,7 @@ namespace JavaScriptRuntime
         {
             DefinePrototypeMethod(prototype, "join", (BuiltinFunction1)PrototypeJoin, 1);
             DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "concat", (BuiltinFunctionVariadic)PrototypeConcat, 1);
             DefinePrototypeMethod(prototype, "push", (BuiltinFunctionVariadic)PrototypePush, 1);
             DefinePrototypeMethod(prototype, "reduce", (BuiltinFunctionVariadic)PrototypeReduce, 1);
             DefinePrototypeMethod(prototype, "reduceRight", (BuiltinFunctionVariadic)PrototypeReduceRight, 1);
@@ -402,6 +403,165 @@ namespace JavaScriptRuntime
             }
 
             return jsArray.toString();
+        }
+
+        private static object PrototypeConcat(object? thisArgument, in JsCallArguments arguments)
+            => Concat(ToConcatObject(thisArgument), arguments.ToArray());
+
+        private static object Concat(object receiver, object?[]? arguments)
+        {
+            var result = ArraySpeciesCreate(receiver);
+            var nextIndex = 0d;
+
+            AppendConcatItem(result, receiver, ref nextIndex);
+            if (arguments is not null)
+            {
+                for (var i = 0; i < arguments.Length; i++)
+                {
+                    AppendConcatItem(result, arguments[i], ref nextIndex);
+                }
+            }
+
+            ObjectRuntime.SetProperty(result, "length", nextIndex, throwOnError: true);
+            return result;
+        }
+
+        private static object ToConcatObject(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                throw new TypeError("Array.prototype.concat called on null or undefined");
+            }
+
+            return ObjectRuntime.Construct(value);
+        }
+
+        private static object ArraySpeciesCreate(object originalArray)
+        {
+            if (!IsArrayForConcat(originalArray))
+            {
+                return new Array();
+            }
+
+            var constructor = ObjectRuntime.GetProperty(originalArray, "constructor");
+            if (constructor is not null && IsObjectValue(constructor))
+            {
+                constructor = ObjectRuntime.GetProperty(
+                    constructor,
+                    Symbol.species.DebugId);
+                if (constructor is JsNull)
+                {
+                    constructor = null;
+                }
+            }
+
+            if (constructor is null)
+            {
+                return new Array();
+            }
+
+            if (!CallableOperations.IsConstructor(constructor))
+            {
+                throw new TypeError("Array species is not a constructor");
+            }
+
+            var result = CallableOperations.Construct1(
+                constructor,
+                constructor,
+                0d);
+            if (!IsObjectValue(result))
+            {
+                throw new TypeError("Array species constructor did not return an object");
+            }
+
+            return result!;
+        }
+
+        private static void AppendConcatItem(
+            object result,
+            object? item,
+            ref double nextIndex)
+        {
+            if (!IsConcatSpreadable(item))
+            {
+                if (nextIndex >= 9007199254740991d)
+                {
+                    throw new TypeError("Array.prototype.concat result exceeds the maximum safe integer");
+                }
+
+                CreateConcatDataProperty(result, nextIndex, item);
+                nextIndex++;
+                return;
+            }
+
+            var length = ToArrayLikeLengthAsDouble(item!);
+            if (nextIndex + length > 9007199254740991d)
+            {
+                throw new TypeError("Array.prototype.concat result exceeds the maximum safe integer");
+            }
+
+            for (var sourceIndex = 0d; sourceIndex < length; sourceIndex++)
+            {
+                var sourceKey = DotNet2JSConversions.ToString(sourceIndex);
+                if (ObjectRuntime.HasPropertyForArrayLike(sourceKey, item!))
+                {
+                    CreateConcatDataProperty(
+                        result,
+                        nextIndex,
+                        ObjectRuntime.GetProperty(item!, sourceKey));
+                }
+
+                nextIndex++;
+            }
+        }
+
+        private static bool IsConcatSpreadable(object? value)
+        {
+            if (!IsObjectValue(value))
+            {
+                return false;
+            }
+
+            var spreadable = ObjectRuntime.GetProperty(
+                value!,
+                Symbol.isConcatSpreadable.DebugId);
+            return spreadable is not null
+                ? TypeUtilities.ToBoolean(spreadable)
+                : IsArrayForConcat(value);
+        }
+
+        private static bool IsArrayForConcat(object? value)
+        {
+            while (value is Proxy proxy)
+            {
+                value = proxy.GetTarget("isArray");
+            }
+
+            return value is Array || ReferenceEquals(value, Prototype);
+        }
+
+        private static bool IsObjectValue(object? value)
+            => value is not null
+                && value is not JsNull
+                && !TypeUtilities.IsPrimitive(value);
+
+        private static void CreateConcatDataProperty(
+            object target,
+            double index,
+            object? value)
+        {
+            var descriptor = new JsObject
+            {
+                ["value"] = value,
+                ["writable"] = true,
+                ["enumerable"] = true,
+                ["configurable"] = true
+            };
+            var key = DotNet2JSConversions.ToString(index);
+            if (!ObjectRuntime.TryDefineProperty(target, key, descriptor))
+            {
+                throw new TypeError($"Cannot create property '{key}'");
+            }
         }
 
         private static object PrototypePush(object? thisArgument, in JsCallArguments arguments)
@@ -2677,7 +2837,7 @@ namespace JavaScriptRuntime
         ///
         /// Note: In this runtime model, CLR null represents JS undefined.
         /// </summary>
-        public static Array Construct(object[] args)
+        public static Array Construct(object?[]? args)
         {
             if (args == null || args.Length == 0)
             {
@@ -4178,69 +4338,11 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.concat(...items): returns a new array.
         /// </summary>
-        public Array concat(object[]? args)
-        {
-            var result = new Array(this);
-            if (args == null || args.Length == 0) return result;
+        public object concat(object[]? args)
+            => Concat(this, args);
 
-            for (int i = 0; i < args.Length; i++)
-            {
-                var item = args[i];
-                if (ShouldConcatSpread(item))
-                {
-                    AppendConcatElements(result, item!);
-                }
-                else
-                {
-                    result.Add(item);
-                }
-            }
-
-            return result;
-        }
-
-        public Array concat()
-        {
-            return new Array(this);
-        }
-
-        private static bool ShouldConcatSpread(object? item)
-        {
-            if (item is null || item is JsNull)
-            {
-                return false;
-            }
-
-            if (item is not string && !item.GetType().IsValueType)
-            {
-                var spreadable = JavaScriptRuntime.ObjectRuntime.GetItem(item, Symbol.isConcatSpreadable);
-                if (spreadable is not null)
-                {
-                    return TypeUtilities.ToBoolean(spreadable);
-                }
-            }
-
-            return item is Array;
-        }
-
-        private static void AppendConcatElements(Array result, object item)
-        {
-            if (item is Array arr)
-            {
-                for (int j = 0; j < arr.Count; j++)
-                {
-                    result.Add(arr[j]);
-                }
-
-                return;
-            }
-
-            var length = ToArrayLikeLength(item);
-            for (int j = 0; j < length; j++)
-            {
-                result.Add(JavaScriptRuntime.ObjectRuntime.GetItem(item, (double)j));
-            }
-        }
+        public object concat()
+            => Concat(this, null);
 
         /// <summary>
         /// JavaScript Array.fill(value[, start[, end]])

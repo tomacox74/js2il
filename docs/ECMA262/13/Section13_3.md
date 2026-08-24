@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-07T08:24:54Z
+> Last generated (UTC): 2026-08-23T20:02:19Z
 
 JROC supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
@@ -58,7 +58,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Property access and assignment: obj.prop / obj[prop] (including computed keys) | Supported | [`Variable_AssignmentTargets_MemberAndIndex.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js) |  | MemberExpression lowering supports both identifier and computed forms, and supports both read and write targets. `super.prop` as a *value* (non-call) is not supported; only `super.m(...)` is supported for base-method calls. |
+| Property access and assignment: obj.prop / obj[prop] (including computed keys) | Supported | [`Variable_AssignmentTargets_MemberAndIndex.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js)<br>`tests/Jroc.Test262.Tests/language/expressions/property-accessors/ExecutionTests.cs` | `test/language/expressions/property-accessors/S11.2.1_A4_T3.js` | MemberExpression lowering supports identifier and computed read/write targets. Computed keys are converted through ToPropertyKey exactly once so observable coercion and abrupt completion are preserved. super.prop as a value (non-call) is not supported; only super.m(...) is supported for base-method calls. |
 
 ### 13.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-new-operator))
 

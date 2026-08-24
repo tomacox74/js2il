@@ -154,9 +154,13 @@
           "test/built-ins/WeakMap/prototype/get/get.js",
           "test/built-ins/WeakMap/prototype/get/returns-undefined-if-key-cannot-be-held-weakly.js",
           "test/built-ins/WeakMap/prototype/get/returns-undefined-with-object-key.js",
-          "test/built-ins/WeakMap/prototype/get/this-not-object-throw.js"
+          "test/built-ins/WeakMap/prototype/get/this-not-object-throw.js",
+          "test/built-ins/WeakMap/prototype/delete/name.js",
+          "test/built-ins/WeakMap/prototype/get/name.js",
+          "test/built-ins/WeakMap/prototype/has/name.js",
+          "test/built-ins/WeakMap/prototype/set/name.js"
         ],
-        "notes": "Core WeakMap flows work for the object keys used in tests. Current checked-in coverage includes get() receiver checks, object-key lookup, and undefined results for missing or non-weakly-held keys. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value."
+        "notes": "Core WeakMap flows work for valid weak keys, and the public prototype methods expose their standard JavaScript names. Current coverage includes receiver checks, object-key lookup, and undefined/false results for values that cannot be held weakly; broader weak-key and exotic behavior remains limited."
       },
       {
         "clause": "24.3.3.4",

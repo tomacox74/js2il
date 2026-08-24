@@ -29,4 +29,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task this_not_object_throw()
         => ExecutionTestFromFile("this-not-object-throw");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

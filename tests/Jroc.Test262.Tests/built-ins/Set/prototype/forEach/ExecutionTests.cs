@@ -22,4 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task iterates_values_added_after_foreach_begins()
         => ExecutionTestFromFile("iterates-values-added-after-foreach-begins");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }
