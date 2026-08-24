@@ -89,6 +89,7 @@ namespace Jroc.Tests.Classes
         [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassPrivateMethodAndAccessor_Log() { var testName = nameof(Classes_ClassPrivateMethodAndAccessor_Log); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return ExecutionTest(testName); }
+        [Fact] public Task Classes_DerivedConstructorAndPrivateLogicalAssignment_Regressions() { var testName = nameof(Classes_DerivedConstructorAndPrivateLogicalAssignment_Regressions); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassProperty_DefaultAndLog() { var testName = nameof(Classes_ClassProperty_DefaultAndLog); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassStaticBlock_DeclarationOrder() { var testName = nameof(Classes_ClassStaticBlock_DeclarationOrder); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassWithMethod_HelloWorld() { var testName = nameof(Classes_ClassWithMethod_HelloWorld); return ExecutionTest(testName); }
@@ -234,6 +235,13 @@ namespace Jroc.Tests.Classes
 
         // #505: super() with no args should behave like new Array() (length 0).
         [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Classes_IntrinsicInheritance_AggregateError_DefaultForwarding()
+        {
+            var testName = nameof(Classes_IntrinsicInheritance_AggregateError_DefaultForwarding);
+            return ExecutionTest(testName);
+        }
 
         [Fact]
         public Task Classes_ClassMethod_MaxParameters_32()

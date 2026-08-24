@@ -57,4 +57,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "invoke-builtin-search-searcher-undef.js")]
     public Task invoke_builtin_search_searcher_undef()
         => ExecutionTestFromFile("invoke-builtin-search-searcher-undef");
+
+    [Fact(DisplayName = "S15.5.4.12_A1_T4")]
+    public Task S15_5_4_12_A1_T4()
+        => ExecutionTestFromFile("S15.5.4.12_A1_T4");
 }

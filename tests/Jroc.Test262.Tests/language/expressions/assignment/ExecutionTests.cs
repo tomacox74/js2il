@@ -85,4 +85,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "target-member-identifier-reference-null")]
     public Task target_member_identifier_reference_null()
         => ExecutionTest("target-member-identifier-reference-null");
+
+    [Fact(DisplayName = "S11.13.1_A5_T1")]
+    public Task S11_13_1_A5_T1()
+        => ExecutionTest("S11.13.1_A5_T1");
+
+    [Fact(DisplayName = "S11.13.1_A5_T2")]
+    public Task S11_13_1_A5_T2()
+        => ExecutionTest("S11.13.1_A5_T2");
+
+    [Fact(DisplayName = "S11.13.1_A5_T3")]
+    public Task S11_13_1_A5_T3()
+        => ExecutionTest("S11.13.1_A5_T3");
 }

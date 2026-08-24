@@ -1418,9 +1418,6 @@ namespace JavaScriptRuntime
             }
 
             var result = CreateOrdinaryObject();
-            var dict = (IDictionary<string, object?>)result;
-
-            // Get iterator for the iterable
             var iterator = GetIterator(iterable);
 
             while (true)
@@ -1434,43 +1431,18 @@ namespace JavaScriptRuntime
                 try
                 {
                     var entry = IteratorResultValue(iterResult);
-                    if (entry is null || entry is JsNull)
+                    if (TypeUtilities.IsPrimitive(entry))
                     {
                         throw new TypeError("Iterator value must be an object");
                     }
 
-                    // Extract key and value from the entry
-                    // Entry should be array-like with length >= 2
-                    object? key;
-                    object? value;
-
-                    if (entry is JavaScriptRuntime.Array arr)
-                    {
-                        if (arr.Count < 2)
-                        {
-                            throw new TypeError("Iterator value must have at least 2 elements");
-                        }
-                        key = arr[0];
-                        value = arr[1];
-                    }
-                    else if (entry is System.Collections.IList list)
-                    {
-                        if (list.Count < 2)
-                        {
-                            throw new TypeError("Iterator value must have at least 2 elements");
-                        }
-                        key = list[0];
-                        value = list[1];
-                    }
-                    else
-                    {
-                        // Try to get via indexed access
-                        key = ObjectRuntime.GetItem(entry, 0.0);
-                        value = ObjectRuntime.GetItem(entry, 1.0);
-                    }
-
+                    var key = ObjectRuntime.GetItem(entry!, 0.0);
+                    var value = ObjectRuntime.GetItem(entry!, 1.0);
                     var keyStr = ToPropertyKeyString(key);
-                    dict[keyStr] = value;
+                    if (!CreateDataProperty(result, keyStr, value))
+                    {
+                        throw new TypeError("Cannot create property");
+                    }
                 }
                 catch
                 {
@@ -1515,8 +1487,17 @@ namespace JavaScriptRuntime
                 throw new TypeError("Property description must be an object");
             }
 
-            InvalidateRegExpWellKnownSymbolFastPath(obj, key);
             var requested = ParseRequestedPropertyDescriptor(attributes!);
+            return TryDefineProperty(obj, key, requested, attributes!);
+        }
+
+        private static bool TryDefineProperty(
+            object obj,
+            string key,
+            RequestedPropertyDescriptor requested,
+            object attributes)
+        {
+            InvalidateRegExpWellKnownSymbolFastPath(obj, key);
             double? validatedArrayLength = null;
 
             if (obj is JavaScriptRuntime.Proxy proxy)
@@ -1662,38 +1643,63 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// ECMA-262 Object.defineProperties(O, Properties).
-        /// Minimal implementation with best-effort all-or-throw behavior.
+        /// Collects and validates every descriptor before defining any property.
         /// </summary>
         public static object defineProperties(object obj, object? properties)
         {
-            if (obj is null || obj is JsNull)
+            if (!IsObjectLikeForPrototype(obj))
             {
-                throw new TypeError("Cannot convert undefined or null to object");
+                throw new TypeError("Object.defineProperties called on non-object");
             }
 
-            // Per ToObject(null/undefined), an explicit null/undefined Properties argument must throw.
             if (properties is null || properties is JsNull)
             {
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            // Snapshot keys first; if we cannot enumerate, throw rather than partially apply.
-            var keys = GetEnumerableKeys(properties);
-            var pending = new List<(string Key, object? Attributes)>(keys.Count);
+            var propertiesObject = Construct(properties);
+            var enumerableKeys = GetEnumerableKeys(propertiesObject);
+            var keys = new List<string>(enumerableKeys.Count);
+            foreach (var key in enumerableKeys)
+            {
+                keys.Add(ToPropertyKeyString(key));
+            }
+
+            var seenKeys = new HashSet<string>(keys, StringComparer.Ordinal);
+            foreach (var key in GetOwnEnumerableKeysInOrder(
+                         propertiesObject,
+                         includeEncodedSymbolKeys: true))
+            {
+                if (IsEncodedSymbolKey(key) && seenKeys.Add(key))
+                {
+                    keys.Add(key);
+                }
+            }
+
+            var pending =
+                new List<(string Key, RequestedPropertyDescriptor Descriptor, object Attributes)>(
+                    keys.Count);
             for (int i = 0; i < keys.Count; i++)
             {
-                var k = DotNet2JSConversions.ToString(keys[i]) ?? string.Empty;
-                var attrs = GetProperty(properties, k);
-                if (attrs is null || attrs is JsNull)
+                var key = keys[i];
+                var attributes = GetProperty(propertiesObject, key);
+                if (!IsPropertyDescriptorObject(attributes))
                 {
                     throw new TypeError("Property description must be an object");
                 }
-                pending.Add((k, attrs));
+
+                pending.Add((
+                    key,
+                    ParseRequestedPropertyDescriptor(attributes!),
+                    attributes!));
             }
 
-            foreach (var (k, attrs) in pending)
+            foreach (var (key, descriptor, attributes) in pending)
             {
-                defineProperty(obj, k, attrs);
+                if (!TryDefineProperty(obj, key, descriptor, attributes))
+                {
+                    throw new TypeError("Cannot define property");
+                }
             }
 
             return obj;
@@ -2508,6 +2514,7 @@ namespace JavaScriptRuntime
                 var isDerivedClassType = prototypeOwner is JsClassConstructorObject
                     && type.BaseType is { } baseType
                     && baseType != typeof(object);
+                RuntimeServices.PushCurrentArguments(callArgs);
                 var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
                     newTarget ?? prototypeOwner ?? type);
                 if (isDerivedClassType)
@@ -2624,6 +2631,7 @@ namespace JavaScriptRuntime
                         RuntimeServices.PopDerivedConstructorThisBinding();
                     }
                     RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                    RuntimeServices.PopCurrentArguments();
                 }
             }
 
@@ -4412,6 +4420,13 @@ namespace JavaScriptRuntime
         }
 
         private static bool TryGetInheritedPropertyValue(object receiver, string propName, out object? value)
+            => TryGetInheritedPropertyValue(receiver, propName, receiver, out value);
+
+        private static bool TryGetInheritedPropertyValue(
+            object receiver,
+            string propName,
+            object receiverForAccessors,
+            out object? value)
         {
             value = null;
 
@@ -4432,7 +4447,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (TryGetOwnPropertyValue(proto, propName, receiver, out value))
+            if (TryGetOwnPropertyValue(proto, propName, receiverForAccessors, out value))
             {
                 return true;
             }
@@ -4460,7 +4475,7 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (TryGetOwnPropertyValue(proto, propName, receiver, out value))
+                if (TryGetOwnPropertyValue(proto, propName, receiverForAccessors, out value))
                 {
                     return true;
                 }
@@ -5755,7 +5770,11 @@ namespace JavaScriptRuntime
             }
 
             if (obj is string
-                && TryGetInheritedPropertyValue(JavaScriptRuntime.String.Prototype, name, out var stringInherited))
+                && TryGetInheritedPropertyValue(
+                    JavaScriptRuntime.String.Prototype,
+                    name,
+                    obj,
+                    out var stringInherited))
             {
                 return stringInherited;
             }
@@ -5763,25 +5782,25 @@ namespace JavaScriptRuntime
             if (obj is bool boolean)
             {
                 var booleanWrapper = new JavaScriptRuntime.Boolean(boolean);
-                return TryGetInheritedPropertyValue(booleanWrapper, name, out var booleanInherited) ? booleanInherited : null;
+                return TryGetInheritedPropertyValue(booleanWrapper, name, obj, out var booleanInherited) ? booleanInherited : null;
             }
 
             if (obj is double or float or int or long or short or byte)
             {
                 var numberWrapper = CreatePrimitiveWrapper(obj, GlobalThis.NumberPrototypeValue, includeOwnStringMethods: false);
-                return TryGetInheritedPropertyValue(numberWrapper, name, out var numberInherited) ? numberInherited : null;
+                return TryGetInheritedPropertyValue(numberWrapper, name, obj, out var numberInherited) ? numberInherited : null;
             }
 
             if (obj is System.Numerics.BigInteger)
             {
                 var bigIntWrapper = CreatePrimitiveWrapper(obj, GlobalThis.BigIntPrototypeValue, includeOwnStringMethods: false);
-                return TryGetInheritedPropertyValue(bigIntWrapper, name, out var bigIntInherited) ? bigIntInherited : null;
+                return TryGetInheritedPropertyValue(bigIntWrapper, name, obj, out var bigIntInherited) ? bigIntInherited : null;
             }
 
             if (obj is JavaScriptRuntime.Symbol)
             {
                 var symbolWrapper = CreatePrimitiveWrapper(obj, GlobalThis.SymbolPrototypeValue, includeOwnStringMethods: false);
-                return TryGetInheritedPropertyValue(symbolWrapper, name, out var symbolInherited) ? symbolInherited : null;
+                return TryGetInheritedPropertyValue(symbolWrapper, name, obj, out var symbolInherited) ? symbolInherited : null;
             }
 
             return TryGetInheritedPropertyValue(obj, name, out var inherited) ? inherited : null;

@@ -17,4 +17,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S11.4.4_A6_T3")]
     public Task S11_4_4_A6_T3()
         => ExecutionTest("S11.4.4_A6_T3");
+
+    [Fact(DisplayName = "operator-prefix-increment-x-calls-putvalue-lhs-newvalue-")]
+    public Task operator_prefix_increment_x_calls_putvalue_lhs_newvalue_()
+        => ExecutionTest("operator-prefix-increment-x-calls-putvalue-lhs-newvalue-");
 }

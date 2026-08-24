@@ -103,6 +103,14 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = string.Empty
             });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = 0d
+            });
             PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1177,9 +1185,15 @@ namespace JavaScriptRuntime
                 return symbolResult!;
             }
 
-            JavaScriptRuntime.RegExp re = regexp as JavaScriptRuntime.RegExp
-                ?? new JavaScriptRuntime.RegExp(DotNet2JSConversions.ToString(regexp));
-            return MatchWithRegExp(input, re);
+            var re = regexp as JavaScriptRuntime.RegExp
+                ?? new JavaScriptRuntime.RegExp(regexp);
+
+            if (TryInvokeWellKnownSymbol(re, Symbol.match, input, out symbolResult))
+            {
+                return symbolResult!;
+            }
+
+            throw new TypeError("Symbol.match is not a function");
         }
 
         /// <summary>
@@ -1201,7 +1215,7 @@ namespace JavaScriptRuntime
             }
 
             var re = regexp as JavaScriptRuntime.RegExp
-                ?? new JavaScriptRuntime.RegExp(DotNet2JSConversions.ToString(regexp));
+                ?? new JavaScriptRuntime.RegExp(regexp);
 
             if (TryInvokeWellKnownSymbol(re, Symbol.search, input, out symbolResult))
             {
@@ -2216,7 +2230,7 @@ namespace JavaScriptRuntime
             }
 
             var result = new JavaScriptRuntime.Array();
-            re.lastIndex = 0;
+            re.SetLastIndexValue(0d);
 
             if (re.SimpleLiteralPattern is string literalPattern)
             {
@@ -2233,7 +2247,7 @@ namespace JavaScriptRuntime
                     searchIndex = matchIndex + literalPattern.Length;
                 }
 
-                re.lastIndex = 0;
+                re.SetLastIndexValue(0d);
                 return result.Count == 0 ? JsNull.Null : result;
             }
 
@@ -2244,7 +2258,7 @@ namespace JavaScriptRuntime
                     result.Add(input.Substring(match.Index, match.Length));
                 }
 
-                re.lastIndex = 0;
+                re.SetLastIndexValue(0d);
                 return result.Count == 0 ? JsNull.Null : result;
             }
 
@@ -2253,13 +2267,13 @@ namespace JavaScriptRuntime
                 result.Add(match.Value);
                 re.UpdateLastIndexAfterSuccess(input, match);
 
-                if (re.lastIndex > input.Length)
+                if (re.GetLastIndexLength() > input.Length)
                 {
                     break;
                 }
             }
 
-            re.lastIndex = 0;
+            re.SetLastIndexValue(0d);
             return result.Count == 0 ? JsNull.Null : result;
         }
 

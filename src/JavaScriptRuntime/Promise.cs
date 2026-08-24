@@ -50,6 +50,11 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         }
     }
 
+    private sealed record PromiseCapability(
+        object Promise,
+        object Resolve,
+        object Reject);
+
     // Fields
     private State _state = State.Pending;
 
@@ -548,49 +553,107 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         => (IJavaScriptPromise)@finally(onFinally)!;
 
     public static object? all(object? iterable)
+        => AllForConstructor(
+            BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
+            iterable);
+
+    internal static object? AllForConstructor(object? constructor, object? iterable)
     {
+        var capability = NewPromiseCapability(constructor);
+        IJavaScriptIterator? iterator = null;
+        var iteratorDone = false;
 
-        JavaScriptRuntime.Array? results = null;
-        int resolvedCount = 0;
-        Promise? allPromise = null;
-
-        Promise InitializeState()
+        try
         {
-            results = new JavaScriptRuntime.Array();
-            allPromise = new Promise();
-            return allPromise;
-        }
-
-        void CheckForAllCompleted()
-        {
-            if (resolvedCount == results!.Count)
+            var promiseResolve = ObjectRuntime.GetProperty(constructor!, "resolve");
+            if (!CallableOperations.IsCallable(promiseResolve))
             {
-                allPromise!.Settle(State.Fulfilled, results);
+                throw new TypeError("Promise resolve is not callable");
+            }
+
+            iterator = ObjectRuntime.GetIterator(iterable);
+            var values = new JavaScriptRuntime.Array();
+            var remainingElements = 1;
+            var index = 0;
+
+            while (true)
+            {
+                var next = ObjectRuntime.IteratorNext(iterator);
+                if (ObjectRuntime.IteratorResultDone(next))
+                {
+                    iteratorDone = true;
+                    remainingElements--;
+                    if (remainingElements == 0)
+                    {
+                        CallableOperations.Call1(
+                            capability.Resolve,
+                            null,
+                            values);
+                    }
+
+                    return capability.Promise;
+                }
+
+                var nextValue = ObjectRuntime.IteratorResultValue(next);
+                values.Add(null);
+                var elementIndex = index++;
+                remainingElements++;
+
+                var nextPromise = CallableOperations.Call1(
+                    promiseResolve,
+                    constructor,
+                    nextValue);
+                var alreadyCalled = false;
+                BuiltinFunction1 resolveElement = (_, value) =>
+                {
+                    if (alreadyCalled)
+                    {
+                        return null;
+                    }
+
+                    alreadyCalled = true;
+                    values[elementIndex] = value;
+                    remainingElements--;
+                    if (remainingElements == 0)
+                    {
+                        CallableOperations.Call1(
+                            capability.Resolve,
+                            null,
+                            values);
+                    }
+
+                    return null;
+                };
+                Function.InitializeFunctionInstance(
+                    resolveElement,
+                    1d,
+                    string.Empty,
+                    requiresInvocationContext: false);
+                Function.MarkUndefinedPrototype(resolveElement);
+                var resolveElementValue =
+                    BuiltinDelegateFunctionAdapter.FromDelegate(resolveElement);
+
+                var then = ObjectRuntime.GetProperty(nextPromise!, "then");
+                CallableOperations.Call2(
+                    then,
+                    nextPromise,
+                    resolveElementValue,
+                    capability.Reject);
             }
         }
-
-        AddPromiseResult AddPromise(Promise p)
+        catch (Exception ex)
         {
-            results!.Add(null);
-            var index = results.Count - 1;
-            return new AddPromiseResult(
-                onFulfilled: (value) =>
-                {
-                    results[index] = value;
-                    resolvedCount++;
-                    CheckForAllCompleted();
-                },
-                onRejected: (reason) =>
-                {
-                    allPromise!.Settle(State.Rejected, reason);
-                });
-        }
+            if (iterator is not null && !iteratorDone)
+            {
+                ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
+            }
 
-        return Combine(
-            initializeState: InitializeState,
-            iterable: iterable,
-            addPromise: AddPromise,
-            finalizeState: CheckForAllCompleted);
+            CallableOperations.Call1(
+                capability.Reject,
+                null,
+                ex.InnerException ?? ex);
+            return capability.Promise;
+        }
     }
 
     public static object? allSettled(object? iterable)
@@ -1110,6 +1173,57 @@ public sealed class Promise : JsObject, IJavaScriptPromise
     private delegate void CombinePromiseHandler(object? value);
     private record AddPromiseResult(CombinePromiseHandler onFulfilled, CombinePromiseHandler onRejected);
     private delegate AddPromiseResult AddPromise(Promise p);
+
+    private static PromiseCapability NewPromiseCapability(object? constructor)
+    {
+        if (!ObjectRuntime.IsConstructibleValue(constructor))
+        {
+            throw new TypeError("Promise constructor receiver is not a constructor");
+        }
+
+        object? capabilityResolve = null;
+        object? capabilityReject = null;
+        Func<object[], object?, object?, object?> executor = (_, resolve, reject) =>
+        {
+            if (capabilityResolve is not null || capabilityReject is not null)
+            {
+                throw new TypeError("Promise capability executor already initialized");
+            }
+
+            capabilityResolve = resolve;
+            capabilityReject = reject;
+            return null;
+        };
+
+        Function.InitializeFunctionInstance(
+            executor,
+            2d,
+            string.Empty,
+            requiresInvocationContext: false);
+        Function.MarkUndefinedPrototype(executor);
+        var executorValue =
+            BuiltinDelegateFunctionAdapter.FromDelegate(executor);
+        var promise = ObjectRuntime.ConstructValue(
+            constructor!,
+            new object[] { executorValue });
+
+        if (!CallableOperations.IsCallable(capabilityResolve)
+            || !CallableOperations.IsCallable(capabilityReject))
+        {
+            throw new TypeError(
+                "Promise constructor did not supply resolving functions");
+        }
+
+        if (TypeUtilities.IsPrimitive(promise))
+        {
+            throw new TypeError("Promise constructor returned a non-object");
+        }
+
+        return new PromiseCapability(
+            promise!,
+            capabilityResolve!,
+            capabilityReject!);
+    }
 
     private static Promise Combine(
         Func<Promise> initializeState,

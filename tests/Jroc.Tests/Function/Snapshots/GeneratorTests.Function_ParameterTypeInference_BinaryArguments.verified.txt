@@ -2194,7 +2194,7 @@
 			IL_0012: conv.r8
 			IL_0013: ldstr "value"
 			IL_0018: ldc.i4.0
-			IL_0019: ldc.i4.1
+			IL_0019: ldc.i4.0
 			IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ParameterTypeInference_BinaryArguments/'value'/FunctionObject>(!!0, float64, string, bool, bool)
 			IL_001f: stloc.1
 			IL_0020: nop
@@ -2222,7 +2222,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 591 (0x24f)
+			// Code size: 565 (0x235)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -2234,8 +2234,7 @@
 				[6] object,
 				[7] object,
 				[8] object,
-				[9] object,
-				[10] float64
+				[9] object
 			)
 
 			IL_0000: ldc.r8 7
@@ -2405,7 +2404,7 @@
 			IL_01f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_01f5: pop
 			IL_01f6: ldc.i4.0
-			IL_01f7: brfalse IL_024d
+			IL_01f7: brfalse IL_0233
 
 			IL_01fc: ldloc.2
 			IL_01fd: ldloc.3
@@ -2416,35 +2415,23 @@
 			IL_0207: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
 			IL_020c: stloc.s 9
 			IL_020e: ldloc.s 7
-			IL_0210: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0215: stloc.s 5
-			IL_0217: ldloc.s 9
-			IL_0219: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_021e: stloc.s 10
-			IL_0220: ldloc.s 5
-			IL_0222: conv.i4
-			IL_0223: ldloc.s 10
-			IL_0225: conv.i4
-			IL_0226: or
-			IL_0227: conv.r8
-			IL_0228: stloc.s 10
-			IL_022a: ldloc.s 10
-			IL_022c: box [System.Runtime]System.Double
-			IL_0231: stloc.s 6
-			IL_0233: ldarg.0
-			IL_0234: ldloc.s 6
-			IL_0236: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::bigint(object)
-			IL_023b: pop
-			IL_023c: ldloc.0
-			IL_023d: box [System.Runtime]System.Double
-			IL_0242: stloc.s 6
-			IL_0244: ldarg.0
-			IL_0245: ldloc.s 6
-			IL_0247: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::functionRedeclare(object)
-			IL_024c: pop
+			IL_0210: ldloc.s 9
+			IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseOr(object, object)
+			IL_0217: stloc.s 9
+			IL_0219: ldarg.0
+			IL_021a: ldloc.s 9
+			IL_021c: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::bigint(object)
+			IL_0221: pop
+			IL_0222: ldloc.0
+			IL_0223: box [System.Runtime]System.Double
+			IL_0228: stloc.s 6
+			IL_022a: ldarg.0
+			IL_022b: ldloc.s 6
+			IL_022d: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::functionRedeclare(object)
+			IL_0232: pop
 
-			IL_024d: ldnull
-			IL_024e: ret
+			IL_0233: ldnull
+			IL_0234: ret
 		} // end of method BinaryReceiver::run
 
 	} // end of class BinaryReceiver

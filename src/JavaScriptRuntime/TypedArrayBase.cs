@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
@@ -25,6 +26,12 @@ namespace JavaScriptRuntime
         protected abstract double ReadElementValue(int index);
         protected abstract void WriteElementValue(int index, double value);
         protected abstract TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length);
+        protected internal virtual object? ReadElementObject(int index)
+            => ReadElementValue(index);
+        protected internal virtual object? CoerceElementValue(object? value)
+            => TypeUtilities.ToNumber(value);
+        protected internal virtual void WriteElementObject(int index, object? value)
+            => WriteElementValue(index, (double)CoerceElementValue(value)!);
 
         internal string TypedArrayNameValue => TypedArrayName;
         protected ArrayBuffer BufferObject => _buffer;
@@ -60,7 +67,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            WriteElementValue(index, TypeUtilities.ToNumber(value));
+            WriteElementObject(index, value);
             return true;
         }
 
@@ -84,7 +91,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var sourceValues = CaptureSourceValues(args[0]);
+            var sourceValues = CaptureSourceItems(args[0]);
             var offset = args.Length > 1
                 ? CoerceNonNegativeIndex(args[1], 0, $"Invalid {TypedArrayName} offset")
                 : 0;
@@ -101,7 +108,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < sourceValues.Count; i++)
             {
-                WriteElementValue(offset + i, sourceValues[i]);
+                WriteElementObject(offset + i, sourceValues[i]);
             }
 
             return null;
@@ -171,10 +178,10 @@ namespace JavaScriptRuntime
         {
             for (int left = 0, right = _length - 1; left < right; left++, right--)
             {
-                var leftValue = ReadElementValue(left);
-                var rightValue = ReadElementValue(right);
-                WriteElementValue(left, rightValue);
-                WriteElementValue(right, leftValue);
+                var leftValue = ReadElementObject(left);
+                var rightValue = ReadElementObject(right);
+                WriteElementObject(left, rightValue);
+                WriteElementObject(right, leftValue);
             }
 
             return this;
@@ -202,9 +209,7 @@ namespace JavaScriptRuntime
 
         public TypedArrayBase fill(object[]? args)
         {
-            var fillValue = args != null && args.Length > 0
-                ? TypeUtilities.ToNumber(args[0])
-                : TypeUtilities.ToNumber(null);
+            var fillValue = CoerceElementValue(args != null && args.Length > 0 ? args[0] : null);
             var start = args != null && args.Length > 1
                 ? CoerceRelativeIndex(args[1], 0, _length)
                 : 0;
@@ -219,7 +224,7 @@ namespace JavaScriptRuntime
 
             for (int i = start; i < end; i++)
             {
-                WriteElementValue(i, fillValue);
+                WriteElementObject(i, fillValue);
             }
 
             return this;
@@ -232,7 +237,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _length; i++)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.every", 3, ReadElementValue(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.every", 3, ReadElementObject(i), (double)i, this, null);
                 if (!Operators.IsTruthy(result))
                 {
                     return false;
@@ -249,7 +254,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _length; i++)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.some", 3, ReadElementValue(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.some", 3, ReadElementObject(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return true;
@@ -266,7 +271,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _length; i++)
             {
-                var value = ReadElementValue(i);
+                var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.find", 3, value, (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
@@ -284,7 +289,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _length; i++)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findIndex", 3, ReadElementValue(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findIndex", 3, ReadElementObject(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return i;
@@ -301,7 +306,7 @@ namespace JavaScriptRuntime
 
             for (int i = _length - 1; i >= 0; i--)
             {
-                var value = ReadElementValue(i);
+                var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLast", 3, value, (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
@@ -319,7 +324,7 @@ namespace JavaScriptRuntime
 
             for (int i = _length - 1; i >= 0; i--)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLastIndex", 3, ReadElementValue(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLastIndex", 3, ReadElementObject(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return i;
@@ -336,7 +341,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _length; i++)
             {
-                _ = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.forEach", 3, ReadElementValue(i), (double)i, this, null);
+                _ = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.forEach", 3, ReadElementObject(i), (double)i, this, null);
             }
 
             return null;
@@ -351,9 +356,9 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _length; i++)
             {
-                var value = ReadElementValue(i);
+                var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.map", 3, value, (double)i, this, null);
-                mapped.WriteElementValue(i, TypeUtilities.ToNumber(result));
+                mapped.WriteElementObject(i, result);
             }
 
             return mapped;
@@ -363,11 +368,11 @@ namespace JavaScriptRuntime
         {
             var callback = GetRequiredCallback(args, "filter");
             var thisArg = GetThisArg(args);
-            var keptValues = new List<double>();
+            var keptValues = new List<object?>();
 
             for (int i = 0; i < _length; i++)
             {
-                var value = ReadElementValue(i);
+                var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.filter", 3, value, (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
@@ -397,13 +402,13 @@ namespace JavaScriptRuntime
             }
             else
             {
-                accumulator = ReadElementValue(0);
+                accumulator = ReadElementObject(0);
                 startIndex = 1;
             }
 
             for (int i = startIndex; i < _length; i++)
             {
-                accumulator = InvokeCallback(callback, null, $"{TypedArrayName}.prototype.reduce", 4, accumulator, ReadElementValue(i), (double)i, this);
+                accumulator = InvokeCallback(callback, null, $"{TypedArrayName}.prototype.reduce", 4, accumulator, ReadElementObject(i), (double)i, this);
             }
 
             return accumulator;
@@ -428,7 +433,7 @@ namespace JavaScriptRuntime
             }
             else
             {
-                accumulator = ReadElementValue(_length - 1);
+                accumulator = ReadElementObject(_length - 1);
                 startIndex = _length - 2;
             }
 
@@ -440,7 +445,7 @@ namespace JavaScriptRuntime
                     $"{TypedArrayName}.prototype.reduceRight",
                     4,
                     accumulator,
-                    ReadElementValue(i),
+                    ReadElementObject(i),
                     (double)i,
                     this);
             }
@@ -453,7 +458,7 @@ namespace JavaScriptRuntime
             var reversed = CreateSameTypeWithLength(_length);
             for (int i = 0; i < _length; i++)
             {
-                reversed.WriteElementValue(i, ReadElementValue(_length - i - 1));
+                reversed.WriteElementObject(i, ReadElementObject(_length - i - 1));
             }
 
             return reversed;
@@ -464,7 +469,7 @@ namespace JavaScriptRuntime
             var sortedValues = GetSortedValues(args);
             for (int i = 0; i < sortedValues.Count; i++)
             {
-                WriteElementValue(i, sortedValues[i]);
+                WriteElementObject(i, sortedValues[i]);
             }
 
             return this;
@@ -484,7 +489,7 @@ namespace JavaScriptRuntime
 
             // Coerce the replacement before validating the index. Its side effects
             // are observable before the copy is made and before a RangeError.
-            var numericValue = TypeUtilities.ToNumber(value);
+            var elementValue = CoerceElementValue(value);
             if (actualIndex < 0 || actualIndex >= _length)
             {
                 throw new RangeError($"Invalid {TypedArrayName} index");
@@ -493,10 +498,10 @@ namespace JavaScriptRuntime
             var result = CreateSameTypeWithLength(_length);
             for (var i = 0; i < _length; i++)
             {
-                result.WriteElementValue(i, ReadElementValue(i));
+                result.WriteElementObject(i, ReadElementObject(i));
             }
 
-            result.WriteElementValue((int)actualIndex, numericValue);
+            result.WriteElementObject((int)actualIndex, elementValue);
             return result;
         }
 
@@ -604,7 +609,7 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            var values = CaptureSourceValues(arg);
+            var values = CaptureSourceItems(arg);
             InitializeFromValues(values);
         }
 
@@ -655,6 +660,17 @@ namespace JavaScriptRuntime
             return CreateSameType(new ArrayBuffer(new byte[byteLength], cloneBuffer: false), 0, length);
         }
 
+        protected TypedArrayBase CreateSameTypeFromValues(IReadOnlyList<object?> values)
+        {
+            var result = CreateSameTypeWithLength(values.Count);
+            for (int i = 0; i < values.Count; i++)
+            {
+                result.WriteElementObject(i, values[i]);
+            }
+
+            return result;
+        }
+
         protected TypedArrayBase CreateSameTypeFromValues(IReadOnlyList<double> values)
         {
             var result = CreateSameTypeWithLength(values.Count);
@@ -677,7 +693,7 @@ namespace JavaScriptRuntime
             _ = ObjectRuntime.GetItem(constructor, Symbol.species);
         }
 
-        private List<double> GetSortedValues(object?[]? args)
+        private List<object?> GetSortedValues(object?[]? args)
         {
             var compareFunction = args != null && args.Length > 0 ? args[0] : null;
             if (compareFunction is not null && !CallableOperations.IsCallable(compareFunction))
@@ -688,12 +704,12 @@ namespace JavaScriptRuntime
             var values = new List<SortableTypedArrayValue>(_length);
             for (int i = 0; i < _length; i++)
             {
-                values.Add(new SortableTypedArrayValue(ReadElementValue(i)));
+                values.Add(new SortableTypedArrayValue(ReadElementObject(i)));
             }
 
             StableSortValues(values, compareFunction);
 
-            var sorted = new List<double>(_length);
+            var sorted = new List<object?>(_length);
             foreach (var value in values)
             {
                 sorted.Add(value.Value);
@@ -750,12 +766,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        private int CompareValues(double left, double right, object? compareFunction)
+        private int CompareValues(object? left, object? right, object? compareFunction)
             => compareFunction is not null
                 ? CompareUsingCallback(compareFunction, left, right)
                 : CompareDefaultValues(left, right);
 
-        private int CompareUsingCallback(object callback, double left, double right)
+        private int CompareUsingCallback(object callback, object? left, object? right)
         {
             var result = TypeUtilities.ToNumber(
                 InvokeCallback(callback, null, $"{TypedArrayName}.prototype.sort", 2, left, right, null, null));
@@ -768,8 +784,15 @@ namespace JavaScriptRuntime
             return result < 0 ? -1 : 1;
         }
 
-        private static int CompareDefaultValues(double left, double right)
+        private static int CompareDefaultValues(object? leftValue, object? rightValue)
         {
+            if (leftValue is BigInteger leftBigInt && rightValue is BigInteger rightBigInt)
+            {
+                return leftBigInt.CompareTo(rightBigInt);
+            }
+
+            var left = TypeUtilities.ToNumber(leftValue);
+            var right = TypeUtilities.ToNumber(rightValue);
             if (double.IsNaN(left))
             {
                 return double.IsNaN(right) ? 0 : 1;
@@ -790,7 +813,7 @@ namespace JavaScriptRuntime
             return left < right ? -1 : left > right ? 1 : 0;
         }
 
-        private readonly record struct SortableTypedArrayValue(double Value);
+        private readonly record struct SortableTypedArrayValue(object? Value);
 
         protected static T FromSource<T>(string typedArrayName, object? source, object? mapper, object? thisArg, Func<object?[], T> factory)
             where T : TypedArrayBase
@@ -949,26 +972,18 @@ namespace JavaScriptRuntime
             return (int)truncated;
         }
 
-        private void InitializeFromValues(IReadOnlyList<double> values)
+        private void InitializeFromValues(IReadOnlyList<object?> values)
         {
             InitializeFromLength(values.Count);
             for (int i = 0; i < values.Count; i++)
             {
-                WriteElementValue(i, values[i]);
+                WriteElementObject(i, values[i]);
             }
         }
 
         private void InitializeIntrinsicSurface()
         {
             PrototypeChain.InitializePrototype(this, GlobalThis.GetTypedArrayInstancePrototype(this));
-            PropertyDescriptorStore.DefineOrUpdate(this, Symbol.iterator.DebugId, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = new Func<IJavaScriptIterator>(values)
-            });
         }
 
         internal override bool TryGetInvariantOwnPropertyValue(string key, out object? value)
@@ -976,7 +991,7 @@ namespace JavaScriptRuntime
             if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
                 && (uint)index < (uint)GetCurrentLengthOrZero())
             {
-                value = ReadElementValue(index);
+                value = ReadElementObject(index);
                 return true;
             }
 
@@ -1034,7 +1049,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            WriteElementValue(index, TypeUtilities.ToNumber(descriptor.Value));
+            WriteElementObject(index, descriptor.Value);
             return true;
         }
 
@@ -1194,7 +1209,7 @@ namespace JavaScriptRuntime
                 return null;
             }
 
-            return ReadElementValue((int)elementIndex);
+            return ReadElementObject((int)elementIndex);
         }
 
         private bool IncludesCore(object? searchElement, object? fromIndex)
@@ -1205,23 +1220,9 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var searchNumber = TypeUtilities.ToNumber(searchElement);
-            if (double.IsNaN(searchNumber))
-            {
-                for (int i = startIndex; i < _length; i++)
-                {
-                    if (double.IsNaN(ReadElementValue(i)))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
             for (int i = startIndex; i < _length; i++)
             {
-                if (ReadElementValue(i) == searchNumber)
+                if (ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: true))
                 {
                     return true;
                 }
@@ -1238,15 +1239,9 @@ namespace JavaScriptRuntime
                 return -1.0;
             }
 
-            var searchNumber = TypeUtilities.ToNumber(searchElement);
-            if (double.IsNaN(searchNumber))
-            {
-                return -1.0;
-            }
-
             for (int i = startIndex; i < _length; i++)
             {
-                if (ReadElementValue(i) == searchNumber)
+                if (ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: false))
                 {
                     return i;
                 }
@@ -1258,12 +1253,6 @@ namespace JavaScriptRuntime
         private double LastIndexOfCore(object? searchElement, object? fromIndex)
         {
             if (_length == 0)
-            {
-                return -1.0;
-            }
-
-            var searchNumber = TypeUtilities.ToNumber(searchElement);
-            if (double.IsNaN(searchNumber))
             {
                 return -1.0;
             }
@@ -1294,13 +1283,80 @@ namespace JavaScriptRuntime
 
             for (int i = startIndex; i >= 0; i--)
             {
-                if (ReadElementValue(i) == searchNumber)
+                if (ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: false))
                 {
                     return i;
                 }
             }
 
             return -1.0;
+        }
+
+        private static bool ElementValuesEqual(object? element, object? searchElement, bool sameValueZero)
+        {
+            if (element is BigInteger elementBigInt)
+            {
+                return searchElement is BigInteger searchBigInt
+                    && elementBigInt == searchBigInt;
+            }
+
+            if (!TryGetNumberPrimitive(searchElement, out var searchNumber))
+            {
+                return false;
+            }
+
+            var elementNumber = TypeUtilities.ToNumber(element);
+            if (double.IsNaN(elementNumber) || double.IsNaN(searchNumber))
+            {
+                return sameValueZero
+                    && double.IsNaN(elementNumber)
+                    && double.IsNaN(searchNumber);
+            }
+
+            return elementNumber == searchNumber;
+        }
+
+        private static bool TryGetNumberPrimitive(object? value, out double number)
+        {
+            switch (value)
+            {
+                case double doubleValue:
+                    number = doubleValue;
+                    return true;
+                case float floatValue:
+                    number = floatValue;
+                    return true;
+                case decimal decimalValue:
+                    number = (double)decimalValue;
+                    return true;
+                case int intValue:
+                    number = intValue;
+                    return true;
+                case uint uintValue:
+                    number = uintValue;
+                    return true;
+                case long longValue:
+                    number = longValue;
+                    return true;
+                case ulong ulongValue:
+                    number = ulongValue;
+                    return true;
+                case short shortValue:
+                    number = shortValue;
+                    return true;
+                case ushort ushortValue:
+                    number = ushortValue;
+                    return true;
+                case sbyte sbyteValue:
+                    number = sbyteValue;
+                    return true;
+                case byte byteValue:
+                    number = byteValue;
+                    return true;
+                default:
+                    number = 0;
+                    return false;
+            }
         }
 
         private string JoinCore(object? separator)
@@ -1316,7 +1372,7 @@ namespace JavaScriptRuntime
             var parts = new string[_length];
             for (int i = 0; i < _length; i++)
             {
-                parts[i] = DotNet2JSConversions.ToString(ReadElementValue(i));
+                parts[i] = DotNet2JSConversions.ToString(ReadElementObject(i));
             }
 
             return string.Join(actualSeparator, parts);
@@ -1365,7 +1421,7 @@ namespace JavaScriptRuntime
                         var values = new List<object?>(typedArray.LengthElements);
                         for (int i = 0; i < typedArray.LengthElements; i++)
                         {
-                            values.Add(typedArray.ReadElementValue(i));
+                            values.Add(typedArray.ReadElementObject(i));
                         }
 
                         return values;
@@ -1452,18 +1508,6 @@ namespace JavaScriptRuntime
             return new List<object?>();
         }
 
-        private static List<double> CaptureSourceValues(object? source)
-        {
-            var items = CaptureSourceItems(source);
-            var values = new List<double>(items.Count);
-            for (int i = 0; i < items.Count; i++)
-            {
-                values.Add(TypeUtilities.ToNumber(items[i]));
-            }
-
-            return values;
-        }
-
         private static bool TryGetArrayLikeLength(object? source, out int length)
         {
             length = 0;
@@ -1517,8 +1561,8 @@ namespace JavaScriptRuntime
             object? value = _kind switch
             {
                 TypedArrayIteratorKind.Keys => (double)_index,
-                TypedArrayIteratorKind.Entries => new JavaScriptRuntime.Array(new object?[] { (double)_index, _typedArray[(double)_index] }),
-                _ => _typedArray[(double)_index]
+                TypedArrayIteratorKind.Entries => new JavaScriptRuntime.Array(new object?[] { (double)_index, _typedArray.ReadElementObject(_index) }),
+                _ => _typedArray.ReadElementObject(_index)
             };
 
             _index++;

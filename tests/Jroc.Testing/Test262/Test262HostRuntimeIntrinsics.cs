@@ -143,6 +143,10 @@ public static class Test262HostRuntimeIntrinsics
         var prototype = new JsObject();
         ObjectRuntime.SetItem(prototype, "constructor", constructor);
         ObjectRuntime.SetItem(constructor, "prototype", prototype);
+        ObjectRuntime.SetItem(constructor, "thrower", CreateFunction(
+            (Action<object?>)(message => throw CreateTest262Error(message)),
+            "thrower",
+            1));
 
         return constructor;
     }

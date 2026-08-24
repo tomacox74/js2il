@@ -33,4 +33,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "index-non-numeric-argument-tointeger-invalid")]
     public Task index_non_numeric_argument_tointeger_invalid()
         => ExecutionTestFromFile("index-non-numeric-argument-tointeger-invalid");
+
+    [Fact(DisplayName = "returns-undefined-for-holes-in-sparse-arrays")]
+    public Task returns_undefined_for_holes_in_sparse_arrays()
+        => ExecutionTestFromFile("returns-undefined-for-holes-in-sparse-arrays");
 }

@@ -134,6 +134,129 @@ public sealed class BuiltinAdapterRuntimeTests
         Assert.Equal(3d, result);
     }
 
+    [Fact]
+    public void SpliceRejectsRoundedLengthAboveMaximumSafeInteger()
+    {
+        WithRealm(() =>
+        {
+            const double maximumSafeInteger = 9007199254740991d;
+            var receiver = new JsObject
+            {
+                ["length"] = maximumSafeInteger
+            };
+            var splice = ObjectRuntime.GetItem(
+                JavaScriptRuntime.Array.Prototype,
+                "splice");
+
+            Assert.Throws<TypeError>(
+                () => CallableOperations.Call(
+                    splice,
+                    receiver,
+                    new object?[]
+                    {
+                        maximumSafeInteger - 1d,
+                        1d,
+                        "first",
+                        "second"
+                    }));
+        });
+    }
+
+    [Fact]
+    public void ArrayMutatorsThrowWhenProxySetTrapReturnsFalse()
+    {
+        WithRealm(() =>
+        {
+            AssertSetTrapFailure(
+                "reverse",
+                CreateArrayLike(2d, (0d, "right"), (1d, "left")));
+            AssertSetTrapFailure("shift", CreateArrayLike(0d));
+            AssertSetTrapFailure(
+                "sort",
+                CreateArrayLike(2d, (0d, 2d), (1d, 1d)));
+            AssertSetTrapFailure("splice", CreateArrayLike(0d));
+            AssertSetTrapFailure("unshift", CreateArrayLike(0d));
+        });
+    }
+
+    [Fact]
+    public void ArrayMutatorsThrowWhenProxyDeleteTrapReturnsFalse()
+    {
+        WithRealm(() =>
+        {
+            AssertDeleteTrapFailure(
+                "reverse",
+                CreateArrayLike(2d, (1d, "upper")));
+            AssertDeleteTrapFailure(
+                "shift",
+                CreateArrayLike(2d, (0d, "first")));
+            AssertDeleteTrapFailure(
+                "sort",
+                CreateArrayLike(2d, (0d, "only")));
+            AssertDeleteTrapFailure(
+                "splice",
+                CreateArrayLike(1d),
+                0d,
+                1d);
+            AssertDeleteTrapFailure(
+                "unshift",
+                CreateArrayLike(1d),
+                "new");
+        });
+    }
+
+    private static JsObject CreateArrayLike(
+        double length,
+        params (double Index, object? Value)[] elements)
+    {
+        var target = new JsObject
+        {
+            ["length"] = length
+        };
+        foreach (var (index, value) in elements)
+        {
+            ObjectRuntime.SetItem(target, index, value);
+        }
+
+        return target;
+    }
+
+    private static void AssertSetTrapFailure(
+        string methodName,
+        JsObject target,
+        params object?[] arguments)
+    {
+        var handler = new JsObject
+        {
+            ["set"] = (BuiltinFunction4)((_, _, _, _, _) => false)
+        };
+        var proxy = new JavaScriptRuntime.Proxy(target, handler);
+        var method = ObjectRuntime.GetItem(
+            JavaScriptRuntime.Array.Prototype,
+            methodName);
+
+        Assert.Throws<TypeError>(
+            () => CallableOperations.Call(method, proxy, arguments));
+    }
+
+    private static void AssertDeleteTrapFailure(
+        string methodName,
+        JsObject target,
+        params object?[] arguments)
+    {
+        var handler = new JsObject
+        {
+            ["deleteProperty"] = (BuiltinFunction2)((_, _, _) => false)
+        };
+        var proxy = new JavaScriptRuntime.Proxy(target, handler);
+        var method = ObjectRuntime.GetItem(
+            JavaScriptRuntime.Array.Prototype,
+            methodName);
+
+        Assert.Throws<TypeError>(
+            () => CallableOperations.Call(method, proxy, arguments));
+    }
+
     private static T WithRealm<T>(Func<T> body)
     {
         var context = RuntimeExecutionContext.GetOrCreate(

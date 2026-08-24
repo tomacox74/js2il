@@ -55,10 +55,18 @@ namespace JavaScriptRuntime
         private readonly string _source;
         private readonly string? _simpleLiteralPattern;
         private readonly (string Name, int Number)[] _namedGroups;
+        private readonly int[] _captureResetAncestors;
+        private readonly CaptureBoundaryKind[] _captureBoundaryKinds;
         private WellKnownSymbolFastPathFlags _wellKnownSymbolFastPathFlags;
 
-        // Minimal support for RegExp.prototype.lastIndex (used heavily by parsers).
-        public double lastIndex { get; set; }
+        private enum CaptureBoundaryKind
+        {
+            Contained,
+            LookAhead,
+            LookBehind
+        }
+
+        public object? lastIndex { get; set; }
 
         public RegExp()
             : this(null, null)
@@ -87,6 +95,8 @@ namespace JavaScriptRuntime
                 var preparedPattern = PreparePatternForDotNetRegex(_source, _unicode, _dotAll);
                 _regex = new Regex(preparedPattern, parsedFlags.ToRegexOptions());
                 _namedGroups = GetNamedGroups(_regex);
+                (_captureResetAncestors, _captureBoundaryKinds) =
+                    GetCaptureResetAncestors(_source, _regex);
             }
             catch (RegexParseException ex)
             {
@@ -286,16 +296,6 @@ namespace JavaScriptRuntime
         {
             var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
 
-            if (!UsesLastIndexSemantics)
-            {
-                if (_simpleLiteralPattern is string literalPattern)
-                {
-                    return s.IndexOf(literalPattern, StringComparison.Ordinal) >= 0;
-                }
-
-                return _regex.IsMatch(s);
-            }
-
             if (!TryGetMatchBounds(s, out var matchIndex, out var matchLength))
             {
                 return false;
@@ -320,7 +320,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < match.Groups.Count; i++)
             {
                 var g = match.Groups[i];
-                result.Add(g.Success ? g.Value : null);
+                result.Add(IsCaptureParticipating(match, i) ? g.Value : null);
             }
 
             DefineResultProperty(result, "index", (double)match.Index);
@@ -408,9 +408,9 @@ namespace JavaScriptRuntime
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
-            DefinePrototypeMethod(prototype, "exec", (BuiltinFunction1)PrototypeExec);
-            DefinePrototypeMethod(prototype, "test", (BuiltinFunction1)PrototypeTest);
-            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString);
+            DefinePrototypeMethod(prototype, "exec", (BuiltinFunction1)PrototypeExec, 1d);
+            DefinePrototypeMethod(prototype, "test", (BuiltinFunction1)PrototypeTest, 1d);
+            DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0d);
             DefinePrototypeGetter(prototype, "dotAll", static regExp => regExp.dotAll);
             DefinePrototypeGetter(prototype, "flags", static regExp => regExp.flags);
             DefinePrototypeGetter(prototype, "global", static regExp => regExp.global);
@@ -427,12 +427,25 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            DefinePrototypeMethod(prototype, "next", (BuiltinFunction0)RegExpStringIteratorPrototypeNext);
+            DefinePrototypeMethod(prototype, "next", (BuiltinFunction0)RegExpStringIteratorPrototypeNext, 0d);
             DefineSymbolMethod(prototype, Symbol.iterator.DebugId, (BuiltinFunction0)RegExpStringIteratorPrototypeIterator);
         }
 
-        private static void DefinePrototypeMethod(object target, string key, object? value)
+        private static void DefinePrototypeMethod(object target, string key, Delegate value, double length)
         {
+            Function.InitializeFunctionInstance(
+                value,
+                length,
+                key,
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(value));
+            PropertyDescriptorStore.DefineOrUpdate(value, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
             PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -568,7 +581,7 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                lastIndex = TypeUtilities.ToNumber(value);
+                lastIndex = value;
                 return true;
             }
 
@@ -584,7 +597,7 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                lastIndex = TypeUtilities.ToNumber(descriptor.Value);
+                lastIndex = descriptor.Value;
             }
 
             return base.DefineOwnProperty(key, descriptor);
@@ -1393,7 +1406,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < match.Groups.Count; i++)
             {
                 var group = match.Groups[i];
-                if (!group.Success)
+                if (!IsCaptureParticipating(match, i))
                 {
                     indices.Add(null);
                     continue;
@@ -1453,7 +1466,7 @@ namespace JavaScriptRuntime
             {
                 var group = match.Groups[number];
                 object? value = null;
-                if (group.Success)
+                if (IsCaptureParticipating(match, number))
                 {
                     value = indices
                         ? new JavaScriptRuntime.Array(2)
@@ -1480,11 +1493,16 @@ namespace JavaScriptRuntime
             }
 
             match = _regex.Match(input, startAt);
+            while (match.Success && IsInvalidUnicodeMatchStart(input, match.Index))
+            {
+                match = _regex.Match(input, match.Index + 1);
+            }
+
             if (!match.Success || (_sticky && match.Index != startAt))
             {
                 if (UsesLastIndexSemantics)
                 {
-                    lastIndex = 0;
+                    SetLastIndexValue(0d);
                 }
 
                 match = Match.Empty;
@@ -1508,11 +1526,16 @@ namespace JavaScriptRuntime
                 }
 
                 var literalIndex = input.IndexOf(literalPattern, literalStartAt, StringComparison.Ordinal);
+                while (literalIndex >= 0 && IsInvalidUnicodeMatchStart(input, literalIndex))
+                {
+                    literalIndex = input.IndexOf(literalPattern, literalIndex + 1, StringComparison.Ordinal);
+                }
+
                 if (literalIndex < 0)
                 {
                     if (UsesLastIndexSemantics)
                     {
-                        lastIndex = 0;
+                        SetLastIndexValue(0d);
                     }
 
                     return false;
@@ -1550,7 +1573,7 @@ namespace JavaScriptRuntime
 
             if (UsesLastIndexSemantics)
             {
-                lastIndex = 0;
+                SetLastIndexValue(0d);
             }
 
             return false;
@@ -1566,7 +1589,7 @@ namespace JavaScriptRuntime
         internal bool TryExactMatchAt(string input, int position, out Match match)
         {
             match = _regex.Match(input, position);
-            if (!match.Success || match.Index != position)
+            if (!match.Success || match.Index != position || IsInvalidUnicodeMatchStart(input, match.Index))
             {
                 match = Match.Empty;
                 return false;
@@ -1578,30 +1601,28 @@ namespace JavaScriptRuntime
         private bool TryGetMatchStart(string input, out int startAt)
         {
             startAt = 0;
+            var numericLastIndex = GetLastIndexLength();
             if (!UsesLastIndexSemantics)
             {
                 return true;
             }
 
-            if (double.IsNaN(lastIndex) || double.IsNegativeInfinity(lastIndex) || lastIndex < 0)
+            if (numericLastIndex > input.Length)
             {
-                return true;
-            }
-
-            if (double.IsPositiveInfinity(lastIndex))
-            {
-                lastIndex = 0;
+                SetLastIndexValue(0d);
                 return false;
             }
 
-            var truncated = global::System.Math.Truncate(lastIndex);
-            if (truncated > input.Length)
+            startAt = (int)numericLastIndex;
+            if (_unicode
+                && startAt > 0
+                && startAt < input.Length
+                && char.IsHighSurrogate(input[startAt - 1])
+                && char.IsLowSurrogate(input[startAt]))
             {
-                lastIndex = 0;
-                return false;
+                startAt--;
             }
 
-            startAt = (int)truncated;
             return true;
         }
 
@@ -1617,7 +1638,176 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            lastIndex = matchIndex + matchLength;
+            SetLastIndexValue((double)(matchIndex + matchLength));
+        }
+
+        internal double GetLastIndexLength()
+            => ToLength(ObjectRuntime.GetItem(this, nameof(lastIndex)));
+
+        internal void SetLastIndexValue(object? value)
+            => ObjectRuntime.SetItem(this, nameof(lastIndex), value);
+
+        private bool IsInvalidUnicodeMatchStart(string input, int index)
+            => _unicode
+                && index > 0
+                && index < input.Length
+                && char.IsHighSurrogate(input[index - 1])
+                && char.IsLowSurrogate(input[index]);
+
+        private bool IsCaptureParticipating(Match match, int groupNumber)
+        {
+            var group = match.Groups[groupNumber];
+            if (!group.Success || groupNumber >= _captureResetAncestors.Length)
+            {
+                return group.Success;
+            }
+
+            var ancestorNumber = _captureResetAncestors[groupNumber];
+            if (ancestorNumber == 0)
+            {
+                return true;
+            }
+
+            var ancestor = match.Groups[ancestorNumber];
+            if (!ancestor.Success)
+            {
+                return false;
+            }
+
+            var ancestorEnd = ancestor.Index + ancestor.Length;
+            return _captureBoundaryKinds[groupNumber] switch
+            {
+                CaptureBoundaryKind.LookAhead => group.Index >= ancestor.Index,
+                CaptureBoundaryKind.LookBehind => group.Index + group.Length <= ancestorEnd,
+                _ => group.Index >= ancestor.Index
+                    && group.Index + group.Length <= ancestorEnd
+            };
+        }
+
+        private static (int[] Ancestors, CaptureBoundaryKind[] BoundaryKinds) GetCaptureResetAncestors(
+            string source,
+            Regex regex)
+        {
+            var groupNumbers = regex.GetGroupNumbers();
+            var maxGroupNumber = 0;
+            foreach (var groupNumber in groupNumbers)
+            {
+                maxGroupNumber = global::System.Math.Max(maxGroupNumber, groupNumber);
+            }
+
+            var parents = new int[maxGroupNumber + 1];
+            var quantified = new bool[maxGroupNumber + 1];
+            var boundaryKinds = new CaptureBoundaryKind[maxGroupNumber + 1];
+            var stack = new Stack<(int CaptureNumber, int ParentCapture, CaptureBoundaryKind BoundaryKind)>();
+            var nextUnnamedCapture = 1;
+            var inCharacterClass = false;
+
+            for (var index = 0; index < source.Length; index++)
+            {
+                var current = source[index];
+                if (current == '\\')
+                {
+                    index++;
+                    continue;
+                }
+
+                if (current == '[')
+                {
+                    inCharacterClass = true;
+                    continue;
+                }
+
+                if (current == ']' && inCharacterClass)
+                {
+                    inCharacterClass = false;
+                    continue;
+                }
+
+                if (inCharacterClass)
+                {
+                    continue;
+                }
+
+                if (current == '(')
+                {
+                    var parentCapture = 0;
+                    foreach (var frame in stack)
+                    {
+                        if (frame.CaptureNumber != 0)
+                        {
+                            parentCapture = frame.CaptureNumber;
+                            break;
+                        }
+                    }
+
+                    var captureNumber = 0;
+                    var boundaryKind = stack.Count == 0
+                        ? CaptureBoundaryKind.Contained
+                        : stack.Peek().BoundaryKind;
+                    if (index + 1 >= source.Length || source[index + 1] != '?')
+                    {
+                        captureNumber = nextUnnamedCapture++;
+                    }
+                    else if (index + 2 < source.Length
+                        && source[index + 2] is '=' or '!')
+                    {
+                        boundaryKind = CaptureBoundaryKind.LookAhead;
+                    }
+                    else if (index + 3 < source.Length
+                        && source[index + 2] == '<'
+                        && source[index + 3] is '=' or '!')
+                    {
+                        boundaryKind = CaptureBoundaryKind.LookBehind;
+                    }
+                    else if (index + 3 < source.Length
+                        && source[index + 2] == '<'
+                        && source[index + 3] is not '=' and not '!')
+                    {
+                        var nameEnd = source.IndexOf('>', index + 3);
+                        if (nameEnd >= 0)
+                        {
+                            captureNumber = regex.GroupNumberFromName(source.Substring(index + 3, nameEnd - index - 3));
+                        }
+                    }
+
+                    if (captureNumber > 0 && captureNumber < parents.Length)
+                    {
+                        parents[captureNumber] = parentCapture;
+                        boundaryKinds[captureNumber] = boundaryKind;
+                    }
+
+                    stack.Push((captureNumber, parentCapture, boundaryKind));
+                    continue;
+                }
+
+                if (current != ')' || stack.Count == 0)
+                {
+                    continue;
+                }
+
+                var closed = stack.Pop();
+                if (closed.CaptureNumber > 0
+                    && closed.CaptureNumber < quantified.Length
+                    && index + 1 < source.Length
+                    && source[index + 1] is '*' or '+' or '?' or '{')
+                {
+                    quantified[closed.CaptureNumber] = true;
+                }
+            }
+
+            var resetAncestors = new int[maxGroupNumber + 1];
+            for (var groupNumber = 1; groupNumber < resetAncestors.Length; groupNumber++)
+            {
+                var parent = parents[groupNumber];
+                while (parent != 0 && !quantified[parent])
+                {
+                    parent = parents[parent];
+                }
+
+                resetAncestors[groupNumber] = parent;
+            }
+
+            return (resetAncestors, boundaryKinds);
         }
 
         private int AdvanceStringIndex(string input, int index)

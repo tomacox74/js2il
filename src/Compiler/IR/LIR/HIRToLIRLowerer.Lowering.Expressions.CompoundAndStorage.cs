@@ -9,6 +9,18 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private TempVariable EmitIsNullish(TempVariable value)
+    {
+        var result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName: nameof(JavaScriptRuntime.RuntimeServices.IsNullish),
+            Arguments: [EnsureObject(value)],
+            Result: result,
+            ParameterTypes: [typeof(object)]));
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return result;
+    }
+
     private bool TryLowerCompoundOperation(Acornima.Operator op, TempVariable currentValue, TempVariable rhsValue, out TempVariable result)
     {
         result = CreateTempVariable();

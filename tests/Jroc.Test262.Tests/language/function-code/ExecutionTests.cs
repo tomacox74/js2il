@@ -86,4 +86,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "10.4.3-1-97-s")]
     public Task _10_4_3_1_97_s()
         => ExecutionTest("10.4.3-1-97-s");
+
+    [Fact(DisplayName = "10.4.3-1-103")]
+    public Task _10_4_3_1_103()
+        => ExecutionTest("10.4.3-1-103");
+
+    [Fact(DisplayName = "10.4.3-1-104")]
+    public Task _10_4_3_1_104()
+        => ExecutionTest("10.4.3-1-104");
+
+    [Fact(DisplayName = "10.4.3-1-106")]
+    public Task _10_4_3_1_106()
+        => ExecutionTest("10.4.3-1-106");
 }

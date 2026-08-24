@@ -107,6 +107,7 @@ public sealed partial class HIRToLIRLowerer
     private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
 
     private readonly Stack<TempVariable> _activeWithObjects = new();
+    private bool _suppressBoundWithReferenceLowering;
 
     // Class element initialization needs the class Type as its owner. Reuse it for every element
     // and for class-constructor value creation, rather than repeatedly running the CLR initializer.

@@ -1,6 +1,7 @@
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
+using System.Linq;
 using TwoPhase = Jroc.Services.TwoPhaseCompilation;
 using Jroc.Utilities;
 using Jroc.SymbolTables;
@@ -49,6 +50,13 @@ public sealed partial class HIRToLIRLowerer
         // delete operator requires lvalue semantics (delete obj[prop] / delete obj.prop)
         if (unaryExpr.Operator == Acornima.Operator.Delete)
         {
+            if (unaryExpr.Argument is HIRChainExpression chainExpression)
+            {
+                return TryLowerDeleteChainExpression(
+                    chainExpression,
+                    out resultTempVar);
+            }
+
             resultTempVar = CreateTempVariable();
 
             switch (unaryExpr.Argument)
@@ -197,5 +205,152 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    private bool TryLowerDeleteChainExpression(
+        HIRChainExpression chainExpression,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+        if (chainExpression.Segments.Count == 0)
+        {
+            if (!TryLowerExpressionDiscardResult(
+                    chainExpression.BaseExpression))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(
+                new LIRConstBoolean(true, resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(bool)));
+            return true;
+        }
+
+        var finalSegment = chainExpression.Segments[^1];
+        if (finalSegment is HIRChainCallSegment)
+        {
+            if (!TryLowerExpressionDiscardResult(chainExpression))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(
+                new LIRConstBoolean(true, resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(bool)));
+            return true;
+        }
+
+        TempVariable receiver;
+        TempVariable prefixShortCircuited;
+        if (chainExpression.Segments.Count == 1)
+        {
+            if (!TryLowerExpression(
+                    chainExpression.BaseExpression,
+                    out receiver))
+            {
+                return false;
+            }
+
+            receiver = EnsureObject(receiver);
+            prefixShortCircuited = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstBoolean(false, prefixShortCircuited));
+            DefineTempStorage(
+                prefixShortCircuited,
+                new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(bool)));
+        }
+        else
+        {
+            var prefixExpression = new HIRChainExpression(
+                chainExpression.BaseExpression,
+                chainExpression.Segments
+                    .Take(chainExpression.Segments.Count - 1)
+                    .ToArray());
+            if (!TryLowerChainReference(
+                    prefixExpression,
+                    out receiver,
+                    out _,
+                    out prefixShortCircuited))
+            {
+                return false;
+            }
+        }
+
+        var shortCircuitLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(
+            new LIRBranchIfTrue(
+                prefixShortCircuited,
+                shortCircuitLabel));
+
+        if (finalSegment.Optional)
+        {
+            var receiverIsNullish = EmitIsNullish(receiver);
+            _methodBodyIR.Instructions.Add(
+                new LIRBranchIfTrue(
+                    receiverIsNullish,
+                    shortCircuitLabel));
+        }
+
+        TempVariable propertyKey;
+        switch (finalSegment)
+        {
+            case HIRChainPropertySegment property:
+                propertyKey = EmitConstString(property.PropertyName);
+                break;
+
+            case HIRChainIndexSegment index:
+                if (!TryLowerExpression(index.Index, out propertyKey))
+                {
+                    return false;
+                }
+                propertyKey = EnsureObject(propertyKey);
+                break;
+
+            default:
+                return false;
+        }
+
+        var deleted = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            UsesStrictAssignmentSemantics()
+                ? nameof(JavaScriptRuntime.ObjectRuntime.DeleteItem)
+                : nameof(JavaScriptRuntime.ObjectRuntime.DeleteItemNonStrict),
+            new[] { EnsureObject(receiver), propertyKey },
+            deleted));
+        DefineTempStorage(
+            deleted,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(bool)));
+        _methodBodyIR.Instructions.Add(
+            new LIRCopyTemp(deleted, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(
+            new LIRLabel(shortCircuitLabel));
+        ClearNumericRefinementsAtLabel();
+        _methodBodyIR.Instructions.Add(
+            new LIRConstBoolean(true, resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(
+            resultTempVar,
+            new ValueStorage(
+                ValueStorageKind.UnboxedValue,
+                typeof(bool)));
+        return true;
     }
 }

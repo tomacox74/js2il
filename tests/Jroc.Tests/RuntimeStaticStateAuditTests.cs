@@ -97,6 +97,7 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.RuntimeServices.EmptyScopes", "immutable ABI array"),
         new("JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel", "immutable ABI sentinel"),
         new("JavaScriptRuntime.RuntimeServices._currentInvocation", "async-flow invocation frame"),
+        new("JavaScriptRuntime.RuntimeServices._generatedClassMethodReceivers", "weak-keyed generated method receiver metadata"),
         new("JavaScriptRuntime.ScriptProcessExitControl.PendingExit", "async-flow process-exit signal"),
         new("JavaScriptRuntime.String.Latin1CharStrings", "immutable primitive lookup"),
         new("JavaScriptRuntime.Symbol._asyncDispose", "ECMA-262 well-known symbol"),

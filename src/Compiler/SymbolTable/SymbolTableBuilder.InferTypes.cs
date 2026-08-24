@@ -3048,6 +3048,14 @@ public partial class SymbolTableBuilder
                     var receiverType = InferExpressionClrType(instanceMe.Object, scope, proposedTypes, inferenceRootScope: inferenceRootScope);
                     if (receiverType == typeof(JavaScriptRuntime.Array))
                     {
+                        if (string.Equals(
+                                methodId.Name,
+                                "slice",
+                                StringComparison.Ordinal))
+                        {
+                            return typeof(JavaScriptRuntime.Array);
+                        }
+
                         // Use reflection to determine return type of Array methods
                         // GetMethods to handle overloads - we just need to check if any overload returns a specific type
                         var methods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)

@@ -123,4 +123,51 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_obj_init_null()
         => ExecutionTest(@"dstr\obj-init-null");
 
+    [Fact(DisplayName = "S12.14_A10_T2")]
+    public Task S12_14_A10_T2()
+        => ExecutionTest("S12.14_A10_T2");
+
+    [Fact(DisplayName = "S12.14_A10_T3")]
+    public Task S12_14_A10_T3()
+        => ExecutionTest("S12.14_A10_T3");
+
+    [Fact(DisplayName = "S12.14_A10_T4")]
+    public Task S12_14_A10_T4()
+        => ExecutionTest("S12.14_A10_T4");
+
+    [Fact(DisplayName = "S12.14_A11_T2")]
+    public Task S12_14_A11_T2()
+        => ExecutionTest("S12.14_A11_T2");
+
+    [Fact(DisplayName = "S12.14_A11_T3")]
+    public Task S12_14_A11_T3()
+        => ExecutionTest("S12.14_A11_T3");
+
+    [Fact(DisplayName = "S12.14_A11_T4")]
+    public Task S12_14_A11_T4()
+        => ExecutionTest("S12.14_A11_T4");
+
+    [Fact(DisplayName = "S12.14_A12_T2")]
+    public Task S12_14_A12_T2()
+        => ExecutionTest("S12.14_A12_T2");
+
+    [Fact(DisplayName = "S12.14_A12_T3")]
+    public Task S12_14_A12_T3()
+        => ExecutionTest("S12.14_A12_T3");
+
+    [Fact(DisplayName = "S12.14_A12_T4")]
+    public Task S12_14_A12_T4()
+        => ExecutionTest("S12.14_A12_T4");
+
+    [Fact(DisplayName = "S12.14_A9_T2")]
+    public Task S12_14_A9_T2()
+        => ExecutionTest("S12.14_A9_T2");
+
+    [Fact(DisplayName = "S12.14_A9_T3")]
+    public Task S12_14_A9_T3()
+        => ExecutionTest("S12.14_A9_T3");
+
+    [Fact(DisplayName = "S12.14_A9_T4")]
+    public Task S12_14_A9_T4()
+        => ExecutionTest("S12.14_A9_T4");
 }

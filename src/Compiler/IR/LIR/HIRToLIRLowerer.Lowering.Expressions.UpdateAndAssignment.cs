@@ -35,6 +35,18 @@ public sealed partial class HIRToLIRLowerer
                 out resultTempVar);
         }
 
+        if (!_suppressBoundWithReferenceLowering
+            && updateExpr.Argument is HIRVariableExpression boundWithUpdateVar
+            && MayUseBoundWithEnvironmentForIdentifier(boundWithUpdateVar.Name.BindingInfo))
+        {
+            return TryLowerBoundWithUpdateExpression(
+                updateExpr,
+                boundWithUpdateVar,
+                isIncrement,
+                needsPostfixValue,
+                out resultTempVar);
+        }
+
         // Support ++/-- on identifiers, property access, and index access.
         // This is needed for common JS patterns like `obj.prop++` and `obj[idx]++`.
         if (updateExpr.Argument is HIRPropertyAccessExpression propAccessExpr)
@@ -348,6 +360,98 @@ public sealed partial class HIRToLIRLowerer
         finally
         {
             _activeWithObjects.Push(activeWithObject);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(lexicalResult), resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (hadPreviousValue)
+        {
+            _variableMap[binding] = previousValue;
+        }
+        else
+        {
+            _variableMap.Remove(binding);
+        }
+        _numericRefinements.Remove(binding);
+        return true;
+    }
+
+    private bool TryLowerBoundWithUpdateExpression(
+        HIRUpdateExpression updateExpr,
+        HIRVariableExpression variableExpression,
+        bool isIncrement,
+        bool needsPostfixValue,
+        out TempVariable resultTempVar)
+    {
+        var binding = variableExpression.Name.BindingInfo;
+        resultTempVar = CreateTempVariable();
+        var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
+
+        var nameTemp = EmitConstString(variableExpression.Name.Name);
+        var hasBinding = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.HasBoundWithBinding),
+            new[] { EnsureObject(nameTemp) },
+            hasBinding));
+        DefineTempStorage(hasBinding, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasBinding, lexicalLabel));
+
+        var current = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.GetBoundWithBindingValue),
+            new[] { EnsureObject(nameTemp) },
+            current));
+        DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var currentNumeric = EnsureNumeric(current);
+        TempVariable? originalSnapshot = null;
+        if (needsPostfixValue)
+        {
+            originalSnapshot = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(currentNumeric), originalSnapshot.Value));
+            DefineTempStorage(originalSnapshot.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        var updatedNumeric = EmitNumericUpdate(currentNumeric, isIncrement);
+        var strictTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(UsesStrictAssignmentSemantics(), strictTemp));
+        DefineTempStorage(strictTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        var setResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetBoundWithBindingValue),
+            new[] { EnsureObject(nameTemp), EnsureObject(updatedNumeric), strictTemp },
+            setResult,
+            new[] { typeof(object), typeof(object), typeof(bool) }));
+        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var withResult = updateExpr.Prefix || !needsPostfixValue
+            ? EnsureObject(updatedNumeric)
+            : originalSnapshot!.Value;
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(withResult, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+
+        TempVariable lexicalResult;
+        _suppressBoundWithReferenceLowering = true;
+        try
+        {
+            if (!TryLowerUpdateExpression(updateExpr, out lexicalResult))
+            {
+                return false;
+            }
+        }
+        finally
+        {
+            _suppressBoundWithReferenceLowering = false;
         }
 
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(lexicalResult), resultTempVar));
@@ -1586,6 +1690,134 @@ public sealed partial class HIRToLIRLowerer
         return scopeTemp;
     }
 
+    private bool TryLowerActiveWithSimpleAssignment(
+        HIRAssignmentExpression assignmentExpression,
+        BindingInfo binding,
+        out TempVariable resultTempVar)
+    {
+        var probe = EmitWithBindingProbe(binding.Name)
+            ?? throw new InvalidOperationException("Active with assignment requires a binding probe.");
+        var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
+
+        if (!TryLowerExpression(assignmentExpression.Value, out var valueToStore)
+            || !TryApplyInferredNameToValue(
+                assignmentExpression.Value,
+                binding.Name,
+                valueToStore,
+                out valueToStore))
+        {
+            resultTempVar = default;
+            return false;
+        }
+
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(probe.HasBinding, lexicalLabel));
+
+        var withSetResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRSetItem(
+            probe.WithObject,
+            probe.Name,
+            valueToStore,
+            withSetResult,
+            UsesStrictAssignmentSemantics()));
+        DefineTempStorage(withSetResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(withSetResult, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+        if (!TryStoreToBinding(binding, valueToStore, out var lexicalValue))
+        {
+            return false;
+        }
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(lexicalValue), resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (hadPreviousValue)
+        {
+            _variableMap[binding] = previousValue;
+        }
+        else
+        {
+            _variableMap.Remove(binding);
+        }
+        _numericRefinements.Remove(binding);
+        return true;
+    }
+
+    private bool TryLowerBoundWithSimpleAssignment(
+        HIRAssignmentExpression assignmentExpression,
+        BindingInfo binding,
+        out TempVariable resultTempVar)
+    {
+        var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
+        var nameTemp = EmitConstString(binding.Name);
+        var hasBinding = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.HasBoundWithBinding),
+            new[] { EnsureObject(nameTemp) },
+            hasBinding));
+        DefineTempStorage(hasBinding, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        if (!TryLowerExpression(assignmentExpression.Value, out var valueToStore)
+            || !TryApplyInferredNameToValue(
+                assignmentExpression.Value,
+                binding.Name,
+                valueToStore,
+                out valueToStore))
+        {
+            resultTempVar = default;
+            return false;
+        }
+
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasBinding, lexicalLabel));
+
+        var strictTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(UsesStrictAssignmentSemantics(), strictTemp));
+        DefineTempStorage(strictTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        var withSetResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetBoundWithBindingValue),
+            new[] { EnsureObject(nameTemp), EnsureObject(valueToStore), strictTemp },
+            withSetResult,
+            new[] { typeof(object), typeof(object), typeof(bool) }));
+        DefineTempStorage(withSetResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(withSetResult, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+        if (!TryStoreToBinding(binding, valueToStore, out var lexicalValue))
+        {
+            return false;
+        }
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(lexicalValue), resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (hadPreviousValue)
+        {
+            _variableMap[binding] = previousValue;
+        }
+        else
+        {
+            _variableMap.Remove(binding);
+        }
+        _numericRefinements.Remove(binding);
+        return true;
+    }
+
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
@@ -1611,6 +1843,19 @@ public sealed partial class HIRToLIRLowerer
             }
 
             return TryLowerExpression(assignExpr.Value, out resultTempVar);
+        }
+
+        if (assignExpr.Operator == Acornima.Operator.Assignment
+            && _activeWithObjects.Count > 0)
+        {
+            return TryLowerActiveWithSimpleAssignment(assignExpr, binding, out resultTempVar);
+        }
+
+        if (assignExpr.Operator == Acornima.Operator.Assignment
+            && !_suppressBoundWithReferenceLowering
+            && MayUseBoundWithEnvironmentForIdentifier(binding))
+        {
+            return TryLowerBoundWithSimpleAssignment(assignExpr, binding, out resultTempVar);
         }
 
         if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
@@ -1675,6 +1920,15 @@ public sealed partial class HIRToLIRLowerer
         {
             // Simple assignment: x = expr
             if (!TryLowerExpression(assignExpr.Value, out valueToStore))
+            {
+                return false;
+            }
+
+            if (!TryApplyInferredNameToValue(
+                    assignExpr.Value,
+                    binding.Name,
+                    valueToStore,
+                    out valueToStore))
             {
                 return false;
             }
