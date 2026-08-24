@@ -81,7 +81,7 @@ public class RuntimeServices
                 var member = memberRequest.Member;
                 if (CallableOperations.IsCallable(member.Target)
                     || member.Target is not null and not JsNull
-                    || member.Receiver is JsObject or Proxy)
+                    || member.Receiver is Proxy)
                 {
                     result = CallableOperations.CallTailTarget(
                         member.Target,
