@@ -124,7 +124,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 365 (0x16d)
+		// Code size: 417 (0x1a1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Environment_EnumerateProcessArgV/Scope,
@@ -132,8 +132,8 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object,
 			[4] float64,
-			[5] float64,
-			[6] object
+			[5] object,
+			[6] bool
 		)
 
 		IL_0000: newobj instance void Modules.Environment_EnumerateProcessArgV/Scope::.ctor()
@@ -199,69 +199,86 @@
 			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_00cc: stloc.3
-			IL_00cd: ldloc.3
-			IL_00ce: ldstr "length"
-			IL_00d3: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-			IL_00d8: stloc.s 5
-			IL_00da: ldloc.s 4
-			IL_00dc: ldloc.s 5
-			IL_00de: clt
-			IL_00e0: brfalse IL_016c
+			IL_00cd: volatile.
+			IL_00cf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_00d4: brfalse IL_00e9
 
-			IL_00e5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ea: stloc.2
-			IL_00eb: ldloc.1
-			IL_00ec: box [System.Runtime]System.Double
-			IL_00f1: stloc.s 6
-			IL_00f3: ldstr "process"
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00fd: volatile.
-			IL_00ff: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_0104: brfalse IL_0118
+			IL_00d9: ldloc.3
+			IL_00da: ldstr "length"
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00e4: br IL_00fe
 
-			IL_0109: ldstr "argv"
-			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0113: br IL_012c
+			IL_00e9: ldloc.3
+			IL_00ea: ldstr "length"
+			IL_00ef: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:23"
+			IL_00f4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0118: ldstr "argv"
-			IL_011d: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:34"
-			IL_0122: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00fe: stloc.3
+			IL_00ff: ldloc.s 4
+			IL_0101: box [System.Runtime]System.Double
+			IL_0106: stloc.s 5
+			IL_0108: ldloc.s 5
+			IL_010a: ldloc.3
+			IL_010b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_0110: stloc.s 6
+			IL_0112: ldloc.s 6
+			IL_0114: brfalse IL_01a0
 
-			IL_012c: stloc.3
-			IL_012d: ldloc.3
-			IL_012e: ldloc.1
-			IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0134: stloc.3
-			IL_0135: ldloc.2
-			IL_0136: ldc.i4.4
-			IL_0137: newarr [System.Runtime]System.Object
-			IL_013c: dup
-			IL_013d: ldc.i4.0
-			IL_013e: ldstr "arg"
-			IL_0143: stelem.ref
-			IL_0144: dup
-			IL_0145: ldc.i4.1
-			IL_0146: ldloc.s 6
-			IL_0148: stelem.ref
-			IL_0149: dup
-			IL_014a: ldc.i4.2
-			IL_014b: ldstr "="
-			IL_0150: stelem.ref
-			IL_0151: dup
-			IL_0152: ldc.i4.3
-			IL_0153: ldloc.3
-			IL_0154: stelem.ref
-			IL_0155: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_015a: pop
-			IL_015b: ldloc.1
-			IL_015c: ldc.r8 1
-			IL_0165: add
-			IL_0166: stloc.1
-			IL_0167: br IL_0090
+			IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_011e: stloc.2
+			IL_011f: ldloc.1
+			IL_0120: box [System.Runtime]System.Double
+			IL_0125: stloc.s 5
+			IL_0127: ldstr "process"
+			IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0131: volatile.
+			IL_0133: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0138: brfalse IL_014c
+
+			IL_013d: ldstr "argv"
+			IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0147: br IL_0160
+
+			IL_014c: ldstr "argv"
+			IL_0151: ldstr "Environment_EnumerateProcessArgV:Modules.Environment_EnumerateProcessArgV:__js_module_init__:35"
+			IL_0156: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0160: stloc.3
+			IL_0161: ldloc.3
+			IL_0162: ldloc.1
+			IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0168: stloc.3
+			IL_0169: ldloc.2
+			IL_016a: ldc.i4.4
+			IL_016b: newarr [System.Runtime]System.Object
+			IL_0170: dup
+			IL_0171: ldc.i4.0
+			IL_0172: ldstr "arg"
+			IL_0177: stelem.ref
+			IL_0178: dup
+			IL_0179: ldc.i4.1
+			IL_017a: ldloc.s 5
+			IL_017c: stelem.ref
+			IL_017d: dup
+			IL_017e: ldc.i4.2
+			IL_017f: ldstr "="
+			IL_0184: stelem.ref
+			IL_0185: dup
+			IL_0186: ldc.i4.3
+			IL_0187: ldloc.3
+			IL_0188: stelem.ref
+			IL_0189: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_018e: pop
+			IL_018f: ldloc.1
+			IL_0190: ldc.r8 1
+			IL_0199: add
+			IL_019a: stloc.1
+			IL_019b: br IL_0090
 		// end loop
 
-		IL_016c: ret
+		IL_01a0: ret
 	} // end of method Environment_EnumerateProcessArgV::__js_module_init__
 
 } // end of class Modules.Environment_EnumerateProcessArgV
@@ -295,6 +312,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_2
 	.field assembly static int32 __jroc_dynamicLookup_3
 	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

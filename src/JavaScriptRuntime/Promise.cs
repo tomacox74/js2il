@@ -124,12 +124,70 @@ public sealed class Promise : JsObject, IJavaScriptPromise
 
     private static object? PrototypeCatch(object? thisArgument, object? onRejectedArgument)
     {
-        return GetPromiseReceiver(thisArgument, "catch").@catch(onRejectedArgument);
+        // 27.2.5.1 Promise.prototype.catch ( onRejected )
+        // 1. Let promise be the this value.
+        // 2. Return ? Invoke(promise, "then", « undefined, onRejected »).
+        // This must be fully generic (works on any receiver whose "then" property
+        // is invoked with the original receiver as `this`), not limited to actual
+        // Promise instances.
+        return ObjectRuntime.CallMember2(thisArgument!, "then", null, onRejectedArgument);
     }
 
     private static object? PrototypeFinally(object? thisArgument, object? onFinallyArgument)
     {
-        return GetPromiseReceiver(thisArgument, "finally").@finally(onFinallyArgument);
+        // 27.2.5.3 Promise.prototype.finally ( onFinally )
+        // 1. Let promise be the this value.
+        // 2. If Type(promise) is not Object, throw a TypeError exception.
+        if (!Proxy.IsObjectLikeValue(thisArgument))
+        {
+            throw new TypeError("Promise.prototype.finally called on non-object");
+        }
+
+        object? thenFinallyValue;
+        object? catchFinallyValue;
+
+        // 3-4. (SpeciesConstructor) intentionally simplified: this codebase does not
+        // implement Symbol.species for Promise, so Promise.resolve(...) is used in
+        // place of PromiseResolve(C, result) below.
+        if (!CallableOperations.IsCallable(onFinallyArgument))
+        {
+            // 5. If IsCallable(onFinally) is false, then
+            //    a. Let thenFinally be onFinally.
+            //    b. Let catchFinally be onFinally.
+            thenFinallyValue = onFinallyArgument;
+            catchFinallyValue = onFinallyArgument;
+        }
+        else
+        {
+            var onFinally = onFinallyArgument;
+
+            BuiltinFunction1 thenFinally = (_, value) =>
+            {
+                var result = CallableOperations.Call0(onFinally, null);
+                var resultPromise = (Promise)Promise.resolve(result)!;
+                BuiltinFunction1 valueThunk = (_, _) => value;
+                return resultPromise.then(valueThunk);
+            };
+            Function.InitializeFunctionInstance(thenFinally, 1d, string.Empty, requiresInvocationContext: false);
+            thenFinallyValue = BuiltinDelegateFunctionAdapter.FromDelegate(thenFinally);
+
+            BuiltinFunction1 catchFinally = (_, reason) =>
+            {
+                var result = CallableOperations.Call0(onFinally, null);
+                var resultPromise = (Promise)Promise.resolve(result)!;
+                // Rather than throwing a wrapped CLR exception (whose unwrap semantics
+                // through the internal reaction pipeline are not guaranteed to preserve
+                // the exact rejection value), return an already-rejected promise so the
+                // existing thenable-assimilation logic propagates `reason` verbatim.
+                BuiltinFunction1 thrower = (_, _) => Promise.reject(reason);
+                return resultPromise.then(thrower);
+            };
+            Function.InitializeFunctionInstance(catchFinally, 1d, string.Empty, requiresInvocationContext: false);
+            catchFinallyValue = BuiltinDelegateFunctionAdapter.FromDelegate(catchFinally);
+        }
+
+        // 6. Return ? Invoke(promise, "then", « thenFinally, catchFinally »).
+        return ObjectRuntime.CallMember2(thisArgument!, "then", thenFinallyValue, catchFinallyValue);
     }
 
     /// <summary>

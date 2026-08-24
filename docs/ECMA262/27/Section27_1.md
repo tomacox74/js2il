@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:51:56Z
+> Last generated (UTC): 2026-08-24T01:16:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -67,35 +67,35 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 27.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-common-iteration-interfaces))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| for..of consumes iterables via Symbol.iterator and performs IteratorClose on break/throw | Supported with Limitations | [`ControlFlow_ForOf_Array_Basic.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js)<br>[`ControlFlow_ForOf_Let_PerIterationBinding.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js)<br>[`ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js)<br>[`ControlFlow_ForOf_LabeledBreak.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js)<br>[`ControlFlow_ForOf_LabeledContinue.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js) | Runtime implements iterator protocol consumption for `for..of` over arrays and user-defined iterables via `obj[Symbol.iterator]()`. IteratorClose is implemented: if an iterator has a callable `return`, it is invoked on break/throw paths. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| for..of consumes iterables via Symbol.iterator and performs IteratorClose on break/throw | Supported with Limitations | [`ControlFlow_ForOf_Array_Basic.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js)<br>[`ControlFlow_ForOf_Let_PerIterationBinding.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js)<br>[`ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js)<br>[`ControlFlow_ForOf_LabeledBreak.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js)<br>[`ControlFlow_ForOf_LabeledContinue.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js) |  | Runtime implements iterator protocol consumption for `for..of` over arrays and user-defined iterables via `obj[Symbol.iterator]()`. IteratorClose is implemented: if an iterator has a callable `return`, it is invoked on break/throw paths. |
 
 ### 27.1.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-asynciterable-interface))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| for await..of consumes async iterables via Symbol.asyncIterator and falls back to Symbol.iterator (async-from-sync wrapper) | Supported with Limitations | [`Async_ForAwaitOf_Array.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Runtime implements async iterator protocol consumption for `for await..of`. When `Symbol.asyncIterator` is missing, it wraps the sync iterator (CreateAsyncFromSyncIterator semantics) and ensures `return()` is invoked on early-exit paths. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| for await..of consumes async iterables via Symbol.asyncIterator and falls back to Symbol.iterator (async-from-sync wrapper) | Supported with Limitations | [`Async_ForAwaitOf_Array.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) |  | Runtime implements async iterator protocol consumption for `for await..of`. When `Symbol.asyncIterator` is missing, it wraps the sync iterator (CreateAsyncFromSyncIterator semantics) and ensures `return()` is invoked on early-exit paths. |
 
 ### 27.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-iterator-helper-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Iterator helper objects support lazy map/filter/drop/take/flatMap pipelines plus helper next/return behavior | Supported with Limitations | [`Iterator_From_HelperChain.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js)<br>[`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js) | Helper objects are lazy, iterable, and expose `next()` / `return()` through the public iterator-helper surface. Limit/count coercion and constructor metadata follow the new helper API shape, but only the synchronous helper family is implemented here. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Iterator helper objects support lazy map/filter/drop/take/flatMap pipelines plus helper next/return behavior | Supported with Limitations | [`Iterator_From_HelperChain.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js)<br>[`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js) |  | Helper objects are lazy, iterable, and expose `next()` / `return()` through the public iterator-helper surface. Iterator, @@iterator, drop, every, and the remaining helper functions expose their covered standard name/length metadata, but only the synchronous helper family is implemented here. |
 
 ### 27.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-iterator-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Public Iterator surface exposes Iterator.from and the helper methods for ordinary synchronous iterables | Supported with Limitations | [`Iterator_From_HelperChain.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js)<br>[`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js) | JROC now exposes global `Iterator` and `Iterator.prototype` surfaces, including `Iterator.from(...)`, helper chaining, terminal helpers, and iterable array-iterator objects. `Iterator.concat` and full abstract-constructor semantics are still not implemented. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Public Iterator surface exposes Iterator.from and the helper methods for ordinary synchronous iterables | Supported with Limitations | [`Iterator_From_HelperChain.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js)<br>[`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js) |  | JROC now exposes global `Iterator` and `Iterator.prototype` surfaces, including `Iterator.from(...)`, helper chaining, terminal helpers, and iterable array-iterator objects. `Iterator.concat` and full abstract-constructor semantics are still not implemented. |
 
 ### 27.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-asynciteratorprototype))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Public AsyncIterator surface is exposed with %Symbol.asyncIterator% for runtime async iterators | Supported with Limitations | [`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Global `AsyncIterator` and `%AsyncIteratorPrototype%[@@asyncIterator]` are exposed, and runtime async iterators inherit that public surface. Async iterator helper methods beyond the prototype exposure are still not implemented. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Public AsyncIterator surface is exposed with %Symbol.asyncIterator% for runtime async iterators | Supported with Limitations | [`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) |  | Global `AsyncIterator` and `%AsyncIteratorPrototype%[@@asyncIterator]` are exposed, and runtime async iterators inherit that public surface. Async iterator helper methods beyond the prototype exposure are still not implemented. |
 

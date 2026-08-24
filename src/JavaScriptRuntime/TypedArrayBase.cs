@@ -1500,7 +1500,11 @@ namespace JavaScriptRuntime
         {
             _typedArray = typedArray;
             _kind = kind;
-            JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
+            // Spec (22.2.3.6/22.2.3.7/22.2.3.19): %TypedArray%.prototype.{entries,keys,values}
+            // all invoke the same CreateArrayIterator abstract operation used by
+            // Array.prototype.{entries,keys,values}, so the returned iterator's
+            // [[Prototype]] is the shared %ArrayIteratorPrototype%, not %IteratorPrototype%.
+            PrototypeChain.InitializePrototype(this, JavaScriptRuntime.Array.IteratorPrototype);
         }
 
         public IteratorResultObject Next()

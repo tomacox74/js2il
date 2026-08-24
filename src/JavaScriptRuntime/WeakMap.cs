@@ -136,6 +136,50 @@ namespace JavaScriptRuntime
             return _table.Remove(key!);
         }
 
+        public object? getOrInsert(object? key, object? value)
+        {
+            if (!TypeUtilities.CanBeHeldWeakly(key))
+            {
+                throw new TypeError("Invalid value used as weak map key");
+            }
+
+            if (_table.TryGetValue(key!, out var existing))
+            {
+                return existing;
+            }
+
+            _table.AddOrUpdate(key!, value!);
+            return value;
+        }
+
+        public object? getOrInsertComputed(object? key, object? callback)
+        {
+            if (!TypeUtilities.CanBeHeldWeakly(key))
+            {
+                throw new TypeError("Invalid value used as weak map key");
+            }
+
+            if (!Proxy.IsCallableValue(callback))
+            {
+                throw new TypeError("WeakMap.prototype.getOrInsertComputed callback must be a function");
+            }
+
+            if (_table.TryGetValue(key!, out var existing))
+            {
+                return existing;
+            }
+
+            var value = Closure.InvokeFunctionCallWithArgs1(
+                callback!,
+                System.Array.Empty<object>(),
+                key);
+
+            // Re-inserts unconditionally: covers both the not-yet-present case and the
+            // case where callbackfn mutated the map for this key, whose value must be overwritten.
+            _table.AddOrUpdate(key!, value!);
+            return value;
+        }
+
         private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
@@ -144,6 +188,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "get", (BuiltinFunction1)PrototypeGet);
             DefinePrototypeMethod(prototype, "has", (BuiltinFunction1)PrototypeHas);
             DefinePrototypeMethod(prototype, "set", (BuiltinFunction2)PrototypeSet);
+            DefinePrototypeMethod(prototype, "getOrInsert", (BuiltinFunction2)PrototypeGetOrInsert);
+            DefinePrototypeMethod(prototype, "getOrInsertComputed", (BuiltinFunction2)PrototypeGetOrInsertComputed);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -204,6 +250,18 @@ namespace JavaScriptRuntime
         {
             var weakMap = GetThisWeakMap(thisArgument, "set");
             return weakMap.set(key, value);
+        }
+
+        private static object? PrototypeGetOrInsert(object? thisArgument, object? key, object? value)
+        {
+            var weakMap = GetThisWeakMap(thisArgument, "getOrInsert");
+            return weakMap.getOrInsert(key, value);
+        }
+
+        private static object? PrototypeGetOrInsertComputed(object? thisArgument, object? key, object? callback)
+        {
+            var weakMap = GetThisWeakMap(thisArgument, "getOrInsertComputed");
+            return weakMap.getOrInsertComputed(key, callback);
         }
     }
 }

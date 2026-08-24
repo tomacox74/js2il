@@ -172,9 +172,10 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Apply_ThisArg.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/apply/ExecutionTests.cs"
         ],
-        "notes": "Implemented through centralized callable operations for generated functions, bound functions, methods, arrows, classes, proxies, and explicit built-in/host delegate adapters. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics for every array-like exotic value remain limited."
+        "notes": "Implemented through centralized callable operations for generated functions, bound functions, methods, arrows, classes, proxies, and explicit built-in/host delegate adapters. Supports null/undefined argArray, generic array-like argument lists, indexed and length accessor abrupt completion, primitive thisArg boxing for non-strict functions, and standard metadata. Broader exotic argument-list behavior remains limited."
       },
       {
         "clause": "20.2.3.2",
@@ -208,7 +209,7 @@
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-15.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-16.js"
         ],
-        "notes": "Implemented as an explicit BoundFunctionObject for every callable target. Supports chained binding, bound this and argument concatenation, constructability classification, spec-aligned newTarget rewriting, target-based instanceof behavior, bound length/name metadata, and no own prototype property. Explicit built-in/host delegate targets are adapted through centralized callable operations rather than represented by new bound delegates."
+        "notes": "Implemented as an explicit BoundFunctionObject for every callable target. Supports chained binding, bound this and argument concatenation, constructability classification, spec-aligned newTarget rewriting, target-based instanceof behavior, ToIntegerOrInfinity-based bound length, bound name metadata, and no own prototype property. Explicit built-in/host delegate targets are adapted through centralized callable operations rather than represented by new bound delegates."
       },
       {
         "clause": "20.2.3.3",

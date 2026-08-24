@@ -660,9 +660,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype",
         "testScripts": [
-          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/ExecutionTests.cs"
         ],
-        "notes": "Object.prototype is available as a value via the global Object function value (JavaScriptRuntime.GlobalThis.Object). The runtime currently exposes a minimal placeholder object to support patterns like Object.create(Object.prototype, ...); the full Object.prototype API surface is not implemented."
+        "notes": "Object.prototype is a concrete intrinsic object with the covered constructor descriptor, legacy accessor methods, immutable-prototype behavior, and ordinary prototype-chain participation. Remaining host and exotic object surface details are still incomplete."
       },
       {
         "clause": "20.1.2.22",
@@ -817,9 +818,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.__proto__",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js"
+          "tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__proto__/ExecutionTests.cs"
         ],
-        "notes": "Supported via special-casing the \"__proto__\" key in runtime property get/set helpers when prototype-chain mode is enabled. This approximates legacy accessor semantics but does not fully implement Object.prototype as an actual intrinsic object with accessor descriptors."
+        "notes": "Object.prototype exposes a real __proto__ accessor with standard metadata, receiver coercion, invalid-prototype no-op behavior, and ordinary cycle, extensibility, and immutable-prototype enforcement for the covered test262 cases."
       },
       {
         "clause": "20.1.3.9",
@@ -827,9 +829,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype-legacy-accessor-methods",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__defineGetter__/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__defineSetter__/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupGetter__/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupSetter__/ExecutionTests.cs"
         ],
-        "notes": "Legacy getter/setter lookup/definition APIs are available via Object.prototype.* call forms and descriptor store integration."
+        "notes": "Legacy getter/setter definition and lookup APIs use ordinary descriptor and prototype-chain semantics, including existing, non-configurable, non-extensible, own-data, and inherited-data cases plus standard function metadata."
       },
       {
         "clause": "20.1.3.9.1",

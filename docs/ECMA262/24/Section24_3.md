@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-08-24T01:16:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,8 +22,8 @@
 | 24.3.3.1 | WeakMap.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.constructor) |
 | 24.3.3.2 | WeakMap.prototype.delete ( key ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.delete) |
 | 24.3.3.3 | WeakMap.prototype.get ( key ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.get) |
-| 24.3.3.4 | WeakMap.prototype.getOrInsert ( key , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert) |
-| 24.3.3.5 | WeakMap.prototype.getOrInsertComputed ( key , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsertcomputed) |
+| 24.3.3.4 | WeakMap.prototype.getOrInsert ( key , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert) |
+| 24.3.3.5 | WeakMap.prototype.getOrInsertComputed ( key , callback ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsertcomputed) |
 | 24.3.3.6 | WeakMap.prototype.has ( key ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.has) |
 | 24.3.3.7 | WeakMap.prototype.set ( key , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.set) |
 | 24.3.3.8 | WeakMap.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%) |
@@ -56,7 +56,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakMap.prototype.getOrInsert / getOrInsertComputed | Not Yet Supported |  |  | The newer WeakMap insertion helpers are not implemented. |
+| WeakMap.prototype.getOrInsert / getOrInsertComputed | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/getOrInsert/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/getOrInsertComputed/ExecutionTests.cs` |  | The insertion helpers support object keys, existing-key short circuiting, callback invocation and abrupt completion, mutation overwrite semantics, and standard name/length metadata for the covered test262 cases. Symbol weak keys and broader exotic callback behavior remain limited. |
 
 ### 24.3.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%))
 

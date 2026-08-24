@@ -23,29 +23,30 @@ public static class Iterator
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
+        Function.InitializeFunctionInstance(iteratorConstructorValue, 0d, "Iterator");
         DefineDataProperty(iteratorConstructorValue, "prototype", Prototype);
-        DefineDataProperty(iteratorConstructorValue, "from", (BuiltinFunction1)ConstructorFrom);
+        DefineFunctionProperty(iteratorConstructorValue, "from", (BuiltinFunction1)ConstructorFrom, 1d);
 
         DefineDataProperty(Prototype, "constructor", iteratorConstructorValue);
-        DefineDataProperty(Prototype, "next", (BuiltinFunction0)PrototypeNext);
-        DefineDataProperty(Prototype, "return", (BuiltinFunction0)PrototypeReturn);
-        DefineDataProperty(Prototype, "drop", (BuiltinFunctionVariadic)PrototypeDrop);
-        DefineDataProperty(Prototype, "every", (BuiltinFunction1)PrototypeEvery);
-        DefineDataProperty(Prototype, "filter", (BuiltinFunction1)PrototypeFilter);
-        DefineDataProperty(Prototype, "find", (BuiltinFunction1)PrototypeFind);
-        DefineDataProperty(Prototype, "flatMap", (BuiltinFunction1)PrototypeFlatMap);
-        DefineDataProperty(Prototype, "forEach", (BuiltinFunction1)PrototypeForEach);
-        DefineDataProperty(Prototype, "map", (BuiltinFunction1)PrototypeMap);
-        DefineDataProperty(Prototype, "reduce", (BuiltinFunctionVariadic)PrototypeReduce);
-        DefineDataProperty(Prototype, "some", (BuiltinFunction1)PrototypeSome);
-        DefineDataProperty(Prototype, "take", (BuiltinFunctionVariadic)PrototypeTake);
-        DefineDataProperty(Prototype, "toArray", (BuiltinFunction0)PrototypeToArray);
-        DefineDataProperty(Prototype, Symbol.iterator.DebugId, (BuiltinFunction0)PrototypeSymbolIterator);
+        DefineFunctionProperty(Prototype, "next", (BuiltinFunction0)PrototypeNext, 0d);
+        DefineFunctionProperty(Prototype, "return", (BuiltinFunction0)PrototypeReturn, 0d);
+        DefineFunctionProperty(Prototype, "drop", (BuiltinFunctionVariadic)PrototypeDrop, 1d);
+        DefineFunctionProperty(Prototype, "every", (BuiltinFunction1)PrototypeEvery, 1d);
+        DefineFunctionProperty(Prototype, "filter", (BuiltinFunction1)PrototypeFilter, 1d);
+        DefineFunctionProperty(Prototype, "find", (BuiltinFunction1)PrototypeFind, 1d);
+        DefineFunctionProperty(Prototype, "flatMap", (BuiltinFunction1)PrototypeFlatMap, 1d);
+        DefineFunctionProperty(Prototype, "forEach", (BuiltinFunction1)PrototypeForEach, 1d);
+        DefineFunctionProperty(Prototype, "map", (BuiltinFunction1)PrototypeMap, 1d);
+        DefineFunctionProperty(Prototype, "reduce", (BuiltinFunctionVariadic)PrototypeReduce, 1d);
+        DefineFunctionProperty(Prototype, "some", (BuiltinFunction1)PrototypeSome, 1d);
+        DefineFunctionProperty(Prototype, "take", (BuiltinFunctionVariadic)PrototypeTake, 1d);
+        DefineFunctionProperty(Prototype, "toArray", (BuiltinFunction0)PrototypeToArray, 0d);
+        DefineFunctionProperty(Prototype, Symbol.iterator.DebugId, (BuiltinFunction0)PrototypeSymbolIterator, 0d, "[Symbol.iterator]");
         DefineDataProperty(Prototype, Symbol.toStringTag.DebugId, "Iterator");
 
-        DefineDataProperty(HelperPrototype, "next", (BuiltinFunction0)PrototypeNext);
-        DefineDataProperty(HelperPrototype, "return", (BuiltinFunction0)PrototypeReturn);
-        DefineDataProperty(HelperPrototype, Symbol.iterator.DebugId, (BuiltinFunction0)PrototypeSymbolIterator);
+        DefineFunctionProperty(HelperPrototype, "next", (BuiltinFunction0)PrototypeNext, 0d);
+        DefineFunctionProperty(HelperPrototype, "return", (BuiltinFunction0)PrototypeReturn, 0d);
+        DefineFunctionProperty(HelperPrototype, Symbol.iterator.DebugId, (BuiltinFunction0)PrototypeSymbolIterator, 0d, "[Symbol.iterator]");
         DefineDataProperty(HelperPrototype, Symbol.toStringTag.DebugId, "Iterator Helper");
     }
 
@@ -106,12 +107,39 @@ public static class Iterator
         });
     }
 
+    /// <summary>
+    /// Defines a data property whose value is a builtin delegate, giving the resulting
+    /// function object the correct spec-mandated <c>length</c>/<c>name</c> metadata.
+    /// Without this, <see cref="Function.InitializeFunctionInstance(object)"/> derives
+    /// <c>name</c> from the underlying CLR method (e.g. "PrototypeEvery" instead of "every").
+    /// </summary>
+    private static void DefineFunctionProperty(
+        object target,
+        string key,
+        Delegate method,
+        double length,
+        string? name = null)
+    {
+        Function.InitializeFunctionInstance(
+            method,
+            length,
+            name ?? key,
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(method));
+        Function.MarkUndefinedPrototype(method);
+        DefineDataProperty(target, key, method);
+    }
+
     private static object? ConstructorFrom(object? thisArgument, object? value)
     {
         return From(value);
     }
 
-    private static object? PrototypeNext(object? thisArgument)
+    /// <summary>
+    /// Generic <c>next()</c> implementation shared by every concrete iterator kind's
+    /// own prototype (e.g. <see cref="Array.IteratorPrototype"/>), in addition to
+    /// <see cref="Prototype"/> itself.
+    /// </summary>
+    internal static object? PrototypeNext(object? thisArgument)
     {
         return GetReceiverIterator(thisArgument, "next").Next();
     }

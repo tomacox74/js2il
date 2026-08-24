@@ -313,14 +313,15 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 139 (0x8b)
+			// Code size: 143 (0x8f)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] float64,
 				[2] float64,
 				[3] float64,
-				[4] object
+				[4] object,
+				[5] bool
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -353,31 +354,31 @@
 			IL_0042: ldloc.0
 			IL_0043: stloc.s 4
 			IL_0045: ldloc.s 4
-			IL_0047: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_004c: ldc.r8 0.0
-			IL_0055: clt
-			IL_0057: ldc.i4.0
-			IL_0058: ceq
-			IL_005a: brfalse IL_006e
+			IL_0047: ldc.r8 0.0
+			IL_0050: box [System.Runtime]System.Double
+			IL_0055: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, object)
+			IL_005a: stloc.s 5
+			IL_005c: ldloc.s 5
+			IL_005e: brfalse IL_0072
 
-			IL_005f: ldc.r8 1
-			IL_0068: stloc.2
-			IL_0069: br IL_007b
+			IL_0063: ldc.r8 1
+			IL_006c: stloc.2
+			IL_006d: br IL_007f
 
-			IL_006e: ldc.r8 1
-			IL_0077: neg
-			IL_0078: stloc.3
-			IL_0079: ldloc.3
-			IL_007a: stloc.2
+			IL_0072: ldc.r8 1
+			IL_007b: neg
+			IL_007c: stloc.3
+			IL_007d: ldloc.3
+			IL_007e: stloc.2
 
-			IL_007b: ldloc.0
-			IL_007c: stloc.s 4
-			IL_007e: ldloc.s 4
-			IL_0080: ldloc.2
-			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0086: stloc.s 4
-			IL_0088: ldloc.s 4
-			IL_008a: ret
+			IL_007f: ldloc.0
+			IL_0080: stloc.s 4
+			IL_0082: ldloc.s 4
+			IL_0084: ldloc.2
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_008a: stloc.s 4
+			IL_008c: ldloc.s 4
+			IL_008e: ret
 		} // end of method calculate::__js_call__
 
 	} // end of class calculate

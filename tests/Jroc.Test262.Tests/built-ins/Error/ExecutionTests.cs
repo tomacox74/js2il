@@ -57,4 +57,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "error-message-tostring-toprimitive")]
     public Task error_message_tostring_toprimitive()
         => ExecutionTestFromFile("error-message-tostring-toprimitive");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
 }

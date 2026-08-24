@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-22T00:01:14Z
+> Last generated (UTC): 2026-08-24T01:16:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -41,7 +41,7 @@
 | 25.1.5 | Properties of the ArrayBuffer Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-constructor) |
 | 25.1.5.1 | ArrayBuffer.isView ( arg ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.isview) |
 | 25.1.5.2 | ArrayBuffer.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype) |
-| 25.1.5.3 | get ArrayBuffer [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-arraybuffer-%symbol.species%) |
+| 25.1.5.3 | get ArrayBuffer [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-arraybuffer-%symbol.species%) |
 | 25.1.6 | Properties of the ArrayBuffer Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object) |
 | 25.1.6.1 | get ArrayBuffer.prototype.byteLength | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-arraybuffer.prototype.bytelength) |
 | 25.1.6.2 | ArrayBuffer.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.constructor) |
@@ -64,7 +64,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer first-class constructor and prototype metadata | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/maxByteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resizable/ExecutionTests.cs` | `test/built-ins/ArrayBuffer/length.js`<br>`test/built-ins/ArrayBuffer/name.js`<br>`test/built-ins/ArrayBuffer/prop-desc.js`<br>`test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, and prototype descriptors. ArrayBuffer.prototype has receiver-checked byteLength, maxByteLength, resizable, and @@toStringTag properties. Species, custom newTarget prototypes, detachment, transfer, and resizable-buffer operations remain limited. |
+| ArrayBuffer first-class constructor and prototype metadata | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/maxByteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resizable/ExecutionTests.cs` | `test/built-ins/ArrayBuffer/length.js`<br>`test/built-ins/ArrayBuffer/name.js`<br>`test/built-ins/ArrayBuffer/prop-desc.js`<br>`test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, prototype descriptors, and the standard @@species accessor. ArrayBuffer.prototype has receiver-checked byteLength, maxByteLength, resizable, and @@toStringTag properties. Custom newTarget prototypes, detachment, transfer, and resizable-buffer operations remain limited. |
 
 ### 25.1.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer-length))
 
@@ -78,9 +78,15 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | ArrayBuffer.isView | Supported with Limitations | [`ArrayBuffer_IsView_DataView.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/PortNext200ExecutionTests.cs` | `test/built-ins/ArrayBuffer/isView/arg-is-typedarray.js` | Recognizes DataView and the supported TypedArray implementations as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774. |
 
+### 25.1.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-arraybuffer-%symbol.species%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| get ArrayBuffer [ @@species ] | Supported | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/Symbol.species/ExecutionTests.cs` |  | The ArrayBuffer constructor exposes the standard configurable, non-enumerable @@species getter with the covered name, length, and receiver-return semantics. |
+
 ### 25.1.6 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) |  | byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. Species, detach, resize, and transfer semantics are not implemented. |
+| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs` |  | byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. The slice function now exposes the standard descriptor, extensibility, name, and length metadata. Species construction beyond the intrinsic getter, detach, resize, and transfer semantics remain limited. |
 

@@ -64,15 +64,22 @@ namespace JavaScriptRuntime
             if (double.IsNaN(d) || double.IsPositiveInfinity(d) || double.IsNegativeInfinity(d)) return d;
             if (d == 0) return d; // preserve +0/-0 when the argument already equals zero
 
-            double r = System.Math.Floor(d + 0.5);
+            // Spec steps 3-4: these ranges must be special-cased rather than folded into the
+            // general floor(d + 0.5) formula below, which both loses precision for values just
+            // under 0.5 (e.g. 0.5 - Number.EPSILON/4) and yields the wrong signed zero for
+            // negative values in [-0.5, -0).
+            if (d > 0.0 && d < 0.5) return 0.0;
+            if (d < 0.0 && d >= -0.5) return -0.0;
 
-            // ECMAScript spec: if result is 0 and input was negative, return -0
-            if (r == 0.0 && d < 0.0)
-            {
-                return -0.0;
-            }
+            if (double.IsInteger(d)) return d;
 
-            return r;
+            // Spec step 5: the integral Number closest to d, preferring +Infinity on a tie.
+            double floorVal = System.Math.Floor(d);
+            double ceilVal = System.Math.Ceiling(d);
+            double diffFloor = d - floorVal;
+            double diffCeil = ceilVal - d;
+
+            return diffCeil <= diffFloor ? ceilVal : floorVal;
         }
 
         public static double round(object? x) => round(ToNumber(x));
@@ -225,19 +232,30 @@ namespace JavaScriptRuntime
         public static double hypot(params object?[] args)
         {
             if (args == null || args.Length == 0) return 0.0;
-            bool anyNaN = false;
-            foreach (var a in args)
+
+            // Spec: coerce every argument to Number first (in order), propagating any abrupt
+            // completion immediately and without coercing later arguments. Only once every
+            // argument has been coerced do we inspect the results for +/-Infinity or NaN.
+            var coerced = new double[args.Length];
+            for (var i = 0; i < args.Length; i++)
             {
-                double d = ToNumber(a);
-                if (double.IsPositiveInfinity(d) || double.IsNegativeInfinity(d)) return double.PositiveInfinity;
-                if (double.IsNaN(d)) anyNaN = true;
+                coerced[i] = ToNumber(args[i]);
             }
-            if (anyNaN) return double.NaN;
-            double sum = 0.0;
-            foreach (var a in args)
+
+            foreach (var number in coerced)
             {
-                double d = ToNumber(a);
-                sum += d * d;
+                if (double.IsPositiveInfinity(number) || double.IsNegativeInfinity(number)) return double.PositiveInfinity;
+            }
+
+            foreach (var number in coerced)
+            {
+                if (double.IsNaN(number)) return double.NaN;
+            }
+
+            double sum = 0.0;
+            foreach (var number in coerced)
+            {
+                sum += number * number;
             }
             return System.Math.Sqrt(sum);
         }

@@ -186,12 +186,13 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 124 (0x7c)
+				// Code size: 129 (0x81)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] bool,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+					[1] object,
+					[2] bool,
+					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 				)
 
 				IL_0000: ldarg.0
@@ -225,22 +226,24 @@
 				IL_0040: ldelem.ref
 				IL_0041: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
 				IL_0046: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
-				IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0050: ldc.r8 3
-				IL_0059: cgt
-				IL_005b: stloc.1
-				IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0061: dup
-				IL_0062: ldstr "value"
-				IL_0067: ldloc.0
-				IL_0068: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_006d: dup
-				IL_006e: ldstr "done"
-				IL_0073: ldloc.1
-				IL_0074: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_0079: stloc.2
-				IL_007a: ldloc.2
-				IL_007b: ret
+				IL_004b: stloc.1
+				IL_004c: ldloc.1
+				IL_004d: ldc.r8 3
+				IL_0056: box [System.Runtime]System.Double
+				IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
+				IL_0060: stloc.2
+				IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0066: dup
+				IL_0067: ldstr "value"
+				IL_006c: ldloc.0
+				IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0072: dup
+				IL_0073: ldstr "done"
+				IL_0078: ldloc.2
+				IL_0079: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_007e: stloc.3
+				IL_007f: ldloc.3
+				IL_0080: ret
 			} // end of method FunctionExpression_iterable::__js_call__
 
 		} // end of class FunctionExpression_iterable

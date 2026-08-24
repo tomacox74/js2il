@@ -513,16 +513,17 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 178 (0xb2)
+			// Code size: 231 (0xe7)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_ExplicitReceiverAbi/variadicSum/Scope,
 				[1] object,
 				[2] float64,
 				[3] float64,
-				[4] float64,
+				[4] object,
 				[5] object,
-				[6] object
+				[6] bool,
+				[7] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_ExplicitReceiverAbi/variadicSum/Scope::.ctor()
@@ -562,34 +563,50 @@
 				IL_0067: stloc.3
 				IL_0068: ldloc.0
 				IL_0069: ldfld object Modules.Function_ExplicitReceiverAbi/variadicSum/Scope::arguments
-				IL_006e: ldstr "length"
-				IL_0073: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0078: stloc.s 4
-				IL_007a: ldloc.3
-				IL_007b: ldloc.s 4
-				IL_007d: clt
-				IL_007f: brfalse IL_00b0
+				IL_006e: volatile.
+				IL_0070: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
+				IL_0075: brfalse IL_0089
 
-				IL_0084: ldloc.0
-				IL_0085: ldfld object Modules.Function_ExplicitReceiverAbi/variadicSum/Scope::arguments
-				IL_008a: ldloc.2
-				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0090: stloc.s 5
-				IL_0092: ldloc.1
-				IL_0093: ldloc.s 5
-				IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_009a: stloc.s 6
-				IL_009c: ldloc.s 6
-				IL_009e: stloc.1
-				IL_009f: ldloc.2
-				IL_00a0: ldc.r8 1
-				IL_00a9: add
-				IL_00aa: stloc.2
-				IL_00ab: br IL_0066
+				IL_007a: ldstr "length"
+				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0084: br IL_009d
+
+				IL_0089: ldstr "length"
+				IL_008e: ldstr "Function_ExplicitReceiverAbi:<TwoPhaseDummy_M5>:__js_call__:13"
+				IL_0093: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
+				IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+				IL_009d: stloc.s 4
+				IL_009f: ldloc.3
+				IL_00a0: box [System.Runtime]System.Double
+				IL_00a5: stloc.s 5
+				IL_00a7: ldloc.s 5
+				IL_00a9: ldloc.s 4
+				IL_00ab: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+				IL_00b0: stloc.s 6
+				IL_00b2: ldloc.s 6
+				IL_00b4: brfalse IL_00e5
+
+				IL_00b9: ldloc.0
+				IL_00ba: ldfld object Modules.Function_ExplicitReceiverAbi/variadicSum/Scope::arguments
+				IL_00bf: ldloc.2
+				IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00c5: stloc.s 4
+				IL_00c7: ldloc.1
+				IL_00c8: ldloc.s 4
+				IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00cf: stloc.s 7
+				IL_00d1: ldloc.s 7
+				IL_00d3: stloc.1
+				IL_00d4: ldloc.2
+				IL_00d5: ldc.r8 1
+				IL_00de: add
+				IL_00df: stloc.2
+				IL_00e0: br IL_0066
 			// end loop
 
-			IL_00b0: ldloc.1
-			IL_00b1: ret
+			IL_00e5: ldloc.1
+			IL_00e6: ret
 		} // end of method variadicSum::__js_call__
 
 	} // end of class variadicSum
@@ -2080,6 +2097,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_34
 	.field assembly static int32 __jroc_dynamicLookup_35
 	.field assembly static int32 __jroc_dynamicLookup_36
+	.field assembly static int32 __jroc_dynamicLookup_37
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262/docs: port 200 additional previously failing ES2025
+  tests across generic Array methods, numeric and string coercion, Object and
+  Reflect descriptors, Function invocation, BigInt, Promise, WeakMap upsert,
+  ArrayBuffer, TypedArray, and Iterator surfaces; implement the shared
+  specification fixes required for the complete batch.
 - sdk/hosting/samples/docs: complete Phase 5 of #1917 and issues #1948 through
   #1953. `Jroc.SDK` now references and deploys the compatible runtime
   transitively, validates runtime assets with `JROCSDK1001`-`JROCSDK1004`, and

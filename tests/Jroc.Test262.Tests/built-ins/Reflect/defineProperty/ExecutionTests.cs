@@ -25,4 +25,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "return-abrupt-from-property-key")]
+    public Task return_abrupt_from_property_key()
+        => ExecutionTestFromFile("return-abrupt-from-property-key");
 }

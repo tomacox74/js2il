@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-08-24T01:16:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -100,7 +100,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %TypedArray%.from / %TypedArray%.of on supported families | Supported with Limitations | [`TypedArray_Static_From_Of.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js)<br>[`iterated-array-changed-by-tonumber.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/from/JavaScript/iterated-array-changed-by-tonumber.js) | `test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js` | Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. Current checked-in test262 coverage also exercises the built-in array-iterator path where later numeric coercion mutates the original source after iteration materialization. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete. |
+| %TypedArray%.from / %TypedArray%.of on supported families | Supported with Limitations | [`TypedArray_Static_From_Of.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js)<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/from/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/of/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/entries/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/keys/ExecutionTests.cs` | `test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js` | Supported non-BigInt TypedArray families expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks and standard name/length/property descriptors. TypedArray entries() and keys() share the intrinsic array-iterator prototype and expose standard metadata. BigInt TypedArray families and remaining constructor edge cases are still incomplete. |
 
 ### 23.2.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype))
 

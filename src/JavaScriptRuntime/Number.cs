@@ -175,6 +175,109 @@ namespace JavaScriptRuntime
             return true;
         }
 
+        /// <summary>
+        /// ECMAScript: Number.prototype.toString([radix]).
+        /// </summary>
+        internal static string ToStringWithRadix(object? value, object? radixArgument)
+        {
+            var number = ThisNumberValue(value);
+
+            // Radix is only coerced when explicitly supplied; ToIntegerOrInfinity(radix)
+            // must run (and may throw) before the radix-range check below.
+            var radixValue = 10d;
+            if (radixArgument is not null)
+            {
+                var radixNumber = TypeUtilities.ToNumber(radixArgument);
+                radixValue = double.IsNaN(radixNumber) || radixNumber == 0d
+                    ? 0d
+                    : double.IsInfinity(radixNumber)
+                        ? radixNumber
+                        : System.Math.Truncate(radixNumber);
+            }
+
+            if (double.IsNaN(radixValue) || radixValue < 2d || radixValue > 36d)
+            {
+                throw new RangeError("toString() radix argument must be between 2 and 36");
+            }
+
+            if (radixValue == 10d)
+            {
+                return DotNet2JSConversions.ToString(number);
+            }
+
+            return ToRadixString(number, (int)radixValue);
+        }
+
+        private static string ToRadixString(double x, int radix)
+        {
+            if (double.IsNaN(x)) return "NaN";
+            if (x == 0d) return "0";
+            if (x < 0) return "-" + ToRadixString(-x, radix);
+            if (double.IsPositiveInfinity(x)) return "Infinity";
+
+            var integerPart = System.Math.Truncate(x);
+            var fractionPart = x - integerPart;
+
+            var integerDigits = ConvertIntegerPartToRadixDigits(integerPart, radix);
+            if (fractionPart <= 0d)
+            {
+                return integerDigits;
+            }
+
+            var fractionDigits = ConvertFractionPartToRadixDigits(fractionPart, radix);
+            return fractionDigits.Length == 0 ? integerDigits : integerDigits + "." + fractionDigits;
+        }
+
+        private static string ConvertIntegerPartToRadixDigits(double integerPart, int radix)
+        {
+            if (integerPart == 0d)
+            {
+                return "0";
+            }
+
+            var value = new System.Numerics.BigInteger(integerPart);
+            var radixBig = new System.Numerics.BigInteger(radix);
+            var digits = new System.Text.StringBuilder();
+            while (value > System.Numerics.BigInteger.Zero)
+            {
+                value = System.Numerics.BigInteger.DivRem(value, radixBig, out var remainder);
+                digits.Insert(0, RadixDigitChar((int)remainder));
+            }
+
+            return digits.ToString();
+        }
+
+        private static string ConvertFractionPartToRadixDigits(double fractionPart, int radix)
+        {
+            // Generous bound covering a double's ~52 bits of fractional precision in any
+            // supported radix (2-36), while still terminating early once the remainder is exact.
+            const int maxFractionDigits = 1100;
+            var digits = new System.Text.StringBuilder();
+            var remaining = fractionPart;
+            for (var i = 0; i < maxFractionDigits && remaining > 0d; i++)
+            {
+                remaining *= radix;
+                var digit = (int)System.Math.Floor(remaining);
+                if (digit >= radix)
+                {
+                    digit = radix - 1;
+                }
+
+                digits.Append(RadixDigitChar(digit));
+                remaining -= digit;
+            }
+
+            while (digits.Length > 0 && digits[^1] == '0')
+            {
+                digits.Length--;
+            }
+
+            return digits.ToString();
+        }
+
+        private static char RadixDigitChar(int digit)
+            => (char)(digit < 10 ? '0' + digit : 'a' + (digit - 10));
+
         internal static string ToExponentialString(object? value, object? fractionDigitsArgument)
         {
             var number = ThisNumberValue(value);
@@ -213,10 +316,19 @@ namespace JavaScriptRuntime
         internal static string ToFixedString(object? value, object? fractionDigitsArgument)
         {
             var number = ThisNumberValue(value);
+            // ToIntegerOrInfinity(fractionDigits) must run (and may throw) before the
+            // magnitude-based short-circuit below, matching Number.prototype.toFixed's step order.
             var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toFixed");
             if (double.IsNaN(number)) return "NaN";
             if (double.IsPositiveInfinity(number)) return "Infinity";
             if (double.IsNegativeInfinity(number)) return "-Infinity";
+
+            // Spec step 9: if the magnitude is >= 10^21, fall back to the ordinary
+            // Number::toString representation regardless of the requested fraction digits.
+            if (System.Math.Abs(number) >= 1e21)
+            {
+                return DotNet2JSConversions.ToString(number);
+            }
 
             return number.ToString($"F{fractionDigits}", CultureInfo.InvariantCulture);
         }

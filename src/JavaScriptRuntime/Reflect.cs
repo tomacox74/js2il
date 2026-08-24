@@ -28,7 +28,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Reflect.construct newTarget is not a constructor");
             }
 
-            return ObjectRuntime.ConstructValue(target!, NormalizeArgumentsList(argumentsList), newTarget);
+            return ObjectRuntime.ConstructValue(target!, CreateListFromArrayLike(argumentsList, "Reflect.construct")!, newTarget);
         }
 
         public static bool defineProperty(object target, object? propertyKey, object? attributes)
@@ -80,7 +80,7 @@ namespace JavaScriptRuntime
         public static bool setPrototypeOf(object target, object? proto)
         {
             RequireObjectTarget(target, "setPrototypeOf");
-            if (proto is not null && proto is not JsNull && !Proxy.IsObjectLikeValue(proto))
+            if (proto is not JsNull && !Proxy.IsObjectLikeValue(proto))
             {
                 throw new TypeError("Reflect.setPrototypeOf proto must be an object or null");
             }
@@ -88,14 +88,14 @@ namespace JavaScriptRuntime
             return ObjectRuntime.ReflectSetPrototypeOf(target, proto);
         }
 
-        public static bool set(object target, object? propertyKey, object? value)
+        public static bool set(object target, object? propertyKey, object? value, object? receiver = null)
         {
             if (!Proxy.IsObjectLikeValue(target))
             {
                 throw new TypeError("Reflect.set target must be an object");
             }
 
-            return ObjectRuntime.ReflectSet(target, propertyKey, value);
+            return ObjectRuntime.ReflectSet(target, propertyKey, value, receiver ?? target);
         }
 
         public static object ownKeys(object target)
@@ -159,37 +159,6 @@ namespace JavaScriptRuntime
             }
 
             return global::System.Math.Min(global::System.Math.Truncate(number), 9007199254740991d);
-        }
-
-        private static object[] NormalizeArgumentsList(object? argumentsList)
-        {
-            if (argumentsList is null || argumentsList is JsNull)
-            {
-                throw new TypeError("Reflect.construct argumentsList must be an object");
-            }
-
-            if (argumentsList is Array jsArray)
-            {
-                return jsArray.ToArray().Cast<object>().ToArray();
-            }
-
-            if (argumentsList is object[] objectArray)
-            {
-                return objectArray;
-            }
-
-            if (argumentsList is IEnumerable enumerable && argumentsList is not string)
-            {
-                var list = new List<object>();
-                foreach (var item in enumerable)
-                {
-                    list.Add(item!);
-                }
-
-                return list.ToArray();
-            }
-
-            throw new TypeError("Reflect.construct argumentsList must be array-like");
         }
     }
 }

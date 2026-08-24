@@ -93,6 +93,36 @@ namespace JavaScriptRuntime
                     RefreshDefaultPrototypeChainState();
                 });
 
+        /// <summary>Realm-owned <c>%ArrayIteratorPrototype%</c> intrinsic (ECMA-262 23.1.5.2).</summary>
+        internal static JsObject IteratorPrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.ArrayIteratorPrototype,
+                static () => new JsObject(),
+                static prototype => InitializeIteratorPrototype(prototype));
+
+        private static void InitializeIteratorPrototype(JsObject prototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "next", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (BuiltinFunction0)Iterator.PrototypeNext
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Array Iterator"
+            });
+        }
+
         internal static void ResetPrototypeForTests()
         {
             _defaultPrototypeChainHasBlockingIndexedProperties = false;
@@ -123,8 +153,11 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "indexOf", (BuiltinFunction2)PrototypeIndexOf, 1);
             DefinePrototypeMethod(prototype, "every", (BuiltinFunction2)PrototypeEvery, 1);
             DefinePrototypeMethod(prototype, "some", (BuiltinFunction2)PrototypeSome, 1);
+            DefinePrototypeMethod(prototype, "forEach", (BuiltinFunction2)PrototypeForEach, 1);
             DefinePrototypeMethod(prototype, "filter", (BuiltinFunction2)PrototypeFilter, 1);
             DefinePrototypeMethod(prototype, "map", (BuiltinFunction2)PrototypeMap, 1);
+            DefinePrototypeMethod(prototype, "slice", (BuiltinFunction2)PrototypeSlice, 2);
+            DefinePrototypeMethod(prototype, "splice", (BuiltinFunctionVariadic)PrototypeSplice, 2);
             DefinePrototypeMethod(prototype, "find", (BuiltinFunction2)PrototypeFind, 1);
             DefinePrototypeMethod(prototype, "findIndex", (BuiltinFunction2)PrototypeFindIndex, 1);
             DefinePrototypeMethod(prototype, "includes", (BuiltinFunction2)PrototypeIncludes, 1);
@@ -436,7 +469,7 @@ namespace JavaScriptRuntime
             return ObjectRuntime.Construct(value);
         }
 
-        private static object ArraySpeciesCreate(object originalArray)
+        private static object ArraySpeciesCreate(object originalArray, double length = 0d)
         {
             if (!IsArrayForConcat(originalArray))
             {
@@ -468,7 +501,7 @@ namespace JavaScriptRuntime
             var result = CallableOperations.Construct1(
                 constructor,
                 constructor,
-                0d);
+                length);
             if (!IsObjectValue(result))
             {
                 throw new TypeError("Array species constructor did not return an object");
@@ -489,7 +522,7 @@ namespace JavaScriptRuntime
                     throw new TypeError("Array.prototype.concat result exceeds the maximum safe integer");
                 }
 
-                CreateConcatDataProperty(result, nextIndex, item);
+                CreateArrayLikeDataProperty(result, nextIndex, item);
                 nextIndex++;
                 return;
             }
@@ -505,7 +538,7 @@ namespace JavaScriptRuntime
                 var sourceKey = DotNet2JSConversions.ToString(sourceIndex);
                 if (ObjectRuntime.HasPropertyForArrayLike(sourceKey, item!))
                 {
-                    CreateConcatDataProperty(
+                    CreateArrayLikeDataProperty(
                         result,
                         nextIndex,
                         ObjectRuntime.GetProperty(item!, sourceKey));
@@ -545,7 +578,7 @@ namespace JavaScriptRuntime
                 && value is not JsNull
                 && !TypeUtilities.IsPrimitive(value);
 
-        private static void CreateConcatDataProperty(
+        private static void CreateArrayLikeDataProperty(
             object target,
             double index,
             object? value)
@@ -883,6 +916,28 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        private static object? PrototypeForEach(object? thisArgument, object? callback, object? thisArg)
+        {
+            var receiver = RequireArrayLikeReceiver(thisArgument, "forEach");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
+            callback = RequireCallback(callback, "forEach");
+
+            for (int i = 0; i < length; i++)
+            {
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
+                {
+                    continue;
+                }
+
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                InvokeArrayCallback(callback, thisArg, "Array.prototype.forEach", 3, value, (double)i, callbackReceiver, null);
+            }
+
+            return null; // undefined
+        }
+
         private static object? PrototypeFind(object? thisArgument, object? callback, object? thisArg)
         {
             var receiver = RequireArrayLikeReceiver(thisArgument, "find");
@@ -1010,6 +1065,149 @@ namespace JavaScriptRuntime
                 var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                 result[i] = InvokeArrayCallback(callback, thisArg, "Array.prototype.map", 3, value, (double)i, callbackReceiver, null);
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// JavaScript Array.prototype.slice(start, end) - generic implementation (ECMA-262 23.1.3.28).
+        /// The receiver need not be a real Array; array-like objects (and primitives coerced via
+        /// GetArrayMethodCallbackReceiver) are supported so <c>Array.prototype.slice.call(obj, ...)</c>
+        /// and <c>obj.slice = Array.prototype.slice; obj.slice(...)</c> patterns work.
+        /// </summary>
+        private static object? PrototypeSlice(object? thisArgument, object? start, object? end)
+        {
+            var receiver = RequireArrayLikeReceiver(thisArgument, "slice");
+
+            // Fast path: real JS array uses the existing optimized instance method.
+            if (receiver is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.slice(new object[] { start!, end! });
+            }
+
+            int length = ToArrayLikeLength(receiver);
+            var k = (int)CoerceArrayLikeSearchStartIndex(start, length);
+            var final = end is null
+                ? length
+                : (int)CoerceArrayLikeSearchStartIndex(end, length);
+
+            var count = global::System.Math.Max(final - k, 0);
+            var result = ArraySpeciesCreate(receiver, count);
+
+            double n = 0d;
+            for (var index = k; index < final; index++)
+            {
+                if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)index, receiver))
+                {
+                    CreateArrayLikeDataProperty(
+                        result,
+                        n,
+                        JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)index));
+                }
+
+                n++;
+            }
+
+            ObjectRuntime.SetProperty(result, "length", n, throwOnError: true);
+            return result;
+        }
+
+        /// <summary>
+        /// JavaScript Array.prototype.splice(start, deleteCount, ...items) - generic implementation
+        /// (ECMA-262 23.1.3.30). The receiver need not be a real Array; supports the
+        /// <c>obj.splice = Array.prototype.splice; obj.splice(...)</c> array-like pattern.
+        /// </summary>
+        private static object? PrototypeSplice(object? thisArgument, in JsCallArguments arguments)
+        {
+            var receiver = RequireArrayLikeReceiver(thisArgument, "splice");
+
+            // Fast path: real JS array uses the existing optimized (dense-mutation-aware) instance method.
+            if (receiver is JavaScriptRuntime.Array jsArray)
+            {
+                return arguments.Count == 0
+                    ? jsArray.splice(System.Array.Empty<object>())
+                    : jsArray.splice(ToNonNullableObjectArray(arguments.ToArray())!);
+            }
+
+            int length = ToArrayLikeLength(receiver);
+            var actualStart = arguments.Count > 0
+                ? (int)CoerceArrayLikeSearchStartIndex(arguments.GetArgument(0), length)
+                : 0;
+
+            var itemCount = global::System.Math.Max(arguments.Count - 2, 0);
+            int actualDeleteCount;
+            if (arguments.Count == 0)
+            {
+                actualDeleteCount = 0;
+            }
+            else if (arguments.Count == 1)
+            {
+                actualDeleteCount = length - actualStart;
+            }
+            else
+            {
+                var requestedDeleteCount = ToIntegerOrInfinity(arguments.GetArgument(1));
+                var maxDeleteCount = (double)(length - actualStart);
+                actualDeleteCount = (int)global::System.Math.Clamp(requestedDeleteCount, 0d, maxDeleteCount);
+            }
+
+            var result = ArraySpeciesCreate(receiver, actualDeleteCount);
+
+            for (var k = 0; k < actualDeleteCount; k++)
+            {
+                var from = (double)(actualStart + k);
+                if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
+                {
+                    CreateArrayLikeDataProperty(result, k, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from));
+                }
+            }
+
+            ObjectRuntime.SetProperty(result, "length", (double)actualDeleteCount, throwOnError: true);
+
+            if (itemCount < actualDeleteCount)
+            {
+                for (var k = actualStart; k < length - actualDeleteCount; k++)
+                {
+                    var from = (double)(k + actualDeleteCount);
+                    var to = (double)(k + itemCount);
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
+                    {
+                        ObjectRuntime.SetItem(receiver, to, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from), throwOnError: true);
+                    }
+                    else
+                    {
+                        ObjectRuntime.DeleteProperty(receiver, to);
+                    }
+                }
+
+                for (var k = length; k > length - actualDeleteCount + itemCount; k--)
+                {
+                    ObjectRuntime.DeleteProperty(receiver, (double)(k - 1));
+                }
+            }
+            else if (itemCount > actualDeleteCount)
+            {
+                for (var k = length - actualDeleteCount; k > actualStart; k--)
+                {
+                    var from = (double)(k + actualDeleteCount - 1);
+                    var to = (double)(k + itemCount - 1);
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
+                    {
+                        ObjectRuntime.SetItem(receiver, to, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from), throwOnError: true);
+                    }
+                    else
+                    {
+                        ObjectRuntime.DeleteProperty(receiver, to);
+                    }
+                }
+            }
+
+            for (var i = 0; i < itemCount; i++)
+            {
+                ObjectRuntime.SetItem(receiver, (double)(actualStart + i), arguments.GetArgument(i + 2), throwOnError: true);
+            }
+
+            ObjectRuntime.SetProperty(receiver, "length", (double)(length - actualDeleteCount + itemCount), throwOnError: true);
 
             return result;
         }
@@ -1307,7 +1505,7 @@ namespace JavaScriptRuntime
                 _receiver = receiver;
                 _getLength = getLength;
                 _kind = kind;
-                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
+                PrototypeChain.SetPrototype(this, IteratorPrototype);
             }
 
             public bool HasReturn => true;
@@ -3260,18 +3458,18 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// JavaScript Array.forEach(callback[, thisArg])
+        /// JavaScript Array.forEach(callback[, thisArg]). The compiler dispatches
+        /// direct calls on statically-known Array receivers straight to this instance
+        /// method (bypassing Array.prototype), so it must implement the full generic
+        /// algorithm (thisArg support, hole/HasProperty checks, live-length re-reads)
+        /// rather than a simplified dense-array loop; delegate to the shared
+        /// prototype implementation to avoid duplicating that logic.
         /// </summary>
         public object? forEach(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = 0; i < this.Count; i++)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "forEach");
-                _ = invoke(this[i], (double)i, this, null);
-            }
-            return null; // undefined
+            var thisArg = (args != null && args.Length > 1) ? args[1] : null;
+            return PrototypeForEach(this, cb, thisArg);
         }
 
         /// <summary>
@@ -4126,17 +4324,17 @@ namespace JavaScriptRuntime
                         // Arrays/tuples are non-numeric in JS when coerced to number => NaN => default
                         return defaultValue;
                     default:
-                        // As a last resort, try parsing the object's string representation
+                        // JS ToNumber uses ToPrimitive with hint "number" (valueOf preferred over
+                        // toString); using TypeUtilities.ToNumber here (rather than stringifying via
+                        // toString first) matches that ordering for objects like
+                        // { valueOf() {...}, toString() {...} }.
                         try
                         {
-                            var str = DotNet2JSConversions.ToString(value);
-                            if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out var d2))
-                            {
-                                if (double.IsNaN(d2)) return defaultValue;
-                                if (double.IsPositiveInfinity(d2)) return int.MaxValue;
-                                if (double.IsNegativeInfinity(d2)) return int.MinValue;
-                                return (int)d2;
-                            }
+                            var d2 = TypeUtilities.ToNumber(value);
+                            if (double.IsNaN(d2)) return defaultValue;
+                            if (double.IsPositiveInfinity(d2)) return int.MaxValue;
+                            if (double.IsNegativeInfinity(d2)) return int.MinValue;
+                            return (int)d2;
                         }
                         catch { /* ignore */ }
                         return defaultValue;

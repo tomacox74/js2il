@@ -174,7 +174,7 @@
     {
       "clause": "25.1.5.3",
       "title": "get ArrayBuffer [ %Symbol.species% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-get-arraybuffer-%symbol.species%"
     },
     {
@@ -302,7 +302,17 @@
           "test/built-ins/ArrayBuffer/prototype/constructor.js",
           "test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js"
         ],
-        "notes": "Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, and prototype descriptors. ArrayBuffer.prototype has receiver-checked byteLength, maxByteLength, resizable, and @@toStringTag properties. Species, custom newTarget prototypes, detachment, transfer, and resizable-buffer operations remain limited."
+        "notes": "Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, prototype descriptors, and the standard @@species accessor. ArrayBuffer.prototype has receiver-checked byteLength, maxByteLength, resizable, and @@toStringTag properties. Custom newTarget prototypes, detachment, transfer, and resizable-buffer operations remain limited."
+      },
+      {
+        "clause": "25.1.5.3",
+        "feature": "get ArrayBuffer [ @@species ]",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-arraybuffer-%symbol.species%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/Symbol.species/ExecutionTests.cs"
+        ],
+        "notes": "The ArrayBuffer constructor exposes the standard configurable, non-enumerable @@species getter with the covered name, length, and receiver-return semantics."
       },
       {
         "clause": "25.1.6",
@@ -310,9 +320,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object",
         "testScripts": [
-          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs"
         ],
-        "notes": "byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. Species, detach, resize, and transfer semantics are not implemented."
+        "notes": "byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. The slice function now exposes the standard descriptor, extensibility, name, and length metadata. Species construction beyond the intrinsic getter, detach, resize, and transfer semantics remain limited."
       }
     ]
   }

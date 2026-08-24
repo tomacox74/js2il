@@ -589,15 +589,6 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (canUseLegacyNumericFallback)
-                {
-                    var leftNumber = EnsureNumber(leftTempVar);
-                    var rightNumber = EnsureNumber(rightTempVar);
-                    _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThan(leftNumber, rightNumber, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    return true;
-                }
-
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.LessThan,
                     EnsureObject(leftTempVar),
@@ -611,15 +602,6 @@ public sealed partial class HIRToLIRLowerer
                     && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftTempVar, rightTempVar, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    return true;
-                }
-
-                if (canUseLegacyNumericFallback)
-                {
-                    var leftNumber = EnsureNumber(leftTempVar);
-                    var rightNumber = EnsureNumber(rightTempVar);
-                    _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftNumber, rightNumber, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
@@ -641,15 +623,6 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (canUseLegacyNumericFallback)
-                {
-                    var leftNumber = EnsureNumber(leftTempVar);
-                    var rightNumber = EnsureNumber(rightTempVar);
-                    _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThanOrEqual(leftNumber, rightNumber, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    return true;
-                }
-
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.LessThanOrEqual,
                     EnsureObject(leftTempVar),
@@ -663,15 +636,6 @@ public sealed partial class HIRToLIRLowerer
                     && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    return true;
-                }
-
-                if (canUseLegacyNumericFallback)
-                {
-                    var leftNumber = EnsureNumber(leftTempVar);
-                    var rightNumber = EnsureNumber(rightTempVar);
-                    _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftNumber, rightNumber, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }

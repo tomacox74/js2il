@@ -9,4 +9,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "Symbol.toStringTag")]
     public Task Symbol_toStringTag()
         => ExecutionTestFromFile("Symbol.toStringTag");
+
+    [Fact(DisplayName = "object-prototype")]
+    public Task object_prototype()
+        => ExecutionTestFromFile("object-prototype");
 }

@@ -1027,6 +1027,23 @@ namespace JavaScriptRuntime
                 ? RewriteUnicodeCodePointEscapes(source)
                 : source;
 
+            prepared = RewriteEmptyCharacterClasses(prepared);
+
+            if (!unicode)
+            {
+                // Annex B.1.2: outside Unicode mode, a backslash before a character with no
+                // special regex meaning (e.g. "\X", or "\x"/"\u" not followed by the right
+                // number of hex digits) is just an identity escape for that literal character.
+                // .NET has no such fallback and throws, so rewrite these before compiling.
+                prepared = RewriteLegacyIdentityEscapes(prepared);
+
+                // Annex B.1.2: "\k<name>" is only a backreference when "name" is an
+                // actually-defined named group; otherwise it is a legacy literal match for
+                // the characters "k<name>". .NET has no such fallback and throws, so rewrite
+                // unresolved references before compiling.
+                prepared = RewriteUnresolvedNamedBackreferences(prepared);
+            }
+
             if (dotAll)
             {
                 return unicode
@@ -1035,6 +1052,210 @@ namespace JavaScriptRuntime
             }
 
             return RewriteDots(prepared, unicode ? UnicodeDotPattern : DotPattern);
+        }
+
+        private const string RecognizedRegexEscapeLetters = "dDwWsSbBnrtvfcxuk";
+
+        private static string RewriteLegacyIdentityEscapes(string pattern)
+        {
+            if (pattern.IndexOf('\\') < 0)
+            {
+                return pattern;
+            }
+
+            var builder = new StringBuilder(pattern.Length);
+
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                var ch = pattern[i];
+                if (ch != '\\' || i + 1 >= pattern.Length)
+                {
+                    builder.Append(ch);
+                    continue;
+                }
+
+                var next = pattern[i + 1];
+
+                if (next == 'x' && !HasHexDigitsAt(pattern, i + 2, 2))
+                {
+                    builder.Append('x');
+                    i++;
+                    continue;
+                }
+
+                if (next == 'u'
+                    && !HasHexDigitsAt(pattern, i + 2, 4)
+                    && !(i + 2 < pattern.Length && pattern[i + 2] == '{'))
+                {
+                    builder.Append('u');
+                    i++;
+                    continue;
+                }
+
+                if (char.IsAsciiLetter(next) && !RecognizedRegexEscapeLetters.Contains(next))
+                {
+                    builder.Append(next);
+                    i++;
+                    continue;
+                }
+
+                builder.Append(ch).Append(next);
+                i++;
+            }
+
+            return builder.ToString();
+        }
+
+        private static bool HasHexDigitsAt(string pattern, int start, int count)
+        {
+            if (start + count > pattern.Length)
+            {
+                return false;
+            }
+
+            for (int i = start; i < start + count; i++)
+            {
+                if (!char.IsAsciiHexDigit(pattern[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static string RewriteUnresolvedNamedBackreferences(string pattern)
+        {
+            if (pattern.IndexOf(@"\k<", StringComparison.Ordinal) < 0)
+            {
+                return pattern;
+            }
+
+            var definedNames = CollectNamedGroupDefinitions(pattern);
+            var builder = new StringBuilder(pattern.Length);
+
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                var ch = pattern[i];
+
+                if (ch == '\\' && i + 2 < pattern.Length && pattern[i + 1] == 'k' && pattern[i + 2] == '<')
+                {
+                    var closeIndex = pattern.IndexOf('>', i + 3);
+                    if (closeIndex > i + 2)
+                    {
+                        var name = pattern.Substring(i + 3, closeIndex - (i + 3));
+                        if (!definedNames.Contains(name))
+                        {
+                            builder.Append("k<").Append(Regex.Escape(name)).Append('>');
+                            i = closeIndex;
+                            continue;
+                        }
+                    }
+                }
+
+                if (ch == '\\' && i + 1 < pattern.Length)
+                {
+                    builder.Append(ch).Append(pattern[i + 1]);
+                    i++;
+                    continue;
+                }
+
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
+        }
+
+        private static HashSet<string> CollectNamedGroupDefinitions(string pattern)
+        {
+            var names = new HashSet<string>(StringComparer.Ordinal);
+
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                var ch = pattern[i];
+
+                if (ch == '\\' && i + 1 < pattern.Length)
+                {
+                    i++;
+                    continue;
+                }
+
+                if (ch == '(' && i + 3 < pattern.Length && pattern[i + 1] == '?' && pattern[i + 2] == '<'
+                    && pattern[i + 3] != '=' && pattern[i + 3] != '!')
+                {
+                    var closeIndex = pattern.IndexOf('>', i + 3);
+                    if (closeIndex > i + 2)
+                    {
+                        names.Add(pattern.Substring(i + 3, closeIndex - (i + 3)));
+                    }
+                }
+            }
+
+            return names;
+        }
+
+        /// <summary>
+        /// JS's "[]" (an empty character class, which never matches any character) and "[^]"
+        /// (its negation, which matches any single character) are not valid .NET character
+        /// classes — .NET requires at least one class member. Rewrite exactly those two forms
+        /// to .NET-compatible equivalents ("(?!)" and "[\s\S]" respectively); every other
+        /// (non-empty) character class is copied through untouched.
+        /// </summary>
+        private static string RewriteEmptyCharacterClasses(string pattern)
+        {
+            if (pattern.IndexOf('[') < 0)
+            {
+                return pattern;
+            }
+
+            var builder = new StringBuilder(pattern.Length);
+            var insideCharacterClass = false;
+
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                var ch = pattern[i];
+                if (ch == '\\')
+                {
+                    builder.Append(ch);
+                    if (i + 1 < pattern.Length)
+                    {
+                        builder.Append(pattern[i + 1]);
+                        i++;
+                    }
+
+                    continue;
+                }
+
+                if (!insideCharacterClass && ch == '[')
+                {
+                    if (i + 1 < pattern.Length && pattern[i + 1] == ']')
+                    {
+                        builder.Append("(?!)");
+                        i++;
+                        continue;
+                    }
+
+                    if (i + 2 < pattern.Length && pattern[i + 1] == '^' && pattern[i + 2] == ']')
+                    {
+                        builder.Append(@"[\s\S]");
+                        i += 2;
+                        continue;
+                    }
+
+                    insideCharacterClass = true;
+                    builder.Append(ch);
+                    continue;
+                }
+
+                if (insideCharacterClass && ch == ']')
+                {
+                    insideCharacterClass = false;
+                }
+
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
         }
 
         private static string RewriteUnicodeCodePointEscapes(string pattern)
@@ -1333,6 +1554,25 @@ namespace JavaScriptRuntime
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Attempts to match this RegExp's pattern starting at exactly <paramref name="position"/>
+        /// (as if a fresh copy of this regexp had its sticky flag forced on and its lastIndex set
+        /// to <paramref name="position"/>). Used by <c>String.prototype.split</c>'s general regex
+        /// algorithm (ECMA-262 22.2.6.13), which never reads or mutates this instance's own
+        /// lastIndex/global/sticky state.
+        /// </summary>
+        internal bool TryExactMatchAt(string input, int position, out Match match)
+        {
+            match = _regex.Match(input, position);
+            if (!match.Success || match.Index != position)
+            {
+                match = Match.Empty;
+                return false;
+            }
+
+            return true;
         }
 
         private bool TryGetMatchStart(string input, out int startAt)

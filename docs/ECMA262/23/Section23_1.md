@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-08-24T01:16:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -172,6 +172,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array.prototype.flat / flatMap | Supported with Limitations | [`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>[`Array_CallbackOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_CallbackOps_Basic.js) |  | Supports core flattening and map+flatten workflows for dense arrays; full species/holes/exotic edge behavior is not exhaustive. |
+
+### 23.1.3.15 / 23.1.3.28 / 23.1.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generic Array.prototype forEach, slice, and splice semantics | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs` |  | The methods now apply their generic algorithms to primitive wrappers and ordinary array-like receivers, observe inherited indexed properties, use spec coercion for lengths and indexes, bind callback thisArg correctly, preserve sparse holes, and create species-aware results for the covered test262 cases. Proxy and remaining exotic descriptor interactions remain limited. |
 
 ### 23.1.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.includes))
 

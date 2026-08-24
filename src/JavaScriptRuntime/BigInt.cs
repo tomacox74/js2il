@@ -26,13 +26,24 @@ public static class BigInt
 
     public static object Call(object? value)
     {
-        return ToBigInteger(value);
+        return ConvertToBigIntForConstructor(value);
+    }
+
+    /// <summary>
+    /// ECMAScript BigInt ( value ) [[Construct]] semantics: step 1 requires that if NewTarget
+    /// is not undefined, a TypeError is thrown immediately. Since [[Construct]] is only ever
+    /// invoked with a defined NewTarget, `new BigInt(...)` (and any other construct-style
+    /// invocation, e.g. via Reflect.construct) always throws without evaluating <paramref name="args"/>.
+    /// </summary>
+    internal static object Construct(object?[]? args, object? newTarget)
+    {
+        throw new TypeError("BigInt is not a constructor");
     }
 
     public static object AsIntN(object? bits, object? bigint)
     {
         var bitCount = ToIndex(bits);
-        var value = ToBigInteger(bigint);
+        var value = ToBigInt(bigint);
 
         if (bitCount == 0)
         {
@@ -59,7 +70,7 @@ public static class BigInt
     public static object AsUintN(object? bits, object? bigint)
     {
         var bitCount = ToIndex(bits);
-        var value = ToBigInteger(bigint);
+        var value = ToBigInt(bigint);
 
         if (bitCount == 0)
         {
@@ -88,7 +99,9 @@ public static class BigInt
 
     public static string ToString(object? value, object? radix)
     {
-        var bigInt = ToBigInteger(value);
+        // Every caller (BigInt.prototype.toString via ThisBigIntValue, and the raw
+        // BigInteger primitive dispatch in ObjectRuntime) already supplies a BigInteger.
+        var bigInt = ConvertPrimitiveToBigInt(value);
         var radixValue = 10;
         if (radix is not null)
         {
@@ -155,65 +168,151 @@ public static class BigInt
         throw new TypeError("BigInt.prototype method called on incompatible receiver");
     }
 
-    private static BigInteger ToBigInteger(object? value)
+    /// <summary>
+    /// BigInt ( value ) semantics (sec-bigint-constructor-number-value):
+    /// 1. Let primitive be ? ToPrimitive(value, number).
+    /// 2. If primitive is a Number, return ? NumberToBigInt(primitive).
+    /// 3. Return ? ToBigInt(primitive).
+    /// Unlike the strict <see cref="ToBigInt"/> abstract operation (used by
+    /// BigInt.asIntN / BigInt.asUintN), the constructor allows an implicit
+    /// Number -&gt; BigInt widening for integral Numbers.
+    /// </summary>
+    private static BigInteger ConvertToBigIntForConstructor(object? value)
     {
-        if (value is null)
+        var primitive = ToPrimitiveForBigInt(value);
+        return TryGetNumberValue(primitive, out var numberValue)
+            ? NumberToBigInt(numberValue)
+            : ConvertPrimitiveToBigInt(primitive);
+    }
+
+    /// <summary>
+    /// ECMA-262 ToBigInt ( argument ) abstract operation, used directly by
+    /// BigInt.asIntN / BigInt.asUintN. Unlike the BigInt(value) constructor, this
+    /// operation never performs an implicit Number -&gt; BigInt widening: any Number
+    /// primitive (including one unboxed from a Number wrapper object) throws a
+    /// TypeError instead of being converted.
+    /// </summary>
+    private static BigInteger ToBigInt(object? value)
+    {
+        var primitive = ToPrimitiveForBigInt(value);
+        if (TryGetNumberValue(primitive, out _))
         {
-            throw new TypeError("Cannot convert undefined to a BigInt");
+            throw new TypeError("Cannot convert a Number value to a BigInt");
         }
 
-        switch (value)
+        return ConvertPrimitiveToBigInt(primitive);
+    }
+
+    /// <summary>
+    /// ToPrimitive(value, hint number), without applying any BigInt-specific
+    /// conversion yet. Non-object primitives (including Symbol) pass through
+    /// unchanged; undefined/null are preserved so callers can report the
+    /// appropriate TypeError for them.
+    /// </summary>
+    private static object? ToPrimitiveForBigInt(object? value)
+    {
+        if (value is null
+            or JsNull
+            or BigInteger
+            or bool
+            or string
+            or int
+            or long
+            or short
+            or byte
+            or double
+            or float
+            or Symbol)
+        {
+            return value;
+        }
+
+        if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "number", out var primitive))
+        {
+            throw new TypeError("Cannot convert object to primitive value");
+        }
+
+        return primitive;
+    }
+
+    private static bool TryGetNumberValue(object? primitive, out double numberValue)
+    {
+        switch (primitive)
+        {
+            case double d:
+                numberValue = d;
+                return true;
+            case float f:
+                numberValue = f;
+                return true;
+            case int i:
+                numberValue = i;
+                return true;
+            case long l:
+                numberValue = l;
+                return true;
+            case short s:
+                numberValue = s;
+                return true;
+            case byte b:
+                numberValue = b;
+                return true;
+            default:
+                numberValue = default;
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// NumberToBigInt ( number ): throws a RangeError unless number is an integral
+    /// Number. NaN and +/-Infinity are never integral, so they are RangeErrors too
+    /// (not TypeErrors).
+    /// </summary>
+    private static BigInteger NumberToBigInt(double number)
+    {
+        if (double.IsNaN(number) || double.IsInfinity(number))
+        {
+            throw new RangeError("The number cannot be converted to a BigInt because it is not an integer");
+        }
+
+        var truncated = global::System.Math.Truncate(number);
+        if (truncated != number)
+        {
+            throw new RangeError("The number cannot be converted to a BigInt because it is not an integer");
+        }
+
+        // Clamp/convert via decimal string to avoid precision surprises for large doubles.
+        return BigInteger.Parse(truncated.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Applies the BigInt Conversions table (table-tobigint) to a value that has
+    /// already been through ToPrimitive and is known not to be a Number.
+    /// </summary>
+    private static BigInteger ConvertPrimitiveToBigInt(object? primitive)
+    {
+        switch (primitive)
         {
             case BigInteger bi:
                 return bi;
 
-            case int i:
-                return new BigInteger(i);
-
-            case long l:
-                return new BigInteger(l);
-
-            case short s:
-                return new BigInteger(s);
-
-            case byte b:
-                return new BigInteger(b);
-
-            case double d:
-                // Spec: only integral Numbers can be converted.
-                if (double.IsNaN(d) || double.IsInfinity(d))
-                {
-                    throw new TypeError("Cannot convert non-finite number to a BigInt");
-                }
-
-                var truncated = global::System.Math.Truncate(d);
-                if (truncated != d)
-                {
-                    throw new RangeError("The number cannot be converted to a BigInt because it is not an integer");
-                }
-
-                // Clamp/convert via decimal string to avoid precision surprises for large doubles.
-                return BigInteger.Parse(truncated.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
-
-            case float f:
-                return ToBigInteger((double)f);
+            case bool boolean:
+                return boolean ? BigInteger.One : BigInteger.Zero;
 
             case string str:
                 return ParseStringToBigInt(str);
 
+            case null:
+                throw new TypeError("Cannot convert undefined to a BigInt");
+
             case JsNull:
                 throw new TypeError("Cannot convert null to a BigInt");
 
-            case bool boolean:
-                return boolean ? BigInteger.One : BigInteger.Zero;
+            case Symbol:
+                throw new TypeError("Cannot convert a Symbol value to a BigInt");
 
             default:
-                if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "number", out var primitive))
-                {
-                    throw new TypeError("Cannot convert object to primitive value");
-                }
-
-                return ToBigInteger(primitive);
+                throw new TypeError("Cannot convert value to a BigInt");
         }
     }
 

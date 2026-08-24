@@ -13,4 +13,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "intrinsic")]
     public Task intrinsic()
         => ExecutionTestFromFile("intrinsic");
+
+    [Fact(DisplayName = "Symbol.toStringTag")]
+    public Task Symbol_toStringTag()
+        => ExecutionTestFromFile("Symbol.toStringTag");
 }

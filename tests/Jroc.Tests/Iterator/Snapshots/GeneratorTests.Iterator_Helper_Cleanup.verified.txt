@@ -318,7 +318,7 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 139 (0x8b)
+					// Code size: 132 (0x84)
 					.maxstack 8
 					.locals init (
 						[0] object,
@@ -367,23 +367,21 @@
 					IL_0054: ldfld object Modules.Iterator_Helper_Cleanup/makeIterable/Scope::limit
 					IL_0059: stloc.2
 					IL_005a: ldloc.1
-					IL_005b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0060: ldloc.2
-					IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_0066: cgt
-					IL_0068: stloc.3
-					IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_006e: dup
-					IL_006f: ldstr "value"
-					IL_0074: ldloc.0
-					IL_0075: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_007a: dup
-					IL_007b: ldstr "done"
-					IL_0080: ldloc.3
-					IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-					IL_0086: stloc.s 4
-					IL_0088: ldloc.s 4
-					IL_008a: ret
+					IL_005b: ldloc.2
+					IL_005c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
+					IL_0061: stloc.3
+					IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_0067: dup
+					IL_0068: ldstr "value"
+					IL_006d: ldloc.0
+					IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_0073: dup
+					IL_0074: ldstr "done"
+					IL_0079: ldloc.3
+					IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+					IL_007f: stloc.s 4
+					IL_0081: ldloc.s 4
+					IL_0083: ret
 				} // end of method FunctionExpression_L13C24::__js_call__
 
 			} // end of class FunctionExpression_L13C24

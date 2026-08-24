@@ -32,4 +32,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task negativeZero() => ExecutionTestFromFile("negativeZero");
     [Fact(DisplayName = "toPropertyKey")]
     public Task toPropertyKey() => ExecutionTestFromFile("toPropertyKey");
+
+    [Fact(DisplayName = "string")]
+    public Task string_input()
+        => ExecutionTestFromFile("string");
 }

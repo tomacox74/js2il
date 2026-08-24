@@ -17,4 +17,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S15.7.4.2_A1_T01")]
     public Task S15_7_4_2_A1_T01()
         => ExecutionTestFromFile("S15.7.4.2_A1_T01");
+
+    [Fact(DisplayName = "a-z")]
+    public Task a_z()
+        => ExecutionTestFromFile("a-z");
+
+    [Fact(DisplayName = "numeric-literal-tostring-radix-1")]
+    public Task numeric_literal_tostring_radix_1()
+        => ExecutionTestFromFile("numeric-literal-tostring-radix-1");
+
+    [Fact(DisplayName = "numeric-literal-tostring-radix-37")]
+    public Task numeric_literal_tostring_radix_37()
+        => ExecutionTestFromFile("numeric-literal-tostring-radix-37");
+
+    [Fact(DisplayName = "numeric-literal-tostring-radix-poisoned")]
+    public Task numeric_literal_tostring_radix_poisoned()
+        => ExecutionTestFromFile("numeric-literal-tostring-radix-poisoned");
 }

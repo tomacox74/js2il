@@ -33,4 +33,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "this-value-non-object")]
     public Task this_value_non_object()
         => ExecutionTestFromFile("this-value-non-object");
+
+    [Fact(DisplayName = "invokes-then")]
+    public Task invokes_then()
+        => ExecutionTestFromFile("invokes-then");
+
+    [Fact(DisplayName = "this-value-obj-coercible")]
+    public Task this_value_obj_coercible()
+        => ExecutionTestFromFile("this-value-obj-coercible");
+
+    [Fact(DisplayName = "this-value-then-poisoned")]
+    public Task this_value_then_poisoned()
+        => ExecutionTestFromFile("this-value-then-poisoned");
+
+    [Fact(DisplayName = "this-value-then-throws")]
+    public Task this_value_then_throws()
+        => ExecutionTestFromFile("this-value-then-throws");
 }

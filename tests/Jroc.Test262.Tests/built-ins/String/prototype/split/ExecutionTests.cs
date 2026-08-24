@@ -163,4 +163,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "call-split-1-100-instance-is-number.js")]
     public Task call_split_1_100_instance_is_number()
         => ExecutionTestFromFile("call-split-1-100-instance-is-number");
+
+    [Fact(DisplayName = "cstm-split-invocation")]
+    public Task cstm_split_invocation()
+        => ExecutionTestFromFile("cstm-split-invocation");
+
+    [Fact(DisplayName = "separator-regexp")]
+    public Task separator_regexp()
+        => ExecutionTestFromFile("separator-regexp");
+
+    [Fact(DisplayName = "separator-tostring-error")]
+    public Task separator_tostring_error()
+        => ExecutionTestFromFile("separator-tostring-error");
+
+    [Fact(DisplayName = "this-value-tostring-error")]
+    public Task this_value_tostring_error()
+        => ExecutionTestFromFile("this-value-tostring-error");
 }

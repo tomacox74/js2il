@@ -13,4 +13,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "return-value-from-receiver")]
     public Task return_value_from_receiver()
         => ExecutionTestFromFile("return-value-from-receiver");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
 }
