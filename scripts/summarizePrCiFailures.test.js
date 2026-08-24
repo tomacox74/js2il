@@ -7,6 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 const {
+  getFailedTests,
   parseFailedTestsFromLog,
   runGh,
   truncateCommandFailureOutput,
@@ -52,6 +53,39 @@ test("parses failed test names and assertion details from Actions logs", () => {
       "Assert.InRange() Failure: Value not in range",
       "Range:  (0 - 131072)",
       "Actual: 144920",
+    ],
+  }]);
+});
+
+test("falls back to the Actions job-log API when gh run view returns no log", () => {
+  const calls = [];
+  const failures = getFailedTests({
+    name: "build",
+    detailsUrl: "https://github.com/octo/example/actions/runs/123/job/456",
+  }, "octo/example", (args) => {
+    calls.push(args);
+    if (args[0] === "run") {
+      return "";
+    }
+
+    return [
+      "2026-08-24T16:36:15.9582466Z [xUnit.net 00:00:21.20]     Example.Tests.Failure [FAIL]",
+      "2026-08-24T16:36:15.9707835Z   Failed Example.Tests.Failure [2 s]",
+      "2026-08-24T16:36:15.9708764Z   Error Message:",
+      "2026-08-24T16:36:15.9709680Z    Expected: true",
+      "2026-08-24T16:36:15.9711107Z    Actual: false",
+    ].join("\n");
+  });
+
+  assert.deepEqual(calls, [
+    ["run", "view", "123", "--job", "456", "--log-failed", "--repo", "octo/example"],
+    ["api", "repos/octo/example/actions/jobs/456/logs"],
+  ]);
+  assert.deepEqual(failures, [{
+    name: "Example.Tests.Failure",
+    details: [
+      "Expected: true",
+      "Actual: false",
     ],
   }]);
 });

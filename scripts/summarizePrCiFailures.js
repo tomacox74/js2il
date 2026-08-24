@@ -233,7 +233,7 @@ function parseFailedTestsFromLog(log) {
   return [...failuresByName.values()];
 }
 
-function getFailedTests(check, repo) {
+function getFailedTests(check, repo, runCommand = runGh) {
   const job = parseActionsJobUrl(check.detailsUrl);
   if (!job) {
     return [];
@@ -244,10 +244,35 @@ function getFailedTests(check, repo) {
     ghArgs.push("--repo", repo);
   }
 
+  let primaryLogError = null;
   try {
-    return parseFailedTestsFromLog(runGh(ghArgs));
+    const log = runCommand(ghArgs);
+    if (log) {
+      return parseFailedTestsFromLog(log);
+    }
   } catch (error) {
-    process.stderr.write(`Warning: could not fetch failed job log for ${check.name}: ${error.message}\n`);
+    primaryLogError = error;
+  }
+
+  if (!repo) {
+    if (primaryLogError) {
+      process.stderr.write(`Warning: could not fetch failed job log for ${check.name}: ${primaryLogError.message}\n`);
+    }
+    return [];
+  }
+
+  try {
+    return parseFailedTestsFromLog(runCommand([
+      "api",
+      `repos/${repo}/actions/jobs/${job.jobId}/logs`,
+    ]));
+  } catch (error) {
+    const primaryFailure = primaryLogError
+      ? ` after gh run view failed: ${primaryLogError.message}`
+      : " after gh run view returned no log output";
+    process.stderr.write(
+      `Warning: could not fetch failed job log for ${check.name}${primaryFailure}; `
+      + `Actions job-log API fallback failed: ${error.message}\n`);
     return [];
   }
 }
@@ -326,6 +351,7 @@ if (require.main === module) {
 
 module.exports = {
   parseFailedTestsFromLog,
+  getFailedTests,
   runGh,
   stripActionsLogPrefix,
   truncateCommandFailureOutput,
