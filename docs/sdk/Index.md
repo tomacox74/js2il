@@ -30,13 +30,15 @@ For build-integrated host projects, start with the `Jroc.SDK` NuGet package and 
 ```xml
 <ItemGroup>
   <PackageReference Include="Jroc.SDK" Version="VERSION" />
-  <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 
   <JrocCompile Include="JavaScript\math.js" />
 </ItemGroup>
 ```
 
 `Jroc.SDK` compiles the JavaScript module before `ResolveAssemblyReferences`, adds the generated module assembly as a normal project reference, and makes generated exports contracts available to C# code in the same build.
+It also supplies the matching runtime implementation transitively for build,
+run, and publish. Add a direct `Jroc.Runtime` reference only when host source
+uses advanced runtime APIs such as `JsEngine`.
 
 ## Quick start (typed)
 

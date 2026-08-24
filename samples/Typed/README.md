@@ -1,14 +1,16 @@
 # Typed
 
 Typed hosting sample demonstrating:
-- typed `module.exports` projection
-- exporting a class and constructing it via generated constructor contracts
-- instance handles via generated `IDisposable` contracts
+- importing through the generated `HostedCounterModule.Import()` facade
+- constructing an exported class through generated constructor and instance contracts
+- awaiting an exported async function as a normal `Task<T>`
+- using no `JsEngine`, runtime-specific host APIs, or handwritten contracts
 
 ## Layout
 
 - `compiler/JavaScript/` – source JS module compiled by the host project
-- `host/` – C# console app that restores `Jroc.SDK` + `Jroc.Runtime`, builds the JS module, and calls exports
+- `host/` – C# console app that restores `Jroc.SDK`, builds the JS module, and
+  calls exports through generated contracts; the runtime is transitive
 
 ## Prerequisites
 
@@ -30,4 +32,11 @@ dotnet run --project .\host
 
 ## Expected output
 
-Prints version and counter values.
+```text
+version=1.2.3
+add(1,2)=3
+counter.add(5)=15
+counter.value=15
+addAsync(1,2)=3
+created.add(1)=3
+```
