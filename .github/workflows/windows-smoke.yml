@@ -211,6 +211,7 @@ jobs:
           try {
             $diagOutput = dotnet run --project samples/Domino/Domino.csproj -c Release --no-build -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
             $diagExit = $LASTEXITCODE
+            $global:LASTEXITCODE = 0
           } finally {
             $ErrorActionPreference = 'Stop'
             Remove-Item Env:JROC_DOMINO_DIAG
