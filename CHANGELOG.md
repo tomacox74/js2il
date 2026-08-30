@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/performance: restore Prime sieve throughput by using direct integer
+  casts for in-range numeric `ToInt32`/`ToUint32` conversions while preserving
+  the ECMA-262 modulo path for exceptional and out-of-range values.
 - test262/docs: port 119 additional `Array.prototype.filter` cases covering
   callback arguments and `thisArg`, sparse and inherited indexed properties,
   array-like and primitive receivers, length snapshotting, mutation during
