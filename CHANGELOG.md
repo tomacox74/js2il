@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 119 additional `Array.prototype.filter` cases covering
+  callback arguments and `thisArg`, sparse and inherited indexed properties,
+  array-like and primitive receivers, length snapshotting, mutation during
+  iteration, and abrupt completion. Twenty-one descriptor/prototype edge cases
+  and one direct-`eval` case remain deferred for focused follow-up work.
 - test262/docs: port 167 additional `Array.prototype.every` cases covering
   callback arguments and `thisArg`, sparse and inherited indexed properties,
   array-like receivers, length snapshotting, mutation during iteration, and
