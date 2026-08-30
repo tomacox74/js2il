@@ -22,5 +22,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task fill_values_relative_start()
         => ExecutionTestFromFile("fill-values-relative-start");
 
+    [Fact(DisplayName = "call-with-boolean")]
+    public Task call_with_boolean()
+        => ExecutionTestFromFile("call-with-boolean");
 
 }

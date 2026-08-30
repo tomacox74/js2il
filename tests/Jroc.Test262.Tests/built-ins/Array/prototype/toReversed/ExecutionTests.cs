@@ -27,5 +27,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task length_decreased_while_iterating()
         => ExecutionTestFromFile("length-decreased-while-iterating");
 
+    [Fact(DisplayName = "this-value-boolean")]
+    public Task this_value_boolean()
+        => ExecutionTestFromFile("this-value-boolean");
 
 }

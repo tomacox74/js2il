@@ -52,4 +52,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task undefined_end()
         => ExecutionTestFromFile("undefined-end");
 
+    [Fact(DisplayName = "call-with-boolean")]
+    public Task call_with_boolean()
+        => ExecutionTestFromFile("call-with-boolean");
+
 }
