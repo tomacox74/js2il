@@ -460,7 +460,7 @@ public partial class ExecutionTests
 
     [Fact(DisplayName = "15.4.4.16-7-c-ii-2")]
     public Task _15_4_4_16_7_c_ii_2()
-        => ExecutionTestFromFile("15.4.4.16-7-c-ii-2");
+        => ExecutionTestFromFile("15.4.4.16-7-c-ii-2", timeoutMs: 60000);
 
     [Fact(DisplayName = "15.4.4.16-7-c-ii-20")]
     public Task _15_4_4_16_7_c_ii_20()

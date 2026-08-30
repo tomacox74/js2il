@@ -28,6 +28,23 @@ Notes:
 - Status breakdown: Supported with Limitations: **13**, Incomplete: **8**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
 - Untracked top-level sections: **1**
 
+## Test262 Conformance Status
+
+For [JROC v0.12.15](https://github.com/tomacox74/js2il/releases/tag/v0.12.15), the latest released version, Test262 provides the following conformance evidence:
+
+| Conformance status | Tests | Percentage of applicable Test262 tests |
+|---|---:|---:|
+| Verified passing | 7,426 | **15.39%** |
+| Explicitly excluded due to known unsupported behavior | 58 | 0.12% |
+| Not yet verified | 40,757 | 84.49% |
+| **Total applicable ECMA-262 tests** | **48,241** | **100.00%** |
+
+See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.
+
+`Verified passing` means the released JROC version successfully executes the corresponding Test262 test. `Not yet verified` means no conformance result is currently published for that test; it does not imply either support or failure. The explicitly excluded tests exercise known unsupported behavior, primarily `eval`.
+
+The applicable corpus is taken from the [pinned Test262 revision](https://github.com/tc39/test262/tree/2b2ecead6e828dd9af13a9ec72065e645724a50f/test) and includes the ECMA-262 `annexB`, `built-ins`, and `language` test areas. ECMA-402 internationalization tests, staging proposals, Test262 harness self-tests, and `_FIXTURE.js` support files are outside this ECMA-262 conformance measure. Percentages are file-based; strict and non-strict execution variants are not counted separately.
+
 ## Sections
 
 | Section | Title | Status | Spec | Document |

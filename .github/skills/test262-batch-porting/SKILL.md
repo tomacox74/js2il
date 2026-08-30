@@ -137,7 +137,20 @@ large-gap and policy-excluded cases separately; do not count them as ported.
 
 ### 7. Complete documentation
 
-When the batch changes the support story:
+Every accepted batch must update the customer-facing conformance evidence:
+
+- update the Test262 summary in `docs/ECMA262/Index.md`;
+- update the overall totals and every affected area/feature row in
+  `docs/ECMA262/Test262Conformance.md`;
+- recalculate counts and percentages using unique standalone tests from the
+  pinned applicable ECMA-262 corpus;
+- preserve the client-facing status vocabulary and accurate JROC version
+  attribution defined by `test262-porting`.
+
+Do this even when the batch only increases verified coverage without changing
+a feature's qualitative support status.
+
+When the batch changes the broader support story:
 
 - update the relevant `docs/ECMA262/**/Section*.json` entries;
 - regenerate their Markdown;
