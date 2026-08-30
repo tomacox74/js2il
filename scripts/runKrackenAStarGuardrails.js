@@ -594,6 +594,7 @@ function runKrackenBenchmark(repoRoot, args, reportPath) {
     benchmarkProject,
     "--",
     "--kracken",
+    "--comprehensive",
     "--filter",
     "*KrackenExecutionBenchmarks*",
     "--scenario",

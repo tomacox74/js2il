@@ -134,14 +134,18 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
                 .Where(path => !path.EndsWith("-data.js", StringComparison.Ordinal))
                 .Select(path => Path.GetFileName(path)!)
                 .Where(MatchesKrackenScenarioFilter)
+                .Where(KrackenBenchmarkSelection.IsScenarioEnabled)
                 .Select(GetBenchmarkScriptName)
                 .ToArray()
             : [];
 
         if (scriptNames.Length == 0)
         {
+            var comprehensiveHint = KrackenBenchmarkSelection.IncludeDisabled
+                ? string.Empty
+                : " Disabled scenarios can be included with --comprehensive.";
             throw new InvalidOperationException(
-                $"No Kraken benchmark scenario matched '{ScenarioFilter}'.");
+                $"No enabled Kraken benchmark scenario matched '{ScenarioFilter}'.{comprehensiveHint}");
         }
 
         return scriptNames;
