@@ -207,10 +207,15 @@ jobs:
           if ($outputText -notmatch 'links=2') { throw 'Expected output containing links=2' }
           $env:JROC_DOMINO_DIAG = '1'
           $env:JROC_DOMINO_HTML_PATH = Join-Path $PWD 'samples\Domino\missing-sample.html'
-          $diagOutput = dotnet run --project samples/Domino/Domino.csproj -c Release --no-build -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
-          $diagExit = $LASTEXITCODE
-          Remove-Item Env:JROC_DOMINO_DIAG
-          Remove-Item Env:JROC_DOMINO_HTML_PATH
+          $ErrorActionPreference = 'Continue'
+          try {
+            $diagOutput = dotnet run --project samples/Domino/Domino.csproj -c Release --no-build -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+            $diagExit = $LASTEXITCODE
+          } finally {
+            $ErrorActionPreference = 'Stop'
+            Remove-Item Env:JROC_DOMINO_DIAG
+            Remove-Item Env:JROC_DOMINO_HTML_PATH
+          }
           if ($diagExit -eq 0) { throw 'Expected Domino diagnostics run to fail' }
           $diagText = ($diagOutput -join "`n")
           if ($diagText -notmatch '\[diag\] Domino failure') { throw 'Expected Domino diagnostic header' }
