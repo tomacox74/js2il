@@ -132,6 +132,7 @@ jroc input.js output                           # Installed tool
 - PR #1011 is the reference example for this workflow: the arrow-function restricted `caller` / `arguments` scenario belongs under `tests\Jroc.Test262.Tests\language\expressions\arrow-function\`, and the parallel `tests\Jroc.Tests\ArrowFunction\ArrowFunction_RestrictedCallerArgumentsProperties` regression is considered redundant.
 - When a new `test262` case changes the documented support story, update the relevant ECMA-262 docs and changelog entry in the same PR.
 - For the full step-by-step individual porting workflow, use the dedicated Copilot skill in `.github\skills\test262-porting\SKILL.md`.
+- For bulk work, use `.github\skills\test262-batch-porting\SKILL.md`; screen up to 500 coherent candidates, then split implementation groups to 100-200 tests when they expose unrelated gaps.
 
 ### Running Phased Benchmarks Locally (Single Scenario)
 - These phased benchmarks use the open-source BenchmarkDotNet project.
