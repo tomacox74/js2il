@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 185 additional `Array.prototype.indexOf` cases covering
+  ordinary and array-like receivers, sparse and inherited indexed properties,
+  `fromIndex` coercion, length snapshotting, primitive boxing, and abrupt
+  completion. Thirteen resizable-buffer, exotic prototype/descriptor, and
+  extreme-length cases remain deferred for focused follow-up work.
 - test262/docs: port 147 additional `Array.prototype.forEach` cases covering
   callback arguments and `thisArg`, sparse and inherited indexed properties,
   array-like and primitive receivers, length snapshotting, mutation during
