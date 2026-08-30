@@ -111,6 +111,11 @@ namespace JavaScriptRuntime
 
         public static int ToInt32(double number)
         {
+            if (number >= int.MinValue && number <= int.MaxValue)
+            {
+                return (int)number;
+            }
+
             // Step 2: If number is NaN, +0, -0, +∞, or -∞, return +0.
             if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
             {
@@ -134,6 +139,11 @@ namespace JavaScriptRuntime
 
         public static uint ToUint32(double number)
         {
+            if (number >= uint.MinValue && number <= uint.MaxValue)
+            {
+                return (uint)number;
+            }
+
             if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
             {
                 return 0;
