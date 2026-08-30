@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/docs: port 167 additional `Array.prototype.every` cases covering
+  callback arguments and `thisArg`, sparse and inherited indexed properties,
+  array-like receivers, length snapshotting, mutation during iteration, and
+  primitive receiver boxing. Twenty-one descriptor/prototype edge cases and
+  one direct-`eval` case remain deferred for focused follow-up work.
 
 ## v0.12.15 - 2026-08-30
 

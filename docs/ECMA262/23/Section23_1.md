@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-30T06:47:02Z
+> Last generated (UTC): 2026-08-30T18:07:45Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -141,7 +141,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.prototype.every ( callback [ , thisArg ] ) | Supported with Limitations | [`Array_CallbackOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_CallbackOps_Basic.js)<br>[`15.4.4.16-0-1.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/JavaScript/15.4.4.16-0-1.js)<br>[`15.4.4.16-1-10.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/JavaScript/15.4.4.16-1-10.js)<br>[`15.4.4.16-3-22.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/JavaScript/15.4.4.16-3-22.js) | `test/built-ins/Array/prototype/every/15.4.4.16-0-1.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-10.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-1.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-2.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-5.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-15.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-3-22.js` | Supports core predicate iteration for ordinary arrays. Current bounded test262 coverage also exercises sparse arrays, array-like receivers, and abrupt ToLength coercion propagation when array-like length conversion throws; species and broader exotic receiver behavior remain limited. |
+| Array.prototype.every ( callback [ , thisArg ] ) | Supported with Limitations | [`Array_CallbackOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_CallbackOps_Basic.js)<br>[`15.4.4.16-0-1.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/JavaScript/15.4.4.16-0-1.js)<br>[`15.4.4.16-1-10.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/JavaScript/15.4.4.16-1-10.js)<br>[`15.4.4.16-3-22.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/JavaScript/15.4.4.16-3-22.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/ExecutionTests.Batch.cs` | suite `built_ins.Array.prototype.every`<br>`test/built-ins/Array/prototype/every/15.4.4.16-0-1.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-10.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-1.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-2.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-5.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-1-15.js`<br>`test/built-ins/Array/prototype/every/15.4.4.16-3-22.js` | Supports core predicate iteration for ordinary arrays. The 188 checked-in test262 cases exercise callback arguments and thisArg, sparse and inherited indexed properties, generic array-like and primitive receivers, length snapshotting, mutation during iteration, and abrupt completion. Twenty-one descriptor/prototype edge cases remain deferred, along with one case that requires direct eval. |
 
 ### 23.1.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.filter))
 
