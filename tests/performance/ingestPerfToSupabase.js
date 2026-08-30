@@ -71,6 +71,10 @@ function normalizeRuntime(raw) {
     if (text.includes('jint') && text.includes('prepare')) return 'jint-prepare';
     if (text.includes('jint') && text.includes('execute')) return 'jint-execute';
     if (text.includes('jint')) return 'jint';
+    if (text.includes('jroc') && text.includes('previous') && text.includes('compile') && text.includes('execute')) return 'jroc-previous-total';
+    if (text.includes('jroc') && text.includes('previous') && text.includes('compile')) return 'jroc-previous-compile';
+    if (text.includes('jroc') && text.includes('previous') && text.includes('execute')) return 'jroc-previous-execute';
+    if (text.includes('jroc') && text.includes('previous')) return 'jroc-previous';
     if (text.includes('jroc') && text.includes('execute') && text.includes('pre-compiled')) return 'jroc-execute';
     if (text.includes('jroc') && text.includes('execute') && text.includes('precompiled')) return 'jroc-execute';
     if (text.includes('jroc') && text.includes('compile') && text.includes('execute')) return 'jroc-total';
@@ -247,6 +251,7 @@ function buildRuntimeVersionContext() {
     const benchmarkPackages = parsePackageVersionsFromCsproj(benchmarkCsproj);
     const nodeVersion = process.env.NODE_VERSION || process.version?.replace(/^v/i, '') || null;
     const jrocVersion = process.env.JROC_PACKAGE_VERSION || process.env.JROC_VERSION || null;
+    const jrocPreviousVersion = process.env.JROC_PREVIOUS_PACKAGE_VERSION || null;
 
     return compactObject({
         node: nodeVersion,
@@ -254,7 +259,8 @@ function buildRuntimeVersionContext() {
         okojo: benchmarkPackages.Okojo ?? null,
         yantrajs: benchmarkPackages['YantraJS.Core'] ?? null,
         clearscript: benchmarkPackages['Microsoft.ClearScript.V8'] ?? null,
-        jroc: jrocVersion
+        jroc: jrocVersion,
+        jroc_previous: jrocPreviousVersion
     });
 }
 
@@ -277,6 +283,9 @@ function resolveRuntimeVersion(normalizedRuntime, runtimeVersions) {
     }
     if (normalizedRuntime.startsWith('clearscript')) {
         return runtimeVersions.clearscript ?? null;
+    }
+    if (normalizedRuntime.startsWith('jroc-previous')) {
+        return runtimeVersions.jroc_previous ?? null;
     }
     if (normalizedRuntime.startsWith('jroc')) {
         return runtimeVersions.jroc ?? null;
@@ -893,4 +902,8 @@ if (require.main === module) {
     });
 }
 
-module.exports = { normalizeRuntime };
+module.exports = {
+    normalizeRuntime,
+    parseBenchmarkDotNetResults,
+    resolveRuntimeVersion
+};

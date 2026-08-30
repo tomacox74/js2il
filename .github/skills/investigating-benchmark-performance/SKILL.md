@@ -149,9 +149,17 @@ values as better for `passes_per_second`. Never compare values across different
 metrics or units.
 
 Runtime names are normalized by the ingester. Relevant examples include
-`jroc`, `jroc-compile`, `jroc-execute`, `jroc-total`, `node`, `jint`,
+`jroc`, `jroc-compile`, `jroc-execute`, `jroc-total`,
+`jroc-previous-execute`, `jroc-previous-total`, `node`, `jint`,
 `jint-prepare`, `jint-execute`, `jint-execute-prepared`, `clearscript`,
 `yantrajs`, and `yantrajs-execute`.
+
+Release BenchmarkDotNet jobs run current JROC first, then build
+`Benchmarks.Previous.csproj` against the prior published patch and rerun the
+same suite's JROC method in that job. The `jroc-previous-*` rows therefore
+share a runner with the current rows from the same `(run_id, run_attempt,
+source, scenario)` group; their `runtime_version` comes from
+`JROC_PREVIOUS_PACKAGE_VERSION`.
 
 Do not assume a runtime label from a C# method name or helper-script label.
 For example, a method named `Jint_ExecutePrepared` can be ingested as

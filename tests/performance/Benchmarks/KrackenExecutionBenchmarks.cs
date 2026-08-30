@@ -162,7 +162,7 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         dataScriptContent = File.ReadAllText(dataScriptPath);
     }
 
-    [Benchmark(Description = "jroc-execute")]
+    [Benchmark(Description = JrocBenchmarkLabels.Execute)]
     public void RunJrocTest()
     {
         dynamic exports = _jrocExports!;

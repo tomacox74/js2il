@@ -7,6 +7,7 @@ This directory contains a comprehensive BenchmarkDotNet-based performance benchm
 - **Okojo** - fully managed .NET JavaScript runtime
 - **YantraJS** - .NET JavaScript runtime
 - **jroc** - JavaScript-to-IL AOT compiler
+- **JrocPrevious** - previous published JROC patch release, measured by CI on the same runner as the current release
 
 ## Purpose
 
@@ -454,6 +455,14 @@ Runs cross-runtime comparison, late-bound dispatch microbenchmarks, and Dromaeo 
 ```powershell
 dotnet run -c Release -- --all
 ```
+
+#### Current vs previous JROC release
+
+The BenchmarkDotNet release workflow runs each suite with the current JROC release, then builds `Benchmarks.Previous.csproj` against the latest lower stable patch version shared by the `Jroc.Core` and `Jroc.Runtime` NuGet packages. That project contains only the release benchmark suites, isolating it from current-only runtime microbenchmark APIs. It reruns the suite's JROC method in the same job and on the same runner, recording the second result as `JrocPrevious`.
+
+Execution-only results use the `jroc-previous-execute` runtime identity. Compile-and-execute results use `jroc-previous-total`. Both retain the actual previous package version in the ingested `runtime_version`.
+
+Manual workflow runs select the previous patch automatically from the current `major.minor` release line. Set the `jroc_previous_package_version` workflow input to compare a specific published version. If no lower patch exists in that release line, the workflow reports that fact and skips `JrocPrevious`.
 
 ### Command-Line Options
 
