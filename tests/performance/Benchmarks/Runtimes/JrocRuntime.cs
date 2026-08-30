@@ -10,7 +10,7 @@ namespace Benchmarks.Runtimes;
 /// </summary>
 public class JrocRuntime : IJavaScriptRuntime
 {
-    public string Name => "jroc";
+    public string Name => JrocBenchmarkLabels.RuntimeName;
 
     public RuntimeExecutionResult Execute(string scriptContent, string scriptName = "script.js")
     {

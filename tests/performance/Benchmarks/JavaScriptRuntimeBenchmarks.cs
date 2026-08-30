@@ -107,7 +107,7 @@ public class JavaScriptRuntimeBenchmarks
         }
     }
 
-    [Benchmark(Description = "jroc (compile+execute)")]
+    [Benchmark(Description = JrocBenchmarkLabels.CompileAndExecute)]
     public void Jroc_Total()
     {
         var script = _scripts[ScriptName];

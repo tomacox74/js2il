@@ -12,6 +12,10 @@ on:
         description: 'Published Jroc package version to benchmark (for example 0.9.5)'
         required: false
         default: ''
+      jroc_previous_package_version:
+        description: 'JrocPrevious package version (blank selects the latest prior patch automatically)'
+        required: false
+        default: ''
       kracken_final_validation:
         description: 'Run only the exact Kraken ai-astar cross-runtime and IL closure gates'
         required: false
@@ -41,15 +45,19 @@ jobs:
           - benchmark_name: KrackenExecutionBenchmarks
             mode_argument: --kracken
             artifact_suffix: kracken
+            jroc_method_filter: '*RunJrocTest*'
           - benchmark_name: DromaeoExecutionBenchmarks
             mode_argument: --dromaeo
             artifact_suffix: dromaeo-execution
+            jroc_method_filter: '*Jroc_ExecuteOnly*'
           - benchmark_name: PrimeExecuteBenchmark
             mode_argument: --prime-execute
             artifact_suffix: prime-execute
+            jroc_method_filter: '*Jroc_ExecuteOnly*'
           - benchmark_name: JavaScriptRuntimeBenchmarks
             mode_argument: ''
             artifact_suffix: javascript-runtime
+            jroc_method_filter: '*Jroc_Total*'
     
     steps:
       - name: Checkout repository
@@ -73,6 +81,12 @@ jobs:
           set -euo pipefail
 
           package_version=""
+          source_version="$(sed -n 's:.*<Version>\([^<]*\)</Version>.*:\1:p' src/Jroc.Core/Jroc.Core.csproj | head -n 1)"
+
+          if [ -z "$source_version" ]; then
+            echo "Could not determine the checked-out Jroc version." >&2
+            exit 1
+          fi
 
           if [ "${{ github.event_name }}" = "release" ]; then
             package_version="${{ github.event.release.tag_name }}"
@@ -88,9 +102,41 @@ jobs:
             echo "Using published Jroc packages version: $package_version"
             echo "USE_PUBLISHED_JROC_PACKAGES=true" >> "$GITHUB_ENV"
             echo "JROC_PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
+            echo "JROC_CURRENT_VERSION=$package_version" >> "$GITHUB_ENV"
           else
             echo "Using checked-out source tree projects for Jroc benchmarks"
             echo "USE_PUBLISHED_JROC_PACKAGES=false" >> "$GITHUB_ENV"
+            echo "JROC_CURRENT_VERSION=$source_version" >> "$GITHUB_ENV"
+            echo "JROC_VERSION=$source_version" >> "$GITHUB_ENV"
+          fi
+
+      - name: Determine previous Jroc package version
+        shell: bash
+        env:
+          INPUT_JROC_PREVIOUS_PACKAGE_VERSION: ${{ github.event.inputs.jroc_previous_package_version || '' }}
+        run: |
+          set -euo pipefail
+
+          previous_version="${INPUT_JROC_PREVIOUS_PACKAGE_VERSION#v}"
+          if [ -z "$previous_version" ]; then
+            previous_version="$(
+              node scripts/findPreviousJrocPackageVersion.js \
+                --current "$JROC_CURRENT_VERSION" \
+                --package Jroc.Core \
+                --package Jroc.Runtime
+            )"
+          fi
+
+          if [ -z "$previous_version" ]; then
+            echo "No previous patch release is available; JrocPrevious will be skipped."
+            echo "RUN_JROC_PREVIOUS=false" >> "$GITHUB_ENV"
+          elif [ "$previous_version" = "$JROC_CURRENT_VERSION" ]; then
+            echo "JrocPrevious must use a version other than the current version." >&2
+            exit 1
+          else
+            echo "JrocPrevious will use published packages version: $previous_version"
+            echo "RUN_JROC_PREVIOUS=true" >> "$GITHUB_ENV"
+            echo "JROC_PREVIOUS_PACKAGE_VERSION=$previous_version" >> "$GITHUB_ENV"
           fi
 
       - name: Wait for published Jroc packages
@@ -151,6 +197,16 @@ jobs:
           set -euo pipefail
           node scripts/waitForNuGetPackageVersions.js \
             --version "${JROC_PACKAGE_VERSION}" \
+            --package Jroc.Core \
+            --package Jroc.Runtime
+
+      - name: Confirm previous Jroc packages are available
+        if: env.RUN_JROC_PREVIOUS == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/waitForNuGetPackageVersions.js \
+            --version "${JROC_PREVIOUS_PACKAGE_VERSION}" \
             --package Jroc.Core \
             --package Jroc.Runtime
 
@@ -234,6 +290,74 @@ jobs:
             echo "BenchmarkDotNet produced no result artifacts; failing workflow."
             exit 1
           fi
+
+      - name: Restore JrocPrevious benchmark project
+        if: env.RUN_JROC_PREVIOUS == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd tests/performance/Benchmarks
+
+          dotnet restore Benchmarks.Previous.csproj \
+            --no-cache \
+            -p:JrocPackageVersion="${JROC_PREVIOUS_PACKAGE_VERSION}"
+
+      - name: Build JrocPrevious benchmark project
+        if: env.RUN_JROC_PREVIOUS == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd tests/performance/Benchmarks
+
+          dotnet build Benchmarks.Previous.csproj \
+            -c Release \
+            --no-restore \
+            -p:JrocPackageVersion="${JROC_PREVIOUS_PACKAGE_VERSION}"
+
+          dotnet build-server shutdown
+
+      - name: Run JrocPrevious benchmarks
+        if: env.RUN_JROC_PREVIOUS == 'true'
+        shell: bash
+        env:
+          BENCHMARK_MODE_ARGUMENT: ${{ matrix.mode_argument }}
+          JROC_METHOD_FILTER: ${{ matrix.jroc_method_filter }}
+          COMPREHENSIVE_BENCHMARKS: ${{ github.event.inputs.comprehensive || 'false' }}
+        run: |
+          set -euo pipefail
+          cd tests/performance/Benchmarks
+
+          DOTNET_ARGS=()
+          if [ -n "$BENCHMARK_MODE_ARGUMENT" ]; then
+            DOTNET_ARGS+=("$BENCHMARK_MODE_ARGUMENT")
+          fi
+          if [ "$COMPREHENSIVE_BENCHMARKS" = "true" ]; then
+            DOTNET_ARGS+=(--comprehensive)
+          fi
+          DOTNET_ARGS+=(
+            --filter "$JROC_METHOD_FILTER"
+            --exporters json
+            --artifacts "$PWD/BenchmarkDotNet.Artifacts/previous"
+          )
+
+          dotnet run \
+            --project Benchmarks.Previous.csproj \
+            -c Release \
+            --no-build \
+            -p:JrocPackageVersion="${JROC_PREVIOUS_PACKAGE_VERSION}" \
+            -- "${DOTNET_ARGS[@]}"
+
+          previous_results="BenchmarkDotNet.Artifacts/previous/results"
+          if [ ! -d "$previous_results" ] || ! compgen -G "$previous_results/*.json" > /dev/null; then
+            echo "JrocPrevious produced no result artifacts; failing workflow."
+            exit 1
+          fi
+
+          for file in "$previous_results"/*; do
+            if [ -f "$file" ]; then
+              cp "$file" "BenchmarkDotNet.Artifacts/results/JrocPrevious-$(basename "$file")"
+            fi
+          done
 
       - name: Ingest Benchmark Results to Supabase
         if: always()

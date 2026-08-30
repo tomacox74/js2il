@@ -88,7 +88,7 @@ public class PrimeExecuteBenchmark : ExecutionBenchmarksBase
         _okojoRuntime = null;
     }
 
-    [Benchmark(Description = "jroc-execute")]
+    [Benchmark(Description = JrocBenchmarkLabels.Execute)]
     public void Jroc_ExecuteOnly()
     {
         var assembly = _jrocAssembly

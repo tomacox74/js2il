@@ -135,7 +135,7 @@ public class DromaeoExecutionBenchmarks : ExecutionBenchmarksBase
             .OrderBy(name => name, StringComparer.Ordinal);
     }
 
-    [Benchmark(Description = "jroc-execute")]
+    [Benchmark(Description = JrocBenchmarkLabels.Execute)]
     public void Jroc_ExecuteOnly()
     {
         if (_jrocCompileFailure is not null)

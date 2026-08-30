@@ -158,6 +158,7 @@ The BenchmarkDotNet suite is integrated into CI via `.github/workflows/benchmark
 
 - **Quick Comparison**: Used in `.github/workflows/performance-comparison.yml` for informational PR comments
 - **BenchmarkDotNet**: Available as workflow_dispatch for detailed statistical reporting (informational-only, no PR gating)
+- Release BenchmarkDotNet jobs also run the previous JROC patch as `JrocPrevious` in the same job, avoiding runner differences in current-versus-previous comparisons
 - The cross-runtime BenchmarkDotNet suite now benchmarks the full checked-in root scenario catalog under `tests/performance/Benchmarks/Scenarios`, not just the original five bootstrap scripts
 
 ## Adding New Benchmarks
