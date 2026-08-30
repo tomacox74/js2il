@@ -5,7 +5,9 @@ using Benchmarks;
 // Run benchmarks based on command line arguments
 var programArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
 var debugBenchmarks = TakeFlag(ref programArgs, "--debug-benchmarks");
+var comprehensiveBenchmarks = TakeFlag(ref programArgs, "--comprehensive");
 FullParamsConfig.DebugModeEnabled = debugBenchmarks;
+KrackenBenchmarkSelection.IncludeDisabled = comprehensiveBenchmarks;
 
 if (programArgs.Length > 0 && programArgs[0] == "--validate")
 {
@@ -182,6 +184,7 @@ Console.WriteLine("  dotnet run -c Release --dynamic-inline-caches # Measure dyn
 Console.WriteLine("  dotnet run -c Release --callable-arity-analysis # Measure benchmark/runtime call-site arities");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");
+Console.WriteLine("  dotnet run -c Release -- --kracken --comprehensive # Include disabled Kraken scenarios and runtimes");
 Console.WriteLine("  dotnet run -c Release -- --prime-execute # Run the one-pass Prime sieve execution benchmark");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");

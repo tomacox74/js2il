@@ -10,6 +10,7 @@ public sealed class FullParamsConfig : ManualConfig
     public FullParamsConfig()
     {
         SummaryStyle = SummaryStyle.Default.WithMaxParameterColumnWidth(200);
+        AddFilter(KrackenBenchmarkSelection.CreateRuntimeFilter());
 
         if (DebugModeEnabled)
         {

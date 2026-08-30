@@ -17,6 +17,11 @@ on:
         required: false
         type: boolean
         default: false
+      comprehensive:
+        description: 'Include benchmark scenarios and runtimes that are disabled by default'
+        required: false
+        type: boolean
+        default: false
   release:
     types: [published]
 
@@ -204,6 +209,7 @@ jobs:
         env:
           BENCHMARK_MODE_ARGUMENT: ${{ matrix.mode_argument }}
           BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
+          COMPREHENSIVE_BENCHMARKS: ${{ github.event.inputs.comprehensive || 'false' }}
         run: |
           set -euo pipefail
           cd tests/performance/Benchmarks
@@ -211,6 +217,9 @@ jobs:
           DOTNET_ARGS=()
           if [ -n "$BENCHMARK_MODE_ARGUMENT" ]; then
             DOTNET_ARGS+=("$BENCHMARK_MODE_ARGUMENT")
+          fi
+          if [ "$COMPREHENSIVE_BENCHMARKS" = "true" ]; then
+            DOTNET_ARGS+=(--comprehensive)
           fi
           DOTNET_ARGS+=(--filter "$BENCHMARK_FILTER" --exporters json)
 
