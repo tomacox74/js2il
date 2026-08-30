@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: port 125 previously failing Array conformance tests
+  covering generic non-array receivers for `copyWithin`, `fill`, `flatMap`,
+  `join`, `lastIndexOf`, `pop`, `push`, `toReversed`, `toSpliced`, and
+  `toString`; preserve fast paths for true arrays while adding specification
+  property access, mutation, coercion, and safe-integer length behavior.
+  Three resizable-ArrayBuffer `join` cases remain deferred with that unsupported
+  feature.
+
 - compiler/runtime/test262/docs: port 200 additional ES2025 tests covering
   comparison and BigInt coercion, logical assignment, try/finally completion
   routing, class/function semantics, generic Array mutation methods, RegExp and

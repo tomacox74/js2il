@@ -148,6 +148,13 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
             DefinePrototypeMethod(prototype, "concat", (BuiltinFunctionVariadic)PrototypeConcat, 1);
             DefinePrototypeMethod(prototype, "push", (BuiltinFunctionVariadic)PrototypePush, 1);
+            DefinePrototypeMethod(prototype, "pop", (BuiltinFunction0)PrototypePop, 0);
+            DefinePrototypeMethod(prototype, "lastIndexOf", (BuiltinFunctionVariadic)PrototypeLastIndexOf, 1);
+            DefinePrototypeMethod(prototype, "copyWithin", (BuiltinFunction3)PrototypeCopyWithin, 2);
+            DefinePrototypeMethod(prototype, "fill", (BuiltinFunction3)PrototypeFill, 1);
+            DefinePrototypeMethod(prototype, "flatMap", (BuiltinFunction2)PrototypeFlatMap, 1);
+            DefinePrototypeMethod(prototype, "toReversed", (BuiltinFunction0)PrototypeToReversed, 0);
+            DefinePrototypeMethod(prototype, "toSpliced", (BuiltinFunctionVariadic)PrototypeToSpliced, 2);
             DefinePrototypeMethod(prototype, "reduce", (BuiltinFunctionVariadic)PrototypeReduce, 1);
             DefinePrototypeMethod(prototype, "reduceRight", (BuiltinFunctionVariadic)PrototypeReduceRight, 1);
             DefinePrototypeMethod(prototype, "indexOf", (BuiltinFunction2)PrototypeIndexOf, 1);
@@ -419,27 +426,61 @@ namespace JavaScriptRuntime
 
         private static object PrototypeJoin(object? thisArgument, object? separator)
         {
-            if (thisArgument is not JavaScriptRuntime.Array jsArray)
-            {
-                throw new TypeError("Array.prototype.join called on non-array");
-            }
-
             // A missing separator and an explicit `undefined` separator are
             // indistinguishable once bound to a fixed-arity parameter; both take
             // the default-separator path here (matching real engines).
-            return separator is null
-                ? jsArray.join(System.Array.Empty<object>())
-                : jsArray.join(new object[] { separator });
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return separator is null
+                    ? jsArray.join(System.Array.Empty<object>())
+                    : jsArray.join(new object[] { separator });
+            }
+
+            // Array.prototype.join is intentionally generic (23.1.3.18): it operates on
+            // any ToObject-coercible receiver via the array-like Get/length protocol
+            // rather than requiring a real Array.
+            var receiver = ToArrayMethodObject(thisArgument, "join");
+            var length = ToArrayLikeLength(receiver);
+            var sep = separator is null
+                ? ","
+                : DotNet2JSConversions.ToStringRejectingSymbols(separator);
+
+            var builder = new StringBuilder();
+            for (var k = 0; k < length; k++)
+            {
+                if (k > 0)
+                {
+                    builder.Append(sep);
+                }
+
+                var element = ObjectRuntime.GetItem(receiver, (double)k);
+                if (element is not null && element is not JsNull)
+                {
+                    builder.Append(DotNet2JSConversions.ToStringRejectingSymbols(element));
+                }
+            }
+
+            return builder.ToString();
         }
 
         private static object PrototypeToString(object? thisArgument)
         {
-            if (thisArgument is not JavaScriptRuntime.Array jsArray)
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                throw new TypeError("Array.prototype.toString called on non-array");
+                return jsArray.toString();
             }
 
-            return jsArray.toString();
+            // Array.prototype.toString is intentionally generic (23.1.3.36): it looks up a
+            // callable "join" on the ToObject-coerced receiver, falling back to
+            // Object.prototype.toString when "join" is missing or not callable.
+            var obj = ToArrayMethodObject(thisArgument, "toString");
+            var func = ObjectRuntime.GetProperty(obj, "join");
+            if (!CallableOperations.IsCallable(func))
+            {
+                func = ObjectRuntime.GetProperty(GlobalThis.ObjectPrototypeValue, "toString");
+            }
+
+            return CallableOperations.Call0(func, obj)!;
         }
 
         private static object PrototypeConcat(object? thisArgument, in JsCallArguments arguments)
@@ -641,17 +682,34 @@ namespace JavaScriptRuntime
 
         private static object PrototypePush(object? thisArgument, in JsCallArguments arguments)
         {
-            if (thisArgument is not JavaScriptRuntime.Array jsArray)
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                throw new TypeError("Array.prototype.push called on non-array");
+                return arguments.Count switch
+                {
+                    0 => jsArray.push(),
+                    1 => jsArray.push(arguments.GetArgument(0)),
+                    _ => jsArray.push(ToNonNullableObjectArray(arguments.ToArray())!)
+                };
             }
 
-            return arguments.Count switch
+            // Array.prototype.push is intentionally generic (23.1.3.23): it appends via
+            // the array-like Set/length protocol rather than requiring a real Array.
+            var receiver = ToArrayMethodObject(thisArgument, "push");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var argCount = arguments.Count;
+            if (length + argCount > 9007199254740991d)
             {
-                0 => jsArray.push(),
-                1 => jsArray.push(arguments.GetArgument(0)),
-                _ => jsArray.push(ToNonNullableObjectArray(arguments.ToArray())!)
-            };
+                throw new TypeError("Array.prototype.push result exceeds the maximum safe integer");
+            }
+
+            for (var i = 0; i < argCount; i++)
+            {
+                SetArrayLikePropertyOrThrow(receiver, length, arguments.GetArgument(i));
+                length += 1d;
+            }
+
+            SetArrayLikeLength(receiver, length);
+            return length;
         }
 
         private static object? PrototypeReduce(object? thisArgument, in JsCallArguments arguments)
@@ -1547,6 +1605,344 @@ namespace JavaScriptRuntime
             var result = new Array();
             FlattenIntoArrayLike(result, receiver, depth);
             return result;
+        }
+
+        private static object? PrototypePop(object? thisArgument)
+        {
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.pop();
+            }
+
+            // Array.prototype.pop is intentionally generic (23.1.3.22): it operates on
+            // any ToObject-coercible receiver via the array-like Get/Delete/length protocol.
+            var receiver = ToArrayMethodObject(thisArgument, "pop");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            if (length == 0d)
+            {
+                SetArrayLikeLength(receiver, 0d);
+                return null; // undefined
+            }
+
+            var newLength = length - 1d;
+            var element = ObjectRuntime.GetItem(receiver, newLength);
+            DeleteArrayLikePropertyOrThrow(receiver, newLength);
+            SetArrayLikeLength(receiver, newLength);
+            return element;
+        }
+
+        private static object? PrototypeLastIndexOf(object? thisArgument, in JsCallArguments arguments)
+        {
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.lastIndexOf(ToNonNullableObjectArray(arguments.ToArray()));
+            }
+
+            // Array.prototype.lastIndexOf is intentionally generic (23.1.3.20): it operates on
+            // any ToObject-coercible receiver via the array-like Get/HasProperty/length protocol.
+            // Uses the double-precision length (not the Int32-clamped ToArrayLikeLength) because
+            // a receiver's 'length' may exceed Int32.MaxValue (e.g. test262 15.4.4.15-3-28.js
+            // uses length 2^32); clamping to Int32 would silently truncate valid indices.
+            var receiver = ToArrayMethodObject(thisArgument, "lastIndexOf");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            if (length == 0d)
+            {
+                return -1d;
+            }
+
+            var searchElement = arguments.GetArgument(0);
+
+            // A fromIndex that is genuinely absent defaults to length - 1; a fromIndex
+            // that is explicitly `undefined` is coerced through ToAbsoluteIndex instead,
+            // so the two cases must be distinguished by argument count, not value.
+            var kValue = arguments.Count < 2
+                ? length - 1d
+                : global::System.Math.Min(ToAbsoluteIndex(arguments.GetArgument(1), length), length - 1d);
+
+            if (kValue < 0d)
+            {
+                return -1d;
+            }
+
+            // Indices are tracked as doubles (not int) because array-like receivers may
+            // report a 'length' up to 2^53-1, far beyond Int32 range (e.g. the boundary
+            // value 2^32 exercised by test262 15.4.4.15-3-28.js); casting to int would
+            // overflow/wrap and produce an incorrect loop bound.
+            for (var i = kValue; i >= 0d; i -= 1d)
+            {
+                if (!ObjectRuntime.HasPropertyForArrayLike(i, receiver))
+                {
+                    continue;
+                }
+
+                var elementK = ObjectRuntime.GetItem(receiver, i);
+                if (Operators.StrictEqual(searchElement, elementK))
+                {
+                    return i;
+                }
+            }
+
+            return -1d;
+        }
+
+        private static object PrototypeCopyWithin(object? thisArgument, object? target, object? start, object? end)
+        {
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.copyWithin(new object?[] { target, start, end }!);
+            }
+
+            // Array.prototype.copyWithin is intentionally generic (23.1.3.4): it operates on
+            // any ToObject-coercible receiver via the array-like Get/Set/HasProperty/Delete protocol.
+            var receiver = ToArrayMethodObject(thisArgument, "copyWithin");
+            var length = ToArrayLikeLength(receiver);
+            var to = ToClampedIndex(target, length);
+            var from = ToClampedIndex(start, length);
+            var final = end is null ? length : ToClampedIndex(end, length);
+            var count = global::System.Math.Min(final - from, length - to);
+
+            var direction = 1;
+            if (from < to && to < from + count)
+            {
+                direction = -1;
+                from = from + count - 1;
+                to = to + count - 1;
+            }
+
+            while (count > 0)
+            {
+                if (ObjectRuntime.HasPropertyForArrayLike((double)from, receiver))
+                {
+                    var fromValue = ObjectRuntime.GetItem(receiver, (double)from);
+                    SetArrayLikePropertyOrThrow(receiver, (double)to, fromValue);
+                }
+                else
+                {
+                    DeleteArrayLikePropertyOrThrow(receiver, (double)to);
+                }
+
+                from += direction;
+                to += direction;
+                count -= 1;
+            }
+
+            return receiver;
+        }
+
+        private static object PrototypeFill(object? thisArgument, object? value, object? start, object? end)
+        {
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.fill(new object?[] { value, start, end }!);
+            }
+
+            // Array.prototype.fill is intentionally generic (23.1.3.7): it operates on
+            // any ToObject-coercible receiver via the array-like Set/length protocol.
+            var receiver = ToArrayMethodObject(thisArgument, "fill");
+            var length = ToArrayLikeLength(receiver);
+            var k = ToClampedIndex(start, length);
+            var final = end is null ? length : ToClampedIndex(end, length);
+
+            for (; k < final; k++)
+            {
+                SetArrayLikePropertyOrThrow(receiver, (double)k, value);
+            }
+
+            return receiver;
+        }
+
+        private static object PrototypeFlatMap(object? thisArgument, object? mapperFunc, object? thisArg)
+        {
+            var receiver = ToArrayMethodObject(thisArgument, "flatMap");
+            var sourceLength = ToArrayLikeLength(receiver);
+            if (!CallableOperations.IsCallable(mapperFunc))
+            {
+                throw new TypeError("Array.prototype.flatMap mapper function is not a function");
+            }
+
+            var array = ArraySpeciesCreate(receiver, 0d);
+            FlattenIntoArrayGeneric(array, receiver, sourceLength, 0, 1, mapperFunc, thisArg);
+            return array;
+        }
+
+        private static int FlattenIntoArrayGeneric(
+            object target,
+            object source,
+            int sourceLength,
+            int start,
+            int depth,
+            object? mapperFunc,
+            object? thisArg)
+        {
+            var targetIndex = start;
+            for (var sourceIndex = 0; sourceIndex < sourceLength; sourceIndex++)
+            {
+                if (!ObjectRuntime.HasPropertyForArrayLike((double)sourceIndex, source))
+                {
+                    continue;
+                }
+
+                var element = ObjectRuntime.GetItem(source, (double)sourceIndex);
+                if (mapperFunc is not null)
+                {
+                    element = InvokeArrayCallback(
+                        mapperFunc,
+                        thisArg,
+                        "Array.prototype.flatMap",
+                        3,
+                        element,
+                        (double)sourceIndex,
+                        source,
+                        null);
+                }
+
+                var shouldFlatten = depth > 0 && element is JavaScriptRuntime.Array;
+                if (shouldFlatten)
+                {
+                    var elementLength = ToArrayLikeLength(element!);
+                    targetIndex = FlattenIntoArrayGeneric(
+                        target,
+                        element!,
+                        elementLength,
+                        targetIndex,
+                        depth - 1,
+                        mapperFunc: null,
+                        thisArg: null);
+                }
+                else
+                {
+                    CreateArrayLikeDataProperty(target, (double)targetIndex, element);
+                    targetIndex += 1;
+                }
+            }
+
+            return targetIndex;
+        }
+
+        private static object PrototypeToReversed(object? thisArgument)
+        {
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.toReversed();
+            }
+
+            // Array.prototype.toReversed is intentionally generic (23.1.3.33): it operates on
+            // any ToObject-coercible receiver via the array-like Get/length protocol, always
+            // producing a fresh Array (no ArraySpeciesCreate/subclassing).
+            var length = GetCopyByChangeLength(thisArgument, "toReversed");
+            var result = new Array(length);
+            for (var k = 0; k < length; k++)
+            {
+                result[k] = ObjectRuntime.GetItem(thisArgument!, (double)(length - k - 1));
+            }
+
+            return result;
+        }
+
+        private static object? PrototypeToSpliced(object? thisArgument, in JsCallArguments arguments)
+        {
+            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            {
+                return jsArray.toSpliced(arguments.Count == 0 ? null : ToNonNullableObjectArray(arguments.ToArray()));
+            }
+
+            // Array.prototype.toSpliced is intentionally generic (23.1.3.35): it operates on
+            // any ToObject-coercible receiver via the array-like Get/length protocol, always
+            // producing a fresh Array (no ArraySpeciesCreate/subclassing).
+            var receiver = ToArrayMethodObject(thisArgument, "toSpliced");
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var actualStart = ToClampedIndexAsDouble(arguments.GetArgument(0), length);
+            var insertCount = global::System.Math.Max(0, arguments.Count - 2);
+            var maxSkipCount = length - actualStart;
+
+            double actualSkipCount;
+            if (arguments.Count == 0)
+            {
+                actualSkipCount = 0d;
+            }
+            else if (arguments.Count == 1)
+            {
+                actualSkipCount = maxSkipCount;
+            }
+            else
+            {
+                var skipCountNumber = ToIntegerOrInfinity(arguments.GetArgument(1));
+                actualSkipCount = global::System.Math.Clamp(skipCountNumber, 0d, maxSkipCount);
+            }
+
+            var newLength = length + insertCount - actualSkipCount;
+            if (newLength > 9007199254740991d)
+            {
+                throw new TypeError("Array.prototype.toSpliced result exceeds the maximum safe integer");
+            }
+
+            if (newLength > 4294967295d)
+            {
+                throw new RangeError("Invalid array length");
+            }
+
+            if (newLength > int.MaxValue)
+            {
+                throw new RangeError("Array length exceeds runtime limits");
+            }
+
+            var newArray = new Array((int)newLength);
+            var writeIndex = 0;
+            var readIndex = actualStart + actualSkipCount;
+
+            while (writeIndex < (int)actualStart)
+            {
+                newArray[writeIndex] = ObjectRuntime.GetItem(receiver, (double)writeIndex);
+                writeIndex++;
+            }
+
+            for (var itemIndex = 0; itemIndex < insertCount; itemIndex++)
+            {
+                newArray[writeIndex] = arguments.GetArgument(2 + itemIndex);
+                writeIndex++;
+            }
+
+            while (writeIndex < (int)newLength)
+            {
+                newArray[writeIndex] = ObjectRuntime.GetItem(receiver, (double)readIndex);
+                writeIndex++;
+                readIndex++;
+            }
+
+            return newArray;
+        }
+
+        private static double ToAbsoluteIndex(object? value, double length)
+        {
+            var integer = ToIntegerOrInfinity(value);
+            if (!double.IsInfinity(integer) && integer < 0d)
+            {
+                integer = length + integer;
+            }
+
+            return integer;
+        }
+
+        private static int ToClampedIndex(object? value, int length)
+        {
+            var index = ToAbsoluteIndex(value, length);
+            if (index < 0d)
+            {
+                return 0;
+            }
+
+            if (index > length)
+            {
+                return length;
+            }
+
+            return (int)index;
+        }
+
+        private static double ToClampedIndexAsDouble(object? value, double length)
+        {
+            var index = ToAbsoluteIndex(value, length);
+            return global::System.Math.Clamp(index, 0d, length);
         }
 
         private static object RequireArrayLikeReceiver(object? receiver, string methodName)
@@ -4655,18 +5051,9 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array flatMap(object[] args)
         {
-            var cb = (args != null && args.Length > 0) ? args[0] : null;
-            var mapped = new Array();
-            ArrayCallbackInvoker? invoke = null;
-
-            for (int i = 0; i < this.Count; i++)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "flatMap");
-                var m = invoke(this[i], (double)i, this, null);
-                mapped.Add(m);
-            }
-
-            return mapped.flat(new object[] { 1d });
+            var callback = args is { Length: > 0 } ? args[0] : null;
+            var thisArg = args is { Length: > 1 } ? args[1] : null;
+            return (Array)PrototypeFlatMap(this, callback, thisArg);
         }
 
         /// <summary>

@@ -740,7 +740,7 @@
         ]
       },
       {
-        "clause": "23.1.3.17",
+        "clause": "23.1.3.17 / 23.1.3.20",
         "feature": "Array.prototype.indexOf / lastIndexOf",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.indexof",
@@ -750,9 +750,10 @@
           "tests/Jroc.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-4-1.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-9-8.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-2-1.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-2-1.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/lastIndexOf/ExecutionTests.cs"
         ],
-        "notes": "Supports standard array usage and array-like call patterns, including fromIndex edge cases. Current checked-in test262 coverage also exercises empty-array misses, object-to-string search values, and array-like receivers with indexed properties; full sparse/exotic behavior is limited.",
+        "notes": "Supports standard arrays and generic array-like receivers, including primitive boxing, inherited indexed properties, fromIndex coercion, and safe-integer lengths beyond Int32.MaxValue. Current checked-in test262 coverage includes 89 additional lastIndexOf cases across built-in and ordinary-object receivers; proxy and broader exotic behavior remain limited.",
         "test262Paths": [
           "test/built-ins/Array/prototype/indexOf/15.4.4.14-4-1.js",
           "test/built-ins/Array/prototype/indexOf/15.4.4.14-9-8.js",
@@ -765,6 +766,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.pop",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/pop/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/push/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/pop/JavaScript/S15.4.4.6_A1.1_T1.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/pop/JavaScript/S15.4.4.6_A1.2_T1.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/push/JavaScript/S15.4.4.7_A1_T1.js",
@@ -776,7 +779,7 @@
           "test/built-ins/Array/prototype/push/S15.4.4.7_A1_T1.js",
           "test/built-ins/Array/prototype/push/S15.4.4.7_A1_T2.js"
         ],
-        "notes": "Supports ordinary-array element removal/appending and length updates. Current checked-in test262 coverage exercises empty arrays, sparse holes, and multi-argument append ordering; generic non-array receivers and descriptor-heavy edge cases remain limited."
+        "notes": "Supports ordinary arrays and generic array-like receivers through Get, Set, DeletePropertyOrThrow, and length updates. Current checked-in test262 coverage exercises primitive and built-in object receivers, empty and sparse inputs, multi-argument append ordering, and safe-integer length boundaries; proxy and descriptor-heavy exotic cases remain limited."
       },
       {
         "clause": "23.1.3.18",
@@ -786,9 +789,10 @@
         "testScripts": [
           "tests/Jroc.Tests/Array/JavaScript/Array_Join_Basic.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_Stringification_Basic.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/JavaScript/S15.4.4.5_A1.1_T1.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toString/ExecutionTests.cs"
         ],
-        "notes": "join and stringification are implemented; current checked-in test262 coverage covers ordinary-array empty-result behavior, and toLocaleString currently aliases basic stringification behavior.",
+        "notes": "join and toString support generic receivers, receiver boxing, array-like indexed reads, separator coercion, and Object.prototype.toString fallback when join is not callable. Resizable ArrayBuffer observation during join and complete toLocaleString semantics remain unsupported.",
         "test262Paths": [
           "test/built-ins/Array/prototype/join/S15.4.4.5_A1.1_T1.js"
         ]
@@ -898,20 +902,27 @@
         "notes": "Supports core reduce flows and array-like .call(...) usage. Current bounded test262 coverage now also exercises abrupt ToLength coercion propagation when array-like length conversion throws and the spec-required ordering where generic receiver/length coercions occur before callback-callable validation, alongside sparse arrays, array-like receivers, inherited array indexed elements, and representative accumulator-initialization edge cases; broader exotic behavior remains limited."
       },
       {
-        "clause": "23.1.3.15 / 23.1.3.26-31 / 23.1.3.37",
+        "clause": "23.1.3.4 / 23.1.3.7 / 23.1.3.14-15 / 23.1.3.22-23 / 23.1.3.26-31 / 23.1.3.33 / 23.1.3.35 / 23.1.3.37",
         "feature": "Generic Array.prototype mutation and copying semantics",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/copyWithin/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/fill/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/flatMap/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/pop/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/push/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/reverse/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/shift/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/sort/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toReversed/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSpliced/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/unshift/ExecutionTests.cs"
         ],
-        "notes": "The methods apply their generic algorithms to primitive wrappers and ordinary array-like receivers, observe inherited indexed properties, preserve sparse holes, enforce non-extensible/non-writable invariants, use safe-integer length checks, and create species-aware results. Sort is stable and observes indexed mutations in specification order. Remaining limitations concern some proxy and exotic descriptor interactions."
+        "notes": "The methods apply their generic algorithms to primitive wrappers and ordinary array-like receivers, observe inherited indexed properties, preserve sparse holes, enforce non-extensible/non-writable invariants, use safe-integer length checks, and create species-aware results where required. Current coverage adds generic-receiver cases for copyWithin, fill, flatMap, pop, push, toReversed, and toSpliced. Remaining limitations concern some proxy, resizable-buffer, and exotic descriptor interactions."
       },
       {
         "clause": "23.1.3.30",
@@ -970,9 +981,10 @@
           "tests/Jroc.Tests/Array/JavaScript/Array_Splice_Basic.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSpliced/ExecutionTests.cs"
         ],
-        "notes": "Insertion/deletion semantics include generic receivers, species-created deleted-element arrays, safe-integer length limits, sparse property movement, and failures on non-extensible or non-configurable targets. Complete proxy and other exotic descriptor interactions are not exhaustive."
+        "notes": "Insertion/deletion semantics include generic receivers, species-created deleted-element arrays for splice, fresh ordinary arrays for toSpliced, safe-integer length limits, sparse property movement, and failures on non-extensible or non-configurable targets. Complete proxy and other exotic descriptor interactions are not exhaustive."
       },
       {
         "clause": "23.1.3.33",
@@ -980,9 +992,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.toreversed",
         "testScripts": [
-          "tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toReversed/ExecutionTests.cs"
         ],
-        "notes": "Returns a reversed copy while preserving original array."
+        "notes": "Returns a reversed copy without mutating the receiver and supports generic array-like receivers, including primitive boxing."
       },
       {
         "clause": "23.1.3.39",
