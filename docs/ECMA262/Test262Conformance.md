@@ -2,11 +2,11 @@
 
 [Back to ECMA-262 Coverage Index](Index.md)
 
-This report provides detailed Test262 conformance evidence for [JROC v0.12.15](https://github.com/tomacox74/js2il/releases/tag/v0.12.15), the latest released version.
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.15](https://github.com/tomacox74/js2il/releases/tag/v0.12.15).
 
 ## How to Read This Report
 
-- **Verified passing**: the released JROC version successfully executes the corresponding Test262 test.
+- **Verified passing**: the current development branch successfully executes the corresponding Test262 test.
 - **Known unsupported**: the test exercises behavior explicitly excluded from the release, primarily `eval`.
 - **No published result**: JROC has not published a conformance result for the test. This does not imply either support or failure.
 - **Verified**: verified passing tests divided by applicable tests in that row.
@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 3,738 | 12 | 19,762 | 23,512 | **15.90%** |
+| Built-in objects and APIs | 4,171 | 12 | 19,329 | 23,512 | **17.74%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 7,426 | 58 | 40,757 | 48,241 | **15.39%** |
+| **Total** | 7,859 | 58 | 40,324 | 48,241 | **16.29%** |
 
 ## Language Areas
 
@@ -169,7 +169,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 20 | 0 | 5 | 25 | **80.00%** |
-| `Array` | 599 | 0 | 2,482 | 3,081 | **19.44%** |
+| `Array` | 1,032 | 0 | 2,049 | 3,081 | **33.50%** |
 | `ArrayBuffer` | 36 | 0 | 160 | 196 | **18.37%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |

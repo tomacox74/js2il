@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-30T18:44:29Z
+> Last generated (UTC): 2026-08-30T20:29:16Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -178,6 +178,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array.prototype.flat / flatMap | Supported with Limitations | [`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>[`Array_CallbackOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_CallbackOps_Basic.js) |  | Supports core flattening and map+flatten workflows for dense arrays; full species/holes/exotic edge behavior is not exhaustive. |
+
+### 23.1.3.15 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.foreach))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array.prototype.forEach ( callback [ , thisArg ] ) | Supported with Limitations | [`Array_CallbackOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_CallbackOps_Basic.js)<br>[`15.4.4.18-1-10.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/JavaScript/15.4.4.18-1-10.js)<br>[`15.4.4.18-3-22.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/JavaScript/15.4.4.18-3-22.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ExecutionTests.Batch.cs` | suite `built_ins.Array.prototype.forEach`<br>`test/built-ins/Array/prototype/forEach/15.4.4.18-1-10.js`<br>`test/built-ins/Array/prototype/forEach/15.4.4.18-1-1.js`<br>`test/built-ins/Array/prototype/forEach/15.4.4.18-1-2.js`<br>`test/built-ins/Array/prototype/forEach/15.4.4.18-3-22.js`<br>`test/built-ins/Array/prototype/forEach/call-with-boolean.js`<br>`test/built-ins/Array/prototype/forEach/length.js`<br>`test/built-ins/Array/prototype/forEach/name.js`<br>`test/built-ins/Array/prototype/forEach/not-a-constructor.js`<br>`test/built-ins/Array/prototype/forEach/prop-desc.js` | Supports callback iteration for ordinary arrays and generic array-like receivers. The 185 checked-in test262 cases exercise callback arguments and thisArg, sparse and inherited indexed properties, primitive receiver boxing, length snapshotting, mutation during iteration, and abrupt completion. Four resizable-ArrayBuffer cases remain deferred, along with one case that requires direct eval. |
 
 ### 23.1.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.includes))
 
