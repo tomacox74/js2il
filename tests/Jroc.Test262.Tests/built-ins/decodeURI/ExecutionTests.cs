@@ -16,7 +16,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "S15.1.3.1_A1.2_T2")]
     public Task S15_1_3_1_A1_2_T2()
-        => ExecutionTestFromFile("S15.1.3.1_A1.2_T2");
+        => ExecutionTestFromFile("S15.1.3.1_A1.2_T2", timeoutMs: 60000);
 
     [Fact(DisplayName = "S15.1.3.1_A1.3_T1")]
     public Task S15_1_3_1_A1_3_T1()

@@ -19,13 +19,17 @@ public abstract class InMemoryExecutionTestsBase
     protected Task ExecutionTest(string testName, [CallerFilePath] string sourceFilePath = "")
         => ExecutionTestFromFile(testName, sourceFilePath);
 
-    protected Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
+    protected Task ExecutionTestFromFile(
+        string testName,
+        [CallerFilePath] string sourceFilePath = "",
+        int timeoutMs = 30000)
     {
         var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-            enableIRMetrics: true);
+            enableIRMetrics: true,
+            timeoutMs: timeoutMs);
 
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;
