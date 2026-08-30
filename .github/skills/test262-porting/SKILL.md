@@ -121,4 +121,29 @@ C# does not silently reduce test coverage.
 
 ## Documentation Follow-Through
 
-When a new `test262` case changes the documented support story, update the relevant ECMA-262 docs and changelog entry in the same PR.
+Every accepted, passing `test262` case changes JROC's published conformance
+evidence. Update both customer-facing conformance documents in the same PR:
+
+1. Update `docs/ECMA262/Index.md`:
+   - refresh the Test262 `Verified passing` and `Not yet verified` counts;
+   - recalculate their percentages against the applicable pinned ECMA-262
+     corpus;
+   - keep the link to the detailed conformance report.
+2. Update `docs/ECMA262/Test262Conformance.md`:
+   - refresh the overall totals;
+   - refresh every affected area and feature row;
+   - ensure each row's passing, known-unsupported, and no-published-result
+     counts add up to its applicable total;
+   - recalculate each affected verified percentage.
+3. Keep these documents client-facing. Use conformance terms such as
+   `Verified passing`, `Known unsupported`, and `No published result`; do not
+   expose fixture-porting or repository-registration details.
+4. Count unique standalone upstream tests at the pinned Test262 revision.
+   Do not count `_FIXTURE.js` support files, strict/non-strict variants, test
+   infrastructure, or duplicate local fixtures as additional conformance.
+5. Keep the documented JROC version accurate. Do not attribute conformance
+   added only on the development branch to an older released version.
+
+When the cases also change the feature support story, update the relevant
+`docs/ECMA262/**/Section*.json` entries, regenerate their Markdown, and update
+`CHANGELOG.md` in the same PR.
