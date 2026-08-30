@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 147 additional `Array.prototype.forEach` cases covering
+  callback arguments and `thisArg`, sparse and inherited indexed properties,
+  array-like and primitive receivers, length snapshotting, mutation during
+  iteration, and abrupt completion. Four resizable-ArrayBuffer cases and one
+  direct-`eval` case remain deferred for focused follow-up work.
 - test262/docs: port 119 additional `Array.prototype.filter` cases covering
   callback arguments and `thisArg`, sparse and inherited indexed properties,
   array-like and primitive receivers, length snapshotting, mutation during
