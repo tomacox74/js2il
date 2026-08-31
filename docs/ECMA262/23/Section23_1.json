@@ -421,7 +421,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/Array.from-name.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/Array.from_arity.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/from-string.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/from-array.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/from-array.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/from/ExecutionTests.Batch.cs"
         ],
         "test262Paths": [
           "test/built-ins/Array/from/calling-from-valid-1-noStrict.js",
@@ -430,7 +431,7 @@
           "test/built-ins/Array/from/from-string.js",
           "test/built-ins/Array/from/from-array.js"
         ],
-        "notes": "Supports array, enumerable, and iterator-producing sources (including Array iterator methods) and exposes the standard Array.from name/length metadata. Current checked-in test262 coverage also exercises string sources and sparse arrays that materialize holes as undefined; mapper and thisArg semantics are not fully modeled."
+        "notes": "Supports array-like and iterator-producing sources (including Array iterator methods), iterator error propagation, mapper arguments and thisArg, and standard Array.from metadata. Current checked-in test262 coverage also exercises string sources and sparse arrays that materialize holes as undefined; custom constructors, Proxy behavior, and cross-realm semantics remain limited."
       },
       {
         "clause": "23.1.2.2",
@@ -442,7 +443,7 @@
       {
         "clause": "23.1.2.3",
         "feature": "Array.isArray",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.isarray",
         "testScripts": [
           "tests/Jroc.Tests/Array/JavaScript/Array_IsArray_Basic.js",
@@ -452,7 +453,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-2.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-3.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-11.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-2-1.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-2-1.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/isArray/ExecutionTests.Batch.cs"
         ],
         "test262Paths": [
           "test/built-ins/Array/isArray/15.4.3.2-0-1.js",
@@ -463,18 +465,19 @@
           "test/built-ins/Array/isArray/15.4.3.2-1-11.js",
           "test/built-ins/Array/isArray/15.4.3.2-2-1.js"
         ],
-        "notes": "Returns true for JavaScriptRuntime.Array instances and the intrinsic Array.prototype object, and false otherwise. Current checked-in test262 coverage also exercises boxed primitives, host built-ins such as JSON, and objects that merely inherit from arrays."
+        "notes": "Returns true for JavaScriptRuntime.Array instances and the intrinsic Array.prototype object, and false otherwise. Current checked-in test262 coverage also exercises boxed primitives, host built-ins such as JSON, objects that merely inherit from arrays, descriptors, and metadata. Proxy and revoked-Proxy semantics remain limited."
       },
       {
         "clause": "23.1.2.4",
         "feature": "Array.of",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.of",
         "testScripts": [
           "tests/Jroc.Tests/Array/JavaScript/Array_Static_Basic.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/of/ExecutionTests.Batch.cs"
         ],
-        "notes": "Creates arrays from argument lists with expected element ordering. Current checked-in test262 coverage covers ordinary argument-list construction; broader custom-constructor and abrupt-completion edge cases remain limited.",
+        "notes": "Creates arrays from ordinary argument lists with expected element ordering and propagates abrupt data-property creation. Custom-constructor, Proxy, cross-realm, metadata, and remaining abrupt-completion edge cases remain limited.",
         "test262Paths": [
           "test/built-ins/Array/of/creates-a-new-array-from-arguments.js"
         ]

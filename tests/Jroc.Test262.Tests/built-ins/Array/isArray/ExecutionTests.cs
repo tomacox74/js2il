@@ -6,7 +6,7 @@ namespace Jroc.Test262.Tests.built_ins.Array.isArray;
 
 
 
-public class ExecutionTests : InMemoryExecutionTestsBase
+public partial class ExecutionTests : InMemoryExecutionTestsBase
 
 {
 
