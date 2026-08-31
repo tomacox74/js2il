@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T07:03:44Z
+> Last generated (UTC): 2026-08-31T22:46:24Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -33,7 +33,7 @@
 | 22.1.3.9 | String.prototype.indexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof) |
 | 22.1.3.10 | String.prototype.isWellFormed ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.iswellformed) |
 | 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
-| 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
+| 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
 | 22.1.3.13 | String.prototype.match ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
 | 22.1.3.14 | String.prototype.matchAll ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
 | 22.1.3.15 | String.prototype.normalize ( [ form ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize) |
@@ -181,7 +181,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.localeCompare (numeric compare) | Supported | [`String_LocaleCompare_Numeric.js`](../../../tests/Jroc.Tests/String/JavaScript/String_LocaleCompare_Numeric.js) |  | Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported. |
+| String.prototype.localeCompare (numeric compare) | Supported with Limitations | [`String_LocaleCompare_Numeric.js`](../../../tests/Jroc.Tests/String/JavaScript/String_LocaleCompare_Numeric.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/localeCompare/ExecutionTests.Batch.cs` | suite `built_ins.String.prototype.localeCompare` | Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option is supported. Canonically equivalent Unicode strings are not yet consistently treated as equal, so locale-sensitive collation remains limited. |
 
 ### 22.1.3.13 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match))
 
