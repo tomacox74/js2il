@@ -13,6 +13,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   metadata, safe-integer limits, and abrupt completion. Thirty-five
   proxy/species/descriptor-order, resizable-buffer, cross-realm, and
   extreme-length cases plus one proxy-helper harness gap remain deferred.
+- runtime/performance: restore guarded dense storage paths for
+  `Array.prototype.shift`, `unshift`, `slice`, and `splice`, while preserving
+  generic array-like, sparse, descriptor, prototype-setter, and species
+  behavior.
 - test262/docs: port 439 additional Array reduction cases: 219 for
   `Array.prototype.reduce` and 220 for `Array.prototype.reduceRight`,
   covering callback arguments, accumulator initialization, sparse and

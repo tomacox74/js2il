@@ -1211,6 +1211,20 @@ namespace JavaScriptRuntime
         {
             var receiver = ToArrayMethodObject(thisArgument, "shift");
             var length = ToArrayLikeLengthAsDouble(receiver);
+            if (receiver is JavaScriptRuntime.Array array
+                && array.CanUseDenseMutationFastPath(length))
+            {
+                if (array.DenseCount == 0)
+                {
+                    return null;
+                }
+
+                var firstDenseValue = array.GetDenseValue(0);
+                array.RemoveDenseRange(0, 1);
+                array.SynchronizeDenseLength();
+                return firstDenseValue;
+            }
+
             if (length == 0d)
             {
                 SetArrayLikeLength(receiver, 0d);
@@ -1374,6 +1388,15 @@ namespace JavaScriptRuntime
 
             var count = global::System.Math.Max(final - k, 0);
             var result = ArraySpeciesCreate(receiver, count);
+            if (receiver is JavaScriptRuntime.Array sourceArray
+                && result is JavaScriptRuntime.Array resultArray
+                && !ReferenceEquals(sourceArray, resultArray)
+                && sourceArray.CanUseDenseMutationFastPath(length)
+                && resultArray.CanInitializeDenseSpeciesResult(count))
+            {
+                sourceArray.CopyDenseRangeTo(resultArray, (int)k, (int)count);
+                return resultArray;
+            }
 
             double n = 0d;
             for (var index = k; index < final; index += 1d)
@@ -1428,19 +1451,44 @@ namespace JavaScriptRuntime
             {
                 throw new TypeError("Array.prototype.splice result exceeds the maximum safe integer");
             }
-
             var result = ArraySpeciesCreate(receiver, actualDeleteCount);
-
-            for (var k = 0d; k < actualDeleteCount; k += 1d)
+            if (receiver is JavaScriptRuntime.Array sourceArray
+                && result is JavaScriptRuntime.Array resultArray
+                && !ReferenceEquals(sourceArray, resultArray)
+                && sourceArray.CanUseDenseMutationFastPath(length)
+                && resultArray.CanInitializeDenseSpeciesResult(actualDeleteCount))
             {
-                var from = actualStart + k;
-                if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
+                sourceArray.CopyDenseRangeTo(
+                    resultArray,
+                    (int)actualStart,
+                    (int)actualDeleteCount);
+            }
+            else
+            {
+                for (var k = 0d; k < actualDeleteCount; k += 1d)
                 {
-                    CreateArrayLikeDataProperty(result, k, JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from));
+                    var from = actualStart + k;
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(from, receiver))
+                    {
+                        CreateArrayLikeDataProperty(
+                            result,
+                            k,
+                            JavaScriptRuntime.ObjectRuntime.GetItem(receiver, from));
+                    }
                 }
+
+                SetArrayLikeLength(result, actualDeleteCount);
             }
 
-            SetArrayLikeLength(result, actualDeleteCount);
+            if (receiver is JavaScriptRuntime.Array denseArray
+                && denseArray.TryApplyDenseSplice(
+                    length,
+                    actualStart,
+                    actualDeleteCount,
+                    in arguments))
+            {
+                return result;
+            }
 
             if (itemCount < actualDeleteCount)
             {
@@ -1504,6 +1552,11 @@ namespace JavaScriptRuntime
             var receiver = ToArrayMethodObject(thisArgument, "unshift");
             var length = ToArrayLikeLengthAsDouble(receiver);
             var argumentCount = arguments.Count;
+            if (receiver is JavaScriptRuntime.Array array
+                && array.TryApplyDenseUnshift(length, in arguments))
+            {
+                return array.length;
+            }
 
             if (argumentCount > 0)
             {
@@ -3179,6 +3232,11 @@ namespace JavaScriptRuntime
                 && _virtualLength == DenseCount
                 && !HasNonDataDescriptors;
 
+        private bool CanUseDenseMutationFastPath(double expectedLength)
+            => expectedLength <= int.MaxValue
+                && expectedLength == DenseCount
+                && CanUseDenseMutationFastPath();
+
         private bool CanAppendDenseIndexFast(int index)
             => index == DenseCount
                 && _holeCount >= 0
@@ -3198,7 +3256,98 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            return DefaultPrototypeChainAllowsDenseWrites();
+            return PrototypeChain.TryGetPrototype(this, out var prototype)
+                && ReferenceEquals(prototype, Prototype)
+                && DefaultPrototypeChainAllowsDenseWrites();
+        }
+
+        private bool CanInitializeDenseSpeciesResult(double expectedLength)
+            => expectedLength <= int.MaxValue
+                && expectedLength == _logicalLength
+                && expectedLength == _virtualLength
+                && DenseCount == 0
+                && (_holeCount & int.MaxValue) == 0
+                && !HasNonDataDescriptors
+                && !PropertyDescriptorStore.HasAny(this)
+                && ObjectRuntime.IsExtensibleInternal(this)
+                && IsLengthWritable;
+
+        private void CopyDenseRangeTo(Array target, int start, int count)
+        {
+            if (_numberItems is not null && target._items is null)
+            {
+                target._numberItems ??= new List<double>(count);
+                target._numberItems.EnsureCapacity(count);
+                for (var index = start; index < start + count; index++)
+                {
+                    target._numberItems.Add(_numberItems[index]);
+                }
+            }
+            else
+            {
+                target.EnsureObjectStorage(count);
+                for (var index = start; index < start + count; index++)
+                {
+                    target.AddDenseValue(GetDenseValue(index));
+                }
+            }
+
+            target.SynchronizeDenseLength();
+        }
+
+        private bool TryApplyDenseSplice(
+            double expectedLength,
+            double start,
+            double deleteCount,
+            in JsCallArguments arguments)
+        {
+            var itemCount = global::System.Math.Max(arguments.Count - 2, 0);
+            var grows = itemCount > deleteCount;
+            if (expectedLength > int.MaxValue
+                || start > int.MaxValue
+                || deleteCount > int.MaxValue
+                || itemCount > int.MaxValue - expectedLength + deleteCount
+                || !(grows
+                    ? CanUseDenseGrowthFastPath()
+                    : CanUseDenseMutationFastPath())
+                || expectedLength != DenseCount)
+            {
+                return false;
+            }
+
+            RemoveDenseRange((int)start, (int)deleteCount);
+            for (var index = 0; index < itemCount; index++)
+            {
+                InsertDenseValue(
+                    (int)start + index,
+                    arguments.GetArgument(index + 2));
+            }
+
+            SynchronizeDenseLength();
+            return true;
+        }
+
+        private bool TryApplyDenseUnshift(
+            double expectedLength,
+            in JsCallArguments arguments)
+        {
+            if (expectedLength > int.MaxValue
+                || arguments.Count > int.MaxValue - expectedLength
+                || expectedLength != DenseCount
+                || (arguments.Count == 0
+                    ? !CanUseDenseMutationFastPath()
+                    : !CanUseDenseGrowthFastPath()))
+            {
+                return false;
+            }
+
+            for (var index = 0; index < arguments.Count; index++)
+            {
+                InsertDenseValue(index, arguments.GetArgument(index));
+            }
+
+            SynchronizeDenseLength();
+            return true;
         }
 
         private static bool DefaultPrototypeChainAllowsDenseWrites()
@@ -3239,6 +3388,11 @@ namespace JavaScriptRuntime
             var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
             while (visited.Add(current))
             {
+                if (current is not JsObject || current is IExoticJsObject)
+                {
+                    return true;
+                }
+
                 foreach (var key in PropertyDescriptorStore.GetOwnKeys(current))
                 {
                     if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _)
