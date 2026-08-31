@@ -88,6 +88,53 @@ public sealed class ArrayReceiverSpecializationRuntimeTests
             });
     }
 
+    [Fact]
+    public void DenseFrontMutationsAvoidGenericPropertyDispatchAllocations()
+    {
+        WithRealm(
+            () =>
+            {
+                var shiftWarmup = CreateDenseArray(128);
+                shiftWarmup.shift();
+                var unshiftWarmup = CreateDenseArray(128, 256);
+                unshiftWarmup.unshift("first");
+
+                var shiftArray = CreateDenseArray(10_000);
+                var beforeShift =
+                    GC.GetAllocatedBytesForCurrentThread();
+                var shifted = shiftArray.shift();
+                var shiftAllocated =
+                    GC.GetAllocatedBytesForCurrentThread() - beforeShift;
+
+                var unshiftArray = CreateDenseArray(10_000, 20_000);
+                var beforeUnshift =
+                    GC.GetAllocatedBytesForCurrentThread();
+                var newLength = unshiftArray.unshift("first");
+                var unshiftAllocated =
+                    GC.GetAllocatedBytesForCurrentThread() - beforeUnshift;
+
+                Assert.Equal("value", shifted);
+                Assert.Equal(9_999d, shiftArray.length);
+                Assert.InRange(shiftAllocated, 0, 8_192);
+                Assert.Equal(10_001d, newLength);
+                Assert.Equal("first", unshiftArray[0]);
+                Assert.InRange(unshiftAllocated, 0, 8_192);
+            });
+    }
+
+    private static JavaScriptRuntime.Array CreateDenseArray(
+        int count,
+        int? capacity = null)
+    {
+        var array = new JavaScriptRuntime.Array(capacity ?? count);
+        for (var index = 0; index < count; index++)
+        {
+            array.Add("value");
+        }
+
+        return array;
+    }
+
     private static void WithRealm(Action body)
     {
         var services = RuntimeServices.BuildServiceProvider();

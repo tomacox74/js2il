@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/performance: restore guarded dense storage paths for
+  `Array.prototype.shift`, `unshift`, `slice`, and `splice`, while preserving
+  generic array-like, sparse, descriptor, prototype-setter, and species
+  behavior.
 - test262/docs: port 439 additional Array reduction cases: 219 for
   `Array.prototype.reduce` and 220 for `Array.prototype.reduceRight`,
   covering callback arguments, accumulator initialization, sparse and
