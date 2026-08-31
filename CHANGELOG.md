@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 44 additional `Array.prototype.concat` cases covering
+  spreadable primitive wrappers and array-like inputs, arguments objects,
+  typed arrays, species creation, proxy access ordering, metadata,
+  safe-integer limits, and abrupt completion. Two cross-realm cases and one
+  revoked-proxy edge case remain deferred.
 - test262/docs: port 222 additional generic Array copying and mutation cases:
   copyWithin, fill, flatMap, pop, push, reverse, shift, slice, splice,
   toReversed, toSpliced, and unshift. The coverage spans coercion, sparse and
