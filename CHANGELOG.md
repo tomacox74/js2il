@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 41 additional static Array method cases: 26 for
+  `Array.from`, 14 for `Array.isArray`, and one for `Array.of`, covering
+  iterator and mapper behavior, array-like sources, metadata, abrupt
+  completion, and ordinary array classification. Custom-constructor, Proxy,
+  cross-realm, and remaining `Array.of` semantics stay deferred.
 - test262/docs: port 44 additional `Array.prototype.concat` cases covering
   spreadable primitive wrappers and array-like inputs, arguments objects,
   typed arrays, species creation, proxy access ordering, metadata,
