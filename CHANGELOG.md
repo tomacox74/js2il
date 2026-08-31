@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 183 additional `Array.prototype.some` cases covering
+  callback arguments and `thisArg`, sparse and inherited indexed properties,
+  array-like and primitive receivers, short-circuiting, length snapshotting,
+  mutation during iteration, metadata, and abrupt completion. Twenty-five
+  exotic property/prototype, resizable-buffer, and direct-`eval` cases remain
+  deferred for focused follow-up work.
 - test262/docs: port 134 additional `Array.prototype.map` cases covering
   callback arguments and `thisArg`, sparse and inherited indexed properties,
   array-like and primitive receivers, length snapshotting, mutation during
