@@ -13,10 +13,22 @@ on:
       - "CHANGELOG.md"
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: unit
+            project: tests/Jroc.Tests/Jroc.Tests.csproj
+            filter: "Category!=ReleaseOnly&FullyQualifiedName!~JrocSdkPackageTests"
+          - name: test262
+            project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
+            filter: "Category!=ReleaseOnly"
+          - name: sdk-packaging
+            project: tests/Jroc.Tests/Jroc.Tests.csproj
+            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests"
+    name: test (${{ matrix.name }})
     steps:
     - uses: actions/checkout@v5
     - name: Setup .NET
@@ -30,12 +42,25 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --filter "Category!=ReleaseOnly"
+      run: dotnet test ${{ matrix.project }} --no-build --verbosity minimal --filter "${{ matrix.filter }}"
     - name: Upload received snapshots
       if: failure()
       uses: actions/upload-artifact@v7
       with:
-        name: verify-received-snapshots
+        name: verify-received-snapshots-${{ matrix.name }}
         path: |
           **/*.received.txt
         if-no-files-found: ignore
+
+  # Aggregate gate so branch protection can keep requiring a single "build" check.
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    steps:
+    - name: Verify test matrix results
+      run: |
+        if [ "${{ needs.test.result }}" != "success" ]; then
+          echo "Test matrix result: ${{ needs.test.result }}"
+          exit 1
+        fi
