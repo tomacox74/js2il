@@ -1,5 +1,6 @@
 using JavaScriptRuntime;
 using JavaScriptRuntime.DependencyInjection;
+using System.Reflection;
 
 namespace Jroc.Tests.Array;
 
@@ -132,6 +133,22 @@ public sealed class BuiltinAdapterRuntimeTests
         });
 
         Assert.Equal(3d, result);
+    }
+
+    [Fact]
+    public void CrossRealmArrayDisablesDenseGrowthFastPath()
+    {
+        var receiver = WithRealm(
+            () => new JavaScriptRuntime.Array { "tail" });
+        var fastPath = typeof(JavaScriptRuntime.Array).GetMethod(
+            "CanUseDenseGrowthFastPath",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+
+        WithRealm(() =>
+        {
+            Assert.NotNull(fastPath);
+            Assert.False((bool)fastPath.Invoke(receiver, null)!);
+        });
     }
 
     [Fact]
