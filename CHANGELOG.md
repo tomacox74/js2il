@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 439 additional Array reduction cases: 219 for
+  `Array.prototype.reduce` and 220 for `Array.prototype.reduceRight`,
+  covering callback arguments, accumulator initialization, sparse and
+  inherited indexed properties, array-like and primitive receivers, length
+  snapshotting, mutation during iteration, metadata, and abrupt completion.
+  Thirty-nine exotic property/prototype and resizable-buffer cases plus one
+  extreme-length case remain deferred for focused follow-up work.
 - test262/docs: port 183 additional `Array.prototype.some` cases covering
   callback arguments and `thisArg`, sparse and inherited indexed properties,
   array-like and primitive receivers, short-circuiting, length snapshotting,
