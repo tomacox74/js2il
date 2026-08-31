@@ -753,6 +753,9 @@
         "feature": "Array.prototype.includes",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.includes",
+        "test262Suites": [
+          "built_ins.Array.prototype.includes"
+        ],
         "testScripts": [
           "tests/Jroc.Tests/Array/JavaScript/Array_SearchOps_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/call-with-boolean.js",
@@ -761,9 +764,10 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/return-abrupt-get-length.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/return-abrupt-get-prop.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/return-abrupt-tointeger-fromindex.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/return-abrupt-tonumber-length.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/return-abrupt-tonumber-length.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/ExecutionTests.Batch.cs"
         ],
-        "notes": "Implements SameValueZero-style comparisons for common runtime values. Current checked-in test262 coverage now also verifies generic primitive-receiver boxing, array-like indexed property reads, large-length boundary handling, abrupt ToLength propagation from length coercion, abrupt ToIntegerOrInfinity propagation from fromIndex coercion, and abrupt completion propagation from indexed property access; sparse-array edge behavior remains limited.",
+        "notes": "Implements SameValueZero-style comparisons for common runtime values. The 25 checked-in test262 cases verify generic primitive-receiver boxing, array-like indexed property reads, sparse arrays, large-length boundaries, standard metadata, value re-reads during iteration, and abrupt coercion/property access. Five resizable-buffer and comparison edge cases remain deferred.",
         "test262Paths": [
           "test/built-ins/Array/prototype/includes/call-with-boolean.js",
           "test/built-ins/Array/prototype/includes/get-prop.js",
@@ -793,7 +797,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/indexOf/ExecutionTests.Batch.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/lastIndexOf/ExecutionTests.cs"
         ],
-        "notes": "Supports standard arrays and generic array-like receivers, including primitive boxing, sparse and inherited indexed properties, fromIndex coercion, length snapshotting, and abrupt completion. The 188 checked-in indexOf cases and 89 additional lastIndexOf cases cover built-in and ordinary-object receivers. Thirteen indexOf cases involving resizable buffers, exotic prototype/descriptor observation, and extreme lengths remain deferred.",
+        "notes": "Supports standard arrays and generic array-like receivers, including primitive boxing, sparse and inherited indexed properties, fromIndex coercion, length snapshotting, and abrupt completion. The 188 checked-in indexOf cases and 180 checked-in lastIndexOf cases cover built-in and ordinary-object receivers. Thirteen indexOf and eighteen lastIndexOf cases involving resizable buffers, exotic prototype/descriptor observation, direct eval, and extreme lengths remain deferred.",
         "test262Paths": [
           "test/built-ins/Array/prototype/indexOf/15.4.4.14-4-1.js",
           "test/built-ins/Array/prototype/indexOf/15.4.4.14-9-8.js",

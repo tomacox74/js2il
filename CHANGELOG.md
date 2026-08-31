@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 101 additional Array search-method cases: 91 for
+  `Array.prototype.lastIndexOf` and 10 for `Array.prototype.includes`,
+  covering ordinary and array-like receivers, sparse and inherited indexed
+  properties, index coercion, primitive boxing, metadata, and abrupt
+  completion. Twenty-three resizable-buffer, exotic property/prototype,
+  direct-`eval`, and comparison edge cases remain deferred.
 - test262/docs: port 185 additional `Array.prototype.indexOf` cases covering
   ordinary and array-like receivers, sparse and inherited indexed properties,
   `fromIndex` coercion, length snapshotting, primitive boxing, and abrupt
