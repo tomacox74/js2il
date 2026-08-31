@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 222 additional generic Array copying and mutation cases:
+  copyWithin, fill, flatMap, pop, push, reverse, shift, slice, splice,
+  toReversed, toSpliced, and unshift. The coverage spans coercion, sparse and
+  inherited indexed properties, primitive and array-like receivers, mutation,
+  metadata, safe-integer limits, and abrupt completion. Thirty-five
+  proxy/species/descriptor-order, resizable-buffer, cross-realm, and
+  extreme-length cases plus one proxy-helper harness gap remain deferred.
 - test262/docs: port 439 additional Array reduction cases: 219 for
   `Array.prototype.reduce` and 220 for `Array.prototype.reduceRight`,
   covering callback arguments, accumulator initialization, sparse and
