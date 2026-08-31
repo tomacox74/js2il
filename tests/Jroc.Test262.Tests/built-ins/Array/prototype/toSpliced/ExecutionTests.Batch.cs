@@ -1,0 +1,57 @@
+namespace Jroc.Test262.Tests.built_ins.Array.prototype.toSpliced;
+
+public partial class ExecutionTests
+{
+    [Fact(DisplayName = "deleteCount-clamped-between-zero-and-remaining-count")]
+    public Task deleteCount_clamped_between_zero_and_remaining_count() => ExecutionTestFromFile("deleteCount-clamped-between-zero-and-remaining-count");
+    [Fact(DisplayName = "deleteCount-missing")]
+    public Task deleteCount_missing() => ExecutionTestFromFile("deleteCount-missing");
+    [Fact(DisplayName = "deleteCount-undefined")]
+    public Task deleteCount_undefined() => ExecutionTestFromFile("deleteCount-undefined");
+    [Fact(DisplayName = "discarded-element-not-read")]
+    public Task discarded_element_not_read() => ExecutionTestFromFile("discarded-element-not-read");
+    [Fact(DisplayName = "elements-read-in-order")]
+    public Task elements_read_in_order() => ExecutionTestFromFile("elements-read-in-order");
+    [Fact(DisplayName = "frozen-this-value")]
+    public Task frozen_this_value() => ExecutionTestFromFile("frozen-this-value");
+    [Fact(DisplayName = "holes-not-preserved")]
+    public Task holes_not_preserved() => ExecutionTestFromFile("holes-not-preserved");
+    [Fact(DisplayName = "ignores-species")]
+    public Task ignores_species() => ExecutionTestFromFile("ignores-species");
+    [Fact(DisplayName = "immutable")]
+    public Task immutable() => ExecutionTestFromFile("immutable");
+    [Fact(DisplayName = "length-casted-to-zero")]
+    public Task length_casted_to_zero() => ExecutionTestFromFile("length-casted-to-zero");
+    [Fact(DisplayName = "length-clamped-to-2pow53minus1")]
+    public Task length_clamped_to_2pow53minus1() => ExecutionTestFromFile("length-clamped-to-2pow53minus1");
+    [Fact(DisplayName = "length")]
+    public Task length() => ExecutionTestFromFile("length");
+    [Fact(DisplayName = "length-tolength")]
+    public Task length_tolength() => ExecutionTestFromFile("length-tolength");
+    [Fact(DisplayName = "mutate-while-iterating")]
+    public Task mutate_while_iterating() => ExecutionTestFromFile("mutate-while-iterating");
+    [Fact(DisplayName = "name")]
+    public Task name() => ExecutionTestFromFile("name");
+    [Fact(DisplayName = "not-a-constructor")]
+    public Task not_a_constructor() => ExecutionTestFromFile("not-a-constructor");
+    [Fact(DisplayName = "property-descriptor")]
+    public Task property_descriptor() => ExecutionTestFromFile("property-descriptor");
+    [Fact(DisplayName = "start-and-deleteCount-missing")]
+    public Task start_and_deleteCount_missing() => ExecutionTestFromFile("start-and-deleteCount-missing");
+    [Fact(DisplayName = "start-and-deleteCount-undefineds")]
+    public Task start_and_deleteCount_undefineds() => ExecutionTestFromFile("start-and-deleteCount-undefineds");
+    [Fact(DisplayName = "start-bigger-than-length")]
+    public Task start_bigger_than_length() => ExecutionTestFromFile("start-bigger-than-length");
+    [Fact(DisplayName = "start-neg-infinity-is-zero")]
+    public Task start_neg_infinity_is_zero() => ExecutionTestFromFile("start-neg-infinity-is-zero");
+    [Fact(DisplayName = "start-neg-less-than-minus-length-is-zero")]
+    public Task start_neg_less_than_minus_length_is_zero() => ExecutionTestFromFile("start-neg-less-than-minus-length-is-zero");
+    [Fact(DisplayName = "start-neg-subtracted-from-length")]
+    public Task start_neg_subtracted_from_length() => ExecutionTestFromFile("start-neg-subtracted-from-length");
+    [Fact(DisplayName = "start-undefined-and-deleteCount-missing")]
+    public Task start_undefined_and_deleteCount_missing() => ExecutionTestFromFile("start-undefined-and-deleteCount-missing");
+    [Fact(DisplayName = "this-value-nullish")]
+    public Task this_value_nullish() => ExecutionTestFromFile("this-value-nullish");
+    [Fact(DisplayName = "unmodified")]
+    public Task unmodified() => ExecutionTestFromFile("unmodified");
+}
