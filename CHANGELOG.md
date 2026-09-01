@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 500 additional `Object.defineProperty` cases covering
+  descriptor creation, data/accessor/generic attribute defaults, property-key
+  coercion, descriptor conflicts, and non-configurable redefinition
+  invariants for ordinary objects.
 - test262/docs: port 458 additional `String.prototype` cases covering `at`,
   character access, concatenation, searching, Unicode well-formedness,
   matching, replacement, slicing, splitting, case conversion, trimming, and
