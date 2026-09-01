@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 496 additional `Object.defineProperties` cases covering
+  descriptor-bag validation, data/accessor/generic descriptors, property-key
+  coercion, attribute defaults, and ordinary-object definitions. Four
+  specialized redefinition edge cases remain deferred.
 - test262/docs: port 500 additional `Object.defineProperty` cases covering
   descriptor creation, data/accessor/generic attribute defaults, property-key
   coercion, descriptor conflicts, and non-configurable redefinition
