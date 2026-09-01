@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: enforce deletion of String exotic indexed properties
+  through nested Proxy targets and port 32 Proxy `defineProperty` and
+  `deleteProperty` trap, forwarding, abrupt-completion, and invariant cases.
+  Nine cross-realm cases remain deferred.
 - runtime/test262/docs: make `JSON.parse` use ECMAScript string coercion and
   Proxy-aware reviver traversal, including observable array lengths and
   CreateDataProperty traps; port the final 36 pinned parse cases.

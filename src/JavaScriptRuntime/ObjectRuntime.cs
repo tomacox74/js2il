@@ -532,7 +532,7 @@ namespace JavaScriptRuntime
                 return DeletePropertyCore(target, key, throwOnError);
             }
 
-            if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
+            if (TryGetOwnPropertyDescriptor(receiver, key, out var ownDescriptor)
                 && !ownDescriptor.Configurable)
             {
                 if (throwOnError)
