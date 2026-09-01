@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 7,126 | 12 | 16,374 | 23,512 | **30.31%** |
+| Built-in objects and APIs | 7,624 | 12 | 15,876 | 23,512 | **32.43%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 10,814 | 58 | 37,369 | 48,241 | **22.42%** |
+| **Total** | 11,312 | 58 | 36,871 | 48,241 | **23.45%** |
 
 ## Language Areas
 
@@ -206,7 +206,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `NaN` | 0 | 0 | 6 | 6 | **0.00%** |
 | `NativeErrors` | 15 | 0 | 79 | 94 | **15.96%** |
 | `Number` | 171 | 0 | 167 | 338 | **50.59%** |
-| `Object` | 1,339 | 0 | 2,072 | 3,411 | **39.26%** |
+| `Object` | 1,837 | 0 | 1,574 | 3,411 | **53.86%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
 | `Promise` | 78 | 0 | 599 | 677 | **11.52%** |

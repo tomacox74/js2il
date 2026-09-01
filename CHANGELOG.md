@@ -21,6 +21,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   construction and port eight previously failing Test262 cases covering
   constructor validation, custom result buffers, capacity checks, and source
   buffer reuse. The immutable-ArrayBuffer species case remains deferred.
+- test262/docs: port 498 additional Object descriptor-model cases: 303 for
+  `Object.create` and 195 for `Object.getOwnPropertyDescriptor`, covering
+  prototype creation, descriptor bags, property-key normalization, descriptor
+  reflection, and ordinary/built-in receivers. Two specialized descriptor
+  reflection edges remain deferred.
 - test262/docs: port 496 additional `Object.defineProperties` cases covering
   descriptor-bag validation, data/accessor/generic descriptors, property-key
   coercion, attribute defaults, and ordinary-object definitions. Four

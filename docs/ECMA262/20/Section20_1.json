@@ -325,9 +325,13 @@
           "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
           "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js",
-          "tests/Jroc.Test262.Tests/built-ins/Object/create/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/create/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/create/ExecutionTests.Batch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. Current bounded test262 coverage exercises the function surface, null/undefined guards, null-prototype creation, explicit prototype wiring, property-bag initialization, and accessor receiver preservation while reading a properties bag. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors."
+        "test262Suites": [
+          "built_ins.Object.create"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. Expanded test262 coverage exercises the function surface, null/undefined guards, null-prototype creation, explicit prototype wiring, property-bag initialization, and accessor receiver preservation while reading a properties bag. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors."
       },
       {
         "clause": "20.1.2.3",
@@ -441,9 +445,14 @@
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
           "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
-          "tests/Jroc.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.Batch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary jroc objects, and the current bounded test262 coverage also exercises descriptor reflection for several ordinary/built-in receivers, including property-key normalization for numeric -0. Full host-object descriptor fidelity remains limited.",
+        "test262Suites": [
+          "built_ins.Object.getOwnPropertyDescriptor"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary jroc objects, and expanded test262 coverage exercises descriptor reflection for several ordinary/built-in receivers, including property-key normalization for numeric -0. Two specialized descriptor-reflection edges and full host-object descriptor fidelity remain limited.",
         "test262Paths": [
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-0-1.js",
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-1-1.js",
