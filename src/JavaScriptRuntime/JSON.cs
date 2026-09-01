@@ -318,50 +318,28 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (item is string || item.GetType().IsValueType)
+            if (item is string
+                || item is double or float or int or long or short or byte
+                    or sbyte or uint or ulong or ushort or decimal)
             {
                 key = ToJsonPropertyKeyString(item);
                 return true;
             }
 
-            if (TryInvokeObjectToString(item, out var primitive))
+            if (Number.TryGetWrappedNumberValue(item, out _))
             {
-                if (primitive is null || primitive is JsNull || primitive is Symbol)
-                {
-                    return false;
-                }
-
-                key = DotNet2JSConversions.ToString(primitive);
-                return true;
-            }
-
-            if (Number.TryGetWrappedNumberValue(item, out var numberValue))
-            {
-                key = ToJsonPropertyKeyString(numberValue);
+                key = DotNet2JSConversions.ToStringRejectingSymbols(item);
                 return true;
             }
 
             if (PropertyDescriptorStore.TryGetOwn(item, String.StringDataPropertyName, out var descriptor)
                 && descriptor.Kind == JsPropertyDescriptorKind.Data)
             {
-                key = DotNet2JSConversions.ToString(descriptor.Value);
+                key = DotNet2JSConversions.ToStringRejectingSymbols(item);
                 return true;
             }
 
             return false;
-        }
-
-        private static bool TryInvokeObjectToString(object receiver, out object? result)
-        {
-            var toString = ObjectRuntime.GetItem(receiver, "toString");
-            if (!CallableOperations.IsCallable(toString))
-            {
-                result = null;
-                return false;
-            }
-
-            result = CallableOperations.Call0(toString, receiver);
-            return result is null || result is JsNull || result is string || result is Symbol || result.GetType().IsValueType;
         }
 
         private static object? InvokeToJsonIfPresent(object? value, string key)
@@ -458,15 +436,15 @@ namespace JavaScriptRuntime
                     throw new TypeError("Do not know how to serialize a BigInt");
             }
 
-            if (Number.TryGetWrappedNumberValue(value, out var wrappedNumber))
+            if (Number.TryGetWrappedNumberValue(value, out _))
             {
-                return SerializeNumber(wrappedNumber);
+                return SerializeNumber(TypeUtilities.ToNumber(value));
             }
 
             if (PropertyDescriptorStore.TryGetOwn(value!, String.StringDataPropertyName, out var stringData)
                 && stringData.Kind == JsPropertyDescriptorKind.Data)
             {
-                return Quote(DotNet2JSConversions.ToString(stringData.Value));
+                return Quote(DotNet2JSConversions.ToStringRejectingSymbols(value));
             }
 
             if (value is Boolean booleanObject)
@@ -484,9 +462,9 @@ namespace JavaScriptRuntime
                 throw new TypeError("Do not know how to serialize a BigInt");
             }
 
-            if (value is Array array)
+            if (Array.isArray(value))
             {
-                return SerializeArray(array, propertyList, replacerFunction, stack, gap, indent);
+                return SerializeArray(value!, propertyList, replacerFunction, stack, gap, indent);
             }
 
             return SerializeObject(value!, propertyList, replacerFunction, stack, gap, indent);
@@ -523,7 +501,7 @@ namespace JavaScriptRuntime
         }
 
         private static string SerializeArray(
-            Array array,
+            object array,
             List<string>? propertyList,
             object? replacerFunction,
             HashSet<object> stack,
@@ -532,7 +510,12 @@ namespace JavaScriptRuntime
         {
             PushToStackOrThrowIfCircular(stack, array);
 
-            var length = (int)array.length;
+            var lengthValue = TypeUtilities.ToNumber(ObjectRuntime.GetItem(array, "length"));
+            var length = double.IsNaN(lengthValue) || lengthValue <= 0d
+                ? 0
+                : lengthValue > int.MaxValue
+                    ? throw new RangeError("JSON.stringify array length exceeds runtime limits")
+                    : (int)global::System.Math.Floor(lengthValue);
             var items = new List<string>(length);
             var stepBack = indent;
             indent += gap;
@@ -611,8 +594,30 @@ namespace JavaScriptRuntime
         {
             var builder = new StringBuilder(value.Length + 2);
             builder.Append('"');
-            foreach (var ch in value)
+            for (var index = 0; index < value.Length; index++)
             {
+                var ch = value[index];
+                if (char.IsHighSurrogate(ch))
+                {
+                    if (index + 1 < value.Length && char.IsLowSurrogate(value[index + 1]))
+                    {
+                        builder.Append(ch);
+                        builder.Append(value[++index]);
+                    }
+                    else
+                    {
+                        AppendUnicodeEscape(builder, ch);
+                    }
+
+                    continue;
+                }
+
+                if (char.IsLowSurrogate(ch))
+                {
+                    AppendUnicodeEscape(builder, ch);
+                    continue;
+                }
+
                 builder.Append(ch switch
                 {
                     '"' => "\\\"",
@@ -629,6 +634,12 @@ namespace JavaScriptRuntime
 
             builder.Append('"');
             return builder.ToString();
+        }
+
+        private static void AppendUnicodeEscape(StringBuilder builder, char value)
+        {
+            builder.Append("\\u");
+            builder.Append(((int)value).ToString("x4", CultureInfo.InvariantCulture));
         }
 
         private static bool IsJsonWhitespace(char value)

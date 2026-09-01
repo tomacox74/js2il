@@ -11,6 +11,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and primitive conversion. Setter coercion/time-clip behavior, temporal
   conversion, realm edges, and four `dateConstants.js` harness cases remain
   deferred.
+- runtime/test262/docs: align `JSON.stringify` replacer filtering, boxed
+  primitive coercion, nested Proxy array/object traversal, abrupt length
+  handling, and lone-surrogate escaping; port 36 additional pinned cases.
+- runtime/test262/docs: make `Array.prototype.toSpliced` cache the source length
+  while observable indexed getters run, and port the final 24 pinned Array
+  change-by-copy cases across `toSorted`, `toSpliced`, and `with`.
 - test262/docs: port 388 additional RegExp constructor, syntax, and intrinsic
   cases from a 500-fixture intake, covering core behavior, dotAll,
   `RegExp.escape`, lookbehind, match indices, and named groups. Character

@@ -2,7 +2,7 @@
 
 [Back to ECMA-262 Coverage Index](Index.md)
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.15](https://github.com/tomacox74/js2il/releases/tag/v0.12.15).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.16](https://github.com/tomacox74/js2il/releases/tag/v0.12.16).
 
 ## How to Read This Report
 
@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 9,834 | 12 | 13,666 | 23,512 | **41.83%** |
+| Built-in objects and APIs | 9,894 | 12 | 13,606 | 23,512 | **42.08%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 13,522 | 58 | 34,661 | 48,241 | **28.03%** |
+| **Total** | 13,582 | 58 | 34,601 | 48,241 | **28.15%** |
 
 ## Language Areas
 
@@ -169,7 +169,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 20 | 0 | 5 | 25 | **80.00%** |
-| `Array` | 2,381 | 0 | 700 | 3,081 | **77.28%** |
+| `Array` | 2,405 | 0 | 676 | 3,081 | **78.06%** |
 | `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |
@@ -199,7 +199,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
 | `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
 | `Iterator` | 9 | 0 | 501 | 510 | **1.76%** |
-| `JSON` | 89 | 0 | 76 | 165 | **53.94%** |
+| `JSON` | 125 | 0 | 40 | 165 | **75.76%** |
 | `Map` | 142 | 0 | 62 | 204 | **69.61%** |
 | `MapIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `Math` | 150 | 0 | 177 | 327 | **45.87%** |
