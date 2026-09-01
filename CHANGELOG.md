@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: implement `ArrayBuffer.prototype.slice` species
+  construction and port eight previously failing Test262 cases covering
+  constructor validation, custom result buffers, capacity checks, and source
+  buffer reuse. The immutable-ArrayBuffer species case remains deferred.
 - test262/docs: port 496 additional `Object.defineProperties` cases covering
   descriptor-bag validation, data/accessor/generic descriptors, property-key
   coercion, attribute defaults, and ordinary-object definitions. Four

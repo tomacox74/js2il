@@ -83,23 +83,44 @@ namespace JavaScriptRuntime
 
         public ArrayBuffer slice(object? start, object? end)
         {
-            var bytes = _storage.Bytes;
-            var startIndex = CoerceRelativeIndex(start, 0, bytes.Length);
-            var endIndex = CoerceRelativeIndex(end, bytes.Length, bytes.Length);
+            var initialByteLength = _storage.Bytes.Length;
+            var startIndex = CoerceRelativeIndex(start, 0, initialByteLength);
+            var endIndex = CoerceRelativeIndex(end, initialByteLength, initialByteLength);
             if (endIndex < startIndex)
             {
                 endIndex = startIndex;
             }
 
             var length = endIndex - startIndex;
-            if (length <= 0)
+            var constructor = ResolveSpeciesConstructor();
+            var result = CallableOperations.Construct1(constructor, constructor, (double)length);
+            if (result is not ArrayBuffer resultBuffer || result is SharedArrayBuffer)
             {
-                return new ArrayBuffer(System.Array.Empty<byte>(), cloneBuffer: false);
+                throw new TypeError("ArrayBuffer species constructor must return an ArrayBuffer");
             }
 
-            var copy = new byte[length];
-            System.Buffer.BlockCopy(bytes, startIndex, copy, 0, length);
-            return new ArrayBuffer(copy, cloneBuffer: false);
+            if (ReferenceEquals(resultBuffer, this))
+            {
+                throw new TypeError("ArrayBuffer species constructor returned the source buffer");
+            }
+
+            if (resultBuffer.ByteLengthInt < length)
+            {
+                throw new TypeError("ArrayBuffer species constructor returned a buffer that is too small");
+            }
+
+            if (length > 0)
+            {
+                var sourceBytes = _storage.Bytes;
+                var availableLength = System.Math.Max(sourceBytes.Length - startIndex, 0);
+                var copyLength = System.Math.Min(length, availableLength);
+                if (copyLength > 0)
+                {
+                    System.Buffer.BlockCopy(sourceBytes, startIndex, resultBuffer.RawBytes, 0, copyLength);
+                }
+            }
+
+            return resultBuffer;
         }
 
         public object? resize()
@@ -139,6 +160,34 @@ namespace JavaScriptRuntime
 
         internal byte[] RawBytes => _storage.Bytes;
         internal bool IsResizable => _isResizable;
+
+        private object ResolveSpeciesConstructor()
+        {
+            var defaultConstructor = GlobalThis.ArrayBufferIntrinsicConstructor;
+            var constructor = ObjectRuntime.GetItem(this, "constructor");
+            if (constructor is null)
+            {
+                return defaultConstructor;
+            }
+
+            if (!Proxy.IsObjectLikeValue(constructor))
+            {
+                throw new TypeError("ArrayBuffer constructor property must be an object");
+            }
+
+            var species = ObjectRuntime.GetItem(constructor, Symbol.species);
+            if (species is null or JsNull)
+            {
+                return defaultConstructor;
+            }
+
+            if (!CallableOperations.IsConstructor(species))
+            {
+                throw new TypeError("ArrayBuffer species value is not a constructor");
+            }
+
+            return species;
+        }
 
         private void InitializeIntrinsicSurface()
         {

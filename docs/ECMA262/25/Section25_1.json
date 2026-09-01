@@ -321,9 +321,20 @@
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object",
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js",
-          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/SpeciesBatchExecutionTests.cs"
         ],
-        "notes": "byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. The slice function exposes the standard descriptor, extensibility, name, and length metadata. Species construction beyond the intrinsic getter, detachment, immutable buffers, and transfer semantics remain limited."
+        "test262Paths": [
+          "test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-not-object.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species-is-not-constructor.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species-is-not-object.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js",
+          "test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js"
+        ],
+        "notes": "byteLength reflects the backing byte[] length. slice resolves Symbol.species, constructs the result through the selected constructor, validates the returned ArrayBuffer and capacity, rejects reuse of the source buffer, and copies the selected bytes. Detached and immutable buffers and transfer semantics remain limited."
       },
       {
         "clause": "25.1.6.6",

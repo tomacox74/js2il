@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T02:50:32Z
+> Last generated (UTC): 2026-09-01T03:12:47Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -88,7 +88,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs` |  | byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. The slice function exposes the standard descriptor, extensibility, name, and length metadata. Species construction beyond the intrinsic getter, detachment, immutable buffers, and transfer semantics remain limited. |
+| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/SpeciesBatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-is-not-constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js` | byteLength reflects the backing byte[] length. slice resolves Symbol.species, constructs the result through the selected constructor, validates the returned ArrayBuffer and capacity, rejects reuse of the source buffer, and copies the selected bytes. Detached and immutable buffers and transfer semantics remain limited. |
 
 ### 25.1.6.6 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.resize))
 
