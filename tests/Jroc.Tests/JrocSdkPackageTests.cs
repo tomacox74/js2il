@@ -10,6 +10,7 @@ namespace Jroc.Tests;
 public class JrocSdkPackageTests
 {
     [Fact]
+    [Trait("CiShard", "metadata")]
     public void Pack_JrocSdk_ContainsBuildAssetsSamplesAndRuntimeDependency()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -112,6 +113,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "metadata")]
     public void Pack_JrocTool_DoesNotShipHostingSamples()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -146,6 +148,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "metadata")]
     public void Pack_JrocCore_ContainsReadmeIconAndDiscoverabilityMetadata()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -192,6 +195,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "metadata")]
     public void Pack_JrocRuntime_ContainsReadmeIconAndDiscoverabilityMetadata()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -237,6 +241,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "build")]
     public void Build_WithLocalJrocSdkPackage_CompilesRunsAndPublishesWithoutDirectRuntimeReference()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -334,6 +339,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "runtime")]
     public void Build_WithMultipleJrocAssemblies_UsesOneTransitiveRuntimeForRunAndPublish()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -383,6 +389,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "runtime")]
     public void Build_WithMissingOrIncompatibleRuntimeAsset_ReportsActionableSdkDiagnostic()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -467,6 +474,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "build")]
     public void Build_WithLocalJrocSdkPackage_CompilesPackageEntrypointByModuleId()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -524,6 +532,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "samples")]
     public void Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -579,6 +588,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "samples")]
     public void Build_ExtractedTypedSample_WithLocalJrocSdkPackage_CompilesAndRuns()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -637,6 +647,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "npm-samples")]
     public void Build_ExtractedNpmSamples_WithLocalJrocSdkPackage_CompileAndRun()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -723,6 +734,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
+    [Trait("CiShard", "metadata")]
     public void ShippingSampleSources_UseSupportedFacadePatterns()
     {
         var repoRoot = FindRepoRoot();
