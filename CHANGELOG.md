@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 480 additional `Object.defineProperty` cases covering
+  ordinary-object descriptor creation and redefinition, attribute defaults,
+  data/accessor transitions, primitive targets, property-key coercion, and
+  non-extensible/sealed/frozen interactions. Twenty mapped/unmapped Arguments
+  exotic-object descriptor cases remain deferred.
 - runtime/test262/docs: implement `ArrayBuffer.prototype.transfer` and
   `transferToFixedLength` with copy-and-detach semantics, resizability
   preservation, length coercion, standard metadata, and receiver validation;
