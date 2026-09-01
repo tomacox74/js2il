@@ -4057,7 +4057,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool isArray(object? value)
         {
-            return value is Array || ReferenceEquals(value, Prototype);
+            return IsArrayForConcat(value);
         }
 
         /// <summary>
