@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 460 additional Object descriptor and integrity cases:
+  `Object.defineProperties`, `Object.getOwnPropertyDescriptor`, `freeze`,
+  `seal`, extensibility/frozen/sealed predicates, and
+  `Object.preventExtensions`. Proxy invariants, resizable typed-array
+  receivers, abrupt-completion/error-object behavior, and specialized
+  descriptor-reflection edges remain deferred.
 - test262/harness/docs: port 423 additional Object own-property model cases
   across descriptor definition and reflection, own-key enumeration, prototype
   access, `hasOwn`, `is`, and Object.prototype operations. Add native
