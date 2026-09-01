@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/harness/docs: port 423 additional Object own-property model cases
+  across descriptor definition and reflection, own-key enumeration, prototype
+  access, `hasOwn`, `is`, and Object.prototype operations. Add native
+  `proxyTrapsHelper.js` support so upstream Proxy trap-order cases preserve
+  their original assertions. Arguments exotic-object, Proxy-invariant, and
+  specialized object-brand edge cases remain deferred.
 - test262/docs: port 480 additional `Object.defineProperty` cases covering
   ordinary-object descriptor creation and redefinition, attribute defaults,
   data/accessor transitions, primitive targets, property-key coercion, and

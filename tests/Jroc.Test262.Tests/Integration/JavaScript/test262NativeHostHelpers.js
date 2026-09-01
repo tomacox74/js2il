@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -113,4 +113,17 @@ assert.throws(TypeError, function() {
             return 1;
         }
     });
+});
+
+var allowedProxyTrapCalls = 0;
+var allowedProxyTraps = allowProxyTraps({
+    get: function() {
+        allowedProxyTrapCalls++;
+        return 'allowed';
+    }
+});
+assert.sameValue(allowedProxyTraps.get(), 'allowed');
+assert.sameValue(allowedProxyTrapCalls, 1);
+assert.throws(Test262Error, function() {
+    allowedProxyTraps.set();
 });

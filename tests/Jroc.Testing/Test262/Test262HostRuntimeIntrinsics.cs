@@ -90,6 +90,11 @@ public static class Test262HostRuntimeIntrinsics
             Test262RegExpHelpers.Register(builder);
         }
 
+        if (included.Contains("proxyTrapsHelper.js"))
+        {
+            Test262ProxyTrapsHelpers.Register(builder);
+        }
+
         return builder.Build();
     }
 
