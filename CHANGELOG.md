@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: expose all 16 supported numeric DataView getters and
+  setters as standard receiver-aware, non-constructible prototype methods with
+  correct function metadata; port 48 previously failing Test262 cases covering
+  `name`, `length`, and constructibility.
 - test262/harness/docs: port 423 additional Object own-property model cases
   across descriptor definition and reflection, own-key enumeration, prototype
   access, `hasOwn`, `is`, and Object.prototype operations. Add native
