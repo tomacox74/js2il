@@ -336,9 +336,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object.defineproperties",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
-          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.Batch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. Proxy and exotic invariant coverage remains limited."
+        "test262Suites": [
+          "built_ins.Object.defineProperties"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. Expanded test262 coverage exercises descriptor-bag validation and ordinary property definitions; a small set of specialized redefinition edges remains limited, alongside proxy and exotic invariants."
       },
       {
         "clause": "20.1.2.3.1",

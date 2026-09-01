@@ -10,6 +10,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   construction and port eight previously failing Test262 cases covering
   constructor validation, custom result buffers, capacity checks, and source
   buffer reuse. The immutable-ArrayBuffer species case remains deferred.
+- test262/docs: port 496 additional `Object.defineProperties` cases covering
+  descriptor-bag validation, data/accessor/generic descriptors, property-key
+  coercion, attribute defaults, and ordinary-object definitions. Four
+  specialized redefinition edge cases remain deferred.
 - runtime/test262/docs: expose `ArrayBuffer.prototype.resize` as a standard
   receiver-aware, non-constructible built-in method and port 15 previously
   failing Test262 cases covering metadata, resizing, and receiver validation.

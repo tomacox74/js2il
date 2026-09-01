@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T02:35:51Z
+> Last generated (UTC): 2026-09-01T03:15:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -87,7 +87,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.defineProperties | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. Proxy and exotic invariant coverage remains limited. |
+| Object.defineProperties | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.Batch.cs` | suite `built_ins.Object.defineProperties` | Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. Expanded test262 coverage exercises descriptor-bag validation and ordinary property definitions; a small set of specialized redefinition edges remains limited, alongside proxy and exotic invariants. |
 
 ### 20.1.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-objectdefineproperties))
 
