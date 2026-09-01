@@ -259,14 +259,16 @@
         "specUrl": "https://tc39.es/ecma262/#sec-dataview-buffer-byteoffset-bytelength",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/DetachmentBatchExecutionTests.cs",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js"
         ],
         "test262Paths": [
-          "test/built-ins/DataView/newtarget-undefined-throws.js"
+          "test/built-ins/DataView/newtarget-undefined-throws.js",
+          "test/built-ins/DataView/detached-buffer.js"
         ],
-        "notes": "Supports a first-class DataView constructor plus fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, and bounds checks. SharedArrayBuffer, resizable buffers, custom newTarget prototypes, and detached buffer semantics are not implemented."
+        "notes": "Supports a first-class DataView constructor plus fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, bounds checks, and rejection of detached buffers after observable argument coercions. SharedArrayBuffer, resizable buffers, and custom newTarget prototypes are not implemented."
       },
       {
         "clause": "25.3.3",
@@ -293,8 +295,11 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/buffer/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/buffer/DetachmentBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/DetachmentBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/DetachmentBatchExecutionTests.cs",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js"
         ],
         "test262Paths": [
@@ -304,16 +309,20 @@
           "test/built-ins/DataView/prototype/buffer/name.js",
           "test/built-ins/DataView/prototype/buffer/prop-desc.js",
           "test/built-ins/DataView/prototype/buffer/return-buffer.js",
+          "test/built-ins/DataView/prototype/buffer/detached-buffer.js",
           "test/built-ins/DataView/prototype/byteLength/invoked-as-accessor.js",
           "test/built-ins/DataView/prototype/byteLength/length.js",
           "test/built-ins/DataView/prototype/byteLength/name.js",
           "test/built-ins/DataView/prototype/byteLength/prop-desc.js",
+          "test/built-ins/DataView/prototype/byteLength/detached-buffer.js",
+          "test/built-ins/DataView/prototype/byteLength/instance-has-detached-buffer.js",
           "test/built-ins/DataView/prototype/byteOffset/invoked-as-accessor.js",
           "test/built-ins/DataView/prototype/byteOffset/length.js",
           "test/built-ins/DataView/prototype/byteOffset/name.js",
-          "test/built-ins/DataView/prototype/byteOffset/prop-desc.js"
+          "test/built-ins/DataView/prototype/byteOffset/prop-desc.js",
+          "test/built-ins/DataView/prototype/byteOffset/detached-buffer.js"
         ],
-        "notes": "DataView.prototype inherits Object.prototype and owns constructor, buffer, byteOffset, byteLength, and @@toStringTag properties. The accessors enforce DataView receivers and expose standard getter metadata."
+        "notes": "DataView.prototype inherits Object.prototype and owns constructor, buffer, byteOffset, byteLength, and @@toStringTag properties. The accessors enforce DataView receivers, expose standard getter metadata, preserve access to the backing buffer after detachment, and reject byte-length and byte-offset access on detached buffers."
       },
       {
         "clause": "25.3.4",
@@ -323,14 +332,19 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_Float32_Float64_RoundTrip.js",
-          "tests/Jroc.Test262.Tests/built-ins/DataView/PortNext200Batch2ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/DataView/PortNext200Batch2ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt8/DetachmentBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/DetachmentBatchExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/DataView/prototype/getFloat32/toindex-byteoffset.js",
           "test/built-ins/DataView/prototype/getFloat64/toindex-byteoffset.js",
-          "test/built-ins/DataView/prototype/getInt16/toindex-byteoffset.js"
+          "test/built-ins/DataView/prototype/getInt16/toindex-byteoffset.js",
+          "test/built-ins/DataView/prototype/getInt8/detached-buffer.js",
+          "test/built-ins/DataView/prototype/setInt8/detached-buffer-after-number-value.js",
+          "test/built-ins/DataView/prototype/setInt8/index-check-before-value-conversion.js"
         ],
-        "notes": "Implements get/set for Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. BigInt64, BigUint64, and Float16 remain unimplemented."
+        "notes": "Implements get/set for Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt64, BigUint64, and Float16 remain unimplemented."
       }
     ]
   }
