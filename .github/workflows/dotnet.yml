@@ -25,9 +25,21 @@ jobs:
           - name: test262
             project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
             filter: "Category!=ReleaseOnly"
-          - name: sdk-packaging
+          - name: sdk-packaging-metadata
             project: tests/Jroc.Tests/Jroc.Tests.csproj
-            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests"
+            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=metadata"
+          - name: sdk-packaging-build
+            project: tests/Jroc.Tests/Jroc.Tests.csproj
+            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=build"
+          - name: sdk-packaging-runtime
+            project: tests/Jroc.Tests/Jroc.Tests.csproj
+            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=runtime"
+          - name: sdk-packaging-samples
+            project: tests/Jroc.Tests/Jroc.Tests.csproj
+            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=samples"
+          - name: sdk-packaging-npm-samples
+            project: tests/Jroc.Tests/Jroc.Tests.csproj
+            filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=npm-samples"
     name: test (${{ matrix.name }})
     steps:
     - uses: actions/checkout@v5
@@ -38,9 +50,29 @@ jobs:
     - name: Restore .NET tools
       run: dotnet tool restore 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ matrix.project }}
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ${{ matrix.project }} --no-restore
+    - name: Verify SDK packaging shard coverage
+      if: matrix.name == 'sdk-packaging-metadata'
+      shell: bash
+      run: |
+        dotnet test ${{ matrix.project }} --no-build --list-tests \
+          --filter "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests" \
+          | sed -n 's/^    \(Jroc\.Tests\.JrocSdkPackageTests\..*\)$/\1/p' \
+          | sort > /tmp/all-sdk-package-tests.txt
+        : > /tmp/sharded-sdk-package-tests.txt
+        for shard in metadata build runtime samples npm-samples; do
+          shard_file="/tmp/sdk-package-tests-$shard.txt"
+          dotnet test ${{ matrix.project }} --no-build --list-tests \
+            --filter "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=$shard" \
+            | sed -n 's/^    \(Jroc\.Tests\.JrocSdkPackageTests\..*\)$/\1/p' \
+            > "$shard_file"
+          test -s "$shard_file"
+          cat "$shard_file" >> /tmp/sharded-sdk-package-tests.txt
+        done
+        sort -o /tmp/sharded-sdk-package-tests.txt /tmp/sharded-sdk-package-tests.txt
+        diff -u /tmp/all-sdk-package-tests.txt /tmp/sharded-sdk-package-tests.txt
     - name: Test
       run: dotnet test ${{ matrix.project }} --no-build --verbosity minimal --filter "${{ matrix.filter }}"
     - name: Upload received snapshots
