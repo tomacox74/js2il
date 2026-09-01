@@ -137,6 +137,54 @@ public sealed class BuiltinAdapterRuntimeTests
     }
 
     [Fact]
+    public void ArrayBufferSliceUsesIntrinsicConstructorWhenGlobalBindingChanges()
+    {
+        WithRealm(() =>
+        {
+            var buffer = new ArrayBuffer(4d);
+            ObjectRuntime.SetItem(buffer, "constructor", null);
+            ObjectRuntime.SetItem(GlobalThis.globalThis, "ArrayBuffer", new JsObject());
+
+            var result = buffer.slice(1d, 3d);
+
+            Assert.Equal(2d, result.byteLength);
+        });
+    }
+
+    [Fact]
+    public void ArrayBufferSliceObservesSourceResizeDuringSpeciesConstruction()
+    {
+        WithRealm(() =>
+        {
+            var source = new ArrayBuffer(4d, new JsObject
+            {
+                ["maxByteLength"] = 4d
+            });
+            source.RawBytes[0] = 1;
+            source.RawBytes[1] = 2;
+            source.RawBytes[2] = 3;
+            source.RawBytes[3] = 4;
+
+            Func<object[], object?[], object?> species = (_, args) =>
+            {
+                source.resize(0d);
+                return new ArrayBuffer(args[0]);
+            };
+            JavaScriptRuntime.Function.InitializeFunctionInstance(species, 1d, "Species");
+            JavaScriptRuntime.Function.MarkConstructible(species);
+
+            var constructor = new JsObject();
+            ObjectRuntime.SetItem(constructor, Symbol.species, species);
+            ObjectRuntime.SetItem(source, "constructor", constructor);
+
+            var result = source.slice(0d, 4d);
+
+            Assert.Equal(0d, source.byteLength);
+            Assert.Equal(new byte[4], result.RawBytes);
+        });
+    }
+
+    [Fact]
     public void SharedArrayBufferAccessorsUseReceiverAwareAdapters()
     {
         WithRealm(() =>

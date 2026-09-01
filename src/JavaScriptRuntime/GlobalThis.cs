@@ -1992,6 +1992,14 @@ namespace JavaScriptRuntime
 
         public static Delegate SharedArrayBuffer => _sharedArrayBufferConstructorValue;
         public static Delegate ArrayBuffer => _arrayBufferConstructorValue;
+        internal static object ArrayBufferIntrinsicConstructor
+        {
+            get
+            {
+                _ = globalThis;
+                return BuiltinDelegateFunctionAdapter.FromDelegate(_arrayBufferConstructorValue);
+            }
+        }
 
         public static Delegate DataView => _dataViewConstructorValue;
 
