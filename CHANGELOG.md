@@ -11,6 +11,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `RegExp.escape`, lookbehind, match indices, and named groups. Character
   class and property escapes, species/constructor semantics, and remaining
   error-path behavior stay deferred.
+- runtime/test262/harness/docs: implement DataView BigInt64 and BigUint64
+  getters/setters with endian-aware modulo-2^64 conversion, standard prototype
+  functions, and native `byteConversionValues.js` data; port 67 previously
+  failing Test262 cases. Two immutable-buffer cases remain deferred.
 - test262/docs: port 460 additional Object descriptor and integrity cases:
   `Object.defineProperties`, `Object.getOwnPropertyDescriptor`, `freeze`,
   `seal`, extensibility/frozen/sealed predicates, and
