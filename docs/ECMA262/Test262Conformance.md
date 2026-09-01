@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 9,171 | 12 | 14,329 | 23,512 | **39.01%** |
+| Built-in objects and APIs | 9,559 | 12 | 13,941 | 23,512 | **40.65%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 12,859 | 58 | 35,324 | 48,241 | **26.66%** |
+| **Total** | 13,247 | 58 | 34,936 | 48,241 | **27.46%** |
 
 ## Language Areas
 
@@ -212,7 +212,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Promise` | 78 | 0 | 599 | 677 | **11.52%** |
 | `Proxy` | 13 | 0 | 298 | 311 | **4.18%** |
 | `Reflect` | 54 | 0 | 99 | 153 | **35.29%** |
-| `RegExp` | 118 | 0 | 1,761 | 1,879 | **6.28%** |
+| `RegExp` | 506 | 0 | 1,373 | 1,879 | **26.93%** |
 | `RegExpStringIteratorPrototype` | 5 | 0 | 12 | 17 | **29.41%** |
 | `Set` | 96 | 0 | 287 | 383 | **25.07%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |

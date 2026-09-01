@@ -129,6 +129,14 @@ public static class Test262HostRuntimeIntrinsics
                 assert.ok(CompareArray(actual, expected), message)),
             "compareArray",
             3));
+        if (included.Contains("deepEqual.js"))
+        {
+            ObjectRuntime.SetItem(assert, "deepEqual", CreateFunction(
+                (Action<object?, object?, object?>)((actual, expected, message) =>
+                    assert.ok(DeepEqual(actual, expected), message)),
+                "deepEqual",
+                3));
+        }
         if (included.Contains("compareIterator.js"))
         {
             ObjectRuntime.SetItem(assert, "compareIterator", CreateFunction(
@@ -225,6 +233,36 @@ public static class Test262HostRuntimeIntrinsics
         for (var i = 0L; i < actualLength; i++)
         {
             if (!JavaScriptRuntime.Object.@is(ObjectRuntime.GetItem(actual, (double)i), ObjectRuntime.GetItem(expected, (double)i)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool DeepEqual(object? actual, object? expected)
+    {
+        if (JavaScriptRuntime.Object.@is(actual, expected))
+        {
+            return true;
+        }
+
+        if (actual is not IJavaScriptArray || expected is not IJavaScriptArray)
+        {
+            return false;
+        }
+
+        var actualLength = ToLength(ObjectRuntime.GetItem(actual, "length"));
+        var expectedLength = ToLength(ObjectRuntime.GetItem(expected, "length"));
+        if (actualLength != expectedLength)
+        {
+            return false;
+        }
+
+        for (var i = 0L; i < actualLength; i++)
+        {
+            if (!DeepEqual(ObjectRuntime.GetItem(actual, (double)i), ObjectRuntime.GetItem(expected, (double)i)))
             {
                 return false;
             }

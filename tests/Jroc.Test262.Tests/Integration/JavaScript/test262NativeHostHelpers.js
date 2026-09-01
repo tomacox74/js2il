@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, byteConversionValues.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, byteConversionValues.js, deepEqual.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -9,6 +9,7 @@ assert.notSameValue(1, 2, 'notSameValue should use SameValue semantics');
 assert.strictEqual('abc', 'abc', 'strictEqual should alias sameValue');
 assert.notStrictEqual('abc', 'def', 'notStrictEqual should alias notSameValue');
 assert.compareArray([1, 2, 3], [1, 2, 3], 'compareArray should compare indexed elements');
+assert.deepEqual([[1, 2], [3, undefined]], [[1, 2], [3, undefined]], 'deepEqual should compare nested arrays');
 
 var expectedMatch = ['a'];
 expectedMatch.index = 0;

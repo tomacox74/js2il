@@ -599,9 +599,15 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js",
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/ExecutionTests.RegExpSyntaxBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/lookBehind/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
-        "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity."
+        "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity. The expanded Test262 evidence also covers constructor identity and flags, literal parsing, legacy pattern semantics, and supported lookbehind forms.",
+        "test262Suites": [
+          "built_ins.RegExp",
+          "built_ins.RegExp.lookBehind"
+        ]
       },
       {
         "clause": "22.2.5.1",
@@ -609,7 +615,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.escape",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
         "test262Paths": [
           "test/built-ins/RegExp/escape/escaped-control-characters.js",
@@ -623,7 +630,10 @@
           "test/built-ins/RegExp/escape/non-string-inputs.js",
           "test/built-ins/RegExp/escape/prop-desc.js"
         ],
-        "notes": "RegExp.escape is a non-constructible static function with the specified configurable, non-enumerable, writable descriptor. It requires a primitive string and escapes leading ASCII letters/digits, syntax characters and solidus, controls, whitespace/line terminators, and lone surrogates while preserving other Unicode code points."
+        "notes": "RegExp.escape is a non-constructible static function with the specified configurable, non-enumerable, writable descriptor. It requires a primitive string and escapes leading ASCII letters/digits, syntax characters and solidus, controls, whitespace/line terminators, and lone surrogates while preserving other Unicode code points. Additional Test262 coverage exercises input coercion, leading-character escaping, punctuation, controls, whitespace, and Unicode code points.",
+        "test262Suites": [
+          "built_ins.RegExp.escape"
+        ]
       },
       {
         "clause": "22.2.6.2",
@@ -637,9 +647,15 @@
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/exec/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/exec/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.RegExpSyntaxBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Named and nested captures preserve participation semantics. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Named and nested captures preserve participation semantics. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited. Expanded Test262 evidence covers named captures and match-index result behavior for the supported regexp subset.",
+        "test262Suites": [
+          "built_ins.RegExp.named-groups",
+          "built_ins.RegExp.match-indices"
+        ]
       },
       {
         "clause": "22.2.6.3",
@@ -648,9 +664,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll",
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/dotall/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.dotAll from the stored s flag. Backed by .NET Regex Singleline for the non-unicode path and by the runtime's limited unicode-pattern rewriting when /su is used."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.dotAll from the stored s flag. Backed by .NET Regex Singleline for the non-unicode path and by the runtime's limited unicode-pattern rewriting when /su is used. Additional Test262 coverage validates the dotAll accessor surface and supported matching behavior.",
+        "test262Suites": [
+          "built_ins.RegExp.dotall"
+        ]
       },
       {
         "clause": "22.2.6.4",
@@ -682,9 +702,13 @@
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js",
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.hasIndices from the stored d flag. exec() attaches .indices containing [start, end] pairs for the overall match and each capture; unmatched captures are undefined. Named captures are exposed through a null-prototype .indices.groups JsObject with source-order keys and default data-property descriptors."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.hasIndices from the stored d flag. exec() attaches .indices containing [start, end] pairs for the overall match and each capture; unmatched captures are undefined. Named captures are exposed through a null-prototype .indices.groups JsObject with source-order keys and default data-property descriptors. Additional Test262 coverage validates the hasIndices accessor alongside indexed match results.",
+        "test262Suites": [
+          "built_ins.RegExp.match-indices"
+        ]
       },
       {
         "clause": "22.2.6.7",

@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/docs: port 388 additional RegExp constructor, syntax, and intrinsic
+  cases from a 500-fixture intake, covering core behavior, dotAll,
+  `RegExp.escape`, lookbehind, match indices, and named groups. Character
+  class and property escapes, species/constructor semantics, and remaining
+  error-path behavior stay deferred.
 
 ## v0.12.16 - 2026-09-01
 
