@@ -22,6 +22,10 @@ public partial class ExecutionTests
     public Task immutable() => ExecutionTestFromFile("immutable");
     [Fact(DisplayName = "length-casted-to-zero")]
     public Task length_casted_to_zero() => ExecutionTestFromFile("length-casted-to-zero");
+    [Fact(DisplayName = "length-decreased-while-iterating")]
+    public Task length_decreased_while_iterating() => ExecutionTestFromFile("length-decreased-while-iterating");
+    [Fact(DisplayName = "length-increased-while-iterating")]
+    public Task length_increased_while_iterating() => ExecutionTestFromFile("length-increased-while-iterating");
     [Fact(DisplayName = "length-clamped-to-2pow53minus1")]
     public Task length_clamped_to_2pow53minus1() => ExecutionTestFromFile("length-clamped-to-2pow53minus1");
     [Fact(DisplayName = "length")]

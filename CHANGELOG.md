@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: make `Array.prototype.toSpliced` cache the source length
+  while observable indexed getters run, and port the final 24 pinned Array
+  change-by-copy cases across `toSorted`, `toSpliced`, and `with`.
 - test262/docs: port 388 additional RegExp constructor, syntax, and intrinsic
   cases from a 500-fixture intake, covering core behavior, dotAll,
   `RegExp.escape`, lookbehind, match indices, and named groups. Character
