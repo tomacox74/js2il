@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 388 additional RegExp constructor, syntax, and intrinsic
+  cases from a 500-fixture intake, covering core behavior, dotAll,
+  `RegExp.escape`, lookbehind, match indices, and named groups. Character
+  class and property escapes, species/constructor semantics, and remaining
+  error-path behavior stay deferred.
 - test262/docs: port 460 additional Object descriptor and integrity cases:
   `Object.defineProperties`, `Object.getOwnPropertyDescriptor`, `freeze`,
   `seal`, extensibility/frozen/sealed predicates, and

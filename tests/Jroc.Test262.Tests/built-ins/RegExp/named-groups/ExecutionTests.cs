@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.RegExp.named_groups;
 
-public class ExecutionTests : DiskExecutionTestsBase
+public partial class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.RegExp.named-groups") { }
 
