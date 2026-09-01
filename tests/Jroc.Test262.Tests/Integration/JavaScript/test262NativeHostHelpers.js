@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -79,6 +79,38 @@ var constructed = new Test262Error('constructed error');
 assert.sameValue(constructed.name, 'Test262Error');
 assert.sameValue(constructed.message, 'constructed error');
 
-assert.throws(Test262Error, function() {
-    $262.detachArrayBuffer();
-}, 'unsupported $262 APIs should fail clearly');
+var detachableBuffer = new ArrayBuffer(4);
+var detachableView = new Uint8Array(detachableBuffer);
+$DETACHBUFFER(detachableBuffer);
+assert.sameValue(detachableBuffer.detached, true);
+assert.sameValue(detachableBuffer.byteLength, 0);
+assert.sameValue(detachableView.length, 0);
+assert.sameValue(detachableView[0], undefined);
+
+var detachedDataViewBuffer = new ArrayBuffer(4);
+var detachedDataView = new DataView(detachedDataViewBuffer, 0, 4);
+$DETACHBUFFER(detachedDataViewBuffer);
+assert.throws(RangeError, function() {
+    detachedDataView.getInt8(Infinity);
+});
+
+var coercionDataViewBuffer = new ArrayBuffer(4);
+var coercionDataView = new DataView(coercionDataViewBuffer, 0, 4);
+assert.throws(TypeError, function() {
+    coercionDataView.getInt8({
+        valueOf: function() {
+            $DETACHBUFFER(coercionDataViewBuffer);
+            return 0;
+        }
+    });
+});
+
+var constructorBuffer = new ArrayBuffer(4);
+assert.throws(TypeError, function() {
+    new Uint8Array(constructorBuffer, 0, {
+        valueOf: function() {
+            $DETACHBUFFER(constructorBuffer);
+            return 1;
+        }
+    });
+});

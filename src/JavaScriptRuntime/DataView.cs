@@ -34,6 +34,7 @@ namespace JavaScriptRuntime
 
             _buffer = arrayBuffer;
             _byteOffset = CoerceIndex(byteOffset, 0, "Invalid DataView byteOffset");
+            arrayBuffer.EnsureAttached();
 
             long remainingLong = (long)arrayBuffer.ByteLengthInt - _byteOffset;
             if (_byteOffset > arrayBuffer.ByteLengthInt || remainingLong < 0 || remainingLong > int.MaxValue)
@@ -46,6 +47,7 @@ namespace JavaScriptRuntime
             _byteLength = byteLength is null || byteLength is JsNull
                 ? remaining
                 : CoerceIndex(byteLength, 0, "Invalid DataView byteLength");
+            arrayBuffer.EnsureAttached();
 
             if ((long)_byteOffset + _byteLength > arrayBuffer.ByteLengthInt)
             {
@@ -57,9 +59,23 @@ namespace JavaScriptRuntime
 
         public ArrayBuffer buffer => _buffer;
 
-        public double byteOffset => IsOutOfBounds ? 0 : _byteOffset;
+        public double byteOffset
+        {
+            get
+            {
+                _buffer.EnsureAttached();
+                return IsOutOfBounds ? 0 : _byteOffset;
+            }
+        }
 
-        public double byteLength => IsOutOfBounds ? 0 : CurrentByteLength;
+        public double byteLength
+        {
+            get
+            {
+                _buffer.EnsureAttached();
+                return IsOutOfBounds ? 0 : CurrentByteLength;
+            }
+        }
 
         public double getInt8(object? byteOffset)
             => (sbyte)ReadByte(byteOffset);
@@ -293,12 +309,13 @@ namespace JavaScriptRuntime
 
         private int GetAbsoluteIndex(object? requestedOffset, int elementSize)
         {
+            var relativeIndex = CoerceIndex(requestedOffset, 0, "Offset is outside the bounds of the DataView");
+            _buffer.EnsureAttached();
             if (IsOutOfBounds)
             {
                 throw new TypeError("DataView is out of bounds");
             }
 
-            var relativeIndex = CoerceIndex(requestedOffset, 0, "Offset is outside the bounds of the DataView");
             long relativeIndexLong = relativeIndex;
             long elementSizeLong = elementSize;
             long byteLengthLong = CurrentByteLength;
@@ -317,9 +334,10 @@ namespace JavaScriptRuntime
         }
 
         private bool IsOutOfBounds
-            => _isLengthTracking
+            => _buffer.IsDetached
+                || (_isLengthTracking
                 ? _byteOffset > _buffer.ByteLengthInt
-                : (long)_byteOffset + _byteLength > _buffer.ByteLengthInt;
+                : (long)_byteOffset + _byteLength > _buffer.ByteLengthInt);
 
         private int CurrentByteLength
             => _isLengthTracking
