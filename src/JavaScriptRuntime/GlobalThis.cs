@@ -2682,6 +2682,22 @@ namespace JavaScriptRuntime
             DefineDataViewAccessor("buffer", DataViewBufferGetter);
             DefineDataViewAccessor("byteLength", DataViewByteLengthGetter);
             DefineDataViewAccessor("byteOffset", DataViewByteOffsetGetter);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt8", (BuiltinFunction1)DataViewGetInt8, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint8", (BuiltinFunction1)DataViewGetUint8, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt16", (BuiltinFunction2)DataViewGetInt16, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint16", (BuiltinFunction2)DataViewGetUint16, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt32", (BuiltinFunction2)DataViewGetInt32, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint32", (BuiltinFunction2)DataViewGetUint32, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat32", (BuiltinFunction2)DataViewGetFloat32, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat64", (BuiltinFunction2)DataViewGetFloat64, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt8", (BuiltinFunction2)DataViewSetInt8, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint8", (BuiltinFunction2)DataViewSetUint8, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt16", (BuiltinFunction3)DataViewSetInt16, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint16", (BuiltinFunction3)DataViewSetUint16, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt32", (BuiltinFunction3)DataViewSetInt32, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint32", (BuiltinFunction3)DataViewSetUint32, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat32", (BuiltinFunction3)DataViewSetFloat32, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat64", (BuiltinFunction3)DataViewSetFloat64, 2d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.DataView.Prototype, "DataView");
         }
 
@@ -2797,19 +2813,95 @@ namespace JavaScriptRuntime
         }
 
         private static object? DataViewBufferGetter(object? thisArgument)
-            => GetDataViewThis(thisArgument, "buffer").buffer;
+            => GetDataViewThis(thisArgument, "buffer", isAccessor: true).buffer;
 
         private static object? DataViewByteLengthGetter(object? thisArgument)
-            => GetDataViewThis(thisArgument, "byteLength").byteLength;
+            => GetDataViewThis(thisArgument, "byteLength", isAccessor: true).byteLength;
 
         private static object? DataViewByteOffsetGetter(object? thisArgument)
-            => GetDataViewThis(thisArgument, "byteOffset").byteOffset;
+            => GetDataViewThis(thisArgument, "byteOffset", isAccessor: true).byteOffset;
 
-        private static JavaScriptRuntime.DataView GetDataViewThis(object? thisArgument, string propertyName)
+        private static object? DataViewGetInt8(object? thisArgument, object? byteOffset)
+            => GetDataViewThis(thisArgument, "getInt8").getInt8(byteOffset);
+
+        private static object? DataViewGetUint8(object? thisArgument, object? byteOffset)
+            => GetDataViewThis(thisArgument, "getUint8").getUint8(byteOffset);
+
+        private static object? DataViewGetInt16(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getInt16").getInt16(byteOffset, littleEndian);
+
+        private static object? DataViewGetUint16(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getUint16").getUint16(byteOffset, littleEndian);
+
+        private static object? DataViewGetInt32(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getInt32").getInt32(byteOffset, littleEndian);
+
+        private static object? DataViewGetUint32(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getUint32").getUint32(byteOffset, littleEndian);
+
+        private static object? DataViewGetFloat32(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getFloat32").getFloat32(byteOffset, littleEndian);
+
+        private static object? DataViewGetFloat64(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getFloat64").getFloat64(byteOffset, littleEndian);
+
+        private static object? DataViewSetInt8(object? thisArgument, object? byteOffset, object? value)
+            => GetDataViewThis(thisArgument, "setInt8").setInt8(byteOffset, value);
+
+        private static object? DataViewSetUint8(object? thisArgument, object? byteOffset, object? value)
+            => GetDataViewThis(thisArgument, "setUint8").setUint8(byteOffset, value);
+
+        private static object? DataViewSetInt16(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setInt16").setInt16(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetUint16(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setUint16").setUint16(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetInt32(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setInt32").setInt32(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetUint32(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setUint32").setUint32(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetFloat32(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setFloat32").setFloat32(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetFloat64(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setFloat64").setFloat64(byteOffset, value, littleEndian);
+
+        private static JavaScriptRuntime.DataView GetDataViewThis(
+            object? thisArgument,
+            string memberName,
+            bool isAccessor = false)
         {
             if (thisArgument is not JavaScriptRuntime.DataView dataView)
             {
-                throw new TypeError($"get DataView.prototype.{propertyName} called on incompatible receiver");
+                var prefix = isAccessor ? "get " : string.Empty;
+                throw new TypeError($"{prefix}DataView.prototype.{memberName} called on incompatible receiver");
             }
 
             return dataView;

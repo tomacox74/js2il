@@ -334,17 +334,25 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_Float32_Float64_RoundTrip.js",
           "tests/Jroc.Test262.Tests/built-ins/DataView/PortNext200Batch2ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt8/DetachmentBatchExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/DetachmentBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt8/IntrinsicSurfaceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/DetachmentBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/IntrinsicSurfaceExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/DataView/prototype/getFloat32/toindex-byteoffset.js",
           "test/built-ins/DataView/prototype/getFloat64/toindex-byteoffset.js",
           "test/built-ins/DataView/prototype/getInt16/toindex-byteoffset.js",
           "test/built-ins/DataView/prototype/getInt8/detached-buffer.js",
+          "test/built-ins/DataView/prototype/getInt8/length.js",
+          "test/built-ins/DataView/prototype/getInt8/name.js",
+          "test/built-ins/DataView/prototype/getInt8/not-a-constructor.js",
           "test/built-ins/DataView/prototype/setInt8/detached-buffer-after-number-value.js",
-          "test/built-ins/DataView/prototype/setInt8/index-check-before-value-conversion.js"
+          "test/built-ins/DataView/prototype/setInt8/index-check-before-value-conversion.js",
+          "test/built-ins/DataView/prototype/setInt8/length.js",
+          "test/built-ins/DataView/prototype/setInt8/name.js",
+          "test/built-ins/DataView/prototype/setInt8/not-a-constructor.js"
         ],
-        "notes": "Implements get/set for Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt64, BigUint64, and Float16 remain unimplemented."
+        "notes": "Implements get/set for Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Each operation is exposed as a receiver-aware, non-constructible prototype method with standard name, length, and property attributes. Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt64, BigUint64, and Float16 remain unimplemented."
       }
     ]
   }

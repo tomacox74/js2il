@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 9,056 | 12 | 14,444 | 23,512 | **38.52%** |
+| Built-in objects and APIs | 9,104 | 12 | 14,396 | 23,512 | **38.72%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 12,744 | 58 | 35,438 | 48,241 | **26.42%** |
+| **Total** | 12,792 | 58 | 35,391 | 48,241 | **26.52%** |
 
 ## Language Areas
 
@@ -181,7 +181,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Atomics` | 20 | 0 | 362 | 382 | **5.24%** |
 | `BigInt` | 49 | 0 | 28 | 77 | **63.64%** |
 | `Boolean` | 14 | 0 | 37 | 51 | **27.45%** |
-| `DataView` | 155 | 0 | 406 | 561 | **27.63%** |
+| `DataView` | 203 | 0 | 358 | 561 | **36.19%** |
 | `Date` | 246 | 0 | 348 | 594 | **41.41%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
