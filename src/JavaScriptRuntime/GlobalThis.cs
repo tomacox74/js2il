@@ -2690,6 +2690,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint32", (BuiltinFunction2)DataViewGetUint32, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat32", (BuiltinFunction2)DataViewGetFloat32, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat64", (BuiltinFunction2)DataViewGetFloat64, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getBigInt64", (BuiltinFunction2)DataViewGetBigInt64, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getBigUint64", (BuiltinFunction2)DataViewGetBigUint64, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt8", (BuiltinFunction2)DataViewSetInt8, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint8", (BuiltinFunction2)DataViewSetUint8, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt16", (BuiltinFunction3)DataViewSetInt16, 2d);
@@ -2698,6 +2700,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint32", (BuiltinFunction3)DataViewSetUint32, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat32", (BuiltinFunction3)DataViewSetFloat32, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat64", (BuiltinFunction3)DataViewSetFloat64, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setBigInt64", (BuiltinFunction3)DataViewSetBigInt64, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setBigUint64", (BuiltinFunction3)DataViewSetBigUint64, 2d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.DataView.Prototype, "DataView");
         }
 
@@ -2845,6 +2849,12 @@ namespace JavaScriptRuntime
         private static object? DataViewGetFloat64(object? thisArgument, object? byteOffset, object? littleEndian)
             => GetDataViewThis(thisArgument, "getFloat64").getFloat64(byteOffset, littleEndian);
 
+        private static object? DataViewGetBigInt64(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getBigInt64").getBigInt64(byteOffset, littleEndian);
+
+        private static object? DataViewGetBigUint64(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getBigUint64").getBigUint64(byteOffset, littleEndian);
+
         private static object? DataViewSetInt8(object? thisArgument, object? byteOffset, object? value)
             => GetDataViewThis(thisArgument, "setInt8").setInt8(byteOffset, value);
 
@@ -2892,6 +2902,20 @@ namespace JavaScriptRuntime
             object? value,
             object? littleEndian)
             => GetDataViewThis(thisArgument, "setFloat64").setFloat64(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetBigInt64(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setBigInt64").setBigInt64(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetBigUint64(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setBigUint64").setBigUint64(byteOffset, value, littleEndian);
 
         private static JavaScriptRuntime.DataView GetDataViewThis(
             object? thisArgument,

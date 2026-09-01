@@ -108,13 +108,13 @@
     {
       "clause": "25.3.4.5",
       "title": "DataView.prototype.getBigInt64 ( byteOffset [ , littleEndian ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype.getbigint64"
     },
     {
       "clause": "25.3.4.6",
       "title": "DataView.prototype.getBigUint64 ( byteOffset [ , littleEndian ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype.getbiguint64"
     },
     {
@@ -174,13 +174,13 @@
     {
       "clause": "25.3.4.16",
       "title": "DataView.prototype.setBigInt64 ( byteOffset , value [ , littleEndian ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype.setbigint64"
     },
     {
       "clause": "25.3.4.17",
       "title": "DataView.prototype.setBigUint64 ( byteOffset , value [ , littleEndian ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype.setbiguint64"
     },
     {
@@ -326,7 +326,7 @@
       },
       {
         "clause": "25.3.4",
-        "feature": "DataView integer and floating-point getters/setters",
+        "feature": "DataView numeric getters/setters",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object",
         "testScripts": [
@@ -335,8 +335,12 @@
           "tests/Jroc.Test262.Tests/built-ins/DataView/PortNext200Batch2ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt8/DetachmentBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt8/IntrinsicSurfaceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getBigInt64/BigIntBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getBigUint64/BigIntBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/DetachmentBatchExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/IntrinsicSurfaceExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/IntrinsicSurfaceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setBigInt64/BigIntBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setBigUint64/BigIntBatchExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/DataView/prototype/getFloat32/toindex-byteoffset.js",
@@ -346,13 +350,17 @@
           "test/built-ins/DataView/prototype/getInt8/length.js",
           "test/built-ins/DataView/prototype/getInt8/name.js",
           "test/built-ins/DataView/prototype/getInt8/not-a-constructor.js",
+          "test/built-ins/DataView/prototype/getBigInt64/return-values.js",
+          "test/built-ins/DataView/prototype/getBigUint64/return-values.js",
           "test/built-ins/DataView/prototype/setInt8/detached-buffer-after-number-value.js",
           "test/built-ins/DataView/prototype/setInt8/index-check-before-value-conversion.js",
           "test/built-ins/DataView/prototype/setInt8/length.js",
           "test/built-ins/DataView/prototype/setInt8/name.js",
-          "test/built-ins/DataView/prototype/setInt8/not-a-constructor.js"
+          "test/built-ins/DataView/prototype/setInt8/not-a-constructor.js",
+          "test/built-ins/DataView/prototype/setBigInt64/set-values-return-undefined.js",
+          "test/built-ins/DataView/prototype/setBigUint64/this-is-not-object.js"
         ],
-        "notes": "Implements get/set for Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Each operation is exposed as a receiver-aware, non-constructible prototype method with standard name, length, and property attributes. Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt64, BigUint64, and Float16 remain unimplemented."
+        "notes": "Implements get/set for BigInt64, BigUint64, Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Each operation is exposed as a receiver-aware, non-constructible prototype method with standard name, length, and property attributes. Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt writes use modulo-2^64 conversion. Float16 and immutable ArrayBuffer write rejection remain unimplemented."
       }
     ]
   }

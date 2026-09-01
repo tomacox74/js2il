@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, byteConversionValues.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -49,6 +49,10 @@ assert.sameValue($MAX_ITERATIONS, 100000);
 assert.sameValue(NaNs.length, 9);
 assert(NaNs.every(Number.isNaN));
 assert(checkSequence([1, 2, 3]));
+assert.sameValue(byteConversionValues.values.length, 56);
+assert.sameValue(byteConversionValues.values[0], 127);
+assert.sameValue(byteConversionValues.values[20], undefined);
+assert.sameValue(byteConversionValues.values[38], Infinity);
 
 var typedArrayRuns = 0;
 testWithTypedArrayConstructors(function(TA, makeCtorArg) {
