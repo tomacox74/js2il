@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 460 additional Object descriptor and integrity cases:
+  `Object.defineProperties`, `Object.getOwnPropertyDescriptor`, `freeze`,
+  `seal`, extensibility/frozen/sealed predicates, and
+  `Object.preventExtensions`. Proxy invariants, resizable typed-array
+  receivers, abrupt-completion/error-object behavior, and specialized
+  descriptor-reflection edges remain deferred.
 - runtime/test262/docs: expose all 16 supported numeric DataView getters and
   setters as standard receiver-aware, non-constructible prototype methods with
   correct function metadata; port 48 previously failing Test262 cases covering
