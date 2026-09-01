@@ -44,6 +44,15 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "newtarget-is-undefined.js")]
     public Task newtarget_is_undefined() => ExecutionTestFromFile("newtarget-is-undefined");
 
+    [Fact(DisplayName = "newtarget-proto-custom.js")]
+    public Task newtarget_proto_custom() => ExecutionTestFromFile("newtarget-proto-custom");
+
+    [Fact(DisplayName = "newtarget-proto-fallback.js")]
+    public Task newtarget_proto_fallback() => ExecutionTestFromFile("newtarget-proto-fallback");
+
+    [Fact(DisplayName = "newtarget-proto.js")]
+    public Task newtarget_proto() => ExecutionTestFromFile("newtarget-proto");
+
     [Fact(DisplayName = "order-of-args-evaluation.js")]
     public Task order_of_args_evaluation()
         => ExecutionTestFromFile("order-of-args-evaluation");

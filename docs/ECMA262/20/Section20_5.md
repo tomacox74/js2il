@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T07:03:44Z
+> Last generated (UTC): 2026-09-01T18:31:35Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -123,7 +123,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| AggregateError constructor and iterable error list | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs` | `test/built-ins/AggregateError/errors-iterabletolist-failures.js`<br>`test/built-ins/AggregateError/errors-iterabletolist.js`<br>`test/built-ins/AggregateError/message-method-prop-cast.js`<br>`test/built-ins/AggregateError/message-method-prop.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt-symbol.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt.js`<br>`test/built-ins/AggregateError/message-undefined-no-prop.js`<br>`test/built-ins/AggregateError/newtarget-is-undefined.js`<br>`test/built-ins/AggregateError/order-of-args-evaluation.js` | AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes a writable non-enumerable errors array, and creates an own message property only for defined messages. Error cause options, custom newTarget prototypes, and cross-realm construction remain limited. |
+| AggregateError constructor and iterable error list | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs` | `test/built-ins/AggregateError/errors-iterabletolist-failures.js`<br>`test/built-ins/AggregateError/errors-iterabletolist.js`<br>`test/built-ins/AggregateError/message-method-prop-cast.js`<br>`test/built-ins/AggregateError/message-method-prop.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt-symbol.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt.js`<br>`test/built-ins/AggregateError/message-undefined-no-prop.js`<br>`test/built-ins/AggregateError/newtarget-is-undefined.js`<br>`test/built-ins/AggregateError/newtarget-proto-custom.js`<br>`test/built-ins/AggregateError/newtarget-proto-fallback.js`<br>`test/built-ins/AggregateError/newtarget-proto.js`<br>`test/built-ins/AggregateError/order-of-args-evaluation.js` | AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes a writable non-enumerable errors array, creates an own message property only for defined messages, and honors default, custom, and fallback newTarget prototypes. Error cause options and cross-realm construction remain limited. |
 
 ### 20.5.7.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors))
 

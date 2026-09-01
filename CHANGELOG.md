@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port three additional AggregateError constructor cases from a
+  five-fixture intake, covering default, custom, and fallback `newTarget`
+  prototype selection. Error cause options and cross-realm construction remain
+  deferred.
 - test262/docs: port 363 additional Date cases from a 436-fixture intake,
   covering construction, UTC/local accessors and mutators, formatting, JSON,
   and primitive conversion. Setter coercion/time-clip behavior, temporal
