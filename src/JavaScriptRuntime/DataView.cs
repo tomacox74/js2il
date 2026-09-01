@@ -33,27 +33,29 @@ namespace JavaScriptRuntime
             }
 
             _buffer = arrayBuffer;
-            _byteOffset = CoerceIndex(byteOffset, 0, "Invalid DataView byteOffset");
+            var requestedByteOffset = CoerceIndex(byteOffset, 0, "Invalid DataView byteOffset");
             arrayBuffer.EnsureAttached();
 
-            long remainingLong = (long)arrayBuffer.ByteLengthInt - _byteOffset;
-            if (_byteOffset > arrayBuffer.ByteLengthInt || remainingLong < 0 || remainingLong > int.MaxValue)
+            if (requestedByteOffset > arrayBuffer.ByteLengthInt)
             {
                 throw new RangeError("Invalid DataView byteOffset");
             }
 
+            _byteOffset = (int)requestedByteOffset;
+            long remainingLong = (long)arrayBuffer.ByteLengthInt - _byteOffset;
             var remaining = (int)remainingLong;
             _isLengthTracking = (byteLength is null || byteLength is JsNull) && arrayBuffer.IsResizable;
-            _byteLength = byteLength is null || byteLength is JsNull
+            var requestedByteLength = byteLength is null || byteLength is JsNull
                 ? remaining
                 : CoerceIndex(byteLength, 0, "Invalid DataView byteLength");
             arrayBuffer.EnsureAttached();
 
-            if ((long)_byteOffset + _byteLength > arrayBuffer.ByteLengthInt)
+            if (_byteOffset + requestedByteLength > arrayBuffer.ByteLengthInt)
             {
                 throw new RangeError("Invalid DataView byteLength");
             }
 
+            _byteLength = (int)requestedByteLength;
             PrototypeChain.SetPrototype(this, Prototype);
         }
 
@@ -145,13 +147,15 @@ namespace JavaScriptRuntime
 
         public object? setInt8(object? byteOffset, object? value)
         {
-            WriteByte(byteOffset, unchecked((byte)TypeUtilities.ToInt8(value)));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteByte(index, unchecked((byte)TypeUtilities.ToInt8(value)));
             return null;
         }
 
         public object? setUint8(object? byteOffset, object? value)
         {
-            WriteByte(byteOffset, TypeUtilities.ToUint8(value));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteByte(index, TypeUtilities.ToUint8(value));
             return null;
         }
 
@@ -160,7 +164,8 @@ namespace JavaScriptRuntime
 
         public object? setInt16(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteUInt16(byteOffset, unchecked((ushort)TypeUtilities.ToInt16(value)), UseLittleEndian(littleEndian));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteUInt16(index, unchecked((ushort)TypeUtilities.ToInt16(value)), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -169,7 +174,8 @@ namespace JavaScriptRuntime
 
         public object? setUint16(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteUInt16(byteOffset, TypeUtilities.ToUint16(value), UseLittleEndian(littleEndian));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteUInt16(index, TypeUtilities.ToUint16(value), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -178,7 +184,8 @@ namespace JavaScriptRuntime
 
         public object? setInt32(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteUInt32(byteOffset, unchecked((uint)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteUInt32(index, unchecked((uint)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -187,7 +194,8 @@ namespace JavaScriptRuntime
 
         public object? setUint32(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteUInt32(byteOffset, unchecked((uint)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteUInt32(index, unchecked((uint)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -196,7 +204,8 @@ namespace JavaScriptRuntime
 
         public object? setFloat32(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteSingle(byteOffset, (float)TypeUtilities.ToNumber(value), UseLittleEndian(littleEndian));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteSingle(index, (float)TypeUtilities.ToNumber(value), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -205,7 +214,8 @@ namespace JavaScriptRuntime
 
         public object? setFloat64(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteDouble(byteOffset, TypeUtilities.ToNumber(value), UseLittleEndian(littleEndian));
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteDouble(index, TypeUtilities.ToNumber(value), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -215,13 +225,13 @@ namespace JavaScriptRuntime
             return _buffer.RawBytes[index];
         }
 
-        private void WriteByte(object? requestedOffset, byte value)
+        private void WriteByte(long requestedOffset, byte value)
         {
             var index = GetAbsoluteIndex(requestedOffset, 1);
             _buffer.RawBytes[index] = value;
         }
 
-        private void WriteUInt16(object? requestedOffset, ushort value, bool littleEndian)
+        private void WriteUInt16(long requestedOffset, ushort value, bool littleEndian)
         {
             var index = GetAbsoluteIndex(requestedOffset, 2);
             var bytes = _buffer.RawBytes;
@@ -237,7 +247,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private void WriteUInt32(object? requestedOffset, uint value, bool littleEndian)
+        private void WriteUInt32(long requestedOffset, uint value, bool littleEndian)
         {
             var index = GetAbsoluteIndex(requestedOffset, 4);
             var bytes = _buffer.RawBytes;
@@ -257,7 +267,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private void WriteSingle(object? requestedOffset, float value, bool littleEndian)
+        private void WriteSingle(long requestedOffset, float value, bool littleEndian)
         {
             var index = GetAbsoluteIndex(requestedOffset, 4);
             var bytes = BitConverter.GetBytes(value);
@@ -269,7 +279,7 @@ namespace JavaScriptRuntime
             System.Buffer.BlockCopy(bytes, 0, _buffer.RawBytes, index, 4);
         }
 
-        private void WriteDouble(object? requestedOffset, double value, bool littleEndian)
+        private void WriteDouble(long requestedOffset, double value, bool littleEndian)
         {
             var index = GetAbsoluteIndex(requestedOffset, 8);
             var bytes = BitConverter.GetBytes(value);
@@ -310,27 +320,25 @@ namespace JavaScriptRuntime
         private int GetAbsoluteIndex(object? requestedOffset, int elementSize)
         {
             var relativeIndex = CoerceIndex(requestedOffset, 0, "Offset is outside the bounds of the DataView");
+            return GetAbsoluteIndex(relativeIndex, elementSize);
+        }
+
+        private int GetAbsoluteIndex(long relativeIndex, int elementSize)
+        {
             _buffer.EnsureAttached();
             if (IsOutOfBounds)
             {
                 throw new TypeError("DataView is out of bounds");
             }
 
-            long relativeIndexLong = relativeIndex;
             long elementSizeLong = elementSize;
             long byteLengthLong = CurrentByteLength;
-            if (relativeIndexLong < 0 || relativeIndexLong + elementSizeLong > byteLengthLong)
+            if (relativeIndex + elementSizeLong > byteLengthLong)
             {
                 throw new RangeError("Offset is outside the bounds of the DataView");
             }
 
-            long absoluteIndexLong = (long)_byteOffset + relativeIndexLong;
-            if (absoluteIndexLong < 0 || absoluteIndexLong > int.MaxValue)
-            {
-                throw new RangeError("Offset is outside the bounds of the DataView");
-            }
-
-            return (int)absoluteIndexLong;
+            return checked(_byteOffset + (int)relativeIndex);
         }
 
         private bool IsOutOfBounds
@@ -347,7 +355,7 @@ namespace JavaScriptRuntime
         private static bool UseLittleEndian(object? value)
             => value is not null && value is not JsNull && TypeUtilities.ToBoolean(value);
 
-        private static int CoerceIndex(object? value, int defaultValue, string errorMessage)
+        private static long CoerceIndex(object? value, long defaultValue, string errorMessage)
         {
             if (value is null || value is JsNull)
             {
@@ -361,12 +369,12 @@ namespace JavaScriptRuntime
             }
 
             var truncated = System.Math.Truncate(number);
-            if (double.IsInfinity(number) || truncated < 0 || truncated > int.MaxValue)
+            if (double.IsInfinity(number) || truncated < 0 || truncated > 9007199254740991d)
             {
                 throw new RangeError(errorMessage);
             }
 
-            return (int)truncated;
+            return (long)truncated;
         }
     }
 }

@@ -232,6 +232,26 @@ public sealed class BuiltinAdapterRuntimeTests
         });
     }
 
+    [Fact]
+    public void DataViewSetterConvertsValueBeforeRejectingLargeValidIndex()
+    {
+        WithRealm(() =>
+        {
+            var view = new DataView(new ArrayBuffer(1d));
+            var marker = new InvalidOperationException("value coercion marker");
+            var value = new JsObject();
+            ObjectRuntime.SetItem(
+                value,
+                "valueOf",
+                new BuiltinDelegateFunctionAdapter((Func<object?>)(() => throw marker)));
+
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => view.setInt8(2147483648d, value));
+
+            Assert.Same(marker, exception);
+        });
+    }
+
 
     [Fact]
     public void Uint8ArrayBase64AndHexMethodsUseReceiverAwareAdapters()
