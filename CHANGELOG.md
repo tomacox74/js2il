@@ -10,6 +10,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   descriptor creation, data/accessor/generic attribute defaults, property-key
   coercion, descriptor conflicts, and non-configurable redefinition
   invariants for ordinary objects.
+- test262/docs: port 66 additional `ArrayBuffer` cases covering construction,
+  `isView`, byte-length and resizability accessors, resizing, slicing, and
+  shared-buffer rejection by transfer APIs. Ninety-four detachment, transfer,
+  species, custom-constructor, and remaining resize edge cases stay deferred.
 - test262/docs: port 458 additional `String.prototype` cases covering `at`,
   character access, concatenation, searching, Unicode well-formedness,
   matching, replacement, slicing, splitting, case conversion, trimming, and
