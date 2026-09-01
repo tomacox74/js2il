@@ -42,9 +42,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-json",
         "testScripts": [
-          "tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
+          "tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js",
+          "tests/Jroc.Test262.Tests/built-ins/JSON/stringify/ExecutionTests.Batch.cs"
         ],
-        "notes": "JavaScriptRuntime.JSON exposes both JSON.parse and JSON.stringify. JSON.parse creates ordinary JsObject records, translates parsing errors to JavaScript SyntaxError, and supports post-order reviver traversal with holder this values, deletion, and replacement. The current bounded test262 coverage also exercises JSON.stringify function metadata, ordinary property ordering, array replacer filtering/order/deduplication, boxed string/number replacer entries, ignored undefined/sparse replacer entries, and proxy abrupt-completion paths. Broader exotic, cyclic, and cross-realm behavior remains limited.",
+        "notes": "JavaScriptRuntime.JSON exposes both JSON.parse and JSON.stringify. JSON.parse creates ordinary JsObject records, translates parsing errors to JavaScript SyntaxError, and supports post-order reviver traversal with holder this values, deletion, and replacement. JSON.stringify coverage includes function metadata, ordinary property ordering, array replacer filtering/order/deduplication, observable boxed primitive coercion, cyclic-value rejection, well-formed lone-surrogate escaping, and nested Proxy array/object traversal with abrupt-completion propagation. Broader exotic and cross-realm behavior remains limited.",
         "test262Paths": [
           "test/built-ins/JSON/parse/15.12.1.1-0-1.js",
           "test/built-ins/JSON/parse/reviver-call-order.js",

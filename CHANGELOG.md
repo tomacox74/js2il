@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: align `JSON.stringify` replacer filtering, boxed
+  primitive coercion, nested Proxy array/object traversal, abrupt length
+  handling, and lone-surrogate escaping; port 36 additional pinned cases.
 - runtime/test262/docs: make `Array.prototype.toSpliced` cache the source length
   while observable indexed getters run, and port the final 24 pinned Array
   change-by-copy cases across `toSorted`, `toSpliced`, and `with`.

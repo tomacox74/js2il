@@ -675,7 +675,7 @@ namespace JavaScriptRuntime
                     return CoerceOwnKeys(trapResult, includeEncodedSymbolKeys).ToList();
                 }
 
-                obj = proxy.GetTarget("ownKeys");
+                return GetOrderedOwnKeys(proxy.GetTarget("ownKeys"), includeEncodedSymbolKeys);
             }
 
             return ReorderOwnKeys(CollectOwnKeysInEncounterOrder(obj), includeEncodedSymbolKeys);
@@ -3737,7 +3737,7 @@ namespace JavaScriptRuntime
                     return true;
                 }
 
-                target = proxyTarget;
+                return TryGetOwnPropertyDescriptor(proxyTarget, propName, out descriptor);
             }
 
             if (PropertyDescriptorStore.IsDeleted(target, propName))
