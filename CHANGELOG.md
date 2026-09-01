@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: expose `ArrayBuffer.prototype.resize` as a standard
+  receiver-aware, non-constructible built-in method and port 15 previously
+  failing Test262 cases covering metadata, resizing, and receiver validation.
+  Detachment and immutable-buffer cases remain deferred.
 - test262/docs: port 66 additional `ArrayBuffer` cases covering construction,
   `isView`, byte-length and resizability accessors, resizing, slicing, and
   shared-buffer rejection by transfer APIs. Ninety-four detachment, transfer,
