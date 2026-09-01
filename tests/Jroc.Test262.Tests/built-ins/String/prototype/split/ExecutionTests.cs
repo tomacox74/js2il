@@ -6,7 +6,7 @@ namespace Jroc.Test262.Tests.built_ins.String.prototype.split;
 
 
 
-public class ExecutionTests : DiskExecutionTestsBase
+public partial class ExecutionTests : DiskExecutionTestsBase
 
 {
 

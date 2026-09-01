@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 458 additional `String.prototype` cases covering `at`,
+  character access, concatenation, searching, Unicode well-formedness,
+  matching, replacement, slicing, splitting, case conversion, trimming, and
+  `valueOf`. Thirty cases requiring direct `eval`, RegExp `v` or duplicate
+  named-group support, cross-realm host APIs, Unicode canonical-equivalence
+  collation, specialized casing, or replacement-callable lowering remain
+  deferred.
 - test262/docs: port 41 additional static Array method cases: 26 for
   `Array.from`, 14 for `Array.isArray`, and one for `Array.of`, covering
   iterator and mapper behavior, array-like sources, metadata, abrupt

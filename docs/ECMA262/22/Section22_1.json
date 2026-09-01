@@ -126,7 +126,7 @@
     {
       "clause": "22.1.3.12",
       "title": "String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.localecompare"
     },
     {
@@ -719,12 +719,16 @@
       {
         "clause": "22.1.3.12",
         "feature": "String.prototype.localeCompare (numeric compare)",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_LocaleCompare_Numeric.js"
+          "tests/Jroc.Tests/String/JavaScript/String_LocaleCompare_Numeric.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/localeCompare/ExecutionTests.Batch.cs"
         ],
-        "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
+        "test262Suites": [
+          "built_ins.String.prototype.localeCompare"
+        ],
+        "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option is supported. Canonically equivalent Unicode strings are not yet consistently treated as equal, so locale-sensitive collation remains limited."
       },
       {
         "clause": "22.1.3.13",

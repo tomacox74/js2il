@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 5,520 | 12 | 17,980 | 23,512 | **23.48%** |
+| Built-in objects and APIs | 5,978 | 12 | 17,522 | 23,512 | **25.43%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 9,208 | 58 | 38,975 | 48,241 | **19.09%** |
+| **Total** | 9,666 | 58 | 38,517 | 48,241 | **20.04%** |
 
 ## Language Areas
 
@@ -218,7 +218,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 37 | 0 | 67 | 104 | **35.58%** |
-| `String` | 622 | 1 | 600 | 1,223 | **50.86%** |
+| `String` | 1,080 | 1 | 142 | 1,223 | **88.31%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
