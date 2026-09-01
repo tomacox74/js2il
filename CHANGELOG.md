@@ -10,6 +10,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   descriptor-bag validation, data/accessor/generic descriptors, property-key
   coercion, attribute defaults, and ordinary-object definitions. Four
   specialized redefinition edge cases remain deferred.
+- runtime/test262/docs: expose `ArrayBuffer.prototype.resize` as a standard
+  receiver-aware, non-constructible built-in method and port 15 previously
+  failing Test262 cases covering metadata, resizing, and receiver validation.
+  Detachment and immutable-buffer cases remain deferred.
 - test262/docs: port 500 additional `Object.defineProperty` cases covering
   descriptor creation, data/accessor/generic attribute defaults, property-key
   coercion, descriptor conflicts, and non-configurable redefinition

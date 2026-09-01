@@ -441,6 +441,15 @@ namespace JavaScriptRuntime
 
             return buffer.slice(start, end);
         };
+        private static readonly BuiltinFunction1 _arrayBufferPrototypeResizeValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.resize called on incompatible receiver");
+            }
+
+            return buffer.resize(newLength);
+        };
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly BuiltinFunction2 _sharedArrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
@@ -2666,6 +2675,7 @@ namespace JavaScriptRuntime
             DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
             DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
         }
