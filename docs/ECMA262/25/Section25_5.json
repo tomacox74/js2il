@@ -98,9 +98,10 @@
         "testScripts": [
           "tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_Reviver_Holder.js",
           "tests/Jroc.Test262.Tests/built-ins/JSON/parse/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/JSON/parse/ExecutionTests.Batch.cs",
           "tests/Jroc.Test262.Tests/built-ins/JSON/PortNext200Batch2ExecutionTests.cs"
         ],
-        "notes": "Implemented by JavaScriptRuntime.JSON.Parse with ECMAScript string coercion and SyntaxError translation for invalid input. Reviver processing walks properties post-order, observes forward object/array modifications, defines replacement properties, and supplies the ES2025 context object with exact source text for unmodified primitive parse nodes. Broader proxy, cross-realm, and extreme-depth behavior remains limited.",
+        "notes": "Implemented by JavaScriptRuntime.JSON.Parse with ECMAScript string coercion and SyntaxError translation for invalid input. The complete pinned JSON.parse directory is covered. Reviver processing walks properties post-order, identifies Proxy-wrapped arrays, observes and coerces array lengths, propagates Proxy internal-operation failures, observes forward object/array modifications, defines replacement properties, and supplies the ES2025 context object with exact source text for unmodified primitive parse nodes. Extreme-depth behavior remains runtime-limited.",
         "test262Paths": [
           "test/built-ins/JSON/parse/15.12.1.1-0-1.js",
           "test/built-ins/JSON/parse/15.12.1.1-0-4.js",
@@ -111,7 +112,13 @@
           "test/built-ins/JSON/parse/15.12.1.1-g2-4.js",
           "test/built-ins/JSON/parse/15.12.1.1-0-2.js",
           "test/built-ins/JSON/parse/15.12.1.1-g1-2.js",
+          "test/built-ins/JSON/parse/revived-proxy.js",
+          "test/built-ins/JSON/parse/reviver-array-define-prop-err.js",
+          "test/built-ins/JSON/parse/reviver-array-length-coerce-err.js",
+          "test/built-ins/JSON/parse/reviver-array-length-get-err.js",
           "test/built-ins/JSON/parse/reviver-call-order.js",
+          "test/built-ins/JSON/parse/reviver-object-define-prop-err.js",
+          "test/built-ins/JSON/parse/text-non-string-primitive.js",
           "test/built-ins/JSON/parse/reviver-wrapper.js"
         ]
       },

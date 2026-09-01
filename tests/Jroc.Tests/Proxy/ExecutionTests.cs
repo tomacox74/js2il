@@ -32,5 +32,8 @@ namespace Jroc.Tests.Proxy
 
         [Fact]
         public Task Proxy_Validation_EdgeCases() { var testName = nameof(Proxy_Validation_EdgeCases); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_DefineProperty_InvariantsAndDescriptorForwarding() { var testName = nameof(Proxy_DefineProperty_InvariantsAndDescriptorForwarding); return ExecutionTest(testName); }
     }
 }

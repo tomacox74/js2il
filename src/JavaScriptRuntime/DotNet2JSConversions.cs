@@ -28,6 +28,7 @@ namespace JavaScriptRuntime
         {
             if (value is not null
                 && value is not JsNull
+                && value is not Symbol
                 && value is not string
                 && !value.GetType().IsValueType)
             {

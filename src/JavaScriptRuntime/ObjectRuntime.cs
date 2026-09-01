@@ -503,12 +503,33 @@ namespace JavaScriptRuntime
 
             if (receiver is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("deleteProperty", "deleteProperty", new object?[] { proxy.GetTarget("deleteProperty"), key }, out var trapResult))
+                var target = proxy.GetTarget("deleteProperty");
+                if (proxy.TryInvokeTrap("deleteProperty", "deleteProperty", new object?[] { target, ToExternalPropertyKey(key) }, out var trapResult))
                 {
-                    return TypeUtilities.ToBoolean(trapResult);
+                    if (!TypeUtilities.ToBoolean(trapResult))
+                    {
+                        if (throwOnError)
+                        {
+                            throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
+                        }
+
+                        return false;
+                    }
+
+                    if (!TryGetOwnPropertyDescriptor(target, key, out var targetDescriptor))
+                    {
+                        return true;
+                    }
+
+                    if (!targetDescriptor.Configurable || !isExtensible(target))
+                    {
+                        throw new JavaScriptRuntime.TypeError("Proxy deleteProperty trap reported an incompatible property descriptor");
+                    }
+
+                    return true;
                 }
 
-                receiver = proxy.GetTarget("deleteProperty");
+                return DeletePropertyCore(target, key, throwOnError);
             }
 
             if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)

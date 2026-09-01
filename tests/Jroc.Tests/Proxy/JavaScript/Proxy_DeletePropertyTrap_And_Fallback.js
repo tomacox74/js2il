@@ -16,7 +16,11 @@ const trappedProxy = new Proxy(trappedTarget, {
 
 console.log(delete trappedProxy.removeMe);
 console.log("removeMe" in trappedTarget);
-console.log(delete trappedProxy.blocked);
+try {
+  console.log(delete trappedProxy.blocked);
+} catch (error) {
+  console.log(error.name);
+}
 console.log("blocked" in trappedTarget);
 console.log(seen.join(","));
 
