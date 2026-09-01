@@ -450,6 +450,24 @@ namespace JavaScriptRuntime
 
             return buffer.resize(newLength);
         };
+        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.transfer called on incompatible receiver");
+            }
+
+            return buffer.transfer(newLength);
+        };
+        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferToFixedLengthValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.transferToFixedLength called on incompatible receiver");
+            }
+
+            return buffer.transferToFixedLength(newLength);
+        };
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly BuiltinFunction2 _sharedArrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
@@ -2686,6 +2704,8 @@ namespace JavaScriptRuntime
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transfer", _arrayBufferPrototypeTransferValue, 0d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transferToFixedLength", _arrayBufferPrototypeTransferToFixedLengthValue, 0d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
         }
 

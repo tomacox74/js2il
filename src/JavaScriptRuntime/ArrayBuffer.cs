@@ -68,6 +68,14 @@ namespace JavaScriptRuntime
             InitializeIntrinsicSurface();
         }
 
+        private ArrayBuffer(byte[] bytes, int maxByteLength)
+        {
+            _storage = new RuntimeArrayBufferStorage(bytes);
+            _maxByteLength = maxByteLength;
+            _isResizable = true;
+            InitializeIntrinsicSurface();
+        }
+
         internal ArrayBuffer(RuntimeArrayBufferStorage storage)
         {
             _storage = storage;
@@ -159,6 +167,18 @@ namespace JavaScriptRuntime
             return null;
         }
 
+        public ArrayBuffer transfer()
+            => TransferCore(null, preserveResizability: true);
+
+        public ArrayBuffer transfer(object? newLength)
+            => TransferCore(newLength, preserveResizability: true);
+
+        public ArrayBuffer transferToFixedLength()
+            => TransferCore(null, preserveResizability: false);
+
+        public ArrayBuffer transferToFixedLength(object? newLength)
+            => TransferCore(newLength, preserveResizability: false);
+
         public static bool isView(object? arg)
             => arg is DataView or TypedArrayBase;
 
@@ -185,6 +205,34 @@ namespace JavaScriptRuntime
             {
                 throw new TypeError("ArrayBuffer is detached");
             }
+        }
+
+        private ArrayBuffer TransferCore(object? newLength, bool preserveResizability)
+        {
+            var newByteLength = newLength is null
+                ? ByteLengthInt
+                : CoerceByteLength(newLength);
+            EnsureAttached();
+
+            if (preserveResizability && _isResizable && newByteLength > _maxByteLength)
+            {
+                throw new RangeError("Invalid ArrayBuffer length");
+            }
+
+            var resultBytes = newByteLength == 0
+                ? System.Array.Empty<byte>()
+                : new byte[newByteLength];
+            var copyLength = System.Math.Min(newByteLength, ByteLengthInt);
+            if (copyLength > 0)
+            {
+                System.Buffer.BlockCopy(_storage.Bytes, 0, resultBytes, 0, copyLength);
+            }
+
+            var result = preserveResizability && _isResizable
+                ? new ArrayBuffer(resultBytes, _maxByteLength)
+                : new ArrayBuffer(resultBytes, cloneBuffer: false);
+            Detach();
+            return result;
         }
 
         private object ResolveSpeciesConstructor()

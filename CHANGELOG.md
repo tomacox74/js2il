@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: implement `ArrayBuffer.prototype.transfer` and
+  `transferToFixedLength` with copy-and-detach semantics, resizability
+  preservation, length coercion, standard metadata, and receiver validation;
+  port 44 previously failing Test262 cases. Immutable ArrayBuffer variants
+  remain deferred.
 - runtime/test262/docs: implement ArrayBuffer detachment state and the
   `ArrayBuffer.prototype.detached` accessor, add native
   `$262.detachArrayBuffer`/`$DETACHBUFFER` harness support, invalidate typed

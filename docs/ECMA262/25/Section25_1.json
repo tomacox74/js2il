@@ -42,7 +42,7 @@
     {
       "clause": "25.1.3.3",
       "title": "ArrayBufferCopyAndDetach ( arrayBuffer , newLength , preserveResizability )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arraybuffercopyanddetach"
     },
     {
@@ -228,13 +228,13 @@
     {
       "clause": "25.1.6.8",
       "title": "ArrayBuffer.prototype.transfer ( [ newLength ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer"
     },
     {
       "clause": "25.1.6.9",
       "title": "ArrayBuffer.prototype.transferToFixedLength ( [ newLength ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength"
     },
     {
@@ -266,7 +266,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js"
         ],
-        "notes": "Implemented as a JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers, and maxByteLength enables resizable buffers within the runtime's supported allocation range. Immutable buffers and transfer APIs are not implemented."
+        "notes": "Implemented as a JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers, and maxByteLength enables resizable buffers within the runtime's supported allocation range. Immutable buffers are not implemented."
       },
       {
         "clause": "25.1.5.1",
@@ -302,7 +302,7 @@
           "test/built-ins/ArrayBuffer/prototype/constructor.js",
           "test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js"
         ],
-        "notes": "Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, prototype descriptors, and the standard @@species accessor. ArrayBuffer.prototype has receiver-checked byteLength, detached, maxByteLength, resizable, resize, and @@toStringTag properties. Custom newTarget prototypes, immutable buffers, and transfer operations remain limited."
+        "notes": "Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, prototype descriptors, and the standard @@species accessor. ArrayBuffer.prototype has receiver-checked byteLength, detached, maxByteLength, resizable, resize, transfer, transferToFixedLength, and @@toStringTag properties. Custom newTarget prototypes and immutable buffers remain limited."
       },
       {
         "clause": "25.1.5.3",
@@ -334,7 +334,7 @@
           "test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js",
           "test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js"
         ],
-        "notes": "byteLength reflects the backing byte[] length and returns zero after detachment. slice resolves Symbol.species, constructs the result through the selected constructor, validates the returned ArrayBuffer and capacity, rejects reuse of the source buffer, and copies the selected bytes. Detached buffers are rejected by slice; immutable buffers and transfer semantics remain limited."
+        "notes": "byteLength reflects the backing byte[] length and returns zero after detachment. slice resolves Symbol.species, constructs the result through the selected constructor, validates the returned ArrayBuffer and capacity, rejects reuse of the source buffer, and copies the selected bytes. Detached buffers are rejected by slice; immutable-buffer semantics remain limited."
       },
       {
         "clause": "25.1.6.3",
@@ -375,6 +375,23 @@
           "test/built-ins/ArrayBuffer/prototype/resize/this-is-not-resizable-arraybuffer-object.js"
         ],
         "notes": "Exposes resize as a standard non-constructible prototype method with receiver checks and standard metadata. Resizable buffers grow or shrink within maxByteLength while preserving existing bytes, and detachment is checked after coercing the requested length. Immutable ArrayBuffer variants remain unsupported."
+      },
+      {
+        "clause": "25.1.6.8",
+        "feature": "ArrayBuffer.prototype.transfer and transferToFixedLength",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transfer/FailingBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transferToFixedLength/FailingBatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-larger.js",
+          "test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-same.js",
+          "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-smaller.js",
+          "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-zero.js"
+        ],
+        "notes": "Both transfer methods coerce optional lengths, allocate and zero-fill the destination, preserve source bytes up to the destination length, and detach the source. transfer preserves resizability and maxByteLength, while transferToFixedLength always returns a fixed-length buffer. Immutable ArrayBuffer rejection remains unavailable because immutable buffers are not yet implemented."
       }
     ]
   }
