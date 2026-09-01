@@ -52,6 +52,14 @@ public static class Test262HostRuntimeIntrinsics
             Test262ResizableArrayBufferHelpers.Register(builder);
         }
 
+        if (included.Contains("detachArrayBuffer.js"))
+        {
+            builder.AddGlobalFactory("$DETACHBUFFER", () => CreateFunction(
+                (Action<object?>)DetachArrayBuffer,
+                "$DETACHBUFFER",
+                1));
+        }
+
         if (included.Contains("testAtomics.js"))
         {
             Test262AtomicsHelpers.Register(builder);
@@ -158,10 +166,23 @@ public static class Test262HostRuntimeIntrinsics
             (Func<object>)CreateRealm,
             "createRealm",
             0));
-        ObjectRuntime.SetItem(result, "detachArrayBuffer", Unsupported262("$262.detachArrayBuffer"));
+        ObjectRuntime.SetItem(result, "detachArrayBuffer", CreateFunction(
+            (Action<object?>)DetachArrayBuffer,
+            "detachArrayBuffer",
+            1));
         ObjectRuntime.SetItem(result, "evalScript", Unsupported262("$262.evalScript"));
         ObjectRuntime.SetItem(result, "gc", Unsupported262("$262.gc"));
         return result;
+    }
+
+    private static void DetachArrayBuffer(object? value)
+    {
+        if (value is not ArrayBuffer buffer || value is SharedArrayBuffer)
+        {
+            throw new TypeError("$262.detachArrayBuffer requires an ArrayBuffer");
+        }
+
+        buffer.Detach();
     }
 
     private static object CreateRealm()

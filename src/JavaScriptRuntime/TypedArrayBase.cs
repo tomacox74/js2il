@@ -556,6 +556,7 @@ namespace JavaScriptRuntime
             }
 
             var offset = CoerceNonNegativeIndex(byteOffset, 0, $"Invalid {TypedArrayName} byteOffset");
+            buffer.EnsureAttached();
             if (offset > buffer.ByteLengthInt || offset % BytesPerElement != 0)
             {
                 throw new RangeError($"Invalid {TypedArrayName} byteOffset");
@@ -575,6 +576,7 @@ namespace JavaScriptRuntime
             else
             {
                 elementLength = CoerceNonNegativeIndex(length, 0, $"Invalid {TypedArrayName} length");
+                buffer.EnsureAttached();
                 if ((long)elementLength * BytesPerElement > remainingBytes)
                 {
                     throw new RangeError($"Invalid {TypedArrayName} length");
@@ -1105,11 +1107,13 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TryGetElementIndex(double index, out int elementIndex)
         {
-            // Fast path for views over non-resizable buffers: a single field compare with
-            // no buffer dereference. The equality check rejects NaN, infinities, negative
-            // values, and non-integers, so they fall through to the slow path.
+            // Fast path for attached views over non-resizable buffers. The equality check
+            // rejects NaN, infinities, negative values, and non-integers, so they fall
+            // through to the slow path.
             var candidate = (int)index;
-            if (candidate == index && (uint)candidate < (uint)_fastLength)
+            if (!_buffer.IsDetached
+                && candidate == index
+                && (uint)candidate < (uint)_fastLength)
             {
                 elementIndex = candidate;
                 return true;
@@ -1141,9 +1145,8 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Recomputes <see cref="_fastLength"/>. This is safe to compute once per
         /// initialization because <c>ArrayBuffer.resizable</c> is fixed at construction and
-        /// the runtime has no <c>transfer</c>/detach support, so the byte length of a
-        /// non-resizable buffer is immutable. If detach, transfer, or growable
-        /// SharedArrayBuffer support is added, this cache must be invalidated there.
+        /// non-resizable buffer is immutable. Indexed access checks detached state before
+        /// consulting this cache.
         /// </summary>
         private void UpdateFastLength()
             => _fastLength = _buffer.IsResizable ? 0 : _length;
@@ -1162,6 +1165,11 @@ namespace JavaScriptRuntime
         {
             get
             {
+                if (_buffer.IsDetached)
+                {
+                    return true;
+                }
+
                 if (!_buffer.IsResizable)
                 {
                     return false;
@@ -1178,6 +1186,11 @@ namespace JavaScriptRuntime
 
         private int GetCurrentLengthOrZero()
         {
+            if (_buffer.IsDetached)
+            {
+                return 0;
+            }
+
             if (_fastLength != 0)
             {
                 return _fastLength;

@@ -2681,6 +2681,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_arrayBufferConstructorValue, "isView", _arrayBufferIsViewValue, 1d);
             DefineSpeciesAccessorProperty(_arrayBufferConstructorValue);
             DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
+            DefineArrayBufferAccessor("detached", static buffer => buffer.detached);
             DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
@@ -2739,7 +2740,8 @@ namespace JavaScriptRuntime
         {
             BuiltinFunction0 getter = thisArgument =>
             {
-                if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer)
+                if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer
+                    || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
                 {
                     throw new TypeError($"get ArrayBuffer.prototype.{propertyName} called on incompatible receiver");
                 }

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262/docs: implement ArrayBuffer detachment state and the
+  `ArrayBuffer.prototype.detached` accessor, add native
+  `$262.detachArrayBuffer`/`$DETACHBUFFER` harness support, invalidate typed
+  array and DataView views after detachment, and port 19 previously failing
+  Test262 cases covering accessors, metadata, receiver validation, and resize
+  detachment checks.
 - runtime/test262/docs: implement `ArrayBuffer.prototype.slice` species
   construction and port eight previously failing Test262 cases covering
   constructor validation, custom result buffers, capacity checks, and source

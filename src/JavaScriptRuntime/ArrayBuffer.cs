@@ -10,6 +10,7 @@ namespace JavaScriptRuntime
         private readonly RuntimeArrayBufferStorage _storage;
         private readonly int _maxByteLength;
         private readonly bool _isResizable;
+        private bool _isDetached;
 
         public ArrayBuffer()
         {
@@ -74,15 +75,17 @@ namespace JavaScriptRuntime
             InitializeIntrinsicSurface();
         }
 
-        public double byteLength => _storage.Bytes.Length;
-        public double maxByteLength => _maxByteLength;
+        public double byteLength => _isDetached ? 0 : _storage.Bytes.Length;
+        public double maxByteLength => _isDetached ? 0 : _maxByteLength;
         public bool resizable => _isResizable;
+        public bool detached => _isDetached;
 
         public ArrayBuffer slice(object? start)
             => slice(start, null);
 
         public ArrayBuffer slice(object? start, object? end)
         {
+            EnsureAttached();
             var initialByteLength = _storage.Bytes.Length;
             var startIndex = CoerceRelativeIndex(start, 0, initialByteLength);
             var endIndex = CoerceRelativeIndex(end, initialByteLength, initialByteLength);
@@ -104,6 +107,8 @@ namespace JavaScriptRuntime
                 throw new TypeError("ArrayBuffer species constructor returned the source buffer");
             }
 
+            EnsureAttached();
+            resultBuffer.EnsureAttached();
             if (resultBuffer.ByteLengthInt < length)
             {
                 throw new TypeError("ArrayBuffer species constructor returned a buffer that is too small");
@@ -134,6 +139,7 @@ namespace JavaScriptRuntime
             }
 
             var byteLength = CoerceByteLength(newLength);
+            EnsureAttached();
             if (byteLength > _maxByteLength)
             {
                 throw new RangeError("Invalid ArrayBuffer length");
@@ -160,6 +166,26 @@ namespace JavaScriptRuntime
 
         internal byte[] RawBytes => _storage.Bytes;
         internal bool IsResizable => _isResizable;
+        internal bool IsDetached => _isDetached;
+
+        internal void Detach()
+        {
+            if (this is SharedArrayBuffer)
+            {
+                throw new TypeError("SharedArrayBuffer cannot be detached");
+            }
+
+            _storage.Bytes = System.Array.Empty<byte>();
+            _isDetached = true;
+        }
+
+        internal void EnsureAttached()
+        {
+            if (_isDetached)
+            {
+                throw new TypeError("ArrayBuffer is detached");
+            }
+        }
 
         private object ResolveSpeciesConstructor()
         {
