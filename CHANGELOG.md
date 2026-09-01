@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.16 - 2026-09-01
+
 - test262/docs: port 460 additional Object descriptor and integrity cases:
   `Object.defineProperties`, `Object.getOwnPropertyDescriptor`, `freeze`,
   `seal`, extensibility/frozen/sealed predicates, and
