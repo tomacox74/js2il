@@ -6,7 +6,7 @@ namespace Jroc.Test262.Tests.built_ins.JSON.parse;
 
 
 
-public class ExecutionTests : DiskExecutionTestsBase
+public partial class ExecutionTests : DiskExecutionTestsBase
 
 {
 

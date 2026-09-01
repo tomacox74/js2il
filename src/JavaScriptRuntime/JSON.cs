@@ -58,7 +58,7 @@ namespace JavaScriptRuntime
 
         public static object? Parse(object? text, object? reviver)
         {
-            var s = DotNet2JSConversions.ToString(text);
+            var s = DotNet2JSConversions.ToStringRejectingSymbols(text);
 
             try
             {
@@ -92,14 +92,14 @@ namespace JavaScriptRuntime
                 parseNode = null;
             }
 
-            if (value is Array array)
+            if (Array.isArray(value))
             {
-                var length = (int)array.length;
-                for (var i = 0; i < length; i++)
+                var length = ToRuntimeArrayLength(ObjectRuntime.GetItem(value!, "length"));
+                for (var i = 0d; i < length; i++)
                 {
-                    var key = i.ToString(CultureInfo.InvariantCulture);
+                    var key = DotNet2JSConversions.ToString(i);
                     var revived = InternalizeJsonProperty(
-                        array,
+                        value!,
                         key,
                         reviver,
                         parseNode?.GetChild(key));
@@ -107,13 +107,13 @@ namespace JavaScriptRuntime
                     {
                         // Spec: Perform ? val.[[Delete]](key) - a failed (non-configurable)
                         // deletion completes normally without throwing.
-                        ObjectRuntime.DeletePropertyNonStrict(array, key);
+                        ObjectRuntime.DeletePropertyNonStrict(value!, key);
                     }
                     else
                     {
                         // Spec: Perform ? CreateDataProperty(val, key, newElement) - a failed
                         // (e.g. non-configurable) definition completes normally without throwing.
-                        ObjectRuntime.CreateDataProperty(array, key, revived);
+                        ObjectRuntime.CreateDataProperty(value!, key, revived);
                     }
                 }
             }
@@ -148,6 +148,20 @@ namespace JavaScriptRuntime
             }
 
             return CallableOperations.Call3(reviver, holder, name, value, context);
+        }
+
+        private static double ToRuntimeArrayLength(object? value)
+        {
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number) || number <= 0d)
+            {
+                return 0d;
+            }
+
+            const double maxSafeInteger = 9007199254740991d;
+            return double.IsPositiveInfinity(number)
+                ? maxSafeInteger
+                : global::System.Math.Min(global::System.Math.Floor(number), maxSafeInteger);
         }
 
         public static object RawJSON(object? text)

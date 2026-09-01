@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 10,242 | 12 | 13,258 | 23,512 | **43.56%** |
+| Built-in objects and APIs | 10,278 | 12 | 13,222 | 23,512 | **43.71%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 13,930 | 58 | 34,253 | 48,241 | **28.88%** |
+| **Total** | 13,966 | 58 | 34,217 | 48,241 | **28.95%** |
 
 ## Language Areas
 
@@ -199,7 +199,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
 | `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
 | `Iterator` | 9 | 0 | 501 | 510 | **1.76%** |
-| `JSON` | 125 | 0 | 40 | 165 | **75.76%** |
+| `JSON` | 161 | 0 | 4 | 165 | **97.58%** |
 | `Map` | 142 | 0 | 62 | 204 | **69.61%** |
 | `MapIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `Math` | 150 | 0 | 177 | 327 | **45.87%** |

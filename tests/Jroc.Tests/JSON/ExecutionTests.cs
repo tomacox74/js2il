@@ -13,5 +13,13 @@ namespace Jroc.Tests.JSON
 		[Fact]
 		public Task JSON_Parse_Reviver_Holder()
 			=> ExecutionTest(nameof(JSON_Parse_Reviver_Holder));
+
+		[Fact]
+		public Task JSON_Parse_ReviverProxyArrayLengthUsesToLength()
+			=> ExecutionTest(nameof(JSON_Parse_ReviverProxyArrayLengthUsesToLength));
+
+		[Fact]
+		public Task JSON_Parse_SymbolPrimitiveRejectsOverriddenCoercion()
+			=> ExecutionTest(nameof(JSON_Parse_SymbolPrimitiveRejectsOverriddenCoercion));
 	}
 }

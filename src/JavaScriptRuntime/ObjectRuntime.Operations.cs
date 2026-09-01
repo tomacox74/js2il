@@ -280,36 +280,32 @@ namespace JavaScriptRuntime
 
         private static RequestedPropertyDescriptor ParseRequestedPropertyDescriptor(object attributes)
         {
-            var descriptor = new RequestedPropertyDescriptor
-            {
-                HasEnumerable = HasProperty(attributes, "enumerable"),
-                HasConfigurable = HasProperty(attributes, "configurable"),
-                HasWritable = HasProperty(attributes, "writable"),
-                HasValue = HasProperty(attributes, "value"),
-                HasGet = HasProperty(attributes, "get"),
-                HasSet = HasProperty(attributes, "set")
-            };
-
+            var descriptor = new RequestedPropertyDescriptor();
+            descriptor.HasEnumerable = HasProperty(attributes, "enumerable");
             if (descriptor.HasEnumerable)
             {
                 descriptor.Enumerable = TypeUtilities.ToBoolean(GetProperty(attributes, "enumerable"));
             }
 
+            descriptor.HasConfigurable = HasProperty(attributes, "configurable");
             if (descriptor.HasConfigurable)
             {
                 descriptor.Configurable = TypeUtilities.ToBoolean(GetProperty(attributes, "configurable"));
             }
 
-            if (descriptor.HasWritable)
-            {
-                descriptor.Writable = TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
-            }
-
+            descriptor.HasValue = HasProperty(attributes, "value");
             if (descriptor.HasValue)
             {
                 descriptor.Value = GetProperty(attributes, "value");
             }
 
+            descriptor.HasWritable = HasProperty(attributes, "writable");
+            if (descriptor.HasWritable)
+            {
+                descriptor.Writable = TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
+            }
+
+            descriptor.HasGet = HasProperty(attributes, "get");
             if (descriptor.HasGet)
             {
                 descriptor.Get = GetProperty(attributes, "get");
@@ -319,6 +315,7 @@ namespace JavaScriptRuntime
                 }
             }
 
+            descriptor.HasSet = HasProperty(attributes, "set");
             if (descriptor.HasSet)
             {
                 descriptor.Set = GetProperty(attributes, "set");
@@ -358,6 +355,37 @@ namespace JavaScriptRuntime
                 Writable = requested.HasWritable && requested.Writable,
                 Value = requested.HasValue ? requested.Value : null
             };
+        }
+
+        private static object CreatePropertyDescriptorObject(RequestedPropertyDescriptor requested)
+        {
+            var descriptor = CreateOrdinaryObject();
+            if (requested.HasValue)
+            {
+                descriptor.SetBoxedValue("value", requested.Value);
+            }
+            if (requested.HasWritable)
+            {
+                descriptor.SetBoxedValue("writable", requested.Writable);
+            }
+            if (requested.HasGet)
+            {
+                descriptor.SetBoxedValue("get", requested.Get);
+            }
+            if (requested.HasSet)
+            {
+                descriptor.SetBoxedValue("set", requested.Set);
+            }
+            if (requested.HasEnumerable)
+            {
+                descriptor.SetBoxedValue("enumerable", requested.Enumerable);
+            }
+            if (requested.HasConfigurable)
+            {
+                descriptor.SetBoxedValue("configurable", requested.Configurable);
+            }
+
+            return descriptor;
         }
 
         private static bool TryApplyRequestedDescriptorToExisting(
@@ -1503,17 +1531,42 @@ namespace JavaScriptRuntime
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
                 var target = proxy.GetTarget("defineProperty");
-                if (proxy.TryInvokeTrap("defineProperty", "defineProperty", new object?[] { target, key, attributes }, out var trapResult))
+                var trapAttributes = CreatePropertyDescriptorObject(requested);
+                if (proxy.TryInvokeTrap("defineProperty", "defineProperty", new object?[] { target, ToExternalPropertyKey(key), trapAttributes }, out var trapResult))
                 {
                     if (!TypeUtilities.ToBoolean(trapResult))
                     {
                         return false;
                     }
 
+                    var targetHasDescriptor = TryGetOwnPropertyDescriptor(target, key, out var targetDescriptor);
+                    var extensibleTarget = isExtensible(target);
+                    var settingConfigFalse = requested.HasConfigurable && !requested.Configurable;
+                    if (!targetHasDescriptor)
+                    {
+                        if (!extensibleTarget || settingConfigFalse)
+                        {
+                            throw new TypeError("Proxy defineProperty trap reported an incompatible property descriptor");
+                        }
+                    }
+                    else
+                    {
+                        if (!TryApplyRequestedDescriptorToExisting(targetDescriptor, requested, out _)
+                            || settingConfigFalse && targetDescriptor.Configurable
+                            || targetDescriptor.Kind == JsPropertyDescriptorKind.Data
+                                && !targetDescriptor.Configurable
+                                && targetDescriptor.Writable
+                                && requested.HasWritable
+                                && !requested.Writable)
+                        {
+                            throw new TypeError("Proxy defineProperty trap reported an incompatible property descriptor");
+                        }
+                    }
+
                     return true;
                 }
 
-                obj = target;
+                return TryDefineProperty(target, key, requested, attributes);
             }
 
             if (obj is JavaScriptRuntime.Array
@@ -1606,6 +1659,16 @@ namespace JavaScriptRuntime
                 HasValue = true,
                 Value = value
             };
+
+            if (target is JavaScriptRuntime.Proxy)
+            {
+                var attributes = CreateOrdinaryObject();
+                attributes.SetBoxedValue("value", value);
+                attributes.SetBoxedValue("writable", true);
+                attributes.SetBoxedValue("enumerable", true);
+                attributes.SetBoxedValue("configurable", true);
+                return TryDefineProperty(target, key, requested, attributes);
+            }
 
             var hasOwnProperty = TryGetOwnPropertyDescriptor(target, key, out var existingDescriptor);
             if (!hasOwnProperty && !IsExtensibleInternal(target))
@@ -1840,7 +1903,7 @@ namespace JavaScriptRuntime
                         throw new TypeError(
                             "Proxy preventExtensions trap returned false");
                     }
-                    if (IsExtensibleInternal(target))
+                    if (isExtensible(target))
                     {
                         throw new TypeError(
                             "Proxy preventExtensions trap returned true for an extensible target");
@@ -1875,17 +1938,17 @@ namespace JavaScriptRuntime
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
                 var target = proxy.GetTarget("isExtensible");
-                var targetResult = IsExtensibleInternal(target);
                 if (!proxy.TryInvokeTrap(
                         "isExtensible",
                         "isExtensible",
                         [target],
                         out var trapResult))
                 {
-                    return targetResult;
+                    return isExtensible(target);
                 }
 
                 var proxyResult = TypeUtilities.ToBoolean(trapResult);
+                var targetResult = isExtensible(target);
                 if (proxyResult != targetResult)
                 {
                     throw new TypeError(
@@ -3696,29 +3759,32 @@ namespace JavaScriptRuntime
                     new object?[] { proxyTarget, ToExternalPropertyKey(propName) },
                     out var trapResult))
                 {
-                    if (trapResult is null || trapResult is JsNull)
+                    var trapResultIsUndefined = trapResult is null;
+                    if (!trapResultIsUndefined && !IsPropertyDescriptorObject(trapResult))
                     {
-                        if (TryGetOwnPropertyDescriptor(proxyTarget, propName, out var targetDescriptor))
+                        throw new TypeError("Proxy getOwnPropertyDescriptor trap must return an object or undefined");
+                    }
+
+                    var targetHasDescriptor = TryGetOwnPropertyDescriptor(proxyTarget, propName, out var targetDescriptor);
+                    if (trapResultIsUndefined)
+                    {
+                        if (!targetHasDescriptor)
                         {
-                            if (!IsExtensibleInternal(proxyTarget) || !targetDescriptor.Configurable)
-                            {
-                                throw new TypeError("Proxy getOwnPropertyDescriptor trap returned undefined for a non-configurable or non-extensible target property");
-                            }
+                            descriptor = default;
+                            return false;
+                        }
+
+                        if (!targetDescriptor.Configurable || !isExtensible(proxyTarget))
+                        {
+                            throw new TypeError("Proxy getOwnPropertyDescriptor trap returned undefined for a non-configurable or non-extensible target property");
                         }
 
                         descriptor = default;
                         return false;
                     }
 
-                    if (!IsPropertyDescriptorObject(trapResult))
-                    {
-                        throw new TypeError("Proxy getOwnPropertyDescriptor trap must return an object or undefined");
-                    }
-
+                    var extensibleTarget = isExtensible(proxyTarget);
                     descriptor = CreateDescriptorForNewProperty(ParseRequestedPropertyDescriptor(trapResult!));
-
-                    var extensibleTarget = IsExtensibleInternal(proxyTarget);
-                    var targetHasDescriptor = TryGetOwnPropertyDescriptor(proxyTarget, propName, out var targetDescriptorForValidation);
                     if (!targetHasDescriptor)
                     {
                         if (!extensibleTarget || !descriptor.Configurable)
@@ -3729,7 +3795,7 @@ namespace JavaScriptRuntime
                         return true;
                     }
 
-                    if (!IsCompatibleProxyOwnPropertyDescriptor(descriptor, targetDescriptorForValidation))
+                    if (!IsCompatibleProxyOwnPropertyDescriptor(descriptor, targetDescriptor))
                     {
                         throw new TypeError("Proxy getOwnPropertyDescriptor trap reported an incompatible property descriptor");
                     }
@@ -4031,7 +4097,7 @@ namespace JavaScriptRuntime
 
             if (targetDescriptor.Kind == JsPropertyDescriptorKind.Data)
             {
-                if (!targetDescriptor.Writable && reportedDescriptor.Writable)
+                if (targetDescriptor.Writable != reportedDescriptor.Writable)
                 {
                     return false;
                 }
