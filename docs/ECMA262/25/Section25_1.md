@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T03:39:59Z
+> Last generated (UTC): 2026-09-01T04:15:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -19,7 +19,7 @@
 | 25.1.3 | Abstract Operations For ArrayBuffer Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-arraybuffer-objects) |
 | 25.1.3.1 | AllocateArrayBuffer ( constructor , byteLength [ , maxByteLength ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-allocatearraybuffer) |
 | 25.1.3.2 | ArrayBufferByteLength ( arrayBuffer , order ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybufferbytelength) |
-| 25.1.3.3 | ArrayBufferCopyAndDetach ( arrayBuffer , newLength , preserveResizability ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffercopyanddetach) |
+| 25.1.3.3 | ArrayBufferCopyAndDetach ( arrayBuffer , newLength , preserveResizability ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffercopyanddetach) |
 | 25.1.3.4 | IsDetachedBuffer ( arrayBuffer ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-isdetachedbuffer) |
 | 25.1.3.5 | DetachArrayBuffer ( arrayBuffer [ , key ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-detacharraybuffer) |
 | 25.1.3.6 | CloneArrayBuffer ( srcBuffer , srcByteOffset , srcLength ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-clonearraybuffer) |
@@ -50,8 +50,8 @@
 | 25.1.6.5 | get ArrayBuffer.prototype.resizable | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-arraybuffer.prototype.resizable) |
 | 25.1.6.6 | ArrayBuffer.prototype.resize ( newLength ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.resize) |
 | 25.1.6.7 | ArrayBuffer.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice) |
-| 25.1.6.8 | ArrayBuffer.prototype.transfer ( [ newLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer) |
-| 25.1.6.9 | ArrayBuffer.prototype.transferToFixedLength ( [ newLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength) |
+| 25.1.6.8 | ArrayBuffer.prototype.transfer ( [ newLength ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer) |
+| 25.1.6.9 | ArrayBuffer.prototype.transferToFixedLength ( [ newLength ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength) |
 | 25.1.6.10 | ArrayBuffer.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype-%symbol.tostringtag%) |
 | 25.1.7 | Properties of ArrayBuffer Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-instances) |
 | 25.1.8 | Resizable ArrayBuffer Guidelines | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-resizable-arraybuffer-guidelines) |
@@ -64,13 +64,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer first-class constructor and prototype metadata | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/maxByteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resizable/ExecutionTests.cs` | `test/built-ins/ArrayBuffer/length.js`<br>`test/built-ins/ArrayBuffer/name.js`<br>`test/built-ins/ArrayBuffer/prop-desc.js`<br>`test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, prototype descriptors, and the standard @@species accessor. ArrayBuffer.prototype has receiver-checked byteLength, detached, maxByteLength, resizable, resize, and @@toStringTag properties. Custom newTarget prototypes, immutable buffers, and transfer operations remain limited. |
+| ArrayBuffer first-class constructor and prototype metadata | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/maxByteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resizable/ExecutionTests.cs` | `test/built-ins/ArrayBuffer/length.js`<br>`test/built-ins/ArrayBuffer/name.js`<br>`test/built-ins/ArrayBuffer/prop-desc.js`<br>`test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, prototype descriptors, and the standard @@species accessor. ArrayBuffer.prototype has receiver-checked byteLength, detached, maxByteLength, resizable, resize, transfer, transferToFixedLength, and @@toStringTag properties. Custom newTarget prototypes and immutable buffers remain limited. |
 
 ### 25.1.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer-length))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer(length) | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) |  | Implemented as a JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers, and maxByteLength enables resizable buffers within the runtime's supported allocation range. Immutable buffers and transfer APIs are not implemented. |
+| ArrayBuffer(length) | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) |  | Implemented as a JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers, and maxByteLength enables resizable buffers within the runtime's supported allocation range. Immutable buffers are not implemented. |
 
 ### 25.1.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.isview))
 
@@ -88,7 +88,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/SpeciesBatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-is-not-constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js` | byteLength reflects the backing byte[] length and returns zero after detachment. slice resolves Symbol.species, constructs the result through the selected constructor, validates the returned ArrayBuffer and capacity, rejects reuse of the source buffer, and copies the selected bytes. Detached buffers are rejected by slice; immutable buffers and transfer semantics remain limited. |
+| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/SpeciesBatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-is-not-constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js`<br>`test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js` | byteLength reflects the backing byte[] length and returns zero after detachment. slice resolves Symbol.species, constructs the result through the selected constructor, validates the returned ArrayBuffer and capacity, rejects reuse of the source buffer, and copies the selected bytes. Detached buffers are rejected by slice; immutable-buffer semantics remain limited. |
 
 ### 25.1.6.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-arraybuffer.prototype.detached))
 
@@ -101,4 +101,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | ArrayBuffer.prototype.resize | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resize/FailingBatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/resize/descriptor.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/extensible.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/length.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/name.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/resize-grow.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/resize-shrink.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/this-is-not-arraybuffer-object.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/this-is-not-resizable-arraybuffer-object.js` | Exposes resize as a standard non-constructible prototype method with receiver checks and standard metadata. Resizable buffers grow or shrink within maxByteLength while preserving existing bytes, and detachment is checked after coercing the requested length. Immutable ArrayBuffer variants remain unsupported. |
+
+### 25.1.6.8 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| ArrayBuffer.prototype.transfer and transferToFixedLength | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transfer/FailingBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transferToFixedLength/FailingBatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-larger.js`<br>`test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-same.js`<br>`test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-smaller.js`<br>`test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-zero.js` | Both transfer methods coerce optional lengths, allocate and zero-fill the destination, preserve source bytes up to the destination length, and detach the source. transfer preserves resizability and maxByteLength, while transferToFixedLength always returns a fixed-length buffer. Immutable ArrayBuffer rejection remains unavailable because immutable buffers are not yet implemented. |
 
