@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 363 additional Date cases from a 436-fixture intake,
+  covering construction, UTC/local accessors and mutators, formatting, JSON,
+  and primitive conversion. Setter coercion/time-clip behavior, temporal
+  conversion, realm edges, and four `dateConstants.js` harness cases remain
+  deferred.
 - runtime/test262/docs: align `JSON.stringify` replacer filtering, boxed
   primitive coercion, nested Proxy array/object traversal, abrupt length
   handling, and lone-surrogate escaping; port 36 additional pinned cases.
