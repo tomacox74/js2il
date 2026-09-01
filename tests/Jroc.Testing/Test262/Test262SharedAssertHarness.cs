@@ -103,7 +103,7 @@ public static class Test262SharedAssertHarness
             return FrontmatterMetadata.Empty;
         }
 
-        var body = match.Groups["body"].Value;
+        var body = match.Groups["body"].Value.Replace("\r\n", "\n").Replace('\r', '\n');
         return new FrontmatterMetadata(
             ParseArrayValue(body, "flags").Contains("onlyStrict", StringComparer.Ordinal),
             ParseArrayValue(body, "includes"),

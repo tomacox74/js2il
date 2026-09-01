@@ -115,6 +115,29 @@
   "support": {
     "entries": [
       {
+        "clause": "20.2",
+        "feature": "Function object and prototype conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Function/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/internals/Call/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/internals/Construct/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/length/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/Symbol.hasInstance/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/apply/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/arguments/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/caller/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/caller-arguments/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/constructor/FunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs"
+        ],
+        "notes": "348 additional pinned Test262 cases verify Function constructor and instance attributes, call and construct behavior, restricted caller and arguments properties, apply, bind, call, and native-source-style toString behavior. Dynamic Function source handling, complete function source reconstruction, cross-realm behavior, and remaining exotic/proxy edge cases stay limited."
+      },
+      {
         "clause": "20.2.1.1.1",
         "feature": "Function/new Function with compile-time string literal parameter/body source",
         "status": "Supported with Limitations",
@@ -275,9 +298,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.tostring",
         "testScripts": [
-          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs"
         ],
-        "notes": "Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
+        "notes": "Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. The pinned Test262 coverage includes 70 source-form and native-function syntax cases. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
       },
       {
         "clause": "20.2.4.1",

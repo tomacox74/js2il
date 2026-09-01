@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/harness/docs: port 348 additional Function object cases from the
+  complete 464-fixture unported intake, covering constructor and instance
+  attributes, callable and construct internals, restricted properties,
+  apply/bind/call, and native-source-style `toString`. Add narrowly scoped
+  native `nativeFunctionMatcher.js` and `wellKnownIntrinsicObjects.js` helper
+  support and recognize CR-only Test262 frontmatter. Dynamic source,
+  cross-realm, and remaining exotic/proxy cases remain deferred.
 - test262/docs: port 363 additional Date cases from a 436-fixture intake,
   covering construction, UTC/local accessors and mutators, formatting, JSON,
   and primitive conversion. Setter coercion/time-clip behavior, temporal

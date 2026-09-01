@@ -95,6 +95,16 @@ public static class Test262HostRuntimeIntrinsics
             Test262ProxyTrapsHelpers.Register(builder);
         }
 
+        if (included.Contains("nativeFunctionMatcher.js"))
+        {
+            Test262NativeFunctionMatcherHelpers.Register(builder);
+        }
+
+        if (included.Contains("wellKnownIntrinsicObjects.js"))
+        {
+            Test262WellKnownIntrinsicObjectsHelpers.Register(builder);
+        }
+
         if (included.Contains("byteConversionValues.js"))
         {
             Test262ByteConversionHelpers.Register(builder);
