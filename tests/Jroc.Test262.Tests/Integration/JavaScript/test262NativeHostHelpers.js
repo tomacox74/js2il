@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, byteConversionValues.js, deepEqual.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -132,3 +132,13 @@ assert.sameValue(allowedProxyTrapCalls, 1);
 assert.throws(Test262Error, function() {
     allowedProxyTraps.set();
 });
+
+assertNativeFunction(Function.prototype.bind);
+assertToStringOrNativeFunction(Function.prototype.bind, 'function bind() { [native code] }');
+assert.throws(SyntaxError, function() {
+    validateNativeFunctionSource('function broken() {}');
+});
+
+assert.sameValue(WellKnownIntrinsicObjects.length, 1);
+assert.sameValue(WellKnownIntrinsicObjects[0].name, '%ThrowTypeError%');
+assert.sameValue(WellKnownIntrinsicObjects[0].value, undefined);

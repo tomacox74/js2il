@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T01:15:54Z
+> Last generated (UTC): 2026-09-01T19:02:34Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -35,6 +35,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 20.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Function object and prototype conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Function/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/internals/Call/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/internals/Construct/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/length/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/Symbol.hasInstance/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/apply/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/arguments/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/caller/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/caller-arguments/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/constructor/FunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs` |  | 348 additional pinned Test262 cases verify Function constructor and instance attributes, call and construct behavior, restricted caller and arguments properties, apply, bind, call, and native-source-style toString behavior. Dynamic Function source handling, complete function source reconstruction, cross-realm behavior, and remaining exotic/proxy edge cases stay limited. |
 
 ### 20.2.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-createdynamicfunction))
 
@@ -70,7 +76,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Function.prototype.toString ( ) returns a function-like source string | Supported with Limitations | [`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) |  | Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented. |
+| Function.prototype.toString ( ) returns a function-like source string | Supported with Limitations | [`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs` |  | Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. The pinned Test262 coverage includes 70 source-form and native-function syntax cases. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented. |
 
 ### 20.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances))
 
