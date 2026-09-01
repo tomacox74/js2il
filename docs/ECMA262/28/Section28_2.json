@@ -52,9 +52,11 @@
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js",
           "tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Proxy/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Proxy/apply/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/apply/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/defineProperty/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/deleteProperty/ExecutionTests.cs"
         ],
-        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation. Currently implemented traps are get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct, each with fallback-to-target behavior when the trap is absent. Proxy intentionally remains a non-JsObject exotic representation: its own-property operations dispatch through descriptor traps or target forwarding rather than JsObject shape/slot fast paths, preserving the currently implemented trap validation and invariants. Full ECMAScript Proxy coverage remains limited to the documented and tested behavior."
+        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation. Currently implemented traps are get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct, each with fallback-to-target behavior when the trap is absent. The defineProperty and deleteProperty operations validate target configurability, writability, and extensibility invariants, preserve abrupt completions, and forward recursively through nested Proxy targets when a trap is null or undefined. Proxy intentionally remains a non-JsObject exotic representation: its own-property operations dispatch through descriptor traps or target forwarding rather than JsObject shape/slot fast paths. Full ECMAScript Proxy coverage remains limited to the documented and tested behavior; cross-realm trap cases are not yet covered."
       },
       {
         "clause": "28.2.2.1",
