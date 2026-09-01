@@ -1,10 +1,14 @@
 using System;
+using System.Buffers.Binary;
+using System.Numerics;
 
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("DataView")]
     public sealed class DataView
     {
+        private static readonly BigInteger BigInt64Modulus = BigInteger.One << 64;
+
         /// <summary>Realm-owned <c>DataView.prototype</c> (issue #1824).</summary>
         internal static object Prototype
             => RuntimeIntrinsics.Current.GetOrCreate(
@@ -145,6 +149,32 @@ namespace JavaScriptRuntime
         public double getFloat64(object? byteOffset, object? littleEndian)
             => ReadDouble(GetAbsoluteIndex(byteOffset, 8), UseLittleEndian(littleEndian));
 
+        public object getBigInt64(object? byteOffset)
+            => getBigInt64(byteOffset, null);
+
+        public object getBigInt64(object? byteOffset, object? littleEndian)
+        {
+            var index = GetAbsoluteIndex(byteOffset, 8);
+            var bytes = _buffer.RawBytes.AsSpan(index, 8);
+            var value = UseLittleEndian(littleEndian)
+                ? BinaryPrimitives.ReadInt64LittleEndian(bytes)
+                : BinaryPrimitives.ReadInt64BigEndian(bytes);
+            return new BigInteger(value);
+        }
+
+        public object getBigUint64(object? byteOffset)
+            => getBigUint64(byteOffset, null);
+
+        public object getBigUint64(object? byteOffset, object? littleEndian)
+        {
+            var index = GetAbsoluteIndex(byteOffset, 8);
+            var bytes = _buffer.RawBytes.AsSpan(index, 8);
+            var value = UseLittleEndian(littleEndian)
+                ? BinaryPrimitives.ReadUInt64LittleEndian(bytes)
+                : BinaryPrimitives.ReadUInt64BigEndian(bytes);
+            return new BigInteger(value);
+        }
+
         public object? setInt8(object? byteOffset, object? value)
         {
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
@@ -219,6 +249,26 @@ namespace JavaScriptRuntime
             return null;
         }
 
+        public object? setBigInt64(object? byteOffset, object? value)
+            => setBigInt64(byteOffset, value, null);
+
+        public object? setBigInt64(object? byteOffset, object? value, object? littleEndian)
+        {
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteBigInt64(index, BigInt.ToBigIntForTypedArray(value), UseLittleEndian(littleEndian));
+            return null;
+        }
+
+        public object? setBigUint64(object? byteOffset, object? value)
+            => setBigUint64(byteOffset, value, null);
+
+        public object? setBigUint64(object? byteOffset, object? value, object? littleEndian)
+        {
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            WriteBigInt64(index, BigInt.ToBigIntForTypedArray(value), UseLittleEndian(littleEndian));
+            return null;
+        }
+
         private byte ReadByte(object? requestedOffset)
         {
             var index = GetAbsoluteIndex(requestedOffset, 1);
@@ -289,6 +339,26 @@ namespace JavaScriptRuntime
             }
 
             System.Buffer.BlockCopy(bytes, 0, _buffer.RawBytes, index, 8);
+        }
+
+        private void WriteBigInt64(long requestedOffset, BigInteger value, bool littleEndian)
+        {
+            var wrapped = value % BigInt64Modulus;
+            if (wrapped < 0)
+            {
+                wrapped += BigInt64Modulus;
+            }
+
+            var index = GetAbsoluteIndex(requestedOffset, 8);
+            var bytes = _buffer.RawBytes.AsSpan(index, 8);
+            if (littleEndian)
+            {
+                BinaryPrimitives.WriteUInt64LittleEndian(bytes, (ulong)wrapped);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt64BigEndian(bytes, (ulong)wrapped);
+            }
         }
 
         private double ReadSingle(int absoluteIndex, bool littleEndian)
