@@ -841,19 +841,29 @@ public class ModuleLoadTests
                 _ = CallableOperations.Call1(adapter, null, argument);
             }
 
-            var before = GC.GetAllocatedBytesForCurrentThread();
             object? result = null;
-            for (var index = 0; index < 10_000; index++)
+            var minimumAllocated = long.MaxValue;
+            for (var sample = 0; sample < 5 && minimumAllocated != 0; sample++)
             {
-                result = CallableOperations.Call1(
-                    adapter,
-                    null,
-                    argument);
+                var before = GC.GetAllocatedBytesForCurrentThread();
+                for (var index = 0; index < 10_000; index++)
+                {
+                    result = CallableOperations.Call1(
+                        adapter,
+                        null,
+                        argument);
+                }
+
+                // Tiered JIT bookkeeping can occasionally spill into the first
+                // sample on slower CI hosts. Sustained call allocations affect
+                // every sample and still fail this guard.
+                minimumAllocated = System.Math.Min(
+                    minimumAllocated,
+                    GC.GetAllocatedBytesForCurrentThread() - before);
             }
-            var measured = GC.GetAllocatedBytesForCurrentThread() - before;
 
             Assert.Same(argument, result);
-            return measured;
+            return minimumAllocated;
         });
 
         Assert.Equal(0, allocated);

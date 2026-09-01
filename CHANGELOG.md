@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.16 - 2026-09-01
+
 - runtime/test262/harness/docs: implement DataView BigInt64 and BigUint64
   getters/setters with endian-aware modulo-2^64 conversion, standard prototype
   functions, and native `byteConversionValues.js` data; port 67 previously
