@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 9,559 | 12 | 13,941 | 23,512 | **40.65%** |
+| Built-in objects and APIs | 9,834 | 12 | 13,666 | 23,512 | **41.83%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 13,247 | 58 | 34,936 | 48,241 | **27.46%** |
+| **Total** | 13,522 | 58 | 34,661 | 48,241 | **28.03%** |
 
 ## Language Areas
 
@@ -182,7 +182,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `BigInt` | 49 | 0 | 28 | 77 | **63.64%** |
 | `Boolean` | 14 | 0 | 37 | 51 | **27.45%** |
 | `DataView` | 270 | 0 | 291 | 561 | **48.13%** |
-| `Date` | 246 | 0 | 348 | 594 | **41.41%** |
+| `Date` | 521 | 0 | 73 | 594 | **87.71%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
 | `DisposableStack` | 0 | 0 | 93 | 93 | **0.00%** |

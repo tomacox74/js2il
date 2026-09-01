@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 363 additional Date cases from a 436-fixture intake,
+  covering construction, UTC/local accessors and mutators, formatting, JSON,
+  and primitive conversion. Setter coercion/time-clip behavior, temporal
+  conversion, realm edges, and four `dateConstants.js` harness cases remain
+  deferred.
 - test262/docs: port 388 additional RegExp constructor, syntax, and intrinsic
   cases from a 500-fixture intake, covering core behavior, dotAll,
   `RegExp.escape`, lookbehind, match indices, and named groups. Character
