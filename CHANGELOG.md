@@ -10,6 +10,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   receiver-aware, non-constructible built-in method and port 15 previously
   failing Test262 cases covering metadata, resizing, and receiver validation.
   Detachment and immutable-buffer cases remain deferred.
+- test262/docs: port 500 additional `Object.defineProperty` cases covering
+  descriptor creation, data/accessor/generic attribute defaults, property-key
+  coercion, descriptor conflicts, and non-configurable redefinition
+  invariants for ordinary objects.
 - test262/docs: port 66 additional `ArrayBuffer` cases covering construction,
   `isView`, byte-length and resizability accessors, resizing, slicing, and
   shared-buffer rejection by transfer APIs. Ninety-four detachment, transfer,
