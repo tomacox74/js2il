@@ -1894,11 +1894,6 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeToSpliced(object? thisArgument, in JsCallArguments arguments)
         {
-            if (thisArgument is JavaScriptRuntime.Array jsArray)
-            {
-                return jsArray.toSpliced(arguments.Count == 0 ? null : ToNonNullableObjectArray(arguments.ToArray()));
-            }
-
             // Array.prototype.toSpliced is intentionally generic (23.1.3.35): it operates on
             // any ToObject-coercible receiver via the array-like Get/length protocol, always
             // producing a fresh Array (no ArraySpeciesCreate/subclassing).
@@ -5246,9 +5241,8 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array toSpliced(object[]? args)
         {
-            var copy = new Array(this);
-            copy.splice(args);
-            return copy;
+            var arguments = JsCallArguments.FromArray(args);
+            return (Array)PrototypeToSpliced(this, in arguments)!;
         }
 
         /// <summary>

@@ -1018,7 +1018,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSorted/JavaScript/length-tolength.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSorted/JavaScript/length.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSorted/JavaScript/name.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSorted/JavaScript/not-a-constructor.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSorted/JavaScript/not-a-constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSorted/ExecutionTests.Batch.cs"
         ],
         "test262Paths": [
           "test/built-ins/Array/prototype/toSorted/comparefn-called-after-get-elements.js",
@@ -1032,9 +1033,17 @@
           "test/built-ins/Array/prototype/toSorted/length-tolength.js",
           "test/built-ins/Array/prototype/toSorted/length.js",
           "test/built-ins/Array/prototype/toSorted/name.js",
-          "test/built-ins/Array/prototype/toSorted/not-a-constructor.js"
+          "test/built-ins/Array/prototype/toSorted/not-a-constructor.js",
+          "test/built-ins/Array/prototype/toSorted/comparefn-controls-sort.js",
+          "test/built-ins/Array/prototype/toSorted/comparefn-default.js",
+          "test/built-ins/Array/prototype/toSorted/holes-not-preserved.js",
+          "test/built-ins/Array/prototype/toSorted/ignores-species.js",
+          "test/built-ins/Array/prototype/toSorted/property-descriptor.js",
+          "test/built-ins/Array/prototype/toSorted/this-value-boolean.js",
+          "test/built-ins/Array/prototype/toSorted/this-value-nullish.js",
+          "test/built-ins/Array/prototype/toSorted/zero-or-one-element.js"
         ],
-        "notes": "Creates a sorted copy without mutating the receiver. The covered Test262 cases verify callable comparator validation before length access, complete indexed-value collection before comparison, abrupt completion propagation, frozen and generic array-like receivers, cached ToLength coercion, maximum array-length rejection, and standard function metadata. Sparse/proxy details and full sorting stability coverage remain limited."
+        "notes": "Creates a sorted copy without mutating the receiver. The complete pinned Test262 directory verifies comparator ordering and default behavior, sparse-value materialization, species independence, frozen and generic array-like receivers, cached ToLength coercion, maximum array-length rejection, abrupt completion, property descriptors, and standard function metadata. Additional proxy and exotic-object details remain limited."
       },
       {
         "clause": "23.1.3.31",
@@ -1046,9 +1055,14 @@
           "tests/Jroc.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSpliced/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSpliced/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toSpliced/ExecutionTests.Batch.cs"
         ],
-        "notes": "Insertion/deletion semantics include generic receivers, species-created deleted-element arrays for splice, fresh ordinary arrays for toSpliced, safe-integer length limits, sparse property movement, and failures on non-extensible or non-configurable targets. Complete proxy and other exotic descriptor interactions are not exhaustive."
+        "test262Paths": [
+          "test/built-ins/Array/prototype/toSpliced/length-decreased-while-iterating.js",
+          "test/built-ins/Array/prototype/toSpliced/length-increased-while-iterating.js"
+        ],
+        "notes": "Insertion/deletion semantics include generic receivers, species-created deleted-element arrays for splice, fresh ordinary arrays for toSpliced, safe-integer length limits, cached source lengths during observable element access, sparse property movement, and failures on non-extensible or non-configurable targets. The complete pinned toSpliced directory is covered. Complete proxy and other exotic descriptor interactions for splice are not exhaustive."
       },
       {
         "clause": "23.1.3.33",
@@ -1074,7 +1088,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/with/JavaScript/length-exceeding-array-length-limit.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/with/JavaScript/length-increased-while-iterating.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/with/JavaScript/length-tolength.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/with/JavaScript/length.js"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/with/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/with/ExecutionTests.Batch.cs"
         ],
         "test262Paths": [
           "test/built-ins/Array/prototype/with/frozen-this-value.js",
@@ -1083,9 +1098,23 @@
           "test/built-ins/Array/prototype/with/length-exceeding-array-length-limit.js",
           "test/built-ins/Array/prototype/with/length-increased-while-iterating.js",
           "test/built-ins/Array/prototype/with/length-tolength.js",
-          "test/built-ins/Array/prototype/with/length.js"
+          "test/built-ins/Array/prototype/with/length.js",
+          "test/built-ins/Array/prototype/with/holes-not-preserved.js",
+          "test/built-ins/Array/prototype/with/ignores-species.js",
+          "test/built-ins/Array/prototype/with/immutable.js",
+          "test/built-ins/Array/prototype/with/index-bigger-or-eq-than-length.js",
+          "test/built-ins/Array/prototype/with/index-casted-to-number.js",
+          "test/built-ins/Array/prototype/with/index-negative.js",
+          "test/built-ins/Array/prototype/with/index-smaller-than-minus-length.js",
+          "test/built-ins/Array/prototype/with/name.js",
+          "test/built-ins/Array/prototype/with/negative-fractional-index-truncated-to-zero.js",
+          "test/built-ins/Array/prototype/with/no-get-replaced-index.js",
+          "test/built-ins/Array/prototype/with/not-a-constructor.js",
+          "test/built-ins/Array/prototype/with/property-descriptor.js",
+          "test/built-ins/Array/prototype/with/this-value-boolean.js",
+          "test/built-ins/Array/prototype/with/this-value-nullish.js"
         ],
-        "notes": "Returns a copied array with one replaced index. The covered Test262 cases verify frozen and generic array-like receivers, abrupt index coercion, cached ToLength coercion, maximum array-length rejection, and standard function length metadata. Proxy and additional index/property descriptor edge cases remain limited."
+        "notes": "Returns a copied array with one replaced index. The complete pinned Test262 directory verifies index coercion and bounds, sparse-value materialization, species independence, replacement-index access suppression, frozen and generic array-like receivers, cached ToLength coercion, maximum array-length rejection, immutability, property descriptors, and standard function metadata."
       },
       {
         "clause": "23.1.3.41",
