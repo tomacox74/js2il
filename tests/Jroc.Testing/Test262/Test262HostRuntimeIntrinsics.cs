@@ -95,6 +95,11 @@ public static class Test262HostRuntimeIntrinsics
             Test262ProxyTrapsHelpers.Register(builder);
         }
 
+        if (included.Contains("byteConversionValues.js"))
+        {
+            Test262ByteConversionHelpers.Register(builder);
+        }
+
         return builder.Build();
     }
 
