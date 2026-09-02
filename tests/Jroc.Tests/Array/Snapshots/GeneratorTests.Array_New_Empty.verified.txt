@@ -103,13 +103,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 40 (0x28)
+		// Code size: 44 (0x2c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_New_Empty/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[3] object
+			[3] float64,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_New_Empty/Scope::.ctor()
@@ -120,14 +121,16 @@
 		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0012: stloc.2
 		IL_0013: ldloc.1
-		IL_0014: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0019: box [System.Runtime]System.Double
-		IL_001e: stloc.3
-		IL_001f: ldloc.2
-		IL_0020: ldloc.3
-		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0026: pop
-		IL_0027: ret
+		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetLength(object)
+		IL_0019: stloc.3
+		IL_001a: ldloc.3
+		IL_001b: box [System.Runtime]System.Double
+		IL_0020: stloc.s 4
+		IL_0022: ldloc.2
+		IL_0023: ldloc.s 4
+		IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_002a: pop
+		IL_002b: ret
 	} // end of method Array_New_Empty::__js_module_init__
 
 } // end of class Modules.Array_New_Empty

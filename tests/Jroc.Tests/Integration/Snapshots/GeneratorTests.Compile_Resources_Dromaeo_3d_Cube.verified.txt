@@ -1528,10 +1528,10 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 335 (0x14f)
+			// Code size: 340 (0x154)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] object,
 				[2] object,
 				[3] float64
@@ -1639,7 +1639,8 @@
 			IL_0147: ldc.i4.1
 			IL_0148: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
 			IL_014d: ldloc.0
-			IL_014e: ret
+			IL_014e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0153: ret
 		} // end of method CalcCross::__js_call__
 
 	} // end of class CalcCross
@@ -1824,11 +1825,11 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 429 (0x1ad)
+			// Code size: 469 (0x1d5)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
+				[1] object,
 				[2] float64,
 				[3] float64,
 				[4] float64,
@@ -1906,85 +1907,93 @@
 			IL_00ab: ldloc.s 7
 			IL_00ad: stloc.0
 			IL_00ae: ldloc.0
-			IL_00af: ldc.r8 0.0
-			IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00bd: stloc.s 5
-			IL_00bf: ldloc.0
-			IL_00c0: ldc.r8 0.0
-			IL_00c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00ce: stloc.s 6
-			IL_00d0: ldloc.s 5
-			IL_00d2: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00d7: ldloc.s 6
-			IL_00d9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00de: mul
-			IL_00df: ldloc.0
-			IL_00e0: ldc.r8 1
-			IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00ee: stloc.s 6
-			IL_00f0: ldloc.0
-			IL_00f1: ldc.r8 1
-			IL_00fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00ff: stloc.s 5
-			IL_0101: ldloc.s 6
-			IL_0103: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0108: ldloc.s 5
-			IL_010a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_010f: mul
-			IL_0110: add
-			IL_0111: ldloc.0
-			IL_0112: ldc.r8 2
-			IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0120: stloc.s 5
-			IL_0122: ldloc.0
-			IL_0123: ldc.r8 2
-			IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0131: stloc.s 6
-			IL_0133: ldloc.s 5
-			IL_0135: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_013a: ldloc.s 6
-			IL_013c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0141: mul
-			IL_0142: add
-			IL_0143: stloc.s 4
-			IL_0145: ldloc.s 4
-			IL_0147: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::sqrt(float64)
-			IL_014c: stloc.3
-			IL_014d: ldc.r8 0.0
-			IL_0156: stloc.2
-			// loop start (head: IL_0157)
-				IL_0157: ldloc.2
-				IL_0158: stloc.s 4
-				IL_015a: ldloc.s 4
-				IL_015c: ldc.r8 3
-				IL_0165: clt
-				IL_0167: brfalse IL_0192
+			IL_00af: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_00b4: ldc.r8 0.0
+			IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00c2: stloc.s 5
+			IL_00c4: ldloc.0
+			IL_00c5: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_00ca: ldc.r8 0.0
+			IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00d8: stloc.s 6
+			IL_00da: ldloc.s 5
+			IL_00dc: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00e1: ldloc.s 6
+			IL_00e3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00e8: mul
+			IL_00e9: ldloc.0
+			IL_00ea: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_00ef: ldc.r8 1
+			IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00fd: stloc.s 6
+			IL_00ff: ldloc.0
+			IL_0100: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0105: ldc.r8 1
+			IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0113: stloc.s 5
+			IL_0115: ldloc.s 6
+			IL_0117: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_011c: ldloc.s 5
+			IL_011e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0123: mul
+			IL_0124: add
+			IL_0125: ldloc.0
+			IL_0126: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_012b: ldc.r8 2
+			IL_0134: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0139: stloc.s 5
+			IL_013b: ldloc.0
+			IL_013c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0141: ldc.r8 2
+			IL_014a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_014f: stloc.s 6
+			IL_0151: ldloc.s 5
+			IL_0153: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0158: ldloc.s 6
+			IL_015a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_015f: mul
+			IL_0160: add
+			IL_0161: stloc.s 4
+			IL_0163: ldloc.s 4
+			IL_0165: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::sqrt(float64)
+			IL_016a: stloc.3
+			IL_016b: ldc.r8 0.0
+			IL_0174: stloc.2
+			// loop start (head: IL_0175)
+				IL_0175: ldloc.2
+				IL_0176: stloc.s 4
+				IL_0178: ldloc.s 4
+				IL_017a: ldc.r8 3
+				IL_0183: clt
+				IL_0185: brfalse IL_01b5
 
-				IL_016c: ldloc.0
-				IL_016d: ldloc.2
-				IL_016e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::GetItemAsNumber(float64)
-				IL_0173: ldloc.3
-				IL_0174: div
-				IL_0175: stloc.s 4
-				IL_0177: ldloc.0
-				IL_0178: ldloc.2
-				IL_0179: ldloc.s 4
-				IL_017b: ldc.i4.1
-				IL_017c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-				IL_0181: ldloc.2
-				IL_0182: ldc.r8 1
-				IL_018b: add
-				IL_018c: stloc.2
-				IL_018d: br IL_0157
+				IL_018a: ldloc.0
+				IL_018b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+				IL_0190: ldloc.2
+				IL_0191: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::GetItemAsNumber(float64)
+				IL_0196: ldloc.3
+				IL_0197: div
+				IL_0198: stloc.s 4
+				IL_019a: ldloc.0
+				IL_019b: ldloc.2
+				IL_019c: ldloc.s 4
+				IL_019e: ldc.i4.1
+				IL_019f: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+				IL_01a4: ldloc.2
+				IL_01a5: ldc.r8 1
+				IL_01ae: add
+				IL_01af: stloc.2
+				IL_01b0: br IL_0175
 			// end loop
 
-			IL_0192: ldloc.0
-			IL_0193: ldc.r8 3
-			IL_019c: ldc.r8 1
-			IL_01a5: ldc.i4.1
-			IL_01a6: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-			IL_01ab: ldloc.0
-			IL_01ac: ret
+			IL_01b5: ldloc.0
+			IL_01b6: ldc.r8 3
+			IL_01bf: ldc.r8 1
+			IL_01c8: ldc.i4.1
+			IL_01c9: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+			IL_01ce: ldloc.0
+			IL_01cf: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_01d4: ret
 		} // end of method CalcNormal::__js_call__
 
 	} // end of class CalcNormal
@@ -2683,10 +2692,10 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 299 (0x12b)
+			// Code size: 304 (0x130)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] float64,
 				[3] object,
@@ -2795,7 +2804,8 @@
 			// end loop
 
 			IL_0129: ldloc.0
-			IL_012a: ret
+			IL_012a: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_012f: ret
 		} // end of method VMulti::__js_call__
 
 	} // end of class VMulti
@@ -2939,10 +2949,10 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 237 (0xed)
+			// Code size: 242 (0xf2)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] float64,
 				[3] object,
@@ -3031,7 +3041,8 @@
 			// end loop
 
 			IL_00eb: ldloc.0
-			IL_00ec: ret
+			IL_00ec: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_00f1: ret
 		} // end of method VMulti2::__js_call__
 
 	} // end of class VMulti2
@@ -5124,10 +5135,10 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 6419 (0x1913)
+			// Code size: 6443 (0x192b)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] object,
 				[3] float64,
@@ -5205,1799 +5216,1803 @@
 
 			IL_00b9: ldloc.0
 			IL_00ba: ldc.r8 0.0
-			IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00c8: ldc.r8 2
-			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00d6: stloc.s 5
-			IL_00d8: ldloc.s 5
-			IL_00da: ldc.r8 0.0
-			IL_00e3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
-			IL_00e8: stloc.s 7
-			IL_00ea: ldloc.s 7
-			IL_00ec: brfalse IL_04a5
-
-			IL_00f1: ldarg.0
-			IL_00f2: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_00f7: volatile.
-			IL_00f9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_40
-			IL_00fe: brfalse IL_0112
-
-			IL_0103: ldstr "Line"
-			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_010d: br IL_0126
-
-			IL_0112: ldstr "Line"
-			IL_0117: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:44"
-			IL_011c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_40
-			IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0126: stloc.s 5
-			IL_0128: ldloc.s 5
-			IL_012a: ldc.r8 0.0
-			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0138: stloc.s 5
-			IL_013a: ldloc.s 5
-			IL_013c: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0141: ldc.i4.0
-			IL_0142: ceq
-			IL_0144: stloc.s 7
-			IL_0146: ldloc.s 7
-			IL_0148: brfalse IL_01df
-
-			IL_014d: ldarg.0
-			IL_014e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0153: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0158: ldc.r8 0.0
-			IL_0161: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0166: stloc.s 5
-			IL_0168: ldarg.0
-			IL_0169: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_016e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0173: ldc.r8 1
-			IL_017c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0181: stloc.2
-			IL_0182: ldarg.0
-			IL_0183: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0188: ldnull
-			IL_0189: ldloc.s 5
-			IL_018b: ldloc.2
-			IL_018c: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0191: pop
-			IL_0192: ldarg.0
-			IL_0193: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0198: volatile.
-			IL_019a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_41
-			IL_019f: brfalse IL_01b3
-
-			IL_01a4: ldstr "Line"
-			IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01ae: br IL_01c7
-
-			IL_01b3: ldstr "Line"
-			IL_01b8: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:61"
-			IL_01bd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_41
-			IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_01c7: stloc.2
-			IL_01c8: ldloc.2
-			IL_01c9: ldc.r8 0.0
-			IL_01d2: ldc.i4.1
-			IL_01d3: box [System.Runtime]System.Boolean
-			IL_01d8: ldc.i4.1
-			IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_01de: pop
-
-			IL_01df: ldarg.0
-			IL_01e0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_01e5: volatile.
-			IL_01e7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_42
-			IL_01ec: brfalse IL_0200
-
-			IL_01f1: ldstr "Line"
-			IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01fb: br IL_0214
-
-			IL_0200: ldstr "Line"
-			IL_0205: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:69"
-			IL_020a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_42
-			IL_020f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0214: stloc.2
-			IL_0215: ldloc.2
-			IL_0216: ldc.r8 1
-			IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0224: stloc.2
-			IL_0225: ldloc.2
-			IL_0226: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_022b: ldc.i4.0
-			IL_022c: ceq
-			IL_022e: stloc.s 7
-			IL_0230: ldloc.s 7
-			IL_0232: brfalse IL_02cb
-
-			IL_0237: ldarg.0
-			IL_0238: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_023d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0242: ldc.r8 1
-			IL_024b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0250: stloc.2
-			IL_0251: ldarg.0
-			IL_0252: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0257: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_025c: ldc.r8 2
-			IL_0265: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_026a: stloc.s 5
-			IL_026c: ldarg.0
-			IL_026d: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0272: ldnull
-			IL_0273: ldloc.2
-			IL_0274: ldloc.s 5
-			IL_0276: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_027b: pop
-			IL_027c: ldarg.0
-			IL_027d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0282: volatile.
-			IL_0284: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_43
-			IL_0289: brfalse IL_029d
-
-			IL_028e: ldstr "Line"
-			IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0298: br IL_02b1
-
-			IL_029d: ldstr "Line"
-			IL_02a2: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:86"
-			IL_02a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_43
-			IL_02ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_02b1: stloc.s 5
-			IL_02b3: ldloc.s 5
-			IL_02b5: ldc.r8 1
-			IL_02be: ldc.i4.1
-			IL_02bf: box [System.Runtime]System.Boolean
-			IL_02c4: ldc.i4.1
-			IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_02ca: pop
-
-			IL_02cb: ldarg.0
-			IL_02cc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_02d1: volatile.
-			IL_02d3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_44
-			IL_02d8: brfalse IL_02ec
-
-			IL_02dd: ldstr "Line"
-			IL_02e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02e7: br IL_0300
-
-			IL_02ec: ldstr "Line"
-			IL_02f1: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:94"
-			IL_02f6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_44
-			IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0300: stloc.s 5
-			IL_0302: ldloc.s 5
-			IL_0304: ldc.r8 2
-			IL_030d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0312: stloc.s 5
-			IL_0314: ldloc.s 5
-			IL_0316: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_031b: ldc.i4.0
-			IL_031c: ceq
-			IL_031e: stloc.s 7
-			IL_0320: ldloc.s 7
-			IL_0322: brfalse IL_03b9
-
-			IL_0327: ldarg.0
-			IL_0328: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_032d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0332: ldc.r8 2
-			IL_033b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0340: stloc.s 5
-			IL_0342: ldarg.0
-			IL_0343: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0348: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_034d: ldc.r8 3
-			IL_0356: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_035b: stloc.2
-			IL_035c: ldarg.0
-			IL_035d: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0362: ldnull
-			IL_0363: ldloc.s 5
-			IL_0365: ldloc.2
-			IL_0366: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_036b: pop
-			IL_036c: ldarg.0
-			IL_036d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0372: volatile.
-			IL_0374: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_45
-			IL_0379: brfalse IL_038d
-
-			IL_037e: ldstr "Line"
-			IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0388: br IL_03a1
-
-			IL_038d: ldstr "Line"
-			IL_0392: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:111"
-			IL_0397: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_45
-			IL_039c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_03a1: stloc.2
-			IL_03a2: ldloc.2
-			IL_03a3: ldc.r8 2
-			IL_03ac: ldc.i4.1
-			IL_03ad: box [System.Runtime]System.Boolean
-			IL_03b2: ldc.i4.1
-			IL_03b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_03b8: pop
-
-			IL_03b9: ldarg.0
-			IL_03ba: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_03bf: volatile.
-			IL_03c1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_46
-			IL_03c6: brfalse IL_03da
-
-			IL_03cb: ldstr "Line"
-			IL_03d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03d5: br IL_03ee
-
-			IL_03da: ldstr "Line"
-			IL_03df: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:119"
-			IL_03e4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_46
-			IL_03e9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_03ee: stloc.2
-			IL_03ef: ldloc.2
-			IL_03f0: ldc.r8 3
-			IL_03f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_03fe: stloc.2
-			IL_03ff: ldloc.2
-			IL_0400: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0405: ldc.i4.0
-			IL_0406: ceq
-			IL_0408: stloc.s 7
-			IL_040a: ldloc.s 7
-			IL_040c: brfalse IL_04a5
-
-			IL_0411: ldarg.0
-			IL_0412: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0417: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_041c: ldc.r8 3
-			IL_0425: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_042a: stloc.2
-			IL_042b: ldarg.0
-			IL_042c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0431: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0436: ldc.r8 0.0
-			IL_043f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0444: stloc.s 5
-			IL_0446: ldarg.0
-			IL_0447: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_044c: ldnull
-			IL_044d: ldloc.2
-			IL_044e: ldloc.s 5
-			IL_0450: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0455: pop
-			IL_0456: ldarg.0
-			IL_0457: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_045c: volatile.
-			IL_045e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_47
-			IL_0463: brfalse IL_0477
-
-			IL_0468: ldstr "Line"
-			IL_046d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0472: br IL_048b
-
-			IL_0477: ldstr "Line"
-			IL_047c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:136"
-			IL_0481: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_47
-			IL_0486: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_048b: stloc.s 5
-			IL_048d: ldloc.s 5
-			IL_048f: ldc.r8 3
-			IL_0498: ldc.i4.1
-			IL_0499: box [System.Runtime]System.Boolean
-			IL_049e: ldc.i4.1
-			IL_049f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_04a4: pop
-
-			IL_04a5: ldloc.0
-			IL_04a6: ldc.r8 1
-			IL_04af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_04b4: ldc.r8 2
-			IL_04bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_04c2: stloc.s 5
-			IL_04c4: ldloc.s 5
-			IL_04c6: ldc.r8 0.0
-			IL_04cf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
-			IL_04d4: stloc.s 7
-			IL_04d6: ldloc.s 7
-			IL_04d8: brfalse IL_0891
-
-			IL_04dd: ldarg.0
-			IL_04de: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_04e3: volatile.
-			IL_04e5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_48
-			IL_04ea: brfalse IL_04fe
-
-			IL_04ef: ldstr "Line"
-			IL_04f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_04f9: br IL_0512
-
-			IL_04fe: ldstr "Line"
-			IL_0503: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:153"
-			IL_0508: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_48
-			IL_050d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0512: stloc.s 5
-			IL_0514: ldloc.s 5
-			IL_0516: ldc.r8 2
-			IL_051f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0524: stloc.s 5
-			IL_0526: ldloc.s 5
-			IL_0528: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_052d: ldc.i4.0
-			IL_052e: ceq
-			IL_0530: stloc.s 7
-			IL_0532: ldloc.s 7
-			IL_0534: brfalse IL_05cb
-
-			IL_0539: ldarg.0
-			IL_053a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_053f: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0544: ldc.r8 3
-			IL_054d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0552: stloc.s 5
-			IL_0554: ldarg.0
-			IL_0555: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_055a: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_055f: ldc.r8 2
-			IL_0568: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_056d: stloc.2
-			IL_056e: ldarg.0
-			IL_056f: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0574: ldnull
-			IL_0575: ldloc.s 5
-			IL_0577: ldloc.2
-			IL_0578: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_057d: pop
-			IL_057e: ldarg.0
-			IL_057f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0584: volatile.
-			IL_0586: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_49
-			IL_058b: brfalse IL_059f
-
-			IL_0590: ldstr "Line"
-			IL_0595: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_059a: br IL_05b3
-
-			IL_059f: ldstr "Line"
-			IL_05a4: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:170"
-			IL_05a9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_49
-			IL_05ae: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_05b3: stloc.2
-			IL_05b4: ldloc.2
-			IL_05b5: ldc.r8 2
-			IL_05be: ldc.i4.1
-			IL_05bf: box [System.Runtime]System.Boolean
-			IL_05c4: ldc.i4.1
-			IL_05c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_05ca: pop
-
-			IL_05cb: ldarg.0
-			IL_05cc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_05d1: volatile.
-			IL_05d3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_50
-			IL_05d8: brfalse IL_05ec
-
-			IL_05dd: ldstr "Line"
-			IL_05e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_05e7: br IL_0600
-
-			IL_05ec: ldstr "Line"
-			IL_05f1: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:178"
-			IL_05f6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_50
-			IL_05fb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0600: stloc.2
-			IL_0601: ldloc.2
-			IL_0602: ldc.r8 9
-			IL_060b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0610: stloc.2
-			IL_0611: ldloc.2
-			IL_0612: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0617: ldc.i4.0
-			IL_0618: ceq
-			IL_061a: stloc.s 7
-			IL_061c: ldloc.s 7
-			IL_061e: brfalse IL_06b7
-
-			IL_0623: ldarg.0
-			IL_0624: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0629: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_062e: ldc.r8 2
-			IL_0637: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_063c: stloc.2
-			IL_063d: ldarg.0
-			IL_063e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0643: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0648: ldc.r8 6
-			IL_0651: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0656: stloc.s 5
-			IL_0658: ldarg.0
-			IL_0659: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_065e: ldnull
-			IL_065f: ldloc.2
-			IL_0660: ldloc.s 5
-			IL_0662: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0667: pop
-			IL_0668: ldarg.0
-			IL_0669: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_066e: volatile.
-			IL_0670: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_51
-			IL_0675: brfalse IL_0689
-
-			IL_067a: ldstr "Line"
-			IL_067f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0684: br IL_069d
-
-			IL_0689: ldstr "Line"
-			IL_068e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:195"
-			IL_0693: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_51
-			IL_0698: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_069d: stloc.s 5
-			IL_069f: ldloc.s 5
-			IL_06a1: ldc.r8 9
-			IL_06aa: ldc.i4.1
-			IL_06ab: box [System.Runtime]System.Boolean
-			IL_06b0: ldc.i4.1
-			IL_06b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_06b6: pop
-
-			IL_06b7: ldarg.0
-			IL_06b8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_06bd: volatile.
-			IL_06bf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_52
-			IL_06c4: brfalse IL_06d8
-
-			IL_06c9: ldstr "Line"
-			IL_06ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_06d3: br IL_06ec
-
-			IL_06d8: ldstr "Line"
-			IL_06dd: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:203"
-			IL_06e2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_52
-			IL_06e7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_06ec: stloc.s 5
-			IL_06ee: ldloc.s 5
-			IL_06f0: ldc.r8 6
-			IL_06f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_06fe: stloc.s 5
-			IL_0700: ldloc.s 5
-			IL_0702: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0707: ldc.i4.0
-			IL_0708: ceq
-			IL_070a: stloc.s 7
-			IL_070c: ldloc.s 7
-			IL_070e: brfalse IL_07a5
-
-			IL_0713: ldarg.0
-			IL_0714: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0719: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_071e: ldc.r8 6
-			IL_0727: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_072c: stloc.s 5
-			IL_072e: ldarg.0
-			IL_072f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0734: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0739: ldc.r8 7
-			IL_0742: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0747: stloc.2
-			IL_0748: ldarg.0
-			IL_0749: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_074e: ldnull
-			IL_074f: ldloc.s 5
-			IL_0751: ldloc.2
-			IL_0752: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0757: pop
-			IL_0758: ldarg.0
-			IL_0759: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_075e: volatile.
-			IL_0760: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_53
-			IL_0765: brfalse IL_0779
-
-			IL_076a: ldstr "Line"
-			IL_076f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0774: br IL_078d
-
-			IL_0779: ldstr "Line"
-			IL_077e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:220"
-			IL_0783: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_53
-			IL_0788: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_078d: stloc.2
-			IL_078e: ldloc.2
-			IL_078f: ldc.r8 6
-			IL_0798: ldc.i4.1
-			IL_0799: box [System.Runtime]System.Boolean
-			IL_079e: ldc.i4.1
-			IL_079f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_07a4: pop
-
-			IL_07a5: ldarg.0
-			IL_07a6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_07ab: volatile.
-			IL_07ad: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_54
-			IL_07b2: brfalse IL_07c6
-
-			IL_07b7: ldstr "Line"
-			IL_07bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_07c1: br IL_07da
-
-			IL_07c6: ldstr "Line"
-			IL_07cb: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:228"
-			IL_07d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_54
-			IL_07d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_07da: stloc.2
-			IL_07db: ldloc.2
-			IL_07dc: ldc.r8 10
-			IL_07e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_07ea: stloc.2
-			IL_07eb: ldloc.2
-			IL_07ec: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_07f1: ldc.i4.0
-			IL_07f2: ceq
-			IL_07f4: stloc.s 7
-			IL_07f6: ldloc.s 7
-			IL_07f8: brfalse IL_0891
-
-			IL_07fd: ldarg.0
-			IL_07fe: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0803: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0808: ldc.r8 7
-			IL_0811: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0816: stloc.2
-			IL_0817: ldarg.0
-			IL_0818: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_081d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0822: ldc.r8 3
-			IL_082b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0830: stloc.s 5
-			IL_0832: ldarg.0
-			IL_0833: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0838: ldnull
-			IL_0839: ldloc.2
-			IL_083a: ldloc.s 5
-			IL_083c: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0841: pop
-			IL_0842: ldarg.0
-			IL_0843: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0848: volatile.
-			IL_084a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_55
-			IL_084f: brfalse IL_0863
-
-			IL_0854: ldstr "Line"
-			IL_0859: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_085e: br IL_0877
-
-			IL_0863: ldstr "Line"
-			IL_0868: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:245"
-			IL_086d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_55
-			IL_0872: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0877: stloc.s 5
-			IL_0879: ldloc.s 5
-			IL_087b: ldc.r8 10
-			IL_0884: ldc.i4.1
-			IL_0885: box [System.Runtime]System.Boolean
-			IL_088a: ldc.i4.1
-			IL_088b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0890: pop
-
-			IL_0891: ldloc.0
-			IL_0892: ldc.r8 2
-			IL_089b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_08a0: ldc.r8 2
-			IL_08a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_08ae: stloc.s 5
-			IL_08b0: ldloc.s 5
-			IL_08b2: ldc.r8 0.0
-			IL_08bb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
-			IL_08c0: stloc.s 7
-			IL_08c2: ldloc.s 7
-			IL_08c4: brfalse IL_0c7d
-
-			IL_08c9: ldarg.0
-			IL_08ca: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_08cf: volatile.
-			IL_08d1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_56
-			IL_08d6: brfalse IL_08ea
-
-			IL_08db: ldstr "Line"
-			IL_08e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_08e5: br IL_08fe
-
-			IL_08ea: ldstr "Line"
-			IL_08ef: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:262"
-			IL_08f4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_56
-			IL_08f9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_08fe: stloc.s 5
-			IL_0900: ldloc.s 5
-			IL_0902: ldc.r8 4
-			IL_090b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0910: stloc.s 5
-			IL_0912: ldloc.s 5
-			IL_0914: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0919: ldc.i4.0
-			IL_091a: ceq
-			IL_091c: stloc.s 7
-			IL_091e: ldloc.s 7
-			IL_0920: brfalse IL_09b7
-
-			IL_0925: ldarg.0
-			IL_0926: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_092b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0930: ldc.r8 4
-			IL_0939: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_093e: stloc.s 5
-			IL_0940: ldarg.0
-			IL_0941: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0946: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_094b: ldc.r8 5
-			IL_0954: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0959: stloc.2
-			IL_095a: ldarg.0
-			IL_095b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0960: ldnull
-			IL_0961: ldloc.s 5
-			IL_0963: ldloc.2
-			IL_0964: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0969: pop
-			IL_096a: ldarg.0
-			IL_096b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0970: volatile.
-			IL_0972: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_57
-			IL_0977: brfalse IL_098b
-
-			IL_097c: ldstr "Line"
-			IL_0981: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0986: br IL_099f
-
-			IL_098b: ldstr "Line"
-			IL_0990: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:279"
-			IL_0995: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_57
-			IL_099a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_099f: stloc.2
-			IL_09a0: ldloc.2
-			IL_09a1: ldc.r8 4
-			IL_09aa: ldc.i4.1
-			IL_09ab: box [System.Runtime]System.Boolean
-			IL_09b0: ldc.i4.1
-			IL_09b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_09b6: pop
-
-			IL_09b7: ldarg.0
-			IL_09b8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_09bd: volatile.
-			IL_09bf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_58
-			IL_09c4: brfalse IL_09d8
-
-			IL_09c9: ldstr "Line"
-			IL_09ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_09d3: br IL_09ec
-
-			IL_09d8: ldstr "Line"
-			IL_09dd: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:287"
-			IL_09e2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_58
-			IL_09e7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_09ec: stloc.2
-			IL_09ed: ldloc.2
-			IL_09ee: ldc.r8 5
-			IL_09f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_09fc: stloc.2
-			IL_09fd: ldloc.2
-			IL_09fe: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0a03: ldc.i4.0
-			IL_0a04: ceq
-			IL_0a06: stloc.s 7
-			IL_0a08: ldloc.s 7
-			IL_0a0a: brfalse IL_0aa3
-
-			IL_0a0f: ldarg.0
-			IL_0a10: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0a15: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0a1a: ldc.r8 5
-			IL_0a23: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0a28: stloc.2
-			IL_0a29: ldarg.0
-			IL_0a2a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0a2f: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0a34: ldc.r8 6
-			IL_0a3d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0a42: stloc.s 5
-			IL_0a44: ldarg.0
-			IL_0a45: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0a4a: ldnull
-			IL_0a4b: ldloc.2
-			IL_0a4c: ldloc.s 5
-			IL_0a4e: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0a53: pop
-			IL_0a54: ldarg.0
-			IL_0a55: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0a5a: volatile.
-			IL_0a5c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
-			IL_0a61: brfalse IL_0a75
-
-			IL_0a66: ldstr "Line"
-			IL_0a6b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0a70: br IL_0a89
-
-			IL_0a75: ldstr "Line"
-			IL_0a7a: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:304"
-			IL_0a7f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
-			IL_0a84: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0a89: stloc.s 5
-			IL_0a8b: ldloc.s 5
-			IL_0a8d: ldc.r8 5
-			IL_0a96: ldc.i4.1
-			IL_0a97: box [System.Runtime]System.Boolean
-			IL_0a9c: ldc.i4.1
-			IL_0a9d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0aa2: pop
-
-			IL_0aa3: ldarg.0
-			IL_0aa4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0aa9: volatile.
-			IL_0aab: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
-			IL_0ab0: brfalse IL_0ac4
-
-			IL_0ab5: ldstr "Line"
-			IL_0aba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0abf: br IL_0ad8
-
-			IL_0ac4: ldstr "Line"
-			IL_0ac9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:312"
-			IL_0ace: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
-			IL_0ad3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0ad8: stloc.s 5
-			IL_0ada: ldloc.s 5
-			IL_0adc: ldc.r8 6
-			IL_0ae5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0aea: stloc.s 5
-			IL_0aec: ldloc.s 5
-			IL_0aee: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0af3: ldc.i4.0
-			IL_0af4: ceq
-			IL_0af6: stloc.s 7
-			IL_0af8: ldloc.s 7
-			IL_0afa: brfalse IL_0b91
-
-			IL_0aff: ldarg.0
-			IL_0b00: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0b05: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0b0a: ldc.r8 6
-			IL_0b13: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0b18: stloc.s 5
-			IL_0b1a: ldarg.0
-			IL_0b1b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0b20: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0b25: ldc.r8 7
-			IL_0b2e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0b33: stloc.2
-			IL_0b34: ldarg.0
-			IL_0b35: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0b3a: ldnull
-			IL_0b3b: ldloc.s 5
-			IL_0b3d: ldloc.2
-			IL_0b3e: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0b43: pop
-			IL_0b44: ldarg.0
-			IL_0b45: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0b4a: volatile.
-			IL_0b4c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
-			IL_0b51: brfalse IL_0b65
-
-			IL_0b56: ldstr "Line"
-			IL_0b5b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0b60: br IL_0b79
-
-			IL_0b65: ldstr "Line"
-			IL_0b6a: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:329"
-			IL_0b6f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
-			IL_0b74: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0b79: stloc.2
-			IL_0b7a: ldloc.2
-			IL_0b7b: ldc.r8 6
-			IL_0b84: ldc.i4.1
-			IL_0b85: box [System.Runtime]System.Boolean
-			IL_0b8a: ldc.i4.1
-			IL_0b8b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0b90: pop
-
-			IL_0b91: ldarg.0
-			IL_0b92: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0b97: volatile.
-			IL_0b99: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
-			IL_0b9e: brfalse IL_0bb2
-
-			IL_0ba3: ldstr "Line"
-			IL_0ba8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0bad: br IL_0bc6
-
-			IL_0bb2: ldstr "Line"
-			IL_0bb7: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:337"
-			IL_0bbc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
-			IL_0bc1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0bc6: stloc.2
-			IL_0bc7: ldloc.2
-			IL_0bc8: ldc.r8 7
-			IL_0bd1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0bd6: stloc.2
-			IL_0bd7: ldloc.2
-			IL_0bd8: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0bdd: ldc.i4.0
-			IL_0bde: ceq
-			IL_0be0: stloc.s 7
-			IL_0be2: ldloc.s 7
-			IL_0be4: brfalse IL_0c7d
-
-			IL_0be9: ldarg.0
-			IL_0bea: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0bef: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0bf4: ldc.r8 7
-			IL_0bfd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0c02: stloc.2
-			IL_0c03: ldarg.0
-			IL_0c04: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0c09: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0c0e: ldc.r8 4
-			IL_0c17: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0c1c: stloc.s 5
-			IL_0c1e: ldarg.0
-			IL_0c1f: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0c24: ldnull
-			IL_0c25: ldloc.2
-			IL_0c26: ldloc.s 5
-			IL_0c28: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0c2d: pop
-			IL_0c2e: ldarg.0
-			IL_0c2f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0c34: volatile.
-			IL_0c36: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
-			IL_0c3b: brfalse IL_0c4f
-
-			IL_0c40: ldstr "Line"
-			IL_0c45: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0c4a: br IL_0c63
-
-			IL_0c4f: ldstr "Line"
-			IL_0c54: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:354"
-			IL_0c59: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
-			IL_0c5e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0c63: stloc.s 5
-			IL_0c65: ldloc.s 5
-			IL_0c67: ldc.r8 7
-			IL_0c70: ldc.i4.1
-			IL_0c71: box [System.Runtime]System.Boolean
-			IL_0c76: ldc.i4.1
-			IL_0c77: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0c7c: pop
-
-			IL_0c7d: ldloc.0
-			IL_0c7e: ldc.r8 3
-			IL_0c87: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0c8c: ldc.r8 2
-			IL_0c95: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0c9a: stloc.s 5
-			IL_0c9c: ldloc.s 5
-			IL_0c9e: ldc.r8 0.0
-			IL_0ca7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
-			IL_0cac: stloc.s 7
-			IL_0cae: ldloc.s 7
-			IL_0cb0: brfalse IL_1069
-
-			IL_0cb5: ldarg.0
-			IL_0cb6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0cbb: volatile.
-			IL_0cbd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
-			IL_0cc2: brfalse IL_0cd6
-
-			IL_0cc7: ldstr "Line"
-			IL_0ccc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0cd1: br IL_0cea
-
-			IL_0cd6: ldstr "Line"
-			IL_0cdb: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:371"
-			IL_0ce0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
-			IL_0ce5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0cea: stloc.s 5
-			IL_0cec: ldloc.s 5
-			IL_0cee: ldc.r8 4
-			IL_0cf7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0cfc: stloc.s 5
-			IL_0cfe: ldloc.s 5
-			IL_0d00: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0d05: ldc.i4.0
-			IL_0d06: ceq
-			IL_0d08: stloc.s 7
-			IL_0d0a: ldloc.s 7
-			IL_0d0c: brfalse IL_0da3
-
-			IL_0d11: ldarg.0
-			IL_0d12: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0d17: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0d1c: ldc.r8 4
-			IL_0d25: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0d2a: stloc.s 5
-			IL_0d2c: ldarg.0
-			IL_0d2d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0d32: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0d37: ldc.r8 5
-			IL_0d40: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0d45: stloc.2
-			IL_0d46: ldarg.0
-			IL_0d47: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0d4c: ldnull
-			IL_0d4d: ldloc.s 5
-			IL_0d4f: ldloc.2
-			IL_0d50: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0d55: pop
+			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00c8: stloc.s 5
+			IL_00ca: ldloc.s 5
+			IL_00cc: ldc.r8 2
+			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00da: stloc.s 5
+			IL_00dc: ldloc.s 5
+			IL_00de: ldc.r8 0.0
+			IL_00e7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_00ec: stloc.s 7
+			IL_00ee: ldloc.s 7
+			IL_00f0: brfalse IL_04a9
+
+			IL_00f5: ldarg.0
+			IL_00f6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_00fb: volatile.
+			IL_00fd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_40
+			IL_0102: brfalse IL_0116
+
+			IL_0107: ldstr "Line"
+			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0111: br IL_012a
+
+			IL_0116: ldstr "Line"
+			IL_011b: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:44"
+			IL_0120: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_40
+			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_012a: stloc.s 5
+			IL_012c: ldloc.s 5
+			IL_012e: ldc.r8 0.0
+			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_013c: stloc.s 5
+			IL_013e: ldloc.s 5
+			IL_0140: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0145: ldc.i4.0
+			IL_0146: ceq
+			IL_0148: stloc.s 7
+			IL_014a: ldloc.s 7
+			IL_014c: brfalse IL_01e3
+
+			IL_0151: ldarg.0
+			IL_0152: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0157: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_015c: ldc.r8 0.0
+			IL_0165: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_016a: stloc.s 5
+			IL_016c: ldarg.0
+			IL_016d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0172: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0177: ldc.r8 1
+			IL_0180: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0185: stloc.2
+			IL_0186: ldarg.0
+			IL_0187: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_018c: ldnull
+			IL_018d: ldloc.s 5
+			IL_018f: ldloc.2
+			IL_0190: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0195: pop
+			IL_0196: ldarg.0
+			IL_0197: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_019c: volatile.
+			IL_019e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_41
+			IL_01a3: brfalse IL_01b7
+
+			IL_01a8: ldstr "Line"
+			IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01b2: br IL_01cb
+
+			IL_01b7: ldstr "Line"
+			IL_01bc: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:61"
+			IL_01c1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_41
+			IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_01cb: stloc.2
+			IL_01cc: ldloc.2
+			IL_01cd: ldc.r8 0.0
+			IL_01d6: ldc.i4.1
+			IL_01d7: box [System.Runtime]System.Boolean
+			IL_01dc: ldc.i4.1
+			IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_01e2: pop
+
+			IL_01e3: ldarg.0
+			IL_01e4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_01e9: volatile.
+			IL_01eb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_42
+			IL_01f0: brfalse IL_0204
+
+			IL_01f5: ldstr "Line"
+			IL_01fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01ff: br IL_0218
+
+			IL_0204: ldstr "Line"
+			IL_0209: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:69"
+			IL_020e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_42
+			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0218: stloc.2
+			IL_0219: ldloc.2
+			IL_021a: ldc.r8 1
+			IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0228: stloc.2
+			IL_0229: ldloc.2
+			IL_022a: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_022f: ldc.i4.0
+			IL_0230: ceq
+			IL_0232: stloc.s 7
+			IL_0234: ldloc.s 7
+			IL_0236: brfalse IL_02cf
+
+			IL_023b: ldarg.0
+			IL_023c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0241: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0246: ldc.r8 1
+			IL_024f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0254: stloc.2
+			IL_0255: ldarg.0
+			IL_0256: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_025b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0260: ldc.r8 2
+			IL_0269: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_026e: stloc.s 5
+			IL_0270: ldarg.0
+			IL_0271: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0276: ldnull
+			IL_0277: ldloc.2
+			IL_0278: ldloc.s 5
+			IL_027a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_027f: pop
+			IL_0280: ldarg.0
+			IL_0281: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0286: volatile.
+			IL_0288: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_43
+			IL_028d: brfalse IL_02a1
+
+			IL_0292: ldstr "Line"
+			IL_0297: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_029c: br IL_02b5
+
+			IL_02a1: ldstr "Line"
+			IL_02a6: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:86"
+			IL_02ab: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_43
+			IL_02b0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_02b5: stloc.s 5
+			IL_02b7: ldloc.s 5
+			IL_02b9: ldc.r8 1
+			IL_02c2: ldc.i4.1
+			IL_02c3: box [System.Runtime]System.Boolean
+			IL_02c8: ldc.i4.1
+			IL_02c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_02ce: pop
+
+			IL_02cf: ldarg.0
+			IL_02d0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_02d5: volatile.
+			IL_02d7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_44
+			IL_02dc: brfalse IL_02f0
+
+			IL_02e1: ldstr "Line"
+			IL_02e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02eb: br IL_0304
+
+			IL_02f0: ldstr "Line"
+			IL_02f5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:94"
+			IL_02fa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_44
+			IL_02ff: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0304: stloc.s 5
+			IL_0306: ldloc.s 5
+			IL_0308: ldc.r8 2
+			IL_0311: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0316: stloc.s 5
+			IL_0318: ldloc.s 5
+			IL_031a: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_031f: ldc.i4.0
+			IL_0320: ceq
+			IL_0322: stloc.s 7
+			IL_0324: ldloc.s 7
+			IL_0326: brfalse IL_03bd
+
+			IL_032b: ldarg.0
+			IL_032c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0331: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0336: ldc.r8 2
+			IL_033f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0344: stloc.s 5
+			IL_0346: ldarg.0
+			IL_0347: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_034c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0351: ldc.r8 3
+			IL_035a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_035f: stloc.2
+			IL_0360: ldarg.0
+			IL_0361: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0366: ldnull
+			IL_0367: ldloc.s 5
+			IL_0369: ldloc.2
+			IL_036a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_036f: pop
+			IL_0370: ldarg.0
+			IL_0371: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0376: volatile.
+			IL_0378: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_45
+			IL_037d: brfalse IL_0391
+
+			IL_0382: ldstr "Line"
+			IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_038c: br IL_03a5
+
+			IL_0391: ldstr "Line"
+			IL_0396: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:111"
+			IL_039b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_45
+			IL_03a0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_03a5: stloc.2
+			IL_03a6: ldloc.2
+			IL_03a7: ldc.r8 2
+			IL_03b0: ldc.i4.1
+			IL_03b1: box [System.Runtime]System.Boolean
+			IL_03b6: ldc.i4.1
+			IL_03b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_03bc: pop
+
+			IL_03bd: ldarg.0
+			IL_03be: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_03c3: volatile.
+			IL_03c5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_46
+			IL_03ca: brfalse IL_03de
+
+			IL_03cf: ldstr "Line"
+			IL_03d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03d9: br IL_03f2
+
+			IL_03de: ldstr "Line"
+			IL_03e3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:119"
+			IL_03e8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_46
+			IL_03ed: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_03f2: stloc.2
+			IL_03f3: ldloc.2
+			IL_03f4: ldc.r8 3
+			IL_03fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0402: stloc.2
+			IL_0403: ldloc.2
+			IL_0404: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0409: ldc.i4.0
+			IL_040a: ceq
+			IL_040c: stloc.s 7
+			IL_040e: ldloc.s 7
+			IL_0410: brfalse IL_04a9
+
+			IL_0415: ldarg.0
+			IL_0416: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_041b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0420: ldc.r8 3
+			IL_0429: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_042e: stloc.2
+			IL_042f: ldarg.0
+			IL_0430: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0435: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_043a: ldc.r8 0.0
+			IL_0443: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0448: stloc.s 5
+			IL_044a: ldarg.0
+			IL_044b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0450: ldnull
+			IL_0451: ldloc.2
+			IL_0452: ldloc.s 5
+			IL_0454: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0459: pop
+			IL_045a: ldarg.0
+			IL_045b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0460: volatile.
+			IL_0462: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_47
+			IL_0467: brfalse IL_047b
+
+			IL_046c: ldstr "Line"
+			IL_0471: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0476: br IL_048f
+
+			IL_047b: ldstr "Line"
+			IL_0480: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:136"
+			IL_0485: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_47
+			IL_048a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_048f: stloc.s 5
+			IL_0491: ldloc.s 5
+			IL_0493: ldc.r8 3
+			IL_049c: ldc.i4.1
+			IL_049d: box [System.Runtime]System.Boolean
+			IL_04a2: ldc.i4.1
+			IL_04a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_04a8: pop
+
+			IL_04a9: ldloc.0
+			IL_04aa: ldc.r8 1
+			IL_04b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_04b8: stloc.s 5
+			IL_04ba: ldloc.s 5
+			IL_04bc: ldc.r8 2
+			IL_04c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_04ca: stloc.s 5
+			IL_04cc: ldloc.s 5
+			IL_04ce: ldc.r8 0.0
+			IL_04d7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_04dc: stloc.s 7
+			IL_04de: ldloc.s 7
+			IL_04e0: brfalse IL_0899
+
+			IL_04e5: ldarg.0
+			IL_04e6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_04eb: volatile.
+			IL_04ed: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_48
+			IL_04f2: brfalse IL_0506
+
+			IL_04f7: ldstr "Line"
+			IL_04fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0501: br IL_051a
+
+			IL_0506: ldstr "Line"
+			IL_050b: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:153"
+			IL_0510: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_48
+			IL_0515: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_051a: stloc.s 5
+			IL_051c: ldloc.s 5
+			IL_051e: ldc.r8 2
+			IL_0527: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_052c: stloc.s 5
+			IL_052e: ldloc.s 5
+			IL_0530: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0535: ldc.i4.0
+			IL_0536: ceq
+			IL_0538: stloc.s 7
+			IL_053a: ldloc.s 7
+			IL_053c: brfalse IL_05d3
+
+			IL_0541: ldarg.0
+			IL_0542: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0547: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_054c: ldc.r8 3
+			IL_0555: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_055a: stloc.s 5
+			IL_055c: ldarg.0
+			IL_055d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0562: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0567: ldc.r8 2
+			IL_0570: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0575: stloc.2
+			IL_0576: ldarg.0
+			IL_0577: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_057c: ldnull
+			IL_057d: ldloc.s 5
+			IL_057f: ldloc.2
+			IL_0580: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0585: pop
+			IL_0586: ldarg.0
+			IL_0587: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_058c: volatile.
+			IL_058e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_49
+			IL_0593: brfalse IL_05a7
+
+			IL_0598: ldstr "Line"
+			IL_059d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_05a2: br IL_05bb
+
+			IL_05a7: ldstr "Line"
+			IL_05ac: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:170"
+			IL_05b1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_49
+			IL_05b6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_05bb: stloc.2
+			IL_05bc: ldloc.2
+			IL_05bd: ldc.r8 2
+			IL_05c6: ldc.i4.1
+			IL_05c7: box [System.Runtime]System.Boolean
+			IL_05cc: ldc.i4.1
+			IL_05cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_05d2: pop
+
+			IL_05d3: ldarg.0
+			IL_05d4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_05d9: volatile.
+			IL_05db: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_50
+			IL_05e0: brfalse IL_05f4
+
+			IL_05e5: ldstr "Line"
+			IL_05ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_05ef: br IL_0608
+
+			IL_05f4: ldstr "Line"
+			IL_05f9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:178"
+			IL_05fe: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_50
+			IL_0603: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0608: stloc.2
+			IL_0609: ldloc.2
+			IL_060a: ldc.r8 9
+			IL_0613: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0618: stloc.2
+			IL_0619: ldloc.2
+			IL_061a: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_061f: ldc.i4.0
+			IL_0620: ceq
+			IL_0622: stloc.s 7
+			IL_0624: ldloc.s 7
+			IL_0626: brfalse IL_06bf
+
+			IL_062b: ldarg.0
+			IL_062c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0631: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0636: ldc.r8 2
+			IL_063f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0644: stloc.2
+			IL_0645: ldarg.0
+			IL_0646: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_064b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0650: ldc.r8 6
+			IL_0659: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_065e: stloc.s 5
+			IL_0660: ldarg.0
+			IL_0661: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0666: ldnull
+			IL_0667: ldloc.2
+			IL_0668: ldloc.s 5
+			IL_066a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_066f: pop
+			IL_0670: ldarg.0
+			IL_0671: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0676: volatile.
+			IL_0678: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_51
+			IL_067d: brfalse IL_0691
+
+			IL_0682: ldstr "Line"
+			IL_0687: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_068c: br IL_06a5
+
+			IL_0691: ldstr "Line"
+			IL_0696: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:195"
+			IL_069b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_51
+			IL_06a0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_06a5: stloc.s 5
+			IL_06a7: ldloc.s 5
+			IL_06a9: ldc.r8 9
+			IL_06b2: ldc.i4.1
+			IL_06b3: box [System.Runtime]System.Boolean
+			IL_06b8: ldc.i4.1
+			IL_06b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_06be: pop
+
+			IL_06bf: ldarg.0
+			IL_06c0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_06c5: volatile.
+			IL_06c7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_52
+			IL_06cc: brfalse IL_06e0
+
+			IL_06d1: ldstr "Line"
+			IL_06d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_06db: br IL_06f4
+
+			IL_06e0: ldstr "Line"
+			IL_06e5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:203"
+			IL_06ea: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_52
+			IL_06ef: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_06f4: stloc.s 5
+			IL_06f6: ldloc.s 5
+			IL_06f8: ldc.r8 6
+			IL_0701: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0706: stloc.s 5
+			IL_0708: ldloc.s 5
+			IL_070a: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_070f: ldc.i4.0
+			IL_0710: ceq
+			IL_0712: stloc.s 7
+			IL_0714: ldloc.s 7
+			IL_0716: brfalse IL_07ad
+
+			IL_071b: ldarg.0
+			IL_071c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0721: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0726: ldc.r8 6
+			IL_072f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0734: stloc.s 5
+			IL_0736: ldarg.0
+			IL_0737: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_073c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0741: ldc.r8 7
+			IL_074a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_074f: stloc.2
+			IL_0750: ldarg.0
+			IL_0751: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0756: ldnull
+			IL_0757: ldloc.s 5
+			IL_0759: ldloc.2
+			IL_075a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_075f: pop
+			IL_0760: ldarg.0
+			IL_0761: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0766: volatile.
+			IL_0768: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_53
+			IL_076d: brfalse IL_0781
+
+			IL_0772: ldstr "Line"
+			IL_0777: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_077c: br IL_0795
+
+			IL_0781: ldstr "Line"
+			IL_0786: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:220"
+			IL_078b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_53
+			IL_0790: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0795: stloc.2
+			IL_0796: ldloc.2
+			IL_0797: ldc.r8 6
+			IL_07a0: ldc.i4.1
+			IL_07a1: box [System.Runtime]System.Boolean
+			IL_07a6: ldc.i4.1
+			IL_07a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_07ac: pop
+
+			IL_07ad: ldarg.0
+			IL_07ae: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_07b3: volatile.
+			IL_07b5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_54
+			IL_07ba: brfalse IL_07ce
+
+			IL_07bf: ldstr "Line"
+			IL_07c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_07c9: br IL_07e2
+
+			IL_07ce: ldstr "Line"
+			IL_07d3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:228"
+			IL_07d8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_54
+			IL_07dd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_07e2: stloc.2
+			IL_07e3: ldloc.2
+			IL_07e4: ldc.r8 10
+			IL_07ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_07f2: stloc.2
+			IL_07f3: ldloc.2
+			IL_07f4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_07f9: ldc.i4.0
+			IL_07fa: ceq
+			IL_07fc: stloc.s 7
+			IL_07fe: ldloc.s 7
+			IL_0800: brfalse IL_0899
+
+			IL_0805: ldarg.0
+			IL_0806: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_080b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0810: ldc.r8 7
+			IL_0819: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_081e: stloc.2
+			IL_081f: ldarg.0
+			IL_0820: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0825: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_082a: ldc.r8 3
+			IL_0833: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0838: stloc.s 5
+			IL_083a: ldarg.0
+			IL_083b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0840: ldnull
+			IL_0841: ldloc.2
+			IL_0842: ldloc.s 5
+			IL_0844: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0849: pop
+			IL_084a: ldarg.0
+			IL_084b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0850: volatile.
+			IL_0852: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_55
+			IL_0857: brfalse IL_086b
+
+			IL_085c: ldstr "Line"
+			IL_0861: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0866: br IL_087f
+
+			IL_086b: ldstr "Line"
+			IL_0870: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:245"
+			IL_0875: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_55
+			IL_087a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_087f: stloc.s 5
+			IL_0881: ldloc.s 5
+			IL_0883: ldc.r8 10
+			IL_088c: ldc.i4.1
+			IL_088d: box [System.Runtime]System.Boolean
+			IL_0892: ldc.i4.1
+			IL_0893: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0898: pop
+
+			IL_0899: ldloc.0
+			IL_089a: ldc.r8 2
+			IL_08a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_08a8: stloc.s 5
+			IL_08aa: ldloc.s 5
+			IL_08ac: ldc.r8 2
+			IL_08b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_08ba: stloc.s 5
+			IL_08bc: ldloc.s 5
+			IL_08be: ldc.r8 0.0
+			IL_08c7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_08cc: stloc.s 7
+			IL_08ce: ldloc.s 7
+			IL_08d0: brfalse IL_0c89
+
+			IL_08d5: ldarg.0
+			IL_08d6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_08db: volatile.
+			IL_08dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_56
+			IL_08e2: brfalse IL_08f6
+
+			IL_08e7: ldstr "Line"
+			IL_08ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_08f1: br IL_090a
+
+			IL_08f6: ldstr "Line"
+			IL_08fb: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:262"
+			IL_0900: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_56
+			IL_0905: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_090a: stloc.s 5
+			IL_090c: ldloc.s 5
+			IL_090e: ldc.r8 4
+			IL_0917: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_091c: stloc.s 5
+			IL_091e: ldloc.s 5
+			IL_0920: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0925: ldc.i4.0
+			IL_0926: ceq
+			IL_0928: stloc.s 7
+			IL_092a: ldloc.s 7
+			IL_092c: brfalse IL_09c3
+
+			IL_0931: ldarg.0
+			IL_0932: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0937: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_093c: ldc.r8 4
+			IL_0945: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_094a: stloc.s 5
+			IL_094c: ldarg.0
+			IL_094d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0952: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0957: ldc.r8 5
+			IL_0960: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0965: stloc.2
+			IL_0966: ldarg.0
+			IL_0967: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_096c: ldnull
+			IL_096d: ldloc.s 5
+			IL_096f: ldloc.2
+			IL_0970: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0975: pop
+			IL_0976: ldarg.0
+			IL_0977: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_097c: volatile.
+			IL_097e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_57
+			IL_0983: brfalse IL_0997
+
+			IL_0988: ldstr "Line"
+			IL_098d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0992: br IL_09ab
+
+			IL_0997: ldstr "Line"
+			IL_099c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:279"
+			IL_09a1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_57
+			IL_09a6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_09ab: stloc.2
+			IL_09ac: ldloc.2
+			IL_09ad: ldc.r8 4
+			IL_09b6: ldc.i4.1
+			IL_09b7: box [System.Runtime]System.Boolean
+			IL_09bc: ldc.i4.1
+			IL_09bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_09c2: pop
+
+			IL_09c3: ldarg.0
+			IL_09c4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_09c9: volatile.
+			IL_09cb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_58
+			IL_09d0: brfalse IL_09e4
+
+			IL_09d5: ldstr "Line"
+			IL_09da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_09df: br IL_09f8
+
+			IL_09e4: ldstr "Line"
+			IL_09e9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:287"
+			IL_09ee: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_58
+			IL_09f3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_09f8: stloc.2
+			IL_09f9: ldloc.2
+			IL_09fa: ldc.r8 5
+			IL_0a03: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0a08: stloc.2
+			IL_0a09: ldloc.2
+			IL_0a0a: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0a0f: ldc.i4.0
+			IL_0a10: ceq
+			IL_0a12: stloc.s 7
+			IL_0a14: ldloc.s 7
+			IL_0a16: brfalse IL_0aaf
+
+			IL_0a1b: ldarg.0
+			IL_0a1c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0a21: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0a26: ldc.r8 5
+			IL_0a2f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0a34: stloc.2
+			IL_0a35: ldarg.0
+			IL_0a36: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0a3b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0a40: ldc.r8 6
+			IL_0a49: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0a4e: stloc.s 5
+			IL_0a50: ldarg.0
+			IL_0a51: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0a56: ldnull
+			IL_0a57: ldloc.2
+			IL_0a58: ldloc.s 5
+			IL_0a5a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0a5f: pop
+			IL_0a60: ldarg.0
+			IL_0a61: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0a66: volatile.
+			IL_0a68: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
+			IL_0a6d: brfalse IL_0a81
+
+			IL_0a72: ldstr "Line"
+			IL_0a77: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0a7c: br IL_0a95
+
+			IL_0a81: ldstr "Line"
+			IL_0a86: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:304"
+			IL_0a8b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
+			IL_0a90: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0a95: stloc.s 5
+			IL_0a97: ldloc.s 5
+			IL_0a99: ldc.r8 5
+			IL_0aa2: ldc.i4.1
+			IL_0aa3: box [System.Runtime]System.Boolean
+			IL_0aa8: ldc.i4.1
+			IL_0aa9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0aae: pop
+
+			IL_0aaf: ldarg.0
+			IL_0ab0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0ab5: volatile.
+			IL_0ab7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
+			IL_0abc: brfalse IL_0ad0
+
+			IL_0ac1: ldstr "Line"
+			IL_0ac6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0acb: br IL_0ae4
+
+			IL_0ad0: ldstr "Line"
+			IL_0ad5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:312"
+			IL_0ada: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_60
+			IL_0adf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0ae4: stloc.s 5
+			IL_0ae6: ldloc.s 5
+			IL_0ae8: ldc.r8 6
+			IL_0af1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0af6: stloc.s 5
+			IL_0af8: ldloc.s 5
+			IL_0afa: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0aff: ldc.i4.0
+			IL_0b00: ceq
+			IL_0b02: stloc.s 7
+			IL_0b04: ldloc.s 7
+			IL_0b06: brfalse IL_0b9d
+
+			IL_0b0b: ldarg.0
+			IL_0b0c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0b11: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0b16: ldc.r8 6
+			IL_0b1f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0b24: stloc.s 5
+			IL_0b26: ldarg.0
+			IL_0b27: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0b2c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0b31: ldc.r8 7
+			IL_0b3a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0b3f: stloc.2
+			IL_0b40: ldarg.0
+			IL_0b41: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0b46: ldnull
+			IL_0b47: ldloc.s 5
+			IL_0b49: ldloc.2
+			IL_0b4a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0b4f: pop
+			IL_0b50: ldarg.0
+			IL_0b51: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0b56: volatile.
+			IL_0b58: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
+			IL_0b5d: brfalse IL_0b71
+
+			IL_0b62: ldstr "Line"
+			IL_0b67: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0b6c: br IL_0b85
+
+			IL_0b71: ldstr "Line"
+			IL_0b76: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:329"
+			IL_0b7b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_61
+			IL_0b80: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0b85: stloc.2
+			IL_0b86: ldloc.2
+			IL_0b87: ldc.r8 6
+			IL_0b90: ldc.i4.1
+			IL_0b91: box [System.Runtime]System.Boolean
+			IL_0b96: ldc.i4.1
+			IL_0b97: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0b9c: pop
+
+			IL_0b9d: ldarg.0
+			IL_0b9e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0ba3: volatile.
+			IL_0ba5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
+			IL_0baa: brfalse IL_0bbe
+
+			IL_0baf: ldstr "Line"
+			IL_0bb4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0bb9: br IL_0bd2
+
+			IL_0bbe: ldstr "Line"
+			IL_0bc3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:337"
+			IL_0bc8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_62
+			IL_0bcd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0bd2: stloc.2
+			IL_0bd3: ldloc.2
+			IL_0bd4: ldc.r8 7
+			IL_0bdd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0be2: stloc.2
+			IL_0be3: ldloc.2
+			IL_0be4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0be9: ldc.i4.0
+			IL_0bea: ceq
+			IL_0bec: stloc.s 7
+			IL_0bee: ldloc.s 7
+			IL_0bf0: brfalse IL_0c89
+
+			IL_0bf5: ldarg.0
+			IL_0bf6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0bfb: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0c00: ldc.r8 7
+			IL_0c09: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0c0e: stloc.2
+			IL_0c0f: ldarg.0
+			IL_0c10: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0c15: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0c1a: ldc.r8 4
+			IL_0c23: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0c28: stloc.s 5
+			IL_0c2a: ldarg.0
+			IL_0c2b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0c30: ldnull
+			IL_0c31: ldloc.2
+			IL_0c32: ldloc.s 5
+			IL_0c34: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0c39: pop
+			IL_0c3a: ldarg.0
+			IL_0c3b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0c40: volatile.
+			IL_0c42: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
+			IL_0c47: brfalse IL_0c5b
+
+			IL_0c4c: ldstr "Line"
+			IL_0c51: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0c56: br IL_0c6f
+
+			IL_0c5b: ldstr "Line"
+			IL_0c60: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:354"
+			IL_0c65: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_63
+			IL_0c6a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0c6f: stloc.s 5
+			IL_0c71: ldloc.s 5
+			IL_0c73: ldc.r8 7
+			IL_0c7c: ldc.i4.1
+			IL_0c7d: box [System.Runtime]System.Boolean
+			IL_0c82: ldc.i4.1
+			IL_0c83: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0c88: pop
+
+			IL_0c89: ldloc.0
+			IL_0c8a: ldc.r8 3
+			IL_0c93: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0c98: stloc.s 5
+			IL_0c9a: ldloc.s 5
+			IL_0c9c: ldc.r8 2
+			IL_0ca5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0caa: stloc.s 5
+			IL_0cac: ldloc.s 5
+			IL_0cae: ldc.r8 0.0
+			IL_0cb7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_0cbc: stloc.s 7
+			IL_0cbe: ldloc.s 7
+			IL_0cc0: brfalse IL_1079
+
+			IL_0cc5: ldarg.0
+			IL_0cc6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0ccb: volatile.
+			IL_0ccd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
+			IL_0cd2: brfalse IL_0ce6
+
+			IL_0cd7: ldstr "Line"
+			IL_0cdc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0ce1: br IL_0cfa
+
+			IL_0ce6: ldstr "Line"
+			IL_0ceb: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:371"
+			IL_0cf0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_64
+			IL_0cf5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0cfa: stloc.s 5
+			IL_0cfc: ldloc.s 5
+			IL_0cfe: ldc.r8 4
+			IL_0d07: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0d0c: stloc.s 5
+			IL_0d0e: ldloc.s 5
+			IL_0d10: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0d15: ldc.i4.0
+			IL_0d16: ceq
+			IL_0d18: stloc.s 7
+			IL_0d1a: ldloc.s 7
+			IL_0d1c: brfalse IL_0db3
+
+			IL_0d21: ldarg.0
+			IL_0d22: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0d27: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0d2c: ldc.r8 4
+			IL_0d35: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0d3a: stloc.s 5
+			IL_0d3c: ldarg.0
+			IL_0d3d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0d42: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0d47: ldc.r8 5
+			IL_0d50: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0d55: stloc.2
 			IL_0d56: ldarg.0
-			IL_0d57: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0d5c: volatile.
-			IL_0d5e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
-			IL_0d63: brfalse IL_0d77
+			IL_0d57: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0d5c: ldnull
+			IL_0d5d: ldloc.s 5
+			IL_0d5f: ldloc.2
+			IL_0d60: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0d65: pop
+			IL_0d66: ldarg.0
+			IL_0d67: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0d6c: volatile.
+			IL_0d6e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
+			IL_0d73: brfalse IL_0d87
 
-			IL_0d68: ldstr "Line"
-			IL_0d6d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0d72: br IL_0d8b
+			IL_0d78: ldstr "Line"
+			IL_0d7d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0d82: br IL_0d9b
 
-			IL_0d77: ldstr "Line"
-			IL_0d7c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:388"
-			IL_0d81: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
-			IL_0d86: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0d87: ldstr "Line"
+			IL_0d8c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:388"
+			IL_0d91: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_65
+			IL_0d96: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0d8b: stloc.2
-			IL_0d8c: ldloc.2
-			IL_0d8d: ldc.r8 4
-			IL_0d96: ldc.i4.1
-			IL_0d97: box [System.Runtime]System.Boolean
-			IL_0d9c: ldc.i4.1
-			IL_0d9d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0da2: pop
+			IL_0d9b: stloc.2
+			IL_0d9c: ldloc.2
+			IL_0d9d: ldc.r8 4
+			IL_0da6: ldc.i4.1
+			IL_0da7: box [System.Runtime]System.Boolean
+			IL_0dac: ldc.i4.1
+			IL_0dad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0db2: pop
 
-			IL_0da3: ldarg.0
-			IL_0da4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0da9: volatile.
-			IL_0dab: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
-			IL_0db0: brfalse IL_0dc4
+			IL_0db3: ldarg.0
+			IL_0db4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0db9: volatile.
+			IL_0dbb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
+			IL_0dc0: brfalse IL_0dd4
 
-			IL_0db5: ldstr "Line"
-			IL_0dba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0dbf: br IL_0dd8
+			IL_0dc5: ldstr "Line"
+			IL_0dca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0dcf: br IL_0de8
 
-			IL_0dc4: ldstr "Line"
-			IL_0dc9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:396"
-			IL_0dce: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
-			IL_0dd3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0dd4: ldstr "Line"
+			IL_0dd9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:396"
+			IL_0dde: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_66
+			IL_0de3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0dd8: stloc.2
-			IL_0dd9: ldloc.2
-			IL_0dda: ldc.r8 8
-			IL_0de3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
 			IL_0de8: stloc.2
 			IL_0de9: ldloc.2
-			IL_0dea: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0def: ldc.i4.0
-			IL_0df0: ceq
-			IL_0df2: stloc.s 7
-			IL_0df4: ldloc.s 7
-			IL_0df6: brfalse IL_0e8f
+			IL_0dea: ldc.r8 8
+			IL_0df3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0df8: stloc.2
+			IL_0df9: ldloc.2
+			IL_0dfa: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0dff: ldc.i4.0
+			IL_0e00: ceq
+			IL_0e02: stloc.s 7
+			IL_0e04: ldloc.s 7
+			IL_0e06: brfalse IL_0e9f
 
-			IL_0dfb: ldarg.0
-			IL_0dfc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0e01: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0e06: ldc.r8 5
-			IL_0e0f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0e14: stloc.2
-			IL_0e15: ldarg.0
-			IL_0e16: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0e1b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0e20: ldc.r8 1
-			IL_0e29: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0e2e: stloc.s 5
-			IL_0e30: ldarg.0
-			IL_0e31: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0e36: ldnull
-			IL_0e37: ldloc.2
-			IL_0e38: ldloc.s 5
-			IL_0e3a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0e3f: pop
+			IL_0e0b: ldarg.0
+			IL_0e0c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0e11: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0e16: ldc.r8 5
+			IL_0e1f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0e24: stloc.2
+			IL_0e25: ldarg.0
+			IL_0e26: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0e2b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0e30: ldc.r8 1
+			IL_0e39: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0e3e: stloc.s 5
 			IL_0e40: ldarg.0
-			IL_0e41: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0e46: volatile.
-			IL_0e48: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
-			IL_0e4d: brfalse IL_0e61
+			IL_0e41: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0e46: ldnull
+			IL_0e47: ldloc.2
+			IL_0e48: ldloc.s 5
+			IL_0e4a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0e4f: pop
+			IL_0e50: ldarg.0
+			IL_0e51: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0e56: volatile.
+			IL_0e58: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
+			IL_0e5d: brfalse IL_0e71
 
-			IL_0e52: ldstr "Line"
-			IL_0e57: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0e5c: br IL_0e75
+			IL_0e62: ldstr "Line"
+			IL_0e67: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0e6c: br IL_0e85
 
-			IL_0e61: ldstr "Line"
-			IL_0e66: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:413"
-			IL_0e6b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
-			IL_0e70: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0e71: ldstr "Line"
+			IL_0e76: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:413"
+			IL_0e7b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_67
+			IL_0e80: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0e75: stloc.s 5
-			IL_0e77: ldloc.s 5
-			IL_0e79: ldc.r8 8
-			IL_0e82: ldc.i4.1
-			IL_0e83: box [System.Runtime]System.Boolean
-			IL_0e88: ldc.i4.1
-			IL_0e89: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0e8e: pop
+			IL_0e85: stloc.s 5
+			IL_0e87: ldloc.s 5
+			IL_0e89: ldc.r8 8
+			IL_0e92: ldc.i4.1
+			IL_0e93: box [System.Runtime]System.Boolean
+			IL_0e98: ldc.i4.1
+			IL_0e99: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0e9e: pop
 
-			IL_0e8f: ldarg.0
-			IL_0e90: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0e95: volatile.
-			IL_0e97: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
-			IL_0e9c: brfalse IL_0eb0
+			IL_0e9f: ldarg.0
+			IL_0ea0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0ea5: volatile.
+			IL_0ea7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
+			IL_0eac: brfalse IL_0ec0
 
-			IL_0ea1: ldstr "Line"
-			IL_0ea6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0eab: br IL_0ec4
+			IL_0eb1: ldstr "Line"
+			IL_0eb6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0ebb: br IL_0ed4
 
-			IL_0eb0: ldstr "Line"
-			IL_0eb5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:421"
-			IL_0eba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
-			IL_0ebf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0ec0: ldstr "Line"
+			IL_0ec5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:421"
+			IL_0eca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_68
+			IL_0ecf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0ec4: stloc.s 5
-			IL_0ec6: ldloc.s 5
-			IL_0ec8: ldc.r8 0.0
-			IL_0ed1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0ed6: stloc.s 5
-			IL_0ed8: ldloc.s 5
-			IL_0eda: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0edf: ldc.i4.0
-			IL_0ee0: ceq
-			IL_0ee2: stloc.s 7
-			IL_0ee4: ldloc.s 7
-			IL_0ee6: brfalse IL_0f7d
+			IL_0ed4: stloc.s 5
+			IL_0ed6: ldloc.s 5
+			IL_0ed8: ldc.r8 0.0
+			IL_0ee1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0ee6: stloc.s 5
+			IL_0ee8: ldloc.s 5
+			IL_0eea: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0eef: ldc.i4.0
+			IL_0ef0: ceq
+			IL_0ef2: stloc.s 7
+			IL_0ef4: ldloc.s 7
+			IL_0ef6: brfalse IL_0f8d
 
-			IL_0eeb: ldarg.0
-			IL_0eec: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0ef1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0ef6: ldc.r8 1
-			IL_0eff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0f04: stloc.s 5
-			IL_0f06: ldarg.0
-			IL_0f07: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0f0c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0f11: ldc.r8 0.0
-			IL_0f1a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0f1f: stloc.2
-			IL_0f20: ldarg.0
-			IL_0f21: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_0f26: ldnull
-			IL_0f27: ldloc.s 5
-			IL_0f29: ldloc.2
-			IL_0f2a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_0f2f: pop
+			IL_0efb: ldarg.0
+			IL_0efc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0f01: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0f06: ldc.r8 1
+			IL_0f0f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0f14: stloc.s 5
+			IL_0f16: ldarg.0
+			IL_0f17: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0f1c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0f21: ldc.r8 0.0
+			IL_0f2a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0f2f: stloc.2
 			IL_0f30: ldarg.0
-			IL_0f31: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0f36: volatile.
-			IL_0f38: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
-			IL_0f3d: brfalse IL_0f51
+			IL_0f31: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_0f36: ldnull
+			IL_0f37: ldloc.s 5
+			IL_0f39: ldloc.2
+			IL_0f3a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_0f3f: pop
+			IL_0f40: ldarg.0
+			IL_0f41: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0f46: volatile.
+			IL_0f48: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
+			IL_0f4d: brfalse IL_0f61
 
-			IL_0f42: ldstr "Line"
-			IL_0f47: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0f4c: br IL_0f65
+			IL_0f52: ldstr "Line"
+			IL_0f57: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0f5c: br IL_0f75
 
-			IL_0f51: ldstr "Line"
-			IL_0f56: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:438"
-			IL_0f5b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
-			IL_0f60: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0f61: ldstr "Line"
+			IL_0f66: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:438"
+			IL_0f6b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_69
+			IL_0f70: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0f65: stloc.2
-			IL_0f66: ldloc.2
-			IL_0f67: ldc.r8 0.0
-			IL_0f70: ldc.i4.1
-			IL_0f71: box [System.Runtime]System.Boolean
-			IL_0f76: ldc.i4.1
-			IL_0f77: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_0f7c: pop
+			IL_0f75: stloc.2
+			IL_0f76: ldloc.2
+			IL_0f77: ldc.r8 0.0
+			IL_0f80: ldc.i4.1
+			IL_0f81: box [System.Runtime]System.Boolean
+			IL_0f86: ldc.i4.1
+			IL_0f87: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_0f8c: pop
 
-			IL_0f7d: ldarg.0
-			IL_0f7e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0f83: volatile.
-			IL_0f85: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
-			IL_0f8a: brfalse IL_0f9e
+			IL_0f8d: ldarg.0
+			IL_0f8e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0f93: volatile.
+			IL_0f95: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
+			IL_0f9a: brfalse IL_0fae
 
-			IL_0f8f: ldstr "Line"
-			IL_0f94: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0f99: br IL_0fb2
+			IL_0f9f: ldstr "Line"
+			IL_0fa4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0fa9: br IL_0fc2
 
-			IL_0f9e: ldstr "Line"
-			IL_0fa3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:446"
-			IL_0fa8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
-			IL_0fad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0fae: ldstr "Line"
+			IL_0fb3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:446"
+			IL_0fb8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_70
+			IL_0fbd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0fb2: stloc.2
-			IL_0fb3: ldloc.2
-			IL_0fb4: ldc.r8 11
-			IL_0fbd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
 			IL_0fc2: stloc.2
 			IL_0fc3: ldloc.2
-			IL_0fc4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0fc9: ldc.i4.0
-			IL_0fca: ceq
-			IL_0fcc: stloc.s 7
-			IL_0fce: ldloc.s 7
-			IL_0fd0: brfalse IL_1069
+			IL_0fc4: ldc.r8 11
+			IL_0fcd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0fd2: stloc.2
+			IL_0fd3: ldloc.2
+			IL_0fd4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0fd9: ldc.i4.0
+			IL_0fda: ceq
+			IL_0fdc: stloc.s 7
+			IL_0fde: ldloc.s 7
+			IL_0fe0: brfalse IL_1079
 
-			IL_0fd5: ldarg.0
-			IL_0fd6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0fdb: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0fe0: ldc.r8 0.0
-			IL_0fe9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0fee: stloc.2
-			IL_0fef: ldarg.0
-			IL_0ff0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0ff5: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0ffa: ldc.r8 4
-			IL_1003: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1008: stloc.s 5
-			IL_100a: ldarg.0
-			IL_100b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_1010: ldnull
-			IL_1011: ldloc.2
-			IL_1012: ldloc.s 5
-			IL_1014: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_1019: pop
+			IL_0fe5: ldarg.0
+			IL_0fe6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_0feb: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0ff0: ldc.r8 0.0
+			IL_0ff9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0ffe: stloc.2
+			IL_0fff: ldarg.0
+			IL_1000: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1005: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_100a: ldc.r8 4
+			IL_1013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1018: stloc.s 5
 			IL_101a: ldarg.0
-			IL_101b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1020: volatile.
-			IL_1022: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
-			IL_1027: brfalse IL_103b
-
-			IL_102c: ldstr "Line"
-			IL_1031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1036: br IL_104f
-
-			IL_103b: ldstr "Line"
-			IL_1040: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:463"
-			IL_1045: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
-			IL_104a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_104f: stloc.s 5
-			IL_1051: ldloc.s 5
-			IL_1053: ldc.r8 11
-			IL_105c: ldc.i4.1
-			IL_105d: box [System.Runtime]System.Boolean
-			IL_1062: ldc.i4.1
-			IL_1063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_1068: pop
-
-			IL_1069: ldloc.0
-			IL_106a: ldc.r8 4
-			IL_1073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1078: ldc.r8 2
-			IL_1081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_1086: stloc.s 5
-			IL_1088: ldloc.s 5
-			IL_108a: ldc.r8 0.0
-			IL_1093: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
-			IL_1098: stloc.s 7
-			IL_109a: ldloc.s 7
-			IL_109c: brfalse IL_1455
-
-			IL_10a1: ldarg.0
-			IL_10a2: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_10a7: volatile.
-			IL_10a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
-			IL_10ae: brfalse IL_10c2
-
-			IL_10b3: ldstr "Line"
-			IL_10b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_10bd: br IL_10d6
-
-			IL_10c2: ldstr "Line"
-			IL_10c7: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:480"
-			IL_10cc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
-			IL_10d1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_10d6: stloc.s 5
-			IL_10d8: ldloc.s 5
-			IL_10da: ldc.r8 11
-			IL_10e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_10e8: stloc.s 5
-			IL_10ea: ldloc.s 5
-			IL_10ec: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_10f1: ldc.i4.0
-			IL_10f2: ceq
-			IL_10f4: stloc.s 7
-			IL_10f6: ldloc.s 7
-			IL_10f8: brfalse IL_118f
-
-			IL_10fd: ldarg.0
-			IL_10fe: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1103: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_1108: ldc.r8 4
-			IL_1111: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1116: stloc.s 5
-			IL_1118: ldarg.0
-			IL_1119: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_111e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_1123: ldc.r8 0.0
-			IL_112c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1131: stloc.2
-			IL_1132: ldarg.0
-			IL_1133: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_1138: ldnull
-			IL_1139: ldloc.s 5
-			IL_113b: ldloc.2
-			IL_113c: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_1141: pop
-			IL_1142: ldarg.0
-			IL_1143: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1148: volatile.
-			IL_114a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_73
-			IL_114f: brfalse IL_1163
-
-			IL_1154: ldstr "Line"
-			IL_1159: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_115e: br IL_1177
-
-			IL_1163: ldstr "Line"
-			IL_1168: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:497"
-			IL_116d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_73
-			IL_1172: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_1177: stloc.2
-			IL_1178: ldloc.2
-			IL_1179: ldc.r8 11
-			IL_1182: ldc.i4.1
-			IL_1183: box [System.Runtime]System.Boolean
-			IL_1188: ldc.i4.1
-			IL_1189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_118e: pop
-
-			IL_118f: ldarg.0
-			IL_1190: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1195: volatile.
-			IL_1197: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_74
-			IL_119c: brfalse IL_11b0
-
-			IL_11a1: ldstr "Line"
-			IL_11a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_11ab: br IL_11c4
-
-			IL_11b0: ldstr "Line"
-			IL_11b5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:505"
-			IL_11ba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_74
-			IL_11bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_11c4: stloc.2
-			IL_11c5: ldloc.2
-			IL_11c6: ldc.r8 3
-			IL_11cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_11d4: stloc.2
-			IL_11d5: ldloc.2
-			IL_11d6: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_11db: ldc.i4.0
-			IL_11dc: ceq
-			IL_11de: stloc.s 7
-			IL_11e0: ldloc.s 7
-			IL_11e2: brfalse IL_127b
-
-			IL_11e7: ldarg.0
-			IL_11e8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_11ed: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_11f2: ldc.r8 0.0
-			IL_11fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1200: stloc.2
-			IL_1201: ldarg.0
-			IL_1202: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1207: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_120c: ldc.r8 3
-			IL_1215: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_121a: stloc.s 5
-			IL_121c: ldarg.0
-			IL_121d: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_1222: ldnull
-			IL_1223: ldloc.2
-			IL_1224: ldloc.s 5
-			IL_1226: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_122b: pop
-			IL_122c: ldarg.0
-			IL_122d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1232: volatile.
-			IL_1234: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_75
-			IL_1239: brfalse IL_124d
-
-			IL_123e: ldstr "Line"
-			IL_1243: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1248: br IL_1261
-
-			IL_124d: ldstr "Line"
-			IL_1252: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:522"
-			IL_1257: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_75
-			IL_125c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_1261: stloc.s 5
-			IL_1263: ldloc.s 5
-			IL_1265: ldc.r8 3
-			IL_126e: ldc.i4.1
-			IL_126f: box [System.Runtime]System.Boolean
-			IL_1274: ldc.i4.1
-			IL_1275: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_127a: pop
-
-			IL_127b: ldarg.0
-			IL_127c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1281: volatile.
-			IL_1283: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
-			IL_1288: brfalse IL_129c
-
-			IL_128d: ldstr "Line"
-			IL_1292: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1297: br IL_12b0
-
-			IL_129c: ldstr "Line"
-			IL_12a1: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:530"
-			IL_12a6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
-			IL_12ab: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_12b0: stloc.s 5
-			IL_12b2: ldloc.s 5
-			IL_12b4: ldc.r8 10
-			IL_12bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_12c2: stloc.s 5
-			IL_12c4: ldloc.s 5
-			IL_12c6: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_12cb: ldc.i4.0
-			IL_12cc: ceq
-			IL_12ce: stloc.s 7
-			IL_12d0: ldloc.s 7
-			IL_12d2: brfalse IL_1369
-
-			IL_12d7: ldarg.0
-			IL_12d8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_12dd: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_12e2: ldc.r8 3
-			IL_12eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_12f0: stloc.s 5
-			IL_12f2: ldarg.0
-			IL_12f3: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_12f8: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_12fd: ldc.r8 7
-			IL_1306: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_130b: stloc.2
-			IL_130c: ldarg.0
-			IL_130d: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_1312: ldnull
-			IL_1313: ldloc.s 5
-			IL_1315: ldloc.2
-			IL_1316: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_131b: pop
-			IL_131c: ldarg.0
-			IL_131d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1322: volatile.
-			IL_1324: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
-			IL_1329: brfalse IL_133d
-
-			IL_132e: ldstr "Line"
-			IL_1333: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1338: br IL_1351
-
-			IL_133d: ldstr "Line"
-			IL_1342: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:547"
-			IL_1347: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
-			IL_134c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_1351: stloc.2
-			IL_1352: ldloc.2
-			IL_1353: ldc.r8 10
-			IL_135c: ldc.i4.1
-			IL_135d: box [System.Runtime]System.Boolean
-			IL_1362: ldc.i4.1
-			IL_1363: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_1368: pop
-
-			IL_1369: ldarg.0
-			IL_136a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_136f: volatile.
-			IL_1371: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_78
-			IL_1376: brfalse IL_138a
-
-			IL_137b: ldstr "Line"
-			IL_1380: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1385: br IL_139e
-
-			IL_138a: ldstr "Line"
-			IL_138f: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:555"
-			IL_1394: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_78
-			IL_1399: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_139e: stloc.2
-			IL_139f: ldloc.2
-			IL_13a0: ldc.r8 7
-			IL_13a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_13ae: stloc.2
-			IL_13af: ldloc.2
-			IL_13b0: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_13b5: ldc.i4.0
-			IL_13b6: ceq
-			IL_13b8: stloc.s 7
-			IL_13ba: ldloc.s 7
-			IL_13bc: brfalse IL_1455
-
-			IL_13c1: ldarg.0
-			IL_13c2: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_13c7: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_13cc: ldc.r8 7
-			IL_13d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_13da: stloc.2
-			IL_13db: ldarg.0
-			IL_13dc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_13e1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_13e6: ldc.r8 4
-			IL_13ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_13f4: stloc.s 5
-			IL_13f6: ldarg.0
-			IL_13f7: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_13fc: ldnull
-			IL_13fd: ldloc.2
-			IL_13fe: ldloc.s 5
-			IL_1400: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_1405: pop
-			IL_1406: ldarg.0
-			IL_1407: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_140c: volatile.
-			IL_140e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
-			IL_1413: brfalse IL_1427
-
-			IL_1418: ldstr "Line"
-			IL_141d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1422: br IL_143b
-
-			IL_1427: ldstr "Line"
-			IL_142c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:572"
-			IL_1431: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
-			IL_1436: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_143b: stloc.s 5
-			IL_143d: ldloc.s 5
-			IL_143f: ldc.r8 7
-			IL_1448: ldc.i4.1
-			IL_1449: box [System.Runtime]System.Boolean
-			IL_144e: ldc.i4.1
-			IL_144f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_1454: pop
-
-			IL_1455: ldloc.0
-			IL_1456: ldc.r8 5
-			IL_145f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1464: ldc.r8 2
-			IL_146d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_1472: stloc.s 5
-			IL_1474: ldloc.s 5
-			IL_1476: ldc.r8 0.0
-			IL_147f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
-			IL_1484: stloc.s 7
-			IL_1486: ldloc.s 7
-			IL_1488: brfalse IL_1841
-
-			IL_148d: ldarg.0
-			IL_148e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1493: volatile.
-			IL_1495: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
-			IL_149a: brfalse IL_14ae
-
-			IL_149f: ldstr "Line"
-			IL_14a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_14a9: br IL_14c2
-
-			IL_14ae: ldstr "Line"
-			IL_14b3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:589"
-			IL_14b8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
-			IL_14bd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_14c2: stloc.s 5
-			IL_14c4: ldloc.s 5
-			IL_14c6: ldc.r8 8
-			IL_14cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_14d4: stloc.s 5
-			IL_14d6: ldloc.s 5
-			IL_14d8: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_14dd: ldc.i4.0
-			IL_14de: ceq
-			IL_14e0: stloc.s 7
-			IL_14e2: ldloc.s 7
-			IL_14e4: brfalse IL_157b
-
-			IL_14e9: ldarg.0
-			IL_14ea: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_14ef: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_14f4: ldc.r8 1
-			IL_14fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1502: stloc.s 5
-			IL_1504: ldarg.0
-			IL_1505: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_150a: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_150f: ldc.r8 5
-			IL_1518: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_151d: stloc.2
-			IL_151e: ldarg.0
-			IL_151f: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_1524: ldnull
-			IL_1525: ldloc.s 5
-			IL_1527: ldloc.2
-			IL_1528: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_152d: pop
-			IL_152e: ldarg.0
-			IL_152f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1534: volatile.
-			IL_1536: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_81
-			IL_153b: brfalse IL_154f
-
-			IL_1540: ldstr "Line"
-			IL_1545: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_154a: br IL_1563
-
-			IL_154f: ldstr "Line"
-			IL_1554: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:606"
-			IL_1559: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_81
-			IL_155e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_1563: stloc.2
-			IL_1564: ldloc.2
-			IL_1565: ldc.r8 8
-			IL_156e: ldc.i4.1
-			IL_156f: box [System.Runtime]System.Boolean
-			IL_1574: ldc.i4.1
-			IL_1575: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_157a: pop
-
-			IL_157b: ldarg.0
-			IL_157c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1581: volatile.
-			IL_1583: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_82
-			IL_1588: brfalse IL_159c
-
-			IL_158d: ldstr "Line"
-			IL_1592: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1597: br IL_15b0
-
-			IL_159c: ldstr "Line"
-			IL_15a1: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:614"
-			IL_15a6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_82
-			IL_15ab: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_15b0: stloc.2
-			IL_15b1: ldloc.2
-			IL_15b2: ldc.r8 5
-			IL_15bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_15c0: stloc.2
-			IL_15c1: ldloc.2
-			IL_15c2: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_15c7: ldc.i4.0
-			IL_15c8: ceq
-			IL_15ca: stloc.s 7
-			IL_15cc: ldloc.s 7
-			IL_15ce: brfalse IL_1667
-
-			IL_15d3: ldarg.0
-			IL_15d4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_15d9: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_15de: ldc.r8 5
-			IL_15e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_15ec: stloc.2
-			IL_15ed: ldarg.0
-			IL_15ee: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_15f3: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_15f8: ldc.r8 6
-			IL_1601: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_1606: stloc.s 5
-			IL_1608: ldarg.0
-			IL_1609: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_160e: ldnull
-			IL_160f: ldloc.2
-			IL_1610: ldloc.s 5
-			IL_1612: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_1617: pop
-			IL_1618: ldarg.0
-			IL_1619: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_161e: volatile.
-			IL_1620: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_83
-			IL_1625: brfalse IL_1639
-
-			IL_162a: ldstr "Line"
-			IL_162f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1634: br IL_164d
-
-			IL_1639: ldstr "Line"
-			IL_163e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:631"
-			IL_1643: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_83
-			IL_1648: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_164d: stloc.s 5
-			IL_164f: ldloc.s 5
-			IL_1651: ldc.r8 5
-			IL_165a: ldc.i4.1
-			IL_165b: box [System.Runtime]System.Boolean
-			IL_1660: ldc.i4.1
-			IL_1661: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_1666: pop
-
-			IL_1667: ldarg.0
-			IL_1668: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_166d: volatile.
-			IL_166f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_84
-			IL_1674: brfalse IL_1688
-
-			IL_1679: ldstr "Line"
-			IL_167e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1683: br IL_169c
-
-			IL_1688: ldstr "Line"
-			IL_168d: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:639"
-			IL_1692: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_84
-			IL_1697: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_169c: stloc.s 5
-			IL_169e: ldloc.s 5
-			IL_16a0: ldc.r8 9
-			IL_16a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_16ae: stloc.s 5
-			IL_16b0: ldloc.s 5
-			IL_16b2: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_16b7: ldc.i4.0
-			IL_16b8: ceq
-			IL_16ba: stloc.s 7
-			IL_16bc: ldloc.s 7
-			IL_16be: brfalse IL_1755
-
-			IL_16c3: ldarg.0
-			IL_16c4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_16c9: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_16ce: ldc.r8 6
-			IL_16d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_16dc: stloc.s 5
-			IL_16de: ldarg.0
-			IL_16df: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_16e4: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_16e9: ldc.r8 2
-			IL_16f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_16f7: stloc.2
-			IL_16f8: ldarg.0
-			IL_16f9: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_16fe: ldnull
-			IL_16ff: ldloc.s 5
-			IL_1701: ldloc.2
-			IL_1702: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_1707: pop
-			IL_1708: ldarg.0
-			IL_1709: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_170e: volatile.
-			IL_1710: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
-			IL_1715: brfalse IL_1729
-
-			IL_171a: ldstr "Line"
-			IL_171f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1724: br IL_173d
-
-			IL_1729: ldstr "Line"
-			IL_172e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:656"
-			IL_1733: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
-			IL_1738: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_173d: stloc.2
-			IL_173e: ldloc.2
-			IL_173f: ldc.r8 9
-			IL_1748: ldc.i4.1
-			IL_1749: box [System.Runtime]System.Boolean
-			IL_174e: ldc.i4.1
-			IL_174f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_1754: pop
-
-			IL_1755: ldarg.0
-			IL_1756: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_175b: volatile.
-			IL_175d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
-			IL_1762: brfalse IL_1776
-
-			IL_1767: ldstr "Line"
-			IL_176c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_1771: br IL_178a
-
-			IL_1776: ldstr "Line"
-			IL_177b: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:664"
-			IL_1780: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
-			IL_1785: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_178a: stloc.2
-			IL_178b: ldloc.2
-			IL_178c: ldc.r8 1
-			IL_1795: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_179a: stloc.2
-			IL_179b: ldloc.2
-			IL_179c: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_17a1: ldc.i4.0
-			IL_17a2: ceq
-			IL_17a4: stloc.s 7
-			IL_17a6: ldloc.s 7
-			IL_17a8: brfalse IL_1841
-
-			IL_17ad: ldarg.0
-			IL_17ae: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_17b3: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_17b8: ldc.r8 2
-			IL_17c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_17c6: stloc.2
-			IL_17c7: ldarg.0
-			IL_17c8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_17cd: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_17d2: ldc.r8 1
-			IL_17db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_17e0: stloc.s 5
-			IL_17e2: ldarg.0
-			IL_17e3: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-			IL_17e8: ldnull
-			IL_17e9: ldloc.2
-			IL_17ea: ldloc.s 5
-			IL_17ec: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
-			IL_17f1: pop
-			IL_17f2: ldarg.0
-			IL_17f3: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_17f8: volatile.
-			IL_17fa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
-			IL_17ff: brfalse IL_1813
-
-			IL_1804: ldstr "Line"
-			IL_1809: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_180e: br IL_1827
-
-			IL_1813: ldstr "Line"
-			IL_1818: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:681"
-			IL_181d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
-			IL_1822: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_1827: stloc.s 5
-			IL_1829: ldloc.s 5
-			IL_182b: ldc.r8 1
-			IL_1834: ldc.i4.1
-			IL_1835: box [System.Runtime]System.Boolean
-			IL_183a: ldc.i4.1
-			IL_183b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_1840: pop
-
-			IL_1841: ldarg.0
-			IL_1842: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_1847: stloc.s 5
-			IL_1849: ldc.i4.s 12
-			IL_184b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_1850: dup
-			IL_1851: ldc.i4.0
-			IL_1852: box [System.Runtime]System.Boolean
-			IL_1857: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_185c: dup
-			IL_185d: ldc.i4.0
-			IL_185e: box [System.Runtime]System.Boolean
-			IL_1863: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_101b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1020: ldnull
+			IL_1021: ldloc.2
+			IL_1022: ldloc.s 5
+			IL_1024: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_1029: pop
+			IL_102a: ldarg.0
+			IL_102b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1030: volatile.
+			IL_1032: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
+			IL_1037: brfalse IL_104b
+
+			IL_103c: ldstr "Line"
+			IL_1041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1046: br IL_105f
+
+			IL_104b: ldstr "Line"
+			IL_1050: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:463"
+			IL_1055: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_71
+			IL_105a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_105f: stloc.s 5
+			IL_1061: ldloc.s 5
+			IL_1063: ldc.r8 11
+			IL_106c: ldc.i4.1
+			IL_106d: box [System.Runtime]System.Boolean
+			IL_1072: ldc.i4.1
+			IL_1073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_1078: pop
+
+			IL_1079: ldloc.0
+			IL_107a: ldc.r8 4
+			IL_1083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_1088: stloc.s 5
+			IL_108a: ldloc.s 5
+			IL_108c: ldc.r8 2
+			IL_1095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_109a: stloc.s 5
+			IL_109c: ldloc.s 5
+			IL_109e: ldc.r8 0.0
+			IL_10a7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_10ac: stloc.s 7
+			IL_10ae: ldloc.s 7
+			IL_10b0: brfalse IL_1469
+
+			IL_10b5: ldarg.0
+			IL_10b6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_10bb: volatile.
+			IL_10bd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
+			IL_10c2: brfalse IL_10d6
+
+			IL_10c7: ldstr "Line"
+			IL_10cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_10d1: br IL_10ea
+
+			IL_10d6: ldstr "Line"
+			IL_10db: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:480"
+			IL_10e0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_72
+			IL_10e5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_10ea: stloc.s 5
+			IL_10ec: ldloc.s 5
+			IL_10ee: ldc.r8 11
+			IL_10f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_10fc: stloc.s 5
+			IL_10fe: ldloc.s 5
+			IL_1100: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_1105: ldc.i4.0
+			IL_1106: ceq
+			IL_1108: stloc.s 7
+			IL_110a: ldloc.s 7
+			IL_110c: brfalse IL_11a3
+
+			IL_1111: ldarg.0
+			IL_1112: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1117: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_111c: ldc.r8 4
+			IL_1125: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_112a: stloc.s 5
+			IL_112c: ldarg.0
+			IL_112d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1132: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1137: ldc.r8 0.0
+			IL_1140: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1145: stloc.2
+			IL_1146: ldarg.0
+			IL_1147: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_114c: ldnull
+			IL_114d: ldloc.s 5
+			IL_114f: ldloc.2
+			IL_1150: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_1155: pop
+			IL_1156: ldarg.0
+			IL_1157: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_115c: volatile.
+			IL_115e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_73
+			IL_1163: brfalse IL_1177
+
+			IL_1168: ldstr "Line"
+			IL_116d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1172: br IL_118b
+
+			IL_1177: ldstr "Line"
+			IL_117c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:497"
+			IL_1181: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_73
+			IL_1186: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_118b: stloc.2
+			IL_118c: ldloc.2
+			IL_118d: ldc.r8 11
+			IL_1196: ldc.i4.1
+			IL_1197: box [System.Runtime]System.Boolean
+			IL_119c: ldc.i4.1
+			IL_119d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_11a2: pop
+
+			IL_11a3: ldarg.0
+			IL_11a4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_11a9: volatile.
+			IL_11ab: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_74
+			IL_11b0: brfalse IL_11c4
+
+			IL_11b5: ldstr "Line"
+			IL_11ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_11bf: br IL_11d8
+
+			IL_11c4: ldstr "Line"
+			IL_11c9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:505"
+			IL_11ce: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_74
+			IL_11d3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_11d8: stloc.2
+			IL_11d9: ldloc.2
+			IL_11da: ldc.r8 3
+			IL_11e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_11e8: stloc.2
+			IL_11e9: ldloc.2
+			IL_11ea: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_11ef: ldc.i4.0
+			IL_11f0: ceq
+			IL_11f2: stloc.s 7
+			IL_11f4: ldloc.s 7
+			IL_11f6: brfalse IL_128f
+
+			IL_11fb: ldarg.0
+			IL_11fc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1201: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1206: ldc.r8 0.0
+			IL_120f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1214: stloc.2
+			IL_1215: ldarg.0
+			IL_1216: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_121b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1220: ldc.r8 3
+			IL_1229: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_122e: stloc.s 5
+			IL_1230: ldarg.0
+			IL_1231: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1236: ldnull
+			IL_1237: ldloc.2
+			IL_1238: ldloc.s 5
+			IL_123a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_123f: pop
+			IL_1240: ldarg.0
+			IL_1241: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1246: volatile.
+			IL_1248: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_75
+			IL_124d: brfalse IL_1261
+
+			IL_1252: ldstr "Line"
+			IL_1257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_125c: br IL_1275
+
+			IL_1261: ldstr "Line"
+			IL_1266: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:522"
+			IL_126b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_75
+			IL_1270: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_1275: stloc.s 5
+			IL_1277: ldloc.s 5
+			IL_1279: ldc.r8 3
+			IL_1282: ldc.i4.1
+			IL_1283: box [System.Runtime]System.Boolean
+			IL_1288: ldc.i4.1
+			IL_1289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_128e: pop
+
+			IL_128f: ldarg.0
+			IL_1290: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1295: volatile.
+			IL_1297: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
+			IL_129c: brfalse IL_12b0
+
+			IL_12a1: ldstr "Line"
+			IL_12a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_12ab: br IL_12c4
+
+			IL_12b0: ldstr "Line"
+			IL_12b5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:530"
+			IL_12ba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_76
+			IL_12bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_12c4: stloc.s 5
+			IL_12c6: ldloc.s 5
+			IL_12c8: ldc.r8 10
+			IL_12d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_12d6: stloc.s 5
+			IL_12d8: ldloc.s 5
+			IL_12da: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_12df: ldc.i4.0
+			IL_12e0: ceq
+			IL_12e2: stloc.s 7
+			IL_12e4: ldloc.s 7
+			IL_12e6: brfalse IL_137d
+
+			IL_12eb: ldarg.0
+			IL_12ec: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_12f1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_12f6: ldc.r8 3
+			IL_12ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1304: stloc.s 5
+			IL_1306: ldarg.0
+			IL_1307: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_130c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1311: ldc.r8 7
+			IL_131a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_131f: stloc.2
+			IL_1320: ldarg.0
+			IL_1321: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1326: ldnull
+			IL_1327: ldloc.s 5
+			IL_1329: ldloc.2
+			IL_132a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_132f: pop
+			IL_1330: ldarg.0
+			IL_1331: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1336: volatile.
+			IL_1338: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
+			IL_133d: brfalse IL_1351
+
+			IL_1342: ldstr "Line"
+			IL_1347: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_134c: br IL_1365
+
+			IL_1351: ldstr "Line"
+			IL_1356: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:547"
+			IL_135b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_77
+			IL_1360: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_1365: stloc.2
+			IL_1366: ldloc.2
+			IL_1367: ldc.r8 10
+			IL_1370: ldc.i4.1
+			IL_1371: box [System.Runtime]System.Boolean
+			IL_1376: ldc.i4.1
+			IL_1377: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_137c: pop
+
+			IL_137d: ldarg.0
+			IL_137e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1383: volatile.
+			IL_1385: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_78
+			IL_138a: brfalse IL_139e
+
+			IL_138f: ldstr "Line"
+			IL_1394: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1399: br IL_13b2
+
+			IL_139e: ldstr "Line"
+			IL_13a3: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:555"
+			IL_13a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_78
+			IL_13ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_13b2: stloc.2
+			IL_13b3: ldloc.2
+			IL_13b4: ldc.r8 7
+			IL_13bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_13c2: stloc.2
+			IL_13c3: ldloc.2
+			IL_13c4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_13c9: ldc.i4.0
+			IL_13ca: ceq
+			IL_13cc: stloc.s 7
+			IL_13ce: ldloc.s 7
+			IL_13d0: brfalse IL_1469
+
+			IL_13d5: ldarg.0
+			IL_13d6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_13db: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_13e0: ldc.r8 7
+			IL_13e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_13ee: stloc.2
+			IL_13ef: ldarg.0
+			IL_13f0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_13f5: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_13fa: ldc.r8 4
+			IL_1403: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1408: stloc.s 5
+			IL_140a: ldarg.0
+			IL_140b: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1410: ldnull
+			IL_1411: ldloc.2
+			IL_1412: ldloc.s 5
+			IL_1414: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_1419: pop
+			IL_141a: ldarg.0
+			IL_141b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1420: volatile.
+			IL_1422: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
+			IL_1427: brfalse IL_143b
+
+			IL_142c: ldstr "Line"
+			IL_1431: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1436: br IL_144f
+
+			IL_143b: ldstr "Line"
+			IL_1440: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:572"
+			IL_1445: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_79
+			IL_144a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_144f: stloc.s 5
+			IL_1451: ldloc.s 5
+			IL_1453: ldc.r8 7
+			IL_145c: ldc.i4.1
+			IL_145d: box [System.Runtime]System.Boolean
+			IL_1462: ldc.i4.1
+			IL_1463: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_1468: pop
+
+			IL_1469: ldloc.0
+			IL_146a: ldc.r8 5
+			IL_1473: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_1478: stloc.s 5
+			IL_147a: ldloc.s 5
+			IL_147c: ldc.r8 2
+			IL_1485: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_148a: stloc.s 5
+			IL_148c: ldloc.s 5
+			IL_148e: ldc.r8 0.0
+			IL_1497: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_149c: stloc.s 7
+			IL_149e: ldloc.s 7
+			IL_14a0: brfalse IL_1859
+
+			IL_14a5: ldarg.0
+			IL_14a6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_14ab: volatile.
+			IL_14ad: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
+			IL_14b2: brfalse IL_14c6
+
+			IL_14b7: ldstr "Line"
+			IL_14bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_14c1: br IL_14da
+
+			IL_14c6: ldstr "Line"
+			IL_14cb: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:589"
+			IL_14d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_80
+			IL_14d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_14da: stloc.s 5
+			IL_14dc: ldloc.s 5
+			IL_14de: ldc.r8 8
+			IL_14e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_14ec: stloc.s 5
+			IL_14ee: ldloc.s 5
+			IL_14f0: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_14f5: ldc.i4.0
+			IL_14f6: ceq
+			IL_14f8: stloc.s 7
+			IL_14fa: ldloc.s 7
+			IL_14fc: brfalse IL_1593
+
+			IL_1501: ldarg.0
+			IL_1502: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1507: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_150c: ldc.r8 1
+			IL_1515: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_151a: stloc.s 5
+			IL_151c: ldarg.0
+			IL_151d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1522: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1527: ldc.r8 5
+			IL_1530: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1535: stloc.2
+			IL_1536: ldarg.0
+			IL_1537: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_153c: ldnull
+			IL_153d: ldloc.s 5
+			IL_153f: ldloc.2
+			IL_1540: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_1545: pop
+			IL_1546: ldarg.0
+			IL_1547: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_154c: volatile.
+			IL_154e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_81
+			IL_1553: brfalse IL_1567
+
+			IL_1558: ldstr "Line"
+			IL_155d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1562: br IL_157b
+
+			IL_1567: ldstr "Line"
+			IL_156c: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:606"
+			IL_1571: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_81
+			IL_1576: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_157b: stloc.2
+			IL_157c: ldloc.2
+			IL_157d: ldc.r8 8
+			IL_1586: ldc.i4.1
+			IL_1587: box [System.Runtime]System.Boolean
+			IL_158c: ldc.i4.1
+			IL_158d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_1592: pop
+
+			IL_1593: ldarg.0
+			IL_1594: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1599: volatile.
+			IL_159b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_82
+			IL_15a0: brfalse IL_15b4
+
+			IL_15a5: ldstr "Line"
+			IL_15aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_15af: br IL_15c8
+
+			IL_15b4: ldstr "Line"
+			IL_15b9: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:614"
+			IL_15be: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_82
+			IL_15c3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_15c8: stloc.2
+			IL_15c9: ldloc.2
+			IL_15ca: ldc.r8 5
+			IL_15d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_15d8: stloc.2
+			IL_15d9: ldloc.2
+			IL_15da: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_15df: ldc.i4.0
+			IL_15e0: ceq
+			IL_15e2: stloc.s 7
+			IL_15e4: ldloc.s 7
+			IL_15e6: brfalse IL_167f
+
+			IL_15eb: ldarg.0
+			IL_15ec: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_15f1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_15f6: ldc.r8 5
+			IL_15ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_1604: stloc.2
+			IL_1605: ldarg.0
+			IL_1606: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_160b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1610: ldc.r8 6
+			IL_1619: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_161e: stloc.s 5
+			IL_1620: ldarg.0
+			IL_1621: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1626: ldnull
+			IL_1627: ldloc.2
+			IL_1628: ldloc.s 5
+			IL_162a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_162f: pop
+			IL_1630: ldarg.0
+			IL_1631: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1636: volatile.
+			IL_1638: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_83
+			IL_163d: brfalse IL_1651
+
+			IL_1642: ldstr "Line"
+			IL_1647: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_164c: br IL_1665
+
+			IL_1651: ldstr "Line"
+			IL_1656: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:631"
+			IL_165b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_83
+			IL_1660: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_1665: stloc.s 5
+			IL_1667: ldloc.s 5
+			IL_1669: ldc.r8 5
+			IL_1672: ldc.i4.1
+			IL_1673: box [System.Runtime]System.Boolean
+			IL_1678: ldc.i4.1
+			IL_1679: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_167e: pop
+
+			IL_167f: ldarg.0
+			IL_1680: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1685: volatile.
+			IL_1687: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_84
+			IL_168c: brfalse IL_16a0
+
+			IL_1691: ldstr "Line"
+			IL_1696: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_169b: br IL_16b4
+
+			IL_16a0: ldstr "Line"
+			IL_16a5: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:639"
+			IL_16aa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_84
+			IL_16af: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_16b4: stloc.s 5
+			IL_16b6: ldloc.s 5
+			IL_16b8: ldc.r8 9
+			IL_16c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_16c6: stloc.s 5
+			IL_16c8: ldloc.s 5
+			IL_16ca: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_16cf: ldc.i4.0
+			IL_16d0: ceq
+			IL_16d2: stloc.s 7
+			IL_16d4: ldloc.s 7
+			IL_16d6: brfalse IL_176d
+
+			IL_16db: ldarg.0
+			IL_16dc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_16e1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_16e6: ldc.r8 6
+			IL_16ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_16f4: stloc.s 5
+			IL_16f6: ldarg.0
+			IL_16f7: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_16fc: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_1701: ldc.r8 2
+			IL_170a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_170f: stloc.2
+			IL_1710: ldarg.0
+			IL_1711: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1716: ldnull
+			IL_1717: ldloc.s 5
+			IL_1719: ldloc.2
+			IL_171a: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_171f: pop
+			IL_1720: ldarg.0
+			IL_1721: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1726: volatile.
+			IL_1728: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
+			IL_172d: brfalse IL_1741
+
+			IL_1732: ldstr "Line"
+			IL_1737: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_173c: br IL_1755
+
+			IL_1741: ldstr "Line"
+			IL_1746: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:656"
+			IL_174b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
+			IL_1750: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_1755: stloc.2
+			IL_1756: ldloc.2
+			IL_1757: ldc.r8 9
+			IL_1760: ldc.i4.1
+			IL_1761: box [System.Runtime]System.Boolean
+			IL_1766: ldc.i4.1
+			IL_1767: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_176c: pop
+
+			IL_176d: ldarg.0
+			IL_176e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1773: volatile.
+			IL_1775: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+			IL_177a: brfalse IL_178e
+
+			IL_177f: ldstr "Line"
+			IL_1784: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1789: br IL_17a2
+
+			IL_178e: ldstr "Line"
+			IL_1793: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:664"
+			IL_1798: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+			IL_179d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_17a2: stloc.2
+			IL_17a3: ldloc.2
+			IL_17a4: ldc.r8 1
+			IL_17ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_17b2: stloc.2
+			IL_17b3: ldloc.2
+			IL_17b4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_17b9: ldc.i4.0
+			IL_17ba: ceq
+			IL_17bc: stloc.s 7
+			IL_17be: ldloc.s 7
+			IL_17c0: brfalse IL_1859
+
+			IL_17c5: ldarg.0
+			IL_17c6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_17cb: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_17d0: ldc.r8 2
+			IL_17d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_17de: stloc.2
+			IL_17df: ldarg.0
+			IL_17e0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_17e5: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_17ea: ldc.r8 1
+			IL_17f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_17f8: stloc.s 5
+			IL_17fa: ldarg.0
+			IL_17fb: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+			IL_1800: ldnull
+			IL_1801: ldloc.2
+			IL_1802: ldloc.s 5
+			IL_1804: call object Modules.Compile_Resources_Dromaeo_3d_Cube/DrawLine::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object)
+			IL_1809: pop
+			IL_180a: ldarg.0
+			IL_180b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1810: volatile.
+			IL_1812: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
+			IL_1817: brfalse IL_182b
+
+			IL_181c: ldstr "Line"
+			IL_1821: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_1826: br IL_183f
+
+			IL_182b: ldstr "Line"
+			IL_1830: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M20>:__js_call__:681"
+			IL_1835: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
+			IL_183a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_183f: stloc.s 5
+			IL_1841: ldloc.s 5
+			IL_1843: ldc.r8 1
+			IL_184c: ldc.i4.1
+			IL_184d: box [System.Runtime]System.Boolean
+			IL_1852: ldc.i4.1
+			IL_1853: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_1858: pop
+
+			IL_1859: ldarg.0
+			IL_185a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_185f: stloc.s 5
+			IL_1861: ldc.i4.s 12
+			IL_1863: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 			IL_1868: dup
 			IL_1869: ldc.i4.0
 			IL_186a: box [System.Runtime]System.Boolean
@@ -7038,24 +7053,32 @@
 			IL_18d5: ldc.i4.0
 			IL_18d6: box [System.Runtime]System.Boolean
 			IL_18db: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_18e0: stloc.s 6
-			IL_18e2: ldloc.s 5
-			IL_18e4: ldstr "Line"
-			IL_18e9: ldloc.s 6
-			IL_18eb: ldc.i4.1
-			IL_18ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_18f1: pop
-			IL_18f2: ldarg.0
-			IL_18f3: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_18f8: stloc.s 5
+			IL_18e0: dup
+			IL_18e1: ldc.i4.0
+			IL_18e2: box [System.Runtime]System.Boolean
+			IL_18e7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_18ec: dup
+			IL_18ed: ldc.i4.0
+			IL_18ee: box [System.Runtime]System.Boolean
+			IL_18f3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_18f8: stloc.s 6
 			IL_18fa: ldloc.s 5
-			IL_18fc: ldstr "LastPx"
-			IL_1901: ldc.r8 0.0
-			IL_190a: ldc.i4.1
-			IL_190b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_1910: pop
-			IL_1911: ldnull
-			IL_1912: ret
+			IL_18fc: ldstr "Line"
+			IL_1901: ldloc.s 6
+			IL_1903: ldc.i4.1
+			IL_1904: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_1909: pop
+			IL_190a: ldarg.0
+			IL_190b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+			IL_1910: stloc.s 5
+			IL_1912: ldloc.s 5
+			IL_1914: ldstr "LastPx"
+			IL_1919: ldc.r8 0.0
+			IL_1922: ldc.i4.1
+			IL_1923: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_1928: pop
+			IL_1929: ldnull
+			IL_192a: ret
 		} // end of method DrawQube::__js_call__
 
 	} // end of class DrawQube
@@ -8532,10 +8555,10 @@
 			IL_092b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 			IL_0930: stloc.1
 			IL_0931: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
-			IL_0936: stloc.2
+			IL_0936: stloc.3
 			IL_0937: ldloc.1
 			IL_0938: ldstr "Normal"
-			IL_093d: ldloc.2
+			IL_093d: ldloc.3
 			IL_093e: ldc.i4.1
 			IL_093f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 			IL_0944: pop
@@ -8559,25 +8582,25 @@
 				IL_097d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_99
 				IL_0982: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0987: stloc.1
+				IL_0987: stloc.3
 				IL_0988: volatile.
 				IL_098a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
 				IL_098f: brfalse IL_09a4
 
-				IL_0994: ldloc.1
+				IL_0994: ldloc.3
 				IL_0995: ldstr "length"
 				IL_099a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 				IL_099f: br IL_09b9
 
-				IL_09a4: ldloc.1
+				IL_09a4: ldloc.3
 				IL_09a5: ldstr "length"
 				IL_09aa: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:291"
 				IL_09af: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_100
 				IL_09b4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_09b9: stloc.1
+				IL_09b9: stloc.3
 				IL_09ba: ldloc.s 4
-				IL_09bc: ldloc.1
+				IL_09bc: ldloc.3
 				IL_09bd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_09c2: stloc.s 9
 				IL_09c4: ldloc.s 9
@@ -8598,7 +8621,7 @@
 				IL_09f6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_101
 				IL_09fb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0a00: stloc.1
+				IL_0a00: stloc.3
 				IL_0a01: ldarg.0
 				IL_0a02: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_0a07: ldarg.0
@@ -8616,34 +8639,34 @@
 				IL_0a32: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_102
 				IL_0a37: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0a3c: stloc.3
-				IL_0a3d: ldloc.3
+				IL_0a3c: stloc.1
+				IL_0a3d: ldloc.1
 				IL_0a3e: ldloc.0
 				IL_0a3f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0a44: stloc.3
-				IL_0a45: ldloc.3
+				IL_0a44: stloc.1
+				IL_0a45: ldloc.1
 				IL_0a46: ldc.r8 0.0
 				IL_0a4f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0a54: stloc.3
-				IL_0a55: ldloc.3
+				IL_0a54: stloc.1
+				IL_0a55: ldloc.1
 				IL_0a56: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-				IL_0a5b: stloc.3
+				IL_0a5b: stloc.1
 				IL_0a5c: volatile.
 				IL_0a5e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
 				IL_0a63: brfalse IL_0a78
 
-				IL_0a68: ldloc.3
+				IL_0a68: ldloc.1
 				IL_0a69: ldstr "V"
 				IL_0a6e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 				IL_0a73: br IL_0a8d
 
-				IL_0a78: ldloc.3
+				IL_0a78: ldloc.1
 				IL_0a79: ldstr "V"
 				IL_0a7e: ldstr "Compile_Resources_Dromaeo_3d_Cube:<TwoPhaseDummy_M22>:__js_call__:307"
 				IL_0a83: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_103
 				IL_0a88: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0a8d: stloc.3
+				IL_0a8d: stloc.1
 				IL_0a8e: ldarg.0
 				IL_0a8f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_0a94: ldarg.0
@@ -8737,12 +8760,12 @@
 				IL_0bbc: ldarg.0
 				IL_0bbd: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
 				IL_0bc2: ldnull
-				IL_0bc3: ldloc.3
+				IL_0bc3: ldloc.1
 				IL_0bc4: ldloc.s 10
 				IL_0bc6: ldloc.s 11
 				IL_0bc8: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/CalcNormal::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, object, object, object)
 				IL_0bcd: stloc.2
-				IL_0bce: ldloc.1
+				IL_0bce: ldloc.3
 				IL_0bcf: ldloc.0
 				IL_0bd0: ldloc.2
 				IL_0bd1: ldc.i4.1
@@ -8757,7 +8780,7 @@
 
 			IL_0be9: ldarg.0
 			IL_0bea: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0bef: stloc.1
+			IL_0bef: stloc.3
 			IL_0bf0: ldc.i4.s 12
 			IL_0bf2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 			IL_0bf7: dup
@@ -8809,7 +8832,7 @@
 			IL_0c7d: box [System.Runtime]System.Boolean
 			IL_0c82: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 			IL_0c87: stloc.2
-			IL_0c88: ldloc.1
+			IL_0c88: ldloc.3
 			IL_0c89: ldstr "Line"
 			IL_0c8e: ldloc.2
 			IL_0c8f: ldc.i4.1
@@ -8817,14 +8840,14 @@
 			IL_0c95: pop
 			IL_0c96: ldarg.0
 			IL_0c97: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-			IL_0c9c: stloc.1
+			IL_0c9c: stloc.3
 			IL_0c9d: ldc.r8 9
 			IL_0ca6: ldc.r8 2
 			IL_0caf: mul
 			IL_0cb0: ldarg.2
 			IL_0cb1: mul
 			IL_0cb2: stloc.s 4
-			IL_0cb4: ldloc.1
+			IL_0cb4: ldloc.3
 			IL_0cb5: ldstr "NumPx"
 			IL_0cba: ldloc.s 4
 			IL_0cbc: ldc.i4.1
@@ -8850,9 +8873,9 @@
 				IL_0cfb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_108
 				IL_0d00: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_0d05: stloc.1
+				IL_0d05: stloc.3
 				IL_0d06: ldloc.s 4
-				IL_0d08: ldloc.1
+				IL_0d08: ldloc.3
 				IL_0d09: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_0d0e: stloc.s 9
 				IL_0d10: ldloc.s 9
@@ -8860,12 +8883,12 @@
 
 				IL_0d17: ldarg.0
 				IL_0d18: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::CreateP
-				IL_0d1d: stloc.1
+				IL_0d1d: stloc.3
 				IL_0d1e: newobj instance void Modules.Compile_Resources_Dromaeo_3d_Cube/ObjectLiterals/Ctor_L97C1_CreateP::.ctor()
 				IL_0d23: stloc.s 7
-				IL_0d25: ldloc.1
+				IL_0d25: ldloc.3
 				IL_0d26: ldloc.s 7
-				IL_0d28: ldloc.1
+				IL_0d28: ldloc.3
 				IL_0d29: ldc.r8 0.0
 				IL_0d32: box [System.Runtime]System.Double
 				IL_0d37: ldc.r8 0.0
@@ -8883,7 +8906,7 @@
 
 			IL_0d6a: ldarg.0
 			IL_0d6b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MTrans
-			IL_0d70: stloc.1
+			IL_0d70: stloc.3
 			IL_0d71: ldarg.0
 			IL_0d72: ldfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Origin
 			IL_0d77: volatile.
@@ -8939,19 +8962,19 @@
 			IL_0e2e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_111
 			IL_0e33: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0e38: stloc.3
-			IL_0e39: ldloc.3
+			IL_0e38: stloc.1
+			IL_0e39: ldloc.1
 			IL_0e3a: ldc.r8 2
 			IL_0e43: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0e48: stloc.3
+			IL_0e48: stloc.1
 			IL_0e49: ldarg.0
 			IL_0e4a: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
 			IL_0e4f: ldnull
-			IL_0e50: ldloc.1
+			IL_0e50: ldloc.3
 			IL_0e51: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
 			IL_0e56: ldloc.s 11
 			IL_0e58: ldloc.s 10
-			IL_0e5a: ldloc.3
+			IL_0e5a: ldloc.1
 			IL_0e5b: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Translate::__js_call__(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope, object, class [JavaScriptRuntime]JavaScriptRuntime.Array, object, object, object)
 			IL_0e60: stloc.2
 			IL_0e61: ldarg.0
@@ -8959,12 +8982,12 @@
 			IL_0e63: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MTrans
 			IL_0e68: ldarg.0
 			IL_0e69: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MTrans
-			IL_0e6e: stloc.3
+			IL_0e6e: stloc.1
 			IL_0e6f: ldarg.0
 			IL_0e70: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MQube
 			IL_0e75: stloc.s 10
 			IL_0e77: ldnull
-			IL_0e78: ldloc.3
+			IL_0e78: ldloc.1
 			IL_0e79: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
 			IL_0e7e: ldloc.s 10
 			IL_0e80: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
@@ -8991,7 +9014,7 @@
 				IL_0ec2: stloc.s 10
 				IL_0ec4: ldarg.0
 				IL_0ec5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MTrans
-				IL_0eca: stloc.3
+				IL_0eca: stloc.1
 				IL_0ecb: ldarg.0
 				IL_0ecc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
 				IL_0ed1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
@@ -9012,7 +9035,7 @@
 
 				IL_0f0b: stloc.s 11
 				IL_0f0d: ldnull
-				IL_0f0e: ldloc.3
+				IL_0f0e: ldloc.1
 				IL_0f0f: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
 				IL_0f14: ldloc.s 11
 				IL_0f16: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/VMulti::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array, object)
@@ -9365,7 +9388,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1070 (0x42e)
+		// Code size: 1090 (0x442)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope,
@@ -9391,7 +9414,7 @@
 			[20] class Modules.Compile_Resources_Dromaeo_3d_Cube/DrawQube/FunctionObject,
 			[21] class Modules.Compile_Resources_Dromaeo_3d_Cube/Loop/FunctionObject,
 			[22] class Modules.Compile_Resources_Dromaeo_3d_Cube/Init/FunctionObject,
-			[23] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[23] object,
 			[24] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[25] class Modules.Compile_Resources_Dromaeo_3d_Cube/FunctionExpression_L334C23/FunctionObject
 		)
@@ -9770,96 +9793,100 @@
 		IL_0341: stloc.s 23
 		IL_0343: ldloc.0
 		IL_0344: ldloc.s 23
-		IL_0346: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
-		IL_034b: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
-		IL_0350: stloc.s 23
-		IL_0352: ldloc.0
-		IL_0353: ldloc.s 23
-		IL_0355: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MTrans
-		IL_035a: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
-		IL_035f: stloc.s 23
-		IL_0361: ldloc.0
-		IL_0362: ldloc.s 23
-		IL_0364: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MQube
-		IL_0369: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
-		IL_036e: stloc.s 23
-		IL_0370: ldloc.0
-		IL_0371: ldloc.s 23
-		IL_0373: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::I
-		IL_0378: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::Construct()
-		IL_037d: stloc.s 24
+		IL_0346: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_034b: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Q
+		IL_0350: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
+		IL_0355: stloc.s 23
+		IL_0357: ldloc.0
+		IL_0358: ldloc.s 23
+		IL_035a: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_035f: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MTrans
+		IL_0364: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
+		IL_0369: stloc.s 23
+		IL_036b: ldloc.0
+		IL_036c: ldloc.s 23
+		IL_036e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0373: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::MQube
+		IL_0378: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct()
+		IL_037d: stloc.s 23
 		IL_037f: ldloc.0
-		IL_0380: ldloc.s 24
-		IL_0382: stfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Origin
-		IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::Construct()
-		IL_038c: stloc.s 24
-		IL_038e: ldloc.0
-		IL_038f: ldloc.s 24
-		IL_0391: stfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Testing
-		IL_0396: ldnull
-		IL_0397: stloc.s 6
-		IL_0399: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::Construct()
-		IL_039e: stloc.s 7
-		IL_03a0: ldloc.s 7
-		IL_03a2: ldstr "Width"
-		IL_03a7: ldc.r8 300
-		IL_03b0: ldc.i4.1
-		IL_03b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_03b6: pop
-		IL_03b7: ldloc.s 7
-		IL_03b9: ldstr "Height"
-		IL_03be: ldc.r8 300
-		IL_03c7: ldc.i4.1
-		IL_03c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_03cd: pop
-		IL_03ce: nop
-		IL_03cf: nop
-		IL_03d0: nop
-		IL_03d1: nop
-		IL_03d2: nop
-		IL_03d3: nop
-		IL_03d4: nop
-		IL_03d5: nop
-		IL_03d6: nop
-		IL_03d7: nop
-		IL_03d8: nop
-		IL_03d9: nop
-		IL_03da: nop
-		IL_03db: nop
-		IL_03dc: nop
-		IL_03dd: ldnull
-		IL_03de: ldstr "dromaeo-3d-cube"
-		IL_03e3: ldstr "979cd0f1"
-		IL_03e8: call object Modules.Compile_Resources_Dromaeo_3d_Cube/startTest::__js_call__(object, string, string)
-		IL_03ed: pop
-		IL_03ee: ldc.i4.1
-		IL_03ef: newarr [System.Runtime]System.Object
-		IL_03f4: dup
-		IL_03f5: ldc.i4.0
-		IL_03f6: ldloc.0
-		IL_03f7: stelem.ref
-		IL_03f8: stloc.s 8
-		IL_03fa: ldloc.s 8
-		IL_03fc: ldc.i4.0
-		IL_03fd: ldelem.ref
-		IL_03fe: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
-		IL_0403: newobj instance void Modules.Compile_Resources_Dromaeo_3d_Cube/FunctionExpression_L334C23/FunctionObject::.ctor(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope)
-		IL_0408: ldc.i4.0
-		IL_0409: conv.r8
-		IL_040a: ldstr ""
-		IL_040f: ldc.i4.0
+		IL_0380: ldloc.s 23
+		IL_0382: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0387: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::I
+		IL_038c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::Construct()
+		IL_0391: stloc.s 24
+		IL_0393: ldloc.0
+		IL_0394: ldloc.s 24
+		IL_0396: stfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Origin
+		IL_039b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::Construct()
+		IL_03a0: stloc.s 24
+		IL_03a2: ldloc.0
+		IL_03a3: ldloc.s 24
+		IL_03a5: stfld object Modules.Compile_Resources_Dromaeo_3d_Cube/Scope::Testing
+		IL_03aa: ldnull
+		IL_03ab: stloc.s 6
+		IL_03ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::Construct()
+		IL_03b2: stloc.s 7
+		IL_03b4: ldloc.s 7
+		IL_03b6: ldstr "Width"
+		IL_03bb: ldc.r8 300
+		IL_03c4: ldc.i4.1
+		IL_03c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_03ca: pop
+		IL_03cb: ldloc.s 7
+		IL_03cd: ldstr "Height"
+		IL_03d2: ldc.r8 300
+		IL_03db: ldc.i4.1
+		IL_03dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_03e1: pop
+		IL_03e2: nop
+		IL_03e3: nop
+		IL_03e4: nop
+		IL_03e5: nop
+		IL_03e6: nop
+		IL_03e7: nop
+		IL_03e8: nop
+		IL_03e9: nop
+		IL_03ea: nop
+		IL_03eb: nop
+		IL_03ec: nop
+		IL_03ed: nop
+		IL_03ee: nop
+		IL_03ef: nop
+		IL_03f0: nop
+		IL_03f1: ldnull
+		IL_03f2: ldstr "dromaeo-3d-cube"
+		IL_03f7: ldstr "979cd0f1"
+		IL_03fc: call object Modules.Compile_Resources_Dromaeo_3d_Cube/startTest::__js_call__(object, string, string)
+		IL_0401: pop
+		IL_0402: ldc.i4.1
+		IL_0403: newarr [System.Runtime]System.Object
+		IL_0408: dup
+		IL_0409: ldc.i4.0
+		IL_040a: ldloc.0
+		IL_040b: stelem.ref
+		IL_040c: stloc.s 8
+		IL_040e: ldloc.s 8
 		IL_0410: ldc.i4.0
-		IL_0411: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Resources_Dromaeo_3d_Cube/FunctionExpression_L334C23/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0416: stloc.s 25
-		IL_0418: ldnull
-		IL_0419: ldstr "Rotate 3D Cube"
-		IL_041e: ldloc.s 25
-		IL_0420: call object Modules.Compile_Resources_Dromaeo_3d_Cube/test::__js_call__(object, string, object)
-		IL_0425: pop
-		IL_0426: ldnull
-		IL_0427: call object Modules.Compile_Resources_Dromaeo_3d_Cube/endTest::__js_call__(object)
-		IL_042c: pop
-		IL_042d: ret
+		IL_0411: ldelem.ref
+		IL_0412: castclass Modules.Compile_Resources_Dromaeo_3d_Cube/Scope
+		IL_0417: newobj instance void Modules.Compile_Resources_Dromaeo_3d_Cube/FunctionExpression_L334C23/FunctionObject::.ctor(class Modules.Compile_Resources_Dromaeo_3d_Cube/Scope)
+		IL_041c: ldc.i4.0
+		IL_041d: conv.r8
+		IL_041e: ldstr ""
+		IL_0423: ldc.i4.0
+		IL_0424: ldc.i4.0
+		IL_0425: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Resources_Dromaeo_3d_Cube/FunctionExpression_L334C23/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_042a: stloc.s 25
+		IL_042c: ldnull
+		IL_042d: ldstr "Rotate 3D Cube"
+		IL_0432: ldloc.s 25
+		IL_0434: call object Modules.Compile_Resources_Dromaeo_3d_Cube/test::__js_call__(object, string, object)
+		IL_0439: pop
+		IL_043a: ldnull
+		IL_043b: call object Modules.Compile_Resources_Dromaeo_3d_Cube/endTest::__js_call__(object)
+		IL_0440: pop
+		IL_0441: ret
 	} // end of method Compile_Resources_Dromaeo_3d_Cube::__js_module_init__
 
 } // end of class Modules.Compile_Resources_Dromaeo_3d_Cube

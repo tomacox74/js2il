@@ -103,14 +103,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 86 (0x56)
+		// Code size: 90 (0x5a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_New_Length/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[3] object,
-			[4] object
+			[3] float64,
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_New_Length/Scope::.ctor()
@@ -123,24 +124,26 @@
 		IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0020: stloc.2
 		IL_0021: ldloc.1
-		IL_0022: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0027: box [System.Runtime]System.Double
-		IL_002c: stloc.3
-		IL_002d: ldloc.2
-		IL_002e: ldloc.3
-		IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0034: pop
-		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003a: stloc.2
-		IL_003b: ldloc.1
-		IL_003c: ldc.r8 0.0
-		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_004a: stloc.s 4
-		IL_004c: ldloc.2
-		IL_004d: ldloc.s 4
-		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0054: pop
-		IL_0055: ret
+		IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetLength(object)
+		IL_0027: stloc.3
+		IL_0028: ldloc.3
+		IL_0029: box [System.Runtime]System.Double
+		IL_002e: stloc.s 4
+		IL_0030: ldloc.2
+		IL_0031: ldloc.s 4
+		IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0038: pop
+		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003e: stloc.2
+		IL_003f: ldloc.1
+		IL_0040: ldc.r8 0.0
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_004e: stloc.s 5
+		IL_0050: ldloc.2
+		IL_0051: ldloc.s 5
+		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0058: pop
+		IL_0059: ret
 	} // end of method Array_New_Length::__js_module_init__
 
 } // end of class Modules.Array_New_Length

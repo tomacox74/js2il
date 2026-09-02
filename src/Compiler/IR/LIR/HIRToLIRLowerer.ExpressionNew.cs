@@ -246,7 +246,7 @@ public sealed partial class HIRToLIRLowerer
                 argTemps.Count == 1 ? "ConstructSingle" : "Construct",
                 argTemps,
                 resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 
