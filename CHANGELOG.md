@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): lower unmodified intrinsic `new Object(...)` calls
+  directly while preserving dynamic dispatch for shadowed, reassigned, or
+  `globalThis`-exposed constructors. Add fixed-arity `Array.Construct`
+  overloads and avoid undersized backing storage for short arrays. The local
+  paired guardrail improves classic
+  `dromaeo-3d-cube` from 9.12 ms / 3.92 MiB to 4.37 ms / 2.52 MiB,
+  outperforming Jint's 5.23 ms while also benefiting ordinary constructor use.
 - test262/docs: port 274 additional Set cases from the complete 287-fixture
   unported intake, covering construction, species/iterator metadata, core
   mutation/access methods, and Set composition and relation operations.

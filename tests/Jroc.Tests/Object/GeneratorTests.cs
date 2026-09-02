@@ -176,5 +176,11 @@ namespace Jroc.Tests.Object
 
         [Fact]
         public Task Object_Prototype_ToString_SymbolToStringTag_Custom() { var testName = nameof(Object_Prototype_ToString_SymbolToStringTag_Custom); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Object_New_Intrinsic() { var testName = nameof(Object_New_Intrinsic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Object_New_OverrideGuards() { var testName = nameof(Object_New_OverrideGuards); return GenerateTest(testName); }
     }
 }

@@ -241,7 +241,11 @@ public sealed partial class HIRToLIRLowerer
             }
 
             resultTempVar = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Array", "Construct", argTemps, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                "Array",
+                argTemps.Count == 1 ? "ConstructSingle" : "Construct",
+                argTemps,
+                resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
@@ -283,7 +287,40 @@ public sealed partial class HIRToLIRLowerer
 
         if (string.Equals(ctorName, "Object", StringComparison.Ordinal))
         {
-            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+            if (calleeVar!.Name.BindingInfo.Kind != BindingKind.Global
+                || calleeVar.Name.BindingInfo.HasNonInitializationWrite
+                || _activeWithObjects.Count > 0)
+            {
+                return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+            }
+
+            TempVariable? firstArgument = null;
+            foreach (var argument in newExpr.Arguments)
+            {
+                if (!TryLowerExpression(argument, out var argumentTemp))
+                {
+                    return false;
+                }
+
+                firstArgument ??= EnsureObject(argumentTemp);
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.Construct),
+                firstArgument is TempVariable firstArgumentTemp
+                    ? new[] { firstArgumentTemp }
+                    : global::System.Array.Empty<TempVariable>(),
+                resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    firstArgument.HasValue
+                        ? typeof(object)
+                        : typeof(JavaScriptRuntime.JsObject)));
+            return true;
         }
 
         if (string.Equals(ctorName, "Date", StringComparison.Ordinal))

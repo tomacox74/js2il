@@ -51,6 +51,7 @@ namespace JavaScriptRuntime
                 });
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
+        private const int MinObjectStorageCapacity = 4;
         private const int MinNumericStorageCapacity = 32;
         private const int MaxInitialDenseCapacity = 65536;
         private const int CapacityHintMarker = 1 << 30;
@@ -311,6 +312,10 @@ namespace JavaScriptRuntime
             var capacity = global::System.Math.Max(
                 global::System.Math.Max(CapacityHint, minCapacity),
                 numberItems?.Count ?? 0);
+            if (capacity is > 0 and < MinObjectStorageCapacity)
+            {
+                capacity = MinObjectStorageCapacity;
+            }
             _items = new List<object?>(capacity);
             ClearCapacityHint();
             if (numberItems is not null)
@@ -3858,44 +3863,44 @@ namespace JavaScriptRuntime
         ///
         /// Note: In this runtime model, CLR null represents JS undefined.
         /// </summary>
+        public static Array Construct()
+            => new Array();
+
+        public static Array ConstructSingle(object? argument)
+        {
+            // JS: if the single argument is a number, it is treated as length (with RangeError for invalid).
+            // Otherwise it is treated as an element.
+            if (argument is double || argument is float || argument is decimal ||
+                argument is int || argument is long || argument is short || argument is byte || argument is sbyte ||
+                argument is uint || argument is ulong || argument is ushort)
+            {
+                var lengthValue = TypeUtilities.ToNumber(argument);
+                if (double.IsNaN(lengthValue) || double.IsInfinity(lengthValue)
+                    || lengthValue < 0 || lengthValue > int.MaxValue || lengthValue % 1 != 0)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                var length = (int)lengthValue;
+                var result = new Array(length);
+                result._logicalLength = length;
+                result._virtualLength = length;
+                return result;
+            }
+
+            return new Array(new object?[] { argument });
+        }
+
         public static Array Construct(object?[]? args)
         {
             if (args == null || args.Length == 0)
             {
-                return new Array();
+                return Construct();
             }
 
             if (args.Length == 1)
             {
-                var a0 = args[0];
-
-                // JS: if the single argument is a number, it is treated as length (with RangeError for invalid).
-                // Otherwise it is treated as an element.
-                if (a0 is double || a0 is float || a0 is decimal ||
-                    a0 is int || a0 is long || a0 is short || a0 is byte || a0 is sbyte ||
-                    a0 is uint || a0 is ulong || a0 is ushort)
-                {
-                    var d = TypeUtilities.ToNumber(a0);
-                    // JS requires a finite integer in [0, 2^32-1]. Keep minimal and clamp to int.MaxValue.
-                    if (double.IsNaN(d) || double.IsInfinity(d))
-                    {
-                        throw new RangeError("Invalid array length");
-                    }
-
-                    // Validate that d is a non-negative integer within [0, int.MaxValue].
-                    if (d < 0 || d > int.MaxValue || d % 1 != 0)
-                    {
-                        throw new RangeError("Invalid array length");
-                    }
-
-                    var len = (int)d;
-                    var result = new Array(len);
-                    result._logicalLength = len;
-                    result._virtualLength = len;
-                    return result;
-                }
-
-                return new Array(new object?[] { a0 });
+                return ConstructSingle(args[0]);
             }
 
             // Multiple arguments => array of elements.

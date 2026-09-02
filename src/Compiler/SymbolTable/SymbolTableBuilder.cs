@@ -2127,6 +2127,7 @@ namespace Jroc.SymbolTables
                         {
                             MarkWritten(currentScope, globalName);
                         }
+                        MarkWritten(currentScope, "Object");
                     }
                     break;
                 case ThisExpression:
@@ -2137,6 +2138,7 @@ namespace Jroc.SymbolTables
                         {
                             MarkWritten(currentScope, globalName);
                         }
+                        MarkWritten(currentScope, "Object");
                     }
                     break;
                 case CallExpression callExpr:
