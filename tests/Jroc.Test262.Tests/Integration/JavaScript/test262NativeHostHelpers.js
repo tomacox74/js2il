@@ -54,6 +54,12 @@ assert.sameValue(byteConversionValues.values.length, 56);
 assert.sameValue(byteConversionValues.values[0], 127);
 assert.sameValue(byteConversionValues.values[20], undefined);
 assert.sameValue(byteConversionValues.values[38], Infinity);
+assert.sameValue(byteConversionValues.expected.Int8[1], -128);
+assert.sameValue(byteConversionValues.expected.Uint16[8], 65535);
+assert.sameValue(byteConversionValues.expected.Int32[10], -1);
+assert.sameValue(byteConversionValues.expected.Uint32[21], 4294967295);
+assert(Number.isNaN(byteConversionValues.expected.Float32[20]));
+assert(Number.isNaN(byteConversionValues.expected.Float64[20]));
 
 var typedArrayRuns = 0;
 testWithTypedArrayConstructors(function(TA, makeCtorArg) {

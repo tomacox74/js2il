@@ -10,8 +10,7 @@ internal static class Test262ByteConversionHelpers
     private static object CreateByteConversionValues()
     {
         var result = new JsObject();
-        ObjectRuntime.SetItem(result, "values", new JavaScriptRuntime.Array(
-        new object?[]
+        var values = new object?[]
         {
             127d,
             128d,
@@ -69,7 +68,57 @@ internal static class Test262ByteConversionHelpers
             65519.99999999999d,
             0.000061005353927612305d,
             0.0000610053539276123d
-        }));
+        };
+
+        ObjectRuntime.SetItem(result, "values", new JavaScriptRuntime.Array(values));
+
+        var expected = new JsObject();
+        ObjectRuntime.SetItem(expected, "Int8", CreateExpectedValues(values, value => ToSignedInteger(value, 8)));
+        ObjectRuntime.SetItem(expected, "Uint8", CreateExpectedValues(values, value => ToUnsignedInteger(value, 8)));
+        ObjectRuntime.SetItem(expected, "Int16", CreateExpectedValues(values, value => ToSignedInteger(value, 16)));
+        ObjectRuntime.SetItem(expected, "Uint16", CreateExpectedValues(values, value => ToUnsignedInteger(value, 16)));
+        ObjectRuntime.SetItem(expected, "Int32", CreateExpectedValues(values, value => ToSignedInteger(value, 32)));
+        ObjectRuntime.SetItem(expected, "Uint32", CreateExpectedValues(values, value => ToUnsignedInteger(value, 32)));
+        ObjectRuntime.SetItem(expected, "Float32", CreateExpectedValues(values, value => (double)(float)value));
+        ObjectRuntime.SetItem(expected, "Float64", CreateExpectedValues(values, value => value));
+        ObjectRuntime.SetItem(result, "expected", expected);
         return result;
+    }
+
+    private static JavaScriptRuntime.Array CreateExpectedValues(
+        object?[] values,
+        Func<double, double> convert)
+    {
+        var expected = new object?[values.Length];
+        for (var index = 0; index < values.Length; index++)
+        {
+            expected[index] = convert(values[index] is double value ? value : double.NaN);
+        }
+
+        return new JavaScriptRuntime.Array(expected);
+    }
+
+    private static double ToUnsignedInteger(double value, int bitWidth)
+    {
+        if (!double.IsFinite(value))
+        {
+            return 0d;
+        }
+
+        var modulo = System.Math.Pow(2d, bitWidth);
+        var integer = System.Math.Truncate(value) % modulo;
+        if (integer == 0d)
+        {
+            return 0d;
+        }
+
+        return integer < 0d ? integer + modulo : integer;
+    }
+
+    private static double ToSignedInteger(double value, int bitWidth)
+    {
+        var unsigned = ToUnsignedInteger(value, bitWidth);
+        var signBit = System.Math.Pow(2d, bitWidth - 1);
+        return unsigned >= signBit ? unsigned - (signBit * 2d) : unsigned;
     }
 }
