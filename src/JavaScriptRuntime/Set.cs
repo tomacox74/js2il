@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Set")]
     public sealed class Set : JsObject, IEnumerable<object>
     {
+        private static readonly object _emptySlot = new object();
+        private static readonly object _iteratorRegistration = new object();
+        private static readonly BuiltinFunction0 _prototypeSizeGetterValue = PrototypeSizeGetter;
         private static readonly BuiltinFunction0 _prototypeValuesValue = PrototypeValues;
         /// <summary>Realm-owned <c>Set Iterator prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject IteratorPrototype
@@ -22,6 +26,11 @@ namespace JavaScriptRuntime
                 static exp => InitializePrototype(exp));
         private readonly List<object> _items = new List<object>();
         private readonly HashSet<object> _set = new HashSet<object>();
+        private readonly ConditionalWeakTable<SetIterator, object> _iterators =
+            new ConditionalWeakTable<SetIterator, object>();
+        // Reentrant callbacks need stable indexes; otherwise removals compact and adjust iterator cursors.
+        private int _activeIndexedTraversals;
+        private int _emptySlotCount;
 
         private static void InitializePrototype(JsObject exp)
         {
@@ -32,7 +41,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "delete", (BuiltinFunction1)PrototypeDelete);
             DefinePrototypeMethod(exp, "clear", (BuiltinFunction0)PrototypeClear);
             DefinePrototypeMethod(exp, "entries", (BuiltinFunction0)PrototypeEntries);
-            DefinePrototypeMethod(exp, "forEach", (BuiltinFunction2)PrototypeForEach);
+            DefinePrototypeMethod(exp, "forEach", (BuiltinFunction2)PrototypeForEach, 1d);
             DefinePrototypeMethod(exp, "keys", _prototypeValuesValue);
             DefinePrototypeMethod(exp, "values", _prototypeValuesValue);
             DefinePrototypeMethod(exp, "difference", (BuiltinFunction1)PrototypeDifference);
@@ -42,12 +51,18 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "isSupersetOf", (BuiltinFunction1)PrototypeIsSupersetOf);
             DefinePrototypeMethod(exp, "symmetricDifference", (BuiltinFunction1)PrototypeSymmetricDifference);
             DefinePrototypeMethod(exp, "union", (BuiltinFunction1)PrototypeUnion);
+            Function.InitializeFunctionInstance(
+                _prototypeSizeGetterValue,
+                0d,
+                "get size",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(_prototypeSizeGetterValue));
+            Function.MarkUndefinedPrototype(_prototypeSizeGetterValue);
             PropertyDescriptorStore.DefineOrUpdate(exp, "size", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (BuiltinFunction0)PrototypeSizeGetter
+                Get = _prototypeSizeGetterValue
             });
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
@@ -83,10 +98,17 @@ namespace JavaScriptRuntime
         }
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method)
+            => DefinePrototypeMethod(prototype, name, method, Function.GetLength(method));
+
+        private static void DefinePrototypeMethod(
+            JsObject prototype,
+            string name,
+            Delegate method,
+            double length)
         {
             Function.InitializeFunctionInstance(
                 method,
-                Function.GetLength(method),
+                length,
                 name,
                 requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(method));
             Function.MarkUndefinedPrototype(method);
@@ -243,7 +265,7 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    JavaScriptRuntime.ObjectRuntime.IteratorClose(iterator);
+                    JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
                 }
             }
         }
@@ -333,9 +355,14 @@ namespace JavaScriptRuntime
         private static Set CopyOf(Set source)
         {
             var copy = new Set();
-            copy._items.AddRange(source._items);
             foreach (var value in source._items)
             {
+                if (IsEmptySlot(value))
+                {
+                    continue;
+                }
+
+                copy._items.Add(value);
                 copy._set.Add(value);
             }
 
@@ -363,7 +390,103 @@ namespace JavaScriptRuntime
 
         /// <summary>ECMA-262 CanonicalizeKeyedCollectionKey: normalizes -0 to +0.</summary>
         private static object? CanonicalizeKey(object? value)
-            => value is double d && d == 0 ? 0d : value;
+            => value switch
+            {
+                double number when number == 0d => 0d,
+                float number when number == 0f => 0d,
+                _ => value
+            };
+
+        private static bool IsEmptySlot(object value)
+            => ReferenceEquals(value, _emptySlot);
+
+        private bool VisitLiveValues(Func<object, bool> visit)
+        {
+            _activeIndexedTraversals++;
+            try
+            {
+                for (var index = 0; index < _items.Count; index++)
+                {
+                    var value = _items[index];
+                    if (!IsEmptySlot(value) && !visit(value))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            finally
+            {
+                _activeIndexedTraversals--;
+                if (_activeIndexedTraversals == 0)
+                {
+                    CompactEmptySlots();
+                }
+            }
+        }
+
+        private void ForEachActiveIterator(Action<SetIterator> action)
+        {
+            foreach (var registration in _iterators)
+            {
+                if (!registration.Key.IsClosed)
+                {
+                    action(registration.Key);
+                }
+            }
+        }
+
+        private void RegisterIterator(SetIterator iterator)
+            => _iterators.Add(iterator, _iteratorRegistration);
+
+        private void UnregisterIterator(SetIterator iterator)
+            => _iterators.Remove(iterator);
+
+        private void CompactEmptySlots()
+        {
+            if (_emptySlotCount == 0)
+            {
+                return;
+            }
+
+            ForEachActiveIterator(iterator =>
+            {
+                var liveIndex = 0;
+                var oldIndex = global::System.Math.Min(iterator.Index, _items.Count);
+                for (var index = 0; index < oldIndex; index++)
+                {
+                    if (!IsEmptySlot(_items[index]))
+                    {
+                        liveIndex++;
+                    }
+                }
+
+                iterator.Index = liveIndex;
+            });
+
+            _items.RemoveAll(IsEmptySlot);
+            _emptySlotCount = 0;
+        }
+
+        private void RemoveItemAt(int index)
+        {
+            if (_activeIndexedTraversals > 0)
+            {
+                _items[index] = _emptySlot;
+                _emptySlotCount++;
+                return;
+            }
+
+            _items.RemoveAt(index);
+            ForEachActiveIterator(iterator =>
+            {
+                if (iterator.Index > index)
+                {
+                    iterator.Index--;
+                }
+            });
+        }
 
         private static bool SetRecordHas(in SetRecord record, object? value)
             => TypeUtilities.ToBoolean(Function.Apply(record.Has, record.SetObject, new object?[] { value }));
@@ -409,12 +532,12 @@ namespace JavaScriptRuntime
         // JavaScript Set.prototype.size property
         public double size
         {
-            get { return _items.Count; }
+            get { return _set.Count; }
         }
 
         public object add(object? value)
         {
-            var v = value!; // JS allows undefined/null; store as null reference
+            var v = CanonicalizeKey(value)!; // JS allows undefined/null; store as null reference
             if (!_set.Contains(v))
             {
                 _set.Add(v);
@@ -425,12 +548,12 @@ namespace JavaScriptRuntime
 
         public object has(object? value)
         {
-            return _set.Contains(value!);
+            return _set.Contains(CanonicalizeKey(value)!);
         }
 
         public bool delete(object? value)
         {
-            var v = value!;
+            var v = CanonicalizeKey(value)!;
             if (!_set.Remove(v))
             {
                 return false;
@@ -438,9 +561,9 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < _items.Count; i++)
             {
-                if (Equals(_items[i], v))
+                if (!IsEmptySlot(_items[i]) && Equals(_items[i], v))
                 {
-                    _items.RemoveAt(i);
+                    RemoveItemAt(i);
                     break;
                 }
             }
@@ -451,7 +574,22 @@ namespace JavaScriptRuntime
         public void clear()
         {
             _set.Clear();
-            _items.Clear();
+            if (_activeIndexedTraversals == 0)
+            {
+                _items.Clear();
+                _emptySlotCount = 0;
+                ForEachActiveIterator(iterator => iterator.Index = 0);
+                return;
+            }
+
+            for (var index = 0; index < _items.Count; index++)
+            {
+                if (!IsEmptySlot(_items[index]))
+                {
+                    _items[index] = _emptySlot;
+                    _emptySlotCount++;
+                }
+            }
         }
 
         public void forEach(object? callback)
@@ -466,11 +604,11 @@ namespace JavaScriptRuntime
                 throw new TypeError("Set.prototype.forEach callback must be a function");
             }
 
-            for (int i = 0; i < _items.Count; i++)
+            VisitLiveValues(value =>
             {
-                var value = _items[i];
                 CallableOperations.Call3(callback, thisArg, value, value, this);
-            }
+                return true;
+            });
         }
 
         public IJavaScriptIterator values() => new SetIterator(this, SetIteratorKind.Values);
@@ -483,16 +621,17 @@ namespace JavaScriptRuntime
         {
             var otherRec = GetSetRecord(other, nameof(difference));
             var result = CopyOf(this);
-            if (_items.Count <= otherRec.Size)
+            if (_set.Count <= otherRec.Size)
             {
-                for (var index = 0; index < _items.Count; index++)
+                result.VisitLiveValues(value =>
                 {
-                    var value = _items[index];
                     if (SetRecordHas(otherRec, value))
                     {
                         result.delete(value);
                     }
-                }
+
+                    return true;
+                });
             }
             else
             {
@@ -510,16 +649,17 @@ namespace JavaScriptRuntime
         {
             var otherRec = GetSetRecord(other, nameof(intersection));
             var result = new Set();
-            if (_items.Count <= otherRec.Size)
+            if (_set.Count <= otherRec.Size)
             {
-                for (var index = 0; index < _items.Count; index++)
+                VisitLiveValues(value =>
                 {
-                    var value = _items[index];
                     if (SetRecordHas(otherRec, value))
                     {
                         result.add(value);
                     }
-                }
+
+                    return true;
+                });
             }
             else
             {
@@ -540,30 +680,22 @@ namespace JavaScriptRuntime
         public bool isDisjointFrom(object? other)
         {
             var otherRec = GetSetRecord(other, nameof(isDisjointFrom));
-            var disjoint = true;
-            if (_items.Count <= otherRec.Size)
+            if (_set.Count <= otherRec.Size)
             {
-                for (var index = 0; index < _items.Count; index++)
-                {
-                    if (SetRecordHas(otherRec, _items[index]))
-                    {
-                        return false;
-                    }
-                }
+                return VisitLiveValues(value => !SetRecordHas(otherRec, value));
             }
-            else
-            {
-                ForEachOtherKey(otherRec, value =>
-                {
-                    if (!_set.Contains(value!))
-                    {
-                        return true;
-                    }
 
-                    disjoint = false;
-                    return false;
-                });
-            }
+            var disjoint = true;
+            ForEachOtherKey(otherRec, value =>
+            {
+                if (!_set.Contains(value!))
+                {
+                    return true;
+                }
+
+                disjoint = false;
+                return false;
+            });
 
             return disjoint;
         }
@@ -571,26 +703,18 @@ namespace JavaScriptRuntime
         public bool isSubsetOf(object? other)
         {
             var otherRec = GetSetRecord(other, nameof(isSubsetOf));
-            if (_items.Count > otherRec.Size)
+            if (_set.Count > otherRec.Size)
             {
                 return false;
             }
 
-            for (var index = 0; index < _items.Count; index++)
-            {
-                if (!SetRecordHas(otherRec, _items[index]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return VisitLiveValues(value => SetRecordHas(otherRec, value));
         }
 
         public bool isSupersetOf(object? other)
         {
             var otherRec = GetSetRecord(other, nameof(isSupersetOf));
-            if (_items.Count < otherRec.Size)
+            if (_set.Count < otherRec.Size)
             {
                 return false;
             }
@@ -644,8 +768,31 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        public new IEnumerator<object> GetEnumerator() => _items.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
+        public new IEnumerator<object> GetEnumerator()
+        {
+            _activeIndexedTraversals++;
+            try
+            {
+                for (var index = 0; index < _items.Count; index++)
+                {
+                    var value = _items[index];
+                    if (!IsEmptySlot(value))
+                    {
+                        yield return value;
+                    }
+                }
+            }
+            finally
+            {
+                _activeIndexedTraversals--;
+                if (_activeIndexedTraversals == 0)
+                {
+                    CompactEmptySlots();
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         private enum SetIteratorKind
         {
             Values,
@@ -659,10 +806,19 @@ namespace JavaScriptRuntime
             private int _index;
             private bool _isClosed;
 
+            internal int Index
+            {
+                get => _index;
+                set => _index = value;
+            }
+
+            internal bool IsClosed => _isClosed;
+
             public SetIterator(Set set, SetIteratorKind kind)
             {
                 _set = set;
                 _kind = kind;
+                set.RegisterIterator(this);
                 PrototypeChain.InitializePrototype(this, IteratorPrototype);
             }
 
@@ -675,24 +831,41 @@ namespace JavaScriptRuntime
                     return new IteratorResultObject(null, done: true);
                 }
 
-                if (_index >= _set._items.Count)
+                while (_index < _set._items.Count)
                 {
-                    return new IteratorResultObject(null, done: true);
+                    var value = _set._items[_index++];
+                    if (IsEmptySlot(value))
+                    {
+                        continue;
+                    }
+
+                    object? result = _kind == SetIteratorKind.Entries
+                        ? new JavaScriptRuntime.Array(new object?[] { value, value })
+                        : value;
+
+                    return new IteratorResultObject(result, done: false);
                 }
 
-                var value = _set._items[_index++];
-                object? result = _kind == SetIteratorKind.Entries
-                    ? new JavaScriptRuntime.Array(new object?[] { value, value })
-                    : value;
-
-                return new IteratorResultObject(result, done: false);
+                Close();
+                return new IteratorResultObject(null, done: true);
             }
 
             public object next(object? value = null) => Next();
 
             public void Return()
             {
+                Close();
+            }
+
+            private void Close()
+            {
+                if (_isClosed)
+                {
+                    return;
+                }
+
                 _isClosed = true;
+                _set.UnregisterIterator(this);
             }
         }
     }
