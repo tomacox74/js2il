@@ -13,6 +13,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   storage for short arrays. The local paired guardrail improves classic
   `dromaeo-3d-cube` from 9.12 ms / 3.92 MiB to 4.52 ms / 2.52 MiB,
   outperforming Jint's 5.03 ms while also benefiting ordinary constructor use.
+- test262/harness/docs: port 232 additional DataView cases from the complete
+  291-fixture unported intake, covering constructor validation, accessors, and
+  numeric read/write conversions. Complete the native
+  `byteConversionValues.js` expected numeric conversion tables. SharedArrayBuffer,
+  resizable-buffer, cross-realm, and remaining exotic DataView cases remain
+  deferred.
+- test262/docs: port 186 additional Array cases from a deterministic
+  500-fixture intake, covering Array construction, length, Array.isArray,
+  iterator metadata, and core prototype callback, search, flattening, and join
+  behavior. Async, Proxy/species, cross-realm, resizable-buffer, and remaining
+  exotic-array cases remain deferred.
 
 ## v0.12.17 - 2026-09-02
 

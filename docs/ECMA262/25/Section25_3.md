@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T06:12:53Z
+> Last generated (UTC): 2026-09-02T06:18:37Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -58,6 +58,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 25.3 ([tc39.es](https://tc39.es/ecma262/#sec-dataview-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| DataView conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/DataView/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/buffer/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getFloat16/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getFloat32/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getFloat64/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt8/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt16/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getInt32/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getUint8/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getUint16/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getUint32/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setFloat16/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setFloat32/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setFloat64/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt16/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt32/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setUint8/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setUint16/DataViewConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setUint32/DataViewConformanceBatchExecutionTests.cs` |  | 232 additional pinned Test262 cases verify DataView constructor validation, byteOffset and byteLength accessors, Float16/Float32/Float64 and signed/unsigned integer reads and writes, coercion, bounds checks, standard metadata, and supported error paths. The native byteConversionValues.js host helper supplies the corresponding ECMAScript numeric conversion expectations. SharedArrayBuffer, resizable-buffer, cross-realm, custom newTarget, and remaining exotic DataView behavior remain limited. |
 
 ### 25.3.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-dataview-buffer-byteoffset-bytelength))
 
