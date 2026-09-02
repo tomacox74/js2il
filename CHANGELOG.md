@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 159 additional TypedArray cases from a deterministic
+  500-fixture follow-up intake, covering prototype lookup, length, iterator,
+  join, map, and reduce behavior across numeric and BigInt families.
+  Resizable-buffer, cross-realm, proxy, and three native typed-array
+  helper-dependent conversion cases remain deferred.
 - test262/docs: port 390 additional TypedArray constructor cases from a
   deterministic 500-fixture intake, covering concrete numeric and BigInt
   constructor metadata, prototype properties, length and buffer coercion, and

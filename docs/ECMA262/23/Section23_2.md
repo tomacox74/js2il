@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-02T18:35:10Z
+> Last generated (UTC): 2026-09-02T20:01:43Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -126,6 +126,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Shared %TypedArray% callback and transform methods | Supported with Limitations | [`Float64Array_Callback_Methods.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js) |  | The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. Detached and resizable ArrayBuffer behavior and remaining callback-based methods are still unsupported. |
 | Shared %TypedArray% fill/reverse/join/toString helpers | Supported with Limitations | [`Int32Array_Fill_Reverse_Join_LastIndexOf.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js) |  | fill(), reverse(), join(), toString(), and toLocaleString() are shared across the supported families and return same-type results/views where applicable. Locale-aware formatting, species interactions, and the remaining prototype metadata surface are still limited. |
+| TypedArray prototype lookup and reduction conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/includes/TypedArrayFollowUpConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/indexOf/TypedArrayFollowUpConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/lastIndexOf/TypedArrayFollowUpConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/TypedArrayFollowUpConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduce/BigInt/TypedArrayFollowUpConformanceBatchExecutionTests.cs` | `test/built-ins/TypedArray/prototype/includes/fromIndex-infinity.js`<br>`test/built-ins/TypedArray/prototype/indexOf/BigInt/fromIndex-equal-or-greater-length-returns-minus-one.js`<br>`test/built-ins/TypedArray/prototype/lastIndexOf/BigInt/fromIndex-infinity.js`<br>`test/built-ins/TypedArray/prototype/map/BigInt/arraylength-internal.js`<br>`test/built-ins/TypedArray/prototype/reduce/BigInt/callbackfn-arguments-custom-accumulator.js`<br>`test/built-ins/TypedArray/prototype/join/BigInt/custom-separator-result-from-tostring-on-each-simple-value.js`<br>`test/built-ins/TypedArray/prototype/keys/BigInt/iter-prototype.js` | The checked-in Test262 evidence now covers 159 additional TypedArray cases across numeric and BigInt prototype lookup, length, iterator, join, map, and reduce behavior. Resizable-buffer, cross-realm, proxy, and three native testTypedArray.js constructor-identity conversion helper cases remain deferred. |
 
 ### 23.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.at))
 
