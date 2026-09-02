@@ -57,6 +57,70 @@ public sealed class SetObjectRepresentationTests
         Assert.Equal($"true{Environment.NewLine}", readResult.Output);
     }
 
+    [Fact]
+    public void SetStorage_DoesNotRetainDeletedEntriesWithoutActiveTraversal()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        var set = new JavaScriptRuntime.Set();
+
+        for (var value = 0; value < 1_000; value++)
+        {
+            set.add((double)value);
+            Assert.True(set.delete((double)value));
+        }
+
+        var itemsField = typeof(JavaScriptRuntime.Set).GetField(
+            "_items",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.NotNull(itemsField);
+        var items = Assert.IsAssignableFrom<System.Collections.ICollection>(
+            itemsField!.GetValue(set));
+
+        Assert.Empty(items);
+    }
+
+    [Fact]
+    public void SetIteration_CanonicalizesNegativeZero()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        var set = new JavaScriptRuntime.Set();
+        set.add(-0d);
+
+        var value = Assert.IsType<double>(set.values().Next().value);
+
+        Assert.Equal(double.PositiveInfinity, 1d / value);
+    }
+
+    [Fact]
+    public void SetDifference_TraversesItsResultSnapshot()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "set-difference-result-snapshot",
+            "Set.DifferenceResultSnapshot",
+            static _ => ("""
+                const receiver = new Set(["a", "b"]);
+                const other = {
+                  size: 2,
+                  has(value) {
+                    if (value === "a") {
+                      receiver.delete("b");
+                      return false;
+                    }
+                    return value === "b";
+                  },
+                  keys() {
+                    throw new Error("keys must not be called");
+                  }
+                };
+
+                console.log([...receiver.difference(other)].join(","));
+                """, null));
+
+        Assert.Equal($"a{Environment.NewLine}", result.Output);
+    }
+
     private static (string Script, string? SourcePath) GetDescriptorIsolationScript(string testName)
         => testName switch
         {

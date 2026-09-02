@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port five failing Set cases covering live traversal
+  after deletion and re-addition, iterator closing when the constructor's
+  adder throws, and built-in function metadata. Preserve EMPTY slots in Set
+  data so active callbacks and iterators observe subsequent mutations without
+  allowing completed iterators to resume, canonicalize negative zero before
+  storage, and keep `difference()` traversal isolated from receiver mutations.
 - test262/docs: port 390 additional TypedArray constructor cases from a
   deterministic 500-fixture intake, covering concrete numeric and BigInt
   constructor metadata, prototype properties, length and buffer coercion, and
