@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/docs: port 186 additional Array cases from a deterministic
+  500-fixture intake, covering Array construction, length, Array.isArray,
+  iterator metadata, and core prototype callback, search, flattening, and join
+  behavior. Async, Proxy/species, cross-realm, resizable-buffer, and remaining
+  exotic-array cases remain deferred.
 
 ## v0.12.17 - 2026-09-02
 
