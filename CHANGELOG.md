@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.17 - 2026-09-02
+
 - perf(runtime/compiler): cut boxing on dynamic numeric hot paths. Cache boxed
   small integral doubles (`BoxedNumber`) for arithmetic results, `ToNumeric`,
   and `++`/`--`; stop boxing the increment flag in `ApplyNumericUpdate`; add
