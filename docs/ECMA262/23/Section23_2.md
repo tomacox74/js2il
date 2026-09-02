@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-02T16:50:00Z
+> Last generated (UTC): 2026-09-02T18:35:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -216,6 +216,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | %TypedArray%.prototype.with | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/with/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/with/early-type-coercion.js`<br>`test/built-ins/TypedArray/prototype/with/ignores-species.js`<br>`test/built-ins/TypedArray/prototype/with/immutable.js`<br>`test/built-ins/TypedArray/prototype/with/index-bigger-or-eq-than-length.js`<br>`test/built-ins/TypedArray/prototype/with/index-casted-to-number.js`<br>`test/built-ins/TypedArray/prototype/with/index-negative.js`<br>`test/built-ins/TypedArray/prototype/with/index-smaller-than-minus-length.js`<br>`test/built-ins/TypedArray/prototype/with/index-throw-completion.js`<br>`test/built-ins/TypedArray/prototype/with/length-property-ignored.js`<br>`test/built-ins/TypedArray/prototype/with/length.js`<br>`test/built-ins/TypedArray/prototype/with/name.js`<br>`test/built-ins/TypedArray/prototype/with/negative-fractional-index-truncated-to-zero.js`<br>`test/built-ins/TypedArray/prototype/with/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/with/order-of-evaluation.js`<br>`test/built-ins/TypedArray/prototype/with/value-throw-completion.js` | Supported non-BigInt TypedArray families return immutable same-type copies, apply ToIntegerOrInfinity index coercion with negative indexing, coerce replacement values before range validation, ignore overridden length and species values, and expose standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported. |
+
+### 23.2.5 / 23.2.6 / 23.2.7 / 23.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-typedarray-constructors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Concrete TypedArray constructor conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/BigInt64Array/TypedArrayConstructorsConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/BigUint64Array/TypedArrayConstructorsConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/buffer-arg/TypedArrayConstructorsConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/length-arg/TypedArrayConstructorsConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Delete/TypedArrayConstructorsConformanceBatchExecutionTests.cs` | `test/built-ins/TypedArrayConstructors/BigInt64Array/constructor.js`<br>`test/built-ins/TypedArrayConstructors/BigUint64Array/prototype/constructor.js`<br>`test/built-ins/TypedArrayConstructors/Float32Array/length.js`<br>`test/built-ins/TypedArrayConstructors/ctors-bigint/buffer-arg/defined-length.js`<br>`test/built-ins/TypedArrayConstructors/ctors/buffer-arg/defined-length.js`<br>`test/built-ins/TypedArrayConstructors/ctors/length-arg/init-zeros.js`<br>`test/built-ins/TypedArrayConstructors/internals/Delete/key-is-symbol.js` | The checked-in Test262 evidence now covers 390 additional concrete TypedArray constructor cases across numeric and BigInt constructor metadata, prototype properties, length and buffer coercion, and indexed internal behavior. Detached, resizable, shared, cross-realm, and proxy-backed buffer behavior remains limited; one testTypedArray.js constructor-identity conversion helper case remains deferred. |
 
 ### 23.2.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-typedarray))
 
