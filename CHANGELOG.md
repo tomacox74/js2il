@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 390 additional TypedArray constructor cases from a
+  deterministic 500-fixture intake, covering concrete numeric and BigInt
+  constructor metadata, prototype properties, length and buffer coercion, and
+  indexed internal behavior. Detached/resizable/shared buffers, cross-realm,
+  proxy, and one native typed-array helper-dependent conversion case remain
+  deferred.
 - test262/docs: port 297 additional TypedArray cases from a deterministic
   500-fixture intake, covering static from/of behavior, shared prototype
   metadata and accessors, iterators, copying, callback/search methods, and
