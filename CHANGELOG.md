@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/docs: port 297 additional TypedArray cases from a deterministic
+  500-fixture intake, covering static from/of behavior, shared prototype
+  metadata and accessors, iterators, copying, callback/search methods, and
+  numeric and BigInt mutation behavior. Resizable-buffer, cross-realm, proxy,
+  and two native typed-array helper-dependent conversion cases remain deferred.
 
 ## v0.12.18 - 2026-09-02
 
