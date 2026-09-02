@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-09-02T06:38:32Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -55,6 +55,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 24.2 ([tc39.es](https://tc39.es/ecma262/#sec-set-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Set conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Set/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/Symbol.species/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/Symbol.iterator/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/add/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/clear/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/constructor/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/delete/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/difference/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/entries/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/forEach/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/has/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/intersection/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isDisjointFrom/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSubsetOf/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSupersetOf/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/size/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/symmetricDifference/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/union/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/values/SetConformanceBatchExecutionTests.cs` |  | 274 additional pinned Test262 cases verify Set construction, species and iterator metadata, add, clear, delete, entries, forEach, has, size, values, and the Set composition and relation methods. Verified coverage includes insertion order, SameValueZero matching, coercion, callback behavior, set-like operands, iterator protocol behavior, abrupt completion, descriptors, and supported error paths. Constructor iterator-close, Proxy, cross-realm, and remaining exotic cases remain limited. |
 
 ### 24.2.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-getsetrecord))
 
