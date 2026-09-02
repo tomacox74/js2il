@@ -84,8 +84,29 @@ namespace JavaScriptRuntime
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int? CompareNumbers(double left, double right)
+        {
+            if (left < right)
+            {
+                return -1;
+            }
+
+            if (left > right)
+            {
+                return 1;
+            }
+
+            return left == right ? 0 : null;
+        }
+
         private static int? CompareRelational(object? a, object? b)
         {
+            if (a is double leftDoubleOperand && b is double rightDoubleOperand)
+            {
+                return CompareNumbers(leftDoubleOperand, rightDoubleOperand);
+            }
+
             a = ToPrimitiveForRelationalComparison(a);
             b = ToPrimitiveForRelationalComparison(b);
 
@@ -248,7 +269,7 @@ namespace JavaScriptRuntime
         {
             if (a is double leftDouble && b is double rightDouble)
             {
-                return leftDouble + rightDouble;
+                return BoxedNumber.Box(leftDouble + rightDouble);
             }
 
             a = ToPrimitiveForAddition(a);
@@ -256,7 +277,7 @@ namespace JavaScriptRuntime
 
             if (a is double leftPrimitiveDouble && b is double rightPrimitiveDouble)
             {
-                return leftPrimitiveDouble + rightPrimitiveDouble;
+                return BoxedNumber.Box(leftPrimitiveDouble + rightPrimitiveDouble);
             }
 
             // If either is a string, concatenate string representations
@@ -289,7 +310,7 @@ namespace JavaScriptRuntime
 
             double da = ToNumber(a);
             double db = ToNumber(b);
-            return da + db;
+            return BoxedNumber.Box(da + db);
         }
 
         /// <summary>
@@ -301,14 +322,14 @@ namespace JavaScriptRuntime
         {
             if (b is double db)
             {
-                return a + db;
+                return BoxedNumber.Box(a + db);
             }
 
             b = ToPrimitiveForAddition(b);
 
             if (b is double primitiveDouble)
             {
-                return a + primitiveDouble;
+                return BoxedNumber.Box(a + primitiveDouble);
             }
 
             if (b is string)
@@ -324,7 +345,7 @@ namespace JavaScriptRuntime
             }
 
             var numberB = ToNumber(b);
-            return a + numberB; // boxed double
+            return BoxedNumber.Box(a + numberB);
         }
 
         /// <summary>
@@ -336,14 +357,14 @@ namespace JavaScriptRuntime
         {
             if (a is double da)
             {
-                return da + b;
+                return BoxedNumber.Box(da + b);
             }
 
             a = ToPrimitiveForAddition(a);
 
             if (a is double primitiveDouble)
             {
-                return primitiveDouble + b;
+                return BoxedNumber.Box(primitiveDouble + b);
             }
 
             if (a is string)
@@ -359,7 +380,7 @@ namespace JavaScriptRuntime
             }
 
             var numberA = ToNumber(a);
-            return numberA + b; // boxed double
+            return BoxedNumber.Box(numberA + b);
         }
 
         private static object? ToPrimitiveForAddition(object? value)
@@ -535,7 +556,7 @@ namespace JavaScriptRuntime
         {
             if (a is double leftDouble && b is double rightDouble)
             {
-                return leftDouble - rightDouble;
+                return BoxedNumber.Box(leftDouble - rightDouble);
             }
 
             // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
@@ -559,7 +580,47 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            return (double)leftNumeric - (double)rightNumeric;
+            return BoxedNumber.Box((double)leftNumeric - (double)rightNumeric);
+        }
+
+        /// <summary>
+        /// '-' where the right operand is already an unboxed double (e.g. <c>x - 1</c> with dynamic <c>x</c>).
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object Subtract(object? a, double b)
+        {
+            if (a is double leftDouble)
+            {
+                return BoxedNumber.Box(leftDouble - b);
+            }
+
+            var leftNumeric = TypeUtilities.ToNumeric(a);
+            if (leftNumeric is BigInteger)
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            return BoxedNumber.Box((double)leftNumeric - b);
+        }
+
+        /// <summary>
+        /// '-' where the left operand is already an unboxed double.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object Subtract(double a, object? b)
+        {
+            if (b is double rightDouble)
+            {
+                return BoxedNumber.Box(a - rightDouble);
+            }
+
+            var rightNumeric = TypeUtilities.ToNumeric(b);
+            if (rightNumeric is BigInteger)
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            return BoxedNumber.Box(a - (double)rightNumeric);
         }
 
         /// <summary>
@@ -570,7 +631,7 @@ namespace JavaScriptRuntime
         {
             if (a is double leftDouble && b is double rightDouble)
             {
-                return leftDouble * rightDouble;
+                return BoxedNumber.Box(leftDouble * rightDouble);
             }
 
             // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
@@ -594,7 +655,7 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            return (double)leftNumeric * (double)rightNumeric;
+            return BoxedNumber.Box((double)leftNumeric * (double)rightNumeric);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -602,7 +663,7 @@ namespace JavaScriptRuntime
         {
             if (a is double leftDouble && b is double rightDouble)
             {
-                return leftDouble / rightDouble;
+                return BoxedNumber.Box(leftDouble / rightDouble);
             }
 
             // ECMA-262 ApplyStringOrNumericBinaryOperator: both operands go through ToNumeric
@@ -631,7 +692,7 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            return (double)leftNumeric / (double)rightNumeric;
+            return BoxedNumber.Box((double)leftNumeric / (double)rightNumeric);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -944,12 +1005,85 @@ namespace JavaScriptRuntime
             return comparison.HasValue && comparison.Value >= 0;
         }
 
+        /// <summary>
+        /// Relational comparison where one operand is already an unboxed double. These overloads let
+        /// generated code compare a dynamic value against a numeric local without boxing the number.
+        /// The unboxed operand is a primitive Number, so ToPrimitive ordering is unaffected.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int? CompareRelational(object? a, double b)
+            => a is double leftNumber
+                ? CompareNumbers(leftNumber, b)
+                : CompareRelational(a, (object)b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int? CompareRelational(double a, object? b)
+            => b is double rightNumber
+                ? CompareNumbers(a, rightNumber)
+                : CompareRelational((object)a, b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThan(object? a, double b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value < 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThan(double a, object? b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value < 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThan(object? a, double b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value > 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThan(double a, object? b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value > 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThanOrEqual(object? a, double b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value <= 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThanOrEqual(double a, object? b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value <= 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThanOrEqual(object? a, double b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value >= 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThanOrEqual(double a, object? b)
+        {
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value >= 0;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object UnaryMinus(object? value)
         {
             if (value is double number)
             {
-                return -number;
+                return BoxedNumber.Box(-number);
             }
 
             if (value is BigInteger bigInt)

@@ -1464,7 +1464,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1046 (0x416)
+		// Code size: 1041 (0x411)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypedComparisonScheduler/Scope,
@@ -1800,69 +1800,68 @@
 
 			IL_036d: ldnull
 			IL_036e: ldc.r8 1
-			IL_0377: box [System.Runtime]System.Double
-			IL_037c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
-			IL_0381: stloc.s 22
-			IL_0383: ldloc.s 22
-			IL_0385: box [System.Runtime]System.Boolean
-			IL_038a: stloc.s 19
-			IL_038c: ldloc.s 15
-			IL_038e: ldloc.s 19
-			IL_0390: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0395: pop
-			IL_0396: leave IL_0407
+			IL_0377: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+			IL_037c: stloc.s 22
+			IL_037e: ldloc.s 22
+			IL_0380: box [System.Runtime]System.Boolean
+			IL_0385: stloc.s 19
+			IL_0387: ldloc.s 15
+			IL_0389: ldloc.s 19
+			IL_038b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0390: pop
+			IL_0391: leave IL_0402
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_039b: stloc.s 9
-			IL_039d: ldloc.s 9
-			IL_039f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_03a4: dup
-			IL_03a5: brtrue IL_03bb
+			IL_0396: stloc.s 9
+			IL_0398: ldloc.s 9
+			IL_039a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_039f: dup
+			IL_03a0: brtrue IL_03b6
 
-			IL_03aa: pop
-			IL_03ab: ldloc.s 9
-			IL_03ad: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_03b2: dup
-			IL_03b3: brtrue IL_03c7
+			IL_03a5: pop
+			IL_03a6: ldloc.s 9
+			IL_03a8: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_03ad: dup
+			IL_03ae: brtrue IL_03c2
 
-			IL_03b8: pop
-			IL_03b9: rethrow
+			IL_03b3: pop
+			IL_03b4: rethrow
 
-			IL_03bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_03c0: stloc.s 10
-			IL_03c2: br IL_03c9
+			IL_03b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_03bb: stloc.s 10
+			IL_03bd: br IL_03c4
 
-			IL_03c7: stloc.s 10
+			IL_03c2: stloc.s 10
 
-			IL_03c9: ldloc.s 10
-			IL_03cb: stloc.s 11
-			IL_03cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03d2: stloc.s 15
-			IL_03d4: ldloc.s 11
-			IL_03d6: stloc.s 20
-			IL_03d8: ldstr "ReferenceError"
-			IL_03dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_03e2: stloc.s 21
-			IL_03e4: ldloc.s 20
-			IL_03e6: ldloc.s 21
-			IL_03e8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_03ed: stloc.s 22
-			IL_03ef: ldloc.s 22
-			IL_03f1: box [System.Runtime]System.Boolean
-			IL_03f6: stloc.s 19
-			IL_03f8: ldloc.s 15
-			IL_03fa: ldloc.s 19
-			IL_03fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0401: pop
-			IL_0402: leave IL_0407
+			IL_03c4: ldloc.s 10
+			IL_03c6: stloc.s 11
+			IL_03c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03cd: stloc.s 15
+			IL_03cf: ldloc.s 11
+			IL_03d1: stloc.s 20
+			IL_03d3: ldstr "ReferenceError"
+			IL_03d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_03dd: stloc.s 21
+			IL_03df: ldloc.s 20
+			IL_03e1: ldloc.s 21
+			IL_03e3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_03e8: stloc.s 22
+			IL_03ea: ldloc.s 22
+			IL_03ec: box [System.Runtime]System.Boolean
+			IL_03f1: stloc.s 19
+			IL_03f3: ldloc.s 15
+			IL_03f5: ldloc.s 19
+			IL_03f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03fc: pop
+			IL_03fd: leave IL_0402
 		} // end handler
 
-		IL_0407: ldc.r8 0.0
-		IL_0410: stloc.s 12
-		IL_0412: ldnull
-		IL_0413: stloc.s 13
-		IL_0415: ret
+		IL_0402: ldc.r8 0.0
+		IL_040b: stloc.s 12
+		IL_040d: ldnull
+		IL_040e: stloc.s 13
+		IL_0410: ret
 	} // end of method BinaryOperator_TypedComparisonScheduler::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypedComparisonScheduler

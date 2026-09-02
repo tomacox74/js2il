@@ -1107,7 +1107,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 636 (0x27c)
+		// Code size: 626 (0x272)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ConstPrimitivePropagation_With/Scope,
@@ -1263,7 +1263,7 @@
 		IL_018f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasPropertyIn(object, object)
 		IL_0194: stloc.s 9
 		IL_0196: ldloc.s 9
-		IL_0198: brfalse IL_01d8
+		IL_0198: brfalse IL_01d3
 
 		IL_019d: ldloc.s 7
 		IL_019f: ldstr "NESTED_VALUE"
@@ -1274,76 +1274,74 @@
 		IL_01b2: stloc.s 8
 		IL_01b4: ldloc.s 8
 		IL_01b6: ldc.i4.1
-		IL_01b7: box [System.Runtime]System.Boolean
-		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-		IL_01c1: stloc.s 8
-		IL_01c3: ldloc.s 7
-		IL_01c5: ldstr "NESTED_VALUE"
-		IL_01ca: ldloc.s 8
-		IL_01cc: ldc.i4.0
-		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_01d2: pop
-		IL_01d3: br IL_0237
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+		IL_01bc: stloc.s 8
+		IL_01be: ldloc.s 7
+		IL_01c0: ldstr "NESTED_VALUE"
+		IL_01c5: ldloc.s 8
+		IL_01c7: ldc.i4.0
+		IL_01c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_01cd: pop
+		IL_01ce: br IL_022d
 
-		IL_01d8: ldstr "NESTED_VALUE"
-		IL_01dd: ldloc.2
-		IL_01de: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasPropertyIn(object, object)
-		IL_01e3: stloc.s 9
-		IL_01e5: ldloc.s 9
-		IL_01e7: brfalse IL_0229
+		IL_01d3: ldstr "NESTED_VALUE"
+		IL_01d8: ldloc.2
+		IL_01d9: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasPropertyIn(object, object)
+		IL_01de: stloc.s 9
+		IL_01e0: ldloc.s 9
+		IL_01e2: brfalse IL_021f
 
-		IL_01ec: ldloc.2
-		IL_01ed: ldstr "NESTED_VALUE"
-		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_01f7: stloc.s 8
-		IL_01f9: ldloc.s 8
-		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
-		IL_0200: stloc.s 8
-		IL_0202: ldloc.s 8
-		IL_0204: ldc.i4.1
-		IL_0205: box [System.Runtime]System.Boolean
-		IL_020a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-		IL_020f: stloc.s 8
-		IL_0211: ldloc.2
-		IL_0212: ldstr "NESTED_VALUE"
-		IL_0217: ldloc.s 8
-		IL_0219: ldc.i4.0
-		IL_021a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_021f: pop
-		IL_0220: ldloc.s 8
-		IL_0222: stloc.s 10
-		IL_0224: br IL_0237
+		IL_01e7: ldloc.2
+		IL_01e8: ldstr "NESTED_VALUE"
+		IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_01f2: stloc.s 8
+		IL_01f4: ldloc.s 8
+		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+		IL_01fb: stloc.s 8
+		IL_01fd: ldloc.s 8
+		IL_01ff: ldc.i4.1
+		IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+		IL_0205: stloc.s 8
+		IL_0207: ldloc.2
+		IL_0208: ldstr "NESTED_VALUE"
+		IL_020d: ldloc.s 8
+		IL_020f: ldc.i4.0
+		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0215: pop
+		IL_0216: ldloc.s 8
+		IL_0218: stloc.s 10
+		IL_021a: br IL_022d
 
-		IL_0229: ldstr "Assignment to constant variable."
-		IL_022e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0233: throw
+		IL_021f: ldstr "Assignment to constant variable."
+		IL_0224: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0229: throw
 
-		IL_0234: ldnull
-		IL_0235: stloc.s 10
+		IL_022a: ldnull
+		IL_022b: stloc.s 10
 
-		IL_0237: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_023c: stloc.s 6
-		IL_023e: volatile.
-		IL_0240: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_0245: brfalse IL_025a
+		IL_022d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0232: stloc.s 6
+		IL_0234: volatile.
+		IL_0236: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_023b: brfalse IL_0250
 
-		IL_024a: ldloc.2
-		IL_024b: ldstr "NESTED_VALUE"
-		IL_0250: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0255: br IL_026f
+		IL_0240: ldloc.2
+		IL_0241: ldstr "NESTED_VALUE"
+		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_024b: br IL_0265
 
-		IL_025a: ldloc.2
-		IL_025b: ldstr "NESTED_VALUE"
-		IL_0260: ldstr "Variable_ConstPrimitivePropagation_With:Modules.Variable_ConstPrimitivePropagation_With:__js_module_init__:88"
-		IL_0265: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_026a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0250: ldloc.2
+		IL_0251: ldstr "NESTED_VALUE"
+		IL_0256: ldstr "Variable_ConstPrimitivePropagation_With:Modules.Variable_ConstPrimitivePropagation_With:__js_module_init__:88"
+		IL_025b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_0260: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_026f: stloc.s 10
-		IL_0271: ldloc.s 6
-		IL_0273: ldloc.s 10
-		IL_0275: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_027a: pop
-		IL_027b: ret
+		IL_0265: stloc.s 10
+		IL_0267: ldloc.s 6
+		IL_0269: ldloc.s 10
+		IL_026b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0270: pop
+		IL_0271: ret
 	} // end of method Variable_ConstPrimitivePropagation_With::__js_module_init__
 
 } // end of class Modules.Variable_ConstPrimitivePropagation_With

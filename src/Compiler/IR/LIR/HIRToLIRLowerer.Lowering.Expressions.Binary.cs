@@ -292,8 +292,7 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            var leftBoxed = EnsureObject(leftTempVar);
-            var rightBoxed = EnsureObject(rightTempVar);
+            var (leftBoxed, rightBoxed) = PrepareMixedDoubleDynamicOperands(leftTempVar, rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                 DynamicBinaryOperatorKind.Subtract,
                 leftBoxed,
@@ -562,10 +561,11 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                var (lessThanLeft, lessThanRight) = PrepareMixedDoubleDynamicOperands(leftTempVar, rightTempVar);
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.LessThan,
-                    EnsureObject(leftTempVar),
-                    EnsureObject(rightTempVar),
+                    lessThanLeft,
+                    lessThanRight,
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -579,10 +579,11 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                var (greaterThanLeft, greaterThanRight) = PrepareMixedDoubleDynamicOperands(leftTempVar, rightTempVar);
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.GreaterThan,
-                    EnsureObject(leftTempVar),
-                    EnsureObject(rightTempVar),
+                    greaterThanLeft,
+                    greaterThanRight,
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -596,10 +597,11 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                var (lessThanOrEqualLeft, lessThanOrEqualRight) = PrepareMixedDoubleDynamicOperands(leftTempVar, rightTempVar);
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.LessThanOrEqual,
-                    EnsureObject(leftTempVar),
-                    EnsureObject(rightTempVar),
+                    lessThanOrEqualLeft,
+                    lessThanOrEqualRight,
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -613,10 +615,11 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                var (greaterThanOrEqualLeft, greaterThanOrEqualRight) = PrepareMixedDoubleDynamicOperands(leftTempVar, rightTempVar);
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.GreaterThanOrEqual,
-                    EnsureObject(leftTempVar),
-                    EnsureObject(rightTempVar),
+                    greaterThanOrEqualLeft,
+                    greaterThanOrEqualRight,
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -791,6 +794,7 @@ public sealed partial class HIRToLIRLowerer
         var lirInstructions = _methodBodyIR.Instructions;
 
         var binding = symbol.BindingInfo;
+        ForgetNumericRefinement(binding);
         var isDestructuredParameter = binding.DeclaringScope.DestructuredParameters.Contains(binding.Name);
         if (isDestructuredParameter && binding.IsStableType && binding.ClrType == typeof(double))
         {

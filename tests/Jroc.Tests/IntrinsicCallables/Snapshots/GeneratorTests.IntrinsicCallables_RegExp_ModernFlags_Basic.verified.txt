@@ -181,7 +181,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1157 (0x485)
+		// Code size: 1152 (0x480)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_RegExp_ModernFlags_Basic/Scope,
@@ -415,7 +415,7 @@
 			IL_02a5: ldstr "no-error"
 			IL_02aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_02af: pop
-			IL_02b0: leave IL_03da
+			IL_02b0: leave IL_03d5
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
@@ -507,86 +507,85 @@
 
 			IL_03ab: ldloc.s 10
 			IL_03ad: ldc.r8 0.0
-			IL_03b6: box [System.Runtime]System.Double
-			IL_03bb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, object)
-			IL_03c0: stloc.s 13
-			IL_03c2: ldloc.s 13
-			IL_03c4: box [System.Runtime]System.Boolean
-			IL_03c9: stloc.s 14
-			IL_03cb: ldloc.s 9
-			IL_03cd: ldloc.s 14
-			IL_03cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03d4: pop
-			IL_03d5: leave IL_03da
+			IL_03b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, float64)
+			IL_03bb: stloc.s 13
+			IL_03bd: ldloc.s 13
+			IL_03bf: box [System.Runtime]System.Boolean
+			IL_03c4: stloc.s 14
+			IL_03c6: ldloc.s 9
+			IL_03c8: ldloc.s 14
+			IL_03ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03cf: pop
+			IL_03d0: leave IL_03d5
 		} // end handler
 		.try
 		{
-			IL_03da: nop
-			IL_03db: ldstr "a"
-			IL_03e0: ldstr "gg"
-			IL_03e5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_03ea: pop
-			IL_03eb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03f0: stloc.s 9
-			IL_03f2: ldloc.s 9
-			IL_03f4: ldstr "no-error"
-			IL_03f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03fe: pop
-			IL_03ff: leave IL_0481
+			IL_03d5: nop
+			IL_03d6: ldstr "a"
+			IL_03db: ldstr "gg"
+			IL_03e0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_03e5: pop
+			IL_03e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03eb: stloc.s 9
+			IL_03ed: ldloc.s 9
+			IL_03ef: ldstr "no-error"
+			IL_03f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03f9: pop
+			IL_03fa: leave IL_047c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0404: stloc.s 5
-			IL_0406: ldloc.s 5
-			IL_0408: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_040d: dup
-			IL_040e: brtrue IL_0424
+			IL_03ff: stloc.s 5
+			IL_0401: ldloc.s 5
+			IL_0403: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0408: dup
+			IL_0409: brtrue IL_041f
 
-			IL_0413: pop
-			IL_0414: ldloc.s 5
-			IL_0416: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_041b: dup
-			IL_041c: brtrue IL_0430
+			IL_040e: pop
+			IL_040f: ldloc.s 5
+			IL_0411: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0416: dup
+			IL_0417: brtrue IL_042b
 
-			IL_0421: pop
-			IL_0422: rethrow
+			IL_041c: pop
+			IL_041d: rethrow
 
-			IL_0424: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0429: stloc.s 6
-			IL_042b: br IL_0432
+			IL_041f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0424: stloc.s 6
+			IL_0426: br IL_042d
 
-			IL_0430: stloc.s 6
+			IL_042b: stloc.s 6
 
-			IL_0432: ldloc.s 6
-			IL_0434: stloc.s 7
-			IL_0436: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_043b: stloc.s 9
-			IL_043d: volatile.
-			IL_043f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_0444: brfalse IL_045a
+			IL_042d: ldloc.s 6
+			IL_042f: stloc.s 7
+			IL_0431: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0436: stloc.s 9
+			IL_0438: volatile.
+			IL_043a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_043f: brfalse IL_0455
 
-			IL_0449: ldloc.s 7
-			IL_044b: ldstr "name"
-			IL_0450: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0455: br IL_0470
+			IL_0444: ldloc.s 7
+			IL_0446: ldstr "name"
+			IL_044b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0450: br IL_046b
 
-			IL_045a: ldloc.s 7
-			IL_045c: ldstr "name"
-			IL_0461: ldstr "IntrinsicCallables_RegExp_ModernFlags_Basic:Modules.IntrinsicCallables_RegExp_ModernFlags_Basic:__js_module_init__:142"
-			IL_0466: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_046b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0455: ldloc.s 7
+			IL_0457: ldstr "name"
+			IL_045c: ldstr "IntrinsicCallables_RegExp_ModernFlags_Basic:Modules.IntrinsicCallables_RegExp_ModernFlags_Basic:__js_module_init__:141"
+			IL_0461: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0466: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0470: stloc.s 10
-			IL_0472: ldloc.s 9
-			IL_0474: ldloc.s 10
-			IL_0476: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_047b: pop
-			IL_047c: leave IL_0481
+			IL_046b: stloc.s 10
+			IL_046d: ldloc.s 9
+			IL_046f: ldloc.s 10
+			IL_0471: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0476: pop
+			IL_0477: leave IL_047c
 		} // end handler
 
-		IL_0481: ldnull
-		IL_0482: stloc.s 8
-		IL_0484: ret
+		IL_047c: ldnull
+		IL_047d: stloc.s 8
+		IL_047f: ret
 	} // end of method IntrinsicCallables_RegExp_ModernFlags_Basic::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_RegExp_ModernFlags_Basic

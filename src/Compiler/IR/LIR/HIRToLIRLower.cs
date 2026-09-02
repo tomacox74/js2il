@@ -114,18 +114,13 @@ public sealed partial class HIRToLIRLowerer
     private readonly Dictionary<string, TempVariable> _classInitializationOwnerTempsByRegistryName = new(StringComparer.Ordinal);
     private readonly Dictionary<string, TempVariable> _classMethodScopesTempsByRegistryName = new(StringComparer.Ordinal);
 
-    // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double
-    // temp that holds its value.  Used to avoid redundant TypeUtilities.ToNumber calls when the
-    // same variable is used in multiple numeric contexts without any intervening write.
-    // Entries for writable bindings are cleared when the binding is assigned and at every
+    // Flow-sensitive numeric type refinement: maps a binding to the unboxed-double temp that was
+    // last assigned to it. Only assignments of a proven double may create an entry (a ToNumber
+    // coercion of a read does not change what the binding holds, so it must not refine it).
+    // Entries are cleared when the binding is assigned a non-double value and at every
     // control-flow label (branch / loop header), keeping the optimisation safe.
     private readonly Dictionary<BindingInfo, TempVariable> _numericRefinements = new Dictionary<BindingInfo, TempVariable>();
 
-    // Reverse map: records which binding a freshly-created load temp originated from so that
-    // EnsureNumber can propagate the coercion result back into _numericRefinements.
-    // Entries are consumed on use and cleared at control-flow labels.
-    private readonly Dictionary<TempVariable, BindingInfo> _tempBindingOrigin = new Dictionary<TempVariable, BindingInfo>();
-    
     /// <summary>
     /// Carries the inferred variable name for an anonymous class expression while lowering its initializer.
     /// This allows class-name metadata to be applied before static field initializers run, so
@@ -885,7 +880,6 @@ public sealed partial class HIRToLIRLowerer
     private void ClearNumericRefinementsAtLabel()
     {
         _numericRefinements.Clear();
-        _tempBindingOrigin.Clear();
         _numericRefinementLabelScanIndex = _methodBodyIR.Instructions.Count;
     }
 

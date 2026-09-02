@@ -2691,16 +2691,16 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 214 (0xd6)
+			// Code size: 205 (0xcd)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 				[1] float64,
 				[2] float64,
 				[3] float64,
-				[4] object,
-				[5] bool,
-				[6] class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
+				[4] bool,
+				[5] class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray,
+				[6] object
 			)
 
 			IL_0000: ldarg.1
@@ -2727,65 +2727,62 @@
 				IL_0043: ldarg.0
 				IL_0044: ldfld float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::sieveSizeInBits
 				IL_0049: clt
-				IL_004b: brfalse IL_00d4
+				IL_004b: brfalse IL_00cb
 
 				IL_0050: ldloc.2
 				IL_0051: stloc.3
 				IL_0052: ldloc.3
-				IL_0053: box [System.Runtime]System.Double
-				IL_0058: stloc.s 4
-				IL_005a: ldloc.s 4
-				IL_005c: ldarg.1
-				IL_005d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, object)
-				IL_0062: stloc.s 5
-				IL_0064: ldloc.s 5
-				IL_0066: brfalse IL_0070
+				IL_0053: ldarg.1
+				IL_0054: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(float64, object)
+				IL_0059: stloc.s 4
+				IL_005b: ldloc.s 4
+				IL_005d: brfalse IL_0067
 
-				IL_006b: br IL_00d4
+				IL_0062: br IL_00cb
 
-				IL_0070: ldarg.0
-				IL_0071: ldfld class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::bitArray
-				IL_0076: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray>(!!0)
-				IL_007b: stloc.s 6
-				IL_007d: ldloc.s 6
-				IL_007f: ldloc.1
-				IL_0080: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray::testBitTrue(float64)
-				IL_0085: stloc.3
-				IL_0086: ldloc.3
-				IL_0087: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
-				IL_008c: ldc.i4.0
-				IL_008d: ceq
-				IL_008f: stloc.s 5
-				IL_0091: ldloc.s 5
-				IL_0093: brfalse IL_00c3
+				IL_0067: ldarg.0
+				IL_0068: ldfld class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::bitArray
+				IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray>(!!0)
+				IL_0072: stloc.s 5
+				IL_0074: ldloc.s 5
+				IL_0076: ldloc.1
+				IL_0077: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray::testBitTrue(float64)
+				IL_007c: stloc.3
+				IL_007d: ldloc.3
+				IL_007e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+				IL_0083: ldc.i4.0
+				IL_0084: ceq
+				IL_0086: stloc.s 4
+				IL_0088: ldloc.s 4
+				IL_008a: brfalse IL_00ba
 
-				IL_0098: ldloc.1
-				IL_0099: stloc.3
-				IL_009a: ldloc.3
-				IL_009b: ldc.r8 2
-				IL_00a4: mul
-				IL_00a5: ldc.r8 1
-				IL_00ae: add
-				IL_00af: stloc.3
-				IL_00b0: ldloc.3
-				IL_00b1: box [System.Runtime]System.Double
-				IL_00b6: stloc.s 4
-				IL_00b8: ldloc.0
-				IL_00b9: ldloc.s 4
-				IL_00bb: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_00c0: stloc.3
-				IL_00c1: ldloc.3
-				IL_00c2: stloc.2
+				IL_008f: ldloc.1
+				IL_0090: stloc.3
+				IL_0091: ldloc.3
+				IL_0092: ldc.r8 2
+				IL_009b: mul
+				IL_009c: ldc.r8 1
+				IL_00a5: add
+				IL_00a6: stloc.3
+				IL_00a7: ldloc.3
+				IL_00a8: box [System.Runtime]System.Double
+				IL_00ad: stloc.s 6
+				IL_00af: ldloc.0
+				IL_00b0: ldloc.s 6
+				IL_00b2: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+				IL_00b7: stloc.3
+				IL_00b8: ldloc.3
+				IL_00b9: stloc.2
 
-				IL_00c3: ldloc.1
-				IL_00c4: ldc.r8 1
-				IL_00cd: add
-				IL_00ce: stloc.1
-				IL_00cf: br IL_0040
+				IL_00ba: ldloc.1
+				IL_00bb: ldc.r8 1
+				IL_00c4: add
+				IL_00c5: stloc.1
+				IL_00c6: br IL_0040
 			// end loop
 
-			IL_00d4: ldloc.0
-			IL_00d5: ret
+			IL_00cb: ldloc.0
+			IL_00cc: ret
 		} // end of method PrimeSieve::getPrimes
 
 		.method public hidebysig 

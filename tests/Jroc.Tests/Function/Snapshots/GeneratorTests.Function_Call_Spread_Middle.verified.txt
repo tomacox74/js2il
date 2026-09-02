@@ -305,7 +305,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 229 (0xe5)
+			// Code size: 220 (0xdc)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Call_Spread_Middle/dump/Scope,
@@ -313,8 +313,7 @@
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[3] object,
 				[4] float64,
-				[5] object,
-				[6] bool
+				[5] bool
 			)
 
 			IL_0000: newobj instance void Modules.Function_Call_Spread_Middle/dump/Scope::.ctor()
@@ -371,35 +370,32 @@
 
 				IL_009c: stloc.3
 				IL_009d: ldloc.s 4
-				IL_009f: box [System.Runtime]System.Double
-				IL_00a4: stloc.s 5
-				IL_00a6: ldloc.s 5
-				IL_00a8: ldloc.3
-				IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
-				IL_00ae: stloc.s 6
-				IL_00b0: ldloc.s 6
-				IL_00b2: brfalse IL_00e3
+				IL_009f: ldloc.3
+				IL_00a0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
+				IL_00a5: stloc.s 5
+				IL_00a7: ldloc.s 5
+				IL_00a9: brfalse IL_00da
 
-				IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00bc: stloc.2
-				IL_00bd: ldloc.0
-				IL_00be: ldfld object Modules.Function_Call_Spread_Middle/dump/Scope::arguments
-				IL_00c3: ldloc.1
-				IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_00c9: stloc.3
-				IL_00ca: ldloc.2
-				IL_00cb: ldloc.3
-				IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00d1: pop
-				IL_00d2: ldloc.1
-				IL_00d3: ldc.r8 1
-				IL_00dc: add
-				IL_00dd: stloc.1
-				IL_00de: br IL_0064
+				IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00b3: stloc.2
+				IL_00b4: ldloc.0
+				IL_00b5: ldfld object Modules.Function_Call_Spread_Middle/dump/Scope::arguments
+				IL_00ba: ldloc.1
+				IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00c0: stloc.3
+				IL_00c1: ldloc.2
+				IL_00c2: ldloc.3
+				IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00c8: pop
+				IL_00c9: ldloc.1
+				IL_00ca: ldc.r8 1
+				IL_00d3: add
+				IL_00d4: stloc.1
+				IL_00d5: br IL_0064
 			// end loop
 
-			IL_00e3: ldnull
-			IL_00e4: ret
+			IL_00da: ldnull
+			IL_00db: ret
 		} // end of method dump::__js_call__
 
 	} // end of class dump

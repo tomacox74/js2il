@@ -157,7 +157,58 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(methodRef);
     }
 
-    private void EmitOperatorsDynamicBinary(DynamicBinaryOperatorKind operatorKind, InstructionEncoder ilEncoder)
+    /// <summary>
+    /// Loads both operands of a dynamic binary operator and calls the matching
+    /// <see cref="JavaScriptRuntime.Operators"/> overload. When exactly one operand is an unboxed
+    /// double and the runtime exposes a mixed overload for the operator, the double is passed
+    /// unboxed instead of allocating a box on every evaluation (e.g. <c>i &lt; limit</c> in loops).
+    /// </summary>
+    private void EmitOperatorsDynamicBinary(
+        LIRBinaryDynamicOperator binaryDynamic,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        static bool IsUnboxedDouble(ValueStorage storage)
+            => storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double);
+
+        var leftIsDouble = IsUnboxedDouble(GetTempStorage(binaryDynamic.Left));
+        var rightIsDouble = IsUnboxedDouble(GetTempStorage(binaryDynamic.Right));
+        var hasMixedOverload = HasMixedDoubleOverload(binaryDynamic.Operator);
+
+        if (hasMixedOverload && leftIsDouble && !rightIsDouble)
+        {
+            EmitLoadTempAsDouble(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsObject(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
+            EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder, typeof(double), typeof(object));
+            return;
+        }
+
+        if (hasMixedOverload && !leftIsDouble && rightIsDouble)
+        {
+            EmitLoadTempAsObject(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsDouble(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
+            EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder, typeof(object), typeof(double));
+            return;
+        }
+
+        EmitLoadTempAsObject(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
+        EmitLoadTempAsObject(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
+        EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder);
+    }
+
+    private static bool HasMixedDoubleOverload(DynamicBinaryOperatorKind operatorKind)
+        => operatorKind is DynamicBinaryOperatorKind.Subtract
+            or DynamicBinaryOperatorKind.LessThan
+            or DynamicBinaryOperatorKind.GreaterThan
+            or DynamicBinaryOperatorKind.LessThanOrEqual
+            or DynamicBinaryOperatorKind.GreaterThanOrEqual;
+
+    private void EmitOperatorsDynamicBinary(
+        DynamicBinaryOperatorKind operatorKind,
+        InstructionEncoder ilEncoder,
+        Type? leftParameterType = null,
+        Type? rightParameterType = null)
     {
         var methodName = operatorKind switch
         {
@@ -181,7 +232,7 @@ internal sealed partial class LIRToILCompiler
         var methodRef = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.Operators),
             methodName,
-            new[] { typeof(object), typeof(object) });
+            new[] { leftParameterType ?? typeof(object), rightParameterType ?? typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

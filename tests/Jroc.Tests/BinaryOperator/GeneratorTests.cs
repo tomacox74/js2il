@@ -26,6 +26,9 @@ namespace Jroc.Tests.BinaryOperator
         public Task BinaryOperator_AddDynamicThenToNumber_StringPreserved() { var testName = nameof(BinaryOperator_AddDynamicThenToNumber_StringPreserved); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_NumericCoercionDoesNotRefineBinding() { var testName = nameof(BinaryOperator_NumericCoercionDoesNotRefineBinding); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_AddObjectObject() { var testName = nameof(BinaryOperator_AddObjectObject); return GenerateTest(testName); }
 
         [Fact]
