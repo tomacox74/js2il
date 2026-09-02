@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T16:33:02Z
+> Last generated (UTC): 2026-09-02T01:06:50Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -82,6 +82,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 23.1 ([tc39.es](https://tc39.es/ecma262/#sec-array-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/isArray/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/length/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/entries/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/find/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLast/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLastIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/flat/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/keys/ArrayConformanceBatchExecutionTests.cs` |  | 186 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, and keys behavior. The verified cases include callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Async Array.fromAsync, Proxy/species, cross-realm, resizable-buffer, and remaining exotic-array behavior remain limited. |
 
 ### 23.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-array))
 
