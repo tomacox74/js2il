@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Numerics;
 
 namespace JavaScriptRuntime
 {
@@ -176,13 +176,22 @@ namespace JavaScriptRuntime
         {
             if (args == null || args.Length == 0) return double.PositiveInfinity;
             double min = double.PositiveInfinity;
+            bool sawNaN = false;
             foreach (var a in args)
             {
                 double d = ToNumber(a);
-                if (double.IsNaN(d)) return double.NaN;
-                if (d < min) min = d;
+                if (double.IsNaN(d))
+                {
+                    sawNaN = true;
+                    continue;
+                }
+
+                if (d < min || (d == 0.0 && min == 0.0 && double.IsNegative(d) && !double.IsNegative(min)))
+                {
+                    min = d;
+                }
             }
-            return min;
+            return sawNaN ? double.NaN : min;
         }
 
         public static double max(params object?[] args)
@@ -306,94 +315,170 @@ namespace JavaScriptRuntime
         public static double sumPrecise(object? items)
         {
             var iterator = ObjectRuntime.GetIterator(items);
-            var completedNormally = false;
-            var partials = new List<double>();
+            var state = PreciseSumState.MinusZero;
+            var exactSum = BigInteger.Zero;
+            long count = 0;
 
-            try
+            while (true)
             {
-                while (true)
+                var step = ObjectRuntime.IteratorNext(iterator);
+                if (ObjectRuntime.IteratorResultDone(step))
                 {
-                    var step = ObjectRuntime.IteratorNext(iterator);
-                    if (ObjectRuntime.IteratorResultDone(step))
-                    {
-                        break;
-                    }
-
-                    var value = ObjectRuntime.IteratorResultValue(step);
-                    var number = ToNumber(value);
-                    if (double.IsNaN(number))
-                    {
-                        return double.NaN;
-                    }
-
-                    AddExactPartial(partials, number);
+                    break;
                 }
 
-                completedNormally = true;
-            }
-            finally
-            {
-                if (!completedNormally)
+                var value = ObjectRuntime.IteratorResultValue(step);
+                count++;
+                if (count >= 1L << 53)
                 {
-                    ObjectRuntime.IteratorClose(iterator);
+                    ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
+                    throw new RangeError("Math.sumPrecise input is too large");
+                }
+
+                if (!TryGetNumberPrimitive(value, out var number))
+                {
+                    ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
+                    throw new TypeError("Math.sumPrecise values must be Numbers");
+                }
+
+                if (state == PreciseSumState.NotANumber)
+                {
+                    continue;
+                }
+
+                if (double.IsNaN(number))
+                {
+                    state = PreciseSumState.NotANumber;
+                }
+                else if (double.IsPositiveInfinity(number))
+                {
+                    state = state == PreciseSumState.MinusInfinity
+                        ? PreciseSumState.NotANumber
+                        : PreciseSumState.PlusInfinity;
+                }
+                else if (double.IsNegativeInfinity(number))
+                {
+                    state = state == PreciseSumState.PlusInfinity
+                        ? PreciseSumState.NotANumber
+                        : PreciseSumState.MinusInfinity;
+                }
+                else if (!(number == 0.0 && double.IsNegative(number))
+                    && state is PreciseSumState.MinusZero or PreciseSumState.Finite)
+                {
+                    state = PreciseSumState.Finite;
+                    exactSum += ToExactBinaryUnits(number);
                 }
             }
 
-            return SumExactPartials(partials);
+            return state switch
+            {
+                PreciseSumState.NotANumber => double.NaN,
+                PreciseSumState.PlusInfinity => double.PositiveInfinity,
+                PreciseSumState.MinusInfinity => double.NegativeInfinity,
+                PreciseSumState.MinusZero => -0.0,
+                _ => RoundExactBinaryUnits(exactSum)
+            };
         }
 
-        private static void AddExactPartial(List<double> partials, double value)
+        private static BigInteger ToExactBinaryUnits(double value)
         {
-            var x = value;
-            for (var i = 0; i < partials.Count; i++)
+            var bits = unchecked((ulong)BitConverter.DoubleToInt64Bits(value));
+            var negative = (bits & (1UL << 63)) != 0;
+            var exponentBits = (int)((bits >> 52) & 0x7ff);
+            var significand = bits & ((1UL << 52) - 1);
+            if (exponentBits != 0)
             {
-                var y = partials[i];
-                if (System.Math.Abs(x) < System.Math.Abs(y))
-                {
-                    (x, y) = (y, x);
-                }
-
-                var hi = x + y;
-                var lo = y - (hi - x);
-                if (lo != 0.0)
-                {
-                    partials[i] = lo;
-                    x = hi;
-                }
-                else
-                {
-                    partials[i] = hi;
-                    return;
-                }
+                significand |= 1UL << 52;
             }
 
-            partials.Add(x);
+            var units = new BigInteger(significand);
+            if (exponentBits > 1)
+            {
+                units <<= exponentBits - 1;
+            }
+
+            return negative ? -units : units;
         }
 
-        private static double SumExactPartials(List<double> partials)
+        private static double RoundExactBinaryUnits(BigInteger units)
         {
-            if (partials.Count == 0)
+            if (units.IsZero)
             {
                 return 0.0;
             }
 
-            var total = 0.0;
-            var sawNegativeZero = false;
-            foreach (var partial in partials)
+            var negative = units.Sign < 0;
+            var magnitude = BigInteger.Abs(units);
+            var bitLength = checked((int)magnitude.GetBitLength());
+            var shift = global::System.Math.Max(0, bitLength - 53);
+            var roundedSignificand = magnitude >> shift;
+
+            if (shift > 0)
             {
-                total += partial;
-                if (partial == 0.0 && double.IsNegative(partial))
+                var remainder = magnitude - (roundedSignificand << shift);
+                var halfway = BigInteger.One << (shift - 1);
+                if (remainder > halfway || (remainder == halfway && !roundedSignificand.IsEven))
                 {
-                    sawNegativeZero = true;
+                    roundedSignificand++;
+                    if (roundedSignificand.GetBitLength() > 53)
+                    {
+                        roundedSignificand >>= 1;
+                        shift++;
+                    }
                 }
             }
 
-            if (total == 0.0 && sawNegativeZero)
-            {
-                return -0.0;
-            }
+            var rounded = global::System.Math.ScaleB((double)roundedSignificand, shift - 1074);
+            return negative ? -rounded : rounded;
+        }
 
-            return total;
+        private static bool TryGetNumberPrimitive(object? value, out double number)
+        {
+            switch (value)
+            {
+                case double d:
+                    number = d;
+                    return true;
+                case float f:
+                    number = f;
+                    return true;
+                case int i:
+                    number = i;
+                    return true;
+                case long l:
+                    number = l;
+                    return true;
+                case short s:
+                    number = s;
+                    return true;
+                case byte b:
+                    number = b;
+                    return true;
+                case sbyte sb:
+                    number = sb;
+                    return true;
+                case uint ui:
+                    number = ui;
+                    return true;
+                case ulong ul:
+                    number = ul;
+                    return true;
+                case ushort us:
+                    number = us;
+                    return true;
+                default:
+                    number = double.NaN;
+                    return false;
+            }
+        }
+
+        private enum PreciseSumState
+        {
+            MinusZero,
+            Finite,
+            PlusInfinity,
+            MinusInfinity,
+            NotANumber
         }
 
         private static double ToNumber(object? x) => TypeUtilities.ToNumber(x);

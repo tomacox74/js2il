@@ -276,7 +276,7 @@
     {
       "clause": "21.3.2.34",
       "title": "Math.sumPrecise ( items )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.sumprecise"
     },
     {
@@ -514,20 +514,32 @@
     },
     {
       "clause": "21.3.2",
-      "feature": "Math.f16round / Math.sumPrecise callable surface",
-      "status": "Supported with Limitations",
+      "feature": "Math.f16round / Math.sumPrecise semantics and callable surface",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-function-properties-of-the-math-object",
       "testScripts": [
-        "tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs"
+        "tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs",
+        "tests/Jroc.Test262.Tests/built-ins/Math/f16round/MathConformanceBatchExecutionTests.cs",
+        "tests/Jroc.Test262.Tests/built-ins/Math/sumPrecise/MathConformanceBatchExecutionTests.cs"
       ],
       "test262Paths": [
         "test/built-ins/Math/f16round/length.js",
         "test/built-ins/Math/f16round/name.js",
         "test/built-ins/Math/f16round/not-a-constructor.js",
+        "test/built-ins/Math/f16round/prop-desc.js",
+        "test/built-ins/Math/f16round/value-conversion.js",
         "test/built-ins/Math/sumPrecise/length.js",
-        "test/built-ins/Math/sumPrecise/not-a-constructor.js"
+        "test/built-ins/Math/sumPrecise/name.js",
+        "test/built-ins/Math/sumPrecise/not-a-constructor.js",
+        "test/built-ins/Math/sumPrecise/prop-desc.js",
+        "test/built-ins/Math/sumPrecise/sum-is-infinite.js",
+        "test/built-ins/Math/sumPrecise/sum-is-minus-zero.js",
+        "test/built-ins/Math/sumPrecise/sum-is-NaN.js",
+        "test/built-ins/Math/sumPrecise/sum.js",
+        "test/built-ins/Math/sumPrecise/takes-iterable.js",
+        "test/built-ins/Math/sumPrecise/throws-on-non-number.js"
       ],
-      "notes": "JROC now exposes the ES2025 `Math.f16round` and `Math.sumPrecise` callables with the expected basic metadata/non-constructibility surface. Their deeper numerical/iterable semantics still need broader test262 coverage, so the subclauses remain documented conservatively."
+      "notes": "JROC covers the complete pinned Math.f16round and Math.sumPrecise Test262 surface. Math.sumPrecise rejects non-Number values without coercion, closes iterators on invalid values, handles signed zero and non-finite inputs, and rounds an exact binary sum once at the end."
     }
     ]
   }
