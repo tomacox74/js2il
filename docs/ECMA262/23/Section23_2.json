@@ -965,6 +965,29 @@
           "test/built-ins/TypedArrayConstructors/internals/Delete/key-is-symbol.js"
         ],
         "notes": "The checked-in Test262 evidence now covers 390 additional concrete TypedArray constructor cases across numeric and BigInt constructor metadata, prototype properties, length and buffer coercion, and indexed internal behavior. Detached, resizable, shared, cross-realm, and proxy-backed buffer behavior remains limited; one testTypedArray.js constructor-identity conversion helper case remains deferred."
+      },
+      {
+        "clause": "23.2.3",
+        "feature": "TypedArray prototype lookup and reduction conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-%typedarrayprototype%-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/includes/TypedArrayFollowUpConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/indexOf/TypedArrayFollowUpConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/lastIndexOf/TypedArrayFollowUpConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/TypedArrayFollowUpConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduce/BigInt/TypedArrayFollowUpConformanceBatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/includes/fromIndex-infinity.js",
+          "test/built-ins/TypedArray/prototype/indexOf/BigInt/fromIndex-equal-or-greater-length-returns-minus-one.js",
+          "test/built-ins/TypedArray/prototype/lastIndexOf/BigInt/fromIndex-infinity.js",
+          "test/built-ins/TypedArray/prototype/map/BigInt/arraylength-internal.js",
+          "test/built-ins/TypedArray/prototype/reduce/BigInt/callbackfn-arguments-custom-accumulator.js",
+          "test/built-ins/TypedArray/prototype/join/BigInt/custom-separator-result-from-tostring-on-each-simple-value.js",
+          "test/built-ins/TypedArray/prototype/keys/BigInt/iter-prototype.js"
+        ],
+        "notes": "The checked-in Test262 evidence now covers 159 additional TypedArray cases across numeric and BigInt prototype lookup, length, iterator, join, map, and reduce behavior. Resizable-buffer, cross-realm, proxy, and three native testTypedArray.js constructor-identity conversion helper cases remain deferred."
       }
     ]
   }
