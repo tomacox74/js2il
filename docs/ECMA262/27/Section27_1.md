@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T01:16:21Z
+> Last generated (UTC): 2026-09-01T20:23:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -68,6 +68,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 27.1 ([tc39.es](https://tc39.es/ecma262/#sec-iteration))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Iterator helper conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Iterator/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/concat/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/from/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/drop/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/every/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/filter/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/find/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/flatMap/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/forEach/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/map/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/reduce/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/some/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/take/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/toArray/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/zip/IteratorConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Iterator/zipKeyed/IteratorConformanceBatchExecutionTests.cs` |  | 208 additional pinned Test262 cases verify Iterator.from plus lazy drop, take, filter, map, flatMap, and terminal every, find, forEach, reduce, some, and toArray helpers. The verified cases include callback and iterator protocol behavior, coercion, abrupt completion, metadata, and supported error paths. Iterator.concat, Iterator.zip, Iterator.zipKeyed, cross-realm behavior, and remaining iterator close/reentrancy edge cases remain limited. |
 
 ### 27.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-common-iteration-interfaces))
 

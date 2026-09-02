@@ -313,6 +313,31 @@
   "support": {
     "entries": [
       {
+        "clause": "27.1",
+        "feature": "Iterator helper conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-control-abstraction-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/concat/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/from/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/drop/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/every/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/filter/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/find/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/flatMap/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/forEach/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/map/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/reduce/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/some/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/take/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/toArray/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/zip/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/zipKeyed/IteratorConformanceBatchExecutionTests.cs"
+        ],
+        "notes": "208 additional pinned Test262 cases verify Iterator.from plus lazy drop, take, filter, map, flatMap, and terminal every, find, forEach, reduce, some, and toArray helpers. The verified cases include callback and iterator protocol behavior, coercion, abrupt completion, metadata, and supported error paths. Iterator.concat, Iterator.zip, Iterator.zipKeyed, cross-realm behavior, and remaining iterator close/reentrancy edge cases remain limited."
+      },
+      {
         "clause": "27.1.1",
         "feature": "for..of consumes iterables via Symbol.iterator and performs IteratorClose on break/throw",
         "status": "Supported with Limitations",

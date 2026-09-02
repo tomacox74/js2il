@@ -13,6 +13,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - runtime/test262/docs: make `JSON.parse` use ECMAScript string coercion and
   Proxy-aware reviver traversal, including observable array lengths and
   CreateDataProperty traps; port the final 36 pinned parse cases.
+- test262/docs: port 208 additional Iterator cases from a deterministic
+  500-fixture intake, covering Iterator.from, lazy helper pipelines, terminal
+  helper behavior, iterator protocol/error paths, coercion, and metadata.
+  Iterator.concat/zip/zipKeyed behavior, cross-realm cases, and remaining
+  iterator close/reentrancy edges remain deferred.
 - test262/harness/docs: port 348 additional Function object cases from the
   complete 464-fixture unported intake, covering constructor and instance
   attributes, callable and construct internals, restricted properties,
