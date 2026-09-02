@@ -13,6 +13,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   paired guardrail improves classic
   `dromaeo-3d-cube` from 9.12 ms / 3.92 MiB to 4.37 ms / 2.52 MiB,
   outperforming Jint's 5.23 ms while also benefiting ordinary constructor use.
+- test262/docs: port 274 additional Set cases from the complete 287-fixture
+  unported intake, covering construction, species/iterator metadata, core
+  mutation/access methods, and Set composition and relation operations.
+  Remaining constructor iterator-close, proxy, and cross-realm cases remain
+  deferred.
 - test262/harness/docs: port 232 additional DataView cases from the complete
   291-fixture unported intake, covering constructor validation, accessors, and
   numeric read/write conversions. Complete the native
