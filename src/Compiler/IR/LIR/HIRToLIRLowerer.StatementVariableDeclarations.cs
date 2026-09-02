@@ -218,6 +218,9 @@ public sealed partial class HIRToLIRLowerer
             value = withResolvedValueTemp;
         }
 
+        // A declaration writes the binding, so any earlier numeric refinement is stale.
+        ForgetNumericRefinement(binding);
+
         bool initializerProvesUnboxedDouble = exprStmt.Initializer != null
             && GetTempStorage(value).Kind == ValueStorageKind.UnboxedValue
             && GetTempStorage(value).ClrType == typeof(double);
@@ -322,6 +325,7 @@ public sealed partial class HIRToLIRLowerer
         slotValue = EnsureTempMappedToSlot(slot, slotValue);
 
         _variableMap[binding] = slotValue;
+        RecordDeclarationNumericRefinement(binding, value, slotValue);
 
         // Mark all variable slots as single-assignment initially.
         // This will be removed if the variable is reassigned later.

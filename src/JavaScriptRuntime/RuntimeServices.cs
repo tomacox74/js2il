@@ -1794,18 +1794,23 @@ public class RuntimeServices
     public static object ToNumeric(object? value)
         => TypeUtilities.ToNumeric(value);
 
+    /// <summary>
+    /// Compatibility shim for assemblies compiled before the increment flag was passed unboxed.
+    /// </summary>
     public static object ApplyNumericUpdate(object numericValue, object incrementValue)
+        => ApplyNumericUpdate(numericValue, incrementValue is true);
+
+    public static object ApplyNumericUpdate(object numericValue, bool increment)
     {
-        var increment = incrementValue is true;
-        if (numericValue is System.Numerics.BigInteger bigInt)
+        if (numericValue is double number)
         {
-            return increment
-                ? bigInt + System.Numerics.BigInteger.One
-                : bigInt - System.Numerics.BigInteger.One;
+            return BoxedNumber.Box(increment ? number + 1d : number - 1d);
         }
 
-        var number = (double)numericValue;
-        return increment ? number + 1d : number - 1d;
+        var bigInt = (System.Numerics.BigInteger)numericValue;
+        return increment
+            ? bigInt + System.Numerics.BigInteger.One
+            : bigInt - System.Numerics.BigInteger.One;
     }
 
     public static object EnsureTemporalDeadZoneInitialized(object value, string bindingName)

@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 322 (0x142)
+		// Code size: 317 (0x13d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_UpdateOverride/Scope,
@@ -184,108 +184,107 @@
 		IL_004d: stloc.s 6
 		IL_004f: ldloc.s 6
 		IL_0051: ldc.i4.1
-		IL_0052: box [System.Runtime]System.Boolean
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-		IL_005c: stloc.s 6
-		IL_005e: ldloc.1
-		IL_005f: ldstr "join"
-		IL_0064: ldloc.s 6
-		IL_0066: ldc.i4.1
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_006c: pop
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+		IL_0057: stloc.s 6
+		IL_0059: ldloc.1
+		IL_005a: ldstr "join"
+		IL_005f: ldloc.s 6
+		IL_0061: ldc.i4.1
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0067: pop
 		.try
 		{
-			IL_006d: nop
-			IL_006e: ldloc.1
-			IL_006f: ldstr "join"
-			IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-			IL_0079: brtrue IL_00a0
+			IL_0068: nop
+			IL_0069: ldloc.1
+			IL_006a: ldstr "join"
+			IL_006f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0074: brtrue IL_009b
 
-			IL_007e: ldloc.1
-			IL_007f: ldc.i4.2
-			IL_0080: newarr [System.Runtime]System.Object
-			IL_0085: dup
-			IL_0086: ldc.i4.0
-			IL_0087: ldstr "a"
-			IL_008c: stelem.ref
-			IL_008d: dup
-			IL_008e: ldc.i4.1
-			IL_008f: ldstr "b"
-			IL_0094: stelem.ref
-			IL_0095: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
-			IL_009a: pop
-			IL_009b: br IL_00c2
+			IL_0079: ldloc.1
+			IL_007a: ldc.i4.2
+			IL_007b: newarr [System.Runtime]System.Object
+			IL_0080: dup
+			IL_0081: ldc.i4.0
+			IL_0082: ldstr "a"
+			IL_0087: stelem.ref
+			IL_0088: dup
+			IL_0089: ldc.i4.1
+			IL_008a: ldstr "b"
+			IL_008f: stelem.ref
+			IL_0090: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+			IL_0095: pop
+			IL_0096: br IL_00bd
 
-			IL_00a0: ldloc.1
-			IL_00a1: ldstr "join"
-			IL_00a6: ldc.i4.2
-			IL_00a7: newarr [System.Runtime]System.Object
-			IL_00ac: dup
-			IL_00ad: ldc.i4.0
-			IL_00ae: ldstr "a"
-			IL_00b3: stelem.ref
-			IL_00b4: dup
-			IL_00b5: ldc.i4.1
-			IL_00b6: ldstr "b"
-			IL_00bb: stelem.ref
-			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-			IL_00c1: pop
+			IL_009b: ldloc.1
+			IL_009c: ldstr "join"
+			IL_00a1: ldc.i4.2
+			IL_00a2: newarr [System.Runtime]System.Object
+			IL_00a7: dup
+			IL_00a8: ldc.i4.0
+			IL_00a9: ldstr "a"
+			IL_00ae: stelem.ref
+			IL_00af: dup
+			IL_00b0: ldc.i4.1
+			IL_00b1: ldstr "b"
+			IL_00b6: stelem.ref
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_00bc: pop
 
-			IL_00c2: leave IL_013e
+			IL_00bd: leave IL_0139
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00c7: stloc.2
-			IL_00c8: ldloc.2
-			IL_00c9: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00ce: dup
-			IL_00cf: brtrue IL_00e4
+			IL_00c2: stloc.2
+			IL_00c3: ldloc.2
+			IL_00c4: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00c9: dup
+			IL_00ca: brtrue IL_00df
 
-			IL_00d4: pop
-			IL_00d5: ldloc.2
-			IL_00d6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00db: dup
-			IL_00dc: brtrue IL_00ef
+			IL_00cf: pop
+			IL_00d0: ldloc.2
+			IL_00d1: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00d6: dup
+			IL_00d7: brtrue IL_00ea
 
-			IL_00e1: pop
-			IL_00e2: rethrow
+			IL_00dc: pop
+			IL_00dd: rethrow
 
-			IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00e9: stloc.3
-			IL_00ea: br IL_00f0
+			IL_00df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00e4: stloc.3
+			IL_00e5: br IL_00eb
 
-			IL_00ef: stloc.3
+			IL_00ea: stloc.3
 
-			IL_00f0: ldloc.3
-			IL_00f1: stloc.s 4
-			IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00f8: stloc.s 7
-			IL_00fa: volatile.
-			IL_00fc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-			IL_0101: brfalse IL_0117
+			IL_00eb: ldloc.3
+			IL_00ec: stloc.s 4
+			IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00f3: stloc.s 7
+			IL_00f5: volatile.
+			IL_00f7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_00fc: brfalse IL_0112
 
-			IL_0106: ldloc.s 4
-			IL_0108: ldstr "name"
-			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0112: br IL_012d
+			IL_0101: ldloc.s 4
+			IL_0103: ldstr "name"
+			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_010d: br IL_0128
 
-			IL_0117: ldloc.s 4
-			IL_0119: ldstr "name"
-			IL_011e: ldstr "Require_Path_UpdateOverride:Modules.Require_Path_UpdateOverride:__js_module_init__:32"
-			IL_0123: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-			IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0112: ldloc.s 4
+			IL_0114: ldstr "name"
+			IL_0119: ldstr "Require_Path_UpdateOverride:Modules.Require_Path_UpdateOverride:__js_module_init__:32"
+			IL_011e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_012d: stloc.s 6
-			IL_012f: ldloc.s 7
-			IL_0131: ldloc.s 6
-			IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0138: pop
-			IL_0139: leave IL_013e
+			IL_0128: stloc.s 6
+			IL_012a: ldloc.s 7
+			IL_012c: ldloc.s 6
+			IL_012e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0133: pop
+			IL_0134: leave IL_0139
 		} // end handler
 
-		IL_013e: ldnull
-		IL_013f: stloc.s 5
-		IL_0141: ret
+		IL_0139: ldnull
+		IL_013a: stloc.s 5
+		IL_013c: ret
 	} // end of method Require_Path_UpdateOverride::__js_module_init__
 
 } // end of class Modules.Require_Path_UpdateOverride

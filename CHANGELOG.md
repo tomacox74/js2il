@@ -6,6 +6,18 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime/compiler): cut boxing on dynamic numeric hot paths. Cache boxed
+  small integral doubles (`BoxedNumber`) for arithmetic results, `ToNumeric`,
+  and `++`/`--`; stop boxing the increment flag in `ApplyNumericUpdate`; add
+  `Operators` overloads for mixed unboxed-double/`object` subtraction and
+  relational comparison so the compiler no longer boxes a known-number operand;
+  fast-path `CompareRelational` for two doubles. Fix `Array` index-append
+  over-counting holes, which permanently disabled dense fast paths for arrays
+  built with `a[a.length] = v`. Classic `dromaeo-3d-cube` allocates ~25% less.
+- fix(compiler): a numeric coercion of a variable read (for example `b - a`)
+  no longer refines the variable to a Number for later reads in the same
+  block, so `a + b` on string arguments concatenates, `typeof` is preserved,
+  and `valueOf` is invoked for every use as required.
 - runtime/test262/docs: enforce deletion of String exotic indexed properties
   through nested Proxy targets and port 32 Proxy `defineProperty` and
   `deleteProperty` trap, forwarding, abrupt-completion, and invariant cases.

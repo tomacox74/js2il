@@ -168,7 +168,8 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object ToNumeric(object? value)
         {
-            if (value is BigInteger)
+            // Already a Number or BigInt: hand back the same box instead of unboxing and re-boxing.
+            if (value is double or BigInteger)
             {
                 return value;
             }
@@ -182,13 +183,13 @@ namespace JavaScriptRuntime
                     throw new TypeError("Cannot convert object to primitive value");
                 }
 
-                if (value is BigInteger)
+                if (value is double or BigInteger)
                 {
                     return value;
                 }
             }
 
-            return ToNumber(value);
+            return BoxedNumber.Box(ToNumber(value));
         }
 
         public static short ToInt16(object? value)

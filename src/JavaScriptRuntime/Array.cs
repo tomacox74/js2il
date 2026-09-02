@@ -3057,8 +3057,10 @@ namespace JavaScriptRuntime
             }
             else
             {
-                EnsureDenseStorage(index + 1);
-                _items[index] = value;
+                // Pad only the gap below index with holes so a plain append (index == Count)
+                // leaves _holeCount untouched and the array keeps its dense fast paths.
+                EnsureDenseStorage(index);
+                _items.Add(value);
             }
 
             if (index >= _logicalLength)
@@ -3104,8 +3106,8 @@ namespace JavaScriptRuntime
                 }
                 else
                 {
-                    EnsureDenseStorage(index + 1);
-                    _items[index] = value;
+                    EnsureDenseStorage(index);
+                    _items.Add(value);
                 }
             }
 

@@ -33,9 +33,7 @@ internal sealed partial class LIRToILCompiler
                 return true;
 
             case LIRBinaryDynamicOperator binaryDynamic:
-                EmitLoadTempAsObject(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsObject(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
-                EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder);
+                EmitOperatorsDynamicBinary(binaryDynamic, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(binaryDynamic.Result, ilEncoder, allocation);
                 return true;
 

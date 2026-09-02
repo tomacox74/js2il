@@ -225,7 +225,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 250 (0xfa)
+			// Code size: 235 (0xeb)
 			.maxstack 8
 			.locals init (
 				[0] string,
@@ -263,84 +263,81 @@
 			IL_0034: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0039: stloc.s 6
 			IL_003b: ldloc.s 6
-			IL_003d: brtrue IL_0088
+			IL_003d: brtrue IL_0083
 
 			IL_0042: ldarg.1
 			IL_0043: ldstr "patch"
 			IL_0048: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_004d: stloc.s 6
 			IL_004f: ldloc.s 6
-			IL_0051: brtrue IL_00b0
+			IL_0051: brtrue IL_00a6
 
-			IL_0056: br IL_00d1
+			IL_0056: br IL_00c2
 
 			IL_005b: ldloc.3
 			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
 			IL_0061: stloc.s 7
 			IL_0063: ldloc.s 7
 			IL_0065: ldc.i4.1
-			IL_0066: box [System.Runtime]System.Boolean
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-			IL_0070: stloc.s 7
-			IL_0072: ldloc.s 7
-			IL_0074: stloc.3
-			IL_0075: ldstr "0"
-			IL_007a: stloc.s 4
-			IL_007c: ldstr "0"
-			IL_0081: stloc.s 5
-			IL_0083: br IL_00d1
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+			IL_006b: stloc.s 7
+			IL_006d: ldloc.s 7
+			IL_006f: stloc.3
+			IL_0070: ldstr "0"
+			IL_0075: stloc.s 4
+			IL_0077: ldstr "0"
+			IL_007c: stloc.s 5
+			IL_007e: br IL_00c2
 
-			IL_0088: ldloc.s 4
-			IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
-			IL_008f: stloc.s 7
-			IL_0091: ldloc.s 7
-			IL_0093: ldc.i4.1
-			IL_0094: box [System.Runtime]System.Boolean
-			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-			IL_009e: stloc.s 7
-			IL_00a0: ldloc.s 7
-			IL_00a2: stloc.s 4
-			IL_00a4: ldstr "0"
-			IL_00a9: stloc.s 5
-			IL_00ab: br IL_00d1
+			IL_0083: ldloc.s 4
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_008a: stloc.s 7
+			IL_008c: ldloc.s 7
+			IL_008e: ldc.i4.1
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+			IL_0094: stloc.s 7
+			IL_0096: ldloc.s 7
+			IL_0098: stloc.s 4
+			IL_009a: ldstr "0"
+			IL_009f: stloc.s 5
+			IL_00a1: br IL_00c2
 
-			IL_00b0: ldloc.s 5
-			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_00a6: ldloc.s 5
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+			IL_00ad: stloc.s 7
+			IL_00af: ldloc.s 7
+			IL_00b1: ldc.i4.1
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
 			IL_00b7: stloc.s 7
 			IL_00b9: ldloc.s 7
-			IL_00bb: ldc.i4.1
-			IL_00bc: box [System.Runtime]System.Boolean
-			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-			IL_00c6: stloc.s 7
-			IL_00c8: ldloc.s 7
-			IL_00ca: stloc.s 5
-			IL_00cc: br IL_00d1
+			IL_00bb: stloc.s 5
+			IL_00bd: br IL_00c2
 
-			IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d6: stloc.s 8
-			IL_00d8: ldloc.s 8
-			IL_00da: ldc.i4.4
-			IL_00db: newarr [System.Runtime]System.Object
-			IL_00e0: dup
-			IL_00e1: ldc.i4.0
-			IL_00e2: ldarg.1
-			IL_00e3: stelem.ref
-			IL_00e4: dup
-			IL_00e5: ldc.i4.1
-			IL_00e6: ldloc.3
-			IL_00e7: stelem.ref
-			IL_00e8: dup
-			IL_00e9: ldc.i4.2
-			IL_00ea: ldloc.s 4
-			IL_00ec: stelem.ref
-			IL_00ed: dup
-			IL_00ee: ldc.i4.3
-			IL_00ef: ldloc.s 5
-			IL_00f1: stelem.ref
-			IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00f7: pop
-			IL_00f8: ldnull
-			IL_00f9: ret
+			IL_00c2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c7: stloc.s 8
+			IL_00c9: ldloc.s 8
+			IL_00cb: ldc.i4.4
+			IL_00cc: newarr [System.Runtime]System.Object
+			IL_00d1: dup
+			IL_00d2: ldc.i4.0
+			IL_00d3: ldarg.1
+			IL_00d4: stelem.ref
+			IL_00d5: dup
+			IL_00d6: ldc.i4.1
+			IL_00d7: ldloc.3
+			IL_00d8: stelem.ref
+			IL_00d9: dup
+			IL_00da: ldc.i4.2
+			IL_00db: ldloc.s 4
+			IL_00dd: stelem.ref
+			IL_00de: dup
+			IL_00df: ldc.i4.3
+			IL_00e0: ldloc.s 5
+			IL_00e2: stelem.ref
+			IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00e8: pop
+			IL_00e9: ldnull
+			IL_00ea: ret
 		} // end of method bump::__js_call__
 
 	} // end of class bump

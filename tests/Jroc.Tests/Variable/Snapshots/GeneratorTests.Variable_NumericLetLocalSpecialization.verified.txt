@@ -313,7 +313,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 143 (0x8f)
+			// Code size: 138 (0x8a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -355,30 +355,29 @@
 			IL_0043: stloc.s 4
 			IL_0045: ldloc.s 4
 			IL_0047: ldc.r8 0.0
-			IL_0050: box [System.Runtime]System.Double
-			IL_0055: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, object)
-			IL_005a: stloc.s 5
-			IL_005c: ldloc.s 5
-			IL_005e: brfalse IL_0072
+			IL_0050: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, float64)
+			IL_0055: stloc.s 5
+			IL_0057: ldloc.s 5
+			IL_0059: brfalse IL_006d
 
-			IL_0063: ldc.r8 1
-			IL_006c: stloc.2
-			IL_006d: br IL_007f
+			IL_005e: ldc.r8 1
+			IL_0067: stloc.2
+			IL_0068: br IL_007a
 
-			IL_0072: ldc.r8 1
-			IL_007b: neg
-			IL_007c: stloc.3
-			IL_007d: ldloc.3
-			IL_007e: stloc.2
+			IL_006d: ldc.r8 1
+			IL_0076: neg
+			IL_0077: stloc.3
+			IL_0078: ldloc.3
+			IL_0079: stloc.2
 
-			IL_007f: ldloc.0
-			IL_0080: stloc.s 4
-			IL_0082: ldloc.s 4
-			IL_0084: ldloc.2
-			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_008a: stloc.s 4
-			IL_008c: ldloc.s 4
-			IL_008e: ret
+			IL_007a: ldloc.0
+			IL_007b: stloc.s 4
+			IL_007d: ldloc.s 4
+			IL_007f: ldloc.2
+			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0085: stloc.s 4
+			IL_0087: ldloc.s 4
+			IL_0089: ret
 		} // end of method calculate::__js_call__
 
 	} // end of class calculate
@@ -1592,7 +1591,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 50 (0x32)
+				// Code size: 45 (0x2d)
 				.maxstack 8
 				.locals init (
 					[0] object
@@ -1609,17 +1608,16 @@
 				IL_0014: stloc.0
 				IL_0015: ldloc.0
 				IL_0016: ldc.i4.1
-				IL_0017: box [System.Runtime]System.Boolean
-				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, object)
-				IL_0021: stloc.0
-				IL_0022: ldarg.0
-				IL_0023: ldc.i4.1
-				IL_0024: ldelem.ref
-				IL_0025: castclass Modules.Variable_NumericLetLocalSpecialization/captured/Scope
-				IL_002a: ldloc.0
-				IL_002b: stfld object Modules.Variable_NumericLetLocalSpecialization/captured/Scope::'value'
-				IL_0030: ldloc.0
-				IL_0031: ret
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+				IL_001c: stloc.0
+				IL_001d: ldarg.0
+				IL_001e: ldc.i4.1
+				IL_001f: ldelem.ref
+				IL_0020: castclass Modules.Variable_NumericLetLocalSpecialization/captured/Scope
+				IL_0025: ldloc.0
+				IL_0026: stfld object Modules.Variable_NumericLetLocalSpecialization/captured/Scope::'value'
+				IL_002b: ldloc.0
+				IL_002c: ret
 			} // end of method FunctionExpression_L81C11::__js_call__
 
 		} // end of class FunctionExpression_L81C11

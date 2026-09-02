@@ -633,7 +633,6 @@ public sealed partial class HIRToLIRLowerer
 
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {
-            _tempBindingOrigin.Remove(tempVar);
             return tempVar;
         }
 
@@ -641,25 +640,18 @@ public sealed partial class HIRToLIRLowerer
         // collapse a just-emitted dynamic '+' followed by ToNumber into one runtime call.
         if (TryRewriteLatestDynamicAddToNumber(tempVar, out var fusedNumberTemp))
         {
-            if (_tempBindingOrigin.Remove(tempVar, out var fusedSourceBinding) && CanTrackNumericRefinement(fusedSourceBinding))
-            {
-                _numericRefinements[fusedSourceBinding] = fusedNumberTemp;
-            }
             return fusedNumberTemp;
         }
 
         // Dynamic numeric coercion: object -> double via runtime helper.
+        // NOTE: the coerced result must not be recorded as a refinement of the source binding. The
+        // binding still holds its original value, so later reads in non-numeric contexts (`a + b`,
+        // string relational comparison, typeof) would observe a Number instead of the real value,
+        // and objects would skip repeated valueOf/toString calls. Only assignments of a proven
+        // double (see InvalidateNumericRefinement) may refine a binding.
         var numberTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConvertToNumber(EnsureObject(tempVar), numberTempVar));
         DefineTempStorage(numberTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-        // Flow-sensitive refinement: if tempVar originated from a variable load, record that the
-        // binding is now proven double so subsequent loads can return the coerced temp directly.
-        if (_tempBindingOrigin.Remove(tempVar, out var sourceBinding) && CanTrackNumericRefinement(sourceBinding))
-        {
-            _numericRefinements[sourceBinding] = numberTempVar;
-        }
-
         return numberTempVar;
     }
 
@@ -707,7 +699,8 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
             nameof(JavaScriptRuntime.RuntimeServices.ApplyNumericUpdate),
             new[] { EnsureObject(numericValue), incrementTemp },
-            updatedNumeric));
+            updatedNumeric,
+            ParameterTypes: [typeof(object), typeof(bool)]));
         DefineTempStorage(updatedNumeric, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return updatedNumeric;
     }
@@ -734,6 +727,80 @@ public sealed partial class HIRToLIRLowerer
         {
             _numericRefinements.Remove(binding);
         }
+    }
+
+    private void ForgetNumericRefinement(BindingInfo binding)
+    {
+        SyncNumericRefinementStateWithLabels();
+        _numericRefinements.Remove(binding);
+    }
+
+    // Declarations store through a slot temp. When the slot itself is an unboxed double that temp is
+    // the natural refinement. When the slot is object-typed but the initializer produced an unboxed
+    // double (e.g. `var d = b - a`), snapshot the double into a fresh copy so later numeric reads in
+    // the same block skip ToNumber. The copy matters: the initializer temp could be a rematerialized
+    // load (parameter / class field) that would observe later writes to its source.
+    private void RecordDeclarationNumericRefinement(BindingInfo binding, TempVariable initializerValue, TempVariable slotValue)
+    {
+        SyncNumericRefinementStateWithLabels();
+        if (!CanTrackNumericRefinement(binding))
+        {
+            _numericRefinements.Remove(binding);
+            return;
+        }
+
+        var slotStorage = GetTempStorage(slotValue);
+        if (slotStorage.Kind == ValueStorageKind.UnboxedValue && slotStorage.ClrType == typeof(double))
+        {
+            _numericRefinements[binding] = slotValue;
+            return;
+        }
+
+        var initializerStorage = GetTempStorage(initializerValue);
+        if (initializerStorage.Kind == ValueStorageKind.UnboxedValue && initializerStorage.ClrType == typeof(double))
+        {
+            if (IsStableNumericRefinementSource(initializerValue))
+            {
+                _numericRefinements[binding] = initializerValue;
+                return;
+            }
+
+            var snapshot = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(initializerValue, snapshot));
+            DefineTempStorage(snapshot, initializerStorage);
+            _numericRefinements[binding] = snapshot;
+            return;
+        }
+
+        _numericRefinements.Remove(binding);
+    }
+
+    // A temp is a stable refinement source when its definition is a recent computation. Temps mapped to
+    // a variable slot alias that variable's mutable IL local, and loads that IL emission may
+    // rematerialize from mutable storage (LIRLoadParameter, LIRLoadUserClassInstanceField) observe later
+    // writes; neither is stable. An unknown (older) definition is treated as unstable too.
+    private bool IsStableNumericRefinementSource(TempVariable temp)
+    {
+        if (GetTempVariableSlot(temp) != -1)
+        {
+            return false;
+        }
+
+        const int lookback = 32;
+        var instructions = _methodBodyIR.Instructions;
+        var stop = Math.Max(0, instructions.Count - lookback);
+        for (int i = instructions.Count - 1; i >= stop; i--)
+        {
+            var instruction = instructions[i];
+            if (!Jroc.IL.LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined) || defined != temp)
+            {
+                continue;
+            }
+
+            return instruction is not (LIRLoadParameter or LIRLoadUserClassInstanceField);
+        }
+
+        return false;
     }
 
     private bool TryRewriteLatestDynamicAddToNumber(TempVariable tempVar, out TempVariable numberTempVar)
@@ -1181,7 +1248,6 @@ public sealed partial class HIRToLIRLowerer
             new[] { builder },
             result));
         DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-        _tempBindingOrigin[result] = binding;
         return true;
     }
 

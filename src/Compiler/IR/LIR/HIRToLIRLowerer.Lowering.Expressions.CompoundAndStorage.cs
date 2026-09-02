@@ -265,6 +265,34 @@ public sealed partial class HIRToLIRLowerer
         return tempVar;
     }
 
+    /// <summary>
+    /// Prepares operands for a dynamic binary operator that has <c>(object, double)</c> /
+    /// <c>(double, object)</c> runtime overloads. When exactly one operand is an unboxed double it
+    /// is left unboxed so IL emission can call the mixed overload instead of boxing it; otherwise
+    /// both operands are boxed as usual.
+    /// </summary>
+    private (TempVariable Left, TempVariable Right) PrepareMixedDoubleDynamicOperands(
+        TempVariable leftTempVar,
+        TempVariable rightTempVar)
+    {
+        var leftIsDouble = IsUnboxedDoubleTemp(leftTempVar);
+        var rightIsDouble = IsUnboxedDoubleTemp(rightTempVar);
+        if (leftIsDouble != rightIsDouble)
+        {
+            return (
+                leftIsDouble ? leftTempVar : EnsureObject(leftTempVar),
+                rightIsDouble ? rightTempVar : EnsureObject(rightTempVar));
+        }
+
+        return (EnsureObject(leftTempVar), EnsureObject(rightTempVar));
+    }
+
+    private bool IsUnboxedDoubleTemp(TempVariable tempVar)
+    {
+        var storage = GetTempStorage(tempVar);
+        return storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double);
+    }
+
     private bool IsObjectCompatible(TempVariable tempVar)
     {
         var s = GetTempStorage(tempVar);

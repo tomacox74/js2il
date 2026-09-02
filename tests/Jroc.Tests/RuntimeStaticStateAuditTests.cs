@@ -51,6 +51,7 @@ public sealed class RuntimeStaticStateAuditTests
     [
         new("JavaScriptRuntime.ArgumentsObject.FieldCaches", "weak-keyed CLR metadata"),
         new("JavaScriptRuntime.Array.Hole", "immutable ABI sentinel"),
+        new("JavaScriptRuntime.BoxedNumber.Cache", "immutable primitive lookup"),
         new("JavaScriptRuntime.Closure._delegateInvokeMetadata", "weak-keyed CLR metadata"),
         new("JavaScriptRuntime.Date.DateOnlyRegex", "immutable regex metadata"),
         new("JavaScriptRuntime.Date.DateStringRegex", "immutable regex metadata"),
