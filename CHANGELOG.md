@@ -6,7 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(compiler/runtime): lower unmodified intrinsic `new Object(...)` calls
+  directly while preserving dynamic dispatch for shadowed, reassigned, or
+  `globalThis`-exposed constructors. Add fixed-arity `Array.Construct`
+  overloads, preserve typed Array results, and avoid undersized backing
+  storage for short arrays. The local paired guardrail improves classic
+  `dromaeo-3d-cube` from 9.12 ms / 3.92 MiB to 4.52 ms / 2.52 MiB,
+  outperforming Jint's 5.03 ms while also benefiting ordinary constructor use.
 
 ## v0.12.17 - 2026-09-02
 
