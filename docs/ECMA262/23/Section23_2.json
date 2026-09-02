@@ -914,6 +914,34 @@
         "test262Paths": [
           "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js"
         ]
+      },
+      {
+        "clause": "23.2.2 / 23.2.3",
+        "feature": "TypedArray static and shared prototype conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/from/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/of/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/every/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/filter/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLast/TypedArrayConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/forEach/TypedArrayConformanceBatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/from/not-a-constructor.js",
+          "test/built-ins/TypedArray/of/not-a-constructor.js",
+          "test/built-ins/TypedArray/prototype/at/index-non-numeric-argument-tointeger.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/return-abrupt-from-end.js",
+          "test/built-ins/TypedArray/prototype/entries/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/every/callbackfn-arguments-with-thisarg.js",
+          "test/built-ins/TypedArray/prototype/filter/result-does-not-share-buffer.js",
+          "test/built-ins/TypedArray/prototype/findLast/return-found-value-predicate-result-is-true.js",
+          "test/built-ins/TypedArray/prototype/forEach/callbackfn-not-called-on-empty.js"
+        ],
+        "notes": "The checked-in Test262 evidence now covers 297 additional cases across static from()/of(), shared typed-array metadata and accessors, iterators, copyWithin(), callback/search methods, and numeric and BigInt mutation behavior. Resizable-buffer, cross-realm, proxy, and two native testTypedArray.js constructor-identity conversion cases remain deferred."
       }
     ]
   }
