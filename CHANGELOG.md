@@ -12,6 +12,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   indexed internal behavior. Detached/resizable/shared buffers, cross-realm,
   proxy, and one native typed-array helper-dependent conversion case remain
   deferred.
+- test262/runtime/docs: port all 177 remaining Math cases, bringing the pinned
+  327-case Math corpus to complete published coverage. Fix `Math.min` to
+  coerce every argument and preserve negative zero, and implement
+  `Math.sumPrecise` exact finite summation, special-value handling, strict
+  Number validation, and iterator closing on invalid values. Complete the
+  native `byteConversionValues.js` Float16 conversion matrix.
 - test262/docs: port 297 additional TypedArray cases from a deterministic
   500-fixture intake, covering static from/of behavior, shared prototype
   metadata and accessors, iterators, copying, callback/search methods, and

@@ -189,6 +189,10 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task f16round_not_a_constructor()
         => ExecutionTestFromFile("f16round/not-a-constructor");
 
+    [Fact(DisplayName = "value-conversion.js")]
+    public Task f16round_value_conversion()
+        => ExecutionTestFromFile("f16round/value-conversion");
+
     [Fact(DisplayName = "hypot/Math.hypot_Success_2")]
     public Task hypot_Math_hypot_Success_2()
         => ExecutionTestFromFile("hypot/Math.hypot_Success_2");

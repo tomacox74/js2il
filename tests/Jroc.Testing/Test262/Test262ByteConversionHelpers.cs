@@ -79,6 +79,7 @@ internal static class Test262ByteConversionHelpers
         ObjectRuntime.SetItem(expected, "Uint16", CreateExpectedValues(values, value => ToUnsignedInteger(value, 16)));
         ObjectRuntime.SetItem(expected, "Int32", CreateExpectedValues(values, value => ToSignedInteger(value, 32)));
         ObjectRuntime.SetItem(expected, "Uint32", CreateExpectedValues(values, value => ToUnsignedInteger(value, 32)));
+        ObjectRuntime.SetItem(expected, "Float16", CreateExpectedValues(values, value => (double)(Half)value));
         ObjectRuntime.SetItem(expected, "Float32", CreateExpectedValues(values, value => (double)(float)value));
         ObjectRuntime.SetItem(expected, "Float64", CreateExpectedValues(values, value => value));
         ObjectRuntime.SetItem(result, "expected", expected);

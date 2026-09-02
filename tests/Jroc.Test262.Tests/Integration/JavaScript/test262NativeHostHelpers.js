@@ -58,6 +58,11 @@ assert.sameValue(byteConversionValues.expected.Int8[1], -128);
 assert.sameValue(byteConversionValues.expected.Uint16[8], 65535);
 assert.sameValue(byteConversionValues.expected.Int32[10], -1);
 assert.sameValue(byteConversionValues.expected.Uint32[21], 4294967295);
+assert(Number.isNaN(byteConversionValues.expected.Float16[20]));
+assert.sameValue(byteConversionValues.expected.Float16[41], 2048);
+assert.sameValue(byteConversionValues.expected.Float16[42], 2052);
+assert.sameValue(byteConversionValues.expected.Float16[51], 65504);
+assert.sameValue(byteConversionValues.expected.Float16[52], Infinity);
 assert(Number.isNaN(byteConversionValues.expected.Float32[20]));
 assert(Number.isNaN(byteConversionValues.expected.Float64[20]));
 

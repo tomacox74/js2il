@@ -2,7 +2,7 @@
 
 [Back to ECMA-262 Coverage Index](Index.md)
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.16](https://github.com/tomacox74/js2il/releases/tag/v0.12.16).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.18](https://github.com/tomacox74/js2il/releases/tag/v0.12.18).
 
 ## How to Read This Report
 
@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 11,897 | 12 | 11,603 | 23,512 | **50.60%** |
+| Built-in objects and APIs | 12,074 | 12 | 11,426 | 23,512 | **51.35%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 15,585 | 58 | 32,598 | 48,241 | **32.31%** |
+| **Total** | 15,762 | 58 | 32,421 | 48,241 | **32.67%** |
 
 ## Language Areas
 
@@ -202,7 +202,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `JSON` | 161 | 0 | 4 | 165 | **97.58%** |
 | `Map` | 142 | 0 | 62 | 204 | **69.61%** |
 | `MapIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
-| `Math` | 150 | 0 | 177 | 327 | **45.87%** |
+| `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 0 | 0 | 6 | 6 | **0.00%** |
 | `NativeErrors` | 15 | 0 | 79 | 94 | **15.96%** |
 | `Number` | 171 | 0 | 167 | 338 | **50.59%** |
