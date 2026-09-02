@@ -18,9 +18,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 10,936 | 12 | 12,564 | 23,512 | **46.51%** |
+| Built-in objects and APIs | 11,210 | 12 | 12,290 | 23,512 | **47.68%** |
 | Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 14,624 | 58 | 33,559 | 48,241 | **30.31%** |
+| **Total** | 14,898 | 58 | 33,285 | 48,241 | **30.88%** |
 
 ## Language Areas
 
@@ -214,7 +214,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Reflect` | 54 | 0 | 99 | 153 | **35.29%** |
 | `RegExp` | 506 | 0 | 1,373 | 1,879 | **26.93%** |
 | `RegExpStringIteratorPrototype` | 5 | 0 | 12 | 17 | **29.41%** |
-| `Set` | 96 | 0 | 287 | 383 | **25.07%** |
+| `Set` | 370 | 0 | 13 | 383 | **96.61%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 37 | 0 | 67 | 104 | **35.58%** |
