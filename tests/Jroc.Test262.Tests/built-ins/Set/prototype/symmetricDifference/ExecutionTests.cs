@@ -9,4 +9,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "allows-set-like-object")]
     public Task allows_set_like_object()
         => ExecutionTestFromFile("allows-set-like-object");
+
+    [Fact(DisplayName = "subclass-receiver-methods")]
+    public Task subclass_receiver_methods()
+        => ExecutionTestFromFile("subclass-receiver-methods");
 }

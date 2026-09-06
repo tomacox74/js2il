@@ -264,7 +264,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Set/prototype/size/SetRuntimeSemanticsBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Set/prototype/values/SetRuntimeSemanticsBatchExecutionTests.cs"
         ],
-        "notes": "279 additional pinned Test262 cases verify Set construction, species and iterator metadata, add, clear, delete, entries, forEach, has, size, values, and the Set composition and relation methods. Verified coverage includes insertion order, SameValueZero matching, live traversal after mutation, coercion, callback behavior, set-like operands, iterator protocol and closing behavior, descriptors, and supported error paths. Proxy, cross-realm, and remaining exotic cases remain limited."
+        "notes": "286 additional pinned Test262 cases verify Set construction, species and iterator metadata, add, clear, delete, entries, forEach, has, size, values, and the Set composition and relation methods. Verified coverage includes insertion order, SameValueZero matching, live traversal after mutation, coercion, callback behavior, subclass receivers, set-like operands, iterator protocol and closing behavior, descriptors, and supported error paths. The remaining cross-realm case is not yet published."
       },
       {
         "clause": "24.2.1.2",
@@ -433,17 +433,24 @@
           "tests/Jroc.Test262.Tests/built-ins/Set/prototype/isDisjointFrom/ExecutionTests.cs",
           "tests/Jroc.Tests/Set/JavaScript/Set_Algebra_Methods.js"
         ],
-        "notes": "The ES2025 Set algebra methods take the set-like protocol path: the argument is validated with GetSetRecord and each method chooses between calling the argument's has method and draining its keys iterator based on the relative sizes, so has and keys are only observed where the spec requires it. Arrays and other plain iterables are rejected with a TypeError because they are not set-like. Results are built by copying the receiver's live set data directly rather than through Set.prototype.add. Proxy and remaining exotic set-like behavior are still limited.",
+        "notes": "The ES2025 Set algebra methods take the set-like protocol path: the argument is validated with GetSetRecord and each method chooses between calling the argument's has method and draining its keys iterator based on the relative sizes, so has and keys are only observed where the spec requires it. Arrays and other plain iterables are rejected with a TypeError because they are not set-like. Results are built as base Set instances by copying the receiver's live set data directly rather than consulting overridden size, has, or keys methods on subclass receivers. Cross-realm behavior remains unpublished.",
         "test262Paths": [
           "test/built-ins/Set/prototype/union/allows-set-like-object.js",
           "test/built-ins/Set/prototype/union/allows-set-like-class.js",
           "test/built-ins/Set/prototype/union/array-throws.js",
+          "test/built-ins/Set/prototype/union/subclass-receiver-methods.js",
           "test/built-ins/Set/prototype/intersection/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/intersection/subclass-receiver-methods.js",
           "test/built-ins/Set/prototype/difference/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/difference/subclass-receiver-methods.js",
           "test/built-ins/Set/prototype/symmetricDifference/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/symmetricDifference/subclass-receiver-methods.js",
           "test/built-ins/Set/prototype/isSubsetOf/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/isSubsetOf/subclass-receiver-methods.js",
           "test/built-ins/Set/prototype/isSupersetOf/allows-set-like-object.js",
-          "test/built-ins/Set/prototype/isDisjointFrom/allows-set-like-object.js"
+          "test/built-ins/Set/prototype/isSupersetOf/subclass-receiver-methods.js",
+          "test/built-ins/Set/prototype/isDisjointFrom/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/isDisjointFrom/subclass-receiver-methods.js"
         ]
       },
       {
