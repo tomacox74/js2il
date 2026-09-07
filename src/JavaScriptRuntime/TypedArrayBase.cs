@@ -230,12 +230,13 @@ namespace JavaScriptRuntime
             return this;
         }
 
-        public bool every(object[]? args)
+        public bool every(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "every");
             var thisArg = GetThisArg(args);
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.every", 3, ReadElementObject(i), (double)i, this, null);
                 if (!Operators.IsTruthy(result))
@@ -247,12 +248,13 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        public bool some(object[]? args)
+        public bool some(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "some");
             var thisArg = GetThisArg(args);
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.some", 3, ReadElementObject(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))

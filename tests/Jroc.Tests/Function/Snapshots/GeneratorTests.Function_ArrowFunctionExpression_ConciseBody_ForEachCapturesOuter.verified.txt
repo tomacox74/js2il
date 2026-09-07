@@ -242,7 +242,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 180 (0xb4)
+		// Code size: 225 (0xe1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope,
@@ -250,7 +250,7 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] object[],
 			[4] class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject,
-			[5] string
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::.ctor()
@@ -301,22 +301,31 @@
 		IL_008a: ldc.i4.0
 		IL_008b: ldloc.s 4
 		IL_008d: stelem.ref
-		IL_008e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_0093: stloc.2
-		IL_0094: ldloc.2
-		IL_0095: ldc.i4.1
-		IL_0096: newarr [System.Runtime]System.Object
-		IL_009b: dup
-		IL_009c: ldc.i4.0
-		IL_009d: ldstr ","
-		IL_00a2: stelem.ref
-		IL_00a3: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00a8: stloc.s 5
-		IL_00aa: ldloc.1
-		IL_00ab: ldloc.s 5
-		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b2: pop
-		IL_00b3: ret
+		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0093: stloc.s 5
+		IL_0095: ldloc.s 5
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009c: volatile.
+		IL_009e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00a3: brfalse IL_00bc
+
+		IL_00a8: ldstr "join"
+		IL_00ad: ldstr ","
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b7: br IL_00d5
+
+		IL_00bc: ldstr "join"
+		IL_00c1: ldstr ","
+		IL_00c6: ldstr "Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter:Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter:__js_module_init__:18"
+		IL_00cb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00d5: stloc.s 5
+		IL_00d7: ldloc.1
+		IL_00d8: ldloc.s 5
+		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00df: pop
+		IL_00e0: ret
 	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::__js_module_init__
 
 } // end of class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
@@ -341,4 +350,12 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_4
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

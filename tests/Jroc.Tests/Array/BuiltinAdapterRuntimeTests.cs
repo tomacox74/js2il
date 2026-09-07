@@ -7,9 +7,11 @@ namespace Jroc.Tests.Array;
 public sealed class BuiltinAdapterRuntimeTests
 {
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void FilterDirectAndAdapterCallsPreserveSpeciesObjectAndSparseSemantics(bool direct)
+    [InlineData("filter", false)]
+    [InlineData("filter", true)]
+    [InlineData("map", false)]
+    [InlineData("map", true)]
+    public void MapAndFilterDirectAndAdapterCallsPreserveSpeciesObjectAndSparseSemantics(string method, bool direct)
     {
         WithRealm(() =>
         {
@@ -18,7 +20,8 @@ public sealed class BuiltinAdapterRuntimeTests
             var result = new JsObject();
             var prototype = new JsObject();
             var setterCalls = 0;
-            PropertyDescriptorStore.DefineOrUpdate(prototype, "0", new JsPropertyDescriptor
+            var resultIndex = method == "map" ? "1" : "0";
+            PropertyDescriptorStore.DefineOrUpdate(prototype, resultIndex, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Configurable = true,
@@ -34,7 +37,7 @@ public sealed class BuiltinAdapterRuntimeTests
             Func<object[], object?[]?, object?> species = (_, arguments) =>
             {
                 trace.Add("construct");
-                Assert.Equal(0d, Assert.Single(arguments!));
+                Assert.Equal(method == "map" ? 3d : 0d, Assert.Single(arguments!));
                 return result;
             };
             JavaScriptRuntime.Function.InitializeFunctionInstance(species, 1d, "Species");
@@ -52,17 +55,21 @@ public sealed class BuiltinAdapterRuntimeTests
                 Assert.Same(source, array);
                 Assert.Equal(1d, index);
                 Assert.Equal(7d, value);
-                return true;
+                source[3] = 99d;
+                return method == "map" ? 14d : true;
             }));
-            var filter = ObjectRuntime.GetItem(JavaScriptRuntime.Array.Prototype, "filter");
+            var adapter = ObjectRuntime.GetItem(JavaScriptRuntime.Array.Prototype, method);
             var actual = direct
-                ? source.filter(new object[] { callback, thisArg })
-                : CallableOperations.Call2(filter, source, callback, thisArg);
+                ? method == "map"
+                    ? source.map(new object[] { callback, thisArg })
+                    : source.filter(new object[] { callback, thisArg })
+                : CallableOperations.Call2(adapter, source, callback, thisArg);
 
             Assert.Same(result, actual);
             Assert.Equal(new[] { "construct", "callback" }, trace);
-            Assert.Equal(7d, ObjectRuntime.GetItem(result, "0"));
-            Assert.True(JavaScriptRuntime.Object.hasOwn(result, "0"));
+            Assert.Equal(method == "map" ? 14d : 7d, ObjectRuntime.GetItem(result, resultIndex));
+            Assert.True(JavaScriptRuntime.Object.hasOwn(result, resultIndex));
+            Assert.False(JavaScriptRuntime.Object.hasOwn(result, method == "map" ? "0" : "1"));
             Assert.False(JavaScriptRuntime.Object.hasOwn(result, "length"));
             Assert.Equal(0, setterCalls);
         });

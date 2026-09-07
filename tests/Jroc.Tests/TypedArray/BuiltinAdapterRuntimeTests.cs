@@ -38,7 +38,7 @@ public sealed class BuiltinAdapterRuntimeTests
         "byteLength"
     ];
 
-    private static readonly string[] CallbackMethodNames = ["map", "filter"];
+    private static readonly string[] CallbackMethodNames = ["map", "filter", "every", "some"];
 
     [Fact]
     public void TypedArrayPrototypeMembersUseReceiverAwareAdapters()
@@ -105,6 +105,39 @@ public sealed class BuiltinAdapterRuntimeTests
             Assert.Equal(2, calls);
             Assert.Equal(name == "map" ? 2d : 1d, result.length);
             Assert.Equal(name == "map" ? 11d : 2d, ObjectRuntime.GetItem(result, 0d));
+        });
+    }
+
+    [Theory]
+    [InlineData("every", true, 2, true)]
+    [InlineData("every", false, 1, false)]
+    [InlineData("some", true, 1, true)]
+    [InlineData("some", false, 2, false)]
+    public void TypedArrayPredicateAdaptersMatchDirectCalls(
+        string name, bool callbackResult, int expectedCalls, bool expectedResult)
+    {
+        WithRealm(() =>
+        {
+            var source = new Uint8Array(new object?[] { 1d, 2d });
+            var thisArg = new JsObject();
+            var calls = 0;
+            var callback = new BuiltinDelegateFunctionAdapter((BuiltinFunction3)((receiver, value, index, array) =>
+            {
+                Assert.Same(thisArg, receiver);
+                Assert.Same(source, array);
+                Assert.Equal((double)calls, index);
+                Assert.Equal((double)++calls, value);
+                return callbackResult;
+            }));
+            var method = ObjectRuntime.GetItem(RuntimeIntrinsics.Current.TypedArrayPrototype, name);
+            Assert.Same(method, ObjectRuntime.GetItem(source, name));
+
+            Assert.Equal(expectedResult, Assert.IsType<bool>(CallableOperations.Call2(method, source, callback, thisArg)));
+            Assert.Equal(expectedCalls, calls);
+            calls = 0;
+            var args = new object?[] { callback, thisArg };
+            Assert.Equal(expectedResult, name == "every" ? source.every(args) : source.some(args));
+            Assert.Equal(expectedCalls, calls);
         });
     }
 

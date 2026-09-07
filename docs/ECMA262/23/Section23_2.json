@@ -635,7 +635,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
         ],
-        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. map() and filter() expose receiver-aware intrinsic methods, validate initial buffer state, and capture the current length before callback validation. Custom species and detach/resize behavior during callbacks remain incomplete."
+        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. map(), filter(), every(), and some() expose receiver-aware intrinsic methods, validate initial buffer state, and capture the current length before callback validation. Custom species and detach/resize behavior during callbacks remain incomplete."
       },
       {
         "clause": "23.2.3.24",
@@ -893,6 +893,40 @@
           "test/built-ins/TypedArray/prototype/filter/prop-desc.js"
         ],
         "notes": "The shared prototype owns a writable, configurable, non-enumerable filter method with name filter and length 1. Its receiver-aware adapter rejects non-TypedArray receivers, preserves thisArg and callback arguments, validates initial attachment/bounds, and captures the current element length. Selected values form a same-type result. Custom species and detach/resize during callbacks remain incomplete."
+      },
+      {
+        "clause": "23.2.3.8",
+        "feature": "%TypedArray%.prototype.every intrinsic surface",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.every",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/every/ExecutionTests.IntrinsicSurface.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/every/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/every/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/every/length.js",
+          "test/built-ins/TypedArray/prototype/every/name.js",
+          "test/built-ins/TypedArray/prototype/every/prop-desc.js"
+        ],
+        "notes": "The shared prototype owns a writable, configurable, non-enumerable every method with name every and length 1. Its receiver-aware adapter rejects non-TypedArray receivers and preserves thisArg and callback arguments. Direct and adapter calls validate initial attachment/bounds, capture the current element length, and stop on the first falsy callback result. Detach/shrink behavior during callbacks and broader cross-realm or exotic behavior remain incomplete."
+      },
+      {
+        "clause": "23.2.3.28",
+        "feature": "%TypedArray%.prototype.some intrinsic surface",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.some",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/some/ExecutionTests.IntrinsicSurface.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/some/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/some/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/some/length.js",
+          "test/built-ins/TypedArray/prototype/some/name.js",
+          "test/built-ins/TypedArray/prototype/some/prop-desc.js"
+        ],
+        "notes": "The shared prototype owns a writable, configurable, non-enumerable some method with name some and length 1. Its receiver-aware adapter rejects non-TypedArray receivers and preserves thisArg and callback arguments. Direct and adapter calls validate initial attachment/bounds, capture the current element length, and stop on the first truthy callback result. Detach/shrink behavior during callbacks and broader cross-realm or exotic behavior remain incomplete."
       },
       {
         "clause": "23.2.3.36",
