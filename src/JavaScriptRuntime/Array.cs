@@ -1041,16 +1041,17 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private static object? PrototypeFilter(object? thisArgument, object? callback, object? thisArg)
+        private static object PrototypeFilter(object? thisArgument, object? callback, object? thisArg)
         {
             var receiver = RequireArrayLikeReceiver(thisArgument, "filter");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
-            int length = ToArrayLikeLength(iterationReceiver);
+            var length = ToArrayLikeLengthAsDouble(iterationReceiver);
             callback = RequireCallback(callback, "filter");
-            var result = new Array();
+            var result = ArraySpeciesCreate(receiver);
+            var targetIndex = 0d;
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0d; i < length; i++)
             {
                 if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
@@ -1061,7 +1062,8 @@ namespace JavaScriptRuntime
                 var keep = InvokeArrayCallback(callback, thisArg, "Array.prototype.filter", 3, value, (double)i, callbackReceiver, null);
                 if (JavaScriptRuntime.Operators.IsTruthy(keep))
                 {
-                    result.Add(value);
+                    CreateArrayLikeDataProperty(result, targetIndex, value);
+                    targetIndex++;
                 }
             }
 
@@ -4278,21 +4280,11 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.filter(callback[, thisArg])
         /// </summary>
-        public Array filter(object[] args)
+        public object filter(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            var result = new Array();
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = 0; i < this.Count; i++)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "filter");
-                var keep = invoke(this[i], (double)i, this, null);
-                if (Operators.IsTruthy(keep))
-                {
-                    result.Add(this[i]);
-                }
-            }
-            return result;
+            var thisArg = (args != null && args.Length > 1) ? args[1] : null;
+            return PrototypeFilter(this, cb, thisArg);
         }
 
         /// <summary>

@@ -347,14 +347,15 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        public TypedArrayBase map(object[]? args)
+        public TypedArrayBase map(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "map");
             var thisArg = GetThisArg(args);
             ObserveSpeciesConstructor();
-            var mapped = CreateSameTypeWithLength(_length);
+            var mapped = CreateSameTypeWithLength(length);
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.map", 3, value, (double)i, this, null);
@@ -364,13 +365,14 @@ namespace JavaScriptRuntime
             return mapped;
         }
 
-        public TypedArrayBase filter(object[]? args)
+        public TypedArrayBase filter(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "filter");
             var thisArg = GetThisArg(args);
             var keptValues = new List<object?>();
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.filter", 3, value, (double)i, this, null);

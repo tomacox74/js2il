@@ -6,6 +6,68 @@ namespace Jroc.Tests.Array;
 
 public sealed class BuiltinAdapterRuntimeTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void FilterDirectAndAdapterCallsPreserveSpeciesObjectAndSparseSemantics(bool direct)
+    {
+        WithRealm(() =>
+        {
+            var source = new JavaScriptRuntime.Array { length = 3d };
+            source[1] = 7d;
+            var result = new JsObject();
+            var prototype = new JsObject();
+            var setterCalls = 0;
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "0", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Configurable = true,
+                Set = new BuiltinDelegateFunctionAdapter((BuiltinFunction1)((_, _) =>
+                {
+                    setterCalls++;
+                    return null;
+                }))
+            });
+            PrototypeChain.SetPrototype(result, prototype);
+
+            var trace = new List<string>();
+            Func<object[], object?[]?, object?> species = (_, arguments) =>
+            {
+                trace.Add("construct");
+                Assert.Equal(0d, Assert.Single(arguments!));
+                return result;
+            };
+            JavaScriptRuntime.Function.InitializeFunctionInstance(species, 1d, "Species");
+            JavaScriptRuntime.Function.MarkConstructible(species);
+            ObjectRuntime.SetItem(source, "constructor", new JsObject
+            {
+                [Symbol.species.DebugId] = BuiltinDelegateFunctionAdapter.FromDelegate(species)
+            });
+
+            var thisArg = new JsObject();
+            var callback = new BuiltinDelegateFunctionAdapter((BuiltinFunction3)((receiver, value, index, array) =>
+            {
+                trace.Add("callback");
+                Assert.Same(thisArg, receiver);
+                Assert.Same(source, array);
+                Assert.Equal(1d, index);
+                Assert.Equal(7d, value);
+                return true;
+            }));
+            var filter = ObjectRuntime.GetItem(JavaScriptRuntime.Array.Prototype, "filter");
+            var actual = direct
+                ? source.filter(new object[] { callback, thisArg })
+                : CallableOperations.Call2(filter, source, callback, thisArg);
+
+            Assert.Same(result, actual);
+            Assert.Equal(new[] { "construct", "callback" }, trace);
+            Assert.Equal(7d, ObjectRuntime.GetItem(result, "0"));
+            Assert.True(JavaScriptRuntime.Object.hasOwn(result, "0"));
+            Assert.False(JavaScriptRuntime.Object.hasOwn(result, "length"));
+            Assert.Equal(0, setterCalls);
+        });
+    }
+
     [Fact]
     public void ArraySpeciesGetterHasItsOwnReceiverAwareAdapter()
     {

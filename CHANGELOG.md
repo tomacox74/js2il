@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 20 failing Array and TypedArray cases. Array filter
+  direct and receiver-aware calls now share species-aware filtering, preserve
+  thisArg and sparse-array behavior, and define selected elements as own data
+  properties. TypedArray map/filter expose receiver-aware intrinsic methods with
+  standard metadata, initial buffer validation, and current-length capture.
+  The CLR `Array.filter` helper now returns `object` to allow non-Array species
+  results; recompile older artifacts that call this helper against the matching
+  compiler/runtime.
 - test262/docs: verify 500 object-initializer cases: 458 positive execution
   and 42 parse-negative cases covering computed and accessor property names,
   method definitions, property-name normalization, and object-pattern

@@ -38,6 +38,8 @@ public sealed class BuiltinAdapterRuntimeTests
         "byteLength"
     ];
 
+    private static readonly string[] CallbackMethodNames = ["map", "filter"];
+
     [Fact]
     public void TypedArrayPrototypeMembersUseReceiverAwareAdapters()
     {
@@ -53,7 +55,7 @@ public sealed class BuiltinAdapterRuntimeTests
                 Assert.False(adapter.RequiresInvocationContext, name);
             }
 
-            foreach (var name in ZeroArgMethodNames.Concat(VariadicMethodNames))
+            foreach (var name in ZeroArgMethodNames.Concat(VariadicMethodNames).Concat(CallbackMethodNames))
             {
                 var adapter = Assert.IsType<BuiltinDelegateFunctionAdapter>(
                     ObjectRuntime.GetItem(typedArrayPrototype, name));
@@ -67,6 +69,42 @@ public sealed class BuiltinAdapterRuntimeTests
                     ObjectRuntime.GetItem(typedArrayPrototype, name));
                 Assert.IsType<BuiltinFunctionVariadic>(adapter.Target);
             }
+
+            foreach (var name in CallbackMethodNames)
+            {
+                var adapter = Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                    ObjectRuntime.GetItem(typedArrayPrototype, name));
+                Assert.IsType<BuiltinFunction2>(adapter.Target);
+                Assert.False(CallableOperations.IsConstructor(adapter));
+                Assert.Equal(1d, ObjectRuntime.GetItem(adapter, "length"));
+            }
+        });
+    }
+
+    [Theory]
+    [InlineData("map")]
+    [InlineData("filter")]
+    public void TypedArrayCallbackAdaptersPreserveReceiverArgumentsAndThisArg(string name)
+    {
+        WithRealm(() =>
+        {
+            var source = new Uint8Array(new object?[] { 1d, 2d });
+            var thisArg = new JsObject();
+            var calls = 0;
+            var callback = new BuiltinDelegateFunctionAdapter((BuiltinFunction3)((receiver, value, index, array) =>
+            {
+                Assert.Same(thisArg, receiver);
+                Assert.Same(source, array);
+                Assert.Equal((double)calls++, index);
+                return name == "map" ? (object)((double)value! + 10d) : (double)value! > 1d;
+            }));
+            var method = ObjectRuntime.GetItem(RuntimeIntrinsics.Current.TypedArrayPrototype, name);
+            Assert.Same(method, ObjectRuntime.GetItem(source, name));
+
+            var result = Assert.IsType<Uint8Array>(CallableOperations.Call2(method, source, callback, thisArg));
+            Assert.Equal(2, calls);
+            Assert.Equal(name == "map" ? 2d : 1d, result.length);
+            Assert.Equal(name == "map" ? 11d : 2d, ObjectRuntime.GetItem(result, 0d));
         });
     }
 
