@@ -635,7 +635,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
         ],
-        "notes": "The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. Detached and resizable ArrayBuffer behavior and remaining callback-based methods are still unsupported."
+        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. map() and filter() expose receiver-aware intrinsic methods, validate initial buffer state, and capture the current length before callback validation. Custom species and detach/resize behavior during callbacks remain incomplete."
       },
       {
         "clause": "23.2.3.24",
@@ -857,19 +857,42 @@
       },
       {
         "clause": "23.2.3.22",
-        "feature": "%TypedArray%.prototype.map default species observation",
+        "feature": "%TypedArray%.prototype.map intrinsic surface and default species observation",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.map",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/ExecutionTests.IntrinsicSurface.cs"
         ],
         "test262Paths": [
           "test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor.js",
           "test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-inherited.js",
           "test/built-ins/TypedArray/prototype/map/speciesctor-get-species.js",
-          "test/built-ins/TypedArray/prototype/map/speciesctor-get-species-use-default-ctor.js"
+          "test/built-ins/TypedArray/prototype/map/speciesctor-get-species-use-default-ctor.js",
+          "test/built-ins/TypedArray/prototype/map/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/map/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/map/length.js",
+          "test/built-ins/TypedArray/prototype/map/name.js",
+          "test/built-ins/TypedArray/prototype/map/prop-desc.js"
         ],
-        "notes": "map() observes constructor and @@species getters once and retains the intrinsic same-type result when constructor or species is undefined or null. Custom species construction remains unsupported."
+        "notes": "The shared prototype owns a writable, configurable, non-enumerable map method with name map and length 1. Its receiver-aware adapter rejects non-TypedArray receivers, preserves thisArg and callback arguments, validates initial attachment/bounds, and captures the current element length. map() observes constructor and @@species getters once and retains the intrinsic same-type result when constructor or species is undefined or null. Custom species construction and detach/resize during callbacks remain incomplete."
+      },
+      {
+        "clause": "23.2.3.10",
+        "feature": "%TypedArray%.prototype.filter intrinsic surface",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.filter",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/filter/ExecutionTests.IntrinsicSurface.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/filter/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/filter/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/filter/length.js",
+          "test/built-ins/TypedArray/prototype/filter/name.js",
+          "test/built-ins/TypedArray/prototype/filter/prop-desc.js"
+        ],
+        "notes": "The shared prototype owns a writable, configurable, non-enumerable filter method with name filter and length 1. Its receiver-aware adapter rejects non-TypedArray receivers, preserves thisArg and callback arguments, validates initial attachment/bounds, and captures the current element length. Selected values form a same-type result. Custom species and detach/resize during callbacks remain incomplete."
       },
       {
         "clause": "23.2.3.36",

@@ -687,7 +687,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/JavaScript/15.4.4.20-1-1.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/JavaScript/15.4.4.20-10-1.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/JavaScript/15.4.4.20-3-22.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ExecutionTests.Batch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ExecutionTests.Batch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ExecutionTests.Species.cs"
         ],
         "test262Paths": [
           "test/built-ins/Array/prototype/filter/15.4.4.20-1-1.js",
@@ -696,9 +697,19 @@
           "test/built-ins/Array/prototype/filter/15.4.4.20-1-6.js",
           "test/built-ins/Array/prototype/filter/15.4.4.20-1-10.js",
           "test/built-ins/Array/prototype/filter/15.4.4.20-1-12.js",
-          "test/built-ins/Array/prototype/filter/15.4.4.20-3-22.js"
+          "test/built-ins/Array/prototype/filter/15.4.4.20-3-22.js",
+          "test/built-ins/Array/prototype/filter/create-ctor-non-object.js",
+          "test/built-ins/Array/prototype/filter/create-ctor-poisoned.js",
+          "test/built-ins/Array/prototype/filter/create-species-abrupt.js",
+          "test/built-ins/Array/prototype/filter/create-species-non-ctor.js",
+          "test/built-ins/Array/prototype/filter/create-species-poisoned.js",
+          "test/built-ins/Array/prototype/filter/create-species.js",
+          "test/built-ins/Array/prototype/filter/target-array-non-extensible.js",
+          "test/built-ins/Array/prototype/filter/target-array-with-non-configurable-property.js",
+          "test/built-ins/Array/prototype/filter/15.4.4.20-5-10.js",
+          "test/built-ins/Array/prototype/filter/15.4.4.20-5-11.js"
         ],
-        "notes": "Supports callback filtering for ordinary arrays. The 140 checked-in test262 cases exercise callback arguments and thisArg, sparse and inherited indexed properties, generic array-like and primitive receivers, length snapshotting, mutation during iteration, and abrupt completion. Twenty-one descriptor/prototype edge cases remain deferred, along with one case that requires direct eval; species and broader exotic receiver behavior remain limited."
+        "notes": "Direct and receiver-aware calls share the generic filtering algorithm, including thisArg, sparse and inherited indexed properties, cached ToLength bounds, mutation during iteration, and abrupt completion. The species constructor receives zero before callbacks run; its result can be an ordinary object. Selected values become own writable, enumerable, configurable data properties without invoking inherited setters. Constructor/species getters and invalid species values propagate errors, and failed property creation throws TypeError. Cross-realm and broader exotic receiver behavior remain limited; direct eval remains unsupported."
       },
       {
         "clause": "23.1.3.14",
