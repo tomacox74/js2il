@@ -56,9 +56,14 @@
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/dflt-params-arg-val-undefined.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/dflt-params-ref-prior.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/try-return-finally-throw.js",
-          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/try-throw-finally-return.js"
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/try-throw-finally-return.js",
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/FunctionExpressionAsyncArrowFunctionConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/FunctionExpressionAsyncArrowFunctionConformanceBatchParseTests.cs"
         ],
-        "notes": "Async arrows materialize as generated non-constructable function objects, capture lexical state once per evaluation, and use the common callable ABI for dynamic invocation. Covered behavior includes await, Promise chaining, default-parameter binding, no-await completion/rejection, metadata/identity, and finally completion overrides."
+        "test262Suites": [
+          "language.expressions.async_arrow_function"
+        ],
+        "notes": "Async arrows materialize as generated non-constructable function objects, capture lexical state once per evaluation, and use the common callable ABI for dynamic invocation. Covered behavior includes await, Promise chaining, default-parameter binding, no-await completion/rejection, metadata/identity, and finally completion overrides. The native Test262 harness additionally verifies 16 current all-variant async-arrow fixtures: 3 positive execution cases and 13 parse-negative early-error cases."
       },
       {
         "clause": "15.9.2",
