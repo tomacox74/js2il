@@ -20,10 +20,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   Correct `String.fromCharCode` error propagation and unsigned 16-bit wrapping.
   Accept octal numeric strings with exact accumulation and correctly rounded
   Number conversion.
-- test262/docs: verify 18 RegExp Unicode property-escape parse-negative cases
-  covering invalid binary-property values and character-class ranges. All 36
-  metadata-selected variants and all 18 native fixtures pass without compiler,
-  runtime, or harness changes.
+- test262/docs: verify 500 RegExp cases: 318 positive execution and 182
+  parse-negative cases covering prototype APIs, symbol-keyed matching,
+  Unicode property-escape errors, UnicodeSets early errors, and scoped
+  modifiers. All metadata-selected variants and native fixtures pass without
+  compiler, runtime, or harness changes.
 - test262/runtime/docs: port 10 failing String constructor-method cases.
   Correct `String.raw` variadic binding, array-like length access, and ordered
   segment/substitution coercion; preserve `String.fromCodePoint` conversion

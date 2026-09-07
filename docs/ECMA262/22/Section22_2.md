@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T16:27:19Z
+> Last generated (UTC): 2026-09-07T21:58:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -44,7 +44,7 @@
 | 22.2.2.7.1 | CharacterSetMatcher ( rer , A , invert , direction ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-charactersetmatcher-abstract-operation) |
 | 22.2.2.7.2 | BackreferenceMatcher ( rer , ns , direction ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-backreference-matcher) |
 | 22.2.2.7.3 | Canonicalize ( rer , ch ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-canonicalize-ch) |
-| 22.2.2.7.4 | UpdateModifiers ( rer , add , remove ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-updatemodifiers) |
+| 22.2.2.7.4 | UpdateModifiers ( rer , add , remove ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-updatemodifiers) |
 | 22.2.2.8 | Runtime Semantics: CompileCharacterClass | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-compilecharacterclass) |
 | 22.2.2.9 | Runtime Semantics: CompileToCharSet | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-compiletocharset) |
 | 22.2.2.9.1 | CharacterRange ( A , B ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-characterrange-abstract-operation) |
@@ -66,10 +66,10 @@
 | 22.2.5 | Properties of the RegExp Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-constructor) |
 | 22.2.5.1 | RegExp.escape ( S ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp.escape) |
 | 22.2.5.1.1 | EncodeForRegExpEscape ( cp ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeforregexpescape) |
-| 22.2.5.2 | RegExp.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype) |
+| 22.2.5.2 | RegExp.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype) |
 | 22.2.5.3 | get RegExp [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp-%symbol.species%) |
 | 22.2.6 | Properties of the RegExp Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-prototype-object) |
-| 22.2.6.1 | RegExp.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.constructor) |
+| 22.2.6.1 | RegExp.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.constructor) |
 | 22.2.6.2 | RegExp.prototype.exec ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec) |
 | 22.2.6.3 | get RegExp.prototype.dotAll | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll) |
 | 22.2.6.4 | get RegExp.prototype.flags | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.flags) |
@@ -118,6 +118,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | RegExp pattern early errors | Supported with Limitations | [`breaking-change-from-u-to-v-01.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-01.js)<br>[`breaking-change-from-u-to-v-02.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-02.js)<br>[`breaking-change-from-u-to-v-03.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-03.js)<br>[`breaking-change-from-u-to-v-04.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-04.js)<br>[`breaking-change-from-u-to-v-05.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-05.js)<br>[`breaking-change-from-u-to-v-06.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-06.js)<br>[`breaking-change-from-u-to-v-07.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-07.js)<br>[`breaking-change-from-u-to-v-08.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-08.js)<br>[`breaking-change-from-u-to-v-09.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-09.js)<br>[`breaking-change-from-u-to-v-10.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-10.js) |  | RegExp literals with unsupported v-flag UnicodeSets syntax are rejected during parse/compilation before runtime execution, matching these negative test262 parse tests so $DONOTEVALUATE() is never evaluated. Full regexp-v-flag and UnicodeSets semantics are still not implemented. |
 
+### 22.2.2.7.4 ([tc39.es](https://tc39.es/ecma262/#sec-updatemodifiers))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| RegExp modifiers | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/syntax/valid/ExecutionTests.cs` | suite `built_ins.RegExp.regexp_modifiers`<br>suite `built_ins.RegExp.regexp_modifiers.syntax.valid` | Scoped s, i, and m modifiers are lowered to the corresponding .NET regular-expression options, including nested additions and removals. The v flag and UnicodeSets semantics remain unsupported. |
+
 ### 22.2.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexp-pattern-flags))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -129,6 +135,18 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | RegExp.escape(S) | Supported | `tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.RegExpSyntaxBatch.cs` | suite `built_ins.RegExp.escape`<br>`test/built-ins/RegExp/escape/escaped-control-characters.js`<br>`test/built-ins/RegExp/escape/escaped-lineterminator.js`<br>`test/built-ins/RegExp/escape/escaped-solidus-character-mixed.js`<br>`test/built-ins/RegExp/escape/escaped-surrogates.js`<br>`test/built-ins/RegExp/escape/escaped-syntax-characters-mixed.js`<br>`test/built-ins/RegExp/escape/escaped-utf16encodecodepoint.js`<br>`test/built-ins/RegExp/escape/escaped-whitespace.js`<br>`test/built-ins/RegExp/escape/initial-char-escape.js`<br>`test/built-ins/RegExp/escape/non-string-inputs.js`<br>`test/built-ins/RegExp/escape/prop-desc.js` | RegExp.escape is a non-constructible static function with the specified configurable, non-enumerable, writable descriptor. It requires a primitive string and escapes leading ASCII letters/digits, syntax characters and solidus, controls, whitespace/line terminators, and lone surrogates while preserving other Unicode code points. Additional Test262 coverage exercises input coercion, leading-character escaping, punctuation, controls, whitespace, and Unicode code points. |
+
+### 22.2.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| RegExp.prototype | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/ExecutionTests.cs` | suite `built_ins.RegExp.prototype` | RegExp.prototype is exposed as an ordinary object with the required non-writable, non-enumerable, non-configurable constructor prototype property. It remains incomplete for the full RegExp exotic-object surface. |
+
+### 22.2.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| RegExp.prototype.constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/ExecutionTests.cs` | suite `built_ins.RegExp.prototype` | The prototype constructor links to the RegExp constructor and constructs RegExp instances. The remaining RegExp prototype and exotic-object semantics are incomplete. |
 
 ### 22.2.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec))
 
@@ -242,4 +260,3 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js) |  | Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in exec() and test() for both /g and /y regexes, and resets to 0 after failed sticky/global matches or when the stored start position is past the end of the input. |
