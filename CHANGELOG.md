@@ -16,6 +16,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   ordering, negative-zero formatting, and omitted-digit shortest exponential
   output; reject precision values that coerce to NaN. Accept binary numeric
   strings with exact accumulation and correctly rounded Number conversion.
+- test262/docs: verify 500 assignment-expression cases: 344 positive execution cases and 156 parse-negative early-error cases across assignment expressions and AssignmentTargetType. All selected metadata variants and all 500 native tests pass without compiler, runtime, or harness changes.
 - test262/runtime/docs: port 10 failing `Array.from` cases. Honor custom
   constructors for iterable and array-like sources, validate mappers, prefer
   the iterator protocol, define own indexed properties, and close iterators on
