@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-31T22:46:24Z
+> Last generated (UTC): 2026-09-07T19:58:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -97,7 +97,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.fromCodePoint | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) |  | Implemented in JavaScriptRuntime.String.FromCodePoint and exposed on GlobalThis.String.fromCodePoint. Supports integer Unicode scalar values and throws RangeError for invalid code points; boxed String wrapper edge cases are still not modeled. |
+| String.fromCodePoint | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js)<br>`tests/Jroc.Tests/String/StringConstructorBuiltinAdapterRuntimeTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/String/fromCodePoint/ExecutionTests.cs` | `test/built-ins/String/fromCodePoint/argument-is-Symbol.js`<br>`test/built-ins/String/fromCodePoint/argument-not-coercible.js` | Implemented in JavaScriptRuntime.String.FromCodePoint with UTF-16 encoding for integer code points from 0 through 0x10FFFF, including surrogate code units. ToNumber failures propagate unchanged, including Symbol TypeErrors and user conversion exceptions; nonintegral or out-of-range numeric values throw RangeError. Direct and receiver-aware calls share the implementation. |
 
 ### 22.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype))
 
@@ -109,7 +109,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.raw | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) |  | Implemented in JavaScriptRuntime.String.Raw and exposed as GlobalThis.String.raw. Supports array-like template.raw values used by tagged-template helpers, but does not attempt full spec fidelity for exotic template objects or property attributes. |
+| String.raw | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js)<br>`tests/Jroc.Tests/String/StringConstructorBuiltinAdapterRuntimeTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/String/raw/ExecutionTests.cs` | `test/built-ins/String/raw/nextkey-is-symbol-throws.js`<br>`test/built-ins/String/raw/return-the-string-value.js`<br>`test/built-ins/String/raw/returns-abrupt-from-next-key-toString.js`<br>`test/built-ins/String/raw/returns-abrupt-from-next-key.js`<br>`test/built-ins/String/raw/returns-abrupt-from-substitution-symbol.js`<br>`test/built-ins/String/raw/substitutions-are-appended-on-same-index.js`<br>`test/built-ins/String/raw/template-length-is-symbol-throws.js`<br>`test/built-ins/String/raw/template-length-throws.js` | Implemented in JavaScriptRuntime.String.Raw with a shared variadic argument-array path for direct and receiver-aware calls. Applies ToObject to the template and raw values, reads the actual raw.length property with the ToLength bound, and accesses segments and needed substitutions in order. String conversion preserves observable getters and abrupt completions, rejects Symbol primitives, and honors custom primitive conversion on boxed Symbols. Unused substitutions are not coerced. Very large results remain subject to CLR string and memory limits; broad exotic-object and property-attribute coverage remains limited. |
 
 ### 22.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at))
 
