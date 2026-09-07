@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 12,343 | 12 | 11,157 | 23,512 | **52.50%** |
+| Built-in objects and APIs | 12,346 | 12 | 11,154 | 23,512 | **52.51%** |
 | Language syntax and semantics | 4,116 | 46 | 19,481 | 23,643 | **17.41%** |
-| **Total** | 16,459 | 58 | 31,724 | 48,241 | **34.12%** |
+| **Total** | 16,462 | 58 | 31,721 | 48,241 | **34.12%** |
 
 ## Language Areas
 
@@ -171,7 +171,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
-| `AggregateError` | 20 | 0 | 5 | 25 | **80.00%** |
+| `AggregateError` | 23 | 0 | 2 | 25 | **92.00%** |
 | `Array` | 2,591 | 0 | 490 | 3,081 | **84.10%** |
 | `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
