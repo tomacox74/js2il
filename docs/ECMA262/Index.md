@@ -34,14 +34,14 @@ For the current development branch following [JROC v0.12.18](https://github.com/
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|
-| Verified passing | 16,963 | **35.16%** |
+| Verified passing | 17,463 | **36.20%** |
 | Explicitly excluded due to known unsupported behavior | 58 | 0.12% |
-| Not yet verified | 31,278 | 64.84% |
+| Not yet verified | 30,778 | 63.80% |
 | **Total applicable ECMA-262 tests** | **48,241** | **100.00%** |
 
 See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.
 
-`Verified passing` means the current development branch successfully executes the corresponding Test262 test. `Not yet verified` means no conformance result is currently published for that test; it does not imply either support or failure. The explicitly excluded tests exercise known unsupported behavior, primarily `eval`.
+`Verified passing` means the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse or runtime phase. `Not yet verified` means no conformance result is currently published for that test; it does not imply either support or failure. The explicitly excluded tests exercise known unsupported behavior, primarily `eval`.
 
 The applicable corpus is taken from the [pinned Test262 revision](https://github.com/tc39/test262/tree/2b2ecead6e828dd9af13a9ec72065e645724a50f/test) and includes the ECMA-262 `annexB`, `built-ins`, and `language` test areas. ECMA-402 internationalization tests, staging proposals, Test262 harness self-tests, and `_FIXTURE.js` support files are outside this ECMA-262 conformance measure. Percentages are file-based; strict and non-strict execution variants are not counted separately.
 

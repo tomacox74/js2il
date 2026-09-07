@@ -115,6 +115,27 @@
     "entries": [
       {
         "clause": "15.7.1",
+        "feature": "Class declaration static early errors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/JavaScript/async-gen-meth-escaped-async.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/JavaScript/array-destructuring-param-strict-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/syntax/early-errors/JavaScript/grammar-privatename-whitespace-error-static-async-meth.js"
+        ],
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/async-gen-meth-escaped-async.js",
+          "test/language/statements/class/async-gen-method-static/array-destructuring-param-strict-body.js",
+          "test/language/statements/class/elements/syntax/early-errors/grammar-privatename-whitespace-error-static-async-meth.js"
+        ],
+        "notes": "The parser rejects 500 additional invalid class-declaration forms from the pinned Test262 corpus, including escaped contextual keywords, invalid async/generator method parameters, malformed class fields, invalid private identifiers, duplicate constructors, and invalid super usage. Runtime class support remains subject to the documented limitations."
+      },
+      {
+        "clause": "15.7.1",
         "feature": "Class-expression syntax and early errors",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors",
