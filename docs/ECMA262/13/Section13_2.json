@@ -389,6 +389,23 @@
         "notes": "Spread syntax in function call arguments (...arr) is fully supported. Spread elements are expanded using JavaScriptRuntime.Array.PushRange() which properly implements the iterator protocol (Symbol.iterator for arrays, strings, typed arrays, and user-defined iterables; .NET IEnumerable as fallback). Multiple spread elements can be mixed with regular arguments in any order, and evaluation proceeds strictly left-to-right. Works with direct function calls, member method calls, and indirect calls via function variables. The final argument array is converted to object[] for the actual call."
       },
       {
+        "clause": "13.2.5",
+        "feature": "Object initializer Test262 conformance",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/object/LanguageExpressionsObjectConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/LanguageExpressionsObjectConformanceBatchParseTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/dstr/LanguageExpressionsObjectDstrConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/dstr/LanguageExpressionsObjectDstrConformanceBatchParseTests.cs"
+        ],
+        "test262Suites": [
+          "language.expressions.object",
+          "language.expressions.object.dstr"
+        ],
+        "notes": "500 native Test262 fixtures verify object-initializer evaluation, computed and accessor property names, method definitions, property-name normalization, and object-pattern destructuring/default semantics: 458 positive execution cases and 42 parse-negative early-error cases. The status remains limited by unsupported behavior outside this verified slice."
+      },
+      {
         "clause": "13.2.5.1",
         "feature": "Object literal basic construction",
         "status": "Supported",
