@@ -4,7 +4,7 @@
 
 [Back to Section8](Section8.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-09T18:01:58Z
+> Last generated (UTC): 2026-09-07T20:31:27Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -60,6 +60,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | AssignmentTargetType checks for supported assignment targets | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js)<br>[`Variable_DestructuringAssignment_Basic.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js) |  | Assignment lowering/validation supports identifier, member, index, and supported destructuring targets; unsupported target forms are rejected. |
+| Test262 AssignmentTargetType conformance batch | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/assignmenttargettype/AssignmentExpressionConformanceBatchParseTests.cs` |  | 71 pinned Test262 AssignmentTargetType parse-negative fixtures are natively verified, covering invalid direct and parenthesized assignment targets across the applicable grammar productions. |
 
 ### 8.6.5 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-propname))
 

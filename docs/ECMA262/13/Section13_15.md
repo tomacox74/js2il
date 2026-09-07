@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T07:03:44Z
+> Last generated (UTC): 2026-09-07T20:31:27Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -29,6 +29,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 13.15 ([tc39.es](https://tc39.es/ecma262/#sec-assignment-operators))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Test262 assignment-expression conformance batch | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/assignment/AssignmentExpressionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/assignment/AssignmentExpressionConformanceBatchParseTests.cs` |  | 500 pinned Test262 assignment-expression fixtures are natively verified: 344 positive execution cases and 85 parse-negative cases. The batch includes assignment evaluation, destructuring assignment, strict-mode syntax, and early-error coverage. |
 
 ### 13.15.1 ([tc39.es](https://tc39.es/ecma262/#sec-assignment-operators-static-semantics-early-errors))
 
