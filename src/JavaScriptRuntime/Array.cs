@@ -20,6 +20,70 @@ namespace JavaScriptRuntime
         private static long _observedPrototypeIntrinsicsId;
         private static long _prototypeMutationVersion;
 
+        private static readonly Func<object?, bool> _arrayIsArrayValue = isArray;
+        private static readonly BuiltinFunction3 _arrayFromValue = static (_, source, mapFn, thisArg) =>
+            from(source, mapFn, thisArg);
+        private static readonly BuiltinFunctionVariadic _arrayOfValue = Of;
+
+        internal static void ConfigureIntrinsicSurface(object constructorValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = ImmutablePrototype
+            });
+            PropertyDescriptorStore.DefineOrUpdate(ImmutablePrototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+            Function.MarkConstructible(constructorValue);
+            GlobalThis.ConfigureBuiltinFunctionObject(_arrayIsArrayValue);
+            GlobalThis.DefineUndefinedPrototypeProperty(_arrayIsArrayValue);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "isArray", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _arrayIsArrayValue
+            });
+            GlobalThis.ConfigureBuiltinFunctionObject(_arrayFromValue);
+            PropertyDescriptorStore.DefineOrUpdate(_arrayFromValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "from"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_arrayFromValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "from", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _arrayFromValue
+            });
+            GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "of", _arrayOfValue, 0d);
+        }
+
         /// <summary>
         /// This realm's immutable <c>%Array.prototype%</c> template. Realm-owned
         /// (issue #1824); <see cref="Prototype"/> is the mutable copy handed to
@@ -4073,6 +4137,22 @@ namespace JavaScriptRuntime
         public static Array of(object[]? args)
         {
             return args == null ? new Array() : new Array(args);
+        }
+
+        private static object Of(object? thisArgument, in JsCallArguments arguments)
+        {
+            var length = (double)arguments.Count;
+            var result = CallableOperations.IsConstructor(thisArgument)
+                ? CallableOperations.Construct1(thisArgument, thisArgument, length)!
+                : CreateDefaultArray(length);
+
+            for (var index = 0; index < arguments.Count; index++)
+            {
+                CreateArrayLikeDataProperty(result, index, arguments.GetArgument(index));
+            }
+
+            SetArrayLikeLength(result, length);
+            return result;
         }
 
         /// <summary>

@@ -165,9 +165,6 @@ namespace JavaScriptRuntime
 
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue =
             static (_, args) => JavaScriptRuntime.Array.Construct(args ?? System.Array.Empty<object?>());
-        private static readonly Func<object?, bool> _arrayIsArrayValue = JavaScriptRuntime.Array.isArray;
-        private static readonly BuiltinFunction3 _arrayFromValue = static (_, source, mapFn, thisArg) =>
-            JavaScriptRuntime.Array.from(source, mapFn, thisArg);
         private static readonly Func<object?, object?, double> _parseIntValue = parseInt;
         private static readonly Func<object?, double> _parseFloatValue = parseFloat;
         private static readonly Func<object?, bool> _isFiniteValue = isFinite;
@@ -555,59 +552,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _functionConstructorValue
             });
-            PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = JavaScriptRuntime.Array.ImmutablePrototype
-            });
-            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Array.ImmutablePrototype, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _arrayConstructorValue
-            });
-            JavaScriptRuntime.Function.MarkConstructible(
-                _arrayConstructorValue);
-            ConfigureBuiltinFunctionObject(_arrayIsArrayValue);
-            DefineUndefinedPrototypeProperty(_arrayIsArrayValue);
-            PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "isArray", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _arrayIsArrayValue
-            });
-            ConfigureBuiltinFunctionObject(_arrayFromValue);
-            PropertyDescriptorStore.DefineOrUpdate(_arrayFromValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "from"
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_arrayFromValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 1d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "from", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _arrayFromValue
-            });
+            JavaScriptRuntime.Array.ConfigureIntrinsicSurface(_arrayConstructorValue);
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
             JavaScriptRuntime.Function.MarkConstructible(
@@ -1595,7 +1540,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefineBuiltinFunctionProperty(object target, string key, Delegate functionValue, double length)
+        internal static void DefineBuiltinFunctionProperty(object target, string key, Delegate functionValue, double length)
         {
             JavaScriptRuntime.Function.InitializeFunctionInstance(
                 functionValue,
@@ -1606,7 +1551,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(target, key, functionValue);
         }
 
-        private static void DefineUndefinedPrototypeProperty(Delegate functionValue)
+        internal static void DefineUndefinedPrototypeProperty(Delegate functionValue)
         {
             PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
             {
