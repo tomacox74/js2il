@@ -10,6 +10,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   receiver-aware built-in with standard name, length, and property descriptors;
   honor custom constructors, define own indexed data properties, and propagate
   constructor and length-setter errors.
+- test262/docs: verify 500 additional class-declaration parse-negative and early-error
+  cases, covering async/generator method parameters, destructuring, class fields,
+  private identifiers, constructors, and invalid `super` usage. All 988
+  metadata-selected variants and all 500 native tests pass without compiler, runtime,
+  or harness changes.
 - test262/docs: verify 500 additional class-expression syntax and early-error
   cases, covering async/generator method parameters, destructuring, class
   fields, private identifiers, constructors, and invalid `super` usage.

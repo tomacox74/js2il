@@ -9,7 +9,7 @@ This report provides detailed Test262 conformance evidence for the current devel
 
 ## How to Read This Report
 
-- **Verified passing**: the current development branch successfully executes the corresponding Test262 test.
+- **Verified passing**: the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse or runtime phase.
 - **Known unsupported**: the test exercises behavior explicitly excluded from the release, primarily `eval`.
 - **No published result**: JROC has not published a conformance result for the test. This does not imply either support or failure.
 - **Verified**: verified passing tests divided by applicable tests in that row.
@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 12,357 | 12 | 11,143 | 23,512 | **52.56%** |
-| Language syntax and semantics | 4,616 | 46 | 18,981 | 23,643 | **19.52%** |
-| **Total** | 16,973 | 58 | 31,210 | 48,241 | **35.18%** |
+| Language syntax and semantics | 5,116 | 46 | 18,481 | 23,643 | **21.64%** |
+| **Total** | 17,473 | 58 | 30,710 | 48,241 | **36.22%** |
 
 ## Language Areas
 
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 0 | 0 | 1 | 1 | **0.00%** |
 | `statementList` | 0 | 0 | 80 | 80 | **0.00%** |
-| `statements` | 2,668 | 35 | 6,634 | 9,337 | **28.57%** |
+| `statements` | 3,168 | 35 | 6,134 | 9,337 | **33.93%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
 | `white-space` | 0 | 0 | 67 | 67 | **0.00%** |
 
@@ -141,7 +141,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `await-using` | 2 | 0 | 92 | 94 | **2.13%** |
 | `block` | 17 | 0 | 4 | 21 | **80.95%** |
 | `break` | 13 | 0 | 7 | 20 | **65.00%** |
-| `class` | 130 | 0 | 4,237 | 4,367 | **2.98%** |
+| `class` | 630 | 0 | 3,737 | 4,367 | **14.43%** |
 | `const` | 33 | 1 | 102 | 136 | **24.26%** |
 | `continue` | 16 | 0 | 8 | 24 | **66.67%** |
 | `debugger` | 0 | 0 | 2 | 2 | **0.00%** |
