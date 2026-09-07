@@ -32,7 +32,17 @@ arbitrary numeric target at the cost of mixing unrelated product changes.
 
 ## Workflow
 
-### 1. Materialize and inventory the pinned corpus
+### 1. Restore the catalog and inventory the pinned corpus
+
+Start with **Catalog-First Candidate Selection** in `test262-porting`, not a
+new full-corpus preflight. Download the `test262-catalog` Actions artifact or
+reuse a local database, inspect `summary.json` provenance/completeness, and run
+`catalog.py export --refresh-registrations` against the working tree. Full
+commands and artifact behavior are in `docs/ECMA262/Test262Catalog.md`.
+
+Use the catalog's full upstream paths and refreshed registration inventory
+as the starting point, verifying the mapping below. Keep SQLite databases,
+exports, and batch lists out of source control.
 
 1. Run `node scripts/test262/bootstrap.js --print-root`.
 2. Use only the commit pinned by `tests/test262/test262.pin.json`.
@@ -56,8 +66,17 @@ test262 output directory; do not commit planning manifests.
 ### 2. Select up to 500 coherent candidates
 
 Choose candidates from one built-in, language construct, or closely related
-set of clauses. Continue from the first unported path in deterministic sorted
-order unless the user names a feature area.
+set of clauses. Prefer compatible all-variant passes in
+`passing-unported.txt`, in deterministic path order within the chosen area.
+Use `historical-passing-unported.txt` as a secondary discovery source requiring
+fresh confirmation, not as current pass evidence. Favor an area with enough
+known passes over repeatedly screening the same known failures. Honor an
+explicitly requested feature area.
+
+The catalog may contain only a partially scanned corpus. Select up to 500
+coherent candidates from the known evidence; do not block a useful batch on an
+exhaustive scan or describe the known subset as the complete passing list.
+`failures.csv` is for focused shared-gap work, not coverage-only intake.
 
 Before copying fixtures:
 
@@ -73,8 +92,18 @@ to reach 500.
 
 ### 3. Preflight and classify
 
-Use `node scripts/test262/runMvp.js` with a feature-area filter or individual
-`--file` selections to classify candidates before making a large edit.
+Reuse compatible catalog results before launching new preflight work.
+`passing-unported.txt` requires every metadata-selected variant to pass under
+one provenance; never aggregate a fixture from just one passing variant or
+combine strict/non-strict results from different builds.
+
+For missing or stale evidence, use a bounded `catalog.py scan --filter ...`
+after initializing against the current build, then export the results.
+Its `--limit` counts variants and each result is checkpointed immediately.
+Use `node scripts/test262/runMvp.js` with an individual `--file` or area filter
+for diagnosis; do not restrict variants when claiming a full fixture pass.
+MVP and native C# harness behavior can differ, so the focused native suite
+remains the acceptance gate even for catalogued passes.
 
 Classify each candidate as:
 
@@ -134,6 +163,10 @@ Validate after each coherent group rather than waiting for all 500 candidates:
 
 All accepted tests must pass before the batch is complete. Report deferred
 large-gap and policy-excluded cases separately; do not count them as ported.
+Refresh catalog registration exclusions using
+`catalog.py export --refresh-registrations` after the accepted ports are
+registered. Record native failures separately for follow-up without relabeling
+MVP results as native evidence.
 
 ### 7. Complete documentation
 
@@ -165,6 +198,9 @@ causes fixed, and focused validation result.
   copied.
 - Batch file discovery and reads, but investigate one failure cluster at a
   time.
+- Consult and resume the catalog rather than restarting exhaustive scans.
+  Do not repeatedly preflight compatible known passes; spend execution time
+  on native acceptance, missing evidence, and selected failure clusters.
 - Reuse existing registration, harness, runtime, and compiler patterns.
 - Stop growing the implementation group when it crosses more than three
   unrelated compiler/runtime subsystems.

@@ -13,6 +13,83 @@ Use this skill when you need to port one or more upstream `test262` tests into `
 
 Keep the upstream `test262` case as the source of truth by copying the JavaScript fixture exactly as-is whenever it is brought into this repo.
 
+## Catalog-First Candidate Selection
+
+Before discovering candidates, consult the **Test262 artifact catalog**.
+The SQLite database and generated lists are published by
+`.github/workflows/test262-catalog.yml` as the `test262-catalog` Actions artifact.
+See `docs/ECMA262/Test262Catalog.md` for the schema, provenance rules, and
+workflow inputs. Keep downloads and generated lists under ignored
+`artifacts/test262/` or session storage, not in Git.
+
+1. Look for an existing local catalog or a completed catalog workflow run.
+   Select a trusted run from the intended branch that actually published the
+   aggregate artifact; do not assume the latest run has one:
+
+   ```sh
+   gh run list --workflow test262-catalog.yml --branch master --limit 10
+   # Replace RUN_ID with the selected run ID; use a fresh download directory.
+   gh run download RUN_ID --name test262-catalog --dir artifacts/test262/catalog-download
+   ```
+
+   Use the feature branch instead of `master` when evaluating a catalog not
+   yet published on the default branch. Do not overwrite a database being
+   written by an active scan.
+
+2. Read `summary.json` before using any list. Verify the upstream pin against
+   `tests/test262/test262.pin.json`, examine the fingerprint and runner identity,
+   and report scan completeness. `inventory_complete` does not mean execution
+   is complete. A false `complete_passing_unported_list` means the exported
+   passes are only the known subset, not all passing unported tests.
+
+3. Refresh registration exclusions against the working tree:
+
+   ```sh
+   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite \
+     export --refresh-registrations --output artifacts/test262/catalog-download
+   ```
+
+   Inspect `registration_warnings` in the new summary. Resolve candidates
+   against actual C# registrations and canonical/legacy fixture paths; never
+   suppress a candidate by basename alone.
+
+4. Prefer `passing-unported.txt`, then `historical-passing-unported.txt` when
+   selecting coverage-only ports. "Current" in a downloaded catalog refers
+   to its recorded environment, not automatically this checkout or local
+   build. Each accepted catalog pass must have **every required variant**
+   passing under one provenance; missing variants, timeouts, metadata errors,
+   and unsupported requirements are not passes.
+
+   To establish local provenance or resume missing evidence, build the current
+   compiler, initialize the database, and run only a bounded relevant area:
+
+   ```sh
+   dotnet build src/Cli/Jroc.csproj -c Release
+   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite init --expand
+   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite \
+     scan --filter built-ins/Array/prototype/at --limit 100 --seconds 120
+   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite \
+     export --refresh-registrations --output artifacts/test262/catalog-download
+   ```
+
+   Change the filter to the requested area. `--limit` counts **variants**, not
+   fixtures. Initialization retains old evidence as historical when the
+   fingerprint changes. Ordinary scans resume missing variants; use `--retry`
+   only for a deliberate recheck. If no artifact is available, use the default
+   `artifacts/test262/catalog.sqlite` with `init --expand`, bounded `scan`, and
+   `export` rather than starting another whole-corpus local scan.
+
+5. Catalog evidence comes from the **MVP composite-JavaScript runner**, not the
+   native C# harness. Historical or otherwise incompatible passes need fresh
+   confirmation. Always run the focused native `Jroc.Test262.Tests` suite
+   after porting; catalog passes alone never count as published conformance.
+   Do not rerun MVP preflight unnecessarily for candidates with compatible,
+   complete evidence. Use targeted probes for missing evidence or diagnosis.
+
+After an accepted port, refresh registrations and exports again so subsequent
+selection excludes it. Leave exhaustive discovery to the resumable catalog
+workflow; do not wait for a complete catalog before porting a known-good batch.
+
 ## Porting Workflow
 
 1. Start from one concrete upstream `test262` file and preserve its relative spec path and base filename.
