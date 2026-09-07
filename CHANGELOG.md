@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 428 language-literal cases from the complete remaining
+  463-fixture literals intake, covering numeric, BigInt, string, regular
+  expression, and template literal lexical syntax and early errors.
 - test262/docs: port 98 additional TypedArray cases from a deterministic
   500-fixture follow-up intake, covering reduce/reduceRight, reverse, and set
   behavior across numeric and BigInt families. Resizable-buffer, cross-realm,

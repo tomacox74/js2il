@@ -13,6 +13,7 @@ namespace Jroc.Tests.Hosting;
 public class ModuleLoadTests
 {
     private const string HostingJavaScriptResourcePrefix = "Jroc.Tests.Hosting.JavaScript.";
+    private static readonly TimeSpan AsyncOperationTimeout = TimeSpan.FromSeconds(30);
     private delegate object? HostedSingleScopeDelegate(
         PackedArgumentsHost scope,
         object? newTarget,
@@ -699,11 +700,12 @@ public class ModuleLoadTests
             delegateSuccess,
             3,
             4);
+        Assert.False(delegatePending.IsCompleted);
         delegateSource.SetResult(7d);
         Assert.Equal(
             7d,
             await delegatePending
-                .WaitAsync(TimeSpan.FromSeconds(2)));
+                .WaitAsync(AsyncOperationTimeout));
 
         var hostFunctionSuccess = new JsHostFunction(
             (_, arguments) => Task.FromResult<object?>(
@@ -714,7 +716,7 @@ public class ModuleLoadTests
                     hostFunctionSuccess,
                     "left",
                     "right")
-                .WaitAsync(TimeSpan.FromSeconds(2)));
+                .WaitAsync(AsyncOperationTimeout));
 
         Func<object[], Task<object?>> delegateFailure = _ =>
             Task.FromException<object?>(
@@ -724,7 +726,7 @@ public class ModuleLoadTests
                     delegateFailure,
                     null,
                     null)
-                .WaitAsync(TimeSpan.FromSeconds(2)));
+                .WaitAsync(AsyncOperationTimeout));
         Assert.Equal("host task boom", failure.Message);
 
         var hostFunctionCancellation = new JsHostFunction(
@@ -735,7 +737,7 @@ public class ModuleLoadTests
                     hostFunctionCancellation,
                     null,
                     null)
-                .WaitAsync(TimeSpan.FromSeconds(2)));
+                .WaitAsync(AsyncOperationTimeout));
     }
 
     [Fact]
@@ -985,34 +987,48 @@ public class ModuleLoadTests
         using var started = new ManualResetEventSlim();
         using var release = new ManualResetEventSlim();
 
-        var running = Task.Run(() => runtime.Invoke(() =>
-        {
-            started.Set();
-            if (!release.Wait(TimeSpan.FromSeconds(2)))
+        // Blocking host calls need independent workers, not competing thread-pool slots.
+        var running = Task.Factory.StartNew(
+            () => runtime.Invoke(() =>
             {
-                throw new TimeoutException("The test did not release the running invocation.");
-            }
-        }));
+                started.Set();
+                // Only the test's finally block may unblock the script thread.
+                release.Wait();
+            }),
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
 
-        Assert.True(started.Wait(TimeSpan.FromSeconds(2)));
-        var queued = Task.Run(() => runtime.Invoke(() => 42));
-        Assert.True(SpinWait.SpinUntil(
-            () => runtime.PendingWorkItemCount >= 2,
-            TimeSpan.FromSeconds(2)));
-
-        var dispose = Task.Run(runtime.Dispose);
+        Task? dispose = null;
         try
         {
+            Assert.True(started.Wait(AsyncOperationTimeout));
+            var queued = Task.Factory.StartNew(
+                () => runtime.Invoke(() => 42),
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
+            Assert.True(SpinWait.SpinUntil(
+                () => runtime.PendingWorkItemCount >= 2,
+                AsyncOperationTimeout));
+
+            dispose = Task.Factory.StartNew(
+                runtime.Dispose,
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
             _ = await Assert.ThrowsAsync<ObjectDisposedException>(
-                () => queued.WaitAsync(TimeSpan.FromSeconds(2)));
+                () => queued.WaitAsync(AsyncOperationTimeout));
         }
         finally
         {
             release.Set();
+            await running.WaitAsync(AsyncOperationTimeout);
+            if (dispose != null)
+            {
+                await dispose.WaitAsync(AsyncOperationTimeout);
+            }
         }
-
-        await running.WaitAsync(TimeSpan.FromSeconds(2));
-        await dispose.WaitAsync(TimeSpan.FromSeconds(2));
     }
 
     [Fact]
