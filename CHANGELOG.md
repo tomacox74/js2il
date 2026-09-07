@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 failing `Array.from` cases. Honor custom
+  constructors for iterable and array-like sources, validate mappers, prefer
+  the iterator protocol, define own indexed properties, and close iterators on
+  mapper or property-definition errors while preserving the original exception.
+  Objects without a length or iterator now produce empty arrays.
 - test262/runtime/docs: port 10 failing `Array.of` cases. Expose the
   receiver-aware built-in with standard name, length, and property descriptors;
   honor custom constructors, define own indexed data properties, and propagate

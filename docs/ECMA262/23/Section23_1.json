@@ -446,16 +446,27 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/Array.from_arity.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/from-string.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/from/JavaScript/from-array.js",
-          "tests/Jroc.Test262.Tests/built-ins/Array/from/ExecutionTests.Batch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Array/from/ExecutionTests.Batch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/from/ExecutionTests.Construction.cs"
         ],
         "test262Paths": [
           "test/built-ins/Array/from/calling-from-valid-1-noStrict.js",
           "test/built-ins/Array/from/Array.from-name.js",
           "test/built-ins/Array/from/Array.from_arity.js",
           "test/built-ins/Array/from/from-string.js",
-          "test/built-ins/Array/from/from-array.js"
+          "test/built-ins/Array/from/from-array.js",
+          "test/built-ins/Array/from/Array.from_forwards-length-for-array-likes.js",
+          "test/built-ins/Array/from/items-is-arraybuffer.js",
+          "test/built-ins/Array/from/iter-cstm-ctor-err.js",
+          "test/built-ins/Array/from/iter-cstm-ctor.js",
+          "test/built-ins/Array/from/iter-map-fn-err.js",
+          "test/built-ins/Array/from/iter-set-elem-prop-err.js",
+          "test/built-ins/Array/from/iter-set-length-err.js",
+          "test/built-ins/Array/from/mapfn-is-not-callable-typeerror.js",
+          "test/built-ins/Array/from/source-object-length-set-elem-prop-err.js",
+          "test/built-ins/Array/from/source-object-without.js"
         ],
-        "notes": "Supports array-like and iterator-producing sources (including Array iterator methods), iterator error propagation, mapper arguments and thisArg, and standard Array.from metadata. Current checked-in test262 coverage also exercises string sources and sparse arrays that materialize holes as undefined; custom constructors, Proxy behavior, and cross-realm semantics remain limited."
+        "notes": "Supports array-like and iterable sources, preferring the iterator protocol and reading its method once. Custom constructors receive no arguments for iterables and the normalized length for array-like sources. Mappers must be callable when supplied, including rejection of null; objects without a length or iterator produce empty arrays. Elements are defined as own data properties, and constructor, property-definition, and length-setter errors propagate. Mapper and property-definition failures close the iterator while preserving the original error; iterator-advancement failures do not trigger closing. Existing coverage also verifies mapper arguments and thisArg, string sources, sparse arrays, and standard metadata. Proxy and cross-realm behavior remain limited."
       },
       {
         "clause": "23.1.2.2",
