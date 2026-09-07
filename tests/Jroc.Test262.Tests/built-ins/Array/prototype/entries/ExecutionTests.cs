@@ -13,4 +13,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "returns-iterator-from-object")]
     public Task returns_iterator_from_object()
         => ExecutionTestFromFile("returns-iterator-from-object");
+
+    [Fact(DisplayName = "iteration.js")]
+    public Task iteration()
+        => ExecutionTestFromFile("iteration");
 }
