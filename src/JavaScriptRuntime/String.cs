@@ -438,14 +438,6 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert a Symbol value to a string");
             }
 
-            if (value is not null
-                && PropertyDescriptorStore.TryGetOwn(value, ObjectRuntime.PrimitiveValuePropertyName, out var descriptor)
-                && descriptor.Kind == JsPropertyDescriptorKind.Data
-                && descriptor.Value is Symbol)
-            {
-                throw new TypeError("Cannot convert a Symbol value to a string");
-            }
-
             if (value is null or JsNull or string || value.GetType().IsValueType)
             {
                 return DotNet2JSConversions.ToString(value);
@@ -774,14 +766,7 @@ namespace JavaScriptRuntime
             => FromCodePoint(arguments.ToArray());
 
         private static object? ConstructorRaw(object? thisArgument, in JsCallArguments arguments)
-        {
-            var args = arguments.ToArray();
-            var template = GetArg(args, 0);
-            var substitutions = args.Length <= 1
-                ? System.Array.Empty<object?>()
-                : args[1..];
-            return Raw(template, substitutions);
-        }
+            => Raw(arguments.ToArray());
 
         private static object? StringIteratorPrototypeIterator(object? thisArgument)
             => thisArgument;
@@ -1459,37 +1444,41 @@ namespace JavaScriptRuntime
             return builder.ToString();
         }
 
-        public static string Raw(object? template, object?[]? substitutions)
+        public static string Raw(object?[]? arguments)
         {
+            var template = GetArg(arguments, 0);
             if (template is null || template is JsNull)
             {
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var raw = JavaScriptRuntime.ObjectRuntime.GetItem(template, "raw");
-            if (raw is null || raw is JsNull)
+            var cooked = ObjectRuntime.Construct(template);
+            var rawValue = ObjectRuntime.GetItem(cooked, "raw");
+            if (rawValue is null || rawValue is JsNull)
             {
                 throw new TypeError("String.raw requires a template.raw property");
             }
 
-            int literalCount = ToLength(JavaScriptRuntime.ObjectRuntime.GetLength(raw));
+            var raw = ObjectRuntime.Construct(rawValue);
+            var length = ToIntegerOrInfinity(ObjectRuntime.GetItem(raw, "length"), 0d);
+            var literalCount = (long)global::System.Math.Clamp(length, 0d, 9007199254740991d);
             if (literalCount == 0)
             {
                 return string.Empty;
             }
 
             var builder = new StringBuilder();
-            for (int i = 0; i < literalCount; i++)
+            for (long i = 0; i < literalCount; i++)
             {
-                builder.Append(DotNet2JSConversions.ToString(JavaScriptRuntime.ObjectRuntime.GetItem(raw, (double)i)));
+                builder.Append(ToSearchString(ObjectRuntime.GetItem(raw, (double)i)));
                 if (i + 1 >= literalCount)
                 {
                     break;
                 }
 
-                if (substitutions != null && i < substitutions.Length)
+                if (arguments != null && i + 1 < arguments.Length)
                 {
-                    builder.Append(DotNet2JSConversions.ToString(substitutions[i]));
+                    builder.Append(ToSearchString(arguments[i + 1]));
                 }
             }
 
@@ -2667,16 +2656,7 @@ namespace JavaScriptRuntime
 
         private static string CodePointToString(object? codePoint)
         {
-            double numericCodePoint;
-            try
-            {
-                numericCodePoint = TypeUtilities.ToNumber(codePoint);
-            }
-            catch
-            {
-                throw new RangeError("Invalid code point");
-            }
-
+            var numericCodePoint = TypeUtilities.ToNumber(codePoint);
             if (!double.IsFinite(numericCodePoint)
                 || !double.IsInteger(numericCodePoint)
                 || numericCodePoint < 0
@@ -2685,14 +2665,9 @@ namespace JavaScriptRuntime
                 throw new RangeError("Invalid code point");
             }
 
-            try
-            {
-                return char.ConvertFromUtf32((int)numericCodePoint);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new RangeError("Invalid code point");
-            }
+            return numericCodePoint <= 0xFFFF
+                ? CharToStringFast((char)numericCodePoint)
+                : char.ConvertFromUtf32((int)numericCodePoint);
         }
 
         private static string ReplaceEmptyPattern(string input, Func<int, string> replacementFactory)

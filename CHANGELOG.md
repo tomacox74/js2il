@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 failing String constructor-method cases.
+  Correct `String.raw` variadic binding, array-like length access, and ordered
+  segment/substitution coercion; preserve `String.fromCodePoint` conversion
+  exceptions and support surrogate code units. The runtime `String.Raw` helper
+  now takes one argument array; recompile older artifacts against the matching
+  compiler/runtime.
 - test262/runtime/docs: port 10 failing Number cases. Correct digit coercion
   ordering, negative-zero formatting, and omitted-digit shortest exponential
   output; reject precision values that coerce to NaN. Accept binary numeric

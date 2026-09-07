@@ -47,6 +47,38 @@ public sealed class StringConstructorBuiltinAdapterRuntimeTests
 
             Assert.Equal("ABC", CallableOperations.Call(fromCharCode, null, [65d, 66d, 67d]));
             Assert.Equal("abc", CallableOperations.Call(fromCodePoint, null, [97d, 98d, 99d]));
+            Assert.Equal("\uD800\uDFFF", CallableOperations.Call(fromCodePoint, null, [(double)0xD800, (double)0xDFFF]));
+        });
+    }
+
+    [Fact]
+    public void StringRawHonorsWrappedSymbolCoercionThroughDirectAndAdapterCalls()
+    {
+        WithRealm(() =>
+        {
+            var boxed = ObjectRuntime.Construct(new Symbol("description"));
+            var calls = 0;
+            var toPrimitive = new BuiltinDelegateFunctionAdapter((BuiltinFunction1)((receiver, hint) =>
+            {
+                Assert.Same(boxed, receiver);
+                Assert.Equal("string", hint);
+                calls++;
+                return "boxed";
+            }));
+            PropertyDescriptorStore.DefineOrUpdate(boxed, Symbol.toPrimitive.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = toPrimitive,
+                Configurable = true
+            });
+
+            var template = new JsObject();
+            ObjectRuntime.SetItem(template, "raw", new JavaScriptRuntime.Array { boxed, "end" });
+            var raw = ObjectRuntime.GetItem(JavaScriptRuntime.GlobalThis.String, "raw");
+
+            Assert.Equal("boxedboxedend", JavaScriptRuntime.String.Raw([template, boxed]));
+            Assert.Equal("boxedboxedend", CallableOperations.Call(raw, null, [template, boxed]));
+            Assert.Equal(4, calls);
         });
     }
 

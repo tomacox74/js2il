@@ -390,9 +390,15 @@
         "feature": "String.fromCodePoint",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.fromcodepoint",
-        "notes": "Implemented in JavaScriptRuntime.String.FromCodePoint and exposed on GlobalThis.String.fromCodePoint. Supports integer Unicode scalar values and throws RangeError for invalid code points; boxed String wrapper edge cases are still not modeled.",
+        "notes": "Implemented in JavaScriptRuntime.String.FromCodePoint with UTF-16 encoding for integer code points from 0 through 0x10FFFF, including surrogate code units. ToNumber failures propagate unchanged, including Symbol TypeErrors and user conversion exceptions; nonintegral or out-of-range numeric values throw RangeError. Direct and receiver-aware calls share the implementation.",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js"
+          "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js",
+          "tests/Jroc.Tests/String/StringConstructorBuiltinAdapterRuntimeTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/String/fromCodePoint/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/fromCodePoint/argument-is-Symbol.js",
+          "test/built-ins/String/fromCodePoint/argument-not-coercible.js"
         ]
       },
       {
@@ -419,9 +425,21 @@
         "feature": "String.raw",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.raw",
-        "notes": "Implemented in JavaScriptRuntime.String.Raw and exposed as GlobalThis.String.raw. Supports array-like template.raw values used by tagged-template helpers, but does not attempt full spec fidelity for exotic template objects or property attributes.",
+        "notes": "Implemented in JavaScriptRuntime.String.Raw with a shared variadic argument-array path for direct and receiver-aware calls. Applies ToObject to the template and raw values, reads the actual raw.length property with the ToLength bound, and accesses segments and needed substitutions in order. String conversion preserves observable getters and abrupt completions, rejects Symbol primitives, and honors custom primitive conversion on boxed Symbols. Unused substitutions are not coerced. Very large results remain subject to CLR string and memory limits; broad exotic-object and property-attribute coverage remains limited.",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js"
+          "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js",
+          "tests/Jroc.Tests/String/StringConstructorBuiltinAdapterRuntimeTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/String/raw/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/raw/nextkey-is-symbol-throws.js",
+          "test/built-ins/String/raw/return-the-string-value.js",
+          "test/built-ins/String/raw/returns-abrupt-from-next-key-toString.js",
+          "test/built-ins/String/raw/returns-abrupt-from-next-key.js",
+          "test/built-ins/String/raw/returns-abrupt-from-substitution-symbol.js",
+          "test/built-ins/String/raw/substitutions-are-appended-on-same-index.js",
+          "test/built-ins/String/raw/template-length-is-symbol-throws.js",
+          "test/built-ins/String/raw/template-length-throws.js"
         ]
       },
       {
