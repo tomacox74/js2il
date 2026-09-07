@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: move typed-array intrinsic property initialization and receiver-aware
+  adapters from `GlobalThis` into `TypedArrayBase`, preserving behavior and
+  subclass-owned APIs.
 - test262/runtime/docs: port 10 failing Array, String, and Number cases.
   Add Array constructor name and receiver-aware species metadata; support the
   full unsigned 32-bit sparse length range, including derived-array initialization.
