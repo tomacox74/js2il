@@ -21,8 +21,7 @@ namespace JavaScriptRuntime
         private static long _prototypeMutationVersion;
 
         private static readonly Func<object?, bool> _arrayIsArrayValue = isArray;
-        private static readonly BuiltinFunction3 _arrayFromValue = static (_, source, mapFn, thisArg) =>
-            from(source, mapFn, thisArg);
+        private static readonly BuiltinFunction3 _arrayFromValue = From;
         private static readonly BuiltinFunctionVariadic _arrayOfValue = Of;
 
         internal static void ConfigureIntrinsicSurface(object constructorValue)
@@ -3996,8 +3995,7 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// JavaScript Array.from(source) minimal implementation.
-        /// Supports JavaScriptRuntime.Array, IEnumerable, and Set.
+        /// JavaScript Array.from for direct calls using the default Array constructor.
         /// </summary>
         public static Array from(object? source)
             => from(source, null, null);
@@ -4006,117 +4004,97 @@ namespace JavaScriptRuntime
             => from(source, mapFn, null);
 
         public static Array from(object? source, object? mapFn, object? thisArg)
-        {
-            if (source == null) return new Array();
+            => (Array)From(null, source, mapFn, thisArg);
 
-            if (mapFn is not null && mapFn is not JsNull && !IsCallable(mapFn))
+        private static object From(object? constructor, object? source, object? mapFn, object? thisArg)
+        {
+            if (mapFn is not null && !IsCallable(mapFn))
             {
                 throw new TypeError("Array.from: when provided, the second argument must be a function");
             }
 
-            // If already a JS array, return a shallow copy
-            if (source is Array jsArr)
+            if (source is null or JsNull)
             {
-                return CopyFromIndexedSource(jsArr, (int)jsArr.length, mapFn, thisArg);
+                throw new TypeError("Array.from requires an array-like or iterable object");
             }
 
-            if (source is string)
+            var iteratorMethod = ObjectRuntime.GetItem(source, Symbol.iterator);
+            if (iteratorMethod is not null and not JsNull)
             {
-                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source), mapFn, thisArg);
-            }
-
-            if (TryGetArrayLikeLength(source, out var length))
-            {
-                return CopyFromIndexedSource(source, length, mapFn, thisArg);
-            }
-
-            if (source is IJavaScriptIterator iterator)
-            {
-                return FromIterator(iterator, mapFn, thisArg);
-            }
-
-            var iteratorMethod = JavaScriptRuntime.ObjectRuntime.GetItem(source, Symbol.iterator);
-            if (iteratorMethod is not null && iteratorMethod is not JsNull)
-            {
-                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source), mapFn, thisArg);
-            }
-
-            // If source is IEnumerable, copy items
-            if (source is System.Collections.IEnumerable enumerable)
-            {
-                var result = new Array();
-                int index = 0;
-                foreach (var item in enumerable)
+                if (!IsCallable(iteratorMethod))
                 {
-                    result.Add(ApplyMapFunction(mapFn, thisArg, item, index++));
+                    throw new TypeError("Symbol.iterator is not a function");
                 }
-                return result;
+
+                var result = CallableOperations.IsConstructor(constructor)
+                    ? CallableOperations.Construct0(constructor, constructor)!
+                    : CreateDefaultArray(0d);
+                var iterator = ObjectRuntime.GetIteratorFromMethod(source, iteratorMethod);
+                return FromIterator(result, iterator, mapFn, thisArg);
             }
 
-            // Fallback: wrap single element
-            var fallback = new Array();
-            fallback.Add(ApplyMapFunction(mapFn, thisArg, source, 0));
-            return fallback;
+            var arrayLike = ObjectRuntime.Construct(source);
+            var length = ToArrayLikeLengthAsDouble(arrayLike);
+            var array = CallableOperations.IsConstructor(constructor)
+                ? CallableOperations.Construct1(constructor, constructor, length)!
+                : CreateDefaultArray(length);
+            for (var index = 0d; index < length; index++)
+            {
+                var value = ObjectRuntime.GetItem(arrayLike, index);
+                CreateArrayLikeDataProperty(array, index, ApplyMapFunction(mapFn, thisArg, value, index));
+            }
+
+            SetArrayLikeLength(array, length);
+            return array;
         }
 
-        private static Array FromIterator(IJavaScriptIterator iterator, object? mapFn, object? thisArg)
+        private static object FromIterator(object result, IJavaScriptIterator iterator, object? mapFn, object? thisArg)
         {
-            var result = new Array();
-            int index = 0;
+            var index = 0d;
             while (true)
             {
+                if (index >= 9007199254740991d)
+                {
+                    ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
+                    throw new TypeError("Array.from result exceeds the maximum safe integer");
+                }
+
+                // Iterator advancement errors do not close the iterator; mapper and
+                // property-definition errors do, preserving the original exception.
                 var step = iterator.Next();
                 if (step.done)
                 {
-                    break;
+                    SetArrayLikeLength(result, index);
+                    return result;
                 }
 
-                result.Add(ApplyMapFunction(mapFn, thisArg, step.value, index++));
-            }
+                var completedNormally = false;
+                try
+                {
+                    var value = ApplyMapFunction(mapFn, thisArg, step.value, index);
+                    CreateArrayLikeDataProperty(result, index, value);
+                    completedNormally = true;
+                }
+                finally
+                {
+                    if (!completedNormally)
+                    {
+                        ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
+                    }
+                }
 
-            return result;
+                index++;
+            }
         }
 
-        private static Array CopyFromIndexedSource(object source, int length, object? mapFn, object? thisArg)
+        private static object? ApplyMapFunction(object? mapFn, object? thisArg, object? value, double index)
         {
-            var result = new Array();
-            for (int i = 0; i < length; i++)
-            {
-                var item = JavaScriptRuntime.ObjectRuntime.GetItem(source, i.ToString(CultureInfo.InvariantCulture));
-                result.Add(ApplyMapFunction(mapFn, thisArg, item, i));
-            }
-
-            return result;
-        }
-
-        private static object? ApplyMapFunction(object? mapFn, object? thisArg, object? value, int index)
-        {
-            if (mapFn is null || mapFn is JsNull)
+            if (mapFn is null)
             {
                 return value;
             }
 
-            return CallableOperations.Call2(mapFn, thisArg, value, (double)index);
-        }
-
-        private static bool TryGetArrayLikeLength(object source, out int length)
-        {
-            var lengthValue = JavaScriptRuntime.ObjectRuntime.GetProperty(source, "length");
-            if (lengthValue is null || lengthValue is JsNull)
-            {
-                length = 0;
-                return false;
-            }
-
-            var numericLength = JavaScriptRuntime.TypeUtilities.ToNumber(lengthValue);
-            if (double.IsNaN(numericLength) || numericLength < 0)
-            {
-                length = 0;
-                return false;
-            }
-
-            length = (int)global::System.Math.Min(numericLength, int.MaxValue);
-            return true;
+            return CallableOperations.Call2(mapFn, thisArg, value, index);
         }
 
         private static bool IsCallable(object? value)

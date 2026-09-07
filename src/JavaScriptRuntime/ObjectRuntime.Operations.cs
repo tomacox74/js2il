@@ -5570,9 +5570,11 @@ namespace JavaScriptRuntime
                 return iterable;
             }
 
-            if (iterable is System.Collections.IEnumerable)
+            if (iterable is System.Collections.IEnumerable enumerable)
             {
-                return JavaScriptRuntime.Array.from(iterable)!;
+                return iterable is JsObject
+                    ? JavaScriptRuntime.Array.from(iterable)
+                    : new JavaScriptRuntime.Array(enumerable);
             }
 
             throw new JavaScriptRuntime.TypeError("Object is not iterable");

@@ -6,6 +6,23 @@ namespace Jroc.Tests;
 public sealed class ArrayReceiverSpecializationRuntimeTests
 {
     [Fact]
+    public void NormalizeForOfIterablePreservesHostEnumerableValues()
+    {
+        WithRealm(
+            () =>
+            {
+                var source = new List<object?> { 1d, null, "host" };
+                var result = Assert.IsType<JavaScriptRuntime.Array>(
+                    ObjectRuntime.NormalizeForOfIterable(source));
+
+                Assert.Equal(3d, result.length);
+                Assert.Equal(1d, result[0]);
+                Assert.Null(result[1]);
+                Assert.Equal("host", result[2]);
+            });
+    }
+
+    [Fact]
     public void HelpersPreserveArrayAndFallbackSemantics()
     {
         WithRealm(
