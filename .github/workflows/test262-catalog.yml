@@ -1,0 +1,209 @@
+name: Test262 artifact catalog
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Maximum new variants per shard (four shards)
+        type: number
+        default: 100
+      seconds:
+        description: Scan time budget per shard (seconds, maximum 1200)
+        type: number
+        default: 600
+      filter:
+        description: Optional upstream path substring (inventory is still complete)
+        type: string
+        default: ""
+  schedule:
+    - cron: "15 6 * * 1"
+
+permissions:
+  contents: read
+  actions: read
+
+# Serialize writers so a later run always restores the previous aggregate.
+concurrency:
+  group: test262-catalog-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Validate bounded inputs
+        env:
+          LIMIT: ${{ inputs.limit || 100 }}
+          BUDGET: ${{ inputs.seconds || 600 }}
+        run: |
+          python3 - <<'PY'
+          import os
+          assert 1 <= int(os.environ["LIMIT"]) <= 10000
+          assert 1 <= int(os.environ["BUDGET"]) <= 1200
+          PY
+      - name: Test catalog invariants
+        run: node --test scripts/test262/catalog.test.js
+      - name: Restore most recent catalog on this branch
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            fs.mkdirSync('artifacts/test262', { recursive: true });
+            const { owner, repo } = context.repo;
+            // Restrict restore to this workflow and branch, never a PR's artifact.
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner, repo, workflow_id: 'test262-catalog.yml',
+              branch: context.ref.replace('refs/heads/', ''), status: 'completed', per_page: 100
+            });
+            for (const run of runs) {
+              const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+                owner, repo, run_id: run.id, per_page: 100
+              });
+              const artifact = artifacts.find(a => a.name === 'test262-catalog' && !a.expired);
+              if (!artifact) continue;
+              const download = await github.rest.actions.downloadArtifact({
+                owner, repo, artifact_id: artifact.id, archive_format: 'zip'
+              });
+              fs.writeFileSync('artifacts/test262/restore.zip', Buffer.from(download.data));
+              core.info(`Restoring catalog from run ${run.id}; init will isolate incompatible evidence.`);
+              break;
+            }
+      - name: Extract database only
+        run: |
+          if [ -f artifacts/test262/restore.zip ]; then
+            unzip -p artifacts/test262/restore.zip catalog.sqlite > artifacts/test262/catalog.sqlite
+            rm artifacts/test262/restore.zip
+          fi
+      - name: Build current compiler and runtime once
+        run: dotnet build src/Cli/Jroc.csproj -c Release --nologo
+      - name: Inventory full pinned upstream and refresh registrations
+        run: |
+          python3 scripts/test262/catalog.py init --expand
+          python3 scripts/test262/catalog.py export
+      - uses: actions/upload-artifact@v7
+        with:
+          name: test262-catalog-base
+          path: artifacts/test262/catalog.sqlite
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        with:
+          name: test262-catalog-compiler
+          path: src/Cli/bin/Release/net10.0/
+          retention-days: 14
+
+  scan:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-catalog-base
+          path: artifacts/test262
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-catalog-compiler
+          path: src/Cli/bin/Release/net10.0
+      - name: Materialize full pinned checkout
+        run: |
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add --no-cone /test/
+      - name: Resume deterministic shard
+        env:
+          LIMIT: ${{ inputs.limit || 100 }}
+          BUDGET: ${{ inputs.seconds || 600 }}
+          FILTER: ${{ inputs.filter }}
+          SHARD: ${{ matrix.shard }}
+        run: |
+          python3 scripts/test262/catalog.py scan \
+            --shard "$SHARD" --shards 4 --limit "$LIMIT" --seconds "$BUDGET" --filter "$FILTER"
+      - name: Export checkpoint
+        if: always()
+        run: python3 scripts/test262/catalog.py export
+      - name: Preserve shard even on failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-catalog-shard-${{ matrix.shard }}
+          path: |
+            artifacts/test262/catalog.sqlite
+            artifacts/test262/summary.json
+          if-no-files-found: error
+          retention-days: 14
+
+  aggregate:
+    needs: [prepare, scan]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-catalog-base
+          path: artifacts/test262
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: test262-catalog-shard-*
+          path: artifacts/test262/shards
+      - name: Merge available checkpoints (missing shards remain incomplete)
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          shards = sorted(Path("artifacts/test262/shards").rglob("catalog.sqlite"))
+          if shards:
+              subprocess.run(["python3", "scripts/test262/catalog.py", "merge", *map(str, shards)], check=True)
+          PY
+      - name: Export current evidence
+        if: always()
+        run: python3 scripts/test262/catalog.py export --refresh-registrations
+      - name: Publish artifact catalog
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-catalog
+          path: |
+            artifacts/test262/catalog.sqlite
+            artifacts/test262/*.txt
+            artifacts/test262/failures.csv
+            artifacts/test262/summary.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Summarize completeness
+        run: |
+          python3 - <<'PY'
+          import json, os
+          s = json.load(open("artifacts/test262/summary.json"))
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("## Test262 catalog — MVP evidence, not native conformance\n\n")
+              for key in ("inventory_files", "recorded_variants", "passing_unported",
+                          "historical_passing_unported", "incomplete_files",
+                          "runnable_scan_complete", "complete_passing_unported_list"):
+                  f.write(f"- {key}: **{s[key]}**\n")
+              f.write("\nDownload **test262-catalog** for SQLite and deterministic exports.\n")
+          PY

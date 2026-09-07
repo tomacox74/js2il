@@ -1598,7 +1598,9 @@ function runMvp(argv) {
 module.exports = {
   createExecutionPlan,
   determineVariants,
+  evaluateCase,
   findJroc,
+  matchPathExclusion,
   loadNamedSuites,
   parseArgs,
   runMvp,
