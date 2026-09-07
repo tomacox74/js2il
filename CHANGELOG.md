@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: port 98 additional TypedArray cases from a deterministic
+  500-fixture follow-up intake, covering reduce/reduceRight, reverse, and set
+  behavior across numeric and BigInt families. Resizable-buffer, cross-realm,
+  proxy, and four native typed-array helper-dependent conversion cases remain
+  deferred.
 - test262/docs: port 159 additional TypedArray cases from a deterministic
   500-fixture follow-up intake, covering prototype lookup, length, iterator,
   join, map, and reduce behavior across numeric and BigInt families.

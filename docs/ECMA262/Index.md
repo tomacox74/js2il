@@ -34,9 +34,9 @@ For the current development branch following [JROC v0.12.18](https://github.com/
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|
-| Verified passing | 15,926 | **33.01%** |
+| Verified passing | 16,024 | **33.22%** |
 | Explicitly excluded due to known unsupported behavior | 58 | 0.12% |
-| Not yet verified | 32,315 | 66.99% |
+| Not yet verified | 32,217 | 66.78% |
 | **Total applicable ECMA-262 tests** | **48,241** | **100.00%** |
 
 See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.
