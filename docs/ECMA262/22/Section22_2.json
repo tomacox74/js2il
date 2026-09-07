@@ -192,7 +192,7 @@
     {
       "clause": "22.2.2.7.4",
       "title": "UpdateModifiers ( rer , add , remove )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-updatemodifiers"
     },
     {
@@ -324,7 +324,7 @@
     {
       "clause": "22.2.5.2",
       "title": "RegExp.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype"
     },
     {
@@ -342,7 +342,7 @@
     {
       "clause": "22.2.6.1",
       "title": "RegExp.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.constructor"
     },
     {
@@ -590,6 +590,21 @@
         "notes": "RegExp literals with unsupported v-flag UnicodeSets syntax are rejected during parse/compilation before runtime execution, matching these negative test262 parse tests so $DONOTEVALUATE() is never evaluated. Full regexp-v-flag and UnicodeSets semantics are still not implemented."
       },
       {
+        "clause": "22.2.2.7.4",
+        "feature": "RegExp modifiers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-updatemodifiers",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/syntax/valid/ExecutionTests.cs"
+        ],
+        "notes": "Scoped s, i, and m modifiers are lowered to the corresponding .NET regular-expression options, including nested additions and removals. The v flag and UnicodeSets semantics remain unsupported.",
+        "test262Suites": [
+          "built_ins.RegExp.regexp_modifiers",
+          "built_ins.RegExp.regexp_modifiers.syntax.valid"
+        ]
+      },
+      {
         "clause": "22.2.4.1",
         "feature": "RegExp ( pattern , flags )",
         "status": "Supported with Limitations",
@@ -633,6 +648,32 @@
         "notes": "RegExp.escape is a non-constructible static function with the specified configurable, non-enumerable, writable descriptor. It requires a primitive string and escapes leading ASCII letters/digits, syntax characters and solidus, controls, whitespace/line terminators, and lone surrogates while preserving other Unicode code points. Additional Test262 coverage exercises input coercion, leading-character escaping, punctuation, controls, whitespace, and Unicode code points.",
         "test262Suites": [
           "built_ins.RegExp.escape"
+        ]
+      },
+      {
+        "clause": "22.2.5.2",
+        "feature": "RegExp.prototype",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/ExecutionTests.cs"
+        ],
+        "notes": "RegExp.prototype is exposed as an ordinary object with the required non-writable, non-enumerable, non-configurable constructor prototype property. It remains incomplete for the full RegExp exotic-object surface.",
+        "test262Suites": [
+          "built_ins.RegExp.prototype"
+        ]
+      },
+      {
+        "clause": "22.2.6.1",
+        "feature": "RegExp.prototype.constructor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/ExecutionTests.cs"
+        ],
+        "notes": "The prototype constructor links to the RegExp constructor and constructs RegExp instances. The remaining RegExp prototype and exotic-object semantics are incomplete.",
+        "test262Suites": [
+          "built_ins.RegExp.prototype"
         ]
       },
       {
