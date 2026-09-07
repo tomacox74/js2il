@@ -22,6 +22,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   The CLR `Array.filter` helper now returns `object` to allow non-Array species
   results; recompile older artifacts that call this helper against the matching
   compiler/runtime.
+- test262/docs: verify 500 function-expression cases: 333 positive execution
+  and 167 parse-negative cases spanning ordinary, arrow, async, and async-arrow
+  function expressions. Coverage includes parameter destructuring/defaults,
+  iterator closing, lexical bindings, restricted properties, and grammar/early
+  errors. All 960 metadata-selected variants and all 500 native fixtures pass
+  without compiler, runtime, or harness changes.
 - test262/docs: verify 500 object-initializer cases: 458 positive execution
   and 42 parse-negative cases covering computed and accessor property names,
   method definitions, property-name normalization, and object-pattern

@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 12,947 | 12 | 10,553 | 23,512 | **55.07%** |
-| Language syntax and semantics | 6,616 | 46 | 16,981 | 23,643 | **27.98%** |
-| **Total** | 19,563 | 58 | 28,620 | 48,241 | **40.55%** |
+| Language syntax and semantics | 7,116 | 46 | 16,481 | 23,643 | **30.10%** |
+| **Total** | 20,063 | 58 | 28,120 | 48,241 | **41.59%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 2,380 | 10 | 8,648 | 11,038 | **21.56%** |
+| `expressions` | 2,880 | 10 | 8,148 | 11,038 | **26.09%** |
 | `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
 | `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
 | `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
@@ -64,11 +64,11 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `addition` | 10 | 0 | 38 | 48 | **20.83%** |
 | `array` | 14 | 0 | 38 | 52 | **26.92%** |
-| `arrow-function` | 61 | 0 | 282 | 343 | **17.78%** |
+| `arrow-function` | 334 | 0 | 9 | 343 | **97.38%** |
 | `assignment` | 485 | 0 | 0 | 485 | **100.00%** |
 | `assignmenttargettype` | 71 | 0 | 253 | 324 | **21.91%** |
-| `async-arrow-function` | 24 | 0 | 36 | 60 | **40.00%** |
-| `async-function` | 0 | 0 | 93 | 93 | **0.00%** |
+| `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
+| `async-function` | 37 | 0 | 56 | 93 | **39.78%** |
 | `async-generator` | 159 | 0 | 464 | 623 | **25.52%** |
 | `await` | 3 | 0 | 19 | 22 | **13.64%** |
 | `bitwise-and` | 8 | 0 | 22 | 30 | **26.67%** |
@@ -88,7 +88,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `dynamic-import` | 0 | 0 | 941 | 941 | **0.00%** |
 | `equals` | 16 | 0 | 31 | 47 | **34.04%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
-| `function` | 60 | 3 | 201 | 264 | **22.73%** |
+| `function` | 234 | 3 | 27 | 264 | **88.64%** |
 | `generators` | 31 | 0 | 259 | 290 | **10.69%** |
 | `greater-than-or-equal` | 5 | 0 | 38 | 43 | **11.63%** |
 | `greater-than` | 12 | 0 | 37 | 49 | **24.49%** |
