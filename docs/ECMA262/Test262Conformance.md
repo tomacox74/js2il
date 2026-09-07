@@ -19,8 +19,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 12,336 | 12 | 11,164 | 23,512 | **52.47%** |
-| Language syntax and semantics | 3,688 | 46 | 19,909 | 23,643 | **15.60%** |
-| **Total** | 16,024 | 58 | 32,217 | 48,241 | **33.22%** |
+| Language syntax and semantics | 4,116 | 46 | 19,481 | 23,643 | **17.41%** |
+| **Total** | 16,452 | 58 | 31,789 | 48,241 | **34.10%** |
 
 ## Language Areas
 
@@ -44,7 +44,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `import` | 10 | 0 | 117 | 127 | **7.87%** |
 | `keywords` | 0 | 0 | 25 | 25 | **0.00%** |
 | `line-terminators` | 0 | 0 | 41 | 41 | **0.00%** |
-| `literals` | 77 | 0 | 457 | 534 | **14.42%** |
+| `literals` | 505 | 0 | 29 | 534 | **94.57%** |
 | `module-code` | 34 | 0 | 560 | 594 | **5.72%** |
 | `punctuators` | 0 | 0 | 11 | 11 | **0.00%** |
 | `reserved-words` | 20 | 0 | 7 | 27 | **74.07%** |

@@ -4,7 +4,7 @@
 
 [Back to Section12](Section12.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T06:17:38Z
+> Last generated (UTC): 2026-09-07T05:43:03Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,6 +34,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 12.9 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar-literals))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Literal lexical syntax and early errors | Supported with Limitations | `tests/Jroc.Test262.Tests/language/literals/**/LiteralsConformanceBatchExecutionTests.cs` |  | Four hundred twenty-eight upstream test262 cases cover numeric, BigInt, string, regular expression, and template literal lexical syntax and early errors. Remaining cases primarily require unsupported regular-expression Unicode and set notation behavior. |
 
 ### 12.9.3 ([tc39.es](https://tc39.es/ecma262/#sec-literals-numeric-literals))
 
