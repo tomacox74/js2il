@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 12,907 | 12 | 10,593 | 23,512 | **54.89%** |
-| Language syntax and semantics | 6,116 | 46 | 17,481 | 23,643 | **25.87%** |
-| **Total** | 19,023 | 58 | 29,160 | 48,241 | **39.43%** |
+| Language syntax and semantics | 6,616 | 46 | 16,981 | 23,643 | **27.98%** |
+| **Total** | 19,523 | 58 | 28,660 | 48,241 | **40.47%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 1,880 | 10 | 9,148 | 11,038 | **17.03%** |
+| `expressions` | 2,380 | 10 | 8,648 | 11,038 | **21.56%** |
 | `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
 | `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
 | `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
@@ -108,7 +108,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `multiplication` | 4 | 0 | 36 | 40 | **10.00%** |
 | `new.target` | 0 | 0 | 14 | 14 | **0.00%** |
 | `new` | 0 | 0 | 59 | 59 | **0.00%** |
-| `object` | 41 | 6 | 1,123 | 1,170 | **3.50%** |
+| `object` | 541 | 6 | 623 | 1,170 | **46.24%** |
 | `optional-chaining` | 6 | 0 | 32 | 38 | **15.79%** |
 | `postfix-decrement` | 2 | 0 | 35 | 37 | **5.41%** |
 | `postfix-increment` | 2 | 0 | 36 | 38 | **5.26%** |
