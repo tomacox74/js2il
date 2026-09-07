@@ -90,6 +90,9 @@ Refresh it independently of execution with `export --refresh-registrations`.
 After these files are pushed, manually run **Test262 artifact catalog** in
 Actions (or `gh workflow run test262-catalog.yml --ref <branch>`). The workflow
 also runs weekly on the default branch. It never runs on pull requests.
+Changes to the catalog tooling on `master` or `test262/artifact-catalog` also
+trigger a bounded run, allowing initial artifact publication before the workflow
+is merged and becomes available for manual dispatch.
 
 - Four deterministic SHA-256 path shards, each with an independent database.
 - Default maximum 100 new variants / 600 seconds **per shard**; dispatch inputs
