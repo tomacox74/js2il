@@ -241,12 +241,14 @@
         "testScripts": [
           "tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js",
-          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringOctalLiteral.cs"
         ],
         "test262Paths": [
-          "test/built-ins/Number/string-binary-literal.js"
+          "test/built-ins/Number/string-binary-literal.js",
+          "test/built-ins/Number/string-octal-literal.js"
         ],
-        "notes": "Supports common primitive conversions including trimmed decimal/hex strings, unsigned binary strings with 0b/0B prefixes, booleans, null, and undefined. Binary strings use exact integer accumulation and correctly rounded binary64 conversion; empty or malformed binary payloads produce NaN. Full StringNumericLiteral grammar parity, including octal-string conversion, remains limited."
+        "notes": "Supports common primitive conversions including trimmed decimal/hex strings, unsigned binary strings with 0b/0B prefixes, unsigned octal strings with 0o/0O prefixes, booleans, null, and undefined. Binary and octal strings use exact integer accumulation and correctly rounded binary64 conversion; empty or malformed payloads produce NaN. Full StringNumericLiteral grammar parity remains limited."
       },
       {
         "clause": "7.1.5",
@@ -298,9 +300,15 @@
         "specUrl": "https://tc39.es/ecma262/#sec-touint16",
         "testScripts": [
           "tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js",
-          "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/fromCharCode/ExecutionTests.cs"
         ],
-        "notes": "Applies ToUint16-style truncation/masking in String.fromCharCode and the covered DataView integer-write paths."
+        "test262Paths": [
+          "test/built-ins/String/fromCharCode/S9.7_A2.1.js",
+          "test/built-ins/String/fromCharCode/touint16-tonumber-throws-bigint.js",
+          "test/built-ins/String/fromCharCode/touint16-tonumber-throws-valueof.js"
+        ],
+        "notes": "String.fromCharCode and the covered DataView integer-write paths share ToUint16 conversion. Numeric values truncate and wrap modulo 65536 without Int32 narrowing; NaN, infinities, and signed zero become zero. ToNumber abrupt completions propagate, including BigInt, Symbol, and object-conversion errors."
       },
       {
         "clause": "7.1.10",

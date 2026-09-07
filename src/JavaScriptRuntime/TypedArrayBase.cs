@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
-    public abstract class TypedArrayBase : JsObject, IExoticJsObject
+    public abstract partial class TypedArrayBase : JsObject, IExoticJsObject
     {
         private ArrayBuffer _buffer = new ArrayBuffer();
         private int _byteOffset;

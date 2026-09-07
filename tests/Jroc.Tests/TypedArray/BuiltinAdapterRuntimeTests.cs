@@ -113,6 +113,98 @@ public sealed class BuiltinAdapterRuntimeTests
     }
 
     [Fact]
+    public void TypedArrayIntrinsicInitializationPreservesRealmIsolationAndIdentity()
+    {
+        var firstServices = RuntimeServices.BuildServiceProvider();
+        var secondServices = RuntimeServices.BuildServiceProvider();
+        var firstContext = RuntimeExecutionContext.GetOrCreate(firstServices);
+        var secondContext = RuntimeExecutionContext.GetOrCreate(secondServices);
+
+        object[] CaptureSurface()
+        {
+            var global = GlobalThis.globalThis;
+            var prototype = JavaScriptRuntime.RuntimeIntrinsics.Current.TypedArrayPrototype;
+            var constructor = ObjectRuntime.GetItem(prototype, "constructor")!;
+            var values = ObjectRuntime.GetItem(prototype, "values")!;
+            Assert.Same(prototype, ObjectRuntime.GetItem(constructor, "prototype"));
+            Assert.Same(values, ObjectRuntime.GetItem(prototype, Symbol.iterator));
+
+            var surface = new System.Collections.Generic.List<object>
+            {
+                prototype,
+                constructor,
+                values,
+                ObjectRuntime.GetItem(constructor, "from")!,
+                ObjectRuntime.GetItem(constructor, "of")!,
+                GetAccessorGetter(prototype, "length")
+            };
+            foreach (var name in new[]
+            {
+                "Float64Array", "Float32Array", "Int32Array", "Int16Array", "Int8Array",
+                "Uint32Array", "Uint16Array", "Uint8Array", "Uint8ClampedArray",
+                "BigInt64Array", "BigUint64Array"
+            })
+            {
+                var concreteConstructor = ObjectRuntime.GetItem(global, name)!;
+                var concretePrototype = ObjectRuntime.GetItem(concreteConstructor, "prototype")!;
+                Assert.Same(constructor, PrototypeChain.GetPrototypeOrNull(concreteConstructor));
+                Assert.Same(prototype, PrototypeChain.GetPrototypeOrNull(concretePrototype));
+                Assert.Same(concreteConstructor, ObjectRuntime.GetItem(concretePrototype, "constructor"));
+                surface.Add(concreteConstructor);
+                surface.Add(concretePrototype);
+            }
+
+            surface.Add(ObjectRuntime.GetItem(GlobalThis.Uint8Array, "fromHex")!);
+            surface.Add(ObjectRuntime.GetItem(JavaScriptRuntime.Uint8Array.Prototype, "toHex")!);
+            return surface.ToArray();
+        }
+
+        try
+        {
+            object[] firstSurface;
+            using (firstContext.EnterAsRoot())
+            {
+                firstSurface = CaptureSurface();
+                ObjectRuntime.SetProperty(firstSurface[0], "realmMutation", "first");
+                ObjectRuntime.SetProperty(firstSurface[2], "realmMutation", "first");
+                ObjectRuntime.SetProperty(JavaScriptRuntime.Uint8Array.Prototype, "realmMutation", "first");
+            }
+
+            using (secondContext.EnterAsRoot())
+            {
+                var secondSurface = CaptureSurface();
+                Assert.Equal(firstSurface.Length, secondSurface.Length);
+                for (var i = 0; i < firstSurface.Length; i++)
+                {
+                    Assert.NotSame(firstSurface[i], secondSurface[i]);
+                }
+
+                Assert.Null(ObjectRuntime.GetItem(secondSurface[0], "realmMutation"));
+                Assert.Null(ObjectRuntime.GetItem(secondSurface[2], "realmMutation"));
+                Assert.Null(ObjectRuntime.GetItem(JavaScriptRuntime.Uint8Array.Prototype, "realmMutation"));
+            }
+
+            using (firstContext.EnterAsRoot())
+            {
+                var reenteredSurface = CaptureSurface();
+                for (var i = 0; i < firstSurface.Length; i++)
+                {
+                    Assert.Same(firstSurface[i], reenteredSurface[i]);
+                }
+
+                Assert.Equal("first", ObjectRuntime.GetItem(firstSurface[0], "realmMutation"));
+                Assert.Equal("first", ObjectRuntime.GetItem(firstSurface[2], "realmMutation"));
+                Assert.Equal("first", ObjectRuntime.GetItem(JavaScriptRuntime.Uint8Array.Prototype, "realmMutation"));
+            }
+        }
+        finally
+        {
+            firstServices.OwningRealm!.Agent.Cluster.Dispose();
+            secondServices.OwningRealm!.Agent.Cluster.Dispose();
+        }
+    }
+
+    [Fact]
     public void ArrayBufferAccessorsUseReceiverAwareAdapters()
     {
         WithRealm(() =>

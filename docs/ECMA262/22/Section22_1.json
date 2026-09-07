@@ -381,9 +381,15 @@
         "specUrl": "https://tc39.es/ecma262/#sec-string.fromcharcode",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_FromCharCode_Basic.js",
-          "tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/fromCharCode/ExecutionTests.cs"
         ],
-        "notes": "Implemented via JavaScriptRuntime.String.FromCharCode and exposed on GlobalThis.String.fromCharCode. Supports ToNumber coercion and ToUint16 code-unit truncation for single and variadic arguments. Does not aim to match all edge-case observable behaviors (e.g., exotic receivers, property attributes) beyond common library usage."
+        "test262Paths": [
+          "test/built-ins/String/fromCharCode/S9.7_A2.1.js",
+          "test/built-ins/String/fromCharCode/touint16-tonumber-throws-bigint.js",
+          "test/built-ins/String/fromCharCode/touint16-tonumber-throws-valueof.js"
+        ],
+        "notes": "Direct and receiver-aware calls use the same ToUint16 conversion for single and variadic arguments. Finite numbers truncate and wrap modulo 65536, including values outside Int32; NaN, infinities, and signed zero produce the zero code unit. ToNumber errors propagate unchanged and stop subsequent argument conversion. Broader metadata and exotic-object coverage remains limited."
       },
       {
         "clause": "22.1.2.2",

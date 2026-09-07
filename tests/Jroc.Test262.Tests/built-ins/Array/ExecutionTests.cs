@@ -6,6 +6,10 @@ public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Array") { }
 
+    [Fact(DisplayName = "name.js")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
     [Fact(DisplayName = "15.4.5-1")]
     public Task _15_4_5_1()
         => ExecutionTestFromFile("15.4.5-1");

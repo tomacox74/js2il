@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T18:57:53Z
+> Last generated (UTC): 2026-09-07T20:35:02Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,7 +22,7 @@
 | 23.1.2.3 | Array.isArray ( arg ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.isarray) |
 | 23.1.2.4 | Array.of ( ... items ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.of) |
 | 23.1.2.5 | Array.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype) |
-| 23.1.2.6 | get Array [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-array-%symbol.species%) |
+| 23.1.2.6 | get Array [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-array-%symbol.species%) |
 | 23.1.3 | Properties of the Array Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object) |
 | 23.1.3.1 | Array.prototype.at ( index ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.at) |
 | 23.1.3.2 | Array.prototype.concat ( ... items ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.concat) |
@@ -93,7 +93,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array constructor/call forms (empty, length, variadic) | Supported with Limitations | [`Array_Callable_Construct.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Callable_Construct.js)<br>[`Array_New_Empty.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_Empty.js)<br>[`Array_New_Length.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Array_New_MultipleArgs.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js) |  | Implements Array() and new Array(...) including numeric length mode; range and integer checks are implemented with runtime-backed limits. |
+| Array constructor/call forms (empty, length, variadic) | Supported with Limitations | [`Array_Callable_Construct.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Callable_Construct.js)<br>[`Array_New_Empty.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_Empty.js)<br>[`Array_New_Length.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Array_New_MultipleArgs.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/JavaScript/name.js)<br>[`S15.4.2.2_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/length/JavaScript/S15.4.2.2_A2.1_T1.js) | `test/built-ins/Array/name.js`<br>`test/built-ins/Array/length/S15.4.2.2_A2.1_T1.js` | Implements Array() and new Array(...) including numeric lengths from 0 through 2^32 - 1, rejecting invalid lengths with RangeError. Large sparse lengths use virtual storage without allocating every element and are preserved by derived-array initialization. The constructor has the standard name property and descriptor. Broader exotic and cross-realm construction behavior remains limited. |
 
 ### 23.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-array.from))
 
@@ -118,6 +118,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array.of | Supported with Limitations | [`Array_Static_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`creates-a-new-array-from-arguments.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/of/ExecutionTests.Batch.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/of/ExecutionTests.Constructor.cs` | `test/built-ins/Array/of/creates-a-new-array-from-arguments.js`<br>`test/built-ins/Array/of/construct-this-with-the-number-of-arguments.js`<br>`test/built-ins/Array/of/does-not-use-prototype-properties.js`<br>`test/built-ins/Array/of/does-not-use-set-for-indices.js`<br>`test/built-ins/Array/of/length.js`<br>`test/built-ins/Array/of/name.js`<br>`test/built-ins/Array/of/of.js`<br>`test/built-ins/Array/of/return-a-custom-instance.js`<br>`test/built-ins/Array/of/return-abrupt-from-contructor.js`<br>`test/built-ins/Array/of/return-abrupt-from-setting-length.js`<br>`test/built-ins/Array/of/sets-length.js` | Creates arrays from ordinary argument lists and exposes a receiver-aware built-in with standard name, length, and property descriptors. Custom constructors receive the item count; elements are defined as writable, enumerable, configurable own data properties without invoking inherited setters, followed by a throwing length assignment. Verified coverage includes custom instances, replacement of configurable non-writable indexed properties, and propagation of constructor and length-setter errors. Cross-realm behavior remains limited. |
+
+### 23.1.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-get-array-%symbol.species%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| get Array [ %Symbol.species% ] | Supported | `tests/Jroc.Test262.Tests/built-ins/Array/Symbol.species/ExecutionTests.cs` | `test/built-ins/Array/Symbol.species/length.js`<br>`test/built-ins/Array/Symbol.species/return-value.js`<br>`test/built-ins/Array/Symbol.species/symbol-species-name.js`<br>`test/built-ins/Array/Symbol.species/symbol-species.js` | The configurable, non-enumerable accessor has no setter and returns its receiver unchanged. The getter has the standard name and zero length with non-writable, non-enumerable, configurable descriptors. |
 
 ### 23.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.at))
 
