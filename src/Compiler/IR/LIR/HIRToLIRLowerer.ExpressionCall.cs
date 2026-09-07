@@ -934,7 +934,8 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Case 2.0: super.m(...) call in a derived class method.
-        if (_classRegistry != null
+        if (!hasSpreadArgs
+            && _classRegistry != null
             && calleePropAccess.Object is HIRSuperExpression
             && TryGetEnclosingBaseClassRegistryName(out var baseClass)
             && baseClass != null
@@ -989,32 +990,55 @@ public sealed partial class HIRToLIRLowerer
 
         if (calleePropAccess.Object is HIRSuperExpression)
         {
-            var arguments = new List<TempVariable>();
-            foreach (var argument in callExpr.Arguments)
-            {
-                if (!TryLowerExpression(argument, out var argumentTemp))
-                {
-                    return false;
-                }
-                arguments.Add(EnsureObject(argumentTemp));
-            }
-
-            var argumentsArray = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRBuildArray(arguments, argumentsArray));
-            DefineTempStorage(
-                argumentsArray,
-                new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
             var propertyName = CreateTempVariable();
             _methodBodyIR.Instructions.Add(
                 new LIRConstString(calleePropAccess.PropertyName, propertyName));
             DefineTempStorage(
                 propertyName,
                 new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var callee = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
                 IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.CallSuperMember),
-                Arguments: [propertyName, argumentsArray],
-                Result: resultTempVar));
+                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.GetSuperProperty),
+                Arguments: [propertyName],
+                Result: callee));
+            DefineTempStorage(
+                callee,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            var receiver = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
+                Array.Empty<TempVariable>(),
+                receiver,
+                Array.Empty<Type>()));
+            DefineTempStorage(
+                receiver,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            if (!TryLowerCallArgumentsToArgsArray(
+                    callExpr.Arguments,
+                    out var argumentsArray))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.CallWithThis),
+                new[]
+                {
+                    EnsureObject(callee),
+                    EnsureObject(receiver),
+                    argumentsArray
+                },
+                resultTempVar,
+                new[]
+                {
+                    typeof(object),
+                    typeof(object),
+                    typeof(object[])
+                }));
             DefineTempStorage(
                 resultTempVar,
                 new ValueStorage(ValueStorageKind.Reference, typeof(object)));

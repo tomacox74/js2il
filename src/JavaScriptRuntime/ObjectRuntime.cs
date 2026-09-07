@@ -192,6 +192,14 @@ namespace JavaScriptRuntime
             }
             var prototype = PrototypeChain.GetPrototypeOrNull(homeObject)
                 ?? throw new TypeError("Super object has no prototype");
+            var receiver = RuntimeServices.GetCurrentLexicalSuperPropertyReceiver();
+
+            if (TryGetOwnPropertyValue(prototype, propertyName, receiver!, out var value)
+                || TryGetInheritedPropertyValue(prototype, propertyName, receiver!, out value))
+            {
+                return value;
+            }
+
             return GetProperty(prototype, propertyName);
         }
 

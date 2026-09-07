@@ -224,6 +224,7 @@ namespace Jroc.Tests.Classes
         [Fact] public Task Classes_Inheritance_SuperConstructor_Args() { var testName = nameof(Classes_Inheritance_SuperConstructor_Args); return ExecutionTest(testName); }
         [Fact] public Task Classes_Inheritance_ThisBeforeSuper_Throws() { var testName = nameof(Classes_Inheritance_ThisBeforeSuper_Throws); return ExecutionTest(testName); }
         [Fact] public Task Classes_Inheritance_SuperMethodCall() { var testName = nameof(Classes_Inheritance_SuperMethodCall); return ExecutionTest(testName); }
+        [Fact] public Task Classes_Inheritance_SuperMethodCall_SpreadArguments() { var testName = nameof(Classes_Inheritance_SuperMethodCall_SpreadArguments); return ExecutionTest(testName); }
 
         // Additional coverage: captured scopes and nested derived class
         [Fact] public Task Classes_Inheritance_SuperCapturedScopeVar() { var testName = nameof(Classes_Inheritance_SuperCapturedScopeVar); return ExecutionTest(testName); }

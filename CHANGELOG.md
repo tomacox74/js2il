@@ -14,6 +14,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   behavior across numeric and BigInt families. Resizable-buffer, cross-realm,
   proxy, and four native typed-array helper-dependent conversion cases remain
   deferred.
+- test262/compiler/docs: port the seven Set subclass-receiver cases for the
+  ES2025 algebra methods, bringing pinned Set coverage to 382 of 383 cases.
+  Lower spread arguments in `super.method(...args)` calls through the shared
+  argument-array path for both intrinsic and user-defined base classes.
 - test262/docs: port 159 additional TypedArray cases from a deterministic
   500-fixture follow-up intake, covering prototype lookup, length, iterator,
   join, map, and reduce behavior across numeric and BigInt families.

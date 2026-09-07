@@ -33,4 +33,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "subclass-receiver-methods")]
+    public Task subclass_receiver_methods()
+        => ExecutionTestFromFile("subclass-receiver-methods");
 }
