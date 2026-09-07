@@ -14,6 +14,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   The CLR `Array.filter` helper now returns `object` to allow non-Array species
   results; recompile older artifacts that call this helper against the matching
   compiler/runtime.
+- test262/docs: verify 500 object-initializer cases: 458 positive execution
+  and 42 parse-negative cases covering computed and accessor property names,
+  method definitions, property-name normalization, and object-pattern
+  destructuring/default semantics. All metadata-selected variants and native
+  fixtures pass without compiler, runtime, or harness changes.
 - test262/runtime/docs: port 10 failing TypedArray constructor `from`/`of` cases.
   Validate constructor-result brand, bounds, and minimum length; reject null
   mappers, preserve iterable and array-like evaluation order, and use the target's
