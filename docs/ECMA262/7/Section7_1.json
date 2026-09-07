@@ -240,9 +240,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-tonumber",
         "testScripts": [
           "tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs"
         ],
-        "notes": "Supports common primitive conversions including trimmed decimal/hex strings, booleans, null, and undefined; does not implement full StringNumericLiteral grammar parity."
+        "test262Paths": [
+          "test/built-ins/Number/string-binary-literal.js"
+        ],
+        "notes": "Supports common primitive conversions including trimmed decimal/hex strings, unsigned binary strings with 0b/0B prefixes, booleans, null, and undefined. Binary strings use exact integer accumulation and correctly rounded binary64 conversion; empty or malformed binary payloads produce NaN. Full StringNumericLiteral grammar parity, including octal-string conversion, remains limited."
       },
       {
         "clause": "7.1.5",

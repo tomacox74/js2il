@@ -281,11 +281,23 @@ namespace JavaScriptRuntime
         internal static string ToExponentialString(object? value, object? fractionDigitsArgument)
         {
             var number = ThisNumberValue(value);
+            var digits = ToIntegerDigitsArgument(fractionDigitsArgument);
             if (double.IsNaN(number)) return "NaN";
             if (double.IsPositiveInfinity(number)) return "Infinity";
             if (double.IsNegativeInfinity(number)) return "-Infinity";
 
-            var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toExponential");
+            var fractionDigits = ValidateDigitsArgument(digits, minimum: 0, maximum: 100, "toExponential");
+            if (fractionDigitsArgument is null)
+            {
+                return ToShortestExponentialString(number);
+            }
+
+            // A negative zero receiver has no sign in Number formatting.
+            if (number == 0d)
+            {
+                number = 0d;
+            }
+
             var formattedNumber = number;
             var absolute = System.Math.Abs(number);
             if (absolute != 0d)
@@ -318,7 +330,7 @@ namespace JavaScriptRuntime
             var number = ThisNumberValue(value);
             // ToIntegerOrInfinity(fractionDigits) must run (and may throw) before the
             // magnitude-based short-circuit below, matching Number.prototype.toFixed's step order.
-            var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toFixed");
+            var fractionDigits = ValidateDigitsArgument(ToIntegerDigitsArgument(fractionDigitsArgument), minimum: 0, maximum: 100, "toFixed");
             if (double.IsNaN(number)) return "NaN";
             if (double.IsPositiveInfinity(number)) return "Infinity";
             if (double.IsNegativeInfinity(number)) return "-Infinity";
@@ -347,12 +359,13 @@ namespace JavaScriptRuntime
                 return DotNet2JSConversions.ToString(number);
             }
 
+            var digitsArgument = ToIntegerDigitsArgument(precisionArgument);
             if (double.IsNaN(number)) return "NaN";
             if (double.IsPositiveInfinity(number)) return "Infinity";
             if (double.IsNegativeInfinity(number)) return "-Infinity";
 
-            var precision = ToDigitsArgument(precisionArgument, defaultValue: 0, minimum: 1, maximum: 100, "toPrecision");
-            var negative = number < 0 || double.IsNegative(number);
+            var precision = ValidateDigitsArgument(digitsArgument, minimum: 1, maximum: 100, "toPrecision");
+            var negative = number < 0;
             var absolute = System.Math.Abs(number);
             var exponentForm = NormalizeExponent(absolute.ToString($"e{precision - 1}", CultureInfo.InvariantCulture), trimMantissaTrailingZeros: false);
             var exponentIndex = exponentForm.IndexOf('e');
@@ -383,26 +396,48 @@ namespace JavaScriptRuntime
             return negative ? "-" + formatted : formatted;
         }
 
-        private static int ToDigitsArgument(object? argument, int defaultValue, int minimum, int maximum, string methodName)
+        private static double ToIntegerDigitsArgument(object? argument)
         {
-            if (argument is null)
-            {
-                return defaultValue;
-            }
-
             var number = TypeUtilities.ToNumber(argument);
-            if (double.IsNaN(number))
-            {
-                return 0;
-            }
+            return double.IsNaN(number) || number == 0d ? 0d : System.Math.Truncate(number);
+        }
 
-            var integer = System.Math.Truncate(number);
-            if (double.IsInfinity(integer) || integer < minimum || integer > maximum)
+        private static int ValidateDigitsArgument(double integer, int minimum, int maximum, string methodName)
+        {
+            if (integer < minimum || integer > maximum)
             {
                 throw new RangeError($"Number.prototype.{methodName} digits argument must be between {minimum} and {maximum}");
             }
 
             return (int)integer;
+        }
+
+        private static string ToShortestExponentialString(double number)
+        {
+            if (number == 0d)
+            {
+                return "0e+0";
+            }
+
+            var text = System.Math.Abs(number).ToString("R", CultureInfo.InvariantCulture);
+            var exponentIndex = text.IndexOf('E');
+            var exponent = 0;
+            if (exponentIndex >= 0)
+            {
+                exponent = int.Parse(text[(exponentIndex + 1)..], CultureInfo.InvariantCulture);
+                text = text[..exponentIndex];
+            }
+
+            var decimalIndex = text.IndexOf('.');
+            var decimalPosition = decimalIndex >= 0 ? decimalIndex : text.Length;
+            var digits = text.Replace(".", string.Empty, StringComparison.Ordinal);
+            var significantDigits = digits.TrimStart('0');
+            exponent += decimalPosition - (digits.Length - significantDigits.Length) - 1;
+            significantDigits = significantDigits.TrimEnd('0');
+            var mantissa = significantDigits.Length == 1
+                ? significantDigits
+                : significantDigits[..1] + "." + significantDigits[1..];
+            return (number < 0 ? "-" : string.Empty) + mantissa + "e" + FormatExponent(exponent);
         }
 
         private static string NormalizeExponent(string value, bool trimMantissaTrailingZeros)
