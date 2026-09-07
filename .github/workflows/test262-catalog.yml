@@ -138,7 +138,7 @@ jobs:
       - name: Materialize full pinned checkout
         run: |
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
-          git -C "$ROOT" sparse-checkout add --no-cone /test/
+          git -C "$ROOT" sparse-checkout add /test/
       - name: Resume deterministic shard
         env:
           LIMIT: ${{ inputs.limit || 100 }}

@@ -125,7 +125,7 @@ def initialize(db, args):
         managed = REPO / "artifacts/test262/cache" / pin["upstream"]["commit"]
         if root != managed:
             raise ValueError("--expand only modifies the managed pinned cache")
-        command("git", "-C", str(root), "sparse-checkout", "add", "--no-cone", "/test/")
+        command("git", "-C", str(root), "sparse-checkout", "add", "/test/")
     # Reject tracked upstream edits; actual source and harness hashes also enter provenance.
     if command("git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"):
         raise ValueError("Pinned checkout has tracked modifications")
