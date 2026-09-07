@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 20 failing Array every/some and TypedArray
+  find/findIndex cases. All Array predicate direct-call overloads now share the
+  receiver-aware algorithms, preserving thisArg, sparse/inherited indices,
+  captured ToLength bounds, short-circuiting, and empty-array callback validation.
+  TypedArray find/findIndex expose standard intrinsic metadata and receiver-aware
+  adapters with initial buffer validation and current-length capture.
+  Public CLR signatures remain unchanged.
 - test262/runtime/docs: port 20 failing Array map and TypedArray every/some cases.
   Array map direct and receiver-aware calls now share species-aware mapping,
   preserve thisArg and sparse indices, and create own data properties.

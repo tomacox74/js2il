@@ -30,6 +30,8 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction2 _typedArrayFilterValue = TypedArrayPrototypeFilter;
         private static readonly BuiltinFunction2 _typedArrayEveryValue = TypedArrayPrototypeEvery;
         private static readonly BuiltinFunction2 _typedArraySomeValue = TypedArrayPrototypeSome;
+        private static readonly BuiltinFunction2 _typedArrayFindValue = TypedArrayPrototypeFind;
+        private static readonly BuiltinFunction2 _typedArrayFindIndexValue = TypedArrayPrototypeFindIndex;
         private static readonly BuiltinFunction3 _typedArrayFromValue = TypedArrayFrom;
         private static readonly BuiltinFunctionVariadic _typedArrayOfValue = TypedArrayOf;
 
@@ -107,6 +109,8 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "filter", _typedArrayFilterValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "every", _typedArrayEveryValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "some", _typedArraySomeValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "find", _typedArrayFindValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "findIndex", _typedArrayFindIndexValue, 1d);
             PropertyDescriptorStore.DefineOrUpdate(
                 prototype,
                 global::JavaScriptRuntime.Symbol.iterator.DebugId,
@@ -310,6 +314,26 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.some(new object?[] { callback, thisArg });
+        }
+
+        private static object? TypedArrayPrototypeFind(object? thisArgument, object? callback, object? thisArg)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.find called on incompatible receiver");
+            }
+
+            return typedArray.find(new object?[] { callback, thisArg });
+        }
+
+        private static object? TypedArrayPrototypeFindIndex(object? thisArgument, object? callback, object? thisArg)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.findIndex called on incompatible receiver");
+            }
+
+            return typedArray.findIndex(new object?[] { callback, thisArg });
         }
 
         private static object? TypedArrayFrom(object? thisArgument, object? source, object? mapFn, object? thisArg)

@@ -266,12 +266,13 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        public object? find(object[]? args)
+        public object? find(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "find");
             var thisArg = GetThisArg(args);
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var value = ReadElementObject(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.find", 3, value, (double)i, this, null);
@@ -284,12 +285,13 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        public double findIndex(object[]? args)
+        public double findIndex(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "findIndex");
             var thisArg = GetThisArg(args);
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findIndex", 3, ReadElementObject(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))

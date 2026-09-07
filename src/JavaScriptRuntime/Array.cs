@@ -1015,15 +1015,15 @@ namespace JavaScriptRuntime
             return -1d;
         }
 
-        private static object? PrototypeEvery(object? thisArgument, object? callback, object? thisArg)
+        private static object PrototypeEvery(object? thisArgument, object? callback, object? thisArg)
         {
             var receiver = RequireArrayLikeReceiver(thisArgument, "every");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
-            int length = ToArrayLikeLength(iterationReceiver);
+            var length = ToArrayLikeLengthAsDouble(iterationReceiver);
             callback = RequireCallback(callback, "every");
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0d; i < length; i++)
             {
                 if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
@@ -1070,15 +1070,15 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private static object? PrototypeSome(object? thisArgument, object? callback, object? thisArg)
+        private static object PrototypeSome(object? thisArgument, object? callback, object? thisArg)
         {
             var receiver = RequireArrayLikeReceiver(thisArgument, "some");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
-            int length = ToArrayLikeLength(iterationReceiver);
+            var length = ToArrayLikeLengthAsDouble(iterationReceiver);
             callback = RequireCallback(callback, "some");
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0d; i < length; i++)
             {
                 if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
@@ -4278,17 +4278,8 @@ namespace JavaScriptRuntime
         public bool every(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = 0; i < this.Count; i++)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "every");
-                var ok = invoke(this[i], (double)i, this, null);
-                if (!Operators.IsTruthy(ok))
-                {
-                    return false;
-                }
-            }
-            return true;
+            var thisArg = (args != null && args.Length > 1) ? args[1] : null;
+            return (bool)PrototypeEvery(this, cb, thisArg);
         }
 
         /// <summary>
@@ -4297,17 +4288,8 @@ namespace JavaScriptRuntime
         public bool some(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = 0; i < this.Count; i++)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "some");
-                var ok = invoke(this[i], (double)i, this, null);
-                if (Operators.IsTruthy(ok))
-                {
-                    return true;
-                }
-            }
-            return false;
+            var thisArg = (args != null && args.Length > 1) ? args[1] : null;
+            return (bool)PrototypeSome(this, cb, thisArg);
         }
 
         /// <summary>
@@ -4392,7 +4374,6 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// JavaScript Array.some(callback[, thisArg])
-        /// Minimal implementation: invokes the callback with (value, index, array) and returns true if any call is truthy.
         /// </summary>
         public bool some(object? callback)
         {
@@ -4401,24 +4382,7 @@ namespace JavaScriptRuntime
 
         public bool some(object? callback, object? thisArg)
         {
-            // Note: thisArg is currently ignored in this runtime/compiler model.
-            if (callback == null)
-            {
-                throw new TypeError("Array.prototype.some requires a callback function");
-            }
-
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = 0; i < this.Count; i++)
-            {
-                invoke ??= CreateArrayCallbackInvoker(callback, 3, "some");
-                var result = invoke(this[i], (double)i, this, null);
-                if (Operators.IsTruthy(result))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (bool)PrototypeSome(this, callback, thisArg);
         }
 
         /// <summary>

@@ -635,7 +635,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
         ],
-        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. map(), filter(), every(), and some() expose receiver-aware intrinsic methods, validate initial buffer state, and capture the current length before callback validation. Custom species and detach/resize behavior during callbacks remain incomplete."
+        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. map(), filter(), every(), some(), find(), and findIndex() expose receiver-aware intrinsic methods, validate initial buffer state, and capture the current length before callback validation. Custom species and detach/resize behavior during callbacks remain incomplete."
       },
       {
         "clause": "23.2.3.24",
@@ -927,6 +927,40 @@
           "test/built-ins/TypedArray/prototype/some/prop-desc.js"
         ],
         "notes": "The shared prototype owns a writable, configurable, non-enumerable some method with name some and length 1. Its receiver-aware adapter rejects non-TypedArray receivers and preserves thisArg and callback arguments. Direct and adapter calls validate initial attachment/bounds, capture the current element length, and stop on the first truthy callback result. Detach/shrink behavior during callbacks and broader cross-realm or exotic behavior remain incomplete."
+      },
+      {
+        "clause": "23.2.3.11",
+        "feature": "%TypedArray%.prototype.find intrinsic surface",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.find",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/find/ExecutionTests.IntrinsicSurface.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/find/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/find/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/find/length.js",
+          "test/built-ins/TypedArray/prototype/find/name.js",
+          "test/built-ins/TypedArray/prototype/find/prop-desc.js"
+        ],
+        "notes": "The shared prototype owns a writable, configurable, non-enumerable find method with name find and length 1. Its receiver-aware adapter rejects non-TypedArray receivers and preserves thisArg and callback arguments. Direct and adapter calls validate initial attachment/bounds, capture the current element length, and visit each initial index until a truthy predicate result. The captured matching value is returned, or undefined if no value matches. Detach/shrink behavior during callbacks and broader cross-realm or exotic behavior remain incomplete."
+      },
+      {
+        "clause": "23.2.3.12",
+        "feature": "%TypedArray%.prototype.findIndex intrinsic surface",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.findindex",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findIndex/ExecutionTests.IntrinsicSurface.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/findIndex/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/findIndex/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/findIndex/length.js",
+          "test/built-ins/TypedArray/prototype/findIndex/name.js",
+          "test/built-ins/TypedArray/prototype/findIndex/prop-desc.js"
+        ],
+        "notes": "The shared prototype owns a writable, configurable, non-enumerable findIndex method with name findIndex and length 1. Its receiver-aware adapter rejects non-TypedArray receivers and preserves thisArg and callback arguments. Direct and adapter calls validate initial attachment/bounds, capture the current element length, and visit each initial index until a truthy predicate result. The matching index is returned, or -1 if no value matches. Detach/shrink behavior during callbacks and broader cross-realm or exotic behavior remain incomplete."
       },
       {
         "clause": "23.2.3.36",
