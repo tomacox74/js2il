@@ -28,6 +28,8 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction0 _typedArrayValuesValue = TypedArrayPrototypeValues;
         private static readonly BuiltinFunction2 _typedArrayMapValue = TypedArrayPrototypeMap;
         private static readonly BuiltinFunction2 _typedArrayFilterValue = TypedArrayPrototypeFilter;
+        private static readonly BuiltinFunction2 _typedArrayEveryValue = TypedArrayPrototypeEvery;
+        private static readonly BuiltinFunction2 _typedArraySomeValue = TypedArrayPrototypeSome;
         private static readonly BuiltinFunction3 _typedArrayFromValue = TypedArrayFrom;
         private static readonly BuiltinFunctionVariadic _typedArrayOfValue = TypedArrayOf;
 
@@ -103,6 +105,8 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "values", _typedArrayValuesValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "map", _typedArrayMapValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "filter", _typedArrayFilterValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "every", _typedArrayEveryValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "some", _typedArraySomeValue, 1d);
             PropertyDescriptorStore.DefineOrUpdate(
                 prototype,
                 global::JavaScriptRuntime.Symbol.iterator.DebugId,
@@ -286,6 +290,26 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.filter(new object?[] { callback, thisArg });
+        }
+
+        private static object? TypedArrayPrototypeEvery(object? thisArgument, object? callback, object? thisArg)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.every called on incompatible receiver");
+            }
+
+            return typedArray.every(new object?[] { callback, thisArg });
+        }
+
+        private static object? TypedArrayPrototypeSome(object? thisArgument, object? callback, object? thisArg)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.some called on incompatible receiver");
+            }
+
+            return typedArray.some(new object?[] { callback, thisArg });
         }
 
         private static object? TypedArrayFrom(object? thisArgument, object? source, object? mapFn, object? thisArg)

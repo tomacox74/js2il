@@ -1223,19 +1223,16 @@ namespace JavaScriptRuntime
             return FindFromLast(receiver, callback, thisArg, returnIndex);
         }
 
-        private static object? PrototypeMap(object? thisArgument, object? callback, object? thisArg)
+        private static object PrototypeMap(object? thisArgument, object? callback, object? thisArg)
         {
             var receiver = RequireArrayLikeReceiver(thisArgument, "map");
             var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
             var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
-            int length = ToArrayLikeLength(iterationReceiver);
+            var length = ToArrayLikeLengthAsDouble(iterationReceiver);
             callback = RequireCallback(callback, "map");
-            var result = new Array
-            {
-                length = length
-            };
+            var result = ArraySpeciesCreate(receiver, length);
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0d; i < length; i++)
             {
                 if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
@@ -1243,7 +1240,8 @@ namespace JavaScriptRuntime
                 }
 
                 var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                result[i] = InvokeArrayCallback(callback, thisArg, "Array.prototype.map", 3, value, (double)i, callbackReceiver, null);
+                var mapped = InvokeArrayCallback(callback, thisArg, "Array.prototype.map", 3, value, (double)i, callbackReceiver, null);
+                CreateArrayLikeDataProperty(result, i, mapped);
             }
 
             return result;
@@ -4241,25 +4239,12 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// JavaScript Array.map(callback[, thisArg])
-        /// Minimal implementation: invokes the callback with (value, index, array) when supported and returns a new Array.
-        /// Supports runtime-owned built-in delegates and generated function objects.
         /// </summary>
-        public Array map(object[] args)
+        public object map(object[] args)
         {
-            var result = new Array(this.Count);
             var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-
-            for (int i = 0; i < this.Count; i++)
-            {
-                var value = this[i];
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "map");
-                object? mapped = invoke(value, (double)i, this, null);
-
-                result.Add(mapped);
-            }
-
-            return result;
+            var thisArg = (args != null && args.Length > 1) ? args[1] : null;
+            return PrototypeMap(this, cb, thisArg);
         }
 
         /// <summary>

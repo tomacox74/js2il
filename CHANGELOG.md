@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 20 failing Array map and TypedArray every/some cases.
+  Array map direct and receiver-aware calls now share species-aware mapping,
+  preserve thisArg and sparse indices, and create own data properties.
+  TypedArray every/some expose receiver-aware methods with standard metadata,
+  initial buffer validation, current-length capture, and short-circuit behavior.
+  The CLR `Array.map` helper now returns `object` to allow non-Array species
+  results; recompile older artifacts that call this helper against the matching
+  compiler/runtime.
 - test262/runtime/docs: port 20 failing Array and TypedArray cases. Array filter
   direct and receiver-aware calls now share species-aware filtering, preserve
   thisArg and sparse-array behavior, and define selected elements as own data
