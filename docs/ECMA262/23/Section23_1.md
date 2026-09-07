@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-02T01:06:50Z
+> Last generated (UTC): 2026-09-07T15:45:23Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -117,7 +117,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.of | Supported with Limitations | [`Array_Static_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`creates-a-new-array-from-arguments.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/of/ExecutionTests.Batch.cs` | `test/built-ins/Array/of/creates-a-new-array-from-arguments.js` | Creates arrays from ordinary argument lists with expected element ordering and propagates abrupt data-property creation. Custom-constructor, Proxy, cross-realm, metadata, and remaining abrupt-completion edge cases remain limited. |
+| Array.of | Supported with Limitations | [`Array_Static_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`creates-a-new-array-from-arguments.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js)<br>`tests/Jroc.Test262.Tests/built-ins/Array/of/ExecutionTests.Batch.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/of/ExecutionTests.Constructor.cs` | `test/built-ins/Array/of/creates-a-new-array-from-arguments.js`<br>`test/built-ins/Array/of/construct-this-with-the-number-of-arguments.js`<br>`test/built-ins/Array/of/does-not-use-prototype-properties.js`<br>`test/built-ins/Array/of/does-not-use-set-for-indices.js`<br>`test/built-ins/Array/of/length.js`<br>`test/built-ins/Array/of/name.js`<br>`test/built-ins/Array/of/of.js`<br>`test/built-ins/Array/of/return-a-custom-instance.js`<br>`test/built-ins/Array/of/return-abrupt-from-contructor.js`<br>`test/built-ins/Array/of/return-abrupt-from-setting-length.js`<br>`test/built-ins/Array/of/sets-length.js` | Creates arrays from ordinary argument lists and exposes a receiver-aware built-in with standard name, length, and property descriptors. Custom constructors receive the item count; elements are defined as writable, enumerable, configurable own data properties without invoking inherited setters, followed by a throwing length assignment. Verified coverage includes custom instances, replacement of configurable non-writable indexed properties, and propagation of constructor and length-setter errors. Cross-realm behavior remains limited. |
 
 ### 23.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.at))
 

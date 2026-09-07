@@ -4075,6 +4075,22 @@ namespace JavaScriptRuntime
             return args == null ? new Array() : new Array(args);
         }
 
+        internal static object Of(object? thisArgument, in JsCallArguments arguments)
+        {
+            var length = (double)arguments.Count;
+            var result = CallableOperations.IsConstructor(thisArgument)
+                ? CallableOperations.Construct1(thisArgument, thisArgument, length)!
+                : CreateDefaultArray(length);
+
+            for (var index = 0; index < arguments.Count; index++)
+            {
+                CreateArrayLikeDataProperty(result, index, arguments.GetArgument(index));
+            }
+
+            SetArrayLikeLength(result, length);
+            return result;
+        }
+
         /// <summary>
         /// JavaScript Array.length property
         /// </summary>

@@ -168,6 +168,7 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, bool> _arrayIsArrayValue = JavaScriptRuntime.Array.isArray;
         private static readonly BuiltinFunction3 _arrayFromValue = static (_, source, mapFn, thisArg) =>
             JavaScriptRuntime.Array.from(source, mapFn, thisArg);
+        private static readonly BuiltinFunctionVariadic _arrayOfValue = JavaScriptRuntime.Array.Of;
         private static readonly Func<object?, object?, double> _parseIntValue = parseInt;
         private static readonly Func<object?, double> _parseFloatValue = parseFloat;
         private static readonly Func<object?, bool> _isFiniteValue = isFinite;
@@ -608,6 +609,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _arrayFromValue
             });
+            DefineBuiltinFunctionProperty(_arrayConstructorValue, "of", _arrayOfValue, 0d);
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
             JavaScriptRuntime.Function.MarkConstructible(

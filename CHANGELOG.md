@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 failing `Array.of` cases. Expose the
+  receiver-aware built-in with standard name, length, and property descriptors;
+  honor custom constructors, define own indexed data properties, and propagate
+  constructor and length-setter errors.
 - test262/docs: port 428 language-literal cases from the complete remaining
   463-fixture literals intake, covering numeric, BigInt, string, regular
   expression, and template literal lexical syntax and early errors.
