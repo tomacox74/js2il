@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional class-expression syntax and early-error
+  cases, covering async/generator method parameters, destructuring, class
+  fields, private identifiers, constructors, and invalid `super` usage.
+  All 988 metadata-selected variants and all 500 native tests pass without
+  compiler, runtime, or harness changes.
 - test262/docs: port 428 language-literal cases from the complete remaining
   463-fixture literals intake, covering numeric, BigInt, string, regular
   expression, and template literal lexical syntax and early errors.

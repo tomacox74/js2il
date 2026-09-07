@@ -115,6 +115,19 @@
     "entries": [
       {
         "clause": "15.7.1",
+        "feature": "Class-expression syntax and early errors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/JavaScript/class-name-ident-let-escaped.js",
+          "tests/Jroc.Test262.Tests/language/expressions/class/async-gen-method-static/JavaScript/dflt-params-duplicates.js",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/syntax/early-errors/JavaScript/grammar-class-body-ctor-duplicate.js",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/syntax/early-errors/JavaScript/grammar-ctor-super-no-heritage.js"
+        ],
+        "notes": "The current development branch additionally verifies 500 pinned Test262 parse-negative class-expression cases, including async/generator method parameters, destructuring, fields, private identifiers, constructors, and invalid super usage. All 988 metadata-selected strict/non-strict variants pass, with independent native compilation-failure coverage for all 500 cases. This evidence does not claim complete coverage of class early errors."
+      },
+      {
+        "clause": "15.7.1",
         "feature": "Async instance method (async m() { await ... })",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
