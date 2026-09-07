@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T18:47:23Z
+> Last generated (UTC): 2026-09-07T19:26:07Z
 
 Type conversion in JROC is implemented on an as-needed basis for supported language features and intrinsics. Some conversions are partial/minimal implementations intended to support specific call sites (e.g., BigInt(value)).
 
@@ -78,7 +78,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ToNumber coercion | Supported with Limitations | [`PrimitiveConversion_Number_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js)<br>[`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js) |  | Supports common primitive conversions including trimmed decimal/hex strings, booleans, null, and undefined; does not implement full StringNumericLiteral grammar parity. |
+| ToNumber coercion | Supported with Limitations | [`PrimitiveConversion_Number_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js)<br>[`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs` | `test/built-ins/Number/string-binary-literal.js` | Supports common primitive conversions including trimmed decimal/hex strings, unsigned binary strings with 0b/0B prefixes, booleans, null, and undefined. Binary strings use exact integer accumulation and correctly rounded binary64 conversion; empty or malformed binary payloads produce NaN. Full StringNumericLiteral grammar parity, including octal-string conversion, remains limited. |
 
 ### 7.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-tointegerorinfinity))
 

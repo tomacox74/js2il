@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 failing Number cases. Correct digit coercion
+  ordering, negative-zero formatting, and omitted-digit shortest exponential
+  output; reject precision values that coerce to NaN. Accept binary numeric
+  strings with exact accumulation and correctly rounded Number conversion.
 - test262/runtime/docs: port 10 failing `Array.from` cases. Honor custom
   constructors for iterable and array-like sources, validate mappers, prefer
   the iterator protocol, define own indexed properties, and close iterators on
