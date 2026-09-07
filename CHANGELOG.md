@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 failing TypedArray constructor `from`/`of` cases.
+  Validate constructor-result brand, bounds, and minimum length; reject null
+  mappers, preserve iterable and array-like evaluation order, and use the target's
+  Number or BigInt conversion when writing elements. Direct and receiver-aware
+  `from` calls share the same algorithm.
 - runtime: move typed-array intrinsic property initialization and receiver-aware
   adapters from `GlobalThis` into `TypedArrayBase`, preserving behavior and
   subclass-owned APIs.

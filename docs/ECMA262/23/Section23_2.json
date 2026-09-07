@@ -306,7 +306,7 @@
     {
       "clause": "23.2.4.1",
       "title": "TypedArrayCreateFromConstructor ( constructor , argumentList )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraycreatefromconstructor"
     },
     {
@@ -907,13 +907,44 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/from/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/of/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/from/ExecutionTests.FactorySemantics.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/from/BigInt/ExecutionTests.FactorySemantics.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/ExecutionTests.FactorySemantics.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/BigInt/ExecutionTests.FactorySemantics.cs",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/entries/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/keys/ExecutionTests.cs"
         ],
-        "notes": "Supported non-BigInt TypedArray families expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks and standard name/length/property descriptors. TypedArray entries() and keys() share the intrinsic array-iterator prototype and expose standard metadata. BigInt TypedArray families and remaining constructor edge cases are still incomplete.",
+        "notes": "Supported Number and BigInt TypedArray families expose from() and of() with validated constructor results and content-type-appropriate element conversion. from() rejects non-callable mappers, including null, before source access; undefined means no mapper. Iterable sources are collected before construction, while array-like sources provide their normalized length before construction and are then read, mapped, converted, and written one element at a time. Custom constructors receive the full ToLength value and must return an attached, in-bounds TypedArray of sufficient length. Concrete direct from() helpers share the receiver-aware algorithm. Existing coverage also verifies standard function metadata and the shared iterator prototype for entries() and keys(). Actual allocations remain subject to runtime size limits; broader constructor, cross-realm, and exotic-object behavior is not exhaustive.",
         "test262Paths": [
-          "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js"
+          "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js",
+          "test/built-ins/TypedArrayConstructors/from/custom-ctor-does-not-instantiate-ta-throws.js",
+          "test/built-ins/TypedArrayConstructors/from/custom-ctor-returns-smaller-instance-throws.js",
+          "test/built-ins/TypedArrayConstructors/from/mapfn-is-not-callable.js",
+          "test/built-ins/TypedArrayConstructors/from/BigInt/custom-ctor-does-not-instantiate-ta-throws.js",
+          "test/built-ins/TypedArrayConstructors/from/BigInt/custom-ctor-returns-other-instance.js",
+          "test/built-ins/TypedArrayConstructors/from/BigInt/mapfn-is-not-callable.js",
+          "test/built-ins/TypedArrayConstructors/of/custom-ctor-does-not-instantiate-ta-throws.js",
+          "test/built-ins/TypedArrayConstructors/of/custom-ctor-returns-smaller-instance-throws.js",
+          "test/built-ins/TypedArrayConstructors/of/BigInt/custom-ctor-does-not-instantiate-ta-throws.js",
+          "test/built-ins/TypedArrayConstructors/of/BigInt/custom-ctor-returns-other-instance.js"
         ]
+      },
+      {
+        "clause": "23.2.4.1",
+        "feature": "TypedArrayCreateFromConstructor for single-length factory calls",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarraycreatefromconstructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/from/ExecutionTests.FactorySemantics.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/ExecutionTests.FactorySemantics.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArrayConstructors/from/custom-ctor-does-not-instantiate-ta-throws.js",
+          "test/built-ins/TypedArrayConstructors/from/custom-ctor-returns-smaller-instance-throws.js",
+          "test/built-ins/TypedArrayConstructors/of/custom-ctor-does-not-instantiate-ta-throws.js",
+          "test/built-ins/TypedArrayConstructors/of/custom-ctor-returns-smaller-instance-throws.js"
+        ],
+        "notes": "from() and of() construct with a single length argument and validate the returned TypedArray's brand, attached/in-bounds state, and current length before mapping or writing. Ordinary objects and undersized views throw TypeError; alternate TypedArray instances of sufficient length are accepted. This does not claim complete abstract-operation support for arbitrary constructor argument lists."
       },
       {
         "clause": "23.2.2 / 23.2.3",

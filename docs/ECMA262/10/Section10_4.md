@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-09T18:38:43Z
+> Last generated (UTC): 2026-09-07T21:39:06Z
 
 JROC implements spec-defined exotic-object behavior for the features it currently supports. Arrays provide dedicated index and length internal operations over dense and sparse storage; bound functions, typed arrays, and namespace imports retain the limitations documented below.
 
@@ -110,7 +110,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Int32Array construction, element access, and integer-index semantics | Supported with Limitations | [`Int32Array_Construct_Length.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Int32Array_Index_Assign.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js)<br>[`Int32Array_FromArray_CopyAndCoerce.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js)<br>[`Int32Array_NaN_Index_NoOp.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js) |  | JROC currently implements only Int32Array, with construction from length/iterables, integer index reads and writes, and pragmatic out-of-bounds handling. It does not model ArrayBuffer-backed typed-array witness records, detach/out-of-bounds abstract operations, or the full family of typed array exotics. |
+| TypedArray construction, element access, and integer-index semantics | Supported with Limitations | [`Int32Array_Construct_Length.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Int32Array_Index_Assign.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js)<br>[`Int32Array_FromArray_CopyAndCoerce.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js)<br>[`Int32Array_NaN_Index_NoOp.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js)<br>[`custom-ctor-returns-other-instance.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/from/BigInt/JavaScript/custom-ctor-returns-other-instance.js)<br>[`custom-ctor-returns-other-instance.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/BigInt/JavaScript/custom-ctor-returns-other-instance.js) | `test/built-ins/TypedArrayConstructors/from/BigInt/custom-ctor-returns-other-instance.js`<br>`test/built-ins/TypedArrayConstructors/of/BigInt/custom-ctor-returns-other-instance.js` | Supported Number and BigInt typed-array families provide construction and integer-indexed element access. The indexed property-write path used by from() and of() applies the target's Number or BigInt conversion before checking the current index validity, so conversion errors propagate and conversion-triggered detachment or resizing is observed. Full integer-indexed exotic invariants and every indexed-write dispatch path are not yet exhaustively verified. |
 
 ### 10.4.6 ([tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects))
 

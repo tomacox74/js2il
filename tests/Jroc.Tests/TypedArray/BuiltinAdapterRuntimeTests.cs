@@ -98,6 +98,68 @@ public sealed class BuiltinAdapterRuntimeTests
         });
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void TypedArrayFromDirectAndAdapterCallsInterleaveReadsMappingAndConversion(bool direct)
+    {
+        WithRealm(() =>
+        {
+            var trace = new System.Collections.Generic.List<string>();
+            var source = new JsObject();
+            ObjectRuntime.SetItem(source, "length", 2d);
+            for (var index = 0; index < 2; index++)
+            {
+                var currentIndex = index;
+                PropertyDescriptorStore.DefineOrUpdate(source, index.ToString(), new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Accessor,
+                    Get = new BuiltinDelegateFunctionAdapter((BuiltinFunction0)(_ =>
+                    {
+                        trace.Add($"get{currentIndex}");
+                        return (double)currentIndex;
+                    }))
+                });
+            }
+
+            var mapper = new BuiltinDelegateFunctionAdapter((BuiltinFunction2)((_, value, index) =>
+            {
+                trace.Add($"map{index}");
+                var mapped = new JsObject();
+                ObjectRuntime.SetItem(mapped, "valueOf",
+                    new BuiltinDelegateFunctionAdapter((BuiltinFunction0)(_ =>
+                    {
+                        trace.Add($"number{index}");
+                        return value;
+                    })));
+                return mapped;
+            }));
+            var constructor = ObjectRuntime.GetItem(GlobalThis.globalThis, "Uint8Array");
+            var from = ObjectRuntime.GetItem(constructor, "from");
+            var result = direct
+                ? Uint8Array.from(source, mapper)
+                : Assert.IsType<Uint8Array>(CallableOperations.Call2(from, constructor, source, mapper));
+
+            Assert.Equal(new[] { "get0", "map0", "number0", "get1", "map1", "number1" }, trace);
+            Assert.Equal(2d, result.length);
+            Assert.Equal(1d, ObjectRuntime.GetItem(result, 1d));
+
+            trace.Clear();
+            Assert.Throws<TypeError>(() =>
+            {
+                if (direct)
+                {
+                    Uint8Array.from(source, JsNull.Null);
+                }
+                else
+                {
+                    CallableOperations.Call2(from, constructor, source, JsNull.Null);
+                }
+            });
+            Assert.Empty(trace);
+        });
+    }
+
     [Fact]
     public void TypedArrayPrototypeMembersRejectIncompatibleReceivers()
     {
