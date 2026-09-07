@@ -271,7 +271,16 @@ namespace JavaScriptRuntime
                 throw new TypeError("%TypedArray%.from called on a value that is not a constructor");
             }
 
-            var mapping = mapFn is not null && mapFn is not JsNull;
+            return CreateFromSource(source, mapFn, thisArg, length => CreateTypedArrayResult(thisArgument, length));
+        }
+
+        private static TypedArrayBase CreateFromSource(
+            object? source,
+            object? mapFn,
+            object? thisArg,
+            Func<double, TypedArrayBase> create)
+        {
+            var mapping = mapFn is not null;
             if (mapping && !CallableOperations.IsCallable(mapFn))
             {
                 throw new TypeError("%TypedArray%.from: mapfn is not callable");
@@ -288,7 +297,8 @@ namespace JavaScriptRuntime
                 iteratorMethod = null;
             }
 
-            List<object?> values;
+            List<object?>? values = null;
+            double length;
             if (iteratorMethod is not null)
             {
                 if (!CallableOperations.IsCallable(iteratorMethod))
@@ -308,23 +318,24 @@ namespace JavaScriptRuntime
 
                     values.Add(step.value);
                 }
+
+                length = values.Count;
             }
             else
             {
-                var length = ToArrayLikeLength(ObjectRuntime.GetItem(source, "length"));
-                values = new List<object?>(length);
-                for (var i = 0; i < length; i++)
-                {
-                    values.Add(ObjectRuntime.GetItem(source, (double)i));
-                }
+                source = ObjectRuntime.Construct(source);
+                length = ToArrayLikeLength(ObjectRuntime.GetItem(source, "length"));
             }
 
-            var target = CallableOperations.Construct1(thisArgument, thisArgument, (double)values.Count);
-            for (var i = 0; i < values.Count; i++)
+            var target = create(length);
+            for (long i = 0; i < length; i++)
             {
+                var sourceValue = values is null
+                    ? ObjectRuntime.GetItem(source, (double)i)
+                    : values[(int)i];
                 var value = mapping
-                    ? CallableOperations.Call2(mapFn, thisArg, values[i], (double)i)
-                    : values[i];
+                    ? CallableOperations.Call2(mapFn, thisArg, sourceValue, (double)i)
+                    : sourceValue;
                 ObjectRuntime.SetProperty(
                     target!,
                     i.ToString(System.Globalization.CultureInfo.InvariantCulture),
@@ -343,7 +354,7 @@ namespace JavaScriptRuntime
             }
 
             var items = arguments.ToArray();
-            var target = CallableOperations.Construct1(thisArgument, thisArgument, (double)items.Length);
+            var target = CreateTypedArrayResult(thisArgument, items.Length);
             for (var i = 0; i < items.Length; i++)
             {
                 ObjectRuntime.SetProperty(
@@ -356,7 +367,23 @@ namespace JavaScriptRuntime
             return target;
         }
 
-        private static int ToArrayLikeLength(object? lengthValue)
+        private static TypedArrayBase CreateTypedArrayResult(object? constructor, double length)
+        {
+            var result = CallableOperations.Construct1(constructor, constructor, length);
+            if (result is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray constructor must return a TypedArray");
+            }
+
+            if (typedArray.GetCurrentLengthForIteration() < length)
+            {
+                throw new TypeError("TypedArray constructor returned an insufficiently sized TypedArray");
+            }
+
+            return typedArray;
+        }
+
+        private static double ToArrayLikeLength(object? lengthValue)
         {
             var number = TypeUtilities.ToNumber(lengthValue);
             if (double.IsNaN(number) || number <= 0)
@@ -364,8 +391,7 @@ namespace JavaScriptRuntime
                 return 0;
             }
 
-            var truncated = System.Math.Min(System.Math.Truncate(number), 9007199254740991d);
-            return (int)System.Math.Min(truncated, int.MaxValue);
+            return System.Math.Min(System.Math.Truncate(number), 9007199254740991d);
         }
 
         private static object? TypedArrayPrototypeSort(object? thisArgument, in JsCallArguments arguments)

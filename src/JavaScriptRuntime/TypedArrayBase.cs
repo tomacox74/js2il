@@ -819,26 +819,8 @@ namespace JavaScriptRuntime
 
         protected static T FromSource<T>(string typedArrayName, object? source, object? mapper, object? thisArg, Func<object?[], T> factory)
             where T : TypedArrayBase
-        {
-            if (source is null || source is JsNull)
-            {
-                throw new TypeError($"{typedArrayName}.from requires a source value");
-            }
-
-            var items = CaptureSourceItems(source);
-            if (mapper is null || mapper is JsNull)
-            {
-                return factory(items.Count == 0 ? System.Array.Empty<object?>() : items.ToArray());
-            }
-
-            var mapped = new object?[items.Count];
-            for (int i = 0; i < items.Count; i++)
-            {
-                mapped[i] = InvokeCallback(mapper, thisArg, $"{typedArrayName}.from", 2, items[i], (double)i, null, null);
-            }
-
-            return factory(mapped);
-        }
+            => (T)CreateFromSource(source, mapper, thisArg, length =>
+                factory(new object?[ToConstructorLength(length, $"{typedArrayName}.from length is out of range")]));
 
         private static bool IsConstructorLengthArgument(object? value)
         {

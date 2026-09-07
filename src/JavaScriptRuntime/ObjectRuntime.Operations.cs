@@ -6257,7 +6257,7 @@ namespace JavaScriptRuntime
             if (obj is TypedArrayBase typedArray
                 && TryParseCanonicalIndexString(name, out var typedArrayIndex))
             {
-                typedArray.SetFromDouble(typedArrayIndex, TypeUtilities.ToNumber(value));
+                typedArray.TrySetElementValue(typedArrayIndex, typedArray.CoerceElementValue(value));
                 return value;
             }
 
