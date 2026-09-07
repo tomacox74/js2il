@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 12,367 | 12 | 11,133 | 23,512 | **52.60%** |
-| Language syntax and semantics | 5,116 | 46 | 18,481 | 23,643 | **21.64%** |
-| **Total** | 17,483 | 58 | 30,700 | 48,241 | **36.24%** |
+| Language syntax and semantics | 5,616 | 46 | 17,981 | 23,643 | **23.75%** |
+| **Total** | 17,983 | 58 | 30,200 | 48,241 | **37.28%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 1,237 | 10 | 9,791 | 11,038 | **11.21%** |
+| `expressions` | 1,380 | 10 | 9,648 | 11,038 | **12.50%** |
 | `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
 | `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
 | `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 0 | 0 | 1 | 1 | **0.00%** |
 | `statementList` | 0 | 0 | 80 | 80 | **0.00%** |
-| `statements` | 3,168 | 35 | 6,134 | 9,337 | **33.93%** |
+| `statements` | 3,525 | 35 | 5,777 | 9,337 | **37.75%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
 | `white-space` | 0 | 0 | 67 | 67 | **0.00%** |
 
@@ -69,7 +69,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `assignmenttargettype` | 0 | 0 | 324 | 324 | **0.00%** |
 | `async-arrow-function` | 24 | 0 | 36 | 60 | **40.00%** |
 | `async-function` | 0 | 0 | 93 | 93 | **0.00%** |
-| `async-generator` | 16 | 0 | 607 | 623 | **2.57%** |
+| `async-generator` | 159 | 0 | 464 | 623 | **25.52%** |
 | `await` | 3 | 0 | 19 | 22 | **13.64%** |
 | `bitwise-and` | 8 | 0 | 22 | 30 | **26.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |
@@ -152,7 +152,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `for-in` | 102 | 13 | 0 | 115 | **88.70%** |
 | `for-of` | 744 | 7 | 0 | 751 | **99.07%** |
 | `for` | 61 | 0 | 324 | 385 | **15.84%** |
-| `function` | 45 | 14 | 392 | 451 | **9.98%** |
+| `function` | 402 | 14 | 35 | 451 | **89.14%** |
 | `generators` | 0 | 0 | 266 | 266 | **0.00%** |
 | `if` | 30 | 0 | 39 | 69 | **43.48%** |
 | `labeled` | 12 | 0 | 12 | 24 | **50.00%** |
