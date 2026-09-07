@@ -198,7 +198,8 @@
         "status": "Supported with Limitations",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringOctalLiteral.cs"
         ],
         "test262Paths": [
           "built-ins/Number/return-abrupt-tonumber-value.js",
@@ -211,9 +212,10 @@
           "built-ins/Number/S9.3.1_A1.js",
           "built-ins/Number/S9.3.1_A7.js",
           "test/built-ins/Number/bigint-conversion.js",
-          "test/built-ins/Number/string-binary-literal.js"
+          "test/built-ins/Number/string-binary-literal.js",
+          "test/built-ins/Number/string-octal-literal.js"
         ],
-        "notes": "Direct calls to the global Number function preserve observable abrupt completions even when the converted value is discarded. BigInt arguments are converted with IEEE-754 round-to-nearest, ties-to-even semantics, while abstract ToNumber coercion continues to reject BigInt. Binary strings with 0b/0B prefixes use exact integer accumulation and correctly rounded Number conversion; malformed or empty binary payloads produce NaN. Checked-in coverage includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, binary-string, object-wrapper, non-canonical infinity-string, and BigInt coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+        "notes": "Direct calls to the global Number function preserve observable abrupt completions even when the converted value is discarded. BigInt arguments are converted with IEEE-754 round-to-nearest, ties-to-even semantics, while abstract ToNumber coercion continues to reject BigInt. Binary strings with 0b/0B prefixes and octal strings with 0o/0O prefixes share exact integer accumulation and correctly rounded Number conversion; malformed or empty payloads produce NaN. Checked-in coverage includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, binary-string, octal-string, object-wrapper, non-canonical infinity-string, and BigInt coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
       },
       {
         "clause": "21.1.2",

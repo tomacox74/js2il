@@ -2877,20 +2877,21 @@ namespace JavaScriptRuntime
         }
 
 
-        private static void DefineSpeciesAccessorProperty(object constructorValue)
+        internal static void DefineSpeciesAccessorProperty(object constructorValue, BuiltinFunction0? getter = null)
         {
+            var getterValue = getter ?? _speciesGetterValue;
             JavaScriptRuntime.Function.InitializeFunctionInstance(
-                _speciesGetterValue,
+                getterValue,
                 0d,
                 "get [Symbol.species]",
-                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(_speciesGetterValue));
-            DefineUndefinedPrototypeProperty(_speciesGetterValue);
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(getterValue));
+            DefineUndefinedPrototypeProperty(getterValue);
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, global::JavaScriptRuntime.Symbol.species.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = _speciesGetterValue
+                Get = getterValue
             });
         }
 

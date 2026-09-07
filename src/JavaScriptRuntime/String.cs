@@ -1407,26 +1407,7 @@ namespace JavaScriptRuntime
         }
 
         private static char ToCharCodeUnit(object? codeUnit)
-        {
-            double d;
-            try
-            {
-                d = JavaScriptRuntime.TypeUtilities.ToNumber(codeUnit);
-            }
-            catch
-            {
-                d = 0;
-            }
-
-            if (double.IsNaN(d) || double.IsInfinity(d))
-            {
-                d = 0;
-            }
-
-            // JS: ToUint16
-            uint u16 = (uint)((int)global::System.Math.Truncate(d)) & 0xFFFFu;
-            return (char)u16;
-        }
+            => (char)TypeUtilities.ToUint16(codeUnit);
 
         public static string FromCodePoint(object?[]? codePoints)
         {

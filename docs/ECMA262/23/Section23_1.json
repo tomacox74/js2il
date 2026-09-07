@@ -60,7 +60,7 @@
     {
       "clause": "23.1.2.6",
       "title": "get Array [ %Symbol.species% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-get-array-%symbol.species%"
     },
     {
@@ -429,9 +429,15 @@
           "tests/Jroc.Tests/Array/JavaScript/Array_Callable_Construct.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_New_Empty.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_New_Length.js",
-          "tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/length/JavaScript/S15.4.2.2_A2.1_T1.js"
         ],
-        "notes": "Implements Array() and new Array(...) including numeric length mode; range and integer checks are implemented with runtime-backed limits."
+        "test262Paths": [
+          "test/built-ins/Array/name.js",
+          "test/built-ins/Array/length/S15.4.2.2_A2.1_T1.js"
+        ],
+        "notes": "Implements Array() and new Array(...) including numeric lengths from 0 through 2^32 - 1, rejecting invalid lengths with RangeError. Large sparse lengths use virtual storage without allocating every element and are preserved by derived-array initialization. The constructor has the standard name property and descriptor. Broader exotic and cross-realm construction behavior remains limited."
       },
       {
         "clause": "23.1.2.1",
@@ -527,6 +533,22 @@
           "test/built-ins/Array/of/return-abrupt-from-setting-length.js",
           "test/built-ins/Array/of/sets-length.js"
         ]
+      },
+      {
+        "clause": "23.1.2.6",
+        "feature": "get Array [ %Symbol.species% ]",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-array-%symbol.species%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/Symbol.species/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Array/Symbol.species/length.js",
+          "test/built-ins/Array/Symbol.species/return-value.js",
+          "test/built-ins/Array/Symbol.species/symbol-species-name.js",
+          "test/built-ins/Array/Symbol.species/symbol-species.js"
+        ],
+        "notes": "The configurable, non-enumerable accessor has no setter and returns its receiver unchanged. The getter has the standard name and zero length with non-writable, non-enumerable, configurable descriptors."
       },
       {
         "clause": "23.1.3.1",

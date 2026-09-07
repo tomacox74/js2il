@@ -6,6 +6,25 @@ namespace Jroc.Tests.Array;
 
 public sealed class BuiltinAdapterRuntimeTests
 {
+    [Fact]
+    public void ArraySpeciesGetterHasItsOwnReceiverAwareAdapter()
+    {
+        WithRealm(() =>
+        {
+            _ = GlobalThis.globalThis;
+            Assert.True(PropertyDescriptorStore.TryGetOwn(GlobalThis.Array, Symbol.species.DebugId, out var arraySpecies));
+            Assert.True(PropertyDescriptorStore.TryGetOwn(GlobalThis.ArrayBuffer, Symbol.species.DebugId, out var bufferSpecies));
+            Assert.NotNull(arraySpecies.Get);
+            Assert.NotNull(bufferSpecies.Get);
+            var adapter = Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(arraySpecies.Get));
+
+            Assert.NotSame(adapter, BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(bufferSpecies.Get));
+            Assert.True(BuiltinFunctionDelegates.IsReceiverAware(adapter.Target));
+            Assert.False(adapter.RequiresInvocationContext);
+        });
+    }
+
     private static readonly string[] FixedArityPrototypeMethodNames =
     [
         "join",

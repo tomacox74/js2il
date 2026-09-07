@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T19:26:07Z
+> Last generated (UTC): 2026-09-07T20:42:21Z
 
 Type conversion in JROC is implemented on an as-needed basis for supported language features and intrinsics. Some conversions are partial/minimal implementations intended to support specific call sites (e.g., BigInt(value)).
 
@@ -78,7 +78,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ToNumber coercion | Supported with Limitations | [`PrimitiveConversion_Number_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js)<br>[`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs` | `test/built-ins/Number/string-binary-literal.js` | Supports common primitive conversions including trimmed decimal/hex strings, unsigned binary strings with 0b/0B prefixes, booleans, null, and undefined. Binary strings use exact integer accumulation and correctly rounded binary64 conversion; empty or malformed binary payloads produce NaN. Full StringNumericLiteral grammar parity, including octal-string conversion, remains limited. |
+| ToNumber coercion | Supported with Limitations | [`PrimitiveConversion_Number_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js)<br>[`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringOctalLiteral.cs` | `test/built-ins/Number/string-binary-literal.js`<br>`test/built-ins/Number/string-octal-literal.js` | Supports common primitive conversions including trimmed decimal/hex strings, unsigned binary strings with 0b/0B prefixes, unsigned octal strings with 0o/0O prefixes, booleans, null, and undefined. Binary and octal strings use exact integer accumulation and correctly rounded binary64 conversion; empty or malformed payloads produce NaN. Full StringNumericLiteral grammar parity remains limited. |
 
 ### 7.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-tointegerorinfinity))
 
@@ -108,7 +108,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ToUint16 coercion for String.fromCharCode and DataView integer writes | Supported with Limitations | [`Array_Slice_FromCharCode_Apply.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js)<br>[`DataView_SetGet_UintAndEndian.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js) |  | Applies ToUint16-style truncation/masking in String.fromCharCode and the covered DataView integer-write paths. |
+| ToUint16 coercion for String.fromCharCode and DataView integer writes | Supported with Limitations | [`Array_Slice_FromCharCode_Apply.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js)<br>[`DataView_SetGet_UintAndEndian.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/fromCharCode/ExecutionTests.cs` | `test/built-ins/String/fromCharCode/S9.7_A2.1.js`<br>`test/built-ins/String/fromCharCode/touint16-tonumber-throws-bigint.js`<br>`test/built-ins/String/fromCharCode/touint16-tonumber-throws-valueof.js` | String.fromCharCode and the covered DataView integer-write paths share ToUint16 conversion. Numeric values truncate and wrap modulo 65536 without Int32 narrowing; NaN, infinities, and signed zero become zero. ToNumber abrupt completions propagate, including BigInt, Symbol, and object-conversion errors. |
 
 ### 7.1.10 ([tc39.es](https://tc39.es/ecma262/#sec-toint8))
 

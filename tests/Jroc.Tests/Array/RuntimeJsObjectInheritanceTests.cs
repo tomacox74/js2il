@@ -77,6 +77,21 @@ public sealed class RuntimeJsObjectInheritanceTests
         Assert.Equal(4294967295d, array.length);
     }
 
+    [Theory]
+    [InlineData(0d)]
+    [InlineData(3d)]
+    [InlineData(2147483648d)]
+    [InlineData(4294967295d)]
+    public void ConstructInto_PreservesSparseLength(double length)
+    {
+        var array = new DescriptorCountingArray(new object?[] { 1d, 2d });
+
+        array.ConstructInto(new object[] { length });
+
+        Assert.Equal(length, array.length);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "0"));
+    }
+
     [Fact]
     public void Array_UsesInheritedStorageOnlyForOrdinaryProperties()
     {

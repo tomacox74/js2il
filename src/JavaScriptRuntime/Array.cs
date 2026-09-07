@@ -23,11 +23,21 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, bool> _arrayIsArrayValue = isArray;
         private static readonly BuiltinFunction3 _arrayFromValue = From;
         private static readonly BuiltinFunctionVariadic _arrayOfValue = Of;
+        private static readonly BuiltinFunction0 _arraySpeciesGetterValue = static thisArgument => thisArgument;
 
         internal static void ConfigureIntrinsicSurface(object constructorValue)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Array"
+            });
+            GlobalThis.DefineSpeciesAccessorProperty(constructorValue, _arraySpeciesGetterValue);
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -3937,11 +3947,10 @@ namespace JavaScriptRuntime
                 argument is int || argument is long || argument is short || argument is byte || argument is sbyte ||
                 argument is uint || argument is ulong || argument is ushort)
             {
-                var lengthValue = TypeUtilities.ToNumber(argument);
-                if (double.IsNaN(lengthValue) || double.IsInfinity(lengthValue)
-                    || lengthValue < 0 || lengthValue > int.MaxValue || lengthValue % 1 != 0)
+                var lengthValue = ValidateLengthValue(TypeUtilities.ToNumber(argument));
+                if (lengthValue > int.MaxValue)
                 {
-                    throw new RangeError("Invalid array length");
+                    return CreateDefaultArray(lengthValue);
                 }
 
                 var length = (int)lengthValue;
@@ -3980,12 +3989,11 @@ namespace JavaScriptRuntime
             var constructed = Construct(args ?? System.Array.Empty<object>());
             this.Clear();
 
-            // Preserve JS semantics: length is Count, and missing elements are represented as null (undefined).
             if (constructed.DenseCount > 0)
             {
                 this.AddRange(constructed);
             }
-            _logicalLength = constructed.Count;
+            SetLengthStorage(constructed.length);
         }
 
         public static Array Empty => new Array();

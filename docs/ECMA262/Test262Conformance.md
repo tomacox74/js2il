@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 12,387 | 12 | 11,113 | 23,512 | **52.68%** |
+| Built-in objects and APIs | 12,397 | 12 | 11,103 | 23,512 | **52.73%** |
 | Language syntax and semantics | 5,616 | 46 | 17,981 | 23,643 | **23.75%** |
-| **Total** | 18,003 | 58 | 30,180 | 48,241 | **37.32%** |
+| **Total** | 18,013 | 58 | 30,170 | 48,241 | **37.34%** |
 
 ## Language Areas
 
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 23 | 0 | 2 | 25 | **92.00%** |
-| `Array` | 2,612 | 0 | 469 | 3,081 | **84.78%** |
+| `Array` | 2,618 | 0 | 463 | 3,081 | **84.97%** |
 | `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |
@@ -208,7 +208,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 0 | 0 | 6 | 6 | **0.00%** |
 | `NativeErrors` | 15 | 0 | 79 | 94 | **15.96%** |
-| `Number` | 181 | 0 | 157 | 338 | **53.55%** |
+| `Number` | 182 | 0 | 156 | 338 | **53.85%** |
 | `Object` | 3,200 | 0 | 211 | 3,411 | **93.81%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
@@ -221,7 +221,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 37 | 0 | 67 | 104 | **35.58%** |
-| `String` | 1,090 | 1 | 132 | 1,223 | **89.13%** |
+| `String` | 1,093 | 1 | 129 | 1,223 | **89.37%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |

@@ -347,22 +347,26 @@ namespace JavaScriptRuntime
                 return 0d;
             }
 
-            if (trimmed.StartsWith("0b", StringComparison.OrdinalIgnoreCase))
+            if (trimmed.StartsWith("0b", StringComparison.OrdinalIgnoreCase)
+                || trimmed.StartsWith("0o", StringComparison.OrdinalIgnoreCase))
             {
                 if (trimmed.Length == 2)
                 {
                     return double.NaN;
                 }
 
+                var bitsPerDigit = trimmed[1] is 'b' or 'B' ? 1 : 3;
+                var radix = 1 << bitsPerDigit;
                 var integer = BigInteger.Zero;
                 foreach (var digit in trimmed.AsSpan(2))
                 {
-                    if (digit is not '0' and not '1')
+                    var digitValue = digit - '0';
+                    if (digitValue < 0 || digitValue >= radix)
                     {
                         return double.NaN;
                     }
 
-                    integer = (integer << 1) + (digit - '0');
+                    integer = (integer << bitsPerDigit) + digitValue;
                 }
 
                 return Number.FromNumberConstructorArgument(integer);

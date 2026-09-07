@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T19:58:21Z
+> Last generated (UTC): 2026-09-07T20:42:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -91,7 +91,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.fromCharCode | Supported with Limitations | [`String_FromCharCode_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_FromCharCode_Basic.js)<br>[`Array_Slice_FromCharCode_Apply.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js) |  | Implemented via JavaScriptRuntime.String.FromCharCode and exposed on GlobalThis.String.fromCharCode. Supports ToNumber coercion and ToUint16 code-unit truncation for single and variadic arguments. Does not aim to match all edge-case observable behaviors (e.g., exotic receivers, property attributes) beyond common library usage. |
+| String.fromCharCode | Supported with Limitations | [`String_FromCharCode_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_FromCharCode_Basic.js)<br>[`Array_Slice_FromCharCode_Apply.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/fromCharCode/ExecutionTests.cs` | `test/built-ins/String/fromCharCode/S9.7_A2.1.js`<br>`test/built-ins/String/fromCharCode/touint16-tonumber-throws-bigint.js`<br>`test/built-ins/String/fromCharCode/touint16-tonumber-throws-valueof.js` | Direct and receiver-aware calls use the same ToUint16 conversion for single and variadic arguments. Finite numbers truncate and wrap modulo 65536, including values outside Int32; NaN, infinities, and signed zero produce the zero code unit. ToNumber errors propagate unchanged and stop subsequent argument conversion. Broader metadata and exotic-object coverage remains limited. |
 
 ### 22.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-string.fromcodepoint))
 
