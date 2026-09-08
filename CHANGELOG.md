@@ -12,6 +12,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `filter` species construction, materialize block-scoped function
   declarations, and box value-type results returned through object-typed
   callable ABIs.
+- test262/docs: verify 300 compound-assignment cases: 276 positive execution
+  fixtures and 24 parse-negative fixtures cover arithmetic, bitwise, and shift
+  operators, primitive coercion, strict-mode early errors, and private-field
+  targets. All 300 native fixtures pass without compiler, runtime, or harness
+  changes.
 
 ## v0.12.19 - 2026-09-08
 

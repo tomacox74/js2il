@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 13,067 | 12 | 10,433 | 23,512 | **55.58%** |
-| Language syntax and semantics | 7,616 | 46 | 15,981 | 23,643 | **32.21%** |
-| **Total** | 20,683 | 58 | 27,500 | 48,241 | **42.87%** |
+| Language syntax and semantics | 7,916 | 46 | 15,681 | 23,643 | **33.48%** |
+| **Total** | 20,983 | 58 | 27,200 | 48,241 | **43.50%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 3,380 | 10 | 7,648 | 11,038 | **30.62%** |
+| `expressions` | 3,680 | 10 | 7,348 | 11,038 | **33.34%** |
 | `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
 | `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
 | `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
@@ -79,7 +79,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `class` | 588 | 0 | 3,471 | 4,059 | **14.49%** |
 | `coalesce` | 18 | 0 | 6 | 24 | **75.00%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
-| `compound-assignment` | 0 | 0 | 454 | 454 | **0.00%** |
+| `compound-assignment` | 300 | 0 | 154 | 454 | **66.08%** |
 | `concatenation` | 0 | 0 | 5 | 5 | **0.00%** |
 | `conditional` | 12 | 0 | 10 | 22 | **54.55%** |
 | `delete` | 5 | 0 | 64 | 69 | **7.25%** |

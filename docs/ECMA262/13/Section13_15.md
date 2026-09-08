@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T20:31:27Z
+> Last generated (UTC): 2026-09-08T06:44:50Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -52,6 +52,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Bitwise compound assignments (\|=, &=, ^=, <<=, >>=, >>>=) | Supported | [`CompoundAssignment_BitwiseOrAssignment.js`](../../../tests/Jroc.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseOrAssignment.js)<br>[`CompoundAssignment_BitwiseAndAssignment.js`](../../../tests/Jroc.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseAndAssignment.js)<br>[`CompoundAssignment_BitwiseXorAssignment.js`](../../../tests/Jroc.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseXorAssignment.js)<br>[`CompoundAssignment_LeftShiftAssignment.js`](../../../tests/Jroc.Tests/CompoundAssignment/JavaScript/CompoundAssignment_LeftShiftAssignment.js)<br>[`CompoundAssignment_RightShiftAssignment.js`](../../../tests/Jroc.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RightShiftAssignment.js)<br>[`CompoundAssignment_UnsignedRightShiftAssignment.js`](../../../tests/Jroc.Tests/CompoundAssignment/JavaScript/CompoundAssignment_UnsignedRightShiftAssignment.js) |  | Emits load-convert-operate-convert-store pattern with int32 operations. Operands are converted to int32, operation applied, result converted back to double for storage. |
 | Compound assignment += with strings | Supported | [`String_PlusEquals_Append.js`](../../../tests/Jroc.Tests/String/JavaScript/String_PlusEquals_Append.js) |  | += on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot. |
 | Logical assignment reference preservation and NamedEvaluation | Supported | `tests/Jroc.Test262.Tests/language/expressions/logical-assignment/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/assignment/ExecutionTests.cs` |  | &&=, \|\|=, and ??= short-circuit without invoking private setters or writing private fields when the existing value determines the result. The left-hand reference and receiver are evaluated once, anonymous function/class RHS values receive inferred names, and assignment through with-environment references updates the resolved binding. |
+| Test262 compound-assignment conformance batch | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/compound-assignment/CompoundAssignmentConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/compound-assignment/CompoundAssignmentConformanceBatchParseTests.cs` |  | 300 pinned Test262 compound-assignment fixtures are natively verified: 276 positive execution cases and 24 parse-negative cases. The batch covers arithmetic, bitwise, and shift compound assignments, primitive coercion, strict-mode early errors, and private-field targets. |
 
 ### 13.15.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-destructuringassignmentevaluation))
 
