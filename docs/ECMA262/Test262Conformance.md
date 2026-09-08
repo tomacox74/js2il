@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.18](https://github.com/tomacox74/js2il/releases/tag/v0.12.18).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.19](https://github.com/tomacox74/js2il/releases/tag/v0.12.19).
 
 ## How to Read This Report
 
@@ -22,41 +22,41 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 13,067 | 12 | 10,433 | 23,512 | **55.58%** |
-| Language syntax and semantics | 8,416 | 46 | 15,181 | 23,643 | **35.60%** |
-| **Total** | 21,483 | 58 | 26,700 | 48,241 | **44.53%** |
+| Language syntax and semantics | 8,916 | 46 | 14,681 | 23,643 | **37.71%** |
+| **Total** | 21,983 | 58 | 26,200 | 48,241 | **45.57%** |
 
 ## Language Areas
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `arguments-object` | 15 | 0 | 248 | 263 | **5.70%** |
-| `asi` | 0 | 0 | 102 | 102 | **0.00%** |
+| `asi` | 102 | 0 | 0 | 102 | **100.00%** |
 | `block-scope` | 35 | 1 | 109 | 145 | **24.14%** |
-| `comments` | 0 | 0 | 52 | 52 | **0.00%** |
+| `comments` | 22 | 0 | 30 | 52 | **42.31%** |
 | `computed-property-names` | 0 | 0 | 48 | 48 | **0.00%** |
 | `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
-| `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
+| `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
 | `expressions` | 4,180 | 10 | 6,848 | 11,038 | **37.87%** |
-| `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
-| `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
-| `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
-| `identifier-resolution` | 0 | 0 | 14 | 14 | **0.00%** |
-| `identifiers` | 5 | 0 | 263 | 268 | **1.87%** |
+| `function-code` | 36 | 0 | 181 | 217 | **16.59%** |
+| `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
+| `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
+| `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
+| `identifiers` | 89 | 0 | 179 | 268 | **33.21%** |
 | `import` | 10 | 0 | 117 | 127 | **7.87%** |
-| `keywords` | 0 | 0 | 25 | 25 | **0.00%** |
-| `line-terminators` | 0 | 0 | 41 | 41 | **0.00%** |
+| `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
+| `line-terminators` | 25 | 0 | 16 | 41 | **60.98%** |
 | `literals` | 505 | 0 | 29 | 534 | **94.57%** |
 | `module-code` | 34 | 0 | 560 | 594 | **5.72%** |
-| `punctuators` | 0 | 0 | 11 | 11 | **0.00%** |
-| `reserved-words` | 20 | 0 | 7 | 27 | **74.07%** |
+| `punctuators` | 11 | 0 | 0 | 11 | **100.00%** |
+| `reserved-words` | 26 | 0 | 1 | 27 | **96.30%** |
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
-| `source-text` | 0 | 0 | 1 | 1 | **0.00%** |
-| `statementList` | 0 | 0 | 80 | 80 | **0.00%** |
+| `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
+| `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
 | `statements` | 3,525 | 35 | 5,777 | 9,337 | **37.75%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
-| `white-space` | 0 | 0 | 67 | 67 | **0.00%** |
+| `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
 ## Expression Features
 

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 lexical grammar and source-code cases: 360 positive
+  execution fixtures and 140 parse-negative fixtures cover automatic semicolon
+  insertion, comments, whitespace, line terminators, Unicode identifiers,
+  keywords and reserved words, directive prologues, statement lists, and
+  script-code parsing. All 500 native fixtures pass without compiler, runtime,
+  or harness changes.
 - test262/docs: verify 500 expression syntax and operator cases: 253 positive
   execution fixtures and 247 parse-negative fixtures cover assignment targets,
   object-initializer grammar, compound and logical assignment, arithmetic and
