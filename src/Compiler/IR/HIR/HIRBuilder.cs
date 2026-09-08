@@ -4024,7 +4024,9 @@ partial class HIRMethodBuilder
                     return true;
                 }
 
-                var maximumBuiltInErrorArguments = string.Equals(calleeName, "SuppressedError", StringComparison.Ordinal)
+                var maximumBuiltInErrorArguments =
+                    string.Equals(calleeName, "SuppressedError", StringComparison.Ordinal)
+                    || string.Equals(calleeName, "AggregateError", StringComparison.Ordinal)
                     ? 3
                     : 2;
                 if (isBuiltInError && newArgExprs.Count > maximumBuiltInErrorArguments)

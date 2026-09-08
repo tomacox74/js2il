@@ -6,7 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/runtime/docs: port 100 Promise and AggregateError cases from a
+  failure-focused batch (87 initially failing in the native harness).
+  Promise combinators now use constructor-aware capabilities, ordered
+  per-element resolution, guarded callbacks, and specification-compliant
+  iterator closing; add Promise.allKeyed and Promise.allSettledKeyed, apply
+  species constructors in then/finally, and support AggregateError cause
+  options.
 
 ## v0.12.19 - 2026-09-08
 

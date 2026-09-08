@@ -256,6 +256,22 @@ namespace JavaScriptRuntime
             global::JavaScriptRuntime.Promise.AllForConstructor(
                 thisArgument,
                 iterable);
+        private static readonly BuiltinFunction1 _promiseAllSettledValue = static (thisArgument, iterable) =>
+            global::JavaScriptRuntime.Promise.AllSettledForConstructor(
+                thisArgument,
+                iterable);
+        private static readonly BuiltinFunction1 _promiseAnyValue = static (thisArgument, iterable) =>
+            global::JavaScriptRuntime.Promise.AnyForConstructor(
+                thisArgument,
+                iterable);
+        private static readonly BuiltinFunction1 _promiseAllKeyedValue = static (thisArgument, dictionary) =>
+            global::JavaScriptRuntime.Promise.AllKeyedForConstructor(
+                thisArgument,
+                dictionary);
+        private static readonly BuiltinFunction1 _promiseAllSettledKeyedValue = static (thisArgument, dictionary) =>
+            global::JavaScriptRuntime.Promise.AllSettledKeyedForConstructor(
+                thisArgument,
+                dictionary);
         private static readonly BuiltinFunction1 _promiseRaceValue = static (_, iterable) =>
             global::JavaScriptRuntime.Promise.race(iterable);
         private static readonly BuiltinFunction1 _promiseRejectValue = static (_, reason) =>
@@ -574,6 +590,10 @@ namespace JavaScriptRuntime
             });
             DefineIntrinsicDataProperty(_promiseConstructorValue, "resolve", _promiseResolveValue);
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "all", _promiseAllValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "allSettled", _promiseAllSettledValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "allKeyed", _promiseAllKeyedValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "allSettledKeyed", _promiseAllSettledKeyedValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "any", _promiseAnyValue, 1d);
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "race", _promiseRaceValue, 1d);
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "reject", _promiseRejectValue, 1d);
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "try", _promiseTryValue, 1d);
