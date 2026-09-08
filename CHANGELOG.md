@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.20 - 2026-09-08
+
 - benchmarks: add Kraken 1.1 `json-parse-financial` with the pinned upstream
   dataset and 1,000 parses per invocation, enabled by default for jroc and Jint.
 - runtime: move Promise constructor descriptor initialization and static-method
