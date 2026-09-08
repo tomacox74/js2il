@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: move Promise constructor descriptor initialization and static-method
+  adapters into Promise, preserving realm bootstrap order and property metadata.
 - test262/runtime/docs: port 100 Promise and AggregateError cases from a
   failure-focused batch (87 initially failing in the native harness).
   Promise combinators now use constructor-aware capabilities, ordered
