@@ -7,6 +7,61 @@ namespace Jroc.Tests.Array;
 public sealed class BuiltinAdapterRuntimeTests
 {
     [Theory]
+    [InlineData("every", "adapter")]
+    [InlineData("every", "args")]
+    [InlineData("some", "adapter")]
+    [InlineData("some", "args")]
+    [InlineData("some", "fixed")]
+    public void PredicateDirectAndAdapterCallsPreserveSparseIterationAndValidateEmptyCallbacks(string method, string mode)
+    {
+        WithRealm(() =>
+        {
+            var adapter = ObjectRuntime.GetItem(JavaScriptRuntime.Array.Prototype, method);
+            bool Invoke(JavaScriptRuntime.Array array, object[] arguments)
+            {
+                if (mode == "fixed")
+                {
+                    return arguments.Length > 1
+                        ? array.some(arguments[0], arguments[1])
+                        : array.some(arguments.Length > 0 ? arguments[0] : null);
+                }
+
+                return mode == "args"
+                    ? method == "every" ? array.every(arguments) : array.some(arguments)
+                    : Assert.IsType<bool>(JavaScriptRuntime.Function.Call(adapter, array, arguments));
+            }
+
+            var source = new JavaScriptRuntime.Array { length = 4d };
+            source[1] = 7d;
+            source[3] = 9d;
+            var prototype = new JsObject { ["2"] = 8d };
+            PrototypeChain.SetPrototype(prototype, JavaScriptRuntime.Array.Prototype);
+            PrototypeChain.SetPrototype(source, prototype);
+
+            var thisArg = new JsObject();
+            var calls = 0;
+            var callback = new BuiltinDelegateFunctionAdapter((BuiltinFunction3)((receiver, value, index, array) =>
+            {
+                Assert.Same(thisArg, receiver);
+                Assert.Same(source, array);
+                Assert.Equal((double)calls + 1d, index);
+                Assert.Equal((double)calls + 7d, value);
+                calls++;
+                source.length = 3d;
+                source[4] = 99d;
+                return method == "every";
+            }));
+
+            Assert.Equal(method == "every", Invoke(source, new object[] { callback, thisArg }));
+            Assert.Equal(2, calls);
+            Assert.Equal(method == "every", Invoke(new JavaScriptRuntime.Array(), new object[] { callback, thisArg }));
+            Assert.Equal(2, calls);
+            Assert.Throws<JavaScriptRuntime.TypeError>(() => Invoke(new JavaScriptRuntime.Array(), System.Array.Empty<object>()));
+            Assert.Throws<JavaScriptRuntime.TypeError>(() => Invoke(new JavaScriptRuntime.Array(), new object[] { JsNull.Null }));
+        });
+    }
+
+    [Theory]
     [InlineData("filter", false)]
     [InlineData("filter", true)]
     [InlineData("map", false)]

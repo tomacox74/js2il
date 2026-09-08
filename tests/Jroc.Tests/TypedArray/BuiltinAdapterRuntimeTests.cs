@@ -38,7 +38,7 @@ public sealed class BuiltinAdapterRuntimeTests
         "byteLength"
     ];
 
-    private static readonly string[] CallbackMethodNames = ["map", "filter", "every", "some"];
+    private static readonly string[] CallbackMethodNames = ["map", "filter", "every", "some", "find", "findIndex"];
 
     [Fact]
     public void TypedArrayPrototypeMembersUseReceiverAwareAdapters()
@@ -138,6 +138,38 @@ public sealed class BuiltinAdapterRuntimeTests
             var args = new object?[] { callback, thisArg };
             Assert.Equal(expectedResult, name == "every" ? source.every(args) : source.some(args));
             Assert.Equal(expectedCalls, calls);
+        });
+    }
+
+    [Theory]
+    [InlineData("find", true, 2d)]
+    [InlineData("find", false, null)]
+    [InlineData("findIndex", true, 1d)]
+    [InlineData("findIndex", false, -1d)]
+    public void TypedArraySearchAdaptersMatchDirectCalls(string name, bool match, object? expectedResult)
+    {
+        WithRealm(() =>
+        {
+            var source = new Uint8Array(new object?[] { 1d, 2d, 3d });
+            var thisArg = new JsObject();
+            var calls = 0;
+            var callback = new BuiltinDelegateFunctionAdapter((BuiltinFunction3)((receiver, value, index, array) =>
+            {
+                Assert.Same(thisArg, receiver);
+                Assert.Same(source, array);
+                Assert.Equal((double)calls, index);
+                Assert.Equal((double)++calls, value);
+                return match && (double)value! == 2d;
+            }));
+            var method = ObjectRuntime.GetItem(RuntimeIntrinsics.Current.TypedArrayPrototype, name);
+            Assert.Same(method, ObjectRuntime.GetItem(source, name));
+
+            Assert.Equal(expectedResult, CallableOperations.Call2(method, source, callback, thisArg));
+            Assert.Equal(match ? 2 : 3, calls);
+            calls = 0;
+            var args = new object?[] { callback, thisArg };
+            Assert.Equal(expectedResult, name == "find" ? source.find(args) : source.findIndex(args));
+            Assert.Equal(match ? 2 : 3, calls);
         });
     }
 
