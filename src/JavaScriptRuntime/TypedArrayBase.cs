@@ -154,7 +154,10 @@ namespace JavaScriptRuntime
             => new TypedArrayIterator(this, TypedArrayIteratorKind.Keys);
 
         public IJavaScriptIterator entries()
-            => new TypedArrayIterator(this, TypedArrayIteratorKind.Entries);
+        {
+            _ = GetCurrentLengthForIteration();
+            return new TypedArrayIterator(this, TypedArrayIteratorKind.Entries);
+        }
 
         public string join()
             => JoinCore(null);
@@ -189,12 +192,23 @@ namespace JavaScriptRuntime
 
         public TypedArrayBase copyWithin(object?[]? args)
         {
-            var target = CoerceRelativeIndex(GetArgument(args, 0), 0, _length);
-            var start = CoerceRelativeIndex(GetArgument(args, 1), 0, _length);
+            var initialLength = GetCurrentLengthForIteration();
+            var target = CoerceRelativeIndex(GetArgument(args, 0), 0, initialLength);
+            var start = CoerceRelativeIndex(GetArgument(args, 1), 0, initialLength);
             var end = args != null && args.Length > 2
-                ? CoerceRelativeIndex(args[2], _length, _length)
-                : _length;
-            var count = global::System.Math.Min(end - start, _length - target);
+                ? CoerceRelativeIndex(args[2], initialLength, initialLength)
+                : initialLength;
+            var count = global::System.Math.Min(end - start, initialLength - target);
+            if (count <= 0)
+            {
+                return this;
+            }
+
+            var currentLength = GetCurrentLengthForIteration();
+            var effectiveLength = global::System.Math.Min(initialLength, currentLength);
+            count = global::System.Math.Min(
+                count,
+                global::System.Math.Min(effectiveLength - start, effectiveLength - target));
             if (count <= 0)
             {
                 return this;
@@ -207,15 +221,20 @@ namespace JavaScriptRuntime
             return this;
         }
 
-        public TypedArrayBase fill(object[]? args)
+        public TypedArrayBase fill(object?[]? args)
         {
+            var initialLength = GetCurrentLengthForIteration();
             var fillValue = CoerceElementValue(args != null && args.Length > 0 ? args[0] : null);
             var start = args != null && args.Length > 1
-                ? CoerceRelativeIndex(args[1], 0, _length)
+                ? CoerceRelativeIndex(args[1], 0, initialLength)
                 : 0;
             var end = args != null && args.Length > 2
-                ? CoerceRelativeIndex(args[2], _length, _length)
-                : _length;
+                ? CoerceRelativeIndex(args[2], initialLength, initialLength)
+                : initialLength;
+            var currentLength = GetCurrentLengthForIteration();
+            var effectiveLength = global::System.Math.Min(initialLength, currentLength);
+            start = global::System.Math.Min(start, effectiveLength);
+            end = global::System.Math.Min(end, effectiveLength);
 
             if (end < start)
             {
@@ -238,7 +257,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.every", 3, ReadElementObject(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.every", 3, ReadElementOrUndefined(i), (double)i, this, null);
                 if (!Operators.IsTruthy(result))
                 {
                     return false;
@@ -274,7 +293,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                var value = ReadElementObject(i);
+                var value = ReadElementOrUndefined(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.find", 3, value, (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
@@ -293,7 +312,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findIndex", 3, ReadElementObject(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findIndex", 3, ReadElementOrUndefined(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return i;
@@ -361,7 +380,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                var value = ReadElementObject(i);
+                var value = ReadElementOrUndefined(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.map", 3, value, (double)i, this, null);
                 mapped.WriteElementObject(i, result);
             }
@@ -378,15 +397,21 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                var value = ReadElementObject(i);
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.filter", 3, value, (double)i, this, null);
-                if (Operators.IsTruthy(result))
+                var value = ReadElementOrUndefined(i);
+                var selected = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.filter", 3, value, (double)i, this, null);
+                if (Operators.IsTruthy(selected))
                 {
                     keptValues.Add(value);
                 }
             }
 
-            return CreateSameTypeFromValues(keptValues);
+            var result = CreateSpeciesResult(keptValues.Count);
+            for (var i = 0; i < keptValues.Count; i++)
+            {
+                result.WriteElementObject(i, keptValues[i]);
+            }
+
+            return result;
         }
 
         public object? reduce(object[]? args)
@@ -572,7 +597,7 @@ namespace JavaScriptRuntime
             int elementLength;
             if (length is null || length is JsNull)
             {
-                if (remainingBytes % BytesPerElement != 0)
+                if (!buffer.IsResizable && remainingBytes % BytesPerElement != 0)
                 {
                     throw new RangeError($"Invalid {TypedArrayName} length");
                 }
@@ -700,6 +725,75 @@ namespace JavaScriptRuntime
 
             _ = ObjectRuntime.GetItem(constructor, Symbol.species);
         }
+
+        private TypedArrayBase CreateSpeciesResult(int length)
+        {
+            var defaultConstructor = GetDefaultConstructor();
+            var constructor = ObjectRuntime.GetItem(this, "constructor");
+            object? species;
+
+            if (constructor is null)
+            {
+                species = defaultConstructor;
+            }
+            else
+            {
+                if (!Proxy.IsObjectLikeValue(constructor))
+                {
+                    throw new TypeError("TypedArray constructor property must be an object");
+                }
+
+                species = ObjectRuntime.GetItem(constructor, Symbol.species);
+                if (species is null or JsNull)
+                {
+                    species = defaultConstructor;
+                }
+            }
+
+            species = BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(species);
+            if (!CallableOperations.IsConstructor(species))
+            {
+                throw new TypeError("TypedArray species value is not a constructor");
+            }
+
+            var result = CallableOperations.Construct1(species, species, (double)length);
+            if (result is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray species constructor must return a TypedArray");
+            }
+
+            if (typedArray.GetCurrentLengthForIteration() < length)
+            {
+                throw new TypeError("TypedArray species constructor returned an insufficiently sized TypedArray");
+            }
+
+            if (IsBigIntTypedArray(this) != IsBigIntTypedArray(typedArray))
+            {
+                throw new TypeError("TypedArray species constructor returned an incompatible content type");
+            }
+
+            return typedArray;
+        }
+
+        private object GetDefaultConstructor()
+            => this switch
+            {
+                Float64Array => GlobalThis.Float64Array,
+                Float32Array => GlobalThis.Float32Array,
+                Int32Array => GlobalThis.Int32Array,
+                Int16Array => GlobalThis.Int16Array,
+                Int8Array => GlobalThis.Int8Array,
+                Uint32Array => GlobalThis.Uint32Array,
+                Uint16Array => GlobalThis.Uint16Array,
+                Uint8Array => GlobalThis.Uint8Array,
+                Uint8ClampedArray => GlobalThis.Uint8ClampedArray,
+                BigInt64Array => GlobalThis.BigInt64Array,
+                BigUint64Array => GlobalThis.BigUint64Array,
+                _ => throw new TypeError("Unknown TypedArray constructor")
+            };
+
+        private static bool IsBigIntTypedArray(TypedArrayBase typedArray)
+            => typedArray is BigInt64Array or BigUint64Array;
 
         private List<object?> GetSortedValues(object?[]? args)
         {
@@ -1395,6 +1489,11 @@ namespace JavaScriptRuntime
 
         private static object? GetArgument(object?[]? args, int index)
             => args != null && args.Length > index ? args[index] : null;
+
+        private object? ReadElementOrUndefined(int index)
+            => (uint)index < (uint)GetCurrentLengthOrZero()
+                ? ReadElementObject(index)
+                : null;
 
         private static object? InvokeCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)
         {

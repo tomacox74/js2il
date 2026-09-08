@@ -15,6 +15,22 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   iterator closing; add Promise.allKeyed and Promise.allSettledKeyed, apply
   species constructors in then/finally, and support AggregateError cause
   options.
+- test262/docs: verify 500 expression syntax and operator cases: 253 positive
+  execution fixtures and 247 parse-negative fixtures cover assignment targets,
+  object-initializer grammar, compound and logical assignment, arithmetic and
+  shift operators, and strict equality. All 500 native fixtures pass without
+  compiler, runtime, or harness changes.
+- test262/compiler/runtime/docs: port 100 failing `%TypedArray%.prototype`
+  cases across `copyWithin`, `entries`, `every`, `fill`, `filter`, `find`, and
+  `findIndex`. Add resizable-buffer and detachment semantics, complete
+  `filter` species construction, materialize block-scoped function
+  declarations, and box value-type results returned through object-typed
+  callable ABIs.
+- test262/docs: verify 300 compound-assignment cases: 276 positive execution
+  fixtures and 24 parse-negative fixtures cover arithmetic, bitwise, and shift
+  operators, primitive coercion, strict-mode early errors, and private-field
+  targets. All 300 native fixtures pass without compiler, runtime, or harness
+  changes.
 
 ## v0.12.19 - 2026-09-08
 

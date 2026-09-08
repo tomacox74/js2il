@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -73,6 +73,13 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
     typedArrayRuns++;
 }, null, ['passthrough']);
 assert.sameValue(typedArrayRuns, 9);
+
+var rab = CreateRabForTest(Uint8Array);
+assert.compareArray(ToNumbers(new Uint8Array(rab)), [0, 2, 4, 6]);
+var collected = [];
+assert.sameValue(CollectValuesAndResize(3, collected, rab, 1, 2), true);
+assert.compareArray(collected, [3]);
+assert.sameValue(rab.byteLength, 2);
 
 var outOfBoundsIndexRuns = 0;
 testWithAtomicsOutOfBoundsIndices(function(indexGenerator) {
