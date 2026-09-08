@@ -21,6 +21,7 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly BuiltinFunctionVariadic _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
+        private static readonly BuiltinFunctionVariadic _typedArrayFillValue = TypedArrayPrototypeFill;
         private static readonly BuiltinFunctionVariadic _typedArrayReduceRightValue = TypedArrayPrototypeReduceRight;
         private static readonly BuiltinFunction0 _typedArrayToReversedValue = TypedArrayPrototypeToReversed;
         private static readonly BuiltinFunction0 _typedArrayEntriesValue = TypedArrayPrototypeEntries;
@@ -98,6 +99,7 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "toString", _typedArrayToStringValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "toLocaleString", _typedArrayToLocaleStringValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "copyWithin", _typedArrayCopyWithinValue, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "fill", _typedArrayFillValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findLast", _typedArrayFindLastValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "reduceRight", _typedArrayReduceRightValue, 1d);
@@ -484,6 +486,16 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.toSorted(arguments.ToArray());
+        }
+
+        private static object? TypedArrayPrototypeFill(object? thisArgument, in JsCallArguments arguments)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.fill called on incompatible receiver");
+            }
+
+            return typedArray.fill(arguments.ToArray());
         }
 
         private static object? TypedArrayPrototypeWith(object? thisArgument, in JsCallArguments arguments)

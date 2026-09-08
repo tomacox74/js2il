@@ -189,6 +189,14 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.OpCode(ILOpCode.Castclass);
                             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(methodDescriptor.ReturnClrType));
                         }
+                        else if (methodDescriptor.ReturnClrType == typeof(object))
+                        {
+                            EmitLoadTempAsObject(
+                                lirReturn.ReturnValue,
+                                ilEncoder,
+                                allocation,
+                                methodDescriptor);
+                        }
                         else
                         {
                             EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);

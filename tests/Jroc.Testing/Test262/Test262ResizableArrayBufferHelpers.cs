@@ -1,4 +1,5 @@
 using JavaScriptRuntime;
+using System.Numerics;
 
 namespace Jroc.Tests;
 
@@ -14,6 +15,15 @@ internal static class Test262ResizableArrayBufferHelpers
             .AddGlobalFactory(
                 "MayNeedBigInt",
                 () => Function(MayNeedBigInt, "MayNeedBigInt", 2))
+            .AddGlobalFactory(
+                "ToNumbers",
+                () => Function(ToNumbers, "ToNumbers", 1))
+            .AddGlobalFactory(
+                "CreateRabForTest",
+                () => Function(CreateRabForTest, "CreateRabForTest", 1))
+            .AddGlobalFactory(
+                "CollectValuesAndResize",
+                () => Function(CollectValuesAndResize, "CollectValuesAndResize", 5))
             .AddGlobalFactory(
                 "TestIterationAndResize",
                 () => Function(TestIterationAndResize, "TestIterationAndResize", 5));
@@ -31,7 +41,9 @@ internal static class Test262ResizableArrayBufferHelpers
             Constructor(GlobalThis.Int32Array),
             Constructor(GlobalThis.Float32Array),
             Constructor(GlobalThis.Float64Array),
-            Constructor(GlobalThis.Uint8ClampedArray)
+            Constructor(GlobalThis.Uint8ClampedArray),
+            Constructor(GlobalThis.BigUint64Array),
+            Constructor(GlobalThis.BigInt64Array)
         });
 
     private static object? CreateResizableArrayBuffer(object[] _, object?[]? args)
@@ -42,7 +54,67 @@ internal static class Test262ResizableArrayBufferHelpers
     }
 
     private static object? MayNeedBigInt(object[] _, object?[]? args)
-        => Argument(args, 1);
+    {
+        var typedArray = Argument(args, 0);
+        var value = Argument(args, 1);
+        return typedArray is BigInt64Array or BigUint64Array
+            ? new BigInteger(TypeUtilities.ToNumber(value))
+            : value;
+    }
+
+    private static object ToNumbers(object[] _, object?[]? args)
+    {
+        var source = Argument(args, 0);
+        var result = new JavaScriptRuntime.Array();
+        var length = TypeUtilities.ToInt32(ObjectRuntime.GetItem(source!, "length"));
+        for (var index = 0; index < length; index++)
+        {
+            var value = ObjectRuntime.GetItem(source!, (double)index);
+            result.push(value is BigInteger bigint ? (double)bigint : value);
+        }
+
+        return result;
+    }
+
+    private static object CreateRabForTest(object[] _, object?[]? args)
+    {
+        var constructor = Argument(args, 0)
+            ?? throw Test262HostRuntimeIntrinsics.CreateTest262Error("constructor is required");
+        var bytesPerElement = TypeUtilities.ToInt32(ObjectRuntime.GetItem(constructor, "BYTES_PER_ELEMENT"));
+        var buffer = new ArrayBuffer(4d * bytesPerElement, CreateMaxByteLengthOptions(8 * bytesPerElement));
+        var typedArray = ObjectRuntime.ConstructValue(constructor, new object[] { buffer });
+        for (var index = 0; index < 4; index++)
+        {
+            ObjectRuntime.SetItem(
+                typedArray!,
+                (double)index,
+                typedArray is BigInt64Array or BigUint64Array
+                    ? new BigInteger(2 * index)
+                    : 2d * index);
+        }
+
+        return buffer;
+    }
+
+    private static object? CollectValuesAndResize(object[] _, object?[]? args)
+    {
+        var value = Argument(args, 0);
+        var values = Argument(args, 1)
+            ?? throw Test262HostRuntimeIntrinsics.CreateTest262Error("values array is required");
+        if (Argument(args, 2) is not ArrayBuffer buffer)
+        {
+            throw Test262HostRuntimeIntrinsics.CreateTest262Error("resizable ArrayBuffer is required");
+        }
+
+        var length = TypeUtilities.ToInt32(ObjectRuntime.GetItem(values, "length"));
+        ObjectRuntime.SetItem(values, (double)length, value is BigInteger bigint ? (double)bigint : value);
+        if (length + 1 == TypeUtilities.ToInt32(Argument(args, 3)))
+        {
+            buffer.resize(Argument(args, 4));
+        }
+
+        return true;
+    }
 
     private static object? TestIterationAndResize(object[] _, object?[]? args)
     {
@@ -82,7 +154,7 @@ internal static class Test262ResizableArrayBufferHelpers
                 "TestIterationAndResize: resize condition should have been hit");
         }
 
-        if (expected is null || expected is JsNull)
+        if (expected is null or JsNull)
         {
             throw Test262HostRuntimeIntrinsics.CreateTest262Error(
                 "TestIterationAndResize: expected an abrupt completion");
@@ -97,9 +169,8 @@ internal static class Test262ResizableArrayBufferHelpers
 
         for (var index = 0; index < values.Count; index++)
         {
-            var actual = TypeUtilities.ToNumber(values[index]);
             var expectedValue = ObjectRuntime.GetItem(expected, (double)index);
-            if (!JavaScriptRuntime.Object.@is(actual, expectedValue))
+            if (!ValuesEqual(values[index], expectedValue))
             {
                 throw Test262HostRuntimeIntrinsics.CreateTest262Error(
                     "TestIterationAndResize: list of iterated values differs from expected values");
@@ -107,6 +178,35 @@ internal static class Test262ResizableArrayBufferHelpers
         }
 
         return null;
+    }
+
+    private static bool ValuesEqual(object? actual, object? expected)
+    {
+        if (actual is IJavaScriptArray)
+        {
+            if (expected is not IJavaScriptArray)
+            {
+                return false;
+            }
+
+            var actualKey = ObjectRuntime.GetItem(actual, 0d);
+            var actualValue = ObjectRuntime.GetItem(actual, 1d);
+            return JavaScriptRuntime.Object.@is(actualKey, ObjectRuntime.GetItem(expected, 0d))
+                && JavaScriptRuntime.Object.@is(
+                    actualValue is BigInteger bigint ? (double)bigint : actualValue,
+                    ObjectRuntime.GetItem(expected, 1d));
+        }
+
+        return JavaScriptRuntime.Object.@is(
+            actual is BigInteger bigintValue ? (double)bigintValue : actual,
+            expected);
+    }
+
+    private static JsObject CreateMaxByteLengthOptions(int maxByteLength)
+    {
+        var options = new JsObject();
+        ObjectRuntime.SetItem(options, "maxByteLength", (double)maxByteLength);
+        return options;
     }
 
     private static object Constructor(Delegate value)

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/compiler/runtime/docs: port 100 failing `%TypedArray%.prototype`
+  cases across `copyWithin`, `entries`, `every`, `fill`, `filter`, `find`, and
+  `findIndex`. Add resizable-buffer and detachment semantics, complete
+  `filter` species construction, materialize block-scoped function
+  declarations, and box value-type results returned through object-typed
+  callable ABIs.
 - test262/runtime/docs: port 20 failing Array every/some and TypedArray
   find/findIndex cases. All Array predicate direct-call overloads now share the
   receiver-aware algorithms, preserving thisArg, sparse/inherited indices,

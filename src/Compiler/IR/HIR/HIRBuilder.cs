@@ -1507,87 +1507,100 @@ partial class HIRMethodBuilder
         }
     }
 
-    public bool TryParseStatementsToList([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out List<HIRStatement> hirStatements)
+    private bool TryAppendHoistedFunctionDeclarations(
+        IEnumerable<Acornima.Ast.Statement> statements,
+        List<HIRStatement> hirStatements)
     {
-        hirStatements = new List<HIRStatement>(_statements.Count + 16);
-        hirStatements.AddRange(_statements);
+        if (_currentScope.Kind is not (ScopeKind.Global or ScopeKind.Function or ScopeKind.Block))
+        {
+            return true;
+        }
 
         // Function declarations are hoisted in JavaScript: the binding is initialized to the function
         // object before any statements execute (including `module.exports = Foo;` patterns).
         // The two-phase compilation pipeline compiles the callable bodies separately, but we still
         // must emit runtime initialization in the executable body.
-        if (_currentScope.Kind is ScopeKind.Global or ScopeKind.Function)
+        foreach (var fd in EnumerateHoistableFunctionDeclarations(statements))
         {
-            foreach (var fd in EnumerateHoistableFunctionDeclarations(statements))
+            if (!HIRBuilder.ParamsSupportedForIR(fd.Params))
             {
-                if (!HIRBuilder.ParamsSupportedForIR(fd.Params))
-                {
-                    return false;
-                }
-
-                var functionScope = FindChildScopeForAstNode(fd);
-                if (functionScope == null)
-                {
-                    return false;
-                }
-
-                string bindingName;
-                CallableId callableId;
-                if (fd.Id is Identifier id && !string.IsNullOrWhiteSpace(id.Name))
-                {
-                    bindingName = id.Name;
-
-                    var root = _currentScope;
-                    while (root.Parent != null)
-                    {
-                        root = root.Parent;
-                    }
-                    var moduleName = root.Name;
-                    var declaringScopeName = _currentScope.Kind == ScopeKind.Global
-                        ? moduleName
-                        : $"{moduleName}/{_currentScope.GetQualifiedName()}";
-
-                    callableId = new CallableId
-                    {
-                        Kind = CallableKind.FunctionDeclaration,
-                        DeclaringScopeName = declaringScopeName,
-                        Name = id.Name,
-                        JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
-                        NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
-                        HasRestParameters = functionScope.HasRestParameters,
-                        UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
-                        ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
-                        IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
-                        HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
-                        Semantics = CallableSemantics.FromNode(
-                            fd,
-                            CallableKind.FunctionDeclaration,
-                            ArgumentsObjectSemantics.IsStrictScope(functionScope)),
-                        AstNode = fd
-                    };
-                }
-                else if (functionScope.Callable != null)
-                {
-                    // Anonymous `export default function` (native ESM only): the scope builder bound it
-                    // under a synthetic Closure{N} name and callable discovery already produced its
-                    // CallableId. Reuse both so the hoisted value matches the declared callable.
-                    bindingName = functionScope.Name;
-                    callableId = functionScope.Callable;
-                }
-                else
-                {
-                    // Anonymous function declarations are otherwise not valid standard JavaScript syntax.
-                    continue;
-                }
-
-                var symbol = _currentScope.FindSymbol(bindingName);
-                var funcValue = new HIRFunctionExpression(callableId, functionScope)
-                {
-                    MaterializationDecision = symbol.BindingInfo.CallableMaterialization
-                        ?? CallableMaterializationDecision.UnboundEvaluation
-                };
-                hirStatements.Add(new HIRVariableDeclaration(symbol, funcValue));
+                return false;
             }
+
+            var functionScope = FindChildScopeForAstNode(fd);
+            if (functionScope == null)
+            {
+                return false;
+            }
+
+            string bindingName;
+            CallableId callableId;
+            if (fd.Id is Identifier id && !string.IsNullOrWhiteSpace(id.Name))
+            {
+                bindingName = id.Name;
+
+                var root = _currentScope;
+                while (root.Parent != null)
+                {
+                    root = root.Parent;
+                }
+                var moduleName = root.Name;
+                var declaringScopeName = _currentScope.Kind == ScopeKind.Global
+                    ? moduleName
+                    : $"{moduleName}/{_currentScope.GetQualifiedName()}";
+
+                callableId = new CallableId
+                {
+                    Kind = CallableKind.FunctionDeclaration,
+                    DeclaringScopeName = declaringScopeName,
+                    Name = id.Name,
+                    JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
+                    NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                    HasRestParameters = functionScope.HasRestParameters,
+                    UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+                    ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+                    IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                    HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                    Semantics = CallableSemantics.FromNode(
+                        fd,
+                        CallableKind.FunctionDeclaration,
+                        ArgumentsObjectSemantics.IsStrictScope(functionScope)),
+                    AstNode = fd
+                };
+            }
+            else if (functionScope.Callable != null)
+            {
+                // Anonymous `export default function` (native ESM only): the scope builder bound it
+                // under a synthetic Closure{N} name and callable discovery already produced its
+                // CallableId. Reuse both so the hoisted value matches the declared callable.
+                bindingName = functionScope.Name;
+                callableId = functionScope.Callable;
+            }
+            else
+            {
+                // Anonymous function declarations are otherwise not valid standard JavaScript syntax.
+                continue;
+            }
+
+            var symbol = _currentScope.FindSymbol(bindingName);
+            var funcValue = new HIRFunctionExpression(callableId, functionScope)
+            {
+                MaterializationDecision = symbol.BindingInfo.CallableMaterialization
+                    ?? CallableMaterializationDecision.UnboundEvaluation
+            };
+            hirStatements.Add(new HIRVariableDeclaration(symbol, funcValue));
+        }
+
+        return true;
+    }
+
+    public bool TryParseStatementsToList([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out List<HIRStatement> hirStatements)
+    {
+        hirStatements = new List<HIRStatement>(_statements.Count + 16);
+        hirStatements.AddRange(_statements);
+        if (!TryAppendHoistedFunctionDeclarations(statements, hirStatements))
+        {
+            return false;
         }
 
         var documentId = GetCurrentDocumentId();
@@ -2554,6 +2567,12 @@ partial class HIRMethodBuilder
                 }
                 
                 var blockStatements = new List<HIRStatement>();
+                if (!TryAppendHoistedFunctionDeclarations(blockStmt.Body, blockStatements))
+                {
+                    _currentScope = previousScope;
+                    return false;
+                }
+
                 foreach (var innerStmt in blockStmt.Body)
                 {
                     if (!TryParseNestedStatement(innerStmt, out var innerHir))
@@ -3131,6 +3150,15 @@ partial class HIRMethodBuilder
                         _currentScope = switchScope;
                     }
 
+                    var hoistedDeclarations = new List<HIRStatement>();
+                    if (!TryAppendHoistedFunctionDeclarations(
+                            switchStmt.Cases.SelectMany(@case => @case.Consequent),
+                            hoistedDeclarations))
+                    {
+                        _currentScope = previousSwitchScope;
+                        return false;
+                    }
+
                     var cases = new List<HIRSwitchCase>();
                     foreach (var sc in switchStmt.Cases)
                     {
@@ -3156,10 +3184,23 @@ partial class HIRMethodBuilder
                     }
 
                     _currentScope = previousSwitchScope;
-                    hirStatement = new HIRSwitchStatement(
+                    var loweredSwitch = new HIRSwitchStatement(
                         discriminant!,
                         cases,
-                        GetMaterializedBlockScopeName(switchScope));
+                        hoistedDeclarations.Count == 0
+                            ? GetMaterializedBlockScopeName(switchScope)
+                            : null);
+                    if (hoistedDeclarations.Count == 0)
+                    {
+                        hirStatement = loweredSwitch;
+                    }
+                    else
+                    {
+                        hoistedDeclarations.Add(loweredSwitch);
+                        hirStatement = new HIRBlock(
+                            hoistedDeclarations,
+                            GetMaterializedBlockScopeName(switchScope));
+                    }
                     return true;
                 }
 
