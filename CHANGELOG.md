@@ -6,7 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/compiler/runtime/docs: port 100 failing `%TypedArray%.prototype`
+  cases across `copyWithin`, `entries`, `every`, `fill`, `filter`, `find`, and
+  `findIndex`. Add resizable-buffer and detachment semantics, complete
+  `filter` species construction, materialize block-scoped function
+  declarations, and box value-type results returned through object-typed
+  callable ABIs.
 
 ## v0.12.19 - 2026-09-08
 

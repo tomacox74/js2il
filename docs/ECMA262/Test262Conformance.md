@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 12,967 | 12 | 10,533 | 23,512 | **55.15%** |
+| Built-in objects and APIs | 13,067 | 12 | 10,433 | 23,512 | **55.58%** |
 | Language syntax and semantics | 7,616 | 46 | 15,981 | 23,643 | **32.21%** |
-| **Total** | 20,583 | 58 | 27,600 | 48,241 | **42.67%** |
+| **Total** | 20,683 | 58 | 27,500 | 48,241 | **42.87%** |
 
 ## Language Areas
 
@@ -227,7 +227,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 733 | 0 | 705 | 1,438 | **50.97%** |
+| `TypedArray` | 833 | 0 | 605 | 1,438 | **57.93%** |
 | `TypedArrayConstructors` | 411 | 0 | 325 | 736 | **55.84%** |
 | `Uint8Array` | 35 | 0 | 33 | 68 | **51.47%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
