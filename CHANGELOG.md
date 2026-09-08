@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- benchmarks: add Kraken 1.1 `json-parse-financial` with the pinned upstream
+  dataset and 1,000 parses per invocation, enabled by default for jroc and Jint.
 - runtime: move Promise constructor descriptor initialization and static-method
   adapters into Promise, preserving realm bootstrap order and property metadata.
 - test262/runtime/docs: port 100 Promise and AggregateError cases from a

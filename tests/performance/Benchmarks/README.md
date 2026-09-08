@@ -111,17 +111,22 @@ dotnet run -c Release -- --dromaeo --scenario dromaeo-3d-cube
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
 
 #### Kraken Comparison
-Runs the selected Kraken 1.1 workload with its test and data scripts loaded during setup, then measures only its registered `runTest()` callback. Release and default local runs include `audio-beat-detection`, `audio-dft`, and `audio-oscillator` on jroc and Jint. The `ai-astar` scenario and the Okojo and YantraJS runtimes remain available but are disabled by default to keep routine benchmark runs focused and shorter.
+Runs the selected Kraken 1.1 workload with its test and data scripts loaded during setup, then measures only its registered `runTest()` callback. Release and default local runs include `audio-beat-detection`, `audio-dft`, `audio-oscillator`, and `json-parse-financial` on jroc and Jint. The `ai-astar` scenario and the Okojo and YantraJS runtimes remain available but are disabled by default to keep routine benchmark runs focused and shorter.
 
 ```powershell
 dotnet run -c Release -- --kracken
 dotnet run -c Release -- --kracken --scenario audio-oscillator
+dotnet run -c Release -- --kracken --scenario json-parse-financial
 dotnet run -c Release -- --kracken --comprehensive
 ```
 
 `--comprehensive` includes every checked-in Kraken scenario and runtime, including entries listed in `KrackenBenchmarkSelection.cs` as disabled by default. The manual BenchmarkDotNet workflow exposes the same behavior through its `comprehensive` input. Add future default exclusions to the scenario or runtime-method set in `KrackenBenchmarkSelection.cs`; do not remove their fixtures or benchmark methods.
 
 `audio-fft` is retained as `audio-fft.js.disabled` and `audio-fft-data.js.disabled`, so it remains outside discovery even in comprehensive mode until those files are explicitly re-enabled.
+
+`json-parse-financial` performs 1,000 parses of Kraken's original financial
+portfolio JSON per benchmark invocation. Data-string construction occurs during
+setup, not inside the timed workload.
 
 #### Prime Execution Comparison
 Runs a single `PrimeJavaScript` sieve pass after JROC compilation and interpreter preparation complete. The dedicated `Scenarios/prime/PrimeJavaScript.OnePass.js` fixture is identical to `tests/performance/PrimeJavaScript.js` except that the timed five-second batch is replaced by one pass. It is intentionally outside the root cross-runtime catalog because it requires Node globals.
