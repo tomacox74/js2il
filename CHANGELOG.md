@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 expression syntax and operator cases: 253 positive
+  execution fixtures and 247 parse-negative fixtures cover assignment targets,
+  object-initializer grammar, compound and logical assignment, arithmetic and
+  shift operators, and strict equality. All 500 native fixtures pass without
+  compiler, runtime, or harness changes.
 - test262/compiler/runtime/docs: port 100 failing `%TypedArray%.prototype`
   cases across `copyWithin`, `entries`, `every`, `fill`, `filter`, `find`, and
   `findIndex`. Add resizable-buffer and detachment semantics, complete

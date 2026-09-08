@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 13,067 | 12 | 10,433 | 23,512 | **55.58%** |
-| Language syntax and semantics | 7,916 | 46 | 15,681 | 23,643 | **33.48%** |
-| **Total** | 20,983 | 58 | 27,200 | 48,241 | **43.50%** |
+| Language syntax and semantics | 8,416 | 46 | 15,181 | 23,643 | **35.60%** |
+| **Total** | 21,483 | 58 | 26,700 | 48,241 | **44.53%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 3,680 | 10 | 7,348 | 11,038 | **33.34%** |
+| `expressions` | 4,180 | 10 | 6,848 | 11,038 | **37.87%** |
 | `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
 | `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
 | `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
@@ -66,7 +66,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `array` | 14 | 0 | 38 | 52 | **26.92%** |
 | `arrow-function` | 334 | 0 | 9 | 343 | **97.38%** |
 | `assignment` | 485 | 0 | 0 | 485 | **100.00%** |
-| `assignmenttargettype` | 71 | 0 | 253 | 324 | **21.91%** |
+| `assignmenttargettype` | 219 | 0 | 105 | 324 | **67.59%** |
 | `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
 | `async-function` | 37 | 0 | 56 | 93 | **39.78%** |
 | `async-generator` | 159 | 0 | 464 | 623 | **25.52%** |
@@ -79,7 +79,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `class` | 588 | 0 | 3,471 | 4,059 | **14.49%** |
 | `coalesce` | 18 | 0 | 6 | 24 | **75.00%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
-| `compound-assignment` | 300 | 0 | 154 | 454 | **66.08%** |
+| `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
 | `concatenation` | 0 | 0 | 5 | 5 | **0.00%** |
 | `conditional` | 12 | 0 | 10 | 22 | **54.55%** |
 | `delete` | 5 | 0 | 64 | 69 | **7.25%** |
@@ -100,7 +100,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `less-than-or-equal` | 46 | 0 | 1 | 47 | **97.87%** |
 | `less-than` | 44 | 0 | 1 | 45 | **97.78%** |
 | `logical-and` | 17 | 0 | 1 | 18 | **94.44%** |
-| `logical-assignment` | 14 | 0 | 64 | 78 | **17.95%** |
+| `logical-assignment` | 48 | 0 | 30 | 78 | **61.54%** |
 | `logical-not` | 6 | 0 | 13 | 19 | **31.58%** |
 | `logical-or` | 17 | 0 | 1 | 18 | **94.44%** |
 | `member-expression` | 1 | 0 | 0 | 1 | **100.00%** |
@@ -108,7 +108,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
 | `new.target` | 0 | 0 | 14 | 14 | **0.00%** |
 | `new` | 0 | 0 | 59 | 59 | **0.00%** |
-| `object` | 541 | 6 | 623 | 1,170 | **46.24%** |
+| `object` | 707 | 6 | 457 | 1,170 | **60.43%** |
 | `optional-chaining` | 6 | 0 | 32 | 38 | **15.79%** |
 | `postfix-decrement` | 2 | 0 | 35 | 37 | **5.41%** |
 | `postfix-increment` | 2 | 0 | 36 | 38 | **5.26%** |
@@ -117,9 +117,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `property-accessors` | 3 | 0 | 18 | 21 | **14.29%** |
 | `relational` | 0 | 0 | 1 | 1 | **0.00%** |
 | `right-shift` | 36 | 0 | 1 | 37 | **97.30%** |
-| `strict-does-not-equals` | 9 | 0 | 21 | 30 | **30.00%** |
-| `strict-equals` | 10 | 0 | 20 | 30 | **33.33%** |
-| `subtraction` | 4 | 0 | 34 | 38 | **10.53%** |
+| `strict-does-not-equals` | 28 | 0 | 2 | 30 | **93.33%** |
+| `strict-equals` | 25 | 0 | 5 | 30 | **83.33%** |
+| `subtraction` | 37 | 0 | 1 | 38 | **97.37%** |
 | `super` | 0 | 0 | 94 | 94 | **0.00%** |
 | `tagged-template` | 0 | 0 | 27 | 27 | **0.00%** |
 | `tco-pos.js` | 1 | 0 | 0 | 1 | **100.00%** |
@@ -128,7 +128,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `typeof` | 1 | 0 | 15 | 16 | **6.25%** |
 | `unary-minus` | 8 | 0 | 6 | 14 | **57.14%** |
 | `unary-plus` | 10 | 0 | 7 | 17 | **58.82%** |
-| `unsigned-right-shift` | 15 | 0 | 30 | 45 | **33.33%** |
+| `unsigned-right-shift` | 45 | 0 | 0 | 45 | **100.00%** |
 | `void` | 4 | 0 | 5 | 9 | **44.44%** |
 | `yield` | 16 | 0 | 47 | 63 | **25.40%** |
 
