@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 binary and logical operator-expression cases: all
+  are positive execution fixtures spanning additive, multiplicative, shifts,
+  relational comparisons, equality, bitwise, and logical operators. All
+  metadata-selected variants and all 500 native fixtures pass without compiler,
+  runtime, or harness changes.
 - test262/runtime/docs: port 20 failing Array every/some and TypedArray
   find/findIndex cases. All Array predicate direct-call overloads now share the
   receiver-aware algorithms, preserving thisArg, sparse/inherited indices,
