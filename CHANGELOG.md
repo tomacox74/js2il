@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: move Promise constructor descriptor initialization and static-method
+  adapters into Promise, preserving realm bootstrap order and property metadata.
+- test262/runtime/docs: port 100 Promise and AggregateError cases from a
+  failure-focused batch (87 initially failing in the native harness).
+  Promise combinators now use constructor-aware capabilities, ordered
+  per-element resolution, guarded callbacks, and specification-compliant
+  iterator closing; add Promise.allKeyed and Promise.allSettledKeyed, apply
+  species constructors in then/finally, and support AggregateError cause
+  options.
 - test262/docs: verify 500 expression syntax and operator cases: 253 positive
   execution fixtures and 247 parse-negative fixtures cover assignment targets,
   object-initializer grammar, compound and logical assignment, arithmetic and

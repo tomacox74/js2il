@@ -250,28 +250,6 @@ namespace JavaScriptRuntime
 
             return new global::JavaScriptRuntime.Promise(executor);
         };
-        private static readonly BuiltinFunction1 _promiseResolveValue = static (thisArgument, value) =>
-            global::JavaScriptRuntime.Promise.ResolveForConstructor(thisArgument, value);
-        private static readonly BuiltinFunction1 _promiseAllValue = static (thisArgument, iterable) =>
-            global::JavaScriptRuntime.Promise.AllForConstructor(
-                thisArgument,
-                iterable);
-        private static readonly BuiltinFunction1 _promiseRaceValue = static (_, iterable) =>
-            global::JavaScriptRuntime.Promise.race(iterable);
-        private static readonly BuiltinFunction1 _promiseRejectValue = static (_, reason) =>
-            global::JavaScriptRuntime.Promise.reject(reason);
-        private static readonly BuiltinFunctionVariadic _promiseTryValue = static (thisArgument, in arguments) =>
-        {
-            var callback = arguments.Count > 0 ? arguments.GetArgument(0) : null;
-            var callbackArgs = arguments.Count > 1
-                ? arguments.ToArray().Skip(1).ToArray()
-                : global::System.Array.Empty<object?>();
-
-            return global::JavaScriptRuntime.Promise.TryForConstructor(
-                thisArgument,
-                callback,
-                callbackArgs);
-        };
         private static readonly BuiltinFunction0 _speciesGetterValue = SpeciesGetter;
 
         private static readonly JsFuncNoScopes2 _proxyConstructorValue = static (newTarget, target, handler) =>
@@ -376,7 +354,6 @@ namespace JavaScriptRuntime
         private object _booleanPrototypeValue => _intrinsics.BooleanPrototype;
         private object _bigIntPrototypeValue => _intrinsics.BigIntPrototype;
         private object _symbolPrototypeValue => _intrinsics.SymbolPrototype;
-        private object _promisePrototypeValue => _intrinsics.GlobalPromisePrototype;
         // Static; the receiver is ignored (issue #1895).
         private readonly BuiltinFunction1 _symbolFunctionValue = SymbolCall;
         private readonly BuiltinFunction0 _symbolPrototypeDescriptionGetterValue = SymbolPrototypeDescription;
@@ -519,7 +496,7 @@ namespace JavaScriptRuntime
                 Value = _functionConstructorValue
             });
             JavaScriptRuntime.Array.ConfigureIntrinsicSurface(_arrayConstructorValue);
-            ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
+            JavaScriptRuntime.Promise.ConfigureIntrinsicPrototype(_promiseConstructorValue, _intrinsics);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
             JavaScriptRuntime.Function.MarkConstructible(
                 _proxyConstructorValue);
@@ -537,46 +514,7 @@ namespace JavaScriptRuntime
             ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
             ConfigureCollectionConstructorMetadata(_weakSetConstructorValue, "WeakSet");
             DefineBuiltinFunctionProperty(_mapConstructorValue, "groupBy", _mapGroupByValue, 2d);
-            ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
-            PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 1d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "Promise"
-            });
-            ConfigureBuiltinFunctionObject(_promiseResolveValue);
-            DefineUndefinedPrototypeProperty(_promiseResolveValue);
-            PropertyDescriptorStore.DefineOrUpdate(_promiseResolveValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 1d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_promiseResolveValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "resolve"
-            });
-            DefineIntrinsicDataProperty(_promiseConstructorValue, "resolve", _promiseResolveValue);
-            DefineBuiltinFunctionProperty(_promiseConstructorValue, "all", _promiseAllValue, 1d);
-            DefineBuiltinFunctionProperty(_promiseConstructorValue, "race", _promiseRaceValue, 1d);
-            DefineBuiltinFunctionProperty(_promiseConstructorValue, "reject", _promiseRejectValue, 1d);
-            DefineBuiltinFunctionProperty(_promiseConstructorValue, "try", _promiseTryValue, 1d);
+            JavaScriptRuntime.Promise.ConfigureIntrinsicSurface(_promiseConstructorValue, _intrinsics);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -2039,31 +1977,6 @@ namespace JavaScriptRuntime
 
                 return factory(iterable);
             };
-        }
-
-        private void ConfigurePromiseIntrinsicSurface(object constructorValue, object prototypeValue)
-        {
-            ConfigureBuiltinFunctionObject(constructorValue);
-            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
-            PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
-
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = prototypeValue
-            });
-            DefineSpeciesAccessorProperty(constructorValue);
-            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = constructorValue
-            });
         }
 
         private void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)

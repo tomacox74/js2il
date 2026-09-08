@@ -444,7 +444,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AggregateError/FailingBatchExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/AggregateError/errors-iterabletolist-failures.js",
@@ -455,9 +456,10 @@
           "test/built-ins/AggregateError/message-tostring-abrupt.js",
           "test/built-ins/AggregateError/message-undefined-no-prop.js",
           "test/built-ins/AggregateError/newtarget-is-undefined.js",
-          "test/built-ins/AggregateError/order-of-args-evaluation.js"
+          "test/built-ins/AggregateError/order-of-args-evaluation.js",
+          "test/built-ins/AggregateError/cause-property.js"
         ],
-        "notes": "AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes a writable non-enumerable errors array, and creates an own message property only for defined messages. Error cause options, custom newTarget prototypes, and cross-realm construction remain limited."
+        "notes": "AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes writable non-enumerable errors and optional cause properties, and creates an own message property only for defined messages. Custom newTarget prototypes and cross-realm construction remain limited."
       },
       {
         "clause": "20.5.7.2",
