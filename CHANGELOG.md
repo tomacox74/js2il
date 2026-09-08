@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.19 - 2026-09-08
+
 - test262/docs: verify 500 binary and logical operator-expression cases: all
   are positive execution fixtures spanning additive, multiplicative, shifts,
   relational comparisons, equality, bitwise, and logical operators. All
