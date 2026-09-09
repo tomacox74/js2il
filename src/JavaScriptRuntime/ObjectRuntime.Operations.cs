@@ -923,6 +923,13 @@ namespace JavaScriptRuntime
             return result;
         }
 
+        internal static JsObject CreateOrdinaryObject(JsShape shape, JsValue[] values)
+        {
+            var result = new JsObject(shape, values);
+            PrototypeChain.InitializePrototype(result, GlobalThis.ObjectPrototypeValue);
+            return result;
+        }
+
         private static void DefineBuiltinDataProperty(object target, string name, object? value, bool enumerable = false, bool configurable = true, bool writable = true)
         {
             PropertyDescriptorStore.DefineOrUpdate(target, name, new JsPropertyDescriptor

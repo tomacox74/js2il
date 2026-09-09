@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/performance: reduce `JSON.parse` execution time and allocations by
+  omitting source records without a callable reviver, filling pre-sized property
+  stores with unboxed values, and reusing bounded thread-local property layouts.
+  Cached layouts contain no parsed values or realm objects and do not intern JSON
+  property names. Preserve duplicate-key ordering, descriptors, and reviver sources.
 - test262/compiler/runtime/docs: port 100 Promise combinator cases: 57
   `Promise.all` and 43 `Promise.allSettled` fixtures. Make generated Promise
   subclasses constructible, including rest/excess constructor arguments and

@@ -187,6 +187,21 @@ public partial class JsObject
         _cacheShapeTransitions = cacheShapeTransitions;
     }
 
+    /// <summary>
+    /// Takes ownership of a complete, default-data-property store and its shape.
+    /// The caller must not mutate the value array after publishing the object.
+    /// </summary>
+    internal JsObject(JsShape shape, JsValue[] values) : this(cacheShapeTransitions: false)
+    {
+        if (shape.PropertyCount != values.Length)
+        {
+            throw new ArgumentException("Property values must match the shape's slot count.", nameof(values));
+        }
+        _shape = shape;
+        _properties = values;
+        AssertInlineInvariants();
+    }
+
     private void SetValue(string key, JsValue value)
     {
         if (HasSharedIntrinsicBaseline && !PropertyDescriptorStore.IsIntrinsicInitialization)

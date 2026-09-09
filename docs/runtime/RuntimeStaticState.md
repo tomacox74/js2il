@@ -23,6 +23,7 @@ hints, resource identity allocators, and context-less compatibility fallbacks.
 | `AsyncContextRuntime._activeContextRuntimeCount` | Process | Fast-path activity count; actual async-hook state is agent-owned |
 | `AsyncContextRuntime._enabledHookCount` | Process | Fast-path activity count; actual hooks are agent-owned |
 | `FsCommon._nextFileDescriptor` | Process | Identity allocator for process file resources |
+| `JSON._parseShapes` | CLR thread | At most 128 cached layout transitions and 8,192 key characters; no parsed values, descriptors, realm objects, or interned keys |
 | `RegExp._prototypeWellKnownSymbolFastPathFlags` | Process | Monotonic deoptimization flags; can only disable an optimization |
 | `RuntimeIntrinsics._initializationDepth` | CLR thread | Reentrant bootstrap state for the calling thread |
 | `RuntimeIntrinsics._nextId` | Process | Metadata identity allocator |
@@ -38,6 +39,12 @@ hints, resource identity allocators, and context-less compatibility fallbacks.
 Bootstrap-in-progress state must be thread-local. A process-wide counter is not
 an acceptable substitute even when initialization work is lock-serialized:
 another thread must not observe itself as reentrant.
+
+The JSON layout cache is shared only by parses on the same CLR thread. Its shapes
+contain immutable property-name/slot metadata; every parsed object receives a
+new value store and the active realm's prototype. Uncacheable keys use uncached
+shapes, and a full cache is replaced on the next parse. Parsed objects and
+oversized keys must remain collectible, as covered by `JSONShapeStorageTests`.
 
 ## Mutable static holders
 
