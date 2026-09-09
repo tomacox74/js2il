@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T17:35:30Z
+> Last generated (UTC): 2026-09-08T21:54:24Z
 
 Block statements are supported, including lexical scoping for `let`/`const` declarations and temporal dead zone checks for lexical bindings. Some early-error edge cases and full spec fidelity around declaration instantiation are not exhaustively validated.
 
@@ -35,6 +35,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | block statement (basic execution) | Supported | [`ArrowFunction_BlockBody_Return.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js) |  | Statement lists within blocks execute normally; common block bodies are exercised widely (e.g., function bodies). |
+| Statement-list parsing in blocks, functions, and classes | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statementList/LexicalSourceConformanceBatchTests.cs` |  | Forty pinned Test262 statement-list fixtures are natively verified across block, function, and class declaration contexts. |
 
 ### 14.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-blockdeclarationinstantiation))
 
