@@ -128,6 +128,20 @@ dotnet run -c Release -- --kracken --comprehensive
 portfolio JSON per benchmark invocation. Data-string construction occurs during
 setup, not inside the timed workload.
 
+For a focused comparison with managed allocation measurements, run:
+
+```powershell
+dotnet run -c Release -- --kracken --scenario json-parse-financial --filter "*RunJrocTest*" "*RunJintTest*" --warmupCount 5 --iterationCount 15
+```
+
+Compare baseline and candidate checkouts on the same host with the same options.
+The generated financial-workload method directly calls `JavaScriptRuntime.JSON.Parse`;
+compiler and module-loading time are outside the measurement. The runtime avoids
+reviver source records when no callable reviver is supplied and uses pre-sized
+property stores with a bounded, thread-local cache of immutable layouts. Layout
+reuse never reuses parsed objects or values, and JSON keys are not interned.
+Use the original scenario, rather than a reduced parsing loop, for end-to-end claims.
+
 #### Prime Execution Comparison
 Runs a single `PrimeJavaScript` sieve pass after JROC compilation and interpreter preparation complete. The dedicated `Scenarios/prime/PrimeJavaScript.OnePass.js` fixture is identical to `tests/performance/PrimeJavaScript.js` except that the timed five-second batch is replaced by one pass. It is intentionally outside the root cross-runtime catalog because it requires Node globals.
 
