@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 13,371 | 12 | 10,129 | 23,512 | **56.87%** |
-| Language syntax and semantics | 10,912 | 46 | 12,685 | 23,643 | **46.15%** |
-| **Total** | 24,283 | 58 | 23,900 | 48,241 | **50.34%** |
+| Built-in objects and APIs | 13,783 | 12 | 9,717 | 23,512 | **58.62%** |
+| Language syntax and semantics | 10,912 | 46 | 12,585 | 23,543 | **46.35%** |
+| **Total** | 24,695 | 58 | 23,388 | 48,141 | **51.30%** |
 
 ## Language Areas
 
@@ -173,7 +173,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
 | `Array` | 2,749 | 0 | 332 | 3,081 | **89.23%** |
-| `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
+| `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |
 | `AsyncFromSyncIteratorPrototype` | 0 | 0 | 38 | 38 | **0.00%** |
@@ -181,7 +181,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `AsyncGeneratorFunction` | 6 | 0 | 17 | 23 | **26.09%** |
 | `AsyncGeneratorPrototype` | 0 | 0 | 48 | 48 | **0.00%** |
 | `AsyncIteratorPrototype` | 0 | 0 | 13 | 13 | **0.00%** |
-| `Atomics` | 20 | 0 | 362 | 382 | **5.24%** |
+| `Atomics` | 71 | 0 | 311 | 382 | **18.59%** |
 | `BigInt` | 49 | 0 | 28 | 77 | **63.64%** |
 | `Boolean` | 14 | 0 | 37 | 51 | **27.45%** |
 | `DataView` | 502 | 0 | 59 | 561 | **89.48%** |
@@ -220,16 +220,16 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Set` | 382 | 0 | 1 | 383 | **99.74%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
-| `SharedArrayBuffer` | 37 | 0 | 67 | 104 | **35.58%** |
+| `SharedArrayBuffer` | 69 | 0 | 35 | 104 | **66.35%** |
 | `String` | 1,093 | 1 | 129 | 1,223 | **89.37%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 833 | 0 | 605 | 1,438 | **57.93%** |
-| `TypedArrayConstructors` | 411 | 0 | 325 | 736 | **55.84%** |
-| `Uint8Array` | 35 | 0 | 33 | 68 | **51.47%** |
+| `TypedArray` | 988 | 0 | 450 | 1,438 | **68.71%** |
+| `TypedArrayConstructors` | 573 | 0 | 163 | 736 | **77.85%** |
+| `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
 | `WeakMap` | 105 | 0 | 36 | 141 | **74.47%** |
 | `WeakRef` | 20 | 0 | 9 | 29 | **68.97%** |

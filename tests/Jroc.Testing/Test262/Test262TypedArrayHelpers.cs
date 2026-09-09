@@ -112,8 +112,14 @@ internal static class Test262TypedArrayHelpers
         var expected = ObjectRuntime.GetItem(conversionValues, "expected");
         foreach (var constructor in TypedArrayConstructors())
         {
-            var name = Test262HostRuntimeIntrinsics.ToMessage(ObjectRuntime.GetItem(constructor!, "name"));
-            var expectedForType = ObjectRuntime.GetItem(expected, name[..^5]);
+            var typeName = GetTypedArrayConversionName(constructor);
+            var expectedForType = ObjectRuntime.GetItem(
+                expected,
+                typeName);
+            if (expectedForType is null)
+            {
+                throw new Error($"Missing byte conversion expectations for {typeName}");
+            }
             var index = 0;
             foreach (var value in EnumerateArrayLike(values))
             {
@@ -127,22 +133,23 @@ internal static class Test262TypedArrayHelpers
     }
 
     private static bool IsFloatTypedArrayConstructor(object[] _, object? value)
-        => ReferenceEquals(value, Constructor(GlobalThis.Float64Array))
-            || ReferenceEquals(value, Constructor(GlobalThis.Float32Array));
+        => IsConstructor(value, GlobalThis.Float64Array)
+            || IsConstructor(value, GlobalThis.Float32Array);
 
     private static string FloatTypedArrayConstructorPrecision(object[] _, object? value)
     {
-        if (ReferenceEquals(value, Constructor(GlobalThis.Float32Array)))
+        if (IsConstructor(value, GlobalThis.Float32Array))
         {
             return "single";
         }
 
-        if (ReferenceEquals(value, Constructor(GlobalThis.Float64Array)))
+        if (IsConstructor(value, GlobalThis.Float64Array))
         {
             return "double";
         }
 
-        throw new Error("Malformed test - floatTypedArrayConstructorPrecision called with non-float TypedArray");
+        throw new Error(
+            "Malformed test - floatTypedArrayConstructorPrecision called with non-float TypedArray");
     }
 
     private static IReadOnlyList<ArgumentFactory> SelectFactories(object? include, object? exclude)
@@ -251,6 +258,41 @@ internal static class Test262TypedArrayHelpers
     private static object?[] NonAtomicsFriendlyConstructors() => [.. FloatConstructors(), Constructor(GlobalThis.Uint8ClampedArray)];
     private static object?[] AtomicsFriendlyConstructors()
         => [Constructor(GlobalThis.Int32Array), Constructor(GlobalThis.Int16Array), Constructor(GlobalThis.Int8Array), Constructor(GlobalThis.Uint32Array), Constructor(GlobalThis.Uint16Array), Constructor(GlobalThis.Uint8Array)];
+
+    private static string GetTypedArrayConversionName(object? constructor)
+    {
+        if (IsConstructor(constructor, GlobalThis.Int8Array)) return "Int8";
+        if (IsConstructor(constructor, GlobalThis.Uint8Array)) return "Uint8";
+        if (IsConstructor(constructor, GlobalThis.Uint8ClampedArray)) return "Uint8Clamped";
+        if (IsConstructor(constructor, GlobalThis.Int16Array)) return "Int16";
+        if (IsConstructor(constructor, GlobalThis.Uint16Array)) return "Uint16";
+        if (IsConstructor(constructor, GlobalThis.Int32Array)) return "Int32";
+        if (IsConstructor(constructor, GlobalThis.Uint32Array)) return "Uint32";
+        if (IsConstructor(constructor, GlobalThis.Float32Array)) return "Float32";
+        if (IsConstructor(constructor, GlobalThis.Float64Array)) return "Float64";
+        throw Test262HostRuntimeIntrinsics.CreateTest262Error(
+            "testTypedArrayConversions received an unsupported TypedArray constructor");
+    }
+
+    private static bool IsConstructor(object? value, Delegate constructor)
+    {
+        value = UnwrapConstructor(value);
+        return ReferenceEquals(value, constructor)
+            || Equals(value, constructor)
+            || value is BuiltinDelegateFunctionAdapter adapter
+                && (ReferenceEquals(adapter.Target, constructor)
+                    || adapter.Target.Equals(constructor));
+    }
+
+    private static object? UnwrapConstructor(object? value)
+    {
+        while (value is object?[] values && values.Length == 1)
+        {
+            value = values[0];
+        }
+
+        return value;
+    }
 
     private static object Constructor(Delegate value)
     {

@@ -199,6 +199,23 @@
           "test/built-ins/SharedArrayBuffer/prototype/maxByteLength/this-is-not-object.js"
         ],
         "notes": "Ported coverage verifies fixed-length construction, standard constructor/prototype metadata, byteLength/maxByteLength receiver validation, and @@toStringTag. Instances use private ArrayBuffer-style storage rather than cross-agent shared memory; growable buffers and grow() remain unsupported."
+      },
+      {
+        "clause": "25.2",
+        "feature": "Additional SharedArrayBuffer conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-sharedarraybuffer-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/IndexedMemoryConformance6BatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/slice/IndexedMemoryConformance6BatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/growable/IndexedMemoryConformance6BatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/SharedArrayBuffer/options-maxbytelength-data-allocation-after-object-creation.js",
+          "test/built-ins/SharedArrayBuffer/prototype/slice/end-default-if-absent.js",
+          "test/built-ins/SharedArrayBuffer/prototype/growable/name.js"
+        ],
+        "notes": "Native Test262 coverage now includes 32 additional SharedArrayBuffer fixtures for options coercion, constructor behavior, fixed-length accessors, and slice argument handling. Storage remains single-agent and growable SharedArrayBuffer semantics remain limited."
       }
     ]
   }

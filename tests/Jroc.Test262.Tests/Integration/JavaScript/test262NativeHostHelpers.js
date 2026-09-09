@@ -55,6 +55,7 @@ assert.sameValue(byteConversionValues.values[0], 127);
 assert.sameValue(byteConversionValues.values[20], undefined);
 assert.sameValue(byteConversionValues.values[38], Infinity);
 assert.sameValue(byteConversionValues.expected.Int8[1], -128);
+assert.sameValue(byteConversionValues.expected.Uint8Clamped[17], 1);
 assert.sameValue(byteConversionValues.expected.Uint16[8], 65535);
 assert.sameValue(byteConversionValues.expected.Int32[10], -1);
 assert.sameValue(byteConversionValues.expected.Uint32[21], 4294967295);
@@ -73,6 +74,18 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
     typedArrayRuns++;
 }, null, ['passthrough']);
 assert.sameValue(typedArrayRuns, 9);
+
+assert(isFloatTypedArrayConstructor(Float32Array));
+assert(isFloatTypedArrayConstructor(Float64Array));
+assert.sameValue(floatTypedArrayConstructorPrecision(Float32Array), 'single');
+assert.sameValue(floatTypedArrayConstructorPrecision(Float64Array), 'double');
+var typedArrayConversionRuns = 0;
+testTypedArrayConversions(byteConversionValues, function(TA, value, expected, initial) {
+    assert(TA);
+    assert(initial === 0 || initial === 1);
+    typedArrayConversionRuns++;
+});
+assert.sameValue(typedArrayConversionRuns, 504);
 
 var rab = CreateRabForTest(Uint8Array);
 assert.compareArray(ToNumbers(new Uint8Array(rab)), [0, 2, 4, 6]);

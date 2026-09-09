@@ -302,6 +302,23 @@
           "test/built-ins/Atomics/Symbol.toStringTag.js"
         ],
         "notes": "Atomics exposes the standard non-writable, non-enumerable, configurable \"Atomics\" tag."
+      },
+      {
+        "clause": "25.4",
+        "feature": "Additional Atomics validation conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-atomics-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/IndexedMemoryConformance6BatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/add/IndexedMemoryConformance6BatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/IndexedMemoryConformance6BatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Atomics/add/validate-arraytype-before-index-coercion.js",
+          "test/built-ins/Atomics/notify/count-symbol-throws.js",
+          "test/built-ins/Atomics/wait/validate-arraytype-before-timeout-coercion.js"
+        ],
+        "notes": "Native Test262 coverage now includes 51 additional Atomics fixtures for descriptors, prototypes, typed-array validation order, and abrupt index, value, count, expected-value, replacement-value, and timeout coercions. This coverage verifies rejection paths and does not expand the unsupported atomic read-modify-write or multi-agent coordination surface."
       }
     ]
   }

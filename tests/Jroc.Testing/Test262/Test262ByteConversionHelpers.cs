@@ -75,6 +75,7 @@ internal static class Test262ByteConversionHelpers
         var expected = new JsObject();
         ObjectRuntime.SetItem(expected, "Int8", CreateExpectedValues(values, value => ToSignedInteger(value, 8)));
         ObjectRuntime.SetItem(expected, "Uint8", CreateExpectedValues(values, value => ToUnsignedInteger(value, 8)));
+        ObjectRuntime.SetItem(expected, "Uint8Clamped", CreateExpectedValues(values, ToUint8Clamped));
         ObjectRuntime.SetItem(expected, "Int16", CreateExpectedValues(values, value => ToSignedInteger(value, 16)));
         ObjectRuntime.SetItem(expected, "Uint16", CreateExpectedValues(values, value => ToUnsignedInteger(value, 16)));
         ObjectRuntime.SetItem(expected, "Int32", CreateExpectedValues(values, value => ToSignedInteger(value, 32)));
@@ -121,5 +122,32 @@ internal static class Test262ByteConversionHelpers
         var unsigned = ToUnsignedInteger(value, bitWidth);
         var signBit = System.Math.Pow(2d, bitWidth - 1);
         return unsigned >= signBit ? unsigned - (signBit * 2d) : unsigned;
+    }
+
+    private static double ToUint8Clamped(double value)
+    {
+        if (double.IsNaN(value) || value <= 0d)
+        {
+            return 0d;
+        }
+
+        if (value >= byte.MaxValue)
+        {
+            return byte.MaxValue;
+        }
+
+        var floor = System.Math.Floor(value);
+        var fractional = value - floor;
+        if (fractional < 0.5d)
+        {
+            return floor;
+        }
+
+        if (fractional > 0.5d)
+        {
+            return floor + 1d;
+        }
+
+        return floor % 2d == 0d ? floor : floor + 1d;
     }
 }
