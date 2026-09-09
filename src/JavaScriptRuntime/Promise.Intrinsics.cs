@@ -1,6 +1,6 @@
 namespace JavaScriptRuntime;
 
-public sealed partial class Promise
+public partial class Promise
 {
     private static readonly BuiltinFunction1 _promiseResolveValue = static (thisArgument, value) =>
         ResolveForConstructor(thisArgument, value);

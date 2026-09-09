@@ -355,13 +355,20 @@ namespace Jroc.Services.ILGenerators
                     try
                     {
                         var runtimeIntrinsicCatalog = _serviceProvider.GetService(typeof(JavaScriptRuntime.IRuntimeIntrinsicCatalog)) as JavaScriptRuntime.IRuntimeIntrinsicCatalog;
-                        if (runtimeIntrinsicCatalog != null
+                        Type? intrinsicBaseType = string.Equals(superId.Name, "Promise", StringComparison.Ordinal)
+                            ? typeof(JavaScriptRuntime.Promise)
+                            : null;
+                        if (intrinsicBaseType == null
+                            && runtimeIntrinsicCatalog != null
                             && runtimeIntrinsicCatalog.TryGetIntrinsicObject(superId.Name, out var intrinsic)
-                            && intrinsic != null
-                            && intrinsic.Type.IsClass
-                            && !intrinsic.Type.IsSealed)
+                            && intrinsic != null)
                         {
-                            baseTypeHandle = _bcl.TypeReferenceRegistry.GetOrAdd(intrinsic.Type);
+                            intrinsicBaseType = intrinsic.Type;
+                        }
+
+                        if (intrinsicBaseType is { IsClass: true, IsSealed: false })
+                        {
+                            baseTypeHandle = _bcl.TypeReferenceRegistry.GetOrAdd(intrinsicBaseType);
                         }
                     }
                     catch
@@ -701,6 +708,12 @@ namespace Jroc.Services.ILGenerators
                     {
                         ctorParamCount = baseCtorFunc.Params.Count;
                     }
+                }
+                else if (string.Equals(superClassId.Name, "Promise", StringComparison.Ordinal))
+                {
+                    // Keep the signature aligned with the synthesized implicit
+                    // `super(executor)` call for classes derived from Promise.
+                    ctorParamCount = 1;
                 }
             }
             var ctorTotalParamCount = classNeedsParentScopes ? ctorParamCount + 1 : ctorParamCount;

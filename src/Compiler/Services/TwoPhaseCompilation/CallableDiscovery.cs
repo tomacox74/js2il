@@ -624,9 +624,10 @@ public sealed class CallableDiscovery
             return (null, null);
         }
 
-        if (string.Equals(identifier.Name, "Array", StringComparison.Ordinal))
+        if (string.Equals(identifier.Name, "Array", StringComparison.Ordinal)
+            || string.Equals(identifier.Name, "Promise", StringComparison.Ordinal))
         {
-            return (null, "Array");
+            return (null, identifier.Name);
         }
 
         var binding = classScope.FindSymbol(identifier.Name).BindingInfo;

@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/compiler/runtime/docs: port 100 Promise combinator cases: 57
+  `Promise.all` and 43 `Promise.allSettled` fixtures. Make generated Promise
+  subclasses constructible, including rest/excess constructor arguments and
+  implicit derived constructors.
 - test262/runtime/docs: port 100 catalog-failing Array and Promise cases.
   Add `Array.fromAsync` with ordered sync/async iteration, thenable awaiting,
   mapper and `thisArg` handling, custom constructors, and abrupt iterator
