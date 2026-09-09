@@ -144,14 +144,10 @@ namespace JavaScriptRuntime
 
         private static bool IsViableConstructorCall(ParameterInfo[] parameters, object[] callArgs)
         {
-            // Must be able to supply all parameters (missing args treated as undefined/null).
-            if (callArgs.Length > parameters.Length)
-            {
-                return false;
-            }
-
-            // Provided args must be assignable/coercible.
-            for (int i = 0; i < callArgs.Length; i++)
+            // JavaScript constructors ignore excess arguments. Generated constructors
+            // access the complete argument list through RuntimeServices when they have
+            // rest parameters or need to forward arguments to a base constructor.
+            for (int i = 0; i < System.Math.Min(callArgs.Length, parameters.Length); i++)
             {
                 if (!TryCoerceConstructorArg(callArgs[i], parameters[i].ParameterType, out _))
                 {

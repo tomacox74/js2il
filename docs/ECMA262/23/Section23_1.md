@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T23:44:36Z
+> Last generated (UTC): 2026-09-09T04:19:27Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -18,7 +18,7 @@
 | 23.1.1.1 | Array ( ... values ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array) |
 | 23.1.2 | Properties of the Array Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-constructor) |
 | 23.1.2.1 | Array.from ( items [ , mapper [ , thisArg ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.from) |
-| 23.1.2.2 | Array.fromAsync ( items [ , mapper [ , thisArg ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.fromasync) |
+| 23.1.2.2 | Array.fromAsync ( items [ , mapper [ , thisArg ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.fromasync) |
 | 23.1.2.3 | Array.isArray ( arg ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.isarray) |
 | 23.1.2.4 | Array.of ( ... items ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.of) |
 | 23.1.2.5 | Array.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype) |
@@ -87,7 +87,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/isArray/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/length/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/entries/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/find/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLast/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLastIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/flat/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/keys/ArrayConformanceBatchExecutionTests.cs` |  | 186 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, and keys behavior. The verified cases include callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Async Array.fromAsync, Proxy/species, cross-realm, resizable-buffer, and remaining exotic-array behavior remain limited. |
+| Array conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/isArray/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/length/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/entries/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/find/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLast/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLastIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/flat/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/keys/ArrayConformanceBatchExecutionTests.cs` |  | 186 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, and keys behavior. The verified cases include callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Array.fromAsync support is described separately below. Proxy/species, cross-realm, resizable-buffer, and remaining exotic-array behavior remain limited. |
 
 ### 23.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-array))
 
@@ -105,7 +105,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.fromAsync | Not Yet Supported |  |  | Async iterator collection and async mapping pipeline are not implemented. |
+| Array.fromAsync | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/fromAsync/ExecutionTests.cs`<br>`tests/Jroc.Tests/Array/FromAsyncExecutionTests.cs` |  | Supports async iterables, sync iterables, and array-like inputs with sequential awaiting, optional async mapping and thisArg, generic result constructors, own data-property creation, and rejection propagation. Iterator acquisition and the single next-method lookup precede result construction; return is read at closing time. The async-from-sync adapter awaits every value, including done:true results, and preserves the separate wrapper and consumer continuations. Mapper/property failures await the wrapper's return result value, whereas rejected yielded values perform synchronous IteratorClose without assimilating the return result. Real async iterator values are not unwrapped. All 95 pinned Array.fromAsync fixtures pass. Broader cross-realm behavior remains limited by runtime support; dynamic Function construction and eval remain unsupported. |
 
 ### 23.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-array.isarray))
 

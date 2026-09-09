@@ -333,6 +333,14 @@ public static class HIRBuilder
                             return null;
                         }
 
+                        // Promise has a fixed one-argument CLR constructor. Retaining that
+                        // arity lets a synthesized derived constructor invoke it directly,
+                        // rather than treating `super(...args)` as a dynamic construction.
+                        if (string.Equals(superId.Name, "Promise", StringComparison.Ordinal))
+                        {
+                            return 1;
+                        }
+
                         var superSymbol = classScope.FindSymbol(superId.Name);
                         ClassBody? baseBody = superSymbol.BindingInfo.DeclarationNode switch
                         {

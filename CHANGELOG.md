@@ -11,6 +11,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   line-terminator separation, computed Symbol names, and field
   initialization. All 1,000 metadata-selected variants and all 500 native
   fixtures pass without compiler, runtime, or harness changes.
+- test262/compiler/runtime/docs: port 100 Promise combinator cases: 57
+  `Promise.all` and 43 `Promise.allSettled` fixtures. Make generated Promise
+  subclasses constructible, including rest/excess constructor arguments and
+  implicit derived constructors.
+- test262/runtime/docs: port 100 catalog-failing Array and Promise cases.
+  Add `Array.fromAsync` with ordered sync/async iteration, thenable awaiting,
+  mapper and `thisArg` handling, custom constructors, and abrupt iterator
+  closing semantics. Capture iterator `next` before constructing the result,
+  await final sync-iterator values, preserve async-from-sync microtask ordering,
+  and distinguish asynchronous wrapper closing from synchronous closing on
+  yielded-value rejection.
 - test262/docs: verify four Array static-method cases for `Array.from` and
   `Array.of`, covering mutation during mapping, alternate constructors,
   non-constructibility, and abrupt proxy property definition. All four native

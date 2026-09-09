@@ -22,6 +22,7 @@ namespace JavaScriptRuntime
 
         private static readonly Func<object?, bool> _arrayIsArrayValue = isArray;
         private static readonly BuiltinFunction3 _arrayFromValue = From;
+        private static readonly BuiltinFunction3 _arrayFromAsyncValue = FromAsync;
         private static readonly BuiltinFunctionVariadic _arrayOfValue = Of;
         private static readonly BuiltinFunction0 _arraySpeciesGetterValue = static thisArgument => thisArgument;
 
@@ -89,6 +90,34 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = _arrayFromValue
+            });
+            // Array.fromAsync is a built-in function, not a constructor. Configure
+            // it explicitly (rather than through DefineBuiltinFunctionProperty)
+            // because the latter models a legacy own `prototype: undefined` slot.
+            GlobalThis.ConfigureBuiltinFunctionObject(_arrayFromAsyncValue);
+            PropertyDescriptorStore.DefineOrUpdate(_arrayFromAsyncValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "fromAsync"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_arrayFromAsyncValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "fromAsync", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _arrayFromAsyncValue
             });
             GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "of", _arrayOfValue, 0d);
         }
@@ -4014,6 +4043,22 @@ namespace JavaScriptRuntime
         public static Array from(object? source, object? mapFn, object? thisArg)
             => (Array)From(null, source, mapFn, thisArg);
 
+        /// <summary>
+        /// JavaScript <c>Array.fromAsync</c> for direct calls using the intrinsic
+        /// Array constructor.
+        /// </summary>
+        public static Promise fromAsync(object? source)
+            => FromAsync(null, source, null, null);
+
+        public static Promise fromAsync(object? source, object? mapFn)
+            => FromAsync(null, source, mapFn, null);
+
+        public static Promise fromAsync(
+            object? source,
+            object? mapFn,
+            object? thisArg)
+            => FromAsync(null, source, mapFn, thisArg);
+
         private static object From(object? constructor, object? source, object? mapFn, object? thisArg)
         {
             if (mapFn is not null && !IsCallable(mapFn))
@@ -4092,6 +4137,661 @@ namespace JavaScriptRuntime
                 }
 
                 index++;
+            }
+        }
+
+        /// <summary>
+        /// Implements Array.fromAsync using promise reactions rather than a CLR
+        /// async method. This preserves JavaScript's ordered, one-at-a-time await
+        /// behavior and keeps every abrupt completion in the returned Promise.
+        /// </summary>
+        private static Promise FromAsync(
+            object? constructor,
+            object? source,
+            object? mapFn,
+            object? thisArg)
+        {
+            var capability = Promise.withResolvers();
+            var operation = new FromAsyncOperation(
+                capability,
+                constructor,
+                source,
+                mapFn,
+                thisArg);
+            operation.Start();
+            return capability.promise;
+        }
+
+        private sealed class FromAsyncOperation
+        {
+            private const double MaxSafeInteger = 9007199254740991d;
+
+            private readonly PromiseWithResolvers _capability;
+            private readonly object? _constructor;
+            private readonly object? _source;
+            private readonly object? _mapFn;
+            private readonly object? _thisArg;
+            private readonly bool _mapping;
+            private object? _result;
+            private object? _arrayLike;
+            private FromAsyncIteratorAdapter? _iterator;
+            private bool _settled;
+            private bool _closing;
+            private double _index;
+            private double _arrayLikeLength;
+
+            public FromAsyncOperation(
+                PromiseWithResolvers capability,
+                object? constructor,
+                object? source,
+                object? mapFn,
+                object? thisArg)
+            {
+                _capability = capability;
+                _constructor = constructor;
+                _source = source;
+                _mapFn = mapFn;
+                _thisArg = thisArg;
+                _mapping = mapFn is not null;
+            }
+
+            public void Start()
+            {
+                try
+                {
+                    if (_mapping && !CallableOperations.IsCallable(_mapFn))
+                    {
+                        throw new TypeError(
+                            "Array.fromAsync: when provided, the second argument must be a function");
+                    }
+
+                    if (_source is null or JsNull)
+                    {
+                        throw new TypeError(
+                            "Array.fromAsync requires an array-like or iterable object");
+                    }
+
+                    // GetMethod(asyncItems, @@asyncIterator) and GetMethod(asyncItems,
+                    // @@iterator) must be performed independently and in this order.
+                    // In particular, do not use GetAsyncIterator here: it intentionally
+                    // serves for-await lowering and does not expose this distinction.
+                    var asyncIteratorMethod = ObjectRuntime.GetItem(
+                        _source,
+                        Symbol.asyncIterator);
+                    if (asyncIteratorMethod is not null and not JsNull)
+                    {
+                        if (!CallableOperations.IsCallable(asyncIteratorMethod))
+                        {
+                            throw new TypeError("Symbol.asyncIterator is not a function");
+                        }
+
+                        _iterator = FromAsyncIteratorAdapter.Create(
+                            _source,
+                            asyncIteratorMethod,
+                            fromSync: false);
+                        _result = CreateIterableResult();
+                        AdvanceIterator();
+                        return;
+                    }
+
+                    var syncIteratorMethod = ObjectRuntime.GetItem(
+                        _source,
+                        Symbol.iterator);
+                    if (syncIteratorMethod is not null and not JsNull)
+                    {
+                        if (!CallableOperations.IsCallable(syncIteratorMethod))
+                        {
+                            throw new TypeError("Symbol.iterator is not a function");
+                        }
+
+                        _iterator = FromAsyncIteratorAdapter.Create(
+                            _source,
+                            syncIteratorMethod,
+                            fromSync: true);
+                        _result = CreateIterableResult();
+                        AdvanceIterator();
+                        return;
+                    }
+
+                    BeginArrayLike();
+                }
+                catch (Exception ex)
+                {
+                    Reject(ExceptionReason(ex));
+                }
+            }
+
+            private object CreateIterableResult()
+                => CallableOperations.IsConstructor(_constructor)
+                    ? CallableOperations.Construct0(_constructor, _constructor)!
+                    : CreateDefaultArray(0d);
+
+            private void BeginArrayLike()
+            {
+                _arrayLike = ObjectRuntime.Construct(_source);
+                _arrayLikeLength = ToArrayLikeLengthAsDouble(_arrayLike);
+                _result = CallableOperations.IsConstructor(_constructor)
+                    ? CallableOperations.Construct1(
+                        _constructor,
+                        _constructor,
+                        _arrayLikeLength)!
+                    : CreateDefaultArray(_arrayLikeLength);
+                AdvanceArrayLike();
+            }
+
+            private void AdvanceArrayLike()
+            {
+                if (_settled)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (_index >= _arrayLikeLength)
+                    {
+                        Complete();
+                        return;
+                    }
+
+                    var value = ObjectRuntime.GetItem(_arrayLike!, _index);
+                    Await(
+                        value,
+                        resolvedValue => MapAndStore(
+                            resolvedValue,
+                            closeIteratorOnAbrupt: false),
+                        Reject);
+                }
+                catch (Exception ex)
+                {
+                    Reject(ExceptionReason(ex));
+                }
+            }
+
+            private void AdvanceIterator()
+            {
+                if (_settled || _closing)
+                {
+                    return;
+                }
+
+                if (_index >= MaxSafeInteger)
+                {
+                    FailWithIteratorClose(
+                        new TypeError(
+                            "Array.fromAsync result exceeds the maximum safe integer"));
+                    return;
+                }
+
+                object? next;
+                try
+                {
+                    next = _iterator!.Next();
+                }
+                catch (Exception ex)
+                {
+                    // IteratorStep failures do not perform IteratorClose.
+                    Reject(ExceptionReason(ex));
+                    return;
+                }
+
+                Await(
+                    next,
+                    ProcessIteratorResult,
+                    // Await(IteratorStep(...)) failures do not perform
+                    // AsyncIteratorClose.
+                    Reject);
+            }
+
+            private void ProcessIteratorResult(object? next)
+            {
+                if (_settled || _closing)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (!Proxy.IsObjectLikeValue(next))
+                    {
+                        throw new TypeError(
+                            "Iterator.next result must be an object");
+                    }
+
+                    if (TypeUtilities.ToBoolean(
+                        ObjectRuntime.GetItem(next!, "done")))
+                    {
+                        Complete();
+                        return;
+                    }
+
+                    var nextValue = ObjectRuntime.GetItem(next!, "value");
+                    // The sync adapter already unwraps values; a real async
+                    // iterator's values must not be awaited here.
+                    MapAndStore(nextValue, closeIteratorOnAbrupt: true);
+                }
+                catch (Exception ex)
+                {
+                    // IteratorStep/IteratorValue failures do not close the iterator.
+                    Reject(ExceptionReason(ex));
+                }
+            }
+
+            private void MapAndStore(
+                object? value,
+                bool closeIteratorOnAbrupt)
+            {
+                if (_settled || _closing)
+                {
+                    return;
+                }
+
+                if (!_mapping)
+                {
+                    StoreValue(value, closeIteratorOnAbrupt);
+                    return;
+                }
+
+                object? mappedValue;
+                try
+                {
+                    mappedValue = CallableOperations.Call2(
+                        _mapFn,
+                        _thisArg,
+                        value,
+                        _index);
+                }
+                catch (Exception ex)
+                {
+                    Fail(
+                        ExceptionReason(ex),
+                        closeIteratorOnAbrupt);
+                    return;
+                }
+
+                Await(
+                    mappedValue,
+                    resolvedMappedValue => StoreValue(
+                        resolvedMappedValue,
+                        closeIteratorOnAbrupt),
+                    reason => Fail(reason, closeIteratorOnAbrupt));
+            }
+
+            private void StoreValue(
+                object? value,
+                bool closeIteratorOnAbrupt)
+            {
+                if (_settled || _closing)
+                {
+                    return;
+                }
+
+                try
+                {
+                    CreateArrayLikeDataProperty(_result!, _index, value);
+                    _index++;
+                    if (_iterator is null)
+                    {
+                        AdvanceArrayLike();
+                    }
+                    else
+                    {
+                        AdvanceIterator();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Fail(
+                        ExceptionReason(ex),
+                        closeIteratorOnAbrupt);
+                }
+            }
+
+            private void Complete()
+            {
+                if (_settled || _closing)
+                {
+                    return;
+                }
+
+                try
+                {
+                    SetArrayLikeLength(_result!, _index);
+                    Resolve(_result);
+                }
+                catch (Exception ex)
+                {
+                    Reject(ExceptionReason(ex));
+                }
+            }
+
+            private void Fail(object? reason, bool closeIteratorOnAbrupt)
+            {
+                if (closeIteratorOnAbrupt && _iterator is not null)
+                {
+                    FailWithIteratorClose(reason);
+                    return;
+                }
+
+                Reject(reason);
+            }
+
+            private void FailWithIteratorClose(object? reason)
+            {
+                if (_settled || _closing)
+                {
+                    return;
+                }
+
+                _closing = true;
+                IteratorCloseResult closeResult;
+                try
+                {
+                    closeResult = _iterator!.Close();
+                }
+                catch
+                {
+                    // AsyncIteratorClose preserves the original abrupt completion.
+                    RejectAfterClose(reason);
+                    return;
+                }
+
+                if (!closeResult.RequiresAwait)
+                {
+                    RejectAfterClose(reason);
+                    return;
+                }
+
+                Await(
+                    closeResult.Value,
+                    _ => RejectAfterClose(reason),
+                    _ => RejectAfterClose(reason));
+            }
+
+            private void RejectAfterClose(object? reason)
+            {
+                _closing = false;
+                Reject(reason);
+            }
+
+            private void Await(
+                object? value,
+                Action<object?> onFulfilled,
+                Action<object?> onRejected)
+            {
+                try
+                {
+                    var promise = (Promise)Promise.resolve(value)!;
+                    promise.then(
+                        new Func<object?[], object?, object?>((_, fulfilledValue) =>
+                        {
+                            try
+                            {
+                                onFulfilled(fulfilledValue);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reject(ExceptionReason(ex));
+                            }
+
+                            return null;
+                        }),
+                        new Func<object?[], object?, object?>((_, rejectionReason) =>
+                        {
+                            try
+                            {
+                                onRejected(rejectionReason);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reject(ExceptionReason(ex));
+                            }
+
+                            return null;
+                        }));
+                }
+                catch (Exception ex)
+                {
+                    onRejected(ExceptionReason(ex));
+                }
+            }
+
+            private void Resolve(object? value)
+            {
+                if (_settled)
+                {
+                    return;
+                }
+
+                _settled = true;
+                CallableOperations.Call1(_capability.resolve, null, value);
+            }
+
+            private void Reject(object? reason)
+            {
+                if (_settled)
+                {
+                    return;
+                }
+
+                _settled = true;
+                CallableOperations.Call1(_capability.reject, null, reason);
+            }
+        }
+
+        private static object? ExceptionReason(Exception exception)
+        {
+            if (exception is JsThrownValueException thrown)
+            {
+                return thrown.Value;
+            }
+
+            if (exception.InnerException is JsThrownValueException innerThrown)
+            {
+                return innerThrown.Value;
+            }
+
+            return exception.InnerException ?? exception;
+        }
+
+        private readonly struct IteratorCloseResult
+        {
+            public IteratorCloseResult(bool requiresAwait, object? value)
+            {
+                RequiresAwait = requiresAwait;
+                Value = value;
+            }
+
+            public bool RequiresAwait { get; }
+            public object? Value { get; }
+        }
+
+        /// <summary>
+        /// Keeps the iterator-record operations used by Array.fromAsync separate
+        /// from for-await lowering: a direct async iterator must not await yielded
+        /// values, while the sync fallback must await each one.
+        /// </summary>
+        private sealed class FromAsyncIteratorAdapter
+        {
+            private readonly object _iterator;
+            private readonly object? _nextMethod;
+            private readonly bool _fromSync;
+
+            private FromAsyncIteratorAdapter(object iterator, bool fromSync)
+            {
+                _iterator = iterator;
+                // GetIteratorFromMethod captures next before result construction.
+                // Callability is checked only when the captured method is called.
+                _nextMethod = ObjectRuntime.GetItem(iterator, "next");
+                _fromSync = fromSync;
+            }
+
+            public static FromAsyncIteratorAdapter Create(
+                object source,
+                object method,
+                bool fromSync)
+            {
+                var iterator = CallableOperations.Call0(method, source);
+                if (!Proxy.IsObjectLikeValue(iterator))
+                {
+                    throw new TypeError(
+                        "Iterator method did not return an object");
+                }
+
+                return new FromAsyncIteratorAdapter(iterator!, fromSync);
+            }
+
+            public object? Next()
+            {
+                if (!_fromSync)
+                {
+                    return CallableOperations.Call0(_nextMethod, _iterator);
+                }
+
+                var capability = Promise.withResolvers();
+                try
+                {
+                    var result = CallableOperations.Call0(_nextMethod, _iterator);
+                    ContinueSyncResult(result, capability, closeOnRejection: true);
+                }
+                catch (Exception ex)
+                {
+                    CallableOperations.Call1(capability.reject, null, ExceptionReason(ex));
+                }
+
+                return capability.promise;
+            }
+
+            public IteratorCloseResult Close()
+            {
+                if (_fromSync)
+                {
+                    // AsyncIteratorClose awaits the wrapper's return promise,
+                    // even when the underlying sync iterator has no return.
+                    return new IteratorCloseResult(true, ReturnFromSync());
+                }
+
+                var returnMethod = GetReturnMethod();
+                return returnMethod is null
+                    ? default
+                    : new IteratorCloseResult(
+                        true,
+                        CallableOperations.Call0(returnMethod, _iterator));
+            }
+
+            private object? GetReturnMethod()
+            {
+                var returnMethod = ObjectRuntime.GetItem(_iterator, "return");
+                if (returnMethod is null or JsNull)
+                {
+                    return null;
+                }
+
+                if (!CallableOperations.IsCallable(returnMethod))
+                {
+                    throw new TypeError("Iterator.return is not a function");
+                }
+
+                return returnMethod;
+            }
+
+            private object? ReturnFromSync()
+            {
+                var capability = Promise.withResolvers();
+                try
+                {
+                    var returnMethod = GetReturnMethod();
+                    if (returnMethod is null)
+                    {
+                        CallableOperations.Call1(
+                            capability.resolve,
+                            null,
+                            IteratorResult.Create(null, done: true));
+                    }
+                    else
+                    {
+                        var result = CallableOperations.Call0(returnMethod, _iterator);
+                        ContinueSyncResult(result, capability, closeOnRejection: false);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CallableOperations.Call1(capability.reject, null, ExceptionReason(ex));
+                }
+
+                return capability.promise;
+            }
+
+            private void ContinueSyncResult(
+                object? result,
+                PromiseWithResolvers capability,
+                bool closeOnRejection)
+            {
+                if (!Proxy.IsObjectLikeValue(result))
+                {
+                    throw new TypeError("Iterator result must be an object");
+                }
+
+                var done = TypeUtilities.ToBoolean(ObjectRuntime.GetItem(result!, "done"));
+                // AsyncFromSyncIteratorContinuation reads and awaits value even
+                // for the final result, unlike the outer Array.fromAsync loop.
+                var value = ObjectRuntime.GetItem(result!, "value");
+                Promise valueWrapper;
+                try
+                {
+                    valueWrapper = (Promise)Promise.resolve(value)!;
+                }
+                catch
+                {
+                    if (!done && closeOnRejection)
+                    {
+                        CloseSyncForThrow();
+                    }
+
+                    throw;
+                }
+
+                var onFulfilled = new Func<object?[], object?, object?>((_, resolvedValue) =>
+                {
+                    CallableOperations.Call1(
+                        capability.resolve,
+                        null,
+                        IteratorResult.Create(resolvedValue, done));
+                    return null;
+                });
+                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    if (!done && closeOnRejection)
+                    {
+                        CloseSyncForThrow();
+                    }
+
+                    CallableOperations.Call1(capability.reject, null, reason);
+                    return null;
+                });
+
+                // Settle the wrapper promise; the consumer awaits this separately
+                // rather than running its mapper inside the unwrapping reaction.
+                valueWrapper.then(onFulfilled, onRejected);
+            }
+
+            private void CloseSyncForThrow()
+            {
+                try
+                {
+                    var returnMethod = GetReturnMethod();
+                    if (returnMethod is not null)
+                    {
+                        // IteratorClose with a throw completion ignores the
+                        // returned object: neither its then nor value is read.
+                        CallableOperations.Call0(returnMethod, _iterator);
+                    }
+                }
+                catch
+                {
+                    // IteratorClose preserves the original thrown value even if
+                    // retrieving or calling return throws.
+                }
             }
         }
 
