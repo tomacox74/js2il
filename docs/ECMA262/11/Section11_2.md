@@ -4,7 +4,7 @@
 
 [Back to Section11](Section11.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T06:16:15Z
+> Last generated (UTC): 2026-09-08T21:54:24Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,6 +22,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 11.2 ([tc39.es](https://tc39.es/ecma262/#sec-types-of-source-code))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Directive prologues and source-code parsing conformance | Supported with Limitations | `tests/Jroc.Test262.Tests/language/directive-prologue/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/global-code/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/function-code/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/identifier-resolution/LexicalSourceConformanceBatchTests.cs` |  | Seventy-eight pinned Test262 fixtures are natively verified across directive prologues, global and function code, and identifier resolution. Script execution remains CommonJS-wrapped rather than a full ECMAScript Script Record implementation. |
 
 ### 11.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-directive-prologues-and-the-use-strict-directive))
 

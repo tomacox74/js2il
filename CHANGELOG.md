@@ -13,6 +13,21 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   await final sync-iterator values, preserve async-from-sync microtask ordering,
   and distinguish asynchronous wrapper closing from synchronous closing on
   yielded-value rejection.
+- test262/docs: verify four Array static-method cases for `Array.from` and
+  `Array.of`, covering mutation during mapping, alternate constructors,
+  non-constructibility, and abrupt proxy property definition. All four native
+  fixtures pass without compiler, runtime, or harness changes.
+- test262/docs: complete this branch's 500-fixture conformance batch with 496
+  class-expression fixtures, alongside the four Array static-method cases above. The
+  class fixtures cover computed accessor/method/field names and generator or
+  async-generator method parameter destructuring. All metadata-selected variants
+  and all 500 native fixtures pass without compiler, runtime, or harness changes.
+- test262/docs: verify 500 lexical grammar and source-code cases: 360 positive
+  execution fixtures and 140 parse-negative fixtures cover automatic semicolon
+  insertion, comments, whitespace, line terminators, Unicode identifiers,
+  keywords and reserved words, directive prologues, statement lists, and
+  script-code parsing. All 500 native fixtures pass without compiler, runtime,
+  or harness changes.
 
 ## v0.12.20 - 2026-09-08
 

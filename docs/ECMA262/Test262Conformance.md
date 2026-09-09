@@ -21,42 +21,42 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 13,267 | 12 | 10,233 | 23,512 | **56.43%** |
-| Language syntax and semantics | 8,416 | 46 | 15,181 | 23,643 | **35.60%** |
-| **Total** | 21,683 | 58 | 26,500 | 48,241 | **44.95%** |
+| Built-in objects and APIs | 13,271 | 12 | 10,229 | 23,512 | **56.44%** |
+| Language syntax and semantics | 9,412 | 46 | 14,185 | 23,643 | **39.81%** |
+| **Total** | 22,683 | 58 | 25,500 | 48,241 | **47.02%** |
 
 ## Language Areas
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `arguments-object` | 15 | 0 | 248 | 263 | **5.70%** |
-| `asi` | 0 | 0 | 102 | 102 | **0.00%** |
+| `asi` | 102 | 0 | 0 | 102 | **100.00%** |
 | `block-scope` | 35 | 1 | 109 | 145 | **24.14%** |
-| `comments` | 0 | 0 | 52 | 52 | **0.00%** |
+| `comments` | 22 | 0 | 30 | 52 | **42.31%** |
 | `computed-property-names` | 0 | 0 | 48 | 48 | **0.00%** |
 | `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
-| `directive-prologue` | 11 | 0 | 51 | 62 | **17.74%** |
+| `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 4,180 | 10 | 6,848 | 11,038 | **37.87%** |
-| `function-code` | 35 | 0 | 182 | 217 | **16.13%** |
-| `future-reserved-words` | 0 | 0 | 55 | 55 | **0.00%** |
-| `global-code` | 0 | 0 | 42 | 42 | **0.00%** |
-| `identifier-resolution` | 0 | 0 | 14 | 14 | **0.00%** |
-| `identifiers` | 5 | 0 | 263 | 268 | **1.87%** |
+| `expressions` | 4,676 | 10 | 6,352 | 11,038 | **42.36%** |
+| `function-code` | 36 | 0 | 181 | 217 | **16.59%** |
+| `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
+| `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
+| `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
+| `identifiers` | 89 | 0 | 179 | 268 | **33.21%** |
 | `import` | 10 | 0 | 117 | 127 | **7.87%** |
-| `keywords` | 0 | 0 | 25 | 25 | **0.00%** |
-| `line-terminators` | 0 | 0 | 41 | 41 | **0.00%** |
+| `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
+| `line-terminators` | 25 | 0 | 16 | 41 | **60.98%** |
 | `literals` | 505 | 0 | 29 | 534 | **94.57%** |
 | `module-code` | 34 | 0 | 560 | 594 | **5.72%** |
-| `punctuators` | 0 | 0 | 11 | 11 | **0.00%** |
-| `reserved-words` | 20 | 0 | 7 | 27 | **74.07%** |
+| `punctuators` | 11 | 0 | 0 | 11 | **100.00%** |
+| `reserved-words` | 26 | 0 | 1 | 27 | **96.30%** |
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
-| `source-text` | 0 | 0 | 1 | 1 | **0.00%** |
-| `statementList` | 0 | 0 | 80 | 80 | **0.00%** |
+| `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
+| `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
 | `statements` | 3,525 | 35 | 5,777 | 9,337 | **37.75%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
-| `white-space` | 0 | 0 | 67 | 67 | **0.00%** |
+| `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
 ## Expression Features
 
@@ -76,7 +76,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
 | `call` | 19 | 1 | 72 | 92 | **20.65%** |
-| `class` | 588 | 0 | 3,471 | 4,059 | **14.49%** |
+| `class` | 1,084 | 0 | 2,975 | 4,059 | **26.71%** |
 | `coalesce` | 18 | 0 | 6 | 24 | **75.00%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 2,745 | 0 | 336 | 3,081 | **89.09%** |
+| `Array` | 2,749 | 0 | 332 | 3,081 | **89.23%** |
 | `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |

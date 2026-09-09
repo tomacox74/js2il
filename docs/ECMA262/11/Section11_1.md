@@ -4,7 +4,7 @@
 
 [Back to Section11](Section11.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:00:13Z
+> Last generated (UTC): 2026-09-08T21:54:24Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,4 +20,14 @@
 | 11.1.4 | Static Semantics: CodePointAt ( string , position ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-codepointat) |
 | 11.1.5 | Static Semantics: StringToCodePoints ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-stringtocodepoints) |
 | 11.1.6 | Static Semantics: ParseText ( sourceText , goalSymbol ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsetext) |
+
+## Support
+
+Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 11.1.6 ([tc39.es](https://tc39.es/ecma262/#sec-parsetext))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Source text parsing baseline | Supported with Limitations | `tests/Jroc.Test262.Tests/language/source-text/LexicalSourceConformanceBatchTests.cs` |  | One pinned Test262 source-text fixture is natively verified, establishing baseline source-text parsing coverage. |
 

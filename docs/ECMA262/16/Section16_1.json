@@ -66,6 +66,16 @@
         "feature": "strict-mode directive prologue detection and enforcement policy",
         "status": "Supported with Limitations",
         "notes": "JROC detects a leading `\"use strict\"` directive and, by default, requires it for successful compilation. `CompilerOptions.StrictMode` can downgrade missing strict mode to a warning or ignore it, but the compiler/runtime are designed around strict-mode semantics."
+      },
+      {
+        "clause": "16.1",
+        "feature": "Script-code parsing and early errors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-scripts",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/global-code/LexicalSourceConformanceBatchTests.cs"
+        ],
+        "notes": "Twenty-five pinned Test262 global-code fixtures are natively verified for script syntax, early errors, strict-mode declarations, and permitted top-level forms. Runtime execution remains CommonJS-wrapped rather than full Script Record evaluation."
       }
     ]
   }

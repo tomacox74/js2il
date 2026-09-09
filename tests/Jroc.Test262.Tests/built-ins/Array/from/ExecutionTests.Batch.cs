@@ -8,6 +8,8 @@ public partial class ExecutionTests
     public Task calling_from_valid_2() => ExecutionTestFromFile("calling-from-valid-2");
     [Fact(DisplayName = "elements-added-after")]
     public Task elements_added_after() => ExecutionTestFromFile("elements-added-after");
+    [Fact(DisplayName = "elements-deleted-after.js")]
+    public Task elements_deleted_after() => ExecutionTestFromFile("elements-deleted-after");
     [Fact(DisplayName = "elements-updated-after")]
     public Task elements_updated_after() => ExecutionTestFromFile("elements-updated-after");
     [Fact(DisplayName = "get-iter-method-err")]
@@ -48,6 +50,8 @@ public partial class ExecutionTests
     public Task source_object_iterator_2() => ExecutionTestFromFile("source-object-iterator-2");
     [Fact(DisplayName = "source-object-length")]
     public Task source_object_length() => ExecutionTestFromFile("source-object-length");
+    [Fact(DisplayName = "source-object-constructor.js")]
+    public Task source_object_constructor() => ExecutionTestFromFile("source-object-constructor");
     [Fact(DisplayName = "source-object-length-set-elem-prop-non-writable")]
     public Task source_object_length_set_elem_prop_non_writable() => ExecutionTestFromFile("source-object-length-set-elem-prop-non-writable");
     [Fact(DisplayName = "source-object-missing")]
