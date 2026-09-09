@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 Test262 fixtures: 66 Array, 30 TypedArray,
+  and four DisposableStack cases. Align direct Array calls with the generic
+  algorithms for coercion, holes, species, sparse lengths, and resizable views;
+  make Array.prototype an Array exotic object; preserve Proxy `has` traps in
+  prototype lookup; and return `undefined` for invalid TypedArray indexed
+  property reads. Referencing the global `eval` value is now supported while
+  invoking unsupported direct eval remains rejected.
 - runtime: correct Array/TypedArray review edge cases: ordered array-like `set`
   reads and overlap handling, species-aware bit-preserving `slice`, permanently
   completed iterators, explicit `lastIndexOf` arguments, empty `join` coercion,

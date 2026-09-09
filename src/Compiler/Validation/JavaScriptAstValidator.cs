@@ -1007,7 +1007,9 @@ public class JavaScriptAstValidator : IAstValidator
 
                             if (IsUnsupportedEvalIdentifier(name))
                             {
-                                if (IsSupportedDirectEvalLiteralIdentifier(id))
+                                if (IsSupportedDirectEvalLiteralIdentifier(id)
+                                    || parent is not CallExpression callExpression
+                                    || !ReferenceEquals(callExpression.Callee, id))
                                 {
                                     break;
                                 }

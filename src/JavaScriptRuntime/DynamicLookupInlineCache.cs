@@ -880,12 +880,13 @@ public static class DynamicLookupInlineCache
                 propertyName,
                 out _) != PropertyDescriptorLookup.None
             || !receiver.TryGetInlinePrototype(out var prototypeValue)
-            || prototypeValue?.GetType() != typeof(JsObject))
+            || prototypeValue is not JsObject prototype
+            || prototype.GetType() != typeof(JsObject)
+                && prototype.GetType() != typeof(Array))
         {
             return false;
         }
 
-        var prototype = (JsObject)prototypeValue;
         if (prototype.GetOwnPropertyDescriptor(
                 propertyName,
                 out var descriptor)

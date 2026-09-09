@@ -993,7 +993,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 666 (0x29a)
+		// Code size: 750 (0x2ee)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_CallbackOps_Basic/Scope,
@@ -1011,8 +1011,7 @@
 			[12] class Modules.Array_CallbackOps_Basic/FunctionExpression_L12C21/FunctionObject,
 			[13] class Modules.Array_CallbackOps_Basic/FunctionExpression_L13C26/FunctionObject,
 			[14] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[15] class Modules.Array_CallbackOps_Basic/FunctionExpression_L15C30/FunctionObject,
-			[16] string
+			[15] class Modules.Array_CallbackOps_Basic/FunctionExpression_L15C30/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Array_CallbackOps_Basic/Scope::.ctor()
@@ -1242,23 +1241,45 @@
 		IL_026a: ldc.i4.0
 		IL_026b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_CallbackOps_Basic/FunctionExpression_L15C30/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0270: stloc.s 15
-		IL_0272: ldloc.s 14
-		IL_0274: ldc.i4.1
-		IL_0275: newarr [System.Runtime]System.Object
-		IL_027a: dup
-		IL_027b: ldc.i4.0
-		IL_027c: ldloc.s 15
-		IL_027e: stelem.ref
-		IL_027f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::flatMap(object[])
-		IL_0284: stloc.s 14
-		IL_0286: ldloc.s 14
-		IL_0288: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join()
-		IL_028d: stloc.s 16
-		IL_028f: ldloc.s 7
-		IL_0291: ldloc.s 16
-		IL_0293: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0298: pop
-		IL_0299: ret
+		IL_0272: volatile.
+		IL_0274: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0279: brfalse IL_0291
+
+		IL_027e: ldloc.s 14
+		IL_0280: ldstr "flatMap"
+		IL_0285: ldloc.s 15
+		IL_0287: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_028c: br IL_02a9
+
+		IL_0291: ldloc.s 14
+		IL_0293: ldstr "flatMap"
+		IL_0298: ldloc.s 15
+		IL_029a: ldstr "Array_CallbackOps_Basic:Modules.Array_CallbackOps_Basic:__js_module_init__:59"
+		IL_029f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_02a9: stloc.s 8
+		IL_02ab: ldloc.s 8
+		IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02b2: volatile.
+		IL_02b4: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_02b9: brfalse IL_02cd
+
+		IL_02be: ldstr "join"
+		IL_02c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_02c8: br IL_02e1
+
+		IL_02cd: ldstr "join"
+		IL_02d2: ldstr "Array_CallbackOps_Basic:Modules.Array_CallbackOps_Basic:__js_module_init__:61"
+		IL_02d7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+
+		IL_02e1: stloc.s 8
+		IL_02e3: ldloc.s 7
+		IL_02e5: ldloc.s 8
+		IL_02e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02ec: pop
+		IL_02ed: ret
 	} // end of method Array_CallbackOps_Basic::__js_module_init__
 
 } // end of class Modules.Array_CallbackOps_Basic
@@ -1289,6 +1310,8 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -32,7 +32,7 @@ public sealed class RuntimeJsObjectInheritanceTests
 
         try
         {
-            var prototype = Assert.IsType<JsObject>(JavaScriptRuntime.Array.Prototype);
+            var prototype = Assert.IsType<JavaScriptRuntime.Array>(JavaScriptRuntime.Array.Prototype);
             var unscopables = Assert.IsType<JsObject>(
                 ObjectRuntime.GetItem(prototype, Symbol.unscopables.DebugId));
 

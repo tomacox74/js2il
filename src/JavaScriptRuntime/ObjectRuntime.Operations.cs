@@ -3747,6 +3747,13 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
+                // A Proxy in the prototype chain contributes its [[HasProperty]]
+                // internal method, not a direct [[GetOwnProperty]] lookup.
+                if (proto is JavaScriptRuntime.Proxy)
+                {
+                    return HasProperty(proto, name);
+                }
+
                 if (HasOwnPropertyForPropertyLookup(proto, name))
                 {
                     return true;
