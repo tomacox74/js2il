@@ -275,7 +275,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < length; i++)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.some", 3, ReadElementObject(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.some", 3, ReadElementOrUndefined(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return true;
@@ -324,12 +324,13 @@ namespace JavaScriptRuntime
 
         public object? findLast(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "findLast");
             var thisArg = GetThisArg(args);
 
-            for (int i = _length - 1; i >= 0; i--)
+            for (int i = length - 1; i >= 0; i--)
             {
-                var value = ReadElementObject(i);
+                var value = ReadElementOrUndefined(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLast", 3, value, (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
@@ -342,12 +343,13 @@ namespace JavaScriptRuntime
 
         public double findLastIndex(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "findLastIndex");
             var thisArg = GetThisArg(args);
 
-            for (int i = _length - 1; i >= 0; i--)
+            for (int i = length - 1; i >= 0; i--)
             {
-                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLastIndex", 3, ReadElementObject(i), (double)i, this, null);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLastIndex", 3, ReadElementOrUndefined(i), (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return i;
@@ -357,14 +359,15 @@ namespace JavaScriptRuntime
             return -1.0;
         }
 
-        public object? forEach(object[]? args)
+        public object? forEach(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "forEach");
             var thisArg = GetThisArg(args);
 
-            for (int i = 0; i < _length; i++)
+            for (int i = 0; i < length; i++)
             {
-                _ = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.forEach", 3, ReadElementObject(i), (double)i, this, null);
+                _ = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.forEach", 3, ReadElementOrUndefined(i), (double)i, this, null);
             }
 
             return null;
@@ -416,10 +419,11 @@ namespace JavaScriptRuntime
 
         public object? reduce(object[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "reduce");
             var hasInitialValue = args != null && args.Length > 1;
 
-            if (_length == 0 && !hasInitialValue)
+            if (length == 0 && !hasInitialValue)
             {
                 throw new TypeError("Reduce of empty typed array with no initial value");
             }
@@ -433,13 +437,13 @@ namespace JavaScriptRuntime
             }
             else
             {
-                accumulator = ReadElementObject(0);
+                accumulator = ReadElementOrUndefined(0);
                 startIndex = 1;
             }
 
-            for (int i = startIndex; i < _length; i++)
+            for (int i = startIndex; i < length; i++)
             {
-                accumulator = InvokeCallback(callback, null, $"{TypedArrayName}.prototype.reduce", 4, accumulator, ReadElementObject(i), (double)i, this);
+                accumulator = InvokeCallback(callback, null, $"{TypedArrayName}.prototype.reduce", 4, accumulator, ReadElementOrUndefined(i), (double)i, this);
             }
 
             return accumulator;
@@ -447,10 +451,11 @@ namespace JavaScriptRuntime
 
         public object? reduceRight(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "reduceRight");
             var hasInitialValue = args != null && args.Length > 1;
 
-            if (_length == 0 && !hasInitialValue)
+            if (length == 0 && !hasInitialValue)
             {
                 throw new TypeError("Reduce of empty typed array with no initial value");
             }
@@ -460,12 +465,12 @@ namespace JavaScriptRuntime
             if (hasInitialValue)
             {
                 accumulator = args![1];
-                startIndex = _length - 1;
+                startIndex = length - 1;
             }
             else
             {
-                accumulator = ReadElementObject(_length - 1);
-                startIndex = _length - 2;
+                accumulator = ReadElementOrUndefined(length - 1);
+                startIndex = length - 2;
             }
 
             for (int i = startIndex; i >= 0; i--)
@@ -476,7 +481,7 @@ namespace JavaScriptRuntime
                     $"{TypedArrayName}.prototype.reduceRight",
                     4,
                     accumulator,
-                    ReadElementObject(i),
+                    ReadElementOrUndefined(i),
                     (double)i,
                     this);
             }
@@ -670,8 +675,12 @@ namespace JavaScriptRuntime
 
         protected TypedArrayBase SubarrayCore(object? start, object? end)
         {
-            var startIndex = CoerceRelativeIndex(start, 0, _length);
-            var endIndex = CoerceRelativeIndex(end, _length, _length);
+            // Capture the source length before coercion. Coercing begin/end may resize or
+            // detach a resizable buffer, but the species constructor must still observe both
+            // coercions before the new view validates the buffer.
+            var sourceLength = GetCurrentLengthOrZero();
+            var startIndex = CoerceRelativeIndex(start, 0, sourceLength);
+            var endIndex = CoerceRelativeIndex(end, sourceLength, sourceLength);
             if (endIndex < startIndex)
             {
                 endIndex = startIndex;
@@ -679,7 +688,10 @@ namespace JavaScriptRuntime
 
             var subarrayLength = endIndex - startIndex;
             var byteOffset = checked(_byteOffset + (startIndex * BytesPerElement));
-            return CreateSameType(_buffer, byteOffset, subarrayLength);
+            var arguments = _isLengthTracking && end is null
+                ? new object?[] { _buffer, (double)byteOffset }
+                : new object?[] { _buffer, (double)byteOffset, (double)subarrayLength };
+            return CreateSubarraySpeciesResult(arguments);
         }
 
         protected TypedArrayBase CreateSameTypeWithLength(int length)
@@ -772,6 +784,46 @@ namespace JavaScriptRuntime
                 throw new TypeError("TypedArray species constructor returned an incompatible content type");
             }
 
+            return typedArray;
+        }
+
+        private TypedArrayBase CreateSubarraySpeciesResult(object?[] arguments)
+        {
+            var defaultConstructor = GetDefaultConstructor();
+            var constructor = ObjectRuntime.GetItem(this, "constructor");
+            object? species;
+
+            if (constructor is null)
+            {
+                species = defaultConstructor;
+            }
+            else
+            {
+                if (!Proxy.IsObjectLikeValue(constructor))
+                {
+                    throw new TypeError("TypedArray constructor property must be an object");
+                }
+
+                species = ObjectRuntime.GetItem(constructor, Symbol.species);
+                if (species is null or JsNull)
+                {
+                    species = defaultConstructor;
+                }
+            }
+
+            species = BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(species);
+            if (!CallableOperations.IsConstructor(species))
+            {
+                throw new TypeError("TypedArray species value is not a constructor");
+            }
+
+            var result = CallableOperations.Construct(species, arguments, species);
+            if (result is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray species constructor must return a TypedArray");
+            }
+
+            typedArray._buffer.EnsureAttached();
             return typedArray;
         }
 
@@ -1293,7 +1345,7 @@ namespace JavaScriptRuntime
 
         private object? AtCore(object? index)
         {
-            var length = GetCurrentLengthOrZero();
+            var length = GetCurrentLengthForIteration();
             var relativeIndex = ToIntegerOrInfinity(index);
             var elementIndex = relativeIndex >= 0
                 ? relativeIndex
@@ -1304,20 +1356,26 @@ namespace JavaScriptRuntime
                 return null;
             }
 
-            return ReadElementObject((int)elementIndex);
+            return ReadElementOrUndefined((int)elementIndex);
         }
 
         private bool IncludesCore(object? searchElement, object? fromIndex)
         {
-            var startIndex = CoerceRelativeIndex(fromIndex, 0, _length);
-            if (startIndex >= _length)
+            var length = GetCurrentLengthForIteration();
+            if (length == 0)
             {
                 return false;
             }
 
-            for (int i = startIndex; i < _length; i++)
+            var startIndex = CoerceRelativeIndex(fromIndex, 0, length);
+            if (startIndex >= length)
             {
-                if (ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: true))
+                return false;
+            }
+
+            for (int i = startIndex; i < length; i++)
+            {
+                if (ElementValuesEqual(ReadElementOrUndefined(i), searchElement, sameValueZero: true))
                 {
                     return true;
                 }
@@ -1389,6 +1447,11 @@ namespace JavaScriptRuntime
 
         private static bool ElementValuesEqual(object? element, object? searchElement, bool sameValueZero)
         {
+            if (element is null)
+            {
+                return searchElement is null;
+            }
+
             if (element is BigInteger elementBigInt)
             {
                 return searchElement is BigInteger searchBigInt
