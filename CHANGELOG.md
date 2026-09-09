@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.21 - 2026-09-09
+
 - runtime/performance: reduce `JSON.parse` execution time and allocations by
   omitting source records without a callable reviver, filling pre-sized property
   stores with unboxed values, and reusing bounded thread-local property layouts.
