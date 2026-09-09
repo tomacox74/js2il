@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T06:06:26Z
+> Last generated (UTC): 2026-09-09T22:46:55Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -255,7 +255,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype.toLocaleString | Supported with Limitations | [`Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js) |  | Implemented as an Object.prototype toString-based fallback path for core compatibility. |
+| Object.prototype.toLocaleString | Supported with Limitations | [`Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js) |  | Requires an object-coercible receiver, looks up its toString method, and calls that method with the original receiver and no arguments. Custom methods, primitive receivers, non-callable properties, and abrupt completions are preserved. |
 
 ### 20.1.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.tostring))
 
@@ -310,4 +310,3 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Properties of Object instances | Supported with Limitations | [`Object_Prototype_Constructor_IsPrototypeOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js)<br>[`PrototypeChain_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js) |  | Instance-level Object.prototype methods are available through the runtime intrinsic Object.prototype surface; default prototype linkage remains opt-in via runtime prototype-chain mode. |
-

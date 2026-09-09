@@ -887,7 +887,7 @@
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js"
         ],
-        "notes": "Implemented as an Object.prototype toString-based fallback path for core compatibility."
+        "notes": "Requires an object-coercible receiver, looks up its toString method, and calls that method with the original receiver and no arguments. Custom methods, primitive receivers, non-callable properties, and abrupt completions are preserved."
       },
       {
         "clause": "20.1.3.6",

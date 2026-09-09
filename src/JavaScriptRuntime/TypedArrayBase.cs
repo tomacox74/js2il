@@ -84,35 +84,64 @@ namespace JavaScriptRuntime
             return bytes;
         }
 
-        public object? set(object[]? args)
+        public object? set(object?[]? args)
         {
             // ToIntegerOrInfinity(targetOffset) precedes source access and target bounds
             // validation, so coercion side effects must be observable in that order.
-            var offset = args is { Length: > 1 }
-                ? CoerceNonNegativeIndex(args[1], 0, $"Invalid {TypedArrayName} offset")
-                : 0;
-
-            if (args == null || args.Length == 0 || args[0] == null || args[0] is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            var targetLength = GetCurrentLengthForIteration();
-
-            if (offset > targetLength)
+            var offset = ToIntegerOrInfinity(GetArgument(args, 1));
+            if (offset < 0)
             {
                 throw new RangeError($"Invalid {TypedArrayName} offset");
             }
 
-            var sourceValues = CaptureSourceItems(args[0]);
-            if (sourceValues.Count > targetLength - offset)
+            var targetLength = GetCurrentLengthForIteration();
+            var source = GetArgument(args, 0);
+            if (source is TypedArrayBase typedSource)
+            {
+                var sourceLength = typedSource.GetCurrentLengthForIteration();
+                if (offset + sourceLength > targetLength)
+                {
+                    throw new RangeError("Source is too large for the destination typed array");
+                }
+
+                if (IsBigIntTypedArray(this) != IsBigIntTypedArray(typedSource))
+                {
+                    throw new TypeError("TypedArray source has an incompatible content type");
+                }
+
+                if (GetType() == typedSource.GetType())
+                {
+                    // BlockCopy preserves NaN payloads and snapshots overlapping ranges.
+                    Buffer.BlockCopy(typedSource._buffer.RawBytes, typedSource._byteOffset,
+                        _buffer.RawBytes, checked(_byteOffset + (int)offset * BytesPerElement),
+                        checked(sourceLength * BytesPerElement));
+                }
+                else
+                {
+                    var sourceValues = CaptureSourceItems(typedSource);
+                    for (var i = 0; i < sourceValues.Count; i++)
+                    {
+                        WriteElementOrIgnore((int)offset + i, sourceValues[i]);
+                    }
+                }
+                return null;
+            }
+
+            if (source is null or JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var sourceObject = ObjectRuntime.Construct(source);
+            var length = ToArrayLikeLength(ObjectRuntime.GetProperty(sourceObject, "length"));
+            if (offset + length > targetLength)
             {
                 throw new RangeError("Source is too large for the destination typed array");
             }
 
-            for (int i = 0; i < sourceValues.Count; i++)
+            for (var i = 0; i < (int)length; i++)
             {
-                WriteElementOrIgnore(offset + i, sourceValues[i]);
+                WriteElementOrIgnore((int)offset + i, ObjectRuntime.GetItem(sourceObject, (double)i));
             }
 
             return null;
@@ -125,7 +154,7 @@ namespace JavaScriptRuntime
             => AtCore(index);
 
         public bool includes()
-            => false;
+            => IncludesCore(null, null);
 
         public bool includes(object? searchElement)
             => IncludesCore(searchElement, null);
@@ -143,13 +172,13 @@ namespace JavaScriptRuntime
             => IndexOfCore(searchElement, fromIndex);
 
         public double lastIndexOf()
-            => LastIndexOfCore(null, null);
+            => LastIndexOfCore(null, null, false);
 
         public double lastIndexOf(object? searchElement)
-            => LastIndexOfCore(searchElement, null);
+            => LastIndexOfCore(searchElement, null, false);
 
         public double lastIndexOf(object? searchElement, object? fromIndex)
-            => LastIndexOfCore(searchElement, fromIndex);
+            => LastIndexOfCore(searchElement, fromIndex, true);
 
         public IJavaScriptIterator values()
         {
@@ -182,20 +211,23 @@ namespace JavaScriptRuntime
             => toString();
 
         public string toLocaleString()
-            => JoinCore(null);
+            => toLocaleString(null);
 
-        public string toLocaleString(object[]? args)
-            => toLocaleString();
+        public string toLocaleString(object?[]? args)
+            => Array.LocaleStringCore(this, GetCurrentLengthForIteration(), GetArgument(args, 0), GetArgument(args, 1));
 
         public TypedArrayBase reverse()
         {
             var length = GetCurrentLengthForIteration();
             for (int left = 0, right = length - 1; left < right; left++, right--)
             {
-                var leftValue = ReadElementObject(left);
-                var rightValue = ReadElementObject(right);
-                WriteElementObject(left, rightValue);
-                WriteElementObject(right, leftValue);
+                var bytes = _buffer.RawBytes;
+                for (var b = 0; b < BytesPerElement; b++)
+                {
+                    var leftByte = _byteOffset + left * BytesPerElement + b;
+                    var rightByte = _byteOffset + right * BytesPerElement + b;
+                    (bytes[leftByte], bytes[rightByte]) = (bytes[rightByte], bytes[leftByte]);
+                }
             }
 
             return this;
@@ -673,14 +705,33 @@ namespace JavaScriptRuntime
 
             var sliceLength = endIndex - startIndex;
             var result = CreateSpeciesResult(sliceLength);
+            if (sliceLength == 0)
+            {
+                return result;
+            }
 
             // Species construction can resize or detach the source buffer.
             var currentLength = GetCurrentLengthForIteration();
             var copyEndIndex = global::System.Math.Min(endIndex, currentLength);
             var copyLength = global::System.Math.Max(copyEndIndex - startIndex, 0);
-            for (var i = 0; i < copyLength; i++)
+            if (GetType() == result.GetType())
             {
-                result.WriteElementOrIgnore(i, ReadElementOrUndefined(startIndex + i));
+                // Unlike set(), slice() copies forward even when species aliases the source.
+                var sourceBytes = _buffer.RawBytes;
+                var targetBytes = result._buffer.RawBytes;
+                var sourceByteIndex = _byteOffset + startIndex * BytesPerElement;
+                var byteCount = copyLength * BytesPerElement;
+                for (var i = 0; i < byteCount; i++)
+                {
+                    targetBytes[result._byteOffset + i] = sourceBytes[sourceByteIndex + i];
+                }
+            }
+            else
+            {
+                for (var i = 0; i < copyLength; i++)
+                {
+                    result.WriteElementOrIgnore(i, ReadElementOrUndefined(startIndex + i));
+                }
             }
 
             return result;
@@ -851,13 +902,13 @@ namespace JavaScriptRuntime
 
         private List<object?> GetSortedValues(object?[]? args)
         {
-            var length = GetCurrentLengthForIteration();
             var compareFunction = args != null && args.Length > 0 ? args[0] : null;
             if (compareFunction is not null && !CallableOperations.IsCallable(compareFunction))
             {
                 throw new TypeError($"{TypedArrayName}.prototype.sort requires a callback function");
             }
 
+            var length = GetCurrentLengthForIteration();
             var values = new List<SortableTypedArrayValue>(length);
             for (int i = 0; i < length; i++)
             {
@@ -1415,7 +1466,7 @@ namespace JavaScriptRuntime
             return -1.0;
         }
 
-        private double LastIndexOfCore(object? searchElement, object? fromIndex)
+        private double LastIndexOfCore(object? searchElement, object? fromIndex, bool hasFromIndex)
         {
             var length = GetCurrentLengthForIteration();
             if (length == 0)
@@ -1424,7 +1475,7 @@ namespace JavaScriptRuntime
             }
 
             var startIndex = length - 1;
-            if (fromIndex is not null && fromIndex is not JsNull)
+            if (hasFromIndex)
             {
                 var number = ToIntegerOrInfinity(fromIndex);
                 if (double.IsNegativeInfinity(number))
@@ -1532,14 +1583,9 @@ namespace JavaScriptRuntime
         private string JoinCore(object? separator)
         {
             var length = GetCurrentLengthForIteration();
-            if (length == 0)
-            {
-                return string.Empty;
-            }
-
             var actualSeparator = separator is null
                 ? ","
-                : DotNet2JSConversions.ToString(separator);
+                : DotNet2JSConversions.ToStringRejectingSymbols(separator);
             var parts = new string[length];
             for (int i = 0; i < length; i++)
             {
@@ -1735,6 +1781,7 @@ namespace JavaScriptRuntime
         private readonly TypedArrayBase _typedArray;
         private readonly TypedArrayIteratorKind _kind;
         private int _index;
+        private bool _isClosed;
 
         public TypedArrayIterator(TypedArrayBase typedArray, TypedArrayIteratorKind kind)
         {
@@ -1749,6 +1796,13 @@ namespace JavaScriptRuntime
 
         public IteratorResultObject Next()
         {
+            if (_isClosed)
+            {
+                return IteratorResult.Create(null, true);
+            }
+
+            // A generator-based iterator remains completed after return or abrupt completion.
+            _isClosed = true;
             if (_index >= _typedArray.GetCurrentLengthForIteration())
             {
                 return IteratorResult.Create(null, true);
@@ -1762,6 +1816,7 @@ namespace JavaScriptRuntime
             };
 
             _index++;
+            _isClosed = false;
             return new IteratorResultObject(value, done: false);
         }
 
