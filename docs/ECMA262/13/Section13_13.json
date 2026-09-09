@@ -44,6 +44,22 @@
           "tests/Jroc.Test262.Tests/language/expressions/coalesce/PortExpressionsBatchExecutionTests.cs"
         ],
         "notes": "Implements short-circuit semantics: the right-hand side is evaluated only when the left-hand side is nullish (undefined or null). The checked-in test262 coverage now includes abrupt completions, non-nullish short-circuit values, and additional chain/evaluation cases."
+      },
+      {
+        "clause": "13.13",
+        "feature": "Nullish-coalescing mixing early errors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-logical-operators",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/coalesce/cannot-chain-head-with-logical-and.js",
+          "test/language/expressions/coalesce/cannot-chain-head-with-logical-or.js",
+          "test/language/expressions/coalesce/cannot-chain-tail-with-logical-and.js",
+          "test/language/expressions/coalesce/cannot-chain-tail-with-logical-or.js"
+        ],
+        "notes": "The native Test262 harness rejects the four pinned parse-negative forms that mix `??` with `&&` or `||` without required grouping."
       }
     ]
   }

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional pinned expression parse-negative fixtures:
+  301 dynamic-import, 91 assignment-target, 48 async-generator, 46 class, and
+  14 other assignment, call, coalesce, conditional, and delete grammar cases.
+  All 960 metadata-selected variants and all 500 native fixtures pass without
+  compiler, runtime, or harness changes.
+
 - test262/runtime/docs: port 100 previously failing TypedArray fixtures. Add
   TypedArray prototype intrinsic dispatch for `forEach`, `includes`, and
   `subarray`; support RAB/detached-buffer validation and iteration, BigInt

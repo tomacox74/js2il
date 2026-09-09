@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-26T19:57:35Z
+> Last generated (UTC): 2026-09-09T22:40:32Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -19,6 +19,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 13.14 ([tc39.es](https://tc39.es/ecma262/#sec-conditional-operator))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Conditional-expression `in` grammar early errors | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs` | `test/language/expressions/conditional/in-branch-2.js`<br>`test/language/expressions/conditional/in-condition.js` | The native Test262 harness rejects two pinned parse-negative conditional-expression forms that use `in` where the grammar disallows it. |
 
 ### 13.14.1 ([tc39.es](https://tc39.es/ecma262/#sec-conditional-operator-runtime-semantics-evaluation))
 

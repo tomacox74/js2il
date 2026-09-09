@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-09-09T22:40:32Z
 
 JROC supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
@@ -93,12 +93,19 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Argument lists (including spread) for CallExpression | Supported with Limitations | [`Function_Call_Spread_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_Basic.js)<br>[`Function_Call_Spread_Middle.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_Middle.js)<br>[`Function_Call_Spread_Multiple.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js)<br>[`Function_Call_Spread_EvaluationOrder.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js)<br>[`Function_Call_Spread_StringIterable.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js)<br>[`Function_Call_Spread_MemberCall_ConsoleLog.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js) |  | Argument list evaluation supports spread elements in CallExpression argument lists by expanding iterables via the iterator protocol. Spread in `new` argument lists is not supported. |
+| Call argument-list early error | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs` | `test/language/expressions/call/S11.2.4_A1.3_T1.js` | The native Test262 harness rejects the pinned malformed argument-list fixture with an empty argument between commas. |
 
 ### 13.3.9 ([tc39.es](https://tc39.es/ecma262/#sec-optional-chains))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Optional chaining (?.) for property/index access and calls | Supported with Limitations | [`BinaryOperator_OptionalChaining_PropertyAccess.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_PropertyAccess.js)<br>[`BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js) |  | Implements nullish short-circuiting for optional member access (identifier + computed) and optional calls, including skipping evaluation of computed keys / call arguments when the base/callee is nullish. Optional chaining on private fields and other less common forms may be incomplete. |
+
+### 13.3.10 ([tc39.es](https://tc39.es/ecma262/#sec-import-calls))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Invalid import-call grammar rejection | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs` |  | The native Test262 harness verifies rejection of 301 pinned parse-negative dynamic-import fixtures, including invalid import-call syntax, escaped `import`, and unsupported import attributes. This evidence is limited to invalid-source rejection; it does not expand the documented valid dynamic-import module-loading or options support. |
 
 ### 13.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-meta-properties))
 

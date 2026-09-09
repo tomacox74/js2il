@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T19:09:38Z
+> Last generated (UTC): 2026-09-09T22:40:32Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -32,4 +32,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | await expression in async generators | Supported | [`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js) |  | Await expressions work within async generator functions, allowing promises to be awaited before yielding values. |
 | for await...of with async generators | Supported | [`AsyncGenerator_ForAwaitOf.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) |  | for await...of loops correctly consume async generators, awaiting each yielded value. |
 | yield expression in async generators | Supported | [`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js) |  | Yield expressions work within async generator functions, suspending execution and returning Promise-wrapped iterator results. |
+
+### 15.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-async-generator-function-definitions-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Async-generator expression early-error conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs` |  | The native Test262 harness verifies 48 additional pinned parse-negative async-generator expression fixtures. They cover parameter and binding restrictions, `await`/`yield` grammar, strict-mode restrictions, and invalid `super` use. |
 

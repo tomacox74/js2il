@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 13,983 | 12 | 9,517 | 23,512 | **59.47%** |
-| Language syntax and semantics | 10,912 | 46 | 12,685 | 23,643 | **46.15%** |
-| **Total** | 24,895 | 58 | 23,288 | 48,241 | **51.61%** |
+| Language syntax and semantics | 11,412 | 46 | 12,185 | 23,643 | **48.27%** |
+| **Total** | 25,395 | 58 | 22,788 | 48,241 | **52.64%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 5,676 | 10 | 5,352 | 11,038 | **51.42%** |
+| `expressions` | 6,176 | 10 | 4,852 | 11,038 | **55.95%** |
 | `function-code` | 36 | 0 | 181 | 217 | **16.59%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -66,26 +66,26 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `array` | 14 | 0 | 38 | 52 | **26.92%** |
 | `arrow-function` | 334 | 0 | 9 | 343 | **97.38%** |
 | `assignment` | 485 | 0 | 0 | 485 | **100.00%** |
-| `assignmenttargettype` | 219 | 0 | 105 | 324 | **67.59%** |
+| `assignmenttargettype` | 310 | 0 | 14 | 324 | **95.68%** |
 | `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
 | `async-function` | 37 | 0 | 56 | 93 | **39.78%** |
-| `async-generator` | 159 | 0 | 464 | 623 | **25.52%** |
+| `async-generator` | 207 | 0 | 416 | 623 | **33.23%** |
 | `await` | 3 | 0 | 19 | 22 | **13.64%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
-| `call` | 19 | 1 | 72 | 92 | **20.65%** |
-| `class` | 2,084 | 0 | 1,975 | 4,059 | **51.34%** |
-| `coalesce` | 18 | 0 | 6 | 24 | **75.00%** |
+| `call` | 20 | 1 | 71 | 92 | **21.74%** |
+| `class` | 2,130 | 0 | 1,929 | 4,059 | **52.48%** |
+| `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
 | `concatenation` | 0 | 0 | 5 | 5 | **0.00%** |
-| `conditional` | 12 | 0 | 10 | 22 | **54.55%** |
-| `delete` | 5 | 0 | 64 | 69 | **7.25%** |
+| `conditional` | 14 | 0 | 8 | 22 | **63.64%** |
+| `delete` | 7 | 0 | 62 | 69 | **10.14%** |
 | `division` | 43 | 0 | 2 | 45 | **95.56%** |
 | `does-not-equals` | 36 | 0 | 2 | 38 | **94.74%** |
-| `dynamic-import` | 0 | 0 | 941 | 941 | **0.00%** |
+| `dynamic-import` | 301 | 0 | 640 | 941 | **31.99%** |
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
 | `function` | 234 | 3 | 27 | 264 | **88.64%** |

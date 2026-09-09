@@ -476,6 +476,29 @@
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js"
         ],
         "notes": "Implements nullish short-circuiting for optional member access (identifier + computed) and optional calls, including skipping evaluation of computed keys / call arguments when the base/callee is nullish. Optional chaining on private fields and other less common forms may be incomplete."
+      },
+      {
+        "clause": "13.3.10",
+        "feature": "Invalid import-call grammar rejection",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-import-calls",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs"
+        ],
+        "notes": "The native Test262 harness verifies rejection of 301 pinned parse-negative dynamic-import fixtures, including invalid import-call syntax, escaped `import`, and unsupported import attributes. This evidence is limited to invalid-source rejection; it does not expand the documented valid dynamic-import module-loading or options support."
+      },
+      {
+        "clause": "13.3.8",
+        "feature": "Call argument-list early error",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-argument-lists",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/call/S11.2.4_A1.3_T1.js"
+        ],
+        "notes": "The native Test262 harness rejects the pinned malformed argument-list fixture with an empty argument between commas."
       }
     ]
   }
