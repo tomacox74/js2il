@@ -36,7 +36,7 @@
     {
       "clause": "23.1.2.2",
       "title": "Array.fromAsync ( items [ , mapper [ , thisArg ] ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-array.fromasync"
     },
     {
@@ -418,7 +418,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ArrayConformanceBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/keys/ArrayConformanceBatchExecutionTests.cs"
         ],
-        "notes": "186 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, and keys behavior. The verified cases include callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Async Array.fromAsync, Proxy/species, cross-realm, resizable-buffer, and remaining exotic-array behavior remain limited."
+        "notes": "186 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, and keys behavior. The verified cases include callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Array.fromAsync support is described separately below. Proxy/species, cross-realm, resizable-buffer, and remaining exotic-array behavior remain limited."
       },
       {
         "clause": "23.1.1.1",
@@ -477,9 +477,13 @@
       {
         "clause": "23.1.2.2",
         "feature": "Array.fromAsync",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.fromasync",
-        "notes": "Async iterator collection and async mapping pipeline are not implemented."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/fromAsync/ExecutionTests.cs",
+          "tests/Jroc.Tests/Array/FromAsyncExecutionTests.cs"
+        ],
+        "notes": "Supports async iterables, sync iterables, and array-like inputs with sequential awaiting, optional async mapping and thisArg, generic result constructors, own data-property creation, and rejection propagation. Iterator acquisition and the single next-method lookup precede result construction; return is read at closing time. The async-from-sync adapter awaits every value, including done:true results, and preserves the separate wrapper and consumer continuations. Mapper/property failures await the wrapper's return result value, whereas rejected yielded values perform synchronous IteratorClose without assimilating the return result. Real async iterator values are not unwrapped. All 95 pinned Array.fromAsync fixtures pass. Broader cross-realm behavior remains limited by runtime support; dynamic Function construction and eval remain unsupported."
       },
       {
         "clause": "23.1.2.3",

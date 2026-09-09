@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 catalog-failing Array and Promise cases.
+  Add `Array.fromAsync` with ordered sync/async iteration, thenable awaiting,
+  mapper and `thisArg` handling, custom constructors, and abrupt iterator
+  closing semantics. Capture iterator `next` before constructing the result,
+  await final sync-iterator values, preserve async-from-sync microtask ordering,
+  and distinguish asynchronous wrapper closing from synchronous closing on
+  yielded-value rejection.
 - test262/docs: verify four Array static-method cases for `Array.from` and
   `Array.of`, covering mutation during mapping, alternate constructors,
   non-constructibility, and abrupt proxy property definition. All four native
