@@ -403,6 +403,10 @@ public class RuntimeServices
         {
             constructed = ObjectRuntime.ConstructValue(constructor, args);
         }
+        else if (constructor is Type)
+        {
+            constructed = ObjectRuntime.ConstructValue(constructor, args, newTarget);
+        }
         else
         {
             throw new TypeError($"Class extends value is not a constructor: it has type {TypeUtilities.Typeof(constructor)}.");

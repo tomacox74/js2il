@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 13,371 | 12 | 10,129 | 23,512 | **56.87%** |
+| Built-in objects and APIs | 13,471 | 12 | 10,029 | 23,512 | **57.29%** |
 | Language syntax and semantics | 10,912 | 46 | 12,685 | 23,643 | **46.15%** |
-| **Total** | 24,283 | 58 | 23,900 | 48,241 | **50.34%** |
+| **Total** | 24,383 | 58 | 23,800 | 48,241 | **50.55%** |
 
 ## Language Areas
 
@@ -175,7 +175,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Array` | 2,749 | 0 | 332 | 3,081 | **89.23%** |
 | `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
-| `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |
+| `AsyncDisposableStack` | 100 | 0 | 4 | 104 | **96.15%** |
 | `AsyncFromSyncIteratorPrototype` | 0 | 0 | 38 | 38 | **0.00%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
 | `AsyncGeneratorFunction` | 6 | 0 | 17 | 23 | **26.09%** |

@@ -39,6 +39,8 @@ internal enum RuntimeIntrinsicSlot
     URIErrorPrototype,
     AggregateErrorPrototype,
     SuppressedErrorPrototype,
+    DisposableStackPrototype,
+    AsyncDisposableStackPrototype,
     Json,
     Intl,
     Atomics,

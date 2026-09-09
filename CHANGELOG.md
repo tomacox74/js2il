@@ -17,6 +17,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   class-element grammar. The group contains 444 positive and 56 parse-negative
   fixtures; all 1,000 metadata-selected variants and all 500 native fixtures pass
   without compiler, runtime, or harness changes.
+- test262/runtime/docs: port 100 previously failing `AsyncDisposableStack`
+  fixtures. Add the constructible global and its intrinsic prototype surface,
+  synchronous/asynchronous disposable-resource registration, ordered asynchronous
+  disposal, error suppression, and stack transfer via `move()`.
 - test262/docs: verify 500 class-expression fixtures: 452 method
   destructuring cases and 48 class-element cases covering private names,
   line-terminator separation, computed Symbol names, and field
