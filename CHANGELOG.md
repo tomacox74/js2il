@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional class-expression fixtures: 236 private
+  method-destructuring cases and 264 class-element cases covering private names,
+  field initializers, line-terminator separation, and valid or invalid static
+  class-element grammar. The group contains 444 positive and 56 parse-negative
+  fixtures; all 1,000 metadata-selected variants and all 500 native fixtures pass
+  without compiler, runtime, or harness changes.
 - test262/docs: verify 500 class-expression fixtures: 452 method
   destructuring cases and 48 class-element cases covering private names,
   line-terminator separation, computed Symbol names, and field
