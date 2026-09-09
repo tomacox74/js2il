@@ -30,7 +30,7 @@ Notes:
 
 ## Test262 Conformance Status
 
-For the current development branch following [JROC v0.12.19](https://github.com/tomacox74/js2il/releases/tag/v0.12.19), Test262 provides the following conformance evidence:
+For the current development branch following [JROC v0.12.20](https://github.com/tomacox74/js2il/releases/tag/v0.12.20), Test262 provides the following conformance evidence:
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|

@@ -4175,7 +4175,6 @@ namespace JavaScriptRuntime
             private object? _result;
             private object? _arrayLike;
             private FromAsyncIteratorAdapter? _iterator;
-            private bool _syncIteratorValues;
             private bool _settled;
             private bool _closing;
             private double _index;
@@ -4226,11 +4225,11 @@ namespace JavaScriptRuntime
                             throw new TypeError("Symbol.asyncIterator is not a function");
                         }
 
-                        _result = CreateIterableResult();
                         _iterator = FromAsyncIteratorAdapter.Create(
                             _source,
-                            asyncIteratorMethod);
-                        _syncIteratorValues = false;
+                            asyncIteratorMethod,
+                            fromSync: false);
+                        _result = CreateIterableResult();
                         AdvanceIterator();
                         return;
                     }
@@ -4245,11 +4244,11 @@ namespace JavaScriptRuntime
                             throw new TypeError("Symbol.iterator is not a function");
                         }
 
-                        _result = CreateIterableResult();
                         _iterator = FromAsyncIteratorAdapter.Create(
                             _source,
-                            syncIteratorMethod);
-                        _syncIteratorValues = true;
+                            syncIteratorMethod,
+                            fromSync: true);
+                        _result = CreateIterableResult();
                         AdvanceIterator();
                         return;
                     }
@@ -4336,12 +4335,6 @@ namespace JavaScriptRuntime
                     return;
                 }
 
-                if (_syncIteratorValues)
-                {
-                    ProcessIteratorResult(next);
-                    return;
-                }
-
                 Await(
                     next,
                     ProcessIteratorResult,
@@ -4373,21 +4366,8 @@ namespace JavaScriptRuntime
                     }
 
                     var nextValue = ObjectRuntime.GetItem(next!, "value");
-                    if (_syncIteratorValues)
-                    {
-                        // CreateAsyncFromSyncIterator awaits every value from a
-                        // synchronous iterator before Array.fromAsync maps it.
-                        Await(
-                            nextValue,
-                            resolvedValue => MapAndStore(
-                                resolvedValue,
-                                closeIteratorOnAbrupt: true),
-                            FailWithIteratorClose);
-                        return;
-                    }
-
-                    // Values yielded by a real async iterator are intentionally
-                    // not awaited by Array.fromAsync.
+                    // The sync adapter already unwraps values; a real async
+                    // iterator's values must not be awaited here.
                     MapAndStore(nextValue, closeIteratorOnAbrupt: true);
                 }
                 catch (Exception ex)
@@ -4597,21 +4577,21 @@ namespace JavaScriptRuntime
                 _settled = true;
                 CallableOperations.Call1(_capability.reject, null, reason);
             }
+        }
 
-            private static object? ExceptionReason(Exception exception)
+        private static object? ExceptionReason(Exception exception)
+        {
+            if (exception is JsThrownValueException thrown)
             {
-                if (exception is JsThrownValueException thrown)
-                {
-                    return thrown.Value;
-                }
-
-                if (exception.InnerException is JsThrownValueException innerThrown)
-                {
-                    return innerThrown.Value;
-                }
-
-                return exception.InnerException ?? exception;
+                return thrown.Value;
             }
+
+            if (exception.InnerException is JsThrownValueException innerThrown)
+            {
+                return innerThrown.Value;
+            }
+
+            return exception.InnerException ?? exception;
         }
 
         private readonly struct IteratorCloseResult
@@ -4634,15 +4614,22 @@ namespace JavaScriptRuntime
         private sealed class FromAsyncIteratorAdapter
         {
             private readonly object _iterator;
+            private readonly object? _nextMethod;
+            private readonly bool _fromSync;
 
-            private FromAsyncIteratorAdapter(object iterator)
+            private FromAsyncIteratorAdapter(object iterator, bool fromSync)
             {
                 _iterator = iterator;
+                // GetIteratorFromMethod captures next before result construction.
+                // Callability is checked only when the captured method is called.
+                _nextMethod = ObjectRuntime.GetItem(iterator, "next");
+                _fromSync = fromSync;
             }
 
             public static FromAsyncIteratorAdapter Create(
                 object source,
-                object method)
+                object method,
+                bool fromSync)
             {
                 var iterator = CallableOperations.Call0(method, source);
                 if (!Proxy.IsObjectLikeValue(iterator))
@@ -4651,30 +4638,53 @@ namespace JavaScriptRuntime
                         "Iterator method did not return an object");
                 }
 
-                return new FromAsyncIteratorAdapter(iterator!);
+                return new FromAsyncIteratorAdapter(iterator!, fromSync);
             }
 
             public object? Next()
             {
-                // Resolve every step through the JavaScript-visible property so an
-                // own/prototype override on a native iterator remains observable.
-                // The intrinsic iterator prototypes delegate back to
-                // IJavaScript(Async)Iterator when no override is present.
-                var nextMethod = ObjectRuntime.GetItem(_iterator, "next");
-                if (!CallableOperations.IsCallable(nextMethod))
+                if (!_fromSync)
                 {
-                    throw new TypeError("Iterator.next is not a function");
+                    return CallableOperations.Call0(_nextMethod, _iterator);
                 }
 
-                return CallableOperations.Call0(nextMethod, _iterator);
+                var capability = Promise.withResolvers();
+                try
+                {
+                    var result = CallableOperations.Call0(_nextMethod, _iterator);
+                    ContinueSyncResult(result, capability, closeOnRejection: true);
+                }
+                catch (Exception ex)
+                {
+                    CallableOperations.Call1(capability.reject, null, ExceptionReason(ex));
+                }
+
+                return capability.promise;
             }
 
             public IteratorCloseResult Close()
             {
+                if (_fromSync)
+                {
+                    // AsyncIteratorClose awaits the wrapper's return promise,
+                    // even when the underlying sync iterator has no return.
+                    return new IteratorCloseResult(true, ReturnFromSync());
+                }
+
+                var returnMethod = GetReturnMethod();
+                return returnMethod is null
+                    ? default
+                    : new IteratorCloseResult(
+                        true,
+                        CallableOperations.Call0(returnMethod, _iterator));
+            }
+
+            private object? GetReturnMethod()
+            {
                 var returnMethod = ObjectRuntime.GetItem(_iterator, "return");
                 if (returnMethod is null or JsNull)
                 {
-                    return default;
+                    return null;
                 }
 
                 if (!CallableOperations.IsCallable(returnMethod))
@@ -4682,9 +4692,106 @@ namespace JavaScriptRuntime
                     throw new TypeError("Iterator.return is not a function");
                 }
 
-                return new IteratorCloseResult(
-                    requiresAwait: true,
-                    CallableOperations.Call0(returnMethod, _iterator));
+                return returnMethod;
+            }
+
+            private object? ReturnFromSync()
+            {
+                var capability = Promise.withResolvers();
+                try
+                {
+                    var returnMethod = GetReturnMethod();
+                    if (returnMethod is null)
+                    {
+                        CallableOperations.Call1(
+                            capability.resolve,
+                            null,
+                            IteratorResult.Create(null, done: true));
+                    }
+                    else
+                    {
+                        var result = CallableOperations.Call0(returnMethod, _iterator);
+                        ContinueSyncResult(result, capability, closeOnRejection: false);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CallableOperations.Call1(capability.reject, null, ExceptionReason(ex));
+                }
+
+                return capability.promise;
+            }
+
+            private void ContinueSyncResult(
+                object? result,
+                PromiseWithResolvers capability,
+                bool closeOnRejection)
+            {
+                if (!Proxy.IsObjectLikeValue(result))
+                {
+                    throw new TypeError("Iterator result must be an object");
+                }
+
+                var done = TypeUtilities.ToBoolean(ObjectRuntime.GetItem(result!, "done"));
+                // AsyncFromSyncIteratorContinuation reads and awaits value even
+                // for the final result, unlike the outer Array.fromAsync loop.
+                var value = ObjectRuntime.GetItem(result!, "value");
+                Promise valueWrapper;
+                try
+                {
+                    valueWrapper = (Promise)Promise.resolve(value)!;
+                }
+                catch
+                {
+                    if (!done && closeOnRejection)
+                    {
+                        CloseSyncForThrow();
+                    }
+
+                    throw;
+                }
+
+                var onFulfilled = new Func<object?[], object?, object?>((_, resolvedValue) =>
+                {
+                    CallableOperations.Call1(
+                        capability.resolve,
+                        null,
+                        IteratorResult.Create(resolvedValue, done));
+                    return null;
+                });
+                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    if (!done && closeOnRejection)
+                    {
+                        CloseSyncForThrow();
+                    }
+
+                    CallableOperations.Call1(capability.reject, null, reason);
+                    return null;
+                });
+
+                // Settle the wrapper promise; the consumer awaits this separately
+                // rather than running its mapper inside the unwrapping reaction.
+                valueWrapper.then(onFulfilled, onRejected);
+            }
+
+            private void CloseSyncForThrow()
+            {
+                try
+                {
+                    var returnMethod = GetReturnMethod();
+                    if (returnMethod is not null)
+                    {
+                        // IteratorClose with a throw completion ignores the
+                        // returned object: neither its then nor value is read.
+                        CallableOperations.Call0(returnMethod, _iterator);
+                    }
+                }
+                catch
+                {
+                    // IteratorClose preserves the original thrown value even if
+                    // retrieving or calling return throws.
+                }
             }
         }
 
