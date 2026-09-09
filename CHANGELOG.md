@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional positive class-declaration fixtures: 409
+  class-method parameter-destructuring cases and 91 declaration, computed-name,
+  accessor, async-generator, and definition cases. All 1,000 metadata-selected
+  strict/non-strict variants and all 500 native fixtures pass without compiler,
+  runtime, or harness changes.
 - test262/docs: verify 500 additional class-expression fixtures: 236 private
   method-destructuring cases and 264 class-element cases covering private names,
   field initializers, line-terminator separation, and valid or invalid static
