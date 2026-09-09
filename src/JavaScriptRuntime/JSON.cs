@@ -52,6 +52,70 @@ namespace JavaScriptRuntime
 
         private static readonly ConditionalWeakTable<JsObject, RawJsonData> RawJsonObjects = new();
 
+        private sealed class ParseShape
+        {
+            private Dictionary<string, ParseShape>? _transitions;
+            private ParseShape? _lastTransition;
+
+            public ParseShape(JsShape shape) => Shape = shape;
+
+            public JsShape Shape { get; }
+
+            public bool TryGetNext(JsonProperty property, out ParseShape next)
+            {
+                if (_lastTransition is { } last
+                    && property.NameEquals(last.Shape.GetPropertyNameAtSlot(Shape.PropertyCount)))
+                {
+                    next = last;
+                    return true;
+                }
+                next = null!;
+                return false;
+            }
+
+            public ParseShape Add(string name, ParseShapeCache cache)
+            {
+                if (_transitions is not null && _transitions.TryGetValue(name, out var existing))
+                {
+                    _lastTransition = existing;
+                    return existing;
+                }
+                var next = new ParseShape(Shape.TransitionToUncached(name));
+                if (cache.TryReserve(name.Length))
+                {
+                    (_transitions ??= new(StringComparer.Ordinal)).Add(name, next);
+                    _lastTransition = next;
+                }
+                return next;
+            }
+        }
+
+        private sealed class ParseShapeCache
+        {
+            private const int MaxTransitions = 128;
+            private const int MaxKeyCharacters = 8192;
+            private int _count;
+            private int _characters;
+            public ParseShape Root { get; } = new(JsShape.Empty);
+            public bool Full => _count >= MaxTransitions || _characters >= MaxKeyCharacters;
+
+            public bool TryReserve(int characters)
+            {
+                if (Full || characters > MaxKeyCharacters - _characters)
+                {
+                    return false;
+                }
+                _count++;
+                _characters += characters;
+                return true;
+            }
+        }
+
+        // Shapes contain only immutable layout metadata, never realm objects or parsed values.
+        // Bound the cache so arbitrary JSON keys cannot grow the shared intern/transition tables.
+        [ThreadStatic]
+        private static ParseShapeCache? _parseShapes;
+
         // JSON.parse(text[, reviver])
         public static object? Parse(object? text)
             => Parse(text, null);
@@ -63,8 +127,13 @@ namespace JavaScriptRuntime
             try
             {
                 using var doc = JsonDocument.Parse(s ?? "undefined");
-                var parsed = FromElement(doc.RootElement, out var parseNode);
-                if (!CallableOperations.IsCallable(reviver))
+                var needsSource = CallableOperations.IsCallable(reviver);
+                if (_parseShapes is null || _parseShapes.Full)
+                {
+                    _parseShapes = new ParseShapeCache();
+                }
+                var parsed = FromElement(doc.RootElement, needsSource, _parseShapes, out var parseNode).ToObject();
+                if (!needsSource)
                 {
                     return parsed;
                 }
@@ -659,62 +728,119 @@ namespace JavaScriptRuntime
         private static bool IsJsonWhitespace(char value)
             => value is '\t' or '\n' or '\r' or ' ';
 
-        private static object? FromElement(JsonElement el, out JsonParseNode node)
+        private static JsValue FromElement(JsonElement el, bool needsSource, ParseShapeCache shapes, out JsonParseNode? node)
         {
+            // Source records are observable only through a callable reviver.
+            node = null;
             switch (el.ValueKind)
             {
                 case JsonValueKind.Object:
-                    var obj = ObjectRuntime.CreateOrdinaryObject();
-                    var properties = new Dictionary<string, JsonParseNode>(StringComparer.Ordinal);
+                    var values = new JsValue[el.GetPropertyCount()];
+                    var shape = shapes.Root;
+                    var properties = needsSource ? new Dictionary<string, JsonParseNode>(StringComparer.Ordinal) : null;
                     foreach (var prop in el.EnumerateObject())
                     {
-                        obj.SetBoxedValue(prop.Name, FromElement(prop.Value, out var child));
-                        properties[prop.Name] = child;
+                        string name;
+                        int slot;
+                        if (shape.TryGetNext(prop, out var next))
+                        {
+                            slot = shape.Shape.PropertyCount;
+                            shape = next;
+                            name = shape.Shape.GetPropertyNameAtSlot(slot);
+                        }
+                        else
+                        {
+                            name = prop.Name;
+                            slot = shape.Shape.GetSlot(name);
+                            if (slot < 0)
+                            {
+                                slot = shape.Shape.PropertyCount;
+                                shape = shape.Add(name, shapes);
+                            }
+                        }
+                        var value = FromElement(prop.Value, needsSource, shapes, out var child);
+                        values[slot] = value;
+                        if (properties is not null)
+                        {
+                            properties[name] = child!;
+                        }
                     }
-                    node = new JsonParseNode(obj, properties);
-                    return obj;
+                    if (values.Length != shape.Shape.PropertyCount)
+                    {
+                        System.Array.Resize(ref values, shape.Shape.PropertyCount);
+                    }
+                    var obj = ObjectRuntime.CreateOrdinaryObject(shape.Shape, values);
+                    if (properties is not null)
+                    {
+                        node = new JsonParseNode(obj, properties);
+                    }
+                    return JsValue.FromObject(obj);
 
                 case JsonValueKind.Array:
-                    var arr = new Array();
-                    var elements = new Dictionary<string, JsonParseNode>(StringComparer.Ordinal);
+                    var arr = new Array(el.GetArrayLength());
+                    var elements = needsSource ? new Dictionary<string, JsonParseNode>(StringComparer.Ordinal) : null;
                     var index = 0;
                     foreach (var item in el.EnumerateArray())
                     {
-                        arr.Add(FromElement(item, out var child)!);
-                        elements[index.ToString(CultureInfo.InvariantCulture)] = child;
+                        arr.Add(FromElement(item, needsSource, shapes, out var child).ToObject());
+                        if (elements is not null)
+                        {
+                            elements[index.ToString(CultureInfo.InvariantCulture)] = child!;
+                        }
                         index++;
                     }
-                    node = new JsonParseNode(arr, elements);
-                    return arr;
+                    if (elements is not null)
+                    {
+                        node = new JsonParseNode(arr, elements);
+                    }
+                    return JsValue.FromObject(arr);
 
                 case JsonValueKind.String:
                     var stringValue = el.GetString();
-                    node = new JsonParseNode(stringValue, el.GetRawText());
-                    return stringValue;
+                    if (needsSource)
+                    {
+                        node = new JsonParseNode(stringValue, el.GetRawText());
+                    }
+                    return JsValue.FromString(stringValue);
 
                 case JsonValueKind.Number:
                     // Use double to model JS number
                     var numberValue = el.GetDouble();
-                    node = new JsonParseNode(numberValue, el.GetRawText());
-                    return numberValue;
+                    if (needsSource)
+                    {
+                        node = new JsonParseNode(numberValue, el.GetRawText());
+                    }
+                    return JsValue.FromNumber(numberValue);
 
                 case JsonValueKind.True:
-                    node = new JsonParseNode(true, el.GetRawText());
-                    return true;
+                    if (needsSource)
+                    {
+                        node = new JsonParseNode(true, el.GetRawText());
+                    }
+                    return JsValue.FromBoolean(true);
 
                 case JsonValueKind.False:
-                    node = new JsonParseNode(false, el.GetRawText());
-                    return false;
+                    if (needsSource)
+                    {
+                        node = new JsonParseNode(false, el.GetRawText());
+                    }
+                    return JsValue.FromBoolean(false);
 
                 case JsonValueKind.Null:
                     // Represent JavaScript null distinctly from CLR null (undefined)
-                    node = new JsonParseNode(JsNull.Null, el.GetRawText());
-                    return JsNull.Null;
+                    if (needsSource)
+                    {
+                        node = new JsonParseNode(JsNull.Null, el.GetRawText());
+                    }
+                    return JsValue.Null;
 
                 default:
                     // JSON doesn't produce Undefined; treat anything else as null
-                    node = new JsonParseNode(null, el.GetRawText());
-                    return null;
+                    if (needsSource)
+                    {
+                        node = new JsonParseNode(null, el.GetRawText());
+                    }
+                    return JsValue.Undefined;
             }
         }
     }
