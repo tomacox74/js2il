@@ -86,29 +86,33 @@ namespace JavaScriptRuntime
 
         public object? set(object[]? args)
         {
+            // ToIntegerOrInfinity(targetOffset) precedes source access and target bounds
+            // validation, so coercion side effects must be observable in that order.
+            var offset = args is { Length: > 1 }
+                ? CoerceNonNegativeIndex(args[1], 0, $"Invalid {TypedArrayName} offset")
+                : 0;
+
             if (args == null || args.Length == 0 || args[0] == null || args[0] is JsNull)
             {
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var sourceValues = CaptureSourceItems(args[0]);
-            var offset = args.Length > 1
-                ? CoerceNonNegativeIndex(args[1], 0, $"Invalid {TypedArrayName} offset")
-                : 0;
+            var targetLength = GetCurrentLengthForIteration();
 
-            if (offset > _length)
+            if (offset > targetLength)
             {
                 throw new RangeError($"Invalid {TypedArrayName} offset");
             }
 
-            if (sourceValues.Count > _length - offset)
+            var sourceValues = CaptureSourceItems(args[0]);
+            if (sourceValues.Count > targetLength - offset)
             {
                 throw new RangeError("Source is too large for the destination typed array");
             }
 
             for (int i = 0; i < sourceValues.Count; i++)
             {
-                WriteElementObject(offset + i, sourceValues[i]);
+                WriteElementOrIgnore(offset + i, sourceValues[i]);
             }
 
             return null;
@@ -130,7 +134,7 @@ namespace JavaScriptRuntime
             => IncludesCore(searchElement, fromIndex);
 
         public double indexOf()
-            => -1.0;
+            => IndexOfCore(null, null);
 
         public double indexOf(object? searchElement)
             => IndexOfCore(searchElement, null);
@@ -139,7 +143,7 @@ namespace JavaScriptRuntime
             => IndexOfCore(searchElement, fromIndex);
 
         public double lastIndexOf()
-            => -1.0;
+            => LastIndexOfCore(null, null);
 
         public double lastIndexOf(object? searchElement)
             => LastIndexOfCore(searchElement, null);
@@ -148,10 +152,16 @@ namespace JavaScriptRuntime
             => LastIndexOfCore(searchElement, fromIndex);
 
         public IJavaScriptIterator values()
-            => new TypedArrayIterator(this, TypedArrayIteratorKind.Values);
+        {
+            _ = GetCurrentLengthForIteration();
+            return new TypedArrayIterator(this, TypedArrayIteratorKind.Values);
+        }
 
         public IJavaScriptIterator keys()
-            => new TypedArrayIterator(this, TypedArrayIteratorKind.Keys);
+        {
+            _ = GetCurrentLengthForIteration();
+            return new TypedArrayIterator(this, TypedArrayIteratorKind.Keys);
+        }
 
         public IJavaScriptIterator entries()
         {
@@ -179,7 +189,8 @@ namespace JavaScriptRuntime
 
         public TypedArrayBase reverse()
         {
-            for (int left = 0, right = _length - 1; left < right; left++, right--)
+            var length = GetCurrentLengthForIteration();
+            for (int left = 0, right = length - 1; left < right; left++, right--)
             {
                 var leftValue = ReadElementObject(left);
                 var rightValue = ReadElementObject(right);
@@ -378,14 +389,13 @@ namespace JavaScriptRuntime
             var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "map");
             var thisArg = GetThisArg(args);
-            ObserveSpeciesConstructor();
-            var mapped = CreateSameTypeWithLength(length);
+            var mapped = CreateSpeciesResult(length);
 
             for (int i = 0; i < length; i++)
             {
                 var value = ReadElementOrUndefined(i);
                 var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.map", 3, value, (double)i, this, null);
-                mapped.WriteElementObject(i, result);
+                mapped.WriteElementOrIgnore(i, result);
             }
 
             return mapped;
@@ -505,7 +515,7 @@ namespace JavaScriptRuntime
             var sortedValues = GetSortedValues(args);
             for (int i = 0; i < sortedValues.Count; i++)
             {
-                WriteElementObject(i, sortedValues[i]);
+                WriteElementOrIgnore(i, sortedValues[i]);
             }
 
             return this;
@@ -653,24 +663,27 @@ namespace JavaScriptRuntime
 
         protected TypedArrayBase SliceCore(object? start, object? end)
         {
-            var startIndex = CoerceRelativeIndex(start, 0, _length);
-            var endIndex = CoerceRelativeIndex(end, _length, _length);
+            var sourceLength = GetCurrentLengthForIteration();
+            var startIndex = CoerceRelativeIndex(start, 0, sourceLength);
+            var endIndex = CoerceRelativeIndex(end, sourceLength, sourceLength);
             if (endIndex < startIndex)
             {
                 endIndex = startIndex;
             }
 
             var sliceLength = endIndex - startIndex;
-            if (sliceLength <= 0)
+            var result = CreateSpeciesResult(sliceLength);
+
+            // Species construction can resize or detach the source buffer.
+            var currentLength = GetCurrentLengthForIteration();
+            var copyEndIndex = global::System.Math.Min(endIndex, currentLength);
+            var copyLength = global::System.Math.Max(copyEndIndex - startIndex, 0);
+            for (var i = 0; i < copyLength; i++)
             {
-                return CreateSameType(new ArrayBuffer(), 0, 0);
+                result.WriteElementOrIgnore(i, ReadElementOrUndefined(startIndex + i));
             }
 
-            var byteLength = checked(sliceLength * BytesPerElement);
-            var copy = new byte[byteLength];
-            var sourceByteOffset = checked(_byteOffset + (startIndex * BytesPerElement));
-            Buffer.BlockCopy(_buffer.RawBytes, sourceByteOffset, copy, 0, byteLength);
-            return CreateSameType(new ArrayBuffer(copy, cloneBuffer: false), 0, sliceLength);
+            return result;
         }
 
         protected TypedArrayBase SubarrayCore(object? start, object? end)
@@ -725,17 +738,6 @@ namespace JavaScriptRuntime
             }
 
             return result;
-        }
-
-        private void ObserveSpeciesConstructor()
-        {
-            var constructor = ObjectRuntime.GetItem(this, "constructor");
-            if (constructor is null || constructor is JsNull)
-            {
-                return;
-            }
-
-            _ = ObjectRuntime.GetItem(constructor, Symbol.species);
         }
 
         private TypedArrayBase CreateSpeciesResult(int length)
@@ -849,21 +851,22 @@ namespace JavaScriptRuntime
 
         private List<object?> GetSortedValues(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var compareFunction = args != null && args.Length > 0 ? args[0] : null;
             if (compareFunction is not null && !CallableOperations.IsCallable(compareFunction))
             {
                 throw new TypeError($"{TypedArrayName}.prototype.sort requires a callback function");
             }
 
-            var values = new List<SortableTypedArrayValue>(_length);
-            for (int i = 0; i < _length; i++)
+            var values = new List<SortableTypedArrayValue>(length);
+            for (int i = 0; i < length; i++)
             {
                 values.Add(new SortableTypedArrayValue(ReadElementObject(i)));
             }
 
             StableSortValues(values, compareFunction);
 
-            var sorted = new List<object?>(_length);
+            var sorted = new List<object?>(length);
             foreach (var value in values)
             {
                 sorted.Add(value.Value);
@@ -1386,15 +1389,24 @@ namespace JavaScriptRuntime
 
         private double IndexOfCore(object? searchElement, object? fromIndex)
         {
-            var startIndex = CoerceRelativeIndex(fromIndex, 0, _length);
-            if (startIndex >= _length)
+            var length = GetCurrentLengthForIteration();
+            if (length == 0)
             {
                 return -1.0;
             }
 
-            for (int i = startIndex; i < _length; i++)
+            var startIndex = CoerceRelativeIndex(fromIndex, 0, length);
+            if (startIndex >= length)
             {
-                if (ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: false))
+                return -1.0;
+            }
+
+            for (int i = startIndex; i < length; i++)
+            {
+                // A resize or detachment while coercing fromIndex makes indexed
+                // properties absent, rather than creating an undefined element.
+                if (HasCurrentElement(i)
+                    && ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: false))
                 {
                     return i;
                 }
@@ -1405,38 +1417,38 @@ namespace JavaScriptRuntime
 
         private double LastIndexOfCore(object? searchElement, object? fromIndex)
         {
-            if (_length == 0)
+            var length = GetCurrentLengthForIteration();
+            if (length == 0)
             {
                 return -1.0;
             }
 
-            var startIndex = _length - 1;
+            var startIndex = length - 1;
             if (fromIndex is not null && fromIndex is not JsNull)
             {
-                var number = TypeUtilities.ToNumber(fromIndex);
-                if (!double.IsNaN(number))
+                var number = ToIntegerOrInfinity(fromIndex);
+                if (double.IsNegativeInfinity(number))
                 {
-                    if (double.IsNegativeInfinity(number))
+                    return -1.0;
+                }
+
+                if (!double.IsPositiveInfinity(number))
+                {
+                    if (number < -length)
                     {
                         return -1.0;
                     }
 
-                    if (!double.IsPositiveInfinity(number))
-                    {
-                        var truncated = (int)global::System.Math.Truncate(number);
-                        startIndex = truncated < 0 ? _length + truncated : truncated;
-                    }
+                    startIndex = number < 0
+                        ? (int)(length + number)
+                        : (int)global::System.Math.Min(number, length - 1);
                 }
-            }
-
-            if (startIndex >= _length)
-            {
-                startIndex = _length - 1;
             }
 
             for (int i = startIndex; i >= 0; i--)
             {
-                if (ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: false))
+                if (HasCurrentElement(i)
+                    && ElementValuesEqual(ReadElementObject(i), searchElement, sameValueZero: false))
                 {
                     return i;
                 }
@@ -1519,7 +1531,8 @@ namespace JavaScriptRuntime
 
         private string JoinCore(object? separator)
         {
-            if (_length == 0)
+            var length = GetCurrentLengthForIteration();
+            if (length == 0)
             {
                 return string.Empty;
             }
@@ -1527,10 +1540,13 @@ namespace JavaScriptRuntime
             var actualSeparator = separator is null
                 ? ","
                 : DotNet2JSConversions.ToString(separator);
-            var parts = new string[_length];
-            for (int i = 0; i < _length; i++)
+            var parts = new string[length];
+            for (int i = 0; i < length; i++)
             {
-                parts[i] = DotNet2JSConversions.ToString(ReadElementObject(i));
+                var value = ReadElementOrUndefined(i);
+                parts[i] = value is null or JsNull
+                    ? string.Empty
+                    : DotNet2JSConversions.ToString(value);
             }
 
             return string.Join(actualSeparator, parts);
@@ -1558,6 +1574,22 @@ namespace JavaScriptRuntime
                 ? ReadElementObject(index)
                 : null;
 
+        private bool HasCurrentElement(int index)
+            => (uint)index < (uint)GetCurrentLengthOrZero();
+
+        private void WriteElementOrIgnore(int index, object? value)
+        {
+            // TypedArraySetElement always performs value conversion, even when the
+            // current buffer state makes the indexed write a no-op.
+            var coercedValue = CoerceElementValue(value);
+            if (!HasCurrentElement(index))
+            {
+                return;
+            }
+
+            WriteElementObject(index, coercedValue);
+        }
+
         private static object? InvokeCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)
         {
             if (!CallableOperations.IsCallable(callback))
@@ -1581,8 +1613,9 @@ namespace JavaScriptRuntime
             {
                 case TypedArrayBase typedArray:
                     {
-                        var values = new List<object?>(typedArray.LengthElements);
-                        for (int i = 0; i < typedArray.LengthElements; i++)
+                        var sourceLength = typedArray.GetCurrentLengthForIteration();
+                        var values = new List<object?>(sourceLength);
+                        for (int i = 0; i < sourceLength; i++)
                         {
                             values.Add(typedArray.ReadElementObject(i));
                         }

@@ -86,4 +86,75 @@ public sealed class TypedArrayRuntimeTests
             string.Join(Environment.NewLine, "true", "0", string.Empty),
             result.Output);
     }
+
+    [Fact]
+    public void TypedArraySet_CoercesOffsetBeforeValidatingResizedTarget()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "typed-array-set-resizable-offset-order",
+            "TypedArray.SetResizableOffsetOrder",
+            static _ => ("""
+                const buffer = new ArrayBuffer(4, { maxByteLength: 4 });
+                const values = new Uint8Array(buffer, 0, 4);
+                const offset = {
+                  valueOf() {
+                    buffer.resize(0);
+                    return 0;
+                  }
+                };
+
+                try {
+                  values.set([], offset);
+                  console.log("no throw");
+                } catch (error) {
+                  console.log(error instanceof TypeError);
+                }
+                """, null));
+
+        Assert.Equal($"true{Environment.NewLine}", result.Output);
+    }
+
+    [Fact]
+    public void TypedArraySort_IgnoresWritesAfterComparatorShrinksBuffer()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "typed-array-sort-resizable-write",
+            "TypedArray.SortResizableWrite",
+            static _ => ("""
+                const buffer = new ArrayBuffer(4, { maxByteLength: 4 });
+                const values = new Uint8Array(buffer);
+                values.set([4, 3, 2, 1]);
+
+                values.sort((left, right) => {
+                  buffer.resize(0);
+                  return left - right;
+                });
+
+                console.log(values.length);
+                """, null));
+
+        Assert.Equal($"0{Environment.NewLine}", result.Output);
+    }
+
+    [Fact]
+    public void TypedArraySlice_ReclampsSourceAfterSpeciesResizesBuffer()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "typed-array-slice-resizable-species",
+            "TypedArray.SliceResizableSpecies",
+            static _ => ("""
+                const buffer = new ArrayBuffer(32, { maxByteLength: 32 });
+                const source = new Float64Array(buffer);
+                source.set([1, 2, 3, 4]);
+                source.constructor = {};
+                source.constructor[Symbol.species] = function() {
+                  buffer.resize(16);
+                  return new Float64Array(4);
+                };
+
+                console.log(Array.from(source.slice()).join(","));
+                """, null));
+
+        Assert.Equal($"1,2,0,0{Environment.NewLine}", result.Output);
+    }
 }

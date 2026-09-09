@@ -418,7 +418,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ArrayConformanceBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/keys/ArrayConformanceBatchExecutionTests.cs"
         ],
-        "notes": "186 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, and keys behavior. The verified cases include callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Array.fromAsync support is described separately below. Proxy/species, cross-realm, resizable-buffer, and remaining exotic-array behavior remain limited."
+        "notes": "242 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, keys, search, mutation, sort, and toLocaleString behavior. This includes generic Array methods and iterators applied to TypedArray views as their resizable buffers grow or shrink. The verified cases cover callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Array.fromAsync support is described separately below. Proxy/species, cross-realm, and remaining exotic-array behavior remain limited."
       },
       {
         "clause": "23.1.1.1",
@@ -860,7 +860,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/JavaScript/return-abrupt-tonumber-length.js",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/includes/ExecutionTests.Batch.cs"
         ],
-        "notes": "Implements SameValueZero-style comparisons for common runtime values. The 25 checked-in test262 cases verify generic primitive-receiver boxing, array-like indexed property reads, sparse arrays, large-length boundaries, standard metadata, value re-reads during iteration, and abrupt coercion/property access. Five resizable-buffer and comparison edge cases remain deferred.",
+        "notes": "Implements SameValueZero-style comparisons for common runtime values, including BigInt TypedArray elements. The checked-in Test262 cases verify generic primitive-receiver boxing, array-like indexed property reads, sparse arrays, large-length boundaries, standard metadata, value re-reads during iteration, abrupt coercion/property access, and resizable-buffer transitions. Remaining limitations concern broader exotic and cross-realm receiver behavior.",
         "test262Paths": [
           "test/built-ins/Array/prototype/includes/call-with-boolean.js",
           "test/built-ins/Array/prototype/includes/get-prop.js",

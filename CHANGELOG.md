@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 Array and TypedArray fixtures covering
+  resizable and detached ArrayBuffer views. Harden generic Array iteration,
+  search, and locale-string behavior; preserve TypedArray validation, species,
+  coercion, and write semantics across buffer state transitions.
 - test262/runtime/docs: port 100 previously failing TypedArray fixtures. Add
   TypedArray prototype intrinsic dispatch for `forEach`, `includes`, and
   `subarray`; support RAB/detached-buffer validation and iteration, BigInt

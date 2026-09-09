@@ -249,6 +249,7 @@ namespace JavaScriptRuntime
         {
             DefinePrototypeMethod(prototype, "join", (BuiltinFunction1)PrototypeJoin, 1);
             DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "toLocaleString", (BuiltinFunctionVariadic)PrototypeToLocaleString, 0);
             DefinePrototypeMethod(prototype, "concat", (BuiltinFunctionVariadic)PrototypeConcat, 1);
             DefinePrototypeMethod(prototype, "push", (BuiltinFunctionVariadic)PrototypePush, 1);
             DefinePrototypeMethod(prototype, "pop", (BuiltinFunction0)PrototypePop, 0);
@@ -588,6 +589,47 @@ namespace JavaScriptRuntime
             }
 
             return CallableOperations.Call0(func, obj)!;
+        }
+
+        private static object PrototypeToLocaleString(object? thisArgument, in JsCallArguments arguments)
+        {
+            var receiver = ToArrayMethodObject(thisArgument, "toLocaleString");
+            var length = ToArrayLikeLength(receiver);
+            var builder = new StringBuilder();
+
+            for (var k = 0; k < length; k++)
+            {
+                if (k > 0)
+                {
+                    builder.Append(',');
+                }
+
+                var element = ObjectRuntime.GetItem(receiver, (double)k);
+                if (element is null or JsNull)
+                {
+                    continue;
+                }
+
+                var toLocaleString = ObjectRuntime.GetProperty(element, "toLocaleString");
+                if (!CallableOperations.IsCallable(toLocaleString))
+                {
+                    throw new TypeError("Array.prototype.toLocaleString element has a non-callable toLocaleString property");
+                }
+
+                var result = arguments.Count switch
+                {
+                    0 => CallableOperations.Call0(toLocaleString, element),
+                    1 => CallableOperations.Call1(toLocaleString, element, arguments.GetArgument(0)),
+                    _ => CallableOperations.Call2(
+                        toLocaleString,
+                        element,
+                        arguments.GetArgument(0),
+                        arguments.GetArgument(1))
+                };
+                builder.Append(DotNet2JSConversions.ToStringRejectingSymbols(result));
+            }
+
+            return builder.ToString();
         }
 
         private static object PrototypeConcat(object? thisArgument, in JsCallArguments arguments)
@@ -2302,6 +2344,13 @@ namespace JavaScriptRuntime
             if (receiver is Array jsArray)
             {
                 return new ArrayIterator(jsArray, () => jsArray.Count, kind);
+            }
+
+            if (receiver is TypedArrayBase typedArray)
+            {
+                // Array iterators defer LengthOfArrayLike until next(), where an
+                // out-of-bounds TypedArray view must be rejected.
+                return new ArrayIterator(typedArray, typedArray.GetCurrentLengthForIteration, kind);
             }
 
             return new ArrayIterator(receiver, () => ToArrayLikeLength(receiver), kind);
@@ -5388,6 +5437,12 @@ namespace JavaScriptRuntime
             {
                 if (double.IsNaN(dx) && double.IsNaN(dy)) return true;
                 return dx.Equals(dy);
+            }
+
+            if (x is global::System.Numerics.BigInteger bigIntegerX
+                && y is global::System.Numerics.BigInteger bigIntegerY)
+            {
+                return bigIntegerX == bigIntegerY;
             }
 
             // Strings

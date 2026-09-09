@@ -57,6 +57,15 @@ namespace JavaScriptRuntime
         public static Uint32Array of(object[]? args)
             => new Uint32Array(args ?? global::System.Array.Empty<object?>());
 
+        public Uint32Array slice()
+            => (Uint32Array)SliceCore(null, null);
+
+        public Uint32Array slice(object? start)
+            => (Uint32Array)SliceCore(start, null);
+
+        public Uint32Array slice(object? start, object? end)
+            => (Uint32Array)SliceCore(start, end);
+
         protected override int BytesPerElement => ElementSize;
 
         protected override string TypedArrayName => nameof(Uint32Array);
