@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify four Array static-method cases for `Array.from` and
+  `Array.of`, covering mutation during mapping, alternate constructors,
+  non-constructibility, and abrupt proxy property definition. All four native
+  fixtures pass without compiler, runtime, or harness changes.
 - test262/docs: verify 500 lexical grammar and source-code cases: 360 positive
   execution fixtures and 140 parse-negative fixtures cover automatic semicolon
   insertion, comments, whitespace, line terminators, Unicode identifiers,

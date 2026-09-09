@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.19](https://github.com/tomacox74/js2il/releases/tag/v0.12.19).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.20](https://github.com/tomacox74/js2il/releases/tag/v0.12.20).
 
 ## How to Read This Report
 
@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 13,167 | 12 | 10,333 | 23,512 | **56.00%** |
+| Built-in objects and APIs | 13,171 | 12 | 10,329 | 23,512 | **56.02%** |
 | Language syntax and semantics | 8,916 | 46 | 14,681 | 23,643 | **37.71%** |
-| **Total** | 22,083 | 58 | 26,100 | 48,241 | **45.78%** |
+| **Total** | 22,087 | 58 | 26,096 | 48,241 | **45.78%** |
 
 ## Language Areas
 
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 2,648 | 0 | 433 | 3,081 | **85.95%** |
+| `Array` | 2,652 | 0 | 429 | 3,081 | **86.08%** |
 | `ArrayBuffer` | 188 | 0 | 8 | 196 | **95.92%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |
