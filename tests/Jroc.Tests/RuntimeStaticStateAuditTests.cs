@@ -30,6 +30,7 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.DynamicLookupInlineCache._previousSite", "thread-local cache-site lookup state"),
         new("JavaScriptRuntime.DynamicLookupInlineCache._recentSites", "thread-local cache-site lookup state"),
         new("JavaScriptRuntime.Function._generatedConstructionReceivers", "thread-local invocation state"),
+        new("JavaScriptRuntime.JSON._parseShapes", "bounded thread-local immutable layout metadata"),
         new("JavaScriptRuntime.Node.AsyncContextRuntime._activeContextRuntimeCount", "process-wide fast-path activity count"),
         new("JavaScriptRuntime.Node.AsyncContextRuntime._enabledHookCount", "process-wide fast-path activity count"),
         new("JavaScriptRuntime.Node.FsCommon._nextFileDescriptor", "process-wide resource identity allocator"),
