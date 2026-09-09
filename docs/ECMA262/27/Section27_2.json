@@ -258,6 +258,16 @@
     "support":  {
                     "entries":  [
                                     {
+                                        "clause": "27.2.2.2",
+                                        "feature": "Thenable assimilation runs as a Promise job",
+                                        "status": "Supported",
+                                        "specUrl": "https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob",
+                                        "testScripts": [
+                                            "tests/Jroc.Tests/AsyncDisposableStackComplianceTests.cs"
+                                        ],
+                                        "notes": "Promise resolution reads then synchronously and queues its invocation, including for Promise objects with an overridden then property. Resolving functions share a first-resolution guard even while adopted thenables remain pending. Abrupt getters and calls preserve the original JavaScript thrown value, including undefined. Internal asynchronous disposal continuations do not use user-visible Promise species construction."
+                                    },
+                                    {
                                         "clause":  "27.2.3",
                                         "feature":  "Promise constructor (executor), Promise.resolve, Promise.reject",
                                         "status":  "Supported",

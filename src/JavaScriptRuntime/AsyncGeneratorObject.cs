@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace JavaScriptRuntime;
 
@@ -25,6 +26,11 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
                 _ = AsyncGeneratorFunction.Prototype;
             });
     private readonly object[] _scopes;
+    private enum RequestKind { Next, Throw, Return }
+    private sealed record Request(RequestKind Kind, object? Value, PromiseWithResolvers Capability);
+    private readonly Queue<Request> _requests = new();
+    private bool _active;
+    private bool _draining;
 
     public AsyncGeneratorObject(object[] scopes)
     {
@@ -119,19 +125,6 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
         return ags;
     }
 
-    private PromiseWithResolvers PrepareDeferred(AsyncGeneratorScope scope)
-    {
-        var deferred = Promise.withResolvers();
-        scope.Deferred = deferred;
-        scope.AsyncState = 0;
-        return deferred;
-    }
-
-    private static void RejectDeferred(PromiseWithResolvers deferred, object? reason)
-    {
-        CallableOperations.Call1(deferred.reject, null, reason);
-    }
-
     private void InvokeMoveNext(
         AsyncGeneratorScope scope,
         CompiledContinuation moveNext)
@@ -148,127 +141,124 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
         }
     }
 
-    public object next(object? value = null)
+    public object next(object? value = null) => Enqueue(RequestKind.Next, value);
+
+    public object @throw(object? error) => Enqueue(RequestKind.Throw, error);
+
+    public object @return(object? value) => Enqueue(RequestKind.Return, value);
+
+    private object Enqueue(RequestKind kind, object? value)
     {
-        var scope = GetLeafScope();
-
-        if (scope.Done)
-        {
-            return Promise.resolve(IteratorResult.Create(null, done: true))!;
-        }
-
-        // Clear prior resume protocol.
-        scope.HasResumeException = false;
-        scope.ResumeException = null;
-        scope.HasReturn = false;
-        scope.ReturnValue = null;
-
-        // On first next(arg), arg is ignored per JS semantics.
-        scope.ResumeValue = scope.Started ? value : null;
-        scope.Started = true;
-
-        var deferred = PrepareDeferred(scope);
-
-        var moveNext = scope.MoveNext;
-        if (moveNext == null)
-        {
-            throw new InvalidOperationException("Async generator MoveNext is null. The closure was not properly initialized.");
-        }
-
-        try
-        {
-            InvokeMoveNext(scope, moveNext);
-        }
-        catch (Exception ex)
-        {
-            scope.Done = true;
-            scope.AsyncState = -1;
-
-            var reason = ex is JsThrownValueException jsv ? jsv.Value : ex;
-            RejectDeferred(deferred, reason);
-        }
-
-        return deferred.promise!;
+        var capability = Promise.withResolvers();
+        _requests.Enqueue(new Request(kind, value, capability));
+        Drain();
+        return capability.promise;
     }
 
-    public object @throw(object? error)
+    private void Drain()
     {
-        var scope = GetLeafScope();
-
-        if (scope.Done)
+        if (_draining)
         {
-            return Promise.reject(error)!;
+            return;
         }
 
-        scope.ResumeValue = null;
-        scope.HasReturn = false;
-        scope.ReturnValue = null;
-
-        scope.HasResumeException = true;
-        scope.ResumeException = error;
-
-        var deferred = PrepareDeferred(scope);
-
-        var moveNext = scope.MoveNext;
-        if (moveNext == null)
-        {
-            throw new InvalidOperationException("Async generator MoveNext is null. The closure was not properly initialized.");
-        }
-
+        _draining = true;
         try
         {
-            InvokeMoveNext(scope, moveNext);
+            while (!_active && _requests.Count > 0)
+            {
+                _active = true;
+                StartRequest(_requests.Peek());
+            }
         }
-        catch (Exception ex)
+        finally
         {
-            scope.Done = true;
-            scope.AsyncState = -1;
-
-            var reason = ex is JsThrownValueException jsv ? jsv.Value : ex;
-            RejectDeferred(deferred, reason);
+            _draining = false;
         }
-
-        return deferred.promise!;
     }
 
-    public object @return(object? value)
+    private void CompleteRequest(Request request, object? value, bool rejected)
     {
-        var scope = GetLeafScope();
-
-        if (scope.Done)
+        if (rejected)
         {
-            return Promise.resolve(IteratorResult.Create(value, done: true))!;
-        }
-
-        scope.HasResumeException = false;
-        scope.ResumeException = null;
-        scope.ResumeValue = null;
-
-        scope.HasReturn = true;
-        scope.ReturnValue = value;
-
-        var deferred = PrepareDeferred(scope);
-
-        var moveNext = scope.MoveNext;
-        if (moveNext == null)
-        {
-            throw new InvalidOperationException("Async generator MoveNext is null. The closure was not properly initialized.");
-        }
-
-        try
-        {
-            InvokeMoveNext(scope, moveNext);
-        }
-        catch (Exception ex)
-        {
+            var scope = GetLeafScope();
             scope.Done = true;
             scope.AsyncState = -1;
-
-            var reason = ex is JsThrownValueException jsv ? jsv.Value : ex;
-            RejectDeferred(deferred, reason);
         }
 
-        return deferred.promise!;
+        CallableOperations.Call1(
+            rejected ? request.Capability.reject : request.Capability.resolve, null, value);
+        _requests.Dequeue();
+        _active = false;
+        Drain();
+    }
+
+    private void StartRequest(Request request)
+    {
+        var scope = GetLeafScope();
+        try
+        {
+            if (!scope.Started && request.Kind != RequestKind.Next)
+            {
+                scope.Done = true;
+            }
+
+            if (scope.Done)
+            {
+                if (request.Kind == RequestKind.Return)
+                {
+                    ((Promise)Promise.resolve(request.Value)!).then(
+                        (BuiltinFunction1)((_, value) =>
+                        {
+                            CompleteRequest(request, IteratorResult.Create(value, done: true), rejected: false);
+                            return null;
+                        }),
+                        (BuiltinFunction1)((_, reason) =>
+                        {
+                            CompleteRequest(request, reason, rejected: true);
+                            return null;
+                        }));
+                }
+                else
+                {
+                    CompleteRequest(request,
+                        request.Kind == RequestKind.Throw ? request.Value : IteratorResult.Create(null, done: true),
+                        rejected: request.Kind == RequestKind.Throw);
+                }
+                return;
+            }
+
+            scope.HasResumeException = request.Kind == RequestKind.Throw;
+            scope.ResumeException = scope.HasResumeException ? request.Value : null;
+            scope.HasReturn = request.Kind == RequestKind.Return;
+            scope.ReturnValue = scope.HasReturn ? request.Value : null;
+            scope.ResumeValue = request.Kind == RequestKind.Next && scope.Started ? request.Value : null;
+            scope.Started = true;
+            scope.AsyncState = 0;
+
+            // Completion hooks release the queue without observing the user's promise,
+            // which would incorrectly mark an unhandled rejection as handled.
+            scope.Deferred = new PromiseWithResolvers(
+                request.Capability.promise,
+                (BuiltinFunction1)((_, value) =>
+                {
+                    CompleteRequest(request, value, rejected: false);
+                    return null;
+                }),
+                (BuiltinFunction1)((_, reason) =>
+                {
+                    CompleteRequest(request, reason, rejected: true);
+                    return null;
+                }));
+            InvokeMoveNext(scope, scope.MoveNext
+                ?? throw new InvalidOperationException("Async generator MoveNext is null."));
+        }
+        catch (Exception exception)
+        {
+            CompleteRequest(request,
+                exception is JsThrownValueException thrown ? thrown.Value : exception,
+                rejected: true);
+        }
     }
 
     // IJavaScriptAsyncIterator (for for await..of lowering)

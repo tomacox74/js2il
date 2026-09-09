@@ -443,6 +443,7 @@ internal sealed partial class LIRToILCompiler
         string fieldName,
         InstructionEncoder ilEncoder)
     {
+        EmitResolveGeneratedClassStorageReceiver(ilEncoder);
         var validReceiver = ilEncoder.DefineLabel();
         ilEncoder.OpCode(ILOpCode.Dup);
         ilEncoder.OpCode(ILOpCode.Isinst);
@@ -462,5 +463,13 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.MarkLabel(validReceiver);
         ilEncoder.OpCode(ILOpCode.Castclass);
         ilEncoder.Token(ownerType);
+    }
+
+    private void EmitResolveGeneratedClassStorageReceiver(InstructionEncoder ilEncoder)
+    {
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedClassStorageReceiver),
+            parameterTypes: new[] { typeof(object) }));
     }
 }

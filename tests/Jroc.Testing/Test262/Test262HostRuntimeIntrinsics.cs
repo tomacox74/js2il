@@ -6,6 +6,11 @@ namespace Jroc.Tests;
 public static class Test262HostRuntimeIntrinsics
 {
     public static HostRuntimeIntrinsicDescriptors Create(IEnumerable<string>? harnessFiles = null)
+        => Create(harnessFiles, new Test262AsyncCompletion());
+
+    internal static HostRuntimeIntrinsicDescriptors Create(
+        IEnumerable<string>? harnessFiles,
+        Test262AsyncCompletion completion)
     {
         var included = harnessFiles?.ToHashSet(StringComparer.Ordinal)
             ?? [];
@@ -16,7 +21,10 @@ public static class Test262HostRuntimeIntrinsics
                 (Action<object?>)(message => throw CreateTest262Error(message)),
                 "$ERROR",
                 1))
-            .AddGlobalFactory("$DONE", CreateDoneFunction)
+            .AddGlobalFactory("$DONE", () => CreateFunction(
+                (Action<object?>)completion.Done,
+                "$DONE",
+                1))
             .AddGlobalFactory("$262", Create262Object)
             .AddGlobalFactory("compareArray", () => CreateFunction(
                 (Func<object?, object?, bool>)CompareArray,
@@ -35,7 +43,7 @@ public static class Test262HostRuntimeIntrinsics
                 "isConstructor",
                 1))
             .AddGlobalFactory("asyncTest", () => CreateFunction(
-                (Action<object?>)AsyncTest,
+                (Action<object?>)completion.AsyncTest,
                 "asyncTest",
                 1));
 
@@ -109,6 +117,10 @@ public static class Test262HostRuntimeIntrinsics
         {
             Test262ByteConversionHelpers.Register(builder);
         }
+        if (included.Contains("temporalHelpers.js"))
+        {
+            Test262TemporalHelpers.Register(builder);
+        }
 
         return builder.Build();
     }
@@ -152,6 +164,13 @@ public static class Test262HostRuntimeIntrinsics
             ObjectRuntime.SetItem(assert, "compareIterator", CreateFunction(
                 Test262RegExpHelpers.CompareIterator,
                 "compareIterator",
+                3));
+        }
+        if (included.Contains("asyncHelpers.js"))
+        {
+            ObjectRuntime.SetItem(assert, "throwsAsync", CreateFunction(
+                (Func<object?, object?, object?, object?>)Test262AsyncHelpers.ThrowsAsync,
+                "throwsAsync",
                 3));
         }
 
@@ -325,25 +344,6 @@ public static class Test262HostRuntimeIntrinsics
         return field.GetValue(null)
             ?? throw new InvalidOperationException($"Resolved {type.FullName}.{fieldName} to null.");
     }
-
-    private static void AsyncTest(object? testFunc)
-    {
-        var result = Closure.InvokeWithArgs(testFunc!, RuntimeServices.EmptyScopes);
-        var done = CreateDoneFunction();
-        ObjectRuntime.CallMember(result!, "then", new object[] { done, done });
-    }
-
-    private static JsFunctionObject CreateDoneFunction()
-        => CreateFunction(
-            (Action<object?>)(error =>
-            {
-            if (error is not null)
-            {
-                throw error as Exception ?? new Error(ToMessage(error));
-            }
-            }),
-            "$DONE",
-            1);
 
     internal static bool HasOwn(object? target, object name)
         => target is not null && target is not JsNull && JavaScriptRuntime.Object.hasOwn(target, name);

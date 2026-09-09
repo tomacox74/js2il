@@ -1861,7 +1861,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 67 (0x43)
+			// Code size: 45 (0x2d)
 			.maxstack 8
 			.locals init (
 				[0] object[]
@@ -1878,21 +1878,12 @@
 			IL_0010: stfld object[] Modules.Classes_GeneratedMethodFunctionObjects/Example::_scopes
 			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_001f: dup
-			IL_0020: ldarg.0
-			IL_0021: beq IL_0037
-
-			IL_0026: ldstr "value"
-			IL_002b: ldarg.2
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_0031: pop
-			IL_0032: br IL_0042
-
-			IL_0037: castclass Modules.Classes_GeneratedMethodFunctionObjects/Example
-			IL_003c: ldarg.2
-			IL_003d: stfld object Modules.Classes_GeneratedMethodFunctionObjects/Example::'value'
-
-			IL_0042: ret
+			IL_001f: ldstr "value"
+			IL_0024: ldarg.2
+			IL_0025: ldc.i4.1
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_002b: pop
+			IL_002c: ret
 		} // end of method Example::.ctor
 
 		.method public hidebysig 
@@ -1904,7 +1895,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 42 (0x2a)
+			// Code size: 97 (0x61)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1919,17 +1910,34 @@
 			IL_0008: ldstr ":"
 			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0012: stloc.1
-			IL_0013: ldarg.0
-			IL_0014: ldfld object Modules.Classes_GeneratedMethodFunctionObjects/Example::'value'
-			IL_0019: ldarg.1
-			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_001f: stloc.2
-			IL_0020: ldloc.1
-			IL_0021: ldloc.2
-			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0027: stloc.2
-			IL_0028: ldloc.2
-			IL_0029: ret
+			IL_0013: volatile.
+			IL_0015: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+			IL_001a: brfalse IL_0034
+
+			IL_001f: ldarg.0
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0025: ldstr "value"
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002f: br IL_004e
+
+			IL_0034: ldarg.0
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_003a: ldstr "value"
+			IL_003f: ldstr "Classes_GeneratedMethodFunctionObjects:<TwoPhaseDummy_M9>:add:6"
+			IL_0044: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_004e: stloc.0
+			IL_004f: ldloc.0
+			IL_0050: ldarg.1
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0056: stloc.2
+			IL_0057: ldloc.1
+			IL_0058: ldloc.2
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_005e: stloc.2
+			IL_005f: ldloc.2
+			IL_0060: ret
 		} // end of method Example::'add'
 
 		.method public hidebysig 
@@ -1938,13 +1946,33 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 7 (0x7)
+			// Header size: 12
+			// Code size: 62 (0x3e)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Classes_GeneratedMethodFunctionObjects/Example::'value'
-			IL_0006: ret
+			IL_0000: volatile.
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
+			IL_0007: brfalse IL_0021
+
+			IL_000c: ldarg.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0012: ldstr "value"
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001c: br IL_003b
+
+			IL_0021: ldarg.0
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0027: ldstr "value"
+			IL_002c: ldstr "Classes_GeneratedMethodFunctionObjects:<TwoPhaseDummy_M10>:get_current:3"
+			IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_003b: stloc.0
+			IL_003c: ldloc.0
+			IL_003d: ret
 		} // end of method Example::get_current
 
 		.method public hidebysig 
@@ -1956,14 +1984,18 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 9 (0x9)
+			// Code size: 21 (0x15)
 			.maxstack 8
 
 			IL_0000: ldarg.0
-			IL_0001: ldarg.1
-			IL_0002: stfld object Modules.Classes_GeneratedMethodFunctionObjects/Example::'value'
-			IL_0007: ldnull
-			IL_0008: ret
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0006: ldstr "value"
+			IL_000b: ldarg.1
+			IL_000c: ldc.i4.1
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0012: pop
+			IL_0013: ldnull
+			IL_0014: ret
 		} // end of method Example::set_current
 
 		.method public hidebysig static 
@@ -1983,7 +2015,7 @@
 			)
 
 			IL_0000: volatile.
-			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
+			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
 			IL_0007: brfalse IL_0025
 
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
@@ -1996,7 +2028,7 @@
 			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_002f: ldstr "prefix"
 			IL_0034: ldstr "Classes_GeneratedMethodFunctionObjects:<TwoPhaseDummy_M12>:identify:3"
-			IL_0039: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_85
+			IL_0039: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
 			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0043: stloc.0
@@ -4351,6 +4383,8 @@
 	.field assembly static int32 __jroc_dynamicLookup_83
 	.field assembly static int32 __jroc_dynamicLookup_84
 	.field assembly static int32 __jroc_dynamicLookup_85
+	.field assembly static int32 __jroc_dynamicLookup_86
+	.field assembly static int32 __jroc_dynamicLookup_87
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

@@ -29,8 +29,13 @@ public sealed partial class HIRToLIRLowerer
         // Ensure the awaited value is boxed to object
         awaitedValueTemp = EnsureObject(awaitedValueTemp);
 
+        return TryLowerAwaitValue(awaitedValueTemp, out resultTempVar);
+    }
+
+    private bool TryLowerAwaitValue(TempVariable awaitedValueTemp, out TempVariable resultTempVar)
+    {
         // Allocate state ID and label for resumption
-        var asyncInfo = _methodBodyIR.AsyncInfo;
+        var asyncInfo = _methodBodyIR.AsyncInfo!;
         var awaitId = asyncInfo.AllocateAwaitId();
         var resumeStateId = asyncInfo.AllocateResumeStateId();
         var resumeLabel = CreateLabel();

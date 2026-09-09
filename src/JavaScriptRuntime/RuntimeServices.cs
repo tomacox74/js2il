@@ -22,6 +22,8 @@ public class RuntimeServices
         => GetCurrentRealmValueCaches().MaterializedClassConstructors;
     private static readonly ConditionalWeakTable<object, GeneratedClassMethodReceiverSlot>
         _generatedClassMethodReceivers = new();
+    private static readonly ConditionalWeakTable<object, GeneratedClassMethodReceiverSlot>
+        _generatedClassReplacementReceivers = new();
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -401,7 +403,7 @@ public class RuntimeServices
         }
         else if (constructor is JavaScriptRuntime.Proxy)
         {
-            constructed = ObjectRuntime.ConstructValue(constructor, args);
+            constructed = ObjectRuntime.ConstructValue(constructor, args, newTarget);
         }
         else if (constructor is Type)
         {
@@ -410,6 +412,14 @@ public class RuntimeServices
         else
         {
             throw new TypeError($"Class extends value is not a constructor: it has type {TypeUtilities.Typeof(constructor)}.");
+        }
+
+        if (constructed != null && !ReferenceEquals(constructed, receiver))
+        {
+            _generatedClassReplacementReceivers.AddOrUpdate(
+                constructed, new GeneratedClassMethodReceiverSlot(receiver));
+            _generatedClassMethodReceivers.AddOrUpdate(
+                receiver, new GeneratedClassMethodReceiverSlot(constructed));
         }
 
         InitializeDerivedConstructorThisBinding(constructed);
@@ -519,6 +529,11 @@ public class RuntimeServices
 
         foreach (var key in PropertyDescriptorStore.GetOwnKeys(sourcePrototype))
         {
+            if (string.Equals(key, "constructor", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(
                     sourcePrototype,
                     key,
@@ -538,6 +553,7 @@ public class RuntimeServices
         var validatedBase = ValidateClassHeritage(baseConstructorValue);
         if (constructorValue is JsClassConstructorObject classConstructor)
         {
+            classConstructor.IsDerivedClass = true;
             PrototypeChain.SetPrototype(classConstructor, validatedBase);
             LinkClassInstancePrototype(classConstructor, validatedBase);
             return classConstructor;
@@ -1122,6 +1138,13 @@ public class RuntimeServices
             return receiver;
         }
 
+        if (receiver != null
+            && _generatedClassReplacementReceivers.TryGetValue(receiver, out var replacement)
+            && ownerType.IsInstanceOfType(replacement.Receiver))
+        {
+            return replacement.Receiver;
+        }
+
         if (!IsPrototypeObjectForClass(receiver, ownerType))
         {
             throw new TypeError("Class method receiver is incompatible with its declaring class");
@@ -1142,6 +1165,12 @@ public class RuntimeServices
         => _generatedClassMethodReceivers.TryGetValue(instance, out var slot)
             ? slot.Receiver
             : instance;
+
+    public static object? ResolveGeneratedClassStorageReceiver(object? receiver)
+        => receiver != null
+            && _generatedClassReplacementReceivers.TryGetValue(receiver, out var slot)
+                ? slot.Receiver
+                : receiver;
 
     public static object ValidateGeneratedStaticMethodReceiver(
         object? receiver,
@@ -1198,7 +1227,7 @@ public class RuntimeServices
     {
         if (receiver is null
             || receiver is JsNull
-            || !ownerType.IsInstanceOfType(receiver))
+            || !ownerType.IsInstanceOfType(ResolveGeneratedClassStorageReceiver(receiver)))
         {
             return false;
         }

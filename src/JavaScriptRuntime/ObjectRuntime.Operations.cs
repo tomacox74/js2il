@@ -2602,9 +2602,7 @@ namespace JavaScriptRuntime
                     throw new TypeError("Value is not a constructor");
                 }
 
-                var isDerivedClassType = prototypeOwner is JsClassConstructorObject
-                    && type.BaseType is { } baseType
-                    && baseType != typeof(object);
+                var isDerivedClassType = prototypeOwner is JsClassConstructorObject { IsDerivedClass: true };
                 RuntimeServices.PushCurrentArguments(callArgs);
                 var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
                     newTarget ?? prototypeOwner ?? type);
@@ -4846,15 +4844,7 @@ namespace JavaScriptRuntime
             }
 
             // User-defined async iterables: call obj[Symbol.asyncIterator]().
-            object? asyncIteratorMethod;
-            try
-            {
-                asyncIteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.asyncIterator);
-            }
-            catch
-            {
-                asyncIteratorMethod = null;
-            }
+            var asyncIteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.asyncIterator);
 
             if (CallableOperations.IsCallable(asyncIteratorMethod))
             {
@@ -4862,7 +4852,7 @@ namespace JavaScriptRuntime
                     iterable,
                     asyncIteratorMethod!,
                     System.Array.Empty<object?>());
-                if (iteratorObj is null)
+                if (iteratorObj is null || !TypeUtilities.IsConstructorReturnOverride(iteratorObj))
                 {
                     throw new JavaScriptRuntime.TypeError("Async iterator method returned null or undefined");
                 }
@@ -4872,16 +4862,12 @@ namespace JavaScriptRuntime
                     return native;
                 }
 
-                // If the async iterator method returns a sync iterator, it is still valid: we will await its next() result.
-                if (iteratorObj is IJavaScriptIterator sync)
-                {
-                    return new AsyncFromSyncIterator(sync);
-                }
-
+                // An explicit @@asyncIterator never uses the async-from-sync
+                // adapter, even when it returns an ordinary synchronous iterator.
                 return new AsyncDynamicIterator(iteratorObj);
             }
 
-            if (asyncIteratorMethod != null)
+            if (asyncIteratorMethod is not null and not JsNull)
             {
                 throw new JavaScriptRuntime.TypeError("Symbol.asyncIterator is not a function");
             }
@@ -4945,6 +4931,40 @@ namespace JavaScriptRuntime
             }
 
             throw new JavaScriptRuntime.TypeError("Iterator is not an iterator");
+        }
+
+        private sealed class SkippedAsyncIteratorClose { }
+
+        public static object? AsyncIteratorCloseForCompletion(object iterator, bool hasThrowCompletion)
+        {
+            try
+            {
+                if (iterator is not IJavaScriptAsyncIterator asyncIterator)
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator is not an async iterator");
+                }
+
+                return asyncIterator.HasReturn
+                    ? asyncIterator.Return()
+                    : new SkippedAsyncIteratorClose();
+            }
+            catch (Exception exception) when (hasThrowCompletion && exception is not ScriptProcessExitException)
+            {
+                // AsyncIteratorClose preserves a throw completion over GetMethod/Call failures.
+                return new SkippedAsyncIteratorClose();
+            }
+        }
+
+        public static bool AsyncIteratorCloseNeedsAwait(object? result)
+            => result is not SkippedAsyncIteratorClose;
+
+        public static object? ValidateAsyncIteratorCloseResult(object? result, bool hasThrowCompletion)
+        {
+            if (!hasThrowCompletion)
+            {
+                ValidateIteratorCloseResult(result);
+            }
+            return result;
         }
 
         /// <summary>
@@ -5273,11 +5293,14 @@ namespace JavaScriptRuntime
             }
 
             public void Return()
+                => _ = ReturnForAsync();
+
+            public object ReturnForAsync()
             {
                 var returnMember = GetReturnMember();
                 if (returnMember is null or JsNull)
                 {
-                    return;
+                    return IteratorResult.Create(null, done: true);
                 }
 
                 if (!CallableOperations.IsCallable(returnMember))
@@ -5285,10 +5308,12 @@ namespace JavaScriptRuntime
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                ValidateIteratorCloseResult(InvokeCallableMember(
+                var result = InvokeCallableMember(
                     _iterator,
                     returnMember,
-                    System.Array.Empty<object?>()));
+                    System.Array.Empty<object?>());
+                ValidateIteratorCloseResult(result);
+                return result!;
             }
         }
 
@@ -5302,19 +5327,53 @@ namespace JavaScriptRuntime
                 JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
             }
 
-            public bool HasReturn => _sync.HasReturn;
+            public bool HasReturn => true;
 
             public object? Next()
             {
-                // Async-from-sync iterator semantics: next() returns a Promise resolved
-                // with the underlying sync iterator result.
-                return JavaScriptRuntime.Promise.resolve(_sync.Next());
+                try
+                {
+                    var result = _sync is DynamicIterator dynamicIterator
+                        ? dynamicIterator.NextRaw()
+                        : _sync.Next();
+                    return Continue(result);
+                }
+                catch (Exception exception) when (exception is not ScriptProcessExitException)
+                {
+                    return JavaScriptRuntime.Promise.reject(
+                        exception is JsThrownValueException thrown ? thrown.Value : exception);
+                }
             }
 
             public object? Return()
             {
-                _sync.Return();
-                return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
+                try
+                {
+                    if (_sync is DynamicIterator dynamicIterator)
+                    {
+                        if (!dynamicIterator.HasReturn)
+                        {
+                            return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
+                        }
+                        return Continue(dynamicIterator.ReturnForAsync());
+                    }
+                    _sync.Return();
+                    return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
+                }
+                catch (Exception exception) when (exception is not ScriptProcessExitException)
+                {
+                    return JavaScriptRuntime.Promise.reject(
+                        exception is JsThrownValueException thrown ? thrown.Value : exception);
+                }
+            }
+
+            private static object? Continue(object result)
+            {
+                var done = IteratorResultDone(result);
+                var value = IteratorResultValue(result);
+                var promise = (JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(value)!;
+                BuiltinFunction1 fulfilled = (_, unwrapped) => IteratorResult.Create(unwrapped, done);
+                return promise.then(fulfilled);
             }
         }
 
@@ -5322,7 +5381,8 @@ namespace JavaScriptRuntime
         {
             private readonly object _iterator;
             private readonly object _next;
-            private readonly object? _return;
+            private object? _return;
+            private bool _returnResolved;
 
             public AsyncDynamicIterator(object iterator)
             {
@@ -5335,11 +5395,20 @@ namespace JavaScriptRuntime
                 }
                 _next = nextMember!;
 
-                _return = GetProperty(_iterator, "return");
                 JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
             }
 
-            public bool HasReturn => _return != null;
+            private object? GetReturnMember()
+            {
+                if (!_returnResolved)
+                {
+                    _return = GetProperty(_iterator, "return");
+                    _returnResolved = true;
+                }
+                return _return;
+            }
+
+            public bool HasReturn => GetReturnMember() is not null and not JsNull;
 
             public object? Next()
                 => InvokeCallableMember(
@@ -5349,19 +5418,20 @@ namespace JavaScriptRuntime
 
             public object? Return()
             {
-                if (_return is null)
+                var returnMethod = GetReturnMember();
+                if (returnMethod is null or JsNull)
                 {
                     return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
                 }
 
-                if (!CallableOperations.IsCallable(_return))
+                if (!CallableOperations.IsCallable(returnMethod))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
                 return InvokeCallableMember(
                     _iterator,
-                    _return,
+                    returnMethod,
                     System.Array.Empty<object?>());
             }
         }

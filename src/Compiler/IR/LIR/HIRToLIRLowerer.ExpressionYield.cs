@@ -58,8 +58,10 @@ public sealed partial class HIRToLIRLowerer
 
             // Delegate via the ECMAScript iterator protocol.
             var iteratorTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
-            DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
+            _methodBodyIR.Instructions.Add(_isAsync
+                ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Create), new[] { yieldedStarArg }, iteratorTemp)
+                : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
+            DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, _isAsync ? typeof(object) : typeof(JavaScriptRuntime.IJavaScriptIterator)));
 
             int iteratorSetupLabel = CreateLabel();
             int indexSetupLabel = CreateLabel();
@@ -250,7 +252,9 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(returnArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallMember(iterObj, "return", argsArr, iterResult));
+                _methodBodyIR.Instructions.Add(_isAsync
+                    ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Return), new[] { EnsureObject(iterObj), EnsureObject(returnArg) }, iterResult)
+                    : new LIRCallMember(iterObj, "return", argsArr, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
@@ -269,7 +273,9 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(throwArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallMember(iterObj, "throw", argsArr, iterResult));
+                _methodBodyIR.Instructions.Add(_isAsync
+                    ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Throw), new[] { EnsureObject(iterObj), EnsureObject(throwArg) }, iterResult)
+                    : new LIRCallMember(iterObj, "throw", argsArr, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
@@ -285,24 +291,50 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(nextArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
+                _methodBodyIR.Instructions.Add(_isAsync
+                    ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Next), new[] { EnsureObject(iterObj), EnsureObject(nextArg) }, iterResult)
+                    : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(iterAfterCall));
+
+            if (_isAsync)
+            {
+                TryLowerAwaitValue(EnsureObject(iterResult), out iterResult);
+                var validated = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                    nameof(JavaScriptRuntime.AsyncGeneratorDelegation),
+                    nameof(JavaScriptRuntime.AsyncGeneratorDelegation.ValidateResult),
+                    new[] { iterResult }, validated));
+                DefineTempStorage(validated, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                iterResult = validated;
+            }
 
             var doneBool = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(doneBool, iterDone));
 
+            var iterYieldValue = iterResult;
+            if (_isAsync)
+            {
+                iterYieldValue = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                    nameof(JavaScriptRuntime.ObjectRuntime),
+                    nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue),
+                    new[] { iterResult }, iterYieldValue));
+                DefineTempStorage(iterYieldValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                TryLowerAwaitValue(iterYieldValue, out iterYieldValue);
+            }
+
             _methodBodyIR.Instructions.Add(new LIRYield(
-                iterResult,
+                iterYieldValue,
                 iterResumeStateId,
                 iterResumeLabel,
                 iterYieldResultTemp,
                 HandleThrowReturn: false,
-                ReturnRawIteratorResult: true));
+                ReturnRawIteratorResult: !_isAsync));
 
             _methodBodyIR.Instructions.Add(new LIRBranch(iterLoopStart));
 
@@ -351,6 +383,12 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
             yieldedValueTemp = EnsureObject(yieldedValueTemp);
+        }
+
+        // AsyncGeneratorYield awaits the value before resolving the pending iterator request.
+        if (_isAsync && !TryLowerAwaitValue(yieldedValueTemp, out yieldedValueTemp))
+        {
+            return false;
         }
 
         var genInfo = _methodBodyIR.GeneratorInfo;

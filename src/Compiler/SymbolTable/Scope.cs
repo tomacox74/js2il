@@ -36,6 +36,8 @@ public class Scope
     public Scope? Parent { get; }
     public List<Scope> Children { get; } = new();
     public Dictionary<string, BindingInfo> Bindings { get; } = new();
+
+    public bool RequiresDynamicInstanceProperties { get; set; }
     public Dictionary<Node, SourceSpan> DebugSequencePointOverrides { get; } = new(ReferenceEqualityComparer.Instance);
     private readonly HashSet<Type> _directRequireContractsWithoutOverrides = new();
 

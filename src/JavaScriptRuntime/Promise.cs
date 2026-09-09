@@ -455,19 +455,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
     public static PromiseWithResolvers withResolvers()
     {
         var promise = new Promise();
-
-        var resolve = new Func<object[]?, object?, object?>((_, value) =>
-        {
-            promise.ResolveValue(value);
-            return null;
-        });
-
-        var reject = new Func<object[]?, object?, object?>((_, reason) =>
-        {
-            promise.Settle(State.Rejected, reason);
-            return null;
-        });
-
+        var (resolve, reject) = promise.CreateResolvingFunctions();
         return new PromiseWithResolvers(promise, resolve, reject);
     }
 
@@ -1230,6 +1218,22 @@ public partial class Promise : JsObject, IJavaScriptPromise
     }
 
     // Private methods
+    private (object Resolve, object Reject) CreateResolvingFunctions()
+    {
+        // Resolution may adopt a still-pending thenable. The resolving functions
+        // share [[AlreadyResolved]] independently of the promise's settlement.
+        var alreadyResolved = 0;
+        BuiltinFunction1 resolve = (_, value) =>
+            System.Threading.Interlocked.Exchange(ref alreadyResolved, 1) == 0
+                ? ResolveValue(value)
+                : null;
+        BuiltinFunction1 reject = (_, reason) =>
+            System.Threading.Interlocked.Exchange(ref alreadyResolved, 1) == 0
+                ? Settle(State.Rejected, reason)
+                : null;
+        return (CreateElementFunctionValue(resolve)!, CreateElementFunctionValue(reject)!);
+    }
+
     private void InvokeExecutor(object? executor)
     {
         if (!CallableOperations.IsCallable(executor))
@@ -1237,20 +1241,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
             throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
         }
 
-        var Resolve = new Func<object[]?, object?, object?>((_, value) =>
-        {
-            return ResolveValue(value);
-        });
-
-        var Reject = new Func<object[]?, object?, object?>((_, reason) =>
-        {
-            return Settle(State.Rejected, reason);
-        });
-
-        var resolveValue =
-            BuiltinDelegateFunctionAdapter.FromDelegate(Resolve);
-        var rejectValue =
-            BuiltinDelegateFunctionAdapter.FromDelegate(Reject);
+        var (resolveValue, rejectValue) = CreateResolvingFunctions();
 
         try 
         {
@@ -1260,9 +1251,9 @@ public partial class Promise : JsObject, IJavaScriptPromise
                 resolveValue,
                 rejectValue);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not ScriptProcessExitException)
         {
-            Settle(State.Rejected, ex.InnerException ?? ex);
+            CallableOperations.Call1(rejectValue, null, GetThrownJsValue(ex));
         }
     }
 
@@ -1509,26 +1500,9 @@ public partial class Promise : JsObject, IJavaScriptPromise
     /// </returns>
     private static bool TryAssimilateThenable(object? value, Promise targetPromise)
     {
-        if (value is Promise promise)
+        if (ReferenceEquals(value, targetPromise))
         {
-            if (ReferenceEquals(promise, targetPromise))
-            {
-                targetPromise.Settle(State.Rejected, new TypeError("Promise cannot resolve itself"));
-                return true;
-            }
-
-            promise.then(
-                new Func<object?[], object?, object?>((_, res) =>
-                {
-                    targetPromise.ResolveValue(res);
-                    return null;
-                }),
-                new Func<object?[], object?, object?>((_, err) =>
-                {
-                    targetPromise.Settle(State.Rejected, err);
-                    return null;
-                })
-            );
+            targetPromise.Settle(State.Rejected, new TypeError("Promise cannot resolve itself"));
             return true;
         }
 
@@ -1549,7 +1523,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
         }
         catch (Exception ex)
         {
-            targetPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            targetPromise.Settle(State.Rejected, GetThrownJsValue(ex));
             return true;
         }
 
@@ -1558,36 +1532,25 @@ public partial class Promise : JsObject, IJavaScriptPromise
             return false;
         }
 
-        int alreadyCalled = 0;
-        object resolve = new Func<object[]?, object?, object?>((_, res) =>
+        // Promise resolution reads "then" synchronously, but calling it is a
+        // NewPromiseResolveThenableJob, including when the value is a Promise.
+        var context = JavaScriptRuntime.Node.AsyncContextRuntime.CaptureCurrentSnapshot();
+        var job = JavaScriptRuntime.EngineCore.HostJobCallbacks.HostMakeJobCallback(() =>
         {
-            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
-            targetPromise.ResolveValue(res);
-            return null;
-        });
-
-        object reject = new Func<object[]?, object?, object?>((_, err) =>
-        {
-            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
-            targetPromise.Settle(State.Rejected, err);
-            return null;
-        });
-        resolve =
-            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(resolve)!;
-        reject =
-            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(reject)!;
-
-        try
-        {
-            CallableOperations.Call2(thenProp, value, resolve, reject);
-        }
-        catch (Exception ex)
-        {
-            if (System.Threading.Volatile.Read(ref alreadyCalled) == 0)
+            var (resolve, reject) = targetPromise.CreateResolvingFunctions();
+            try
             {
-                targetPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+                CallableOperations.Call2(thenProp, value, resolve, reject);
             }
-        }
+            catch (Exception ex) when (ex is not ScriptProcessExitException)
+            {
+                CallableOperations.Call1(reject, null, GetThrownJsValue(ex));
+            }
+        });
+        var scheduler = GlobalThis.ServiceProvider?.Resolve<IMicrotaskScheduler>()
+            ?? throw new InvalidOperationException("No microtask scheduler available");
+        scheduler.QueueMicrotask(() => JavaScriptRuntime.Node.AsyncContextRuntime.RunJobSnapshot(
+            context, targetPromise._asyncResourceState, job));
 
         return true;
     }
