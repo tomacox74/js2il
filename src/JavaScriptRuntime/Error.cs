@@ -192,7 +192,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("AggregateError", IntrinsicCallKind.BuiltInError)]
     public class AggregateError : Error
     {
-        public JavaScriptRuntime.Array Errors { get; }
+        public JavaScriptRuntime.Array Errors { get; private set; }
         public JavaScriptRuntime.Array errors => Errors; // JS-style alias
 
         public AggregateError() : this(System.Array.Empty<object?>(), null) { }
@@ -220,6 +220,29 @@ namespace JavaScriptRuntime
             var hasMessage = args.Length > 1 && args[1] is not null;
             var message = hasMessage ? CoerceMessage(args[1]) : null;
             var iterable = args.Length > 0 ? args[0] : null;
+            var options = args.Length > 2 ? args[2] : null;
+
+            // ECMA-262 AggregateError ( errors, message [ , options ] ) installs the
+            // properties in the order: "message" (step 3), then InstallErrorCause
+            // (step 4), and only afterwards consumes the errors iterable (step 5) and
+            // defines "errors" (step 6). Build the object empty first so options.cause
+            // is read before the errors iterable is iterated.
+            var error = new AggregateError();
+            PropertyDescriptorStore.Delete(error, "errors");
+
+            if (hasMessage)
+            {
+                error.InstallMessageProperty(message!);
+            }
+            else
+            {
+                PropertyDescriptorStore.Delete(error, "message");
+            }
+
+            // 4. InstallErrorCause(O, options) — before the errors iterable is consumed.
+            InstallCause(error, options);
+
+            // 5. IteratorToList(GetIterator(errors)).
             var iterator = ObjectRuntime.GetIterator(iterable);
             var values = new List<object?>();
 
@@ -234,15 +257,9 @@ namespace JavaScriptRuntime
                 values.Add(next.value);
             }
 
-            var error = new AggregateError(values, message);
-            if (hasMessage)
-            {
-                error.InstallMessageProperty(message!);
-            }
-            else
-            {
-                PropertyDescriptorStore.Delete(error, "message");
-            }
+            // 6. DefinePropertyOrThrow(O, "errors", …) — appended after "cause".
+            error.Errors = new Array(values);
+            error.InstallErrorsProperty();
 
             return error;
         }

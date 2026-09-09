@@ -7,7 +7,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
-public sealed class Promise : JsObject, IJavaScriptPromise
+public sealed partial class Promise : JsObject, IJavaScriptPromise
 {
     private static readonly BuiltinFunction2 PrototypeThenValue = PrototypeThen;
     private static readonly BuiltinFunction1 PrototypeCatchValue = PrototypeCatch;
@@ -26,8 +26,17 @@ public sealed class Promise : JsObject, IJavaScriptPromise
     {
         public readonly object? OnFulfilled;
         public readonly object? OnRejected;
-        public readonly Promise NextPromise;
+        public readonly Promise? NextPromise;
         public readonly JavaScriptRuntime.Node.AsyncContextSnapshot? Context;
+
+        /// <summary>
+        /// When set, the reaction settles a caller-provided PromiseCapability by
+        /// invoking these resolving functions directly in the reaction job (used by
+        /// Promise.prototype.then's SpeciesConstructor path). When null, the reaction
+        /// settles <see cref="NextPromise"/> directly (the intrinsic fast path).
+        /// </summary>
+        public readonly object? CapabilityResolve;
+        public readonly object? CapabilityReject;
 
         /// <Summary>
         /// True if this reaction is for a finally handler,
@@ -45,9 +54,31 @@ public sealed class Promise : JsObject, IJavaScriptPromise
             OnFulfilled = onFulfilled;
             OnRejected = onRejected;
             NextPromise = nextPromise;
+            CapabilityResolve = null;
+            CapabilityReject = null;
             IsFinally = isFinally;
             Context = JavaScriptRuntime.Node.AsyncContextRuntime.CaptureCurrentSnapshot();
         }
+
+        private Reaction(object? onFulfilled, object? onRejected, object? capabilityResolve, object? capabilityReject)
+        {
+            OnFulfilled = onFulfilled;
+            OnRejected = onRejected;
+            NextPromise = null;
+            CapabilityResolve = capabilityResolve;
+            CapabilityReject = capabilityReject;
+            IsFinally = false;
+            Context = JavaScriptRuntime.Node.AsyncContextRuntime.CaptureCurrentSnapshot();
+        }
+
+        public static Reaction ForCapability(
+            object? onFulfilled,
+            object? onRejected,
+            object? capabilityResolve,
+            object? capabilityReject)
+            => new Reaction(onFulfilled, onRejected, capabilityResolve, capabilityReject);
+
+        public bool HasCapability => CapabilityResolve is not null;
     }
 
     private sealed record PromiseCapability(
@@ -124,7 +155,10 @@ public sealed class Promise : JsObject, IJavaScriptPromise
 
     private static object? PrototypeThen(object? thisArgument, object? onFulfilledArgument, object? onRejectedArgument)
     {
-        return GetPromiseReceiver(thisArgument, "then").then(onFulfilledArgument, onRejectedArgument);
+        // 27.2.5.4 Promise.prototype.then: the this value must be a Promise, and the
+        // result promise is created from SpeciesConstructor(promise, %Promise%).
+        return GetPromiseReceiver(thisArgument, "then")
+            .ThenWithSpeciesConstructor(onFulfilledArgument, onRejectedArgument);
     }
 
     private static object? PrototypeCatch(object? thisArgument, object? onRejectedArgument)
@@ -148,12 +182,15 @@ public sealed class Promise : JsObject, IJavaScriptPromise
             throw new TypeError("Promise.prototype.finally called on non-object");
         }
 
+        // 3. Let C be ? SpeciesConstructor(promise, %Promise%). Performed immediately,
+        //    before building the wrappers or invoking "then", so a throwing/poisoned
+        //    constructor or @@species is observed here.
+        // 4. Assert: IsConstructor(C).
+        var constructor = SpeciesConstructor(thisArgument);
+
         object? thenFinallyValue;
         object? catchFinallyValue;
 
-        // 3-4. (SpeciesConstructor) intentionally simplified: this codebase does not
-        // implement Symbol.species for Promise, so Promise.resolve(...) is used in
-        // place of PromiseResolve(C, result) below.
         if (!CallableOperations.IsCallable(onFinallyArgument))
         {
             // 5. If IsCallable(onFinally) is false, then
@@ -165,34 +202,61 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         else
         {
             var onFinally = onFinallyArgument;
+            var capturedConstructor = constructor;
 
+            // Then Finally Function: result = onFinally(); promise = PromiseResolve(C, result);
+            // return Invoke(promise, "then", « (value) => value »).
             BuiltinFunction1 thenFinally = (_, value) =>
             {
                 var result = CallableOperations.Call0(onFinally, null);
-                var resultPromise = (Promise)Promise.resolve(result)!;
+                var resultPromise = ResolveForConstructor(capturedConstructor, result);
                 BuiltinFunction1 valueThunk = (_, _) => value;
-                return resultPromise.then(valueThunk);
+                Function.InitializeFunctionInstance(valueThunk, 0d, string.Empty, requiresInvocationContext: false);
+                Function.MarkUndefinedPrototype(valueThunk);
+                var valueThunkValue = BuiltinDelegateFunctionAdapter.FromDelegate(valueThunk);
+                return ObjectRuntime.CallMember1(resultPromise!, "then", valueThunkValue);
             };
             Function.InitializeFunctionInstance(thenFinally, 1d, string.Empty, requiresInvocationContext: false);
+            Function.MarkUndefinedPrototype(thenFinally);
             thenFinallyValue = BuiltinDelegateFunctionAdapter.FromDelegate(thenFinally);
 
+            // Catch Finally Function: result = onFinally(); promise = PromiseResolve(C, result);
+            // return Invoke(promise, "then", « thrower »).
             BuiltinFunction1 catchFinally = (_, reason) =>
             {
                 var result = CallableOperations.Call0(onFinally, null);
-                var resultPromise = (Promise)Promise.resolve(result)!;
-                // Rather than throwing a wrapped CLR exception (whose unwrap semantics
-                // through the internal reaction pipeline are not guaranteed to preserve
-                // the exact rejection value), return an already-rejected promise so the
-                // existing thenable-assimilation logic propagates `reason` verbatim.
+                var resultPromise = ResolveForConstructor(capturedConstructor, result);
+                // The spec thrower rethrows `reason`; returning an already-rejected
+                // promise propagates `reason` verbatim through thenable assimilation
+                // without wrapping it in a CLR exception.
                 BuiltinFunction1 thrower = (_, _) => Promise.reject(reason);
-                return resultPromise.then(thrower);
+                Function.InitializeFunctionInstance(thrower, 0d, string.Empty, requiresInvocationContext: false);
+                Function.MarkUndefinedPrototype(thrower);
+                var throwerValue = BuiltinDelegateFunctionAdapter.FromDelegate(thrower);
+                return ObjectRuntime.CallMember1(resultPromise!, "then", throwerValue);
             };
             Function.InitializeFunctionInstance(catchFinally, 1d, string.Empty, requiresInvocationContext: false);
+            Function.MarkUndefinedPrototype(catchFinally);
             catchFinallyValue = BuiltinDelegateFunctionAdapter.FromDelegate(catchFinally);
         }
 
-        // 6. Return ? Invoke(promise, "then", « thenFinally, catchFinally »).
-        return ObjectRuntime.CallMember2(thisArgument!, "then", thenFinallyValue, catchFinallyValue);
+        // 7. Return ? Invoke(promise, "then", « thenFinally, catchFinally »).
+        // Invoke performs Get(promise, "then") and then Call, which throws a
+        // TypeError when the resolved "then" property is not callable. Resolve the
+        // property explicitly (respecting own-property shadowing) so a non-callable
+        // (or overridden) "then" is handled per spec rather than falling back to the
+        // prototype implementation.
+        var thenMethod = ObjectRuntime.GetProperty(thisArgument!, "then");
+        if (!CallableOperations.IsCallable(thenMethod))
+        {
+            throw new TypeError("Promise.prototype.finally: then is not a function");
+        }
+
+        return CallableOperations.Call2(
+            thenMethod,
+            thisArgument,
+            thenFinallyValue,
+            catchFinallyValue);
     }
 
     /// <summary>
@@ -239,9 +303,12 @@ public sealed class Promise : JsObject, IJavaScriptPromise
     // Public methods
     public static object? resolve(object? value)
     {
-        if (value is Promise existing)
+        // PromiseResolve(%Promise%, value): return the value unchanged only when it is
+        // already a promise whose own "constructor" is the intrinsic %Promise%. A
+        // promise whose "constructor" was overridden must not be blindly reused.
+        if (value is Promise && PromiseResolveConstructorMatches(value, null))
         {
-            return existing;
+            return value;
         }
 
         var promise = new Promise();
@@ -249,11 +316,28 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         return promise;
     }
 
+    /// <summary>
+    /// Implements the SameValue(xConstructor, C) test of PromiseResolve (ECMA-262
+    /// 27.2.4.7.1). When <paramref name="constructor"/> is the intrinsic %Promise%
+    /// (or <c>null</c>, meaning the intrinsic), identity is decided by
+    /// <see cref="GlobalThis.IsPromiseConstructorValue"/> so that any canonical
+    /// representation of %Promise% matches; otherwise a strict SameValue comparison
+    /// against the supplied constructor is used.
+    /// </summary>
+    private static bool PromiseResolveConstructorMatches(object? value, object? constructor)
+    {
+        var valueConstructor = ObjectRuntime.GetProperty(value!, "constructor");
+        if (constructor is null || GlobalThis.IsPromiseConstructorValue(constructor))
+        {
+            return GlobalThis.IsPromiseConstructorValue(valueConstructor);
+        }
+
+        return Operators.SameValue(valueConstructor, constructor);
+    }
+
     internal static object? ResolveForConstructor(object? constructor, object? value)
     {
-        if (constructor is null
-            || constructor is JsNull
-            || GlobalThis.IsPromiseConstructorValue(constructor))
+        if (constructor is null || constructor is JsNull)
         {
             return Promise.resolve(value);
         }
@@ -261,6 +345,24 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         if (!ObjectRuntime.IsConstructibleValue(constructor))
         {
             throw new TypeError("Promise.resolve requires a constructor receiver");
+        }
+
+        // PromiseResolve identity (ECMA-262 27.2.4.7.1): when the value is already a
+        // promise whose own "constructor" is SameValue with C, return it unchanged.
+        // This must run even for the intrinsic Promise constructor so that a promise
+        // whose "constructor" was overridden is not blindly reused.
+        if (value is Promise && PromiseResolveConstructorMatches(value, constructor))
+        {
+            return value;
+        }
+
+        if (GlobalThis.IsPromiseConstructorValue(constructor))
+        {
+            // Intrinsic constructor fast path: allocate a fresh native promise and
+            // run the resolution procedure directly instead of the capability dance.
+            var intrinsicPromise = new Promise();
+            intrinsicPromise.ResolveValue(value);
+            return intrinsicPromise;
         }
 
         object? capabilityResolve = null;
@@ -509,6 +611,105 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         return then(null, onRejected);
     }
 
+    /// <summary>
+    /// Implements the SpeciesConstructor portion of Promise.prototype.then
+    /// (27.2.5.4 steps 3-5). When the resolved constructor is the intrinsic
+    /// %Promise%, the fast default reaction path is used; otherwise the result
+    /// promise is created via NewPromiseCapability(C) and PerformPromiseThen
+    /// targets that capability directly.
+    /// </summary>
+    internal object? ThenWithSpeciesConstructor(object? onFulfilled, object? onRejected)
+    {
+        var constructor = ResolveThenSpeciesConstructor();
+        if (constructor is null)
+        {
+            // Default %Promise%: preserve the existing, allocation-light reaction path.
+            return then(onFulfilled, onRejected);
+        }
+
+        // 4. resultCapability = NewPromiseCapability(C).
+        var capability = NewPromiseCapability(constructor);
+
+        // 5. PerformPromiseThen(promise, onFulfilled, onRejected, resultCapability):
+        // register a reaction that invokes the generic capability's resolving
+        // functions directly in the original reaction job.
+        MarkHandled();
+        var reaction = Reaction.ForCapability(
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onFulfilled),
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onRejected),
+            capability.Resolve,
+            capability.Reject);
+
+        var shouldEnqueue = false;
+        lock (_reactions)
+        {
+            if (_state == State.Pending)
+            {
+                _reactions.Add(reaction);
+            }
+            else
+            {
+                shouldEnqueue = true;
+            }
+        }
+
+        if (shouldEnqueue)
+        {
+            EnqueueReaction(reaction);
+        }
+
+        return capability.Promise;
+    }
+
+    /// <summary>
+    /// SpeciesConstructor(this, %Promise%). Returns <c>null</c> when the resolved
+    /// constructor is the intrinsic %Promise% (or an unset/undefined species), so
+    /// callers can use the default fast path. Throws a TypeError for an invalid
+    /// constructor/species, matching ECMA-262 SpeciesConstructor.
+    /// </summary>
+    private object? ResolveThenSpeciesConstructor()
+    {
+        var constructor = SpeciesConstructor(this);
+        return GlobalThis.IsPromiseConstructorValue(constructor) ? null : constructor;
+    }
+
+    /// <summary>
+    /// ECMA-262 SpeciesConstructor(O, %Promise%). Returns the resolved constructor,
+    /// defaulting to the intrinsic %Promise% constructor when the "constructor"
+    /// property is undefined or its @@species is undefined/null.
+    /// </summary>
+    private static object SpeciesConstructor(object? promise)
+    {
+        var constructor = ObjectRuntime.GetProperty(promise!, "constructor");
+        if (constructor is null)
+        {
+            // constructor is undefined -> default constructor.
+            return DefaultPromiseConstructorValue;
+        }
+
+        if (constructor is JsNull || TypeUtilities.IsPrimitive(constructor))
+        {
+            throw new TypeError("Promise constructor property is not an object");
+        }
+
+        var species = ObjectRuntime.GetProperty(constructor, Symbol.species.DebugId);
+        if (species is null || species is JsNull)
+        {
+            // @@species is undefined or null -> default constructor.
+            return DefaultPromiseConstructorValue;
+        }
+
+        if (!CallableOperations.IsConstructor(species))
+        {
+            throw new TypeError("Promise @@species is not a constructor");
+        }
+
+        return species;
+    }
+
+    private static object DefaultPromiseConstructorValue
+        => BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise);
+
     public object? @finally(object? onFinally)
     {
         MarkHandled();
@@ -558,87 +759,282 @@ public sealed class Promise : JsObject, IJavaScriptPromise
             iterable);
 
     internal static object? AllForConstructor(object? constructor, object? iterable)
+        => PerformCombinator(CombinatorKind.All, constructor, iterable);
+
+    public static object? allSettled(object? iterable)
+        => AllSettledForConstructor(
+            BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
+            iterable);
+
+    internal static object? AllSettledForConstructor(object? constructor, object? iterable)
+        => PerformCombinator(CombinatorKind.AllSettled, constructor, iterable);
+
+    public static object? any(object? iterable)
+        => AnyForConstructor(
+            BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
+            iterable);
+
+    internal static object? AnyForConstructor(object? constructor, object? iterable)
+        => PerformCombinator(CombinatorKind.Any, constructor, iterable);
+
+    public static object? allKeyed(object? dictionary)
+        => AllKeyedForConstructor(
+            BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
+            dictionary);
+
+    internal static object? AllKeyedForConstructor(object? constructor, object? dictionary)
+        => PerformKeyedCombinator(settled: false, constructor, dictionary);
+
+    public static object? allSettledKeyed(object? dictionary)
+        => AllSettledKeyedForConstructor(
+            BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
+            dictionary);
+
+    internal static object? AllSettledKeyedForConstructor(object? constructor, object? dictionary)
+        => PerformKeyedCombinator(settled: true, constructor, dictionary);
+
+    /// <summary>
+    /// Constructor-aware implementation of the await-dictionary combinators
+    /// (Promise.allKeyed and Promise.allSettledKeyed). Follows ECMA-262
+    /// PerformPromiseAllKeyed: it iterates the dictionary's own enumerable
+    /// string and symbol keys in [[OwnPropertyKeys]] order, resolves each value,
+    /// and fulfils with CreateKeyedPromiseCombinatorResultObject — a
+    /// null-prototype object whose keys follow the original source order
+    /// regardless of settlement order (values for allKeyed, settlement records
+    /// for allSettledKeyed).
+    /// </summary>
+    private static object? PerformKeyedCombinator(bool settled, object? constructor, object? dictionary)
     {
+        var capability = NewPromiseCapability(constructor);
+
+        try
+        {
+            var promiseResolve = GetPromiseResolve(constructor);
+
+            if (dictionary is null || dictionary is JsNull || TypeUtilities.IsPrimitive(dictionary))
+            {
+                throw new TypeError("Promise keyed combinator requires an object dictionary");
+            }
+
+            // 1. allKeys = ? dictionary.[[OwnPropertyKeys]](): snapshot ALL own keys
+            // (string and symbol) in source order. Enumerability is intentionally NOT
+            // filtered here; it is re-checked inside the loop immediately before each
+            // value is read so that a callback triggered by an earlier key can affect
+            // the enumerability (or presence) of a later key.
+            var keys = ObjectRuntime.GetOwnPropertyKeysInOrder(
+                dictionary,
+                includeEncodedSymbolKeys: true);
+
+            // entries preserves source order; each value slot starts as undefined and
+            // is filled in place as its promise settles.
+            var entries = new List<(string Key, StrongBox<object?> Value)>(keys.Count);
+            var remaining = new StrongBox<int>(1);
+
+            void ResolveWhenComplete()
+            {
+                // CreateKeyedPromiseCombinatorResultObject: OrdinaryObjectCreate(null),
+                // then CreateDataPropertyOrThrow for each entry in source order.
+                var result = ObjectRuntime.CreateOrdinaryObject();
+                PrototypeChain.SetPrototype(result, JsNull.Null);
+                foreach (var (entryKey, entryValue) in entries)
+                {
+                    ObjectRuntime.CreateDataProperty(result, entryKey, entryValue.Value);
+                }
+
+                CallableOperations.Call1(capability.Resolve, null, result);
+            }
+
+            foreach (var key in keys)
+            {
+                // Re-check the descriptor immediately before reading the value: skip
+                // keys that an earlier callback deleted or made non-enumerable.
+                if (!ObjectRuntime.IsOwnPropertyPresentAndEnumerable(dictionary, key))
+                {
+                    continue;
+                }
+
+                var value = ObjectRuntime.GetProperty(dictionary, key);
+                var entryValue = new StrongBox<object?>(null);
+                entries.Add((key, entryValue));
+
+                var nextPromise = CallableOperations.Call1(promiseResolve, constructor, value);
+                var alreadyCalled = new StrongBox<bool>(false);
+                remaining.Value++;
+
+                BuiltinFunction1 resolveElement = (_, v) =>
+                {
+                    if (alreadyCalled.Value)
+                    {
+                        return null;
+                    }
+
+                    alreadyCalled.Value = true;
+                    entryValue.Value = settled
+                        ? CreateSettledRecord("fulfilled", "value", v)
+                        : v;
+                    remaining.Value--;
+                    if (remaining.Value == 0)
+                    {
+                        ResolveWhenComplete();
+                    }
+
+                    return null;
+                };
+
+                object? onRejectedValue;
+                if (settled)
+                {
+                    BuiltinFunction1 rejectElement = (_, reason) =>
+                    {
+                        if (alreadyCalled.Value)
+                        {
+                            return null;
+                        }
+
+                        alreadyCalled.Value = true;
+                        entryValue.Value = CreateSettledRecord("rejected", "reason", reason);
+                        remaining.Value--;
+                        if (remaining.Value == 0)
+                        {
+                            ResolveWhenComplete();
+                        }
+
+                        return null;
+                    };
+                    onRejectedValue = CreateElementFunctionValue(rejectElement);
+                }
+                else
+                {
+                    onRejectedValue = capability.Reject;
+                }
+
+                var then = ObjectRuntime.GetProperty(nextPromise!, "then");
+                CallableOperations.Call2(
+                    then,
+                    nextPromise,
+                    CreateElementFunctionValue(resolveElement),
+                    onRejectedValue);
+            }
+
+            remaining.Value--;
+            if (remaining.Value == 0)
+            {
+                ResolveWhenComplete();
+            }
+
+            return capability.Promise;
+        }
+        catch (Exception ex)
+        {
+            CallableOperations.Call1(
+                capability.Reject,
+                null,
+                GetThrownJsValue(ex));
+            return capability.Promise;
+        }
+    }
+
+    private enum CombinatorKind
+    {
+        All,
+        AllSettled,
+        Any,
+    }
+
+    /// <summary>
+    /// Shared, constructor-aware implementation of the Promise combinators
+    /// (Promise.all, Promise.allSettled, Promise.any). Implements
+    /// NewPromiseCapability, GetPromiseResolve (evaluated once), per-element
+    /// resolving functions with the "already called" guard, and the
+    /// iterator/IteratorClose completion ordering required by ECMA-262.
+    /// </summary>
+    private static object? PerformCombinator(CombinatorKind kind, object? constructor, object? iterable)
+    {
+        // 1-2. NewPromiseCapability(C) is a throwing (?) completion: it propagates
+        // synchronously rather than rejecting the returned promise.
         var capability = NewPromiseCapability(constructor);
         IJavaScriptIterator? iterator = null;
         var iteratorDone = false;
 
         try
         {
-            var promiseResolve = ObjectRuntime.GetProperty(constructor!, "resolve");
-            if (!CallableOperations.IsCallable(promiseResolve))
-            {
-                throw new TypeError("Promise resolve is not callable");
-            }
+            // 3-4. GetPromiseResolve(C) — evaluated exactly once, before iteration.
+            var promiseResolve = GetPromiseResolve(constructor);
 
+            // 5-6. GetIterator(iterable, sync).
             iterator = ObjectRuntime.GetIterator(iterable);
+
+            // The list of per-element results (values for all/allSettled, errors for any).
             var values = new JavaScriptRuntime.Array();
-            var remainingElements = 1;
+            var remaining = new StrongBox<int>(1);
             var index = 0;
+
+            void ResolveWhenComplete()
+            {
+                if (kind == CombinatorKind.Any)
+                {
+                    CallableOperations.Call1(
+                        capability.Reject,
+                        null,
+                        new AggregateError(values, "All promises were rejected"));
+                }
+                else
+                {
+                    CallableOperations.Call1(capability.Resolve, null, values);
+                }
+            }
 
             while (true)
             {
-                var next = ObjectRuntime.IteratorNext(iterator);
-                if (ObjectRuntime.IteratorResultDone(next))
+                object? nextValue;
+                try
                 {
-                    iteratorDone = true;
-                    remainingElements--;
-                    if (remainingElements == 0)
+                    var next = ObjectRuntime.IteratorNext(iterator);
+                    if (ObjectRuntime.IteratorResultDone(next))
                     {
-                        CallableOperations.Call1(
-                            capability.Resolve,
-                            null,
-                            values);
+                        iteratorDone = true;
+                        remaining.Value--;
+                        if (remaining.Value == 0)
+                        {
+                            ResolveWhenComplete();
+                        }
+
+                        return capability.Promise;
                     }
 
-                    return capability.Promise;
+                    nextValue = ObjectRuntime.IteratorResultValue(next);
+                }
+                catch
+                {
+                    // Errors while stepping the iterator (IteratorStep/IteratorValue)
+                    // leave the iterator in a "done" state; it must not be closed.
+                    iteratorDone = true;
+                    throw;
                 }
 
-                var nextValue = ObjectRuntime.IteratorResultValue(next);
                 values.Add(null);
                 var elementIndex = index++;
-                remainingElements++;
+                remaining.Value++;
 
                 var nextPromise = CallableOperations.Call1(
                     promiseResolve,
                     constructor,
                     nextValue);
-                var alreadyCalled = false;
-                BuiltinFunction1 resolveElement = (_, value) =>
-                {
-                    if (alreadyCalled)
-                    {
-                        return null;
-                    }
 
-                    alreadyCalled = true;
-                    values[elementIndex] = value;
-                    remainingElements--;
-                    if (remainingElements == 0)
-                    {
-                        CallableOperations.Call1(
-                            capability.Resolve,
-                            null,
-                            values);
-                    }
-
-                    return null;
-                };
-                Function.InitializeFunctionInstance(
-                    resolveElement,
-                    1d,
-                    string.Empty,
-                    requiresInvocationContext: false);
-                Function.MarkUndefinedPrototype(resolveElement);
-                var resolveElementValue =
-                    BuiltinDelegateFunctionAdapter.FromDelegate(resolveElement);
+                var (onFulfilledValue, onRejectedValue) = CreateElementHandlers(
+                    kind,
+                    elementIndex,
+                    values,
+                    remaining,
+                    capability,
+                    ResolveWhenComplete);
 
                 var then = ObjectRuntime.GetProperty(nextPromise!, "then");
                 CallableOperations.Call2(
                     then,
                     nextPromise,
-                    resolveElementValue,
-                    capability.Reject);
+                    onFulfilledValue,
+                    onRejectedValue);
             }
         }
         catch (Exception ex)
@@ -651,106 +1047,156 @@ public sealed class Promise : JsObject, IJavaScriptPromise
             CallableOperations.Call1(
                 capability.Reject,
                 null,
-                ex.InnerException ?? ex);
+                GetThrownJsValue(ex));
             return capability.Promise;
         }
     }
 
-    public static object? allSettled(object? iterable)
+    /// <summary>
+    /// GetPromiseResolve(constructor): reads the constructor's <c>resolve</c>
+    /// method once and asserts it is callable.
+    /// </summary>
+    private static object? GetPromiseResolve(object? constructor)
     {
-        JavaScriptRuntime.Array? results = null;
-        var settledCount = 0;
-        Promise? allSettledPromise = null;
-
-        Promise InitializeState()
+        var promiseResolve = ObjectRuntime.GetProperty(constructor!, "resolve");
+        if (!CallableOperations.IsCallable(promiseResolve))
         {
-            results = new JavaScriptRuntime.Array();
-            allSettledPromise = new Promise();
-            return allSettledPromise;
+            throw new TypeError("Promise resolve is not callable");
         }
 
-        void CheckForAllCompleted()
-        {
-            if (settledCount == results!.Count)
-            {
-                allSettledPromise!.Settle(State.Fulfilled, results);
-            }
-        }
-
-        AddPromiseResult AddPromise(Promise p)
-        {
-            results!.Add(null);
-            var index = results.Count - 1;
-            return new AddPromiseResult(
-                onFulfilled: (value) =>
-                {
-                    results[index] = new FulfilledResult(value);
-                    settledCount++;
-                    CheckForAllCompleted();
-                },
-                onRejected: (reason) =>
-                {
-                    results[index] = new RejectedResult(reason);
-                    settledCount++;
-                    CheckForAllCompleted();
-                });
-        }
-
-        return Combine(
-            initializeState: InitializeState,
-            iterable: iterable,
-            addPromise: AddPromise,
-            finalizeState: CheckForAllCompleted);
+        return promiseResolve;
     }
 
-    public static object? any(object? iterable)
+    /// <summary>
+    /// Builds the per-element resolving functions passed to each element promise's
+    /// <c>then</c>. The functions carry the spec-mandated metadata (length 1,
+    /// anonymous name, no <c>prototype</c>, not a constructor) and share a single
+    /// "already called" guard so only the first settlement is observed.
+    /// </summary>
+    private static (object? OnFulfilled, object? OnRejected) CreateElementHandlers(
+        CombinatorKind kind,
+        int elementIndex,
+        JavaScriptRuntime.Array values,
+        StrongBox<int> remaining,
+        PromiseCapability capability,
+        Action resolveWhenComplete)
     {
-        JavaScriptRuntime.Array? rejectionReasons = null;
-        var rejectedCount = 0;
-        Promise? anyPromise = null;
-        var totalCount = 0;
+        var alreadyCalled = new StrongBox<bool>(false);
 
-        Promise InitializeState()
+        void RecordSettlement(object? entry)
         {
-            rejectionReasons = new JavaScriptRuntime.Array();
-            anyPromise = new Promise();
-            return anyPromise;
-        }
-
-        AddPromiseResult AddPromise(Promise p)
-        {
-            totalCount++;
-            return new AddPromiseResult(
-                onFulfilled: (value) =>
-                {
-                    anyPromise!.Settle(State.Fulfilled, value);
-                },
-                onRejected: (reason) =>
-                {
-                    rejectionReasons!.Add(reason);
-                    rejectedCount++;
-                    if (rejectedCount == totalCount)
-                    {
-                        anyPromise!.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
-                    }
-                });
-        }
-
-        void FinalizeState()
-        {
-            // handle the case of an empty iterable
-            if (totalCount == 0)
+            values[elementIndex] = entry;
+            remaining.Value--;
+            if (remaining.Value == 0)
             {
-                // this is the same error message nodejs returns for Promise.any with an empty iterable
-                anyPromise!.Settle(State.Rejected, new AggregateError(rejectionReasons!, "All promises were rejected"));
+                resolveWhenComplete();
             }
         }
 
-        return Combine(
-            initializeState: InitializeState,
-            iterable: iterable,
-            addPromise: AddPromise,
-            finalizeState: FinalizeState);
+        switch (kind)
+        {
+            case CombinatorKind.All:
+            {
+                BuiltinFunction1 resolveElement = (_, value) =>
+                {
+                    if (alreadyCalled.Value)
+                    {
+                        return null;
+                    }
+
+                    alreadyCalled.Value = true;
+                    RecordSettlement(value);
+                    return null;
+                };
+                return (
+                    CreateElementFunctionValue(resolveElement),
+                    capability.Reject);
+            }
+
+            case CombinatorKind.AllSettled:
+            {
+                BuiltinFunction1 resolveElement = (_, value) =>
+                {
+                    if (alreadyCalled.Value)
+                    {
+                        return null;
+                    }
+
+                    alreadyCalled.Value = true;
+                    RecordSettlement(CreateSettledRecord("fulfilled", "value", value));
+                    return null;
+                };
+                BuiltinFunction1 rejectElement = (_, reason) =>
+                {
+                    if (alreadyCalled.Value)
+                    {
+                        return null;
+                    }
+
+                    alreadyCalled.Value = true;
+                    RecordSettlement(CreateSettledRecord("rejected", "reason", reason));
+                    return null;
+                };
+                return (
+                    CreateElementFunctionValue(resolveElement),
+                    CreateElementFunctionValue(rejectElement));
+            }
+
+            case CombinatorKind.Any:
+            {
+                BuiltinFunction1 rejectElement = (_, reason) =>
+                {
+                    if (alreadyCalled.Value)
+                    {
+                        return null;
+                    }
+
+                    alreadyCalled.Value = true;
+                    RecordSettlement(reason);
+                    return null;
+                };
+                return (
+                    capability.Resolve,
+                    CreateElementFunctionValue(rejectElement));
+            }
+
+            default:
+                throw new InvalidOperationException("Unknown Promise combinator kind");
+        }
+    }
+
+    private static object? CreateElementFunctionValue(BuiltinFunction1 element)
+    {
+        Function.InitializeFunctionInstance(
+            element,
+            1d,
+            string.Empty,
+            requiresInvocationContext: false);
+        Function.MarkUndefinedPrototype(element);
+        return BuiltinDelegateFunctionAdapter.FromDelegate(element);
+    }
+
+    private static JsObject CreateSettledRecord(string status, string valueKey, object? value)
+    {
+        var record = ObjectRuntime.CreateOrdinaryObject();
+        ObjectRuntime.CreateDataProperty(record, "status", status);
+        ObjectRuntime.CreateDataProperty(record, valueKey, value);
+        return record;
+    }
+
+    private static object? GetThrownJsValue(Exception ex)
+    {
+        if (ex is JsThrownValueException thrown)
+        {
+            return thrown.Value;
+        }
+
+        if (ex.InnerException is JsThrownValueException innerThrown)
+        {
+            return innerThrown.Value;
+        }
+
+        return ex.InnerException ?? ex;
     }
 
     public static object? race(object? iterable)
@@ -877,60 +1323,119 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         {
             JavaScriptRuntime.Node.AsyncContextRuntime.RunJobSnapshot(
                 reaction.Context,
-                reaction.NextPromise._asyncResourceState,
+                reaction.NextPromise?._asyncResourceState,
                 jobCallback);
         });
     }
 
     private void ProcessReaction(Reaction reaction)
     {
-        try
+        // select the appropriate handler
+        var handler = _state == State.Fulfilled ? reaction.OnFulfilled : reaction.OnRejected;
+
+        // Promise.prototype.finally reactions retain the original settlement
+        // semantics and never use a caller-provided capability.
+        if (reaction.IsFinally && handler != null)
         {
-            // select the appropriate handler
-            var handler = _state == State.Fulfilled ? reaction.OnFulfilled : reaction.OnRejected;
-
-            // by default the state and result are passed on
-            var newState = _state;
-            object? newResult = _result;
-
-            if (handler != null)
+            try
             {
-                if (reaction.IsFinally)
-                {
-                    var cleanupResult = ExecuteHandler(handler, _result, isFinally: true);
+                var cleanupResult = ExecuteHandler(handler, _result, isFinally: true);
 
-                    // If finally returns a Promise/thenable, we must wait for it.
-                    // On fulfillment: preserve the original state/result.
-                    // On rejection: override with the cleanup error.
-                    if (TryWaitFinally(cleanupResult, reaction.NextPromise, _state, _result))
-                    {
-                        return;
-                    }
-
-                    reaction.NextPromise.Settle(_state, _result);
-                    return;
-                }
-
-                // then/catch: handler exists -> state becomes Fulfilled
-                newState = State.Fulfilled;
-                var handlerResult = ExecuteHandler(handler, _result, isFinally: false);
-                newResult = handlerResult;
-
-                if (TryAssimilateThenable(handlerResult, reaction.NextPromise))
+                // If finally returns a Promise/thenable, we must wait for it.
+                // On fulfillment: preserve the original state/result.
+                // On rejection: override with the cleanup error.
+                if (TryWaitFinally(cleanupResult, reaction.NextPromise!, _state, _result))
                 {
                     return;
                 }
 
-                reaction.NextPromise.Settle(newState, newResult);
+                reaction.NextPromise!.Settle(_state, _result);
+            }
+            catch (Exception ex)
+            {
+                reaction.NextPromise!.Settle(State.Rejected, ex);
+            }
+
+            return;
+        }
+
+        // Per NewPromiseReactionJob (27.2.2.1), only the handler invocation is a
+        // catchable completion. Compute the handler result (normal or abrupt) here;
+        // the selected resolving callback is invoked afterwards so that any throw it
+        // raises propagates as an abrupt completion of the job instead of triggering
+        // a second (double) reject on the same capability.
+        object? handlerValue = _result;
+        var handlerAbrupt = false;
+        Exception? handlerError = null;
+
+        if (handler != null)
+        {
+            try
+            {
+                handlerValue = ExecuteHandler(handler, _result, isFinally: false);
+            }
+            catch (Exception ex)
+            {
+                handlerAbrupt = true;
+                handlerError = ex;
+            }
+        }
+
+        if (reaction.HasCapability)
+        {
+            if (handlerAbrupt)
+            {
+                CallableOperations.Call1(
+                    reaction.CapabilityReject,
+                    null,
+                    GetThrownJsValue(handlerError!));
                 return;
             }
 
-            reaction.NextPromise.Settle(newState, newResult);
+            if (handler != null)
+            {
+                // then/catch handler present: resolve the caller-provided capability
+                // with the handler result (assimilation is performed by the
+                // capability's resolving function).
+                CallableOperations.Call1(reaction.CapabilityResolve, null, handlerValue);
+                return;
+            }
+
+            // No handler: forward the settlement (pass-through) to the capability's
+            // resolving functions in the same reaction job.
+            if (_state == State.Fulfilled)
+            {
+                CallableOperations.Call1(reaction.CapabilityResolve, null, handlerValue);
+            }
+            else
+            {
+                CallableOperations.Call1(reaction.CapabilityReject, null, handlerValue);
+            }
+
+            return;
         }
-        catch (Exception ex)
+
+        // Intrinsic fast path: settle the internally-created next promise.
+        if (handlerAbrupt)
         {
-            reaction.NextPromise.Settle(State.Rejected, ex);
+            reaction.NextPromise!.Settle(State.Rejected, handlerError);
+            return;
         }
+
+        if (handler != null)
+        {
+            // then/catch: handler exists -> state becomes Fulfilled
+            if (TryAssimilateThenable(handlerValue, reaction.NextPromise!))
+            {
+                return;
+            }
+
+            reaction.NextPromise!.Settle(State.Fulfilled, handlerValue);
+            return;
+        }
+
+        // No handler: pass the current settlement through unchanged.
+        reaction.NextPromise!.Settle(_state, handlerValue);
     }
 
     /// <Summary>
@@ -1266,36 +1771,6 @@ public sealed class Promise : JsObject, IJavaScriptPromise
         finalizeState();
 
         return combinedPromise;
-    }
-
-    private abstract class SettledResult
-    {
-        public readonly string status;
-
-        protected SettledResult(string status)
-        {
-            this.status = status;
-        }
-    }
-
-    private sealed class FulfilledResult : SettledResult
-    {
-        public readonly object? value;
-
-        public FulfilledResult(object? value) : base("fulfilled")
-        {
-            this.value = value;
-        }
-    }
-
-    private sealed class RejectedResult : SettledResult
-    {
-        public readonly object? reason;
-
-        public RejectedResult(object? reason) : base("rejected")
-        {
-            this.reason = reason;
-        }
     }
 
 }

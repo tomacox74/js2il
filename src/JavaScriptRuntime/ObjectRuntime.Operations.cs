@@ -818,6 +818,31 @@ namespace JavaScriptRuntime
                 : PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, key);
         }
 
+        /// <summary>
+        /// Spec-faithful own-property enumerability probe used by combinators that
+        /// snapshot the full own-key list up front and must re-check each key
+        /// immediately before reading its value (ECMA-262 PerformPromiseAllKeyed step
+        /// "Let desc be ? dictionary.[[GetOwnProperty]](key)"). Returns true only when
+        /// the property is still present as an own property and is enumerable, so a
+        /// key deleted or made non-enumerable by an earlier callback is skipped.
+        /// </summary>
+        internal static bool IsOwnPropertyPresentAndEnumerable(object obj, string key)
+        {
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                return TryGetOwnPropertyDescriptor(obj, key, out var descriptor)
+                    && descriptor.Enumerable;
+            }
+
+            if (TryGetOwnPropertyDescriptor(obj, key, out var ownDescriptor))
+            {
+                return ownDescriptor.Enumerable;
+            }
+
+            return RuntimeServices.TryEnsureLazyClassMethodDataProperty(obj, key, out var lazyClassMethodDescriptor)
+                && lazyClassMethodDescriptor.Enumerable;
+        }
+
         internal static List<string> GetOwnPropertyKeysInOrder(
             object obj,
             bool includeEncodedSymbolKeys = false)
