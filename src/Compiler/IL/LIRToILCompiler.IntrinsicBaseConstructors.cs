@@ -15,11 +15,6 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        if (!string.Equals(callIntrinsicBaseCtor.IntrinsicName, "Array", StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException($"Unsupported intrinsic base constructor: '{callIntrinsicBaseCtor.IntrinsicName}'");
-        }
-
         void EmitReceiver()
         {
             if (callIntrinsicBaseCtor.UsesLexicalReceiver)
@@ -38,34 +33,59 @@ internal sealed partial class LIRToILCompiler
             }
         }
 
-        // Base constructor must be invoked before instance usage.
-        EmitReceiver();
-        var baseCtor = _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.Array), Type.EmptyTypes);
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(baseCtor);
-
-        EmitReceiver();
-
-        int argc = callIntrinsicBaseCtor.Arguments.Count;
-        ilEncoder.LoadConstantI4(argc);
-        ilEncoder.OpCode(ILOpCode.Newarr);
-        ilEncoder.Token(_bclReferences.ObjectType);
-
-        for (int i = 0; i < argc; i++)
+        if (string.Equals(callIntrinsicBaseCtor.IntrinsicName, "Array", StringComparison.Ordinal))
         {
-            ilEncoder.OpCode(ILOpCode.Dup);
-            ilEncoder.LoadConstantI4(i);
-            EmitLoadTempAsObject(callIntrinsicBaseCtor.Arguments[i], ilEncoder, allocation, methodDescriptor);
-            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            // Base constructor must be invoked before instance usage.
+            EmitReceiver();
+            var baseCtor = _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.Array), Type.EmptyTypes);
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(baseCtor);
+
+            EmitReceiver();
+
+            int argc = callIntrinsicBaseCtor.Arguments.Count;
+            ilEncoder.LoadConstantI4(argc);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int i = 0; i < argc; i++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(i);
+                EmitLoadTempAsObject(callIntrinsicBaseCtor.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+
+            var initRef = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Array),
+                nameof(JavaScriptRuntime.Array.ConstructInto),
+                new[] { typeof(object[]) });
+
+            ilEncoder.OpCode(ILOpCode.Callvirt);
+            ilEncoder.Token(initRef);
         }
+        else if (string.Equals(callIntrinsicBaseCtor.IntrinsicName, "Promise", StringComparison.Ordinal))
+        {
+            EmitReceiver();
+            if (callIntrinsicBaseCtor.Arguments.Count > 0)
+            {
+                EmitLoadTempAsObject(callIntrinsicBaseCtor.Arguments[0], ilEncoder, allocation, methodDescriptor);
+            }
+            else
+            {
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
 
-        var initRef = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.Array),
-            nameof(JavaScriptRuntime.Array.ConstructInto),
-            new[] { typeof(object[]) });
-
-        ilEncoder.OpCode(ILOpCode.Callvirt);
-        ilEncoder.Token(initRef);
+            var baseCtor = _memberRefRegistry.GetOrAddConstructor(
+                typeof(JavaScriptRuntime.Promise),
+                new[] { typeof(object) });
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(baseCtor);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Unsupported intrinsic base constructor: '{callIntrinsicBaseCtor.IntrinsicName}'");
+        }
 
         var initializeDerivedThis = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.RuntimeServices),

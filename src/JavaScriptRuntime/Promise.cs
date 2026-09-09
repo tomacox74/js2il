@@ -7,7 +7,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
-public sealed partial class Promise : JsObject, IJavaScriptPromise
+public partial class Promise : JsObject, IJavaScriptPromise
 {
     private static readonly BuiltinFunction2 PrototypeThenValue = PrototypeThen;
     private static readonly BuiltinFunction1 PrototypeCatchValue = PrototypeCatch;
