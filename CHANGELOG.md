@@ -10,6 +10,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   TypedArray prototype intrinsic dispatch for `forEach`, `includes`, and
   `subarray`; support RAB/detached-buffer validation and iteration, BigInt
   subarray species construction, and native RAB test helpers.
+- test262/docs: verify 412 additional indexed-collection and shared-memory API
+  fixtures: 328 TypedArray-family, one ArrayBuffer, 32 SharedArrayBuffer, and
+  51 Atomics cases. The native Test262 helper now preserves typed-array
+  constructor identity and supplies Uint8Clamped byte-conversion expectations;
+  all 412 fixtures pass in the native harness.
 - test262/docs: verify 500 additional positive class-declaration fixtures: 409
   class-method parameter-destructuring cases and 91 declaration, computed-name,
   accessor, async-generator, and definition cases. All 1,000 metadata-selected

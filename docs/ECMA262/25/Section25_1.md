@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T04:15:36Z
+> Last generated (UTC): 2026-09-09T19:11:53Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -101,6 +101,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | ArrayBuffer.prototype.resize | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resize/FailingBatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/resize/descriptor.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/extensible.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/length.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/name.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/resize-grow.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/resize-shrink.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/this-is-not-arraybuffer-object.js`<br>`test/built-ins/ArrayBuffer/prototype/resize/this-is-not-resizable-arraybuffer-object.js` | Exposes resize as a standard non-constructible prototype method with receiver checks and standard metadata. Resizable buffers grow or shrink within maxByteLength while preserving existing bytes, and detachment is checked after coercing the requested length. Immutable ArrayBuffer variants remain unsupported. |
+
+### 25.1.6.7 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| ArrayBuffer.prototype.slice immutable species result | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/IndexedMemoryConformance6BatchExecutionTests.cs` | `test/built-ins/ArrayBuffer/prototype/slice/species-returns-immutable-arraybuffer.js` | Native Test262 coverage includes the required immutable ArrayBuffer species-result rejection path for slice. Immutable ArrayBuffer instances themselves remain unsupported. |
 
 ### 25.1.6.8 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer))
 

@@ -1063,7 +1063,7 @@
           "test/built-ins/TypedArray/prototype/findLast/return-found-value-predicate-result-is-true.js",
           "test/built-ins/TypedArray/prototype/forEach/callbackfn-not-called-on-empty.js"
         ],
-        "notes": "The checked-in Test262 evidence now covers 297 additional cases across static from()/of(), shared typed-array metadata and accessors, iterators, copyWithin(), callback/search methods, and numeric and BigInt mutation behavior. Resizable-buffer, cross-realm, proxy, and two native testTypedArray.js constructor-identity conversion cases remain deferred."
+        "notes": "The checked-in Test262 evidence now covers 297 additional cases across static from()/of(), shared typed-array metadata and accessors, iterators, copyWithin(), callback/search methods, and numeric and BigInt mutation behavior. Resizable-buffer, cross-realm, and proxy cases remain limited."
       },
       {
         "clause": "23.2.5 / 23.2.6 / 23.2.7 / 23.2.8",
@@ -1086,7 +1086,7 @@
           "test/built-ins/TypedArrayConstructors/ctors/length-arg/init-zeros.js",
           "test/built-ins/TypedArrayConstructors/internals/Delete/key-is-symbol.js"
         ],
-        "notes": "The checked-in Test262 evidence now covers 390 additional concrete TypedArray constructor cases across numeric and BigInt constructor metadata, prototype properties, length and buffer coercion, and indexed internal behavior. Detached, resizable, shared, cross-realm, and proxy-backed buffer behavior remains limited; one testTypedArray.js constructor-identity conversion helper case remains deferred."
+        "notes": "The checked-in Test262 evidence now covers 390 additional concrete TypedArray constructor cases across numeric and BigInt constructor metadata, prototype properties, length and buffer coercion, and indexed internal behavior. Detached, resizable, shared, cross-realm, and proxy-backed buffer behavior remains limited."
       },
       {
         "clause": "23.2.3",
@@ -1109,7 +1109,7 @@
           "test/built-ins/TypedArray/prototype/join/BigInt/custom-separator-result-from-tostring-on-each-simple-value.js",
           "test/built-ins/TypedArray/prototype/keys/BigInt/iter-prototype.js"
         ],
-        "notes": "The checked-in Test262 evidence now covers 159 additional TypedArray cases across numeric and BigInt prototype lookup, length, iterator, join, map, and reduce behavior. Resizable-buffer, cross-realm, proxy, and three native testTypedArray.js constructor-identity conversion helper cases remain deferred."
+        "notes": "The checked-in Test262 evidence now covers 159 additional TypedArray cases across numeric and BigInt prototype lookup, length, iterator, join, map, and reduce behavior. Resizable-buffer, cross-realm, and proxy cases remain limited."
       },
       {
         "clause": "23.2.3",
@@ -1131,7 +1131,7 @@
           "test/built-ins/TypedArray/prototype/set/array-arg-src-values-are-not-cached.js",
           "test/built-ins/TypedArray/prototype/set/BigInt/array-arg-src-values-are-not-cached.js"
         ],
-        "notes": "The checked-in Test262 evidence now covers 98 additional TypedArray cases across numeric and BigInt reduce/reduceRight, reverse, and set behavior. Cross-realm, proxy, and four native testTypedArray.js constructor-identity conversion helper cases remain deferred."
+        "notes": "The checked-in Test262 evidence now covers 98 additional TypedArray cases across numeric and BigInt reduce/reduceRight, reverse, and set behavior. Cross-realm and proxy cases remain limited."
       },
       {
         "clause": "23.2.3",
@@ -1164,6 +1164,24 @@
           "test/built-ins/TypedArray/prototype/findIndex/resizable-buffer.js"
         ],
         "notes": "The checked-in Test262 evidence now covers 100 additional numeric and BigInt TypedArray cases for copyWithin, entries, every, fill, filter, find, and findIndex. The implementations validate detached and out-of-bounds views, honor resizable-buffer length changes during argument coercion and callbacks, and create filter results through the selected species constructor with content-type and minimum-length checks."
+      },
+      {
+        "clause": "23.2",
+        "feature": "Additional TypedArray-family conformance coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/fill/IndexedMemoryConformance6BatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Set/IndexedMemoryConformance6BatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/IndexedMemoryConformance6BatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/fill/fill-values-conversion-operations.js",
+          "test/built-ins/TypedArray/prototype/set/typedarray-arg-set-values-diff-buffer-other-type-conversions.js",
+          "test/built-ins/TypedArrayConstructors/internals/Set/conversion-operation.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/results.js"
+        ],
+        "notes": "Native Test262 coverage now includes 328 additional TypedArray-family fixtures: 155 %TypedArray% cases, 162 concrete TypedArray-constructor cases, and 11 Uint8Array encoding cases. The native testTypedArray.js helper preserves JavaScript-visible constructor identity and supplies Uint8Clamped byte-conversion expectations for these checks. Detached, cross-realm, proxy, and broader multi-agent behavior remain limited."
       }
     ]
   }

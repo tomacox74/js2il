@@ -392,6 +392,19 @@
           "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-zero.js"
         ],
         "notes": "Both transfer methods coerce optional lengths, allocate and zero-fill the destination, preserve source bytes up to the destination length, and detach the source. transfer preserves resizability and maxByteLength, while transferToFixedLength always returns a fixed-length buffer. Immutable ArrayBuffer rejection remains unavailable because immutable buffers are not yet implemented."
+      },
+      {
+        "clause": "25.1.6.7",
+        "feature": "ArrayBuffer.prototype.slice immutable species result",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/slice/IndexedMemoryConformance6BatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/ArrayBuffer/prototype/slice/species-returns-immutable-arraybuffer.js"
+        ],
+        "notes": "Native Test262 coverage includes the required immutable ArrayBuffer species-result rejection path for slice. Immutable ArrayBuffer instances themselves remain unsupported."
       }
     ]
   }
