@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 previously failing TypedArray fixtures. Add
+  TypedArray prototype intrinsic dispatch for `forEach`, `includes`, and
+  `subarray`; support RAB/detached-buffer validation and iteration, BigInt
+  subarray species construction, and native RAB test helpers.
 - test262/docs: verify 500 additional positive class-declaration fixtures: 409
   class-method parameter-destructuring cases and 91 declaration, computed-name,
   accessor, async-generator, and definition cases. All 1,000 metadata-selected

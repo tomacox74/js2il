@@ -37,4 +37,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "returns-undefined-for-holes-in-sparse-arrays")]
     public Task returns_undefined_for_holes_in_sparse_arrays()
         => ExecutionTestFromFile("returns-undefined-for-holes-in-sparse-arrays");
+
+    [Fact(DisplayName = "coerced-index-resize")]
+    public Task coerced_index_resize()
+        => ExecutionTestFromFile("coerced-index-resize");
+
+    [Fact(DisplayName = "resizable-buffer")]
+    public Task resizable_buffer()
+        => ExecutionTestFromFile("resizable-buffer");
+
+    [Fact(DisplayName = "return-abrupt-from-this-out-of-bounds")]
+    public Task return_abrupt_from_this_out_of_bounds()
+        => ExecutionTestFromFile("return-abrupt-from-this-out-of-bounds");
 }

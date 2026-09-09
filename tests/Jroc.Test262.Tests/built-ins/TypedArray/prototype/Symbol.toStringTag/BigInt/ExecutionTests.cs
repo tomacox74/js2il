@@ -9,4 +9,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "return-typedarrayname")]
     public Task return_typedarrayname()
         => ExecutionTestFromFile("return-typedarrayname");
+
+    [Fact(DisplayName = "detached-buffer")]
+    public Task detached_buffer()
+        => ExecutionTestFromFile("detached-buffer");
 }

@@ -59,4 +59,31 @@ public sealed class TypedArrayRuntimeTests
                 string.Empty),
             result.Output);
     }
+
+    [Fact]
+    public void TypedArraySubarray_AcceptsOutOfBoundsSpeciesResult()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "typed-array-subarray-out-of-bounds-species-result",
+            "TypedArray.SubarrayOutOfBoundsSpeciesResult",
+            static _ => ("""
+                const buffer = new ArrayBuffer(8, { maxByteLength: 8 });
+                const source = new Uint8Array(buffer, 0, 4);
+                let speciesResult;
+
+                source.constructor = {};
+                source.constructor[Symbol.species] = function() {
+                  speciesResult = new Uint8Array(buffer, 0, 4);
+                  buffer.resize(0);
+                  return speciesResult;
+                };
+
+                console.log(source.subarray() === speciesResult);
+                console.log(speciesResult.length);
+                """, null));
+
+        Assert.Equal(
+            string.Join(Environment.NewLine, "true", "0", string.Empty),
+            result.Output);
+    }
 }

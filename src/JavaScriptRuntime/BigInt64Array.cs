@@ -47,6 +47,15 @@ namespace JavaScriptRuntime
             InitializeFromArgument(arg);
         }
 
+        public BigInt64Array subarray()
+            => (BigInt64Array)SubarrayCore(null, null);
+
+        public BigInt64Array subarray(object? start)
+            => (BigInt64Array)SubarrayCore(start, null);
+
+        public BigInt64Array subarray(object? start, object? end)
+            => (BigInt64Array)SubarrayCore(start, end);
+
         private BigInt64Array(ArrayBuffer buffer, int byteOffset, int length)
         {
             InitializeFromExisting(buffer, byteOffset, length);

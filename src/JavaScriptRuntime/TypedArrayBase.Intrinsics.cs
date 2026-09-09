@@ -22,6 +22,7 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly BuiltinFunctionVariadic _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
         private static readonly BuiltinFunctionVariadic _typedArrayFillValue = TypedArrayPrototypeFill;
+        private static readonly BuiltinFunctionVariadic _typedArraySubarrayValue = TypedArrayPrototypeSubarray;
         private static readonly BuiltinFunctionVariadic _typedArrayReduceRightValue = TypedArrayPrototypeReduceRight;
         private static readonly BuiltinFunction0 _typedArrayToReversedValue = TypedArrayPrototypeToReversed;
         private static readonly BuiltinFunction0 _typedArrayEntriesValue = TypedArrayPrototypeEntries;
@@ -33,12 +34,15 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction2 _typedArraySomeValue = TypedArrayPrototypeSome;
         private static readonly BuiltinFunction2 _typedArrayFindValue = TypedArrayPrototypeFind;
         private static readonly BuiltinFunction2 _typedArrayFindIndexValue = TypedArrayPrototypeFindIndex;
+        private static readonly BuiltinFunction2 _typedArrayForEachValue = TypedArrayPrototypeForEach;
+        private static readonly BuiltinFunction2 _typedArrayIncludesValue = TypedArrayPrototypeIncludes;
         private static readonly BuiltinFunction3 _typedArrayFromValue = TypedArrayFrom;
         private static readonly BuiltinFunctionVariadic _typedArrayOfValue = TypedArrayOf;
 
         internal static void ConfigureIntrinsicSurface(RuntimeIntrinsics intrinsics)
         {
             GlobalThis.ConfigureBuiltinFunctionObject(_typedArrayConstructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(_typedArrayConstructorValue);
             // Resolve prototypes from the bootstrapping realm, never from static storage.
             var prototype = intrinsics.TypedArrayPrototype;
             PrototypeChain.SetPrototype(prototype, intrinsics.ObjectPrototype);
@@ -100,6 +104,7 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "toLocaleString", _typedArrayToLocaleStringValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "copyWithin", _typedArrayCopyWithinValue, 2d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "fill", _typedArrayFillValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "subarray", _typedArraySubarrayValue, 2d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findLast", _typedArrayFindLastValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "reduceRight", _typedArrayReduceRightValue, 1d);
@@ -113,6 +118,8 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "some", _typedArraySomeValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "find", _typedArrayFindValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findIndex", _typedArrayFindIndexValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "forEach", _typedArrayForEachValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "includes", _typedArrayIncludesValue, 1d);
             PropertyDescriptorStore.DefineOrUpdate(
                 prototype,
                 global::JavaScriptRuntime.Symbol.iterator.DebugId,
@@ -336,6 +343,26 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.findIndex(new object?[] { callback, thisArg });
+        }
+
+        private static object? TypedArrayPrototypeForEach(object? thisArgument, object? callback, object? thisArg)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.forEach called on incompatible receiver");
+            }
+
+            return typedArray.forEach(new object?[] { callback, thisArg });
+        }
+
+        private static object? TypedArrayPrototypeIncludes(object? thisArgument, object? searchElement, object? fromIndex)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.includes called on incompatible receiver");
+            }
+
+            return typedArray.includes(searchElement, fromIndex);
         }
 
         private static object? TypedArrayFrom(object? thisArgument, object? source, object? mapFn, object? thisArg)
@@ -580,6 +607,19 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.copyWithin(arguments.ToArray());
+        }
+
+        private static object? TypedArrayPrototypeSubarray(object? thisArgument, in JsCallArguments arguments)
+        {
+            if (thisArgument is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.subarray called on incompatible receiver");
+            }
+
+            var values = arguments.ToArray();
+            return typedArray.SubarrayCore(
+                values.Length > 0 ? values[0] : null,
+                values.Length > 1 ? values[1] : null);
         }
 
         private static object? TypedArrayPrototypeReduceRight(object? thisArgument, in JsCallArguments arguments)
