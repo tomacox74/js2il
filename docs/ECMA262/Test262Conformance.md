@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 13,171 | 12 | 10,329 | 23,512 | **56.02%** |
-| Language syntax and semantics | 8,916 | 46 | 14,681 | 23,643 | **37.71%** |
-| **Total** | 22,087 | 58 | 26,096 | 48,241 | **45.78%** |
+| Language syntax and semantics | 9,412 | 46 | 14,185 | 23,643 | **39.81%** |
+| **Total** | 22,583 | 58 | 25,600 | 48,241 | **46.81%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 4,180 | 10 | 6,848 | 11,038 | **37.87%** |
+| `expressions` | 4,676 | 10 | 6,352 | 11,038 | **42.36%** |
 | `function-code` | 36 | 0 | 181 | 217 | **16.59%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -76,7 +76,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
 | `call` | 19 | 1 | 72 | 92 | **20.65%** |
-| `class` | 588 | 0 | 3,471 | 4,059 | **14.49%** |
+| `class` | 1,084 | 0 | 2,975 | 4,059 | **26.71%** |
 | `coalesce` | 18 | 0 | 6 | 24 | **75.00%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
