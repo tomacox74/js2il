@@ -66,4 +66,8 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     public Task return_abrupt_tonumber_length()
         => ExecutionTestFromFile("return-abrupt-tonumber-length");
 
+    [Fact(DisplayName = "resizable-buffer-special-float-values.js")]
+    public Task resizable_buffer_special_float_values() => ExecutionTestFromFile("resizable-buffer-special-float-values");
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }

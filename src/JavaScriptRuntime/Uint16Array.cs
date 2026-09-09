@@ -57,6 +57,15 @@ namespace JavaScriptRuntime
         public static Uint16Array of(object[]? args)
             => new Uint16Array(args ?? global::System.Array.Empty<object?>());
 
+        public Uint16Array slice()
+            => (Uint16Array)SliceCore(null, null);
+
+        public Uint16Array slice(object? start)
+            => (Uint16Array)SliceCore(start, null);
+
+        public Uint16Array slice(object? start, object? end)
+            => (Uint16Array)SliceCore(start, end);
+
         protected override int BytesPerElement => ElementSize;
 
         protected override string TypedArrayName => nameof(Uint16Array);

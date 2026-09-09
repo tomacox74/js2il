@@ -6,6 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: correct Array/TypedArray review edge cases: ordered array-like `set`
+  reads and overlap handling, species-aware bit-preserving `slice`, permanently
+  completed iterators, explicit `lastIndexOf` arguments, empty `join` coercion,
+  and observable element `toLocaleString` calls. Expose the affected TypedArray
+  methods on the shared prototype and honor custom Object `toString` methods
+  from `Object.prototype.toLocaleString`.
+- test262/runtime/docs: port 100 Array and TypedArray fixtures covering
+  resizable and detached ArrayBuffer views. Harden generic Array iteration,
+  search, and locale-string behavior; preserve TypedArray validation, species,
+  coercion, and write semantics across buffer state transitions.
 - test262/runtime/docs: port 100 previously failing TypedArray fixtures. Add
   TypedArray prototype intrinsic dispatch for `forEach`, `includes`, and
   `subarray`; support RAB/detached-buffer validation and iteration, BigInt

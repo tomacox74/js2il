@@ -2242,7 +2242,7 @@ namespace JavaScriptRuntime
         private static object? PrototypeToLocaleString(object? thisArgument)
         {
             _ = RequireObjectCoercibleReceiver(thisArgument);
-            return PrototypeToString(thisArgument);
+            return CallableOperations.Call0(GetProperty(thisArgument!, "toString"), thisArgument);
         }
 
         private static object? PrototypeToString(object? thisArgument)

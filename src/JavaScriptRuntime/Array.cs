@@ -249,6 +249,7 @@ namespace JavaScriptRuntime
         {
             DefinePrototypeMethod(prototype, "join", (BuiltinFunction1)PrototypeJoin, 1);
             DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "toLocaleString", (BuiltinFunctionVariadic)PrototypeToLocaleString, 0);
             DefinePrototypeMethod(prototype, "concat", (BuiltinFunctionVariadic)PrototypeConcat, 1);
             DefinePrototypeMethod(prototype, "push", (BuiltinFunctionVariadic)PrototypePush, 1);
             DefinePrototypeMethod(prototype, "pop", (BuiltinFunction0)PrototypePop, 0);
@@ -588,6 +589,43 @@ namespace JavaScriptRuntime
             }
 
             return CallableOperations.Call0(func, obj)!;
+        }
+
+        private static object PrototypeToLocaleString(object? thisArgument, in JsCallArguments arguments)
+        {
+            var receiver = ToArrayMethodObject(thisArgument, "toLocaleString");
+            return LocaleStringCore(receiver, ToArrayLikeLengthAsDouble(receiver),
+                arguments.GetArgument(0), arguments.GetArgument(1));
+        }
+
+        internal static string LocaleStringCore(object receiver, double length, object? locales, object? options)
+        {
+            var builder = new StringBuilder();
+
+            for (double k = 0; k < length; k++)
+            {
+                if (k > 0)
+                {
+                    builder.Append(',');
+                }
+
+                var element = ObjectRuntime.GetItem(receiver, (double)k);
+                if (element is null or JsNull)
+                {
+                    continue;
+                }
+
+                var toLocaleString = ObjectRuntime.GetProperty(element, "toLocaleString");
+                if (!CallableOperations.IsCallable(toLocaleString))
+                {
+                    throw new TypeError("Array.prototype.toLocaleString element has a non-callable toLocaleString property");
+                }
+
+                var result = CallableOperations.Call2(toLocaleString, element, locales, options);
+                builder.Append(DotNet2JSConversions.ToStringRejectingSymbols(result));
+            }
+
+            return builder.ToString();
         }
 
         private static object PrototypeConcat(object? thisArgument, in JsCallArguments arguments)
@@ -2304,7 +2342,14 @@ namespace JavaScriptRuntime
                 return new ArrayIterator(jsArray, () => jsArray.Count, kind);
             }
 
-            return new ArrayIterator(receiver, () => ToArrayLikeLength(receiver), kind);
+            if (receiver is TypedArrayBase typedArray)
+            {
+                // Array iterators defer LengthOfArrayLike until next(), where an
+                // out-of-bounds TypedArray view must be rejected.
+                return new ArrayIterator(typedArray, () => typedArray.GetCurrentLengthForIteration(), kind);
+            }
+
+            return new ArrayIterator(receiver, () => ToArrayLikeLengthAsDouble(receiver), kind);
         }
 
         private void InitializeIntrinsicSurface()
@@ -2322,12 +2367,13 @@ namespace JavaScriptRuntime
         private sealed class ArrayIterator : IJavaScriptIterator
         {
             private readonly object _receiver;
-            private readonly Func<int> _getLength;
+            private readonly Func<double> _getLength;
             private readonly ArrayIteratorKind _kind;
-            private int _index;
+            private double _index;
             private bool _isClosed;
+            private bool _isExecuting;
 
-            public ArrayIterator(object receiver, Func<int> getLength, ArrayIteratorKind kind)
+            public ArrayIterator(object receiver, Func<double> getLength, ArrayIteratorKind kind)
             {
                 _receiver = receiver;
                 _getLength = getLength;
@@ -2335,35 +2381,49 @@ namespace JavaScriptRuntime
                 PrototypeChain.SetPrototype(this, IteratorPrototype);
             }
 
-            public bool HasReturn => true;
+            public bool HasReturn => false;
 
             public IteratorResultObject Next()
             {
+                if (_isExecuting)
+                {
+                    throw new TypeError("Array iterator is already executing");
+                }
                 if (_isClosed)
                 {
                     return new IteratorResultObject(null, done: true);
                 }
 
-                int index = _index;
-                if (index >= _getLength())
+                _isExecuting = true;
+                try
                 {
-                    return new IteratorResultObject(null, done: true);
-                }
-
-                _index++;
-                object? value = _kind switch
-                {
-                    ArrayIteratorKind.Keys => (double)index,
-                    ArrayIteratorKind.Values => JavaScriptRuntime.ObjectRuntime.GetItem(_receiver, (double)index),
-                    ArrayIteratorKind.Entries => new Array(new object?[]
+                    _isClosed = true;
+                    var index = _index;
+                    if (index >= _getLength())
                     {
-                        (double)index,
-                        JavaScriptRuntime.ObjectRuntime.GetItem(_receiver, (double)index)
-                    }),
-                    _ => null
-                };
+                        return new IteratorResultObject(null, done: true);
+                    }
 
-                return new IteratorResultObject(value, done: false);
+                    _index++;
+                    object? value = _kind switch
+                    {
+                        ArrayIteratorKind.Keys => index,
+                        ArrayIteratorKind.Values => JavaScriptRuntime.ObjectRuntime.GetItem(_receiver, index),
+                        ArrayIteratorKind.Entries => new Array(new object?[]
+                        {
+                            index,
+                            JavaScriptRuntime.ObjectRuntime.GetItem(_receiver, index)
+                        }),
+                        _ => null
+                    };
+
+                    _isClosed = false;
+                    return new IteratorResultObject(value, done: false);
+                }
+                finally
+                {
+                    _isExecuting = false;
+                }
             }
 
             public object next(object? value = null)
@@ -5324,16 +5384,15 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// JavaScript Array.toLocaleString()
-        /// Minimal: same as toString for now.
         /// </summary>
         public string toLocaleString(object[]? args)
         {
-            return toString();
+            return (string)PrototypeToLocaleString(this, JsCallArguments.FromArray(args));
         }
 
         public string toLocaleString()
         {
-            return toString();
+            return toLocaleString(null);
         }
 
         /// <summary>
@@ -5388,6 +5447,12 @@ namespace JavaScriptRuntime
             {
                 if (double.IsNaN(dx) && double.IsNaN(dy)) return true;
                 return dx.Equals(dy);
+            }
+
+            if (x is global::System.Numerics.BigInteger bigIntegerX
+                && y is global::System.Numerics.BigInteger bigIntegerY)
+            {
+                return bigIntegerX == bigIntegerY;
             }
 
             // Strings

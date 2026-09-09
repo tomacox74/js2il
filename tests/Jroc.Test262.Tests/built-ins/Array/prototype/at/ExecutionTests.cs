@@ -49,4 +49,7 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "returns-undefined-for-out-of-range-index")]
     public Task returns_undefined_for_out_of_range_index()
         => ExecutionTestFromFile("returns-undefined-for-out-of-range-index");
+
+    [Fact(DisplayName = "typed-array-resizable-buffer.js")]
+    public Task typed_array_resizable_buffer() => ExecutionTestFromFile("typed-array-resizable-buffer");
 }

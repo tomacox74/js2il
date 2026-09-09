@@ -19,4 +19,9 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "15.4.4.14-2-1")]
     public Task _15_4_4_14_2_1()
         => ExecutionTestFromFile("15.4.4.14-2-1");
+
+    [Fact(DisplayName = "resizable-buffer-special-float-values.js")]
+    public Task resizable_buffer_special_float_values() => ExecutionTestFromFile("resizable-buffer-special-float-values");
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }

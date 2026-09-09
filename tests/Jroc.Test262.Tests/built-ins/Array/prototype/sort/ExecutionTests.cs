@@ -79,4 +79,9 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "stability-513-elements")]
     public Task stability_513_elements()
         => ExecutionTestFromFile("stability-513-elements");
+
+    [Fact(DisplayName = "comparefn-resizable-buffer.js")]
+    public Task comparefn_resizable_buffer() => ExecutionTestFromFile("comparefn-resizable-buffer");
+    [Fact(DisplayName = "resizable-buffer-default-comparator.js")]
+    public Task resizable_buffer_default_comparator() => ExecutionTestFromFile("resizable-buffer-default-comparator");
 }
