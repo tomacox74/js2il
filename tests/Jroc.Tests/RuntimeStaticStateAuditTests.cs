@@ -100,6 +100,7 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel", "immutable ABI sentinel"),
         new("JavaScriptRuntime.RuntimeServices._currentInvocation", "async-flow invocation frame"),
         new("JavaScriptRuntime.RuntimeServices._generatedClassMethodReceivers", "weak-keyed generated method receiver metadata"),
+        new("JavaScriptRuntime.RuntimeServices._generatedClassReplacementReceivers", "weak-keyed replacement receiver metadata; generated receiver lives only with its JavaScript receiver"),
         new("JavaScriptRuntime.ScriptProcessExitControl.PendingExit", "async-flow process-exit signal"),
         new("JavaScriptRuntime.Set._emptySlot", "immutable SetData sentinel"),
         new("JavaScriptRuntime.Set._iteratorRegistration", "immutable weak-table registration value"),
@@ -234,6 +235,16 @@ public sealed class RuntimeStaticStateAuditTests
     public void StaticMetadataCachesDoNotRetainCollectibleTypes()
     {
         var references = PopulateStaticMetadataCachesWithCollectibleType();
+
+        CollectUntilDead(references);
+
+        Assert.All(references, reference => Assert.False(reference.IsAlive));
+    }
+
+    [Fact]
+    public void ReplacementReceiverMetadataDoesNotRetainRuntimeGraphsOrCollectibleTypes()
+    {
+        var references = CreateReplacementReceiverReferences();
 
         CollectUntilDead(references);
 
@@ -426,6 +437,53 @@ public sealed class RuntimeStaticStateAuditTests
         }
 
         return references;
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference[] CreateReplacementReceiverReferences()
+    {
+        using var lifecycle = RuntimeLifecycle.Create(
+            typeof(RuntimeStaticStateAuditTests).Assembly,
+            isHostedExecution: true,
+            suppressInheritedExecutionContext: true);
+        var assembly = AssemblyBuilder.DefineDynamicAssembly(
+            new AssemblyName($"CollectibleReplacementReceiver_{Guid.NewGuid():N}"),
+            AssemblyBuilderAccess.RunAndCollect);
+        var typeBuilder = assembly.DefineDynamicModule("main").DefineType("Generated.Receiver");
+        typeBuilder.DefineField("scope", typeof(object), FieldAttributes.Public);
+        var receiverType = typeBuilder.CreateType()!;
+        var receiver = Activator.CreateInstance(receiverType)!;
+        object? replacement = null;
+
+        lifecycle.Execute(
+            _ =>
+            {
+                receiverType.GetField("scope")!.SetValue(receiver, lifecycle.Realm);
+                RuntimeServices.PushDerivedConstructorThisBinding();
+                try
+                {
+                    RuntimeServices.ConstructDerivedFunctionBase(receiver, typeof(AsyncDisposableStack), []);
+                    replacement = RuntimeServices.ResolveLexicalThis(RuntimeServices.GetCurrentThis());
+                    Assert.IsType<AsyncDisposableStack>(replacement);
+                    Assert.Same(replacement, RuntimeServices.ResolveGeneratedClassMethodThis(receiver));
+                }
+                finally
+                {
+                    RuntimeServices.PopDerivedConstructorThisBinding();
+                }
+            },
+            waitForTimers: false);
+
+        return
+        [
+            new WeakReference(receiver),
+            new WeakReference(replacement),
+            new WeakReference(receiverType),
+            new WeakReference(assembly),
+            new WeakReference(lifecycle.Realm),
+            new WeakReference(lifecycle.Agent),
+            new WeakReference(lifecycle.Cluster),
+        ];
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]

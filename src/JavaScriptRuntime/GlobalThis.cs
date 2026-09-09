@@ -667,6 +667,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "valueOf", _bigIntPrototypeValueOfValue, 0d);
             DefineIntrinsicToStringTagProperty(_bigIntPrototypeValue, "BigInt");
             JavaScriptRuntime.Date.InitializeIntrinsicSurface(_objectPrototypeValue);
+            JavaScriptRuntime.DisposableStack.InitializeIntrinsicSurface(_objectPrototypeValue);
+            JavaScriptRuntime.AsyncDisposableStack.InitializeIntrinsicSurface(_objectPrototypeValue);
             JavaScriptRuntime.AbortController.InitializeIntrinsicSurface(_objectPrototypeValue);
             JavaScriptRuntime.AbortSignal.InitializeIntrinsicSurface(_objectPrototypeValue);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
@@ -1184,6 +1186,12 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.SuppressedError), SuppressedError);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.SuppressedError), dict[nameof(GlobalThis.SuppressedError)]);
 
+            dict.TryAdd(nameof(GlobalThis.DisposableStack), DisposableStack);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.DisposableStack), dict[nameof(GlobalThis.DisposableStack)]);
+
+            dict.TryAdd(nameof(GlobalThis.AsyncDisposableStack), AsyncDisposableStack);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.AsyncDisposableStack), dict[nameof(GlobalThis.AsyncDisposableStack)]);
+
             dict.TryAdd(nameof(GlobalThis.Iterator), Iterator);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Iterator), dict[nameof(GlobalThis.Iterator)]);
 
@@ -1505,6 +1513,10 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> AggregateError => _aggregateErrorConstructorValue;
 
         public static Func<object[], object?[], object?> SuppressedError => _suppressedErrorConstructorValue;
+
+        public static Type DisposableStack => typeof(JavaScriptRuntime.DisposableStack);
+
+        public static Type AsyncDisposableStack => typeof(JavaScriptRuntime.AsyncDisposableStack);
 
         public static Func<object[], object?[], object?> Iterator => _iteratorConstructorValue;
 

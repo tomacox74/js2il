@@ -1441,6 +1441,7 @@ public sealed partial class HIRToLIRLowerer
             // rather than runtime dispatch through ObjectRuntime.CallMember.
             if (_classRegistry != null
                 && calleePropAccess.Object is HIRThisExpression
+                && !UsesDynamicClassInstanceProperties()
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
                 && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var methodReturnTypeHandle, out var hasScopesParam, out _, out var maxParamCount))

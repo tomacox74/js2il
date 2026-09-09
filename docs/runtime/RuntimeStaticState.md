@@ -63,12 +63,21 @@ oversized keys must remain collectible, as covered by `JSONShapeStorageTests`.
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
 | `RuntimeServices._currentInvocation` | Async flow | Immutable residual invocation frame captured/restored by root frames |
+| `RuntimeServices._generatedClassMethodReceivers` | Process identity metadata | Generated CLR method receivers are weak keys; their JavaScript `this` values live only with those receivers |
+| `RuntimeServices._generatedClassReplacementReceivers` | Process identity metadata | JavaScript replacement receivers are weak keys; generated receiver instances, captured scopes, and collectible types live only with those JavaScript receivers |
 | `ScriptProcessExitControl.PendingExit` | Async flow | Per-run fatal exit signal cleared at the generated facade boundary |
 | `JsReturnConverter.ResultConversions` | Process metadata | Weak-keyed constructed generic methods |
 
 A weak-keyed table is approved only when the key has the semantic lifetime of
 the cached value. Ephemeron values may refer back to their keys without keeping
 collectible types or JavaScript objects alive.
+
+The two generated-class receiver tables form reciprocal ephemeron associations:
+native or function-valued `super()` results retain the generated instance needed
+to invoke class methods, and that instance resolves `this` to the JavaScript
+result. Neither table roots an otherwise unreachable receiver pair. The
+replacement-receiver collection gate covers both receivers, their collectible
+generated type/assembly, and an explicitly captured realm/agent/cluster graph.
 
 ## Immutable process state
 

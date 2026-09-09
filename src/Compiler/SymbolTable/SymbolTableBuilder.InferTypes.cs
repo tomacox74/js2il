@@ -2314,6 +2314,11 @@ public partial class SymbolTableBuilder
 
     private void InferClassInstanceFieldClrTypesRecursively(Scope scope)
     {
+        if (scope.Kind == ScopeKind.Class)
+        {
+            scope.RequiresDynamicInstanceProperties = ClassMayUseReplacementReceiver(scope, new HashSet<Scope>());
+        }
+
         if (scope.Kind == ScopeKind.Class && scope.AstNode is ClassDeclaration classDecl)
         {
             InferClassInstanceFieldClrTypesForClassScope(scope, classDecl);
@@ -2325,11 +2330,54 @@ public partial class SymbolTableBuilder
         }
     }
 
+    private bool ClassMayUseReplacementReceiver(Scope classScope, HashSet<Scope> visited)
+    {
+        if (!visited.Add(classScope))
+        {
+            return true;
+        }
+
+        var superClass = classScope.AstNode switch
+        {
+            ClassDeclaration declaration => declaration.SuperClass,
+            ClassExpression expression => expression.SuperClass,
+            _ => null
+        };
+        if (superClass == null)
+        {
+            return false;
+        }
+
+        if (superClass is Identifier identifier)
+        {
+            var binding = TryResolveBinding(classScope.Parent ?? classScope, identifier.Name);
+            if (binding?.ClassScope is { } baseScope)
+            {
+                return ClassMayUseReplacementReceiver(baseScope, visited);
+            }
+
+            if ((binding == null || binding.Kind == BindingKind.Global)
+                && _runtimeIntrinsicCatalog.TryGetIntrinsicObject(identifier.Name, out var intrinsic)
+                && intrinsic?.Type is { IsClass: true, IsSealed: false })
+            {
+                return false;
+            }
+        }
+
+        // Function-valued and sealed native bases construct a JS receiver distinct from the CLR instance.
+        return true;
+    }
+
     private void InferClassInstanceFieldClrTypesForClassScope(Scope classScope, ClassDeclaration classDecl)
     {
         // Clear any previous results (builder should be single-use, but keep this deterministic).
         classScope.StableInstanceFieldClrTypes.Clear();
         classScope.StableInstanceFieldUserClassNames.Clear();
+
+        if (classScope.RequiresDynamicInstanceProperties)
+        {
+            return;
+        }
 
         var proposedClr = new Dictionary<string, Type>(StringComparer.Ordinal);
         var proposedUserClass = new Dictionary<string, string>(StringComparer.Ordinal);

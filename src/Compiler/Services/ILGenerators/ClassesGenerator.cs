@@ -43,8 +43,7 @@ namespace Jroc.Services.ILGenerators
 
         private static int CountRequiredParameters(in NodeList<Node> parameters)
         {
-            // Parameters with defaults (AssignmentPattern) are optional.
-            return parameters.Count(p => p is not AssignmentPattern);
+            return parameters.TakeWhile(p => p is not AssignmentPattern and not RestElement).Count();
         }
 
         private string GetRegistryClassName(Scope classScope)
@@ -692,7 +691,8 @@ namespace Jroc.Services.ILGenerators
             _classRegistry.Register(registryClassName, typeHandle);
 
             // Register constructor signature for call-site validation.
-            var ctorParamCount = (ctorMember?.Value as FunctionExpression)?.Params.Count ?? 0;
+            // Rest parameters are collected from the invocation frame, not passed in the CLR signature.
+            var ctorParamCount = (ctorMember?.Value as FunctionExpression)?.Params.Count(p => p is not RestElement) ?? 0;
             if (ctorMember == null && superClass is Identifier superClassId)
             {
                 // Default derived constructors in JS accept arguments and forward them to super(...).

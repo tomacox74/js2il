@@ -18,6 +18,7 @@ public sealed partial class HIRToLIRLowerer
 
         if (_classRegistry != null
             && objectExpr is HIRThisExpression
+            && !UsesDynamicClassInstanceProperties()
             && TryGetEnclosingClassRegistryName(out var currentClass)
             && currentClass != null
             && _classRegistry.TryGetField(currentClass, propertyName, out _))
@@ -73,6 +74,7 @@ public sealed partial class HIRToLIRLowerer
 
         if (_classRegistry != null
             && objectExpr is HIRThisExpression
+            && !UsesDynamicClassInstanceProperties()
             && indexExpr is HIRLiteralExpression literalIndex
             && literalIndex.Kind == JavascriptType.String
             && literalIndex.Value is string literalFieldName
@@ -230,6 +232,7 @@ public sealed partial class HIRToLIRLowerer
         {
             if (_classRegistry != null
                 && assignExpr.Object is HIRThisExpression
+                && !UsesDynamicClassInstanceProperties()
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
                 && _classRegistry.TryGetField(currentClass, assignExpr.PropertyName, out _))
@@ -457,6 +460,7 @@ public sealed partial class HIRToLIRLowerer
         {
             if (_classRegistry != null
                 && assignExpr.Object is HIRThisExpression
+                && !UsesDynamicClassInstanceProperties()
                 && assignExpr.Index is HIRLiteralExpression literalIndex
                 && literalIndex.Kind == JavascriptType.String
                 && literalIndex.Value is string literalFieldName

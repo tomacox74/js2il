@@ -73,7 +73,7 @@ public class AsyncScope : IAsyncScope
         }
 
         // Wrap in Promise.resolve() per ECMA-262
-        var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
+        var promise = (Promise)Promise.resolve(awaited)!;
 
         // Get the scope type for reflection (awaited result storage)
         var scopeType = GetType();
@@ -117,7 +117,7 @@ public class AsyncScope : IAsyncScope
             return;
         }
 
-        var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
+        var promise = (Promise)Promise.resolve(awaited)!;
         var deferred = Deferred ?? throw new InvalidOperationException(
             $"Scope type {scopeType.Name} has null _deferred");
 
@@ -160,7 +160,7 @@ public class AsyncScope : IAsyncScope
             }
         }
 
-        var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
+        var promise = (Promise)Promise.resolve(awaited)!;
 
         var scopeType = GetType();
         var resultField = scopeType.GetField(resultFieldName);
@@ -216,7 +216,7 @@ public class AsyncScope : IAsyncScope
             return;
         }
 
-        var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
+        var promise = (Promise)Promise.resolve(awaited)!;
         var currentThis = RuntimeServices.GetCurrentThis();
         var continuation = moveNext
             ?? throw new InvalidOperationException(
@@ -265,6 +265,10 @@ public class AsyncScope : IAsyncScope
                 // Call MoveNext to resume the state machine
                 InvokeMoveNext(moveNext, scopesArray);
             }
+            catch (Exception error) when (error is not ScriptProcessExitException)
+            {
+                RejectResumedException((IAsyncScope)scope, error);
+            }
             finally
             {
                 RuntimeServices.SetCurrentThis(previousThis);
@@ -303,6 +307,10 @@ public class AsyncScope : IAsyncScope
                 ((IAsyncScope)scope).AsyncState = rejectStateId;
                 InvokeMoveNext(moveNext, scopesArray);
             }
+            catch (Exception error) when (error is not ScriptProcessExitException)
+            {
+                RejectResumedException((IAsyncScope)scope, error);
+            }
             finally
             {
                 RuntimeServices.SetCurrentThis(previousThis);
@@ -337,6 +345,10 @@ public class AsyncScope : IAsyncScope
 
                 resultField.SetValue(scope, value);
                 moveNext.Resume();
+            }
+            catch (Exception error) when (error is not ScriptProcessExitException)
+            {
+                RejectResumedException((IAsyncScope)scope, error);
             }
             finally
             {
@@ -375,6 +387,10 @@ public class AsyncScope : IAsyncScope
                 ((IAsyncScope)scope).AsyncState = rejectStateId;
                 moveNext.Resume();
             }
+            catch (Exception error) when (error is not ScriptProcessExitException)
+            {
+                RejectResumedException((IAsyncScope)scope, error);
+            }
             finally
             {
                 RuntimeServices.SetCurrentThis(previousThis);
@@ -382,6 +398,19 @@ public class AsyncScope : IAsyncScope
 
             return null;
         });
+    }
+
+    private static void RejectResumedException(IAsyncScope scope, Exception error)
+    {
+        // The promise returned by the continuation's .then is discarded; reject the async call itself.
+        scope.AsyncState = -1;
+        if (scope is AsyncGeneratorScope generator)
+        {
+            generator.Done = true;
+        }
+
+        var reason = error is JsThrownValueException thrown ? thrown.Value : error;
+        CallableOperations.Call1(scope.Deferred!.reject, null, reason);
     }
 
     private static void InvokeMoveNext(

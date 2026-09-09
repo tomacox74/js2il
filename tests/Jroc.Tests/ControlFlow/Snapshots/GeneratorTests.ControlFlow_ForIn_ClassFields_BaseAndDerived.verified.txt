@@ -326,7 +326,7 @@
 
 		// Fields
 		.field private object[] _scopes
-		.field public float64 derived
+		.field public object derived
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -338,7 +338,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 88 (0x58)
+			// Code size: 53 (0x35)
 			.maxstack 8
 			.locals init (
 				[0] object[]
@@ -355,22 +355,12 @@
 			IL_0010: stfld object[] Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived::_scopes
 			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_001f: dup
-			IL_0020: ldarg.0
-			IL_0021: beq IL_0044
-
-			IL_0026: ldstr "derived"
-			IL_002b: ldc.r8 2
-			IL_0034: box [System.Runtime]System.Double
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_003e: pop
-			IL_003f: br IL_0057
-
-			IL_0044: castclass Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived
-			IL_0049: ldc.r8 2
-			IL_0052: stfld float64 Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived::derived
-
-			IL_0057: ret
+			IL_001f: ldstr "derived"
+			IL_0024: ldc.r8 2
+			IL_002d: ldc.i4.1
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_0033: pop
+			IL_0034: ret
 		} // end of method Derived::.ctor
 
 	} // end of class Derived

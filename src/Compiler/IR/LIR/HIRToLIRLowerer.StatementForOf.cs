@@ -174,6 +174,9 @@ public sealed partial class HIRToLIRLowerer
                     // Loop start
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
+                    // Failures while advancing or reading an iterator result do not close it.
+                    lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+
                     // awaitedNext = await ObjectRuntime.AsyncIteratorNext(iterator)
                     var nextCallTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.AsyncIteratorNext), new[] { EnsureObject(iterTemp) }, nextCallTemp));
@@ -222,6 +225,7 @@ public sealed partial class HIRToLIRLowerer
                     var itemTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
                         ? DestructuringWriteMode.ForDeclarationBindingInitialization
@@ -279,6 +283,14 @@ public sealed partial class HIRToLIRLowerer
 
                 // --- Finally block ---
                 _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
+                var closeHasThrowTemp = CreateTempVariable();
+                DefineTempStorage(closeHasThrowTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                SetTempVariableSlot(closeHasThrowTemp, CreateAnonymousVariableSlot("$forAwaitOf_closeHasThrow", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingExceptionField, closeHasThrowTemp));
+                var closeOriginalErrorTemp = CreateTempVariable();
+                DefineTempStorage(closeOriginalErrorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                SetTempVariableSlot(closeOriginalErrorTemp, CreateAnonymousVariableSlot("$forAwaitOf_closeOriginalError", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, closeOriginalErrorTemp));
                 _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
                     FinallyEntryLabelId: finallyEntryLabel,
                     FinallyExitLabelId: finallyExitLabel,
@@ -300,8 +312,12 @@ public sealed partial class HIRToLIRLowerer
                     // Await ObjectRuntime.AsyncIteratorClose(iterator)
                     _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
                     var closeCallTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.AsyncIteratorClose), new[] { EnsureObject(iterTemp) }, closeCallTemp));
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.AsyncIteratorCloseForCompletion), new[] { EnsureObject(iterTemp), closeHasThrowTemp }, closeCallTemp));
                     DefineTempStorage(closeCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    var closeNeedsAwaitTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.AsyncIteratorCloseNeedsAwait), new[] { closeCallTemp }, closeNeedsAwaitTemp));
+                    DefineTempStorage(closeNeedsAwaitTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(closeNeedsAwaitTemp, finallySkipClose));
 
                     var finallyAwaitId = asyncInfo.AllocateAwaitId();
                     var finallyResumeStateId = asyncInfo.AllocateResumeStateId();
@@ -335,6 +351,13 @@ public sealed partial class HIRToLIRLowerer
                         finallyRejectStateId,
                         finallyRejectPendingExceptionField));
 
+                    var validatedCloseTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.ValidateAsyncIteratorCloseResult),
+                        new[] { finallyCloseResultTemp, closeHasThrowTemp }, validatedCloseTemp));
+                    DefineTempStorage(validatedCloseTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
                     _methodBodyIR.Instructions.Add(new LIRLabel(finallySkipClose));
                     _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
                 }
@@ -344,9 +367,15 @@ public sealed partial class HIRToLIRLowerer
                     _asyncTryFinallyStack.Pop();
                 }
 
-                // --- Exception inside finally overrides prior completion ---
+                // A close rejection overrides normal/return completion, but not a pending throw.
                 _methodBodyIR.Instructions.Add(new LIRLabel(exceptionInFinallyLabel));
                 {
+                    var overrideCompletionLabel = CreateLabel();
+                    _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(closeHasThrowTemp, overrideCompletionLabel));
+                    _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, closeOriginalErrorTemp));
+                    _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+                    _methodBodyIR.Instructions.Add(new LIRLabel(overrideCompletionLabel));
+
                     var setHasExTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, setHasExTemp));
                     DefineTempStorage(setHasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));

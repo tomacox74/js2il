@@ -156,7 +156,7 @@
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/dflt-params-ref-prior.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/try-throw-finally-return.js"
         ],
-        "notes": "Async functions are supported via syntax (`async function`, `await`) and runtime Promise integration. JROC now exposes the observable `AsyncFunction` constructor/prototype surface for compiled async functions, and the checked-in test262 ports cover returned async callables, async default-parameter binding, trailing-comma parsing, no-await Promise completion/rejection, and await/finally override ordering for both async functions and async arrows."
+        "notes": "Async functions are supported via syntax (`async function`, `await`) and runtime Promise integration. Await performs PromiseResolve even for existing Promise objects, preserving observable constructor lookups. Exceptions escaping resumed code reject the original async function promise rather than an ignored continuation promise. JROC exposes the observable `AsyncFunction` constructor/prototype surface for compiled async functions, and the checked-in test262 ports cover returned async callables, async default-parameter binding, trailing-comma parsing, no-await Promise completion/rejection, and await/finally override ordering for both async functions and async arrows."
       }
     ]
   }

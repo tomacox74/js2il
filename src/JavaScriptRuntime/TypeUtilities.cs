@@ -19,7 +19,7 @@ namespace JavaScriptRuntime
             if (value is JsNull) return false;
 
             // JS primitives never override
-            if (value is string) return false;
+            if (value is string or Symbol) return false;
             if (value.GetType().IsValueType) return false;
 
             // Any remaining reference type (ordinary object, Array, Delegate, host object, etc.) counts as an object.

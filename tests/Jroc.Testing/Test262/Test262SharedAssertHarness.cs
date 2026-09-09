@@ -21,7 +21,8 @@ public static class Test262SharedAssertHarness
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
         var preparedEntryScript = PrepareEntryScript(entryScript, metadata);
-        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes);
+        var completion = new Test262AsyncCompletion(metadata.Async);
+        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes, completion);
 
         var expectsRuntimeException = allowUnhandledException
             && string.Equals(metadata.NegativePhase, "runtime", StringComparison.OrdinalIgnoreCase);
@@ -39,6 +40,16 @@ public static class Test262SharedAssertHarness
             addMocks: addMocks,
             hostRuntimeIntrinsics: hostRuntimeIntrinsics,
             timeoutMs: timeoutMs);
+
+        var asyncFailure = completion.GetFailure(testName, result.UnhandledException is not null);
+        if (asyncFailure is not null)
+        {
+            if (!allowUnhandledException)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(asyncFailure).Throw();
+            }
+            result = result with { UnhandledException = result.UnhandledException ?? asyncFailure };
+        }
 
         if (expectsRuntimeException)
         {
@@ -106,6 +117,7 @@ public static class Test262SharedAssertHarness
         var body = match.Groups["body"].Value.Replace("\r\n", "\n").Replace('\r', '\n');
         return new FrontmatterMetadata(
             ParseArrayValue(body, "flags").Contains("onlyStrict", StringComparer.Ordinal),
+            ParseArrayValue(body, "flags").Contains("async", StringComparer.Ordinal),
             ParseArrayValue(body, "includes"),
             ParseScalarValue(body, "phase"),
             ParseScalarValue(body, "type"));
@@ -126,7 +138,20 @@ public static class Test262SharedAssertHarness
             @"(?m)^\s*" + Regex.Escape(key) + @"\s*:\s*\[(?<value>[^\]]*)\]");
         if (!match.Success)
         {
-            return Array.Empty<string>();
+            var block = Regex.Match(
+                frontmatterBody,
+                @"(?m)^[ \t]*" + Regex.Escape(key)
+                    + @"[ \t]*:[ \t]*\n(?<value>(?:[ \t]*-[ \t]+[^\n]*(?:\n|$))+)");
+            if (!block.Success)
+            {
+                return Array.Empty<string>();
+            }
+
+            return block.Groups["value"].Value
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(entry => entry[1..].Split('#', 2)[0].Trim().Trim('\'', '"'))
+                .Where(entry => !string.IsNullOrWhiteSpace(entry))
+                .ToArray();
         }
 
         return match.Groups["value"].Value
@@ -284,10 +309,11 @@ public static class Test262SharedAssertHarness
 
     private sealed record FrontmatterMetadata(
         bool OnlyStrict,
+        bool Async,
         IReadOnlyList<string> Includes,
         string? NegativePhase,
         string? NegativeType)
     {
-        public static FrontmatterMetadata Empty { get; } = new(false, Array.Empty<string>(), null, null);
+        public static FrontmatterMetadata Empty { get; } = new(false, false, Array.Empty<string>(), null, null);
     }
 }
