@@ -17,4 +17,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "define-own-prop-length-no-value-order")]
     public Task define_own_prop_length_no_value_order()
         => ExecutionTestFromFile("define-own-prop-length-no-value-order");
+
+    [Fact(DisplayName = "define-own-prop-length-overflow-realm.js")]
+    public Task define_own_prop_length_overflow_realm()
+        => ExecutionTestFromFile("define-own-prop-length-overflow-realm");
 }

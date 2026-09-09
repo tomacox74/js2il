@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262/runtime/docs: port 100 catalog-failing Array and Promise cases.
+  Add `Array.fromAsync` with ordered sync/async iteration, thenable awaiting,
+  mapper and `thisArg` handling, custom constructors, and abrupt iterator
+  closing semantics.
 
 ## v0.12.20 - 2026-09-08
 

@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T23:44:36Z
+> Last generated (UTC): 2026-09-09T00:27:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -18,7 +18,7 @@
 | 23.1.1.1 | Array ( ... values ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array) |
 | 23.1.2 | Properties of the Array Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-constructor) |
 | 23.1.2.1 | Array.from ( items [ , mapper [ , thisArg ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.from) |
-| 23.1.2.2 | Array.fromAsync ( items [ , mapper [ , thisArg ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.fromasync) |
+| 23.1.2.2 | Array.fromAsync ( items [ , mapper [ , thisArg ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.fromasync) |
 | 23.1.2.3 | Array.isArray ( arg ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.isarray) |
 | 23.1.2.4 | Array.of ( ... items ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.of) |
 | 23.1.2.5 | Array.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype) |

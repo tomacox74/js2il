@@ -34,4 +34,8 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     public Task from_array()
         => ExecutionTest("from-array");
 
+    [Fact(DisplayName = "mapfn-is-symbol-throws.js")]
+    public Task mapfn_is_symbol_throws()
+        => ExecutionTestFromFile("mapfn-is-symbol-throws");
+
 }
