@@ -55,13 +55,13 @@
     {
       "clause": "27.6.3",
       "title": "AsyncGenerator Abstract Operations",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgenerator-abstract-operations"
     },
     {
       "clause": "27.6.3.1",
       "title": "AsyncGeneratorRequest Records",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorrequest-records"
     },
     {
@@ -79,13 +79,13 @@
     {
       "clause": "27.6.3.4",
       "title": "AsyncGeneratorEnqueue ( generator , completion , promiseCapability )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorenqueue"
     },
     {
       "clause": "27.6.3.5",
       "title": "AsyncGeneratorCompleteStep ( generator , completion , done [ , realm ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorcompletestep"
     },
     {
@@ -103,7 +103,7 @@
     {
       "clause": "27.6.3.8",
       "title": "AsyncGeneratorYield ( value )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratoryield"
     },
     {
@@ -115,12 +115,25 @@
     {
       "clause": "27.6.3.10",
       "title": "AsyncGeneratorDrainQueue ( generator )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratordrainqueue"
     }
   ],
   "support": {
     "entries": [
+      {
+        "clause": "27.6.3",
+        "feature": "Queued async-generator requests and awaited yield values",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-asyncgenerator-abstract-operations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-promise-reject-next.js",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-star-async-next.js",
+          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
+        ],
+        "notes": "Concurrent next/return/throw requests are serialized without overwriting pending promise capabilities. Yield operands are awaited, rejected yields complete the generator, and yield* selects the async iterator protocol with a sync fallback. Resumed exceptions reject the original request; captured destructuring bindings retain TDZ checks across suspension. Full cross-realm and generator-brand conformance is not claimed."
+      },
       {
         "clause": "27.6.1.2",
         "feature": "async generator objects returned from `async function*` support next/return/throw and are consumable by `for await..of`",

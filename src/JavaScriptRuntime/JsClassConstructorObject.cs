@@ -20,6 +20,8 @@ public abstract class JsClassConstructorObject : JsFunctionObject
 
     public int FormalParameterCount { get; private set; }
 
+    internal bool IsDerivedClass { get; set; }
+
     internal void Initialize(
         Type type,
         object[] scopes,

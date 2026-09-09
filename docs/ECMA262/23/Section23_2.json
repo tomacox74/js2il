@@ -532,7 +532,7 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fractional_Index_NoOp.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_ShiftDerived_Index_Access.js"
         ],
-        "notes": "buffer, byteOffset, byteLength, length, numeric index access, and instance BYTES_PER_ELEMENT reads are shared across the supported TypedArray families, backed by ArrayBuffer views. Out-of-range reads and writes, detached buffers, and full property-descriptor/prototype fidelity are not fully spec-complete."
+        "notes": "buffer, byteOffset, byteLength, length, numeric index access, and instance BYTES_PER_ELEMENT reads are shared across the supported TypedArray families, backed by ArrayBuffer views. Accessors correctly distinguish detached and resized out-of-bounds views for the covered families. Out-of-range writes and full property-descriptor/prototype fidelity are not fully spec-complete."
       },
       {
         "clause": "23.2.3.1",
@@ -545,7 +545,7 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/at/ExecutionTests.cs"
         ],
-        "notes": "The supported numeric and BigInt TypedArray families share at(), includes(), indexOf(), and lastIndexOf(). at() is exposed on the shared prototype with standard metadata, validates its receiver, applies ToIntegerOrInfinity with abrupt-completion propagation, supports relative indices, and returns undefined out of bounds. Detached and resizable ArrayBuffer behavior remains unsupported.",
+        "notes": "The supported numeric and BigInt TypedArray families share at(), includes(), indexOf(), and lastIndexOf(). at() and includes() are exposed on the shared prototype with standard metadata, validate their receiver, apply ToIntegerOrInfinity with abrupt-completion propagation, support relative indices, and return undefined or false out of bounds. They capture length before coercion and handle detached or resizable ArrayBuffer transitions without caching invalidated values.",
         "test262Paths": [
           "test/built-ins/TypedArray/prototype/at/returns-item-relative-index.js",
           "test/built-ins/TypedArray/prototype/at/name.js",
@@ -578,7 +578,7 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
         ],
-        "notes": "slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. Species construction and broader constructor selection rules are not yet implemented."
+        "notes": "slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. subarray() validates detached buffers, preserves coercion ordering across resizes, uses a length-tracking result when appropriate, and performs species construction for supported Number and BigInt families. Broader constructor selection rules remain incomplete."
       },
       {
         "clause": "23.2.3.6",
@@ -635,7 +635,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
         ],
-        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. map(), filter(), every(), some(), find(), and findIndex() expose receiver-aware intrinsic methods, validate initial buffer state, and capture the current length before callback validation. filter() honors custom species and every(), filter(), find(), and findIndex() observe detach/resize changes during callbacks; remaining species and resize behavior is incomplete."
+        "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), findLast(), findLastIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. The callback methods expose receiver-aware intrinsic methods, validate initial buffer state, capture the current length before callback validation, and observe detached/resized elements as undefined without caching invalidated values. filter() honors custom species; remaining species and resize behavior is incomplete."
       },
       {
         "clause": "23.2.3.24",
@@ -755,7 +755,7 @@
           "test/built-ins/TypedArray/prototype/findLast/not-a-constructor.js",
           "test/built-ins/TypedArray/prototype/findLast/prop-desc.js"
         ],
-        "notes": "The supported TypedArray families expose a non-constructible findLast() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, and reverse-index callback traversal. Detached or resizable ArrayBuffer behavior and unsupported TypedArray families remain outside the covered subset."
+        "notes": "The supported TypedArray families expose a non-constructible findLast() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, reverse-index callback traversal, and detached/resizable ArrayBuffer behavior."
       },
       {
         "clause": "23.2.3.14",
@@ -776,7 +776,7 @@
           "test/built-ins/TypedArray/prototype/findLastIndex/not-a-constructor.js",
           "test/built-ins/TypedArray/prototype/findLastIndex/prop-desc.js"
         ],
-        "notes": "The supported TypedArray families expose a non-constructible findLastIndex() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, and reverse-index callback traversal. Detached or resizable ArrayBuffer behavior and unsupported TypedArray families remain outside the covered subset."
+        "notes": "The supported TypedArray families expose a non-constructible findLastIndex() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, reverse-index callback traversal, and detached/resizable ArrayBuffer behavior."
       },
       {
         "clause": "23.2.3",
@@ -1005,7 +1005,7 @@
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/entries/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/keys/ExecutionTests.cs"
         ],
-        "notes": "Supported Number and BigInt TypedArray families expose from() and of() with validated constructor results and content-type-appropriate element conversion. from() rejects non-callable mappers, including null, before source access; undefined means no mapper. Iterable sources are collected before construction, while array-like sources provide their normalized length before construction and are then read, mapped, converted, and written one element at a time. Custom constructors receive the full ToLength value and must return an attached, in-bounds TypedArray of sufficient length. Concrete direct from() helpers share the receiver-aware algorithm. Existing coverage also verifies standard function metadata and the shared iterator prototype for entries() and keys(). Actual allocations remain subject to runtime size limits; broader constructor, cross-realm, and exotic-object behavior is not exhaustive.",
+        "notes": "Supported Number and BigInt TypedArray families expose from() and of() with validated constructor results and content-type-appropriate element conversion. from() rejects non-callable mappers, including null, before source access; undefined means no mapper. Iterable sources are collected before construction, while array-like sources provide their normalized length before construction and are then read, mapped, converted, and written one element at a time. Custom constructors receive the full ToLength value and must return an attached, in-bounds TypedArray of sufficient length. Abrupt source iterator and length operations propagate correctly. Concrete direct from() helpers share the receiver-aware algorithm. Existing coverage also verifies standard function metadata and the shared iterator prototype for entries() and keys(). Actual allocations remain subject to runtime size limits; broader constructor, cross-realm, and exotic-object behavior is not exhaustive.",
         "test262Paths": [
           "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js",
           "test/built-ins/TypedArrayConstructors/from/custom-ctor-does-not-instantiate-ta-throws.js",

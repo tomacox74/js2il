@@ -424,7 +424,9 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        if (binding.RequiresRuntimeTemporalDeadZoneChecks)
+        // Captured bindings belong to another invocation's environment, not this
+        // method's local declaration map. Check their stored value at runtime.
+        if (binding.RequiresRuntimeTemporalDeadZoneChecks || binding.IsCaptured)
         {
             if (!TryLoadVariable(binding, out var currentValue))
             {

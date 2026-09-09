@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T17:39:50Z
+> Last generated (UTC): 2026-09-09T06:57:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -60,6 +60,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 19.3 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Explicit resource management: AsyncDisposableStack and DisposableStack globals | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AsyncDisposableStack/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AsyncDisposableStack/prototype/disposeAsync/ExecutionTests.cs`<br>`tests/Jroc.Tests/AsyncDisposableStackComplianceTests.cs`<br>`tests/Jroc.Tests/DisposableStackComplianceTests.cs` |  | Constructible globals expose realm-owned prototypes, use/adopt/defer/move, disposed accessors, and symbol disposal aliases. Disposal is LIFO and preserves thrown JavaScript values in SuppressedError chains without retaining completed resources. Async disposal rejects invalid receivers, awaits null/undefined registrations once when needed, ignores synchronous disposer return values, and awaits thenables in promise jobs. The synchronous stack exposes its complete disposal surface rather than a constructor-only placeholder. Cross-realm construction through a dynamically evaluated Function constructor remains outside the supported dynamic-code scope; this evidence is not a claim of complete explicit-resource-management language syntax coverage. |
 
 ### 19.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer))
 

@@ -1339,6 +1339,18 @@ public sealed partial class HIRToLIRLowerer
                     }
                 }
 
+                if (initializedUserClassType.IsClassExpression
+                    && initializedUserClassType.SuperClass != null)
+                {
+                    var refreshedConstructor = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        nameof(JavaScriptRuntime.RuntimeServices.RefreshClassConstructorDescriptors),
+                        [EnsureObject(resultTempVar)],
+                        refreshedConstructor));
+                    DefineTempStorage(refreshedConstructor, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    resultTempVar = refreshedConstructor;
+                }
+
                 if (initializedUserClassType.SuperClass == null
                     && !TryLowerClassConstructorObject(
                         initializedUserClassType.RegistryClassName,

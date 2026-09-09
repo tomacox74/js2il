@@ -1934,6 +1934,7 @@ internal sealed partial class LIRToILCompiler
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(requirePrivateBrandTarget);
+                    EmitResolveGeneratedClassStorageReceiver(ilEncoder);
                     ilEncoder.OpCode(ILOpCode.Isinst);
                     ilEncoder.Token(privateBrandType);
                     ilEncoder.OpCode(ILOpCode.Ldnull);

@@ -25,4 +25,32 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "prop-desc")]
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
+
+    [Fact(DisplayName = "callbackfn-resize")]
+    public Task callbackfn_resize()
+        => ExecutionTestFromFile("callbackfn-resize");
+
+    [Fact(DisplayName = "detached-buffer")]
+    public Task detached_buffer()
+        => ExecutionTestFromFile("detached-buffer");
+
+    [Fact(DisplayName = "predicate-may-detach-buffer")]
+    public Task predicate_may_detach_buffer()
+        => ExecutionTestFromFile("predicate-may-detach-buffer");
+
+    [Fact(DisplayName = "resizable-buffer-grow-mid-iteration")]
+    public Task resizable_buffer_grow_mid_iteration()
+        => ExecutionTestFromFile("resizable-buffer-grow-mid-iteration");
+
+    [Fact(DisplayName = "resizable-buffer-shrink-mid-iteration")]
+    public Task resizable_buffer_shrink_mid_iteration()
+        => ExecutionTestFromFile("resizable-buffer-shrink-mid-iteration");
+
+    [Fact(DisplayName = "resizable-buffer")]
+    public Task resizable_buffer()
+        => ExecutionTestFromFile("resizable-buffer");
+
+    [Fact(DisplayName = "return-abrupt-from-this-out-of-bounds")]
+    public Task return_abrupt_from_this_out_of_bounds()
+        => ExecutionTestFromFile("return-abrupt-from-this-out-of-bounds");
 }

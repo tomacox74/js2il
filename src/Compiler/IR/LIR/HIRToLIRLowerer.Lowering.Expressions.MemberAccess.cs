@@ -125,6 +125,7 @@ public sealed partial class HIRToLIRLowerer
         // If the receiver is `this` and we know the generated CLR type has a field with this name,
         // lower directly to an instance field load (ldfld) instead of dynamic property access.
         if (propAccessExpr.Object is HIRThisExpression
+            && !UsesDynamicClassInstanceProperties()
             && TryGetEnclosingClassRegistryName(out var currentClass)
             && currentClass != null)
         {
@@ -539,6 +540,7 @@ public sealed partial class HIRToLIRLowerer
         // If the receiver is `this` and the index is a constant string that matches a known field on the
         // generated CLR type, lower directly to an instance field load (ldfld) instead of dynamic GetItem.
         if (indexAccessExpr.Object is HIRThisExpression
+            && !UsesDynamicClassInstanceProperties()
             && indexAccessExpr.Index is HIRLiteralExpression literalIndex
             && literalIndex.Kind == JavascriptType.String
             && literalIndex.Value is string literalFieldName

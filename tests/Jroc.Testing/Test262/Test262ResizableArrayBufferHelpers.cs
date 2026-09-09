@@ -8,6 +8,7 @@ internal static class Test262ResizableArrayBufferHelpers
     public static void Register(HostRuntimeIntrinsicDescriptorsBuilder builder)
     {
         builder
+            .AddGlobalFactory("floatCtors", CreateFloatConstructors)
             .AddGlobalFactory("ctors", CreateConstructors)
             .AddGlobalFactory(
                 "CreateResizableArrayBuffer",
@@ -15,6 +16,9 @@ internal static class Test262ResizableArrayBufferHelpers
             .AddGlobalFactory(
                 "MayNeedBigInt",
                 () => Function(MayNeedBigInt, "MayNeedBigInt", 2))
+            .AddGlobalFactory(
+                "Convert",
+                () => Function(Convert, "Convert", 1))
             .AddGlobalFactory(
                 "ToNumbers",
                 () => Function(ToNumbers, "ToNumbers", 1))
@@ -46,6 +50,14 @@ internal static class Test262ResizableArrayBufferHelpers
             Constructor(GlobalThis.BigInt64Array)
         });
 
+    private static object CreateFloatConstructors()
+        => new JavaScriptRuntime.Array(
+        new object?[]
+        {
+            Constructor(GlobalThis.Float32Array),
+            Constructor(GlobalThis.Float64Array)
+        });
+
     private static object? CreateResizableArrayBuffer(object[] _, object?[]? args)
     {
         var options = new JsObject();
@@ -60,6 +72,12 @@ internal static class Test262ResizableArrayBufferHelpers
         return typedArray is BigInt64Array or BigUint64Array
             ? new BigInteger(TypeUtilities.ToNumber(value))
             : value;
+    }
+
+    private static object? Convert(object[] _, object?[]? args)
+    {
+        var value = Argument(args, 0);
+        return value is BigInteger bigint ? (double)bigint : value;
     }
 
     private static object ToNumbers(object[] _, object?[]? args)

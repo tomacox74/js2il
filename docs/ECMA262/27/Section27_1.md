@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T20:23:08Z
+> Last generated (UTC): 2026-09-09T08:10:56Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -85,7 +85,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| for await..of consumes async iterables via Symbol.asyncIterator and falls back to Symbol.iterator (async-from-sync wrapper) | Supported with Limitations | [`Async_ForAwaitOf_Array.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) |  | Runtime implements async iterator protocol consumption for `for await..of`. When `Symbol.asyncIterator` is missing, it wraps the sync iterator (CreateAsyncFromSyncIterator semantics) and ensures `return()` is invoked on early-exit paths. |
+| for await..of consumes async iterables via Symbol.asyncIterator and falls back to Symbol.iterator (async-from-sync wrapper) | Supported with Limitations | [`Async_ForAwaitOf_Array.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js)<br>`tests/Jroc.Test262.Tests/language/statements/for-await-of/ExecutionTests.cs` |  | Runtime implements async iterator protocol consumption for `for await..of`. Only a missing/null Symbol.asyncIterator selects the sync fallback; an explicit async iterator never unwraps its yielded values. The async-from-sync adapter awaits values, including completed iterator results, while await performs observable PromiseResolve constructor lookups. Iterator return methods are retrieved lazily on early exit, not while acquiring the iterator. Iterator-step failures do not trigger closing or an extra await; close errors preserve an existing throw completion, and a missing return method skips the close await. |
 
 ### 27.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-iterator-helper-objects))
 

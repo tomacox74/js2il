@@ -3447,10 +3447,14 @@ namespace Jroc.SymbolTables
 
             int count = 0;
 
-            // Count this node if it's an await expression
-            if (node is AwaitExpression)
+            // Async generator yields implicitly await their values.
+            if (node is AwaitExpression or YieldExpression { Delegate: false })
             {
                 count = 1;
+            }
+            else if (node is YieldExpression { Delegate: true })
+            {
+                count = 2;
             }
 
             // for-await-of introduces implicit awaits:

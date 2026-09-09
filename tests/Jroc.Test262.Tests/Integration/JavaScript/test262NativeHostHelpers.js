@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -173,3 +173,16 @@ assert.throws(SyntaxError, function() {
 assert.sameValue(WellKnownIntrinsicObjects.length, 1);
 assert.sameValue(WellKnownIntrinsicObjects[0].name, '%ThrowTypeError%');
 assert.sameValue(WellKnownIntrinsicObjects[0].value, undefined);
+
+var temporalCalls = [];
+var temporalTarget = {};
+TemporalHelpers.observeProperty(temporalCalls, temporalTarget, Symbol.iterator, undefined, "items");
+assert.sameValue(temporalTarget[Symbol.iterator], undefined);
+var temporalBag = TemporalHelpers.propertyBagObserver(temporalCalls, { length: 2 }, "items");
+assert.sameValue(+temporalBag.length, 2);
+assert.compareArray(temporalCalls, [
+    "get items[Symbol.iterator]",
+    "get items.length",
+    "get items.length.valueOf",
+    "call items.length.valueOf"
+]);

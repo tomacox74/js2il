@@ -9,6 +9,17 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private bool UsesDynamicClassInstanceProperties()
+    {
+        var current = _scope;
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        return current?.RequiresDynamicInstanceProperties == true;
+    }
+
     private Type? TryGetStableThisFieldClrType(string fieldName)
     {
         // Find the nearest enclosing class scope.

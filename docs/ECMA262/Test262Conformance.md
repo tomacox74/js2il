@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 13,783 | 12 | 9,717 | 23,512 | **58.62%** |
-| Language syntax and semantics | 10,912 | 46 | 12,585 | 23,543 | **46.35%** |
-| **Total** | 24,695 | 58 | 23,388 | 48,141 | **51.30%** |
+| Built-in objects and APIs | 13,983 | 12 | 9,517 | 23,512 | **59.47%** |
+| Language syntax and semantics | 10,912 | 46 | 12,685 | 23,643 | **46.15%** |
+| **Total** | 24,895 | 58 | 23,288 | 48,241 | **51.61%** |
 
 ## Language Areas
 
@@ -175,7 +175,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Array` | 2,749 | 0 | 332 | 3,081 | **89.23%** |
 | `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
-| `AsyncDisposableStack` | 0 | 0 | 104 | 104 | **0.00%** |
+| `AsyncDisposableStack` | 100 | 0 | 4 | 104 | **96.15%** |
 | `AsyncFromSyncIteratorPrototype` | 0 | 0 | 38 | 38 | **0.00%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
 | `AsyncGeneratorFunction` | 6 | 0 | 17 | 23 | **26.09%** |
@@ -227,7 +227,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 988 | 0 | 450 | 1,438 | **68.71%** |
+| `TypedArray` | 1,088 | 0 | 350 | 1,438 | **75.66%** |
 | `TypedArrayConstructors` | 573 | 0 | 163 | 736 | **77.85%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |

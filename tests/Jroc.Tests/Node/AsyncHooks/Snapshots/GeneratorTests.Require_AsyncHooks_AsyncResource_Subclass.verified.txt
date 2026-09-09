@@ -542,7 +542,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -571,21 +571,12 @@
 			IL_0027: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::_scopes
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0036: dup
-			IL_0037: ldarg.0
-			IL_0038: beq IL_004e
-
-			IL_003d: ldstr "callback"
-			IL_0042: ldarg.2
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_0048: pop
-			IL_0049: br IL_0059
-
-			IL_004e: castclass Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
-			IL_0053: ldarg.2
-			IL_0054: stfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::callback
-
-			IL_0059: ret
+			IL_0036: ldstr "callback"
+			IL_003b: ldarg.2
+			IL_003c: ldc.i4.1
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0042: pop
+			IL_0043: ret
 		} // end of method UndiciStyleHandler::.ctor
 
 		.method public hidebysig 
@@ -598,26 +589,46 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 38 (0x26)
+			// Code size: 95 (0x5f)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: ldstr "runInAsyncScope"
-			IL_0010: ldarg.0
-			IL_0011: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::callback
-			IL_0016: ldarg.0
-			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
-			IL_001c: ldarg.1
-			IL_001d: ldarg.2
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ret
+			IL_000b: stloc.0
+			IL_000c: volatile.
+			IL_000e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0013: brfalse IL_002d
+
+			IL_0018: ldarg.0
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_001e: ldstr "callback"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0028: br IL_0047
+
+			IL_002d: ldarg.0
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0033: ldstr "callback"
+			IL_0038: ldstr "Require_AsyncHooks_AsyncResource_Subclass:<TwoPhaseDummy_M6>:deliver:5"
+			IL_003d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0047: stloc.1
+			IL_0048: ldloc.0
+			IL_0049: ldstr "runInAsyncScope"
+			IL_004e: ldloc.1
+			IL_004f: ldarg.0
+			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_0055: ldarg.1
+			IL_0056: ldarg.2
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
+			IL_005c: stloc.1
+			IL_005d: ldloc.1
+			IL_005e: ret
 		} // end of method UndiciStyleHandler::deliver
 
 	} // end of class UndiciStyleHandler
@@ -959,6 +970,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_9
 	.field assembly static int32 __jroc_dynamicLookup_10
 	.field assembly static int32 __jroc_dynamicLookup_11
+	.field assembly static int32 __jroc_dynamicLookup_12
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

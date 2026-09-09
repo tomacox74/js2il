@@ -95,6 +95,12 @@ public sealed partial class HIRToLIRLowerer
         int count = 0;
         switch (expression)
         {
+            case HIRYieldExpression yieldExpr:
+                // AsyncGeneratorYield awaits its operand; yield* also awaits each next result.
+                count = yieldExpr.IsDelegate ? 2 : 1;
+                if (yieldExpr.Argument != null)
+                    count += CountAwaitExpressionsInExpression(yieldExpr.Argument);
+                break;
             case HIRAwaitExpression awaitExpr:
                 count = 1; // Found one!
                 count += CountAwaitExpressionsInExpression(awaitExpr.Argument);

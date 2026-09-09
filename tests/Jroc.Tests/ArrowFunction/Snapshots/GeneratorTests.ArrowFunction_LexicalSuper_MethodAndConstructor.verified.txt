@@ -866,7 +866,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 149 (0x95)
+			// Code size: 127 (0x7f)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived/Scope_ctor,
@@ -919,21 +919,12 @@
 			IL_0066: stloc.2
 			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0071: dup
-			IL_0072: ldarg.0
-			IL_0073: beq IL_0089
-
-			IL_0078: ldstr "fromConstructor"
-			IL_007d: ldloc.2
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_0083: pop
-			IL_0084: br IL_0094
-
-			IL_0089: castclass Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived
-			IL_008e: ldloc.2
-			IL_008f: stfld object Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived::fromConstructor
-
-			IL_0094: ret
+			IL_0071: ldstr "fromConstructor"
+			IL_0076: ldloc.2
+			IL_0077: ldc.i4.1
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_007d: pop
+			IL_007e: ret
 		} // end of method Derived::.ctor
 
 		.method public hidebysig 

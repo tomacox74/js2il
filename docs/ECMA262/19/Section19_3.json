@@ -265,6 +265,19 @@
   "support": {
     "entries": [
       {
+        "clause": "19.3",
+        "feature": "Explicit resource management: AsyncDisposableStack and DisposableStack globals",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-explicit-resource-management/#sec-asyncdisposablestack-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/AsyncDisposableStack/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncDisposableStack/prototype/disposeAsync/ExecutionTests.cs",
+          "tests/Jroc.Tests/AsyncDisposableStackComplianceTests.cs",
+          "tests/Jroc.Tests/DisposableStackComplianceTests.cs"
+        ],
+        "notes": "Constructible globals expose realm-owned prototypes, use/adopt/defer/move, disposed accessors, and symbol disposal aliases. Disposal is LIFO and preserves thrown JavaScript values in SuppressedError chains without retaining completed resources. Async disposal rejects invalid receivers, awaits null/undefined registrations once when needed, ignores synchronous disposer return values, and awaits thenables in promise jobs. The synchronous stack exposes its complete disposal surface rather than a constructor-only placeholder. Cross-realm construction through a dynamically evaluated Function constructor remains outside the supported dynamic-code scope; this evidence is not a claim of complete explicit-resource-management language syntax coverage."
+      },
+      {
         "clause": "19.3.23",
         "feature": "Global Object is available as a first-class value (e.g., Object.prototype, Object.create(Object.prototype, ...))",
         "status": "Supported with Limitations",

@@ -751,8 +751,8 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 923 (0x39b)
-			.maxstack 8
+			// Code size: 1043 (0x413)
+			.maxstack 11
 			.locals init (
 				[0] class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptAsyncIterator,
@@ -760,10 +760,12 @@
 				[3] bool,
 				[4] object,
 				[5] bool,
-				[6] bool,
-				[7] object,
+				[6] object,
+				[7] bool,
 				[8] bool,
-				[9] class [JavaScriptRuntime]JavaScriptRuntime.Console
+				[9] object,
+				[10] bool,
+				[11] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: ldarg.0
@@ -801,14 +803,14 @@
 			IL_0057: brtrue IL_0069
 
 			IL_005c: ldloc.0
-			IL_005d: ldc.i4.s 9
+			IL_005d: ldc.i4.s 11
 			IL_005f: newarr [System.Runtime]System.Object
 			IL_0064: stfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
 
 			IL_0069: ldloc.0
 			IL_006a: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
 			IL_006f: ldc.i4.0
-			IL_0070: ble IL_00c9
+			IL_0070: ble IL_00da
 
 			IL_0075: ldloc.0
 			IL_0076: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
@@ -839,11 +841,11 @@
 			IL_00a5: dup
 			IL_00a6: ldc.i4.5
 			IL_00a7: ldelem.ref
-			IL_00a8: unbox.any [System.Runtime]System.Boolean
-			IL_00ad: stloc.s 6
-			IL_00af: dup
-			IL_00b0: ldc.i4.6
-			IL_00b1: ldelem.ref
+			IL_00a8: stloc.s 6
+			IL_00aa: dup
+			IL_00ab: ldc.i4.6
+			IL_00ac: ldelem.ref
+			IL_00ad: unbox.any [System.Runtime]System.Boolean
 			IL_00b2: stloc.s 7
 			IL_00b4: dup
 			IL_00b5: ldc.i4.7
@@ -853,318 +855,374 @@
 			IL_00be: dup
 			IL_00bf: ldc.i4.8
 			IL_00c0: ldelem.ref
-			IL_00c1: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_00c6: stloc.s 9
-			IL_00c8: pop
+			IL_00c1: stloc.s 9
+			IL_00c3: dup
+			IL_00c4: ldc.i4.s 9
+			IL_00c6: ldelem.ref
+			IL_00c7: unbox.any [System.Runtime]System.Boolean
+			IL_00cc: stloc.s 10
+			IL_00ce: dup
+			IL_00cf: ldc.i4.s 10
+			IL_00d1: ldelem.ref
+			IL_00d2: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+			IL_00d7: stloc.s 11
+			IL_00d9: pop
 
-			IL_00c9: ldloc.0
-			IL_00ca: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_00cf: switch (IL_00e8, IL_0213, IL_02bb, IL_01a4, IL_02af)
+			IL_00da: ldloc.0
+			IL_00db: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00e0: switch (IL_00f9, IL_0239, IL_031f, IL_01c8, IL_0308)
 
-			IL_00e8: ldarg.0
-			IL_00e9: ldc.i4.1
-			IL_00ea: ldelem.ref
-			IL_00eb: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope
-			IL_00f0: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope::iterable
-			IL_00f5: stloc.s 7
-			IL_00f7: ldloc.s 7
-			IL_00f9: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptAsyncIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetAsyncIterator(object)
-			IL_00fe: stloc.1
-			IL_00ff: ldc.i4.0
-			IL_0100: stloc.2
-			IL_0101: ldc.i4.0
-			IL_0102: stloc.3
-			IL_0103: ldloc.0
-			IL_0104: ldc.i4.0
-			IL_0105: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_010a: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
-			IL_010f: ldloc.0
+			IL_00f9: ldarg.0
+			IL_00fa: ldc.i4.1
+			IL_00fb: ldelem.ref
+			IL_00fc: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope
+			IL_0101: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope::iterable
+			IL_0106: stloc.s 9
+			IL_0108: ldloc.s 9
+			IL_010a: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptAsyncIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetAsyncIterator(object)
+			IL_010f: stloc.1
 			IL_0110: ldc.i4.0
-			IL_0111: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0116: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingReturnValue
-			IL_011b: ldloc.0
-			IL_011c: ldc.i4.0
-			IL_011d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_0122: ldloc.0
-			IL_0123: ldc.i4.0
-			IL_0124: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_0111: stloc.2
+			IL_0112: ldc.i4.0
+			IL_0113: stloc.3
+			IL_0114: ldloc.0
+			IL_0115: ldc.i4.0
+			IL_0116: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_011b: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
+			IL_0120: ldloc.0
+			IL_0121: ldc.i4.0
+			IL_0122: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0127: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingReturnValue
+			IL_012c: ldloc.0
+			IL_012d: ldc.i4.0
+			IL_012e: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_0133: ldloc.0
+			IL_0134: ldc.i4.0
+			IL_0135: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
 
-			IL_0129: ldloc.1
-			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::AsyncIteratorNext(object)
-			IL_012f: stloc.s 7
-			IL_0131: ldloc.0
-			IL_0132: ldc.i4.3
-			IL_0133: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0138: ldloc.0
-			IL_0139: ldloc.s 7
-			IL_013b: ldarg.0
-			IL_013c: ldc.i4.1
-			IL_013d: ldloc.0
-			IL_013e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_0143: ldc.i4.1
-			IL_0144: ldstr "_pendingException"
-			IL_0149: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationWithRejectResumeTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation, int32, string)
-			IL_014e: ldloc.0
-			IL_014f: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_0154: dup
-			IL_0155: ldc.i4.0
-			IL_0156: ldloc.1
-			IL_0157: stelem.ref
-			IL_0158: dup
-			IL_0159: ldc.i4.1
-			IL_015a: ldloc.2
-			IL_015b: box [System.Runtime]System.Boolean
-			IL_0160: stelem.ref
-			IL_0161: dup
-			IL_0162: ldc.i4.2
-			IL_0163: ldloc.3
-			IL_0164: box [System.Runtime]System.Boolean
-			IL_0169: stelem.ref
-			IL_016a: dup
-			IL_016b: ldc.i4.3
-			IL_016c: ldloc.s 4
-			IL_016e: stelem.ref
-			IL_016f: dup
-			IL_0170: ldc.i4.4
-			IL_0171: ldloc.s 5
-			IL_0173: box [System.Runtime]System.Boolean
-			IL_0178: stelem.ref
-			IL_0179: dup
-			IL_017a: ldc.i4.5
-			IL_017b: ldloc.s 6
-			IL_017d: box [System.Runtime]System.Boolean
-			IL_0182: stelem.ref
-			IL_0183: dup
-			IL_0184: ldc.i4.6
-			IL_0185: ldloc.s 7
-			IL_0187: stelem.ref
-			IL_0188: dup
-			IL_0189: ldc.i4.7
-			IL_018a: ldloc.s 8
-			IL_018c: box [System.Runtime]System.Boolean
-			IL_0191: stelem.ref
-			IL_0192: dup
-			IL_0193: ldc.i4.8
-			IL_0194: ldloc.s 9
-			IL_0196: stelem.ref
-			IL_0197: pop
-			IL_0198: ldloc.0
-			IL_0199: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_019e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_01a3: ret
+			IL_013a: ldc.i4.1
+			IL_013b: stloc.2
+			IL_013c: ldloc.1
+			IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::AsyncIteratorNext(object)
+			IL_0142: stloc.s 9
+			IL_0144: ldloc.0
+			IL_0145: ldc.i4.3
+			IL_0146: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_014b: ldloc.0
+			IL_014c: ldloc.s 9
+			IL_014e: ldarg.0
+			IL_014f: ldc.i4.1
+			IL_0150: ldloc.0
+			IL_0151: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0156: ldc.i4.1
+			IL_0157: ldstr "_pendingException"
+			IL_015c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationWithRejectResumeTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation, int32, string)
+			IL_0161: ldloc.0
+			IL_0162: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_0167: dup
+			IL_0168: ldc.i4.0
+			IL_0169: ldloc.1
+			IL_016a: stelem.ref
+			IL_016b: dup
+			IL_016c: ldc.i4.1
+			IL_016d: ldloc.2
+			IL_016e: box [System.Runtime]System.Boolean
+			IL_0173: stelem.ref
+			IL_0174: dup
+			IL_0175: ldc.i4.2
+			IL_0176: ldloc.3
+			IL_0177: box [System.Runtime]System.Boolean
+			IL_017c: stelem.ref
+			IL_017d: dup
+			IL_017e: ldc.i4.3
+			IL_017f: ldloc.s 4
+			IL_0181: stelem.ref
+			IL_0182: dup
+			IL_0183: ldc.i4.4
+			IL_0184: ldloc.s 5
+			IL_0186: box [System.Runtime]System.Boolean
+			IL_018b: stelem.ref
+			IL_018c: dup
+			IL_018d: ldc.i4.5
+			IL_018e: ldloc.s 6
+			IL_0190: stelem.ref
+			IL_0191: dup
+			IL_0192: ldc.i4.6
+			IL_0193: ldloc.s 7
+			IL_0195: box [System.Runtime]System.Boolean
+			IL_019a: stelem.ref
+			IL_019b: dup
+			IL_019c: ldc.i4.7
+			IL_019d: ldloc.s 8
+			IL_019f: box [System.Runtime]System.Boolean
+			IL_01a4: stelem.ref
+			IL_01a5: dup
+			IL_01a6: ldc.i4.8
+			IL_01a7: ldloc.s 9
+			IL_01a9: stelem.ref
+			IL_01aa: dup
+			IL_01ab: ldc.i4.s 9
+			IL_01ad: ldloc.s 10
+			IL_01af: box [System.Runtime]System.Boolean
+			IL_01b4: stelem.ref
+			IL_01b5: dup
+			IL_01b6: ldc.i4.s 10
+			IL_01b8: ldloc.s 11
+			IL_01ba: stelem.ref
+			IL_01bb: pop
+			IL_01bc: ldloc.0
+			IL_01bd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_01c2: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_01c7: ret
 
-			IL_01a4: ldloc.0
-			IL_01a5: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/Scope::_awaited1
-			IL_01aa: stloc.s 7
-			IL_01ac: ldloc.s 7
-			IL_01ae: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-			IL_01b3: stloc.s 8
-			IL_01b5: ldloc.s 8
-			IL_01b7: brtrue IL_020c
-
-			IL_01bc: ldloc.s 7
-			IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-			IL_01c3: stloc.s 7
-			IL_01c5: ldloc.s 7
-			IL_01c7: stloc.s 4
-			IL_01c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01c8: ldloc.0
+			IL_01c9: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/Scope::_awaited1
 			IL_01ce: stloc.s 9
 			IL_01d0: ldloc.s 9
-			IL_01d2: ldstr "x:"
-			IL_01d7: ldloc.s 4
-			IL_01d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01de: pop
-			IL_01df: ldloc.s 4
-			IL_01e1: ldc.r8 1
-			IL_01ea: box [System.Runtime]System.Double
-			IL_01ef: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_01f4: stloc.s 8
-			IL_01f6: ldloc.s 8
-			IL_01f8: brfalse IL_0202
+			IL_01d2: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+			IL_01d7: stloc.s 10
+			IL_01d9: ldloc.s 10
+			IL_01db: brtrue IL_0232
 
-			IL_01fd: br IL_0207
+			IL_01e0: ldloc.s 9
+			IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+			IL_01e7: stloc.s 9
+			IL_01e9: ldc.i4.0
+			IL_01ea: stloc.2
+			IL_01eb: ldloc.s 9
+			IL_01ed: stloc.s 4
+			IL_01ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01f4: stloc.s 11
+			IL_01f6: ldloc.s 11
+			IL_01f8: ldstr "x:"
+			IL_01fd: ldloc.s 4
+			IL_01ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0204: pop
+			IL_0205: ldloc.s 4
+			IL_0207: ldc.r8 1
+			IL_0210: box [System.Runtime]System.Double
+			IL_0215: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_021a: stloc.s 10
+			IL_021c: ldloc.s 10
+			IL_021e: brfalse IL_0228
 
-			IL_0202: br IL_0129
+			IL_0223: br IL_022d
 
-			IL_0207: br IL_0226
+			IL_0228: br IL_013a
 
-			IL_020c: ldc.i4.1
-			IL_020d: stloc.2
-			IL_020e: br IL_0226
-
-			IL_0213: ldloc.0
-			IL_0214: ldc.i4.1
-			IL_0215: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_021a: ldloc.0
-			IL_021b: ldc.i4.0
-			IL_021c: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
-			IL_0221: br IL_0226
-
-			IL_0226: ldloc.2
-			IL_0227: brtrue IL_02b6
-
-			IL_022c: ldloc.3
-			IL_022d: brtrue IL_02b6
+			IL_022d: br IL_024c
 
 			IL_0232: ldc.i4.1
-			IL_0233: stloc.3
-			IL_0234: ldloc.1
-			IL_0235: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::AsyncIteratorClose(object)
-			IL_023a: stloc.s 7
-			IL_023c: ldloc.0
-			IL_023d: ldc.i4.4
-			IL_023e: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0243: ldloc.0
-			IL_0244: ldloc.s 7
-			IL_0246: ldarg.0
-			IL_0247: ldc.i4.2
-			IL_0248: ldloc.0
-			IL_0249: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_024e: ldc.i4.2
-			IL_024f: ldstr "_pendingException"
-			IL_0254: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationWithRejectResumeTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation, int32, string)
-			IL_0259: ldloc.0
-			IL_025a: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_025f: dup
-			IL_0260: ldc.i4.0
-			IL_0261: ldloc.1
-			IL_0262: stelem.ref
-			IL_0263: dup
-			IL_0264: ldc.i4.1
-			IL_0265: ldloc.2
-			IL_0266: box [System.Runtime]System.Boolean
-			IL_026b: stelem.ref
-			IL_026c: dup
-			IL_026d: ldc.i4.2
-			IL_026e: ldloc.3
-			IL_026f: box [System.Runtime]System.Boolean
-			IL_0274: stelem.ref
-			IL_0275: dup
-			IL_0276: ldc.i4.3
-			IL_0277: ldloc.s 4
-			IL_0279: stelem.ref
-			IL_027a: dup
-			IL_027b: ldc.i4.4
-			IL_027c: ldloc.s 5
-			IL_027e: box [System.Runtime]System.Boolean
-			IL_0283: stelem.ref
-			IL_0284: dup
-			IL_0285: ldc.i4.5
-			IL_0286: ldloc.s 6
-			IL_0288: box [System.Runtime]System.Boolean
-			IL_028d: stelem.ref
-			IL_028e: dup
-			IL_028f: ldc.i4.6
-			IL_0290: ldloc.s 7
-			IL_0292: stelem.ref
-			IL_0293: dup
-			IL_0294: ldc.i4.7
-			IL_0295: ldloc.s 8
-			IL_0297: box [System.Runtime]System.Boolean
-			IL_029c: stelem.ref
-			IL_029d: dup
-			IL_029e: ldc.i4.8
-			IL_029f: ldloc.s 9
-			IL_02a1: stelem.ref
-			IL_02a2: pop
-			IL_02a3: ldloc.0
-			IL_02a4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_02a9: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_02ae: ret
+			IL_0233: stloc.2
+			IL_0234: br IL_024c
 
-			IL_02af: ldloc.0
-			IL_02b0: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/Scope::_awaited2
-			IL_02b5: pop
+			IL_0239: ldloc.0
+			IL_023a: ldc.i4.1
+			IL_023b: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_0240: ldloc.0
+			IL_0241: ldc.i4.0
+			IL_0242: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_0247: br IL_024c
 
-			IL_02b6: br IL_02ce
+			IL_024c: ldloc.0
+			IL_024d: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_0252: stloc.s 5
+			IL_0254: ldloc.0
+			IL_0255: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
+			IL_025a: stloc.s 6
+			IL_025c: ldloc.2
+			IL_025d: brtrue IL_031a
 
-			IL_02bb: ldloc.0
-			IL_02bc: ldc.i4.1
-			IL_02bd: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_02c2: ldloc.0
-			IL_02c3: ldc.i4.0
-			IL_02c4: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
-			IL_02c9: br IL_02ce
+			IL_0262: ldloc.3
+			IL_0263: brtrue IL_031a
 
-			IL_02ce: ldloc.0
-			IL_02cf: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
-			IL_02d4: stloc.s 5
-			IL_02d6: ldloc.s 5
-			IL_02d8: brfalse IL_0315
+			IL_0268: ldc.i4.1
+			IL_0269: stloc.3
+			IL_026a: ldloc.1
+			IL_026b: ldloc.s 5
+			IL_026d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::AsyncIteratorCloseForCompletion(object, bool)
+			IL_0272: stloc.s 9
+			IL_0274: ldloc.s 9
+			IL_0276: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::AsyncIteratorCloseNeedsAwait(object)
+			IL_027b: stloc.s 10
+			IL_027d: ldloc.s 10
+			IL_027f: brfalse IL_031a
 
-			IL_02dd: ldloc.0
-			IL_02de: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
-			IL_02e3: stloc.s 7
-			IL_02e5: ldloc.0
-			IL_02e6: ldc.i4.m1
-			IL_02e7: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_02ec: ldloc.0
-			IL_02ed: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_02f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_reject()
-			IL_02f7: ldarg.0
-			IL_02f8: ldc.i4.1
-			IL_02f9: newarr [System.Runtime]System.Object
-			IL_02fe: dup
-			IL_02ff: ldc.i4.0
-			IL_0300: ldloc.s 7
-			IL_0302: stelem.ref
-			IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0308: pop
-			IL_0309: ldloc.0
-			IL_030a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_030f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0314: ret
+			IL_0284: ldloc.0
+			IL_0285: ldc.i4.4
+			IL_0286: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_028b: ldloc.0
+			IL_028c: ldloc.s 9
+			IL_028e: ldarg.0
+			IL_028f: ldc.i4.2
+			IL_0290: ldloc.0
+			IL_0291: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0296: ldc.i4.2
+			IL_0297: ldstr "_pendingException"
+			IL_029c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationWithRejectResumeTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation, int32, string)
+			IL_02a1: ldloc.0
+			IL_02a2: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_02a7: dup
+			IL_02a8: ldc.i4.0
+			IL_02a9: ldloc.1
+			IL_02aa: stelem.ref
+			IL_02ab: dup
+			IL_02ac: ldc.i4.1
+			IL_02ad: ldloc.2
+			IL_02ae: box [System.Runtime]System.Boolean
+			IL_02b3: stelem.ref
+			IL_02b4: dup
+			IL_02b5: ldc.i4.2
+			IL_02b6: ldloc.3
+			IL_02b7: box [System.Runtime]System.Boolean
+			IL_02bc: stelem.ref
+			IL_02bd: dup
+			IL_02be: ldc.i4.3
+			IL_02bf: ldloc.s 4
+			IL_02c1: stelem.ref
+			IL_02c2: dup
+			IL_02c3: ldc.i4.4
+			IL_02c4: ldloc.s 5
+			IL_02c6: box [System.Runtime]System.Boolean
+			IL_02cb: stelem.ref
+			IL_02cc: dup
+			IL_02cd: ldc.i4.5
+			IL_02ce: ldloc.s 6
+			IL_02d0: stelem.ref
+			IL_02d1: dup
+			IL_02d2: ldc.i4.6
+			IL_02d3: ldloc.s 7
+			IL_02d5: box [System.Runtime]System.Boolean
+			IL_02da: stelem.ref
+			IL_02db: dup
+			IL_02dc: ldc.i4.7
+			IL_02dd: ldloc.s 8
+			IL_02df: box [System.Runtime]System.Boolean
+			IL_02e4: stelem.ref
+			IL_02e5: dup
+			IL_02e6: ldc.i4.8
+			IL_02e7: ldloc.s 9
+			IL_02e9: stelem.ref
+			IL_02ea: dup
+			IL_02eb: ldc.i4.s 9
+			IL_02ed: ldloc.s 10
+			IL_02ef: box [System.Runtime]System.Boolean
+			IL_02f4: stelem.ref
+			IL_02f5: dup
+			IL_02f6: ldc.i4.s 10
+			IL_02f8: ldloc.s 11
+			IL_02fa: stelem.ref
+			IL_02fb: pop
+			IL_02fc: ldloc.0
+			IL_02fd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0302: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0307: ret
 
-			IL_0315: ldloc.0
-			IL_0316: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
-			IL_031b: stloc.s 6
-			IL_031d: ldloc.s 6
-			IL_031f: brfalse IL_035c
+			IL_0308: ldloc.0
+			IL_0309: ldfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/Scope::_awaited2
+			IL_030e: stloc.s 9
+			IL_0310: ldloc.s 9
+			IL_0312: ldloc.s 5
+			IL_0314: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ValidateAsyncIteratorCloseResult(object, bool)
+			IL_0319: pop
 
-			IL_0324: ldloc.0
-			IL_0325: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingReturnValue
-			IL_032a: stloc.s 7
-			IL_032c: ldloc.0
-			IL_032d: ldc.i4.m1
-			IL_032e: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_031a: br IL_0346
+
+			IL_031f: ldloc.s 5
+			IL_0321: brfalse IL_0333
+
+			IL_0326: ldloc.0
+			IL_0327: ldloc.s 6
+			IL_0329: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
+			IL_032e: br IL_0346
+
 			IL_0333: ldloc.0
-			IL_0334: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0339: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_033e: ldarg.0
-			IL_033f: ldc.i4.1
-			IL_0340: newarr [System.Runtime]System.Object
-			IL_0345: dup
-			IL_0346: ldc.i4.0
-			IL_0347: ldloc.s 7
-			IL_0349: stelem.ref
-			IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_034f: pop
-			IL_0350: ldloc.0
-			IL_0351: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0356: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_035b: ret
+			IL_0334: ldc.i4.1
+			IL_0335: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_033a: ldloc.0
+			IL_033b: ldc.i4.0
+			IL_033c: stfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_0341: br IL_0346
 
-			IL_035c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0361: stloc.s 9
-			IL_0363: ldloc.s 9
-			IL_0365: ldstr "after"
-			IL_036a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_036f: pop
-			IL_0370: ldloc.0
-			IL_0371: ldc.i4.m1
-			IL_0372: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0377: ldloc.0
-			IL_0378: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_037d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_0382: ldarg.0
-			IL_0383: ldc.i4.1
-			IL_0384: newarr [System.Runtime]System.Object
-			IL_0389: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_038e: pop
-			IL_038f: ldloc.0
-			IL_0390: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0395: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_039a: ret
+			IL_0346: ldloc.0
+			IL_0347: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingException
+			IL_034c: stloc.s 7
+			IL_034e: ldloc.s 7
+			IL_0350: brfalse IL_038d
+
+			IL_0355: ldloc.0
+			IL_0356: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingException
+			IL_035b: stloc.s 9
+			IL_035d: ldloc.0
+			IL_035e: ldc.i4.m1
+			IL_035f: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0364: ldloc.0
+			IL_0365: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_036a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_reject()
+			IL_036f: ldarg.0
+			IL_0370: ldc.i4.1
+			IL_0371: newarr [System.Runtime]System.Object
+			IL_0376: dup
+			IL_0377: ldc.i4.0
+			IL_0378: ldloc.s 9
+			IL_037a: stelem.ref
+			IL_037b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0380: pop
+			IL_0381: ldloc.0
+			IL_0382: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0387: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_038c: ret
+
+			IL_038d: ldloc.0
+			IL_038e: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_hasPendingReturn
+			IL_0393: stloc.s 8
+			IL_0395: ldloc.s 8
+			IL_0397: brfalse IL_03d4
+
+			IL_039c: ldloc.0
+			IL_039d: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_pendingReturnValue
+			IL_03a2: stloc.s 9
+			IL_03a4: ldloc.0
+			IL_03a5: ldc.i4.m1
+			IL_03a6: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_03ab: ldloc.0
+			IL_03ac: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_03b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_03b6: ldarg.0
+			IL_03b7: ldc.i4.1
+			IL_03b8: newarr [System.Runtime]System.Object
+			IL_03bd: dup
+			IL_03be: ldc.i4.0
+			IL_03bf: ldloc.s 9
+			IL_03c1: stelem.ref
+			IL_03c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_03c7: pop
+			IL_03c8: ldloc.0
+			IL_03c9: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_03ce: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_03d3: ret
+
+			IL_03d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03d9: stloc.s 11
+			IL_03db: ldloc.s 11
+			IL_03dd: ldstr "after"
+			IL_03e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03e7: pop
+			IL_03e8: ldloc.0
+			IL_03e9: ldc.i4.m1
+			IL_03ea: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_03ef: ldloc.0
+			IL_03f0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_03f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_03fa: ldarg.0
+			IL_03fb: ldc.i4.1
+			IL_03fc: newarr [System.Runtime]System.Object
+			IL_0401: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0406: pop
+			IL_0407: ldloc.0
+			IL_0408: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_040d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0412: ret
 		} // end of method test::__js_call__
 
 	} // end of class test

@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 previously failing TypedArray fixtures. Add
+  TypedArray prototype intrinsic dispatch for `forEach`, `includes`, and
+  `subarray`; support RAB/detached-buffer validation and iteration, BigInt
+  subarray species construction, and native RAB test helpers.
 - test262/docs: verify 412 additional indexed-collection and shared-memory API
   fixtures: 328 TypedArray-family, one ArrayBuffer, 32 SharedArrayBuffer, and
   51 Atomics cases. The native Test262 helper now preserves typed-array
@@ -22,6 +26,34 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   class-element grammar. The group contains 444 positive and 56 parse-negative
   fixtures; all 1,000 metadata-selected variants and all 500 native fixtures pass
   without compiler, runtime, or harness changes.
+- test262/runtime/docs: port 100 previously failing `AsyncDisposableStack`
+  fixtures. Add the constructible global and its intrinsic prototype surface,
+  synchronous/asynchronous disposable-resource registration, ordered asynchronous
+  disposal, error suppression, and stack transfer via `move()`.
+- runtime/test262: harden explicit resource management beyond the initial batch:
+  preserve required await boundaries, ignore synchronous disposer return values,
+  reject invalid async receivers, release resource storage, and preserve
+  suppressed-error descriptors and thrown values. Complete the synchronous
+  `DisposableStack` API and schedule thenable assimilation as Promise jobs.
+- compiler: preserve rest-argument constructor arity and generated class
+  field/method storage and private brands when a built-in superclass supplies
+  the actual receiver.
+- test262: track asynchronous completion and assertion failures per execution,
+  including missing or repeated `$DONE` and native `assert.throwsAsync`
+  semantics, while preserving the pinned harness's falsy `$DONE` convention.
+  Previously swallowed asynchronous assertions are now surfaced. Promise
+  resolving functions share a first-resolution guard
+  even while adopted thenables remain pending.
+- runtime: preserve observable Promise constructor lookups in `await`, await
+  async-from-sync iterator values, keep explicit async iterators unwrapped, and
+  defer iterator `return` lookup until closing. Preserve throw completions over
+  close errors and avoid closing or extra awaits after iterator-step failures.
+- compiler/runtime: propagate exceptions from resumed async code to the original
+  promise. Serialize async-generator requests, await yielded values, support
+  asynchronous `yield*` delegation, and retain destructuring TDZ checks across
+  suspension.
+- test262: provide the native Temporal observation helpers used by
+  `Array.fromAsync` evaluation-order fixtures.
 - test262/docs: verify 500 class-expression fixtures: 452 method
   destructuring cases and 48 class-element cases covering private names,
   line-terminator separation, computed Symbol names, and field

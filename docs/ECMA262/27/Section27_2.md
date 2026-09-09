@@ -2,7 +2,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-08T21:45:09Z
+> Last generated (UTC): 2026-09-09T06:58:42Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -57,6 +57,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 27.2.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Thenable assimilation runs as a Promise job | Supported | `tests/Jroc.Tests/AsyncDisposableStackComplianceTests.cs` |  | Promise resolution reads then synchronously and queues its invocation, including for Promise objects with an overridden then property. Resolving functions share a first-resolution guard even while adopted thenables remain pending. Abrupt getters and calls preserve the original JavaScript thrown value, including undefined. Internal asynchronous disposal continuations do not use user-visible Promise species construction. |
 
 ### 27.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-promise-constructor))
 
