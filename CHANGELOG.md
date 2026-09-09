@@ -11,6 +11,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   line-terminator separation, computed Symbol names, and field
   initialization. All 1,000 metadata-selected variants and all 500 native
   fixtures pass without compiler, runtime, or harness changes.
+
+## v0.12.21 - 2026-09-09
+
 - runtime/performance: reduce `JSON.parse` execution time and allocations by
   omitting source records without a callable reviver, filling pre-sized property
   stores with unboxed values, and reusing bounded thread-local property layouts.
