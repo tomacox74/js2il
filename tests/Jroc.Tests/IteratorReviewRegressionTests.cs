@@ -325,6 +325,7 @@ public sealed class IteratorReviewRegressionTests
         object iteratorPrototypeFromFirstRealm = null!;
         object wrapperPrototypeFromFirstRealm = null!;
         JsObject directIteratorFromFirstRealm = null!;
+        object wrapperFromFirstRealm = null!;
 
         WithRealm(() =>
         {
@@ -354,14 +355,20 @@ public sealed class IteratorReviewRegressionTests
 
             var source = CreateIterator(
                 _ => IteratorResult.Create(null, true));
-            var wrapper = CallableOperations.Call1(
+            wrapperFromFirstRealm = CallableOperations.Call1(
                 fromFirstRealm,
                 null,
-                source);
-            Assert.NotNull(wrapper);
+                source)!;
             Assert.Same(
                 wrapperPrototypeFromFirstRealm,
-                JsObjectConstructor.getPrototypeOf(wrapper!));
+                JsObjectConstructor.getPrototypeOf(wrapperFromFirstRealm));
+        });
+
+        WithRealm(() =>
+        {
+            Assert.Same(
+                wrapperPrototypeFromFirstRealm,
+                JsObjectConstructor.getPrototypeOf(wrapperFromFirstRealm));
         });
     }
 

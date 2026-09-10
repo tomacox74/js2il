@@ -1188,7 +1188,7 @@ public static class Iterator
         }
     }
 
-    private sealed class IteratorLikeWrapper : IJavaScriptIterator
+    private sealed class IteratorLikeWrapper : JsObject, IJavaScriptIterator
     {
         private readonly IteratorRecord _record;
 
@@ -1197,7 +1197,7 @@ public static class Iterator
             object wrapperPrototype)
         {
             _record = record;
-            PrototypeChain.SetPrototype(this, wrapperPrototype);
+            PrototypeChain.InitializePrototype(this, wrapperPrototype);
         }
 
         public bool HasReturn => true;
