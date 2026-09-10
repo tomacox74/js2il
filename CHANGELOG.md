@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 100 additional explicit-resource-management and Symbol
+  fixtures: 88 DisposableStack cases and 12 well-known Symbol descriptor and
+  Symbol.prototype cases. All 100 native fixtures pass without compiler,
+  runtime, or harness changes.
 - test262/docs: verify 500 additional pinned statement syntax parse-negative
   fixtures: 145 class, 66 switch, 49 for, 33 async-generator, 32 generator,
   29 if, 27 let, 26 const, 25 await-using, 21 using, and 47 other
