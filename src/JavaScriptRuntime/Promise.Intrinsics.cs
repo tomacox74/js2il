@@ -15,7 +15,8 @@ public partial class Promise
     private static readonly BuiltinFunction1 _promiseAllSettledKeyedValue = static (thisArgument, dictionary) =>
         AllSettledKeyedForConstructor(thisArgument, dictionary);
     private static readonly BuiltinFunction1 _promiseRaceValue = static (_, iterable) => race(iterable);
-    private static readonly BuiltinFunction1 _promiseRejectValue = static (_, reason) => reject(reason);
+    private static readonly BuiltinFunction1 _promiseRejectValue = static (thisArgument, reason) =>
+        RejectForConstructor(thisArgument, reason);
     private static readonly BuiltinFunctionVariadic _promiseTryValue = static (thisArgument, in arguments) =>
     {
         var callback = arguments.Count > 0 ? arguments.GetArgument(0) : null;

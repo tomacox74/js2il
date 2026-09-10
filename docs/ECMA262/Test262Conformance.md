@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 14,183 | 12 | 9,317 | 23,512 | **60.32%** |
+| Built-in objects and APIs | 14,483 | 12 | 9,017 | 23,512 | **61.60%** |
 | Language syntax and semantics | 12,412 | 46 | 11,185 | 23,643 | **52.50%** |
-| **Total** | 26,595 | 58 | 21,588 | 48,241 | **55.13%** |
+| **Total** | 26,895 | 58 | 21,288 | 48,241 | **55.75%** |
 
 ## Language Areas
 
@@ -188,7 +188,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Date` | 521 | 0 | 73 | 594 | **87.71%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
-| `DisposableStack` | 4 | 0 | 89 | 93 | **4.30%** |
+| `DisposableStack` | 92 | 0 | 1 | 93 | **98.92%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
 | `Error` | 19 | 0 | 39 | 58 | **32.76%** |
@@ -208,11 +208,11 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 0 | 0 | 6 | 6 | **0.00%** |
 | `NativeErrors` | 15 | 0 | 79 | 94 | **15.96%** |
-| `Number` | 182 | 0 | 156 | 338 | **53.85%** |
+| `Number` | 282 | 0 | 56 | 338 | **83.43%** |
 | `Object` | 3,200 | 0 | 211 | 3,411 | **93.81%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
-| `Promise` | 280 | 0 | 397 | 677 | **41.36%** |
+| `Promise` | 380 | 0 | 297 | 677 | **56.13%** |
 | `Proxy` | 45 | 0 | 266 | 311 | **14.47%** |
 | `Reflect` | 54 | 0 | 99 | 153 | **35.29%** |
 | `RegExp` | 1,006 | 0 | 873 | 1,879 | **53.54%** |
@@ -224,7 +224,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `String` | 1,093 | 1 | 129 | 1,223 | **89.37%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
-| `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
+| `Symbol` | 62 | 0 | 36 | 98 | **63.27%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
 | `TypedArray` | 1,162 | 0 | 276 | 1,438 | **80.81%** |

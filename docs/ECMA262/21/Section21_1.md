@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T20:42:21Z
+> Last generated (UTC): 2026-09-10T05:54:19Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -63,7 +63,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Properties of the Number Constructor | Supported |  | `built-ins/Number/S15.7.3_A1.js`<br>`built-ins/Number/S15.7.3_A2.js`<br>`built-ins/Number/S15.7.3_A3.js`<br>`built-ins/Number/S15.7.3_A4.js` | The Number constructor exposes the covered standard own properties with representative descriptor and existence coverage. |
+| Properties of the Number Constructor | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/NextBatch100ExecutionTests.cs` | `built-ins/Number/S15.7.3_A1.js`<br>`built-ins/Number/S15.7.3_A2.js`<br>`built-ins/Number/S15.7.3_A3.js`<br>`built-ins/Number/S15.7.3_A4.js` | The Number constructor exposes the covered standard own properties with representative descriptor and existence coverage. |
 
 ### 21.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-number.epsilon))
 
@@ -81,7 +81,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.isInteger(number) | Supported with Limitations | [`nan.js`](../../../tests/Jroc.Test262.Tests/built-ins/Number/isInteger/JavaScript/nan.js) | `test/built-ins/Number/isInteger/nan.js` | Checked-in coverage now includes representative NaN classification for Number.isInteger. Broader Number.isInteger metadata and argument-shape coverage remain limited to the current test262 slice. |
+| Number.isInteger(number) | Supported with Limitations | [`nan.js`](../../../tests/Jroc.Test262.Tests/built-ins/Number/isInteger/JavaScript/nan.js)<br>`tests/Jroc.Test262.Tests/built-ins/Number/isInteger/NextBatch100ExecutionTests.cs` | `test/built-ins/Number/isInteger/nan.js` | Checked-in coverage now includes representative NaN classification for Number.isInteger. Broader Number.isInteger metadata and argument-shape coverage remain limited to the current test262 slice. |
 
 ### 21.1.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-number.isnan))
 
@@ -93,7 +93,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.isSafeInteger(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs` | `built-ins/Number/isSafeInteger/not-safe-integer.js`<br>`built-ins/Number/isSafeInteger/safe-integers.js`<br>`test/built-ins/Number/isSafeInteger/arg-is-not-number.js` | Number.isSafeInteger accepts safe integral Number values and rejects NaN, infinities, fractional values, unsafe integers, and non-number inputs without coercion. |
+| Number.isSafeInteger(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/NextBatch100ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs` | `built-ins/Number/isSafeInteger/not-safe-integer.js`<br>`built-ins/Number/isSafeInteger/safe-integers.js`<br>`test/built-ins/Number/isSafeInteger/arg-is-not-number.js` | Number.isSafeInteger accepts safe integral Number values and rejects NaN, infinities, fractional values, unsafe integers, and non-number inputs without coercion. |
 
 ### 21.1.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-number.max_safe_integer))
 
@@ -117,7 +117,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.MIN_VALUE | Supported |  | `built-ins/Number/MIN_VALUE/S15.7.3.3_A3.js`<br>`built-ins/Number/MIN_VALUE/value.js` | Exposed on the Number constructor with the expected smallest positive double value and non-configurable data-property attribute coverage. |
+| Number.MIN_VALUE | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/MIN_VALUE/NextBatch100ExecutionTests.cs` | `built-ins/Number/MIN_VALUE/S15.7.3.3_A3.js`<br>`built-ins/Number/MIN_VALUE/value.js` | Exposed on the Number constructor with the expected smallest positive double value and non-configurable data-property attribute coverage. |
 
 ### 21.1.2.10 ([tc39.es](https://tc39.es/ecma262/#sec-number.nan))
 
@@ -129,25 +129,25 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.NEGATIVE_INFINITY | Supported |  | `built-ins/Number/NEGATIVE_INFINITY/value.js` | Exposed on the Number constructor with the expected negative infinity numeric value. |
+| Number.NEGATIVE_INFINITY | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/NEGATIVE_INFINITY/NextBatch100ExecutionTests.cs` | `built-ins/Number/NEGATIVE_INFINITY/value.js` | Exposed on the Number constructor with the expected negative infinity numeric value. |
 
 ### 21.1.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-number.parsefloat))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.parseFloat | Supported |  | `built-ins/Number/parseFloat.js` | Exposed as the same function value as the global parseFloat property with writable, non-enumerable, configurable data-property attributes. |
+| Number.parseFloat | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/parseFloat/NextBatch100ExecutionTests.cs` | `built-ins/Number/parseFloat.js` | Exposed as the same function value as the global parseFloat property with writable, non-enumerable, configurable data-property attributes. |
 
 ### 21.1.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-number.parseint))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.parseInt | Supported |  | `built-ins/Number/parseInt.js` | Exposed as the same function value as the global parseInt property with writable, non-enumerable, configurable data-property attributes. |
+| Number.parseInt | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/parseInt/NextBatch100ExecutionTests.cs` | `built-ins/Number/parseInt.js` | Exposed as the same function value as the global parseInt property with writable, non-enumerable, configurable data-property attributes. |
 
 ### 21.1.2.14 ([tc39.es](https://tc39.es/ecma262/#sec-number.positive_infinity))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.POSITIVE_INFINITY | Supported |  | `built-ins/Number/POSITIVE_INFINITY/value.js` | Exposed on the Number constructor with the expected positive infinity numeric value. |
+| Number.POSITIVE_INFINITY | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/POSITIVE_INFINITY/NextBatch100ExecutionTests.cs` | `built-ins/Number/POSITIVE_INFINITY/value.js` | Exposed on the Number constructor with the expected positive infinity numeric value. |
 
 ### 21.1.2.15 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype))
 
@@ -171,31 +171,31 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.prototype.toExponential(fractionDigits) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toExponential/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toExponential/ExecutionTests.Formatting.cs` | `built-ins/Number/prototype/toExponential/prop-desc.js`<br>`built-ins/Number/prototype/toExponential/return-values.js`<br>`test/built-ins/Number/prototype/toExponential/return-abrupt-tointeger-fractiondigits-symbol.js`<br>`test/built-ins/Number/prototype/toExponential/return-abrupt-tointeger-fractiondigits.js`<br>`test/built-ins/Number/prototype/toExponential/this-is-0-fractiondigits-is-0.js`<br>`test/built-ins/Number/prototype/toExponential/this-is-0-fractiondigits-is-not-0.js`<br>`test/built-ins/Number/prototype/toExponential/undefined-fractiondigits.js` | Implemented with expected descriptor metadata, non-constructor behavior through builtin-function initialization, representative return values, and RangeError validation for digits outside 0..100. Digit coercion occurs before returning NaN/infinity, so Symbol and object-conversion errors propagate; range validation follows the special-value return. Negative zero formats without a minus sign. Omitted or undefined digits use shortest round-trip scientific notation, while null requests zero fractional digits. Explicit-digit decimal rounding remains limited to the current implementation and verified Test262 coverage. |
+| Number.prototype.toExponential(fractionDigits) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toExponential/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toExponential/ExecutionTests.Formatting.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toExponential/NextBatch100ExecutionTests.cs` | `built-ins/Number/prototype/toExponential/prop-desc.js`<br>`built-ins/Number/prototype/toExponential/return-values.js`<br>`test/built-ins/Number/prototype/toExponential/return-abrupt-tointeger-fractiondigits-symbol.js`<br>`test/built-ins/Number/prototype/toExponential/return-abrupt-tointeger-fractiondigits.js`<br>`test/built-ins/Number/prototype/toExponential/this-is-0-fractiondigits-is-0.js`<br>`test/built-ins/Number/prototype/toExponential/this-is-0-fractiondigits-is-not-0.js`<br>`test/built-ins/Number/prototype/toExponential/undefined-fractiondigits.js` | Implemented with expected descriptor metadata, non-constructor behavior through builtin-function initialization, representative return values, and RangeError validation for digits outside 0..100. Digit coercion occurs before returning NaN/infinity, so Symbol and object-conversion errors propagate; range validation follows the special-value return. Negative zero formats without a minus sign. Omitted or undefined digits use shortest round-trip scientific notation, while null requests zero fractional digits. Explicit-digit decimal rounding remains limited to the current implementation and verified Test262 coverage. |
 
 ### 21.1.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype.tofixed))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.prototype.toFixed(fractionDigits) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toFixed/ExecutionTests.cs` | `built-ins/Number/prototype/toFixed/S15.7.4.5_A1.3_T01.js`<br>`built-ins/Number/prototype/toFixed/prop-desc.js`<br>`built-ins/Number/prototype/toFixed/return-type.js` | Implemented with expected descriptor metadata, string return behavior, special NaN/infinity handling (including Number wrapper NaN receivers), and RangeError validation for digits outside 0..100. Exhaustive ECMAScript decimal-rounding edge cases are not yet fully tracked. |
+| Number.prototype.toFixed(fractionDigits) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toFixed/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toFixed/NextBatch100ExecutionTests.cs` | `built-ins/Number/prototype/toFixed/S15.7.4.5_A1.3_T01.js`<br>`built-ins/Number/prototype/toFixed/prop-desc.js`<br>`built-ins/Number/prototype/toFixed/return-type.js` | Implemented with expected descriptor metadata, string return behavior, special NaN/infinity handling (including Number wrapper NaN receivers), and RangeError validation for digits outside 0..100. Exhaustive ECMAScript decimal-rounding edge cases are not yet fully tracked. |
 
 ### 21.1.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype.tolocalestring))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.prototype.toLocaleString([ reserved1 [, reserved2 ] ]) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toLocaleString/ExecutionTests.cs` | `built-ins/Number/prototype/toLocaleString/not-a-constructor.js`<br>`built-ins/Number/prototype/toLocaleString/prop-desc.js` | Exposed as a non-constructible builtin with the expected property descriptor. Locale/options-sensitive formatting is intentionally limited today and currently delegates to the invariant JavaScript number string conversion. |
+| Number.prototype.toLocaleString([ reserved1 [, reserved2 ] ]) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toLocaleString/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toLocaleString/NextBatch100ExecutionTests.cs` | `built-ins/Number/prototype/toLocaleString/not-a-constructor.js`<br>`built-ins/Number/prototype/toLocaleString/prop-desc.js` | Exposed as a non-constructible builtin with the expected property descriptor. Locale/options-sensitive formatting is intentionally limited today and currently delegates to the invariant JavaScript number string conversion. |
 
 ### 21.1.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype.toprecision))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.prototype.toPrecision(precision) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toPrecision/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toPrecision/ExecutionTests.Formatting.cs` | `built-ins/Number/prototype/toPrecision/prop-desc.js`<br>`built-ins/Number/prototype/toPrecision/return-values.js`<br>`test/built-ins/Number/prototype/toPrecision/nan.js`<br>`test/built-ins/Number/prototype/toPrecision/precision-cannot-be-coerced-to-a-number-in-range.js`<br>`test/built-ins/Number/prototype/toPrecision/this-is-0-precision-is-1.js`<br>`test/built-ins/Number/prototype/toPrecision/this-is-0-precision-is-gter-than-1.js` | Implemented with expected descriptor metadata, representative precision formatting, undefined-precision fallback, special NaN/infinity handling, and RangeError validation for precision outside 1..100. Supplied precision is coerced before returning NaN/infinity; values coercing to NaN become integer zero and fail range validation for finite receivers. Negative zero formats without a minus sign. Exhaustive ECMAScript decimal rounding and large-number formatting through the undefined-precision fallback remain limited. |
+| Number.prototype.toPrecision(precision) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toPrecision/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toPrecision/ExecutionTests.Formatting.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toPrecision/NextBatch100ExecutionTests.cs` | `built-ins/Number/prototype/toPrecision/prop-desc.js`<br>`built-ins/Number/prototype/toPrecision/return-values.js`<br>`test/built-ins/Number/prototype/toPrecision/nan.js`<br>`test/built-ins/Number/prototype/toPrecision/precision-cannot-be-coerced-to-a-number-in-range.js`<br>`test/built-ins/Number/prototype/toPrecision/this-is-0-precision-is-1.js`<br>`test/built-ins/Number/prototype/toPrecision/this-is-0-precision-is-gter-than-1.js` | Implemented with expected descriptor metadata, representative precision formatting, undefined-precision fallback, special NaN/infinity handling, and RangeError validation for precision outside 1..100. Supplied precision is coerced before returning NaN/infinity; values coercing to NaN become integer zero and fail range validation for finite receivers. Negative zero formats without a minus sign. Exhaustive ECMAScript decimal rounding and large-number formatting through the undefined-precision fallback remain limited. |
 
 ### 21.1.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype.tostring))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.prototype.toString([ radix ]) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toString/ExecutionTests.cs` | `built-ins/Number/prototype/toString/not-a-constructor.js`<br>`built-ins/Number/prototype/toString/prop-desc.js`<br>`built-ins/Number/prototype/toString/S15.7.4.2_A1_T01.js` | Implemented for the covered default/decimal conversion cases, including Number.prototype itself, wrapper values, NaN, and infinities; exposed as a non-constructible builtin with expected property descriptor. Non-decimal radix formatting remains limited to existing runtime conversion support. |
+| Number.prototype.toString([ radix ]) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/prototype/toString/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/prototype/toString/NextBatch100ExecutionTests.cs` | `built-ins/Number/prototype/toString/not-a-constructor.js`<br>`built-ins/Number/prototype/toString/prop-desc.js`<br>`built-ins/Number/prototype/toString/S15.7.4.2_A1_T01.js` | Implemented for the covered default/decimal conversion cases, including Number.prototype itself, wrapper values, NaN, and infinities; exposed as a non-constructible builtin with expected property descriptor. Non-decimal radix formatting remains limited to existing runtime conversion support. |
 
 ### 21.1.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-number.prototype.valueof))
 

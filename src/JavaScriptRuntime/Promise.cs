@@ -556,6 +556,13 @@ public partial class Promise : JsObject, IJavaScriptPromise
         return promise;
     }
 
+    internal static object? RejectForConstructor(object? constructor, object? reason)
+    {
+        var capability = NewPromiseCapability(constructor);
+        CallableOperations.Call1(capability.Reject, null, reason);
+        return capability.Promise;
+    }
+
     public object? @then()
         => @then(null, null);
 

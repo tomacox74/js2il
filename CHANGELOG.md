@@ -13,6 +13,19 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   strict/non-strict variants and all 500 native fixtures pass without compiler,
   runtime, or harness changes.
 
+- test262/runtime/docs: port 100 pinned Promise fixtures covering constructor
+  capabilities, combinators, static methods, species, and prototype methods.
+  Make Promise.reject constructor-generic so custom constructors receive and
+  validate the NewPromiseCapability executor and rejection function.
+- test262/docs: verify 100 additional pinned Number fixtures covering
+  constructor/static property descriptors and Number.prototype formatting,
+  coercion, receiver validation, radix conversion, and callable metadata. All
+  200 metadata-selected variants and all 100 native fixtures pass without
+  compiler, runtime, or harness changes.
+- test262/docs: verify 100 additional explicit-resource-management and Symbol
+  fixtures: 88 DisposableStack cases and 12 well-known Symbol descriptor and
+  Symbol.prototype cases. All 100 native fixtures pass without compiler,
+  runtime, or harness changes.
 - test262/docs: verify 500 additional pinned statement syntax parse-negative
   fixtures: 145 class, 66 switch, 49 for, 33 async-generator, 32 generator,
   29 if, 27 let, 26 const, 25 await-using, 21 using, and 47 other

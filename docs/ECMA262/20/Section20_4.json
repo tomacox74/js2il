@@ -215,9 +215,21 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-symbol-constructor",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/hasInstance/NextBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/isConcatSpreadable/NextBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/iterator/NextBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/match/NextBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/matchAll/NextBatch100ExecutionTests.cs"
         ],
-        "notes": "Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons. jroc also wires Symbol.asyncIterator, RegExp symbol dispatch, Array.prototype.concat spreadability, and Object.prototype.toString Symbol.toStringTag lookup; hasInstance/species/toPrimitive protocol hooks remain partial."
+        "notes": "Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons with standard property descriptors. jroc also wires Symbol.asyncIterator, RegExp symbol dispatch, Array.prototype.concat spreadability, and Object.prototype.toString Symbol.toStringTag lookup; hasInstance/species/toPrimitive protocol hooks remain partial.",
+        "test262Paths": [
+          "test/built-ins/Symbol/hasInstance/prop-desc.js",
+          "test/built-ins/Symbol/isConcatSpreadable/prop-desc.js",
+          "test/built-ins/Symbol/iterator/prop-desc.js",
+          "test/built-ins/Symbol/match/prop-desc.js",
+          "test/built-ins/Symbol/matchAll/prop-desc.js"
+        ]
       },
       {
         "clause": "20.4.2.2",
@@ -258,13 +270,22 @@
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-symbol-prototype-object",
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/Symbol.toPrimitive/NextBatch100ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/description/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/toString/NextBatch100ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/toString/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Symbol/prototype/valueOf/ExecutionTests.cs"
         ],
         "notes": "Supports the Symbol.prototype description accessor, toString(), and valueOf() for primitive symbols and wrappers, including incompatible-receiver TypeErrors, accessor/property descriptors, non-own description behavior, and standard function-name metadata.",
         "test262Paths": [
           "test/built-ins/Symbol/prototype/toString/name.js",
+          "test/built-ins/Symbol/prototype/toString/length.js",
+          "test/built-ins/Symbol/prototype/toString/not-a-constructor.js",
+          "test/built-ins/Symbol/prototype/toString/prop-desc.js",
+          "test/built-ins/Symbol/prototype/toString/toString-default-attributes-non-strict.js",
+          "test/built-ins/Symbol/prototype/toString/toString-default-attributes-strict.js",
+          "test/built-ins/Symbol/prototype/Symbol.toPrimitive/this-val-obj-non-symbol-wrapper.js",
+          "test/built-ins/Symbol/prototype/Symbol.toPrimitive/this-val-symbol.js",
           "test/built-ins/Symbol/prototype/valueOf/name.js",
           "test/built-ins/Symbol/prototype/description/descriptor.js",
           "test/built-ins/Symbol/prototype/description/this-val-symbol.js",
