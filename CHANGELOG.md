@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 100 additional pinned Number fixtures covering
+  constructor/static property descriptors and Number.prototype formatting,
+  coercion, receiver validation, radix conversion, and callable metadata. All
+  200 metadata-selected variants and all 100 native fixtures pass without
+  compiler, runtime, or harness changes.
 - test262/docs: verify 100 additional explicit-resource-management and Symbol
   fixtures: 88 DisposableStack cases and 12 well-known Symbol descriptor and
   Symbol.prototype cases. All 100 native fixtures pass without compiler,
