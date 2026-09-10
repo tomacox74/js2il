@@ -3727,6 +3727,23 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is bool
+                or double
+                or float
+                or int
+                or long
+                or short
+                or byte
+                or sbyte
+                or uint
+                or ulong
+                or ushort
+                or global::System.Numerics.BigInteger
+                or JavaScriptRuntime.Symbol)
+            {
+                target = Construct(target);
+            }
+
             if (!PrototypeChain.Enabled)
             {
                 return false;

@@ -1006,8 +1006,15 @@ namespace JavaScriptRuntime
                 throw new TypeError("Array.prototype.indexOf called on null or undefined");
             }
 
-            // Generic array-like indexOf
+            // Generic array-like indexOf. LengthOfArrayLike precedes fromIndex
+            // coercion, and a zero length returns before coercion. Property access
+            // retains the primitive receiver so its intrinsic prototype is observed.
             var length = ToArrayLikeLengthAsDouble(thisArgument);
+            if (length == 0d)
+            {
+                return -1d;
+            }
+
             var fromIndexNum = TypeUtilities.ToNumber(fromIndex);
             if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum))
             {
@@ -1030,7 +1037,7 @@ namespace JavaScriptRuntime
             }
             else if (fromIndexNum >= 0)
             {
-                k = fromIndexNum;
+                k = fromIndexNum == 0d ? 0d : fromIndexNum;
             }
             else
             {
