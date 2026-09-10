@@ -326,11 +326,34 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _suppressedErrorConstructorValue = static (_, args) =>
             JavaScriptRuntime.SuppressedError.Construct(args ?? System.Array.Empty<object?>());
 
-        private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
-            throw new TypeError("Iterator is not directly constructible in jroc.");
+        private static readonly Func<object[], object?[], object?> _iteratorConstructorValue =
+            ConstructIterator;
 
         private static readonly Func<object[], object?[], object?> _asyncIteratorConstructorValue = static (_, __) =>
             throw new TypeError("AsyncIterator is not directly constructible in jroc.");
+
+        private static object? ConstructIterator(object[] _, object?[] __)
+        {
+            var newTarget = RuntimeServices.GetCurrentNewTarget();
+            var activeFunction = RuntimeServices.GetCurrentCallee();
+            if (newTarget is null
+                || ReferenceEquals(newTarget, activeFunction))
+            {
+                throw new TypeError("Iterator is not directly constructible.");
+            }
+
+            var prototype = ObjectRuntime.GetProperty(newTarget, "prototype");
+            if (!JavaScriptRuntime.Proxy.IsObjectLikeValue(prototype))
+            {
+                prototype =
+                    JavaScriptRuntime.Iterator.GetIntrinsicPrototypeForConstructor(
+                        newTarget);
+            }
+
+            var result = ObjectRuntime.CreateOrdinaryObject();
+            PrototypeChain.SetPrototype(result, prototype!);
+            return result;
+        }
 
         private static readonly BuiltinFunction1 _errorIsErrorValue = static (_, arg) =>
             arg is JavaScriptRuntime.Error;

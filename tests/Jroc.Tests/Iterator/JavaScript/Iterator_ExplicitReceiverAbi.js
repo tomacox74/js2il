@@ -42,12 +42,12 @@ try {
     console.log(error instanceof TypeError);
 }
 try {
-    Iterator.prototype.map.call({}, value => value);
+    Iterator.prototype.map.call({}, value => value).next();
 } catch (error) {
     console.log(error instanceof TypeError);
 }
 
 // Metadata.
 console.log(Iterator.prototype.map.length);
-console.log(Iterator.prototype.next.length);
+console.log(Iterator.prototype[Symbol.iterator].length);
 console.log(Iterator.from.length);

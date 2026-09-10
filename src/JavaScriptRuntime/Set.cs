@@ -87,6 +87,7 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
             PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
+            DefinePrototypeMethod(prototype, "next", (BuiltinFunction0)IteratorPrototypeNext, 0d);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -95,6 +96,17 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Set Iterator"
             });
+        }
+
+        private static object? IteratorPrototypeNext(object? thisArgument)
+        {
+            if (thisArgument is not SetIterator iterator)
+            {
+                throw new TypeError(
+                    "Set Iterator.prototype.next called on incompatible receiver");
+            }
+
+            return iterator.Next();
         }
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method)

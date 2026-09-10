@@ -32,8 +32,6 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.ForInIterator"] = IteratorReason,
             ["JavaScriptRuntime.IntlNumberFormat"] = "Needs a dedicated Intl wrapper migration once its constructor surface expands.",
             ["JavaScriptRuntime.IntlSegmenter"] = "Needs a dedicated Intl wrapper migration once its constructor surface expands.",
-            ["JavaScriptRuntime.Iterator+GeneratorIteratorAdapter"] = HostIteratorReason,
-            ["JavaScriptRuntime.Iterator+IteratorLikeWrapper"] = HostIteratorReason,
             ["JavaScriptRuntime.Node.Events+EventEmitterAsyncOnIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.Node.TimersPromises+TimersPromisesIntervalIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.Object"] = "Static intrinsic holder; constructed ordinary objects use JsObject.",

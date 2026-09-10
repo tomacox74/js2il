@@ -7,8 +7,6 @@ public sealed class BuiltinAdapterRuntimeTests
 {
     private static readonly string[] FixedArityPrototypeMethodNames =
     [
-        "next",
-        "return",
         "every",
         "filter",
         "find",
@@ -73,29 +71,33 @@ public sealed class BuiltinAdapterRuntimeTests
     }
 
     [Fact]
-    public void IteratorPrototypeNextThrowsOnIncompatibleReceiver()
+    public void IteratorPrototypeOmitsConcreteIteratorMethods()
     {
         WithRealm(() =>
         {
-            var next = ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.Prototype, "next");
-            Assert.Throws<TypeError>(() => CallableOperations.Call0(next, new JsObject()));
+            Assert.Null(ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.Prototype, "next"));
+            Assert.Null(ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.Prototype, "return"));
         });
     }
 
     [Fact]
-    public void IteratorPrototypeAdapterCanBeCalledFromAnotherRealm()
+    public void IteratorWrapperAdapterCanBeCalledFromAnotherRealm()
     {
         var firstRealmNext = WithRealm(
-            () => ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.Prototype, "next")!);
+            () => ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.WrapperPrototype, "next")!);
 
         var result = WithRealm(() =>
         {
             var secondRealmNext =
-                ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.Prototype, "next");
+                ObjectRuntime.GetItem(JavaScriptRuntime.Iterator.WrapperPrototype, "next");
             Assert.NotSame(firstRealmNext, secondRealmNext);
 
-            var receiver = JavaScriptRuntime.Iterator.From(
-                new JavaScriptRuntime.Array(new object[] { 42d }));
+            var source = new JsObject();
+            ObjectRuntime.SetProperty(
+                source,
+                "next",
+                (BuiltinFunction0)(_ => IteratorResult.Create((object?)42d, false)));
+            var receiver = JavaScriptRuntime.Iterator.From(source);
             return CallableOperations.Call0(firstRealmNext, receiver);
         });
 

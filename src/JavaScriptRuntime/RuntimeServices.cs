@@ -467,6 +467,7 @@ public class RuntimeServices
         var materialized = freshIdentity
             ? constructor
             : _classConstructorValues.GetOrAdd(cacheKey, constructor);
+        RuntimeIntrinsics.AssociateFunction(materialized);
         CopyStaticClassDescriptors(type, materialized);
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
             materialized,

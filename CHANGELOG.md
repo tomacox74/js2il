@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 previously failing pinned Iterator fixtures
+  covering helper protocol validation, callback ordering, iterator closing,
+  lazy return forwarding, reentrancy, flatMap flattening, subclassing, and
+  intrinsic descriptors. Align iterator records and helper state transitions
+  with ECMA-262.
+
 - test262/docs: verify 500 additional current-provenance pinned generator and
   method-definition fixtures: 181 generator expressions, 165 generator
   declarations, 61 async-generator declaration/expression cases, and 93

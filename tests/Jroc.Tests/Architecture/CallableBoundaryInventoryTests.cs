@@ -321,6 +321,8 @@ public sealed class CallableBoundaryInventoryTests
                 ["src/JavaScriptRuntime/AsyncScope.cs"] = 4,
                 ["src/JavaScriptRuntime/Closure.cs"] = 10,
                 ["src/JavaScriptRuntime/GeneratorObject.cs"] = 1,
+                ["src/JavaScriptRuntime/GlobalThis.cs"] = 2,
+                ["src/JavaScriptRuntime/Iterator.cs"] = 1,
                 ["src/JavaScriptRuntime/ObjectRuntime.Operations.cs"] = 3
             },
             actual);
