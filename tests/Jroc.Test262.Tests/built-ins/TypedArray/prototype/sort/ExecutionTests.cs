@@ -56,4 +56,9 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "this-is-not-typedarray-instance")]
     public Task this_is_not_typedarray_instance() => ExecutionTestFromFile("this-is-not-typedarray-instance");
+
+    [Fact(DisplayName = "comparefn-resizable-buffer.js")]
+    public Task comparefn_resizable_buffer() => ExecutionTestFromFile("comparefn-resizable-buffer");
+    [Fact(DisplayName = "resizable-buffer-default-comparator.js")]
+    public Task resizable_buffer_default_comparator() => ExecutionTestFromFile("resizable-buffer-default-comparator");
 }

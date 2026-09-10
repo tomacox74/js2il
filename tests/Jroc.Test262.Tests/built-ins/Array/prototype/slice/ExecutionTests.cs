@@ -81,4 +81,7 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "target-array-with-non-configurable-property")]
     public Task target_array_with_non_configurable_property()
         => ExecutionTestFromFile("target-array-with-non-configurable-property");
+
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }

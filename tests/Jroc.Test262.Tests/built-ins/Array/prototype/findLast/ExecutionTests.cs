@@ -60,4 +60,10 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task return_undefined_if_predicate_returns_false_value()
         => ExecutionTestFromFile("return-undefined-if-predicate-returns-false-value");
 
+    [Fact(DisplayName = "resizable-buffer-grow-mid-iteration.js")]
+    public Task resizable_buffer_grow_mid_iteration() => ExecutionTestFromFile("resizable-buffer-grow-mid-iteration");
+    [Fact(DisplayName = "resizable-buffer-shrink-mid-iteration.js")]
+    public Task resizable_buffer_shrink_mid_iteration() => ExecutionTestFromFile("resizable-buffer-shrink-mid-iteration");
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }

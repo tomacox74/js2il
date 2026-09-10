@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 13,983 | 12 | 9,517 | 23,512 | **59.47%** |
+| Built-in objects and APIs | 14,083 | 12 | 9,417 | 23,512 | **59.90%** |
 | Language syntax and semantics | 11,412 | 46 | 12,185 | 23,643 | **48.27%** |
-| **Total** | 25,395 | 58 | 22,788 | 48,241 | **52.64%** |
+| **Total** | 25,495 | 58 | 22,688 | 48,241 | **52.85%** |
 
 ## Language Areas
 
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 2,749 | 0 | 332 | 3,081 | **89.23%** |
+| `Array` | 2,805 | 0 | 276 | 3,081 | **91.04%** |
 | `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 100 | 0 | 4 | 104 | **96.15%** |
@@ -227,7 +227,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 1,088 | 0 | 350 | 1,438 | **75.66%** |
+| `TypedArray` | 1,132 | 0 | 306 | 1,438 | **78.72%** |
 | `TypedArrayConstructors` | 573 | 0 | 163 | 736 | **77.85%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |

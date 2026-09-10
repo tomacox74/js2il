@@ -56,6 +56,15 @@ namespace JavaScriptRuntime
         public BigUint64Array subarray(object? start, object? end)
             => (BigUint64Array)SubarrayCore(start, end);
 
+        public BigUint64Array slice()
+            => (BigUint64Array)SliceCore(null, null);
+
+        public BigUint64Array slice(object? start)
+            => (BigUint64Array)SliceCore(start, null);
+
+        public BigUint64Array slice(object? start, object? end)
+            => (BigUint64Array)SliceCore(start, end);
+
         private BigUint64Array(ArrayBuffer buffer, int byteOffset, int length)
         {
             InitializeFromExisting(buffer, byteOffset, length);

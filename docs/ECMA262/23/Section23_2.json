@@ -1163,7 +1163,7 @@
           "test/built-ins/TypedArray/prototype/find/resizable-buffer.js",
           "test/built-ins/TypedArray/prototype/findIndex/resizable-buffer.js"
         ],
-        "notes": "The checked-in Test262 evidence now covers 100 additional numeric and BigInt TypedArray cases for copyWithin, entries, every, fill, filter, find, and findIndex. The implementations validate detached and out-of-bounds views, honor resizable-buffer length changes during argument coercion and callbacks, and create filter results through the selected species constructor with content-type and minimum-length checks."
+        "notes": "The checked-in Test262 evidence now covers 144 additional numeric and BigInt TypedArray cases for copyWithin, entries, every, fill, filter, find, findIndex, indexOf, join, keys, lastIndexOf, map, reduce, reverse, set, slice, sort, subarray, toLocaleString, and values. The implementations validate detached and out-of-bounds views, honor resizable-buffer length changes during argument coercion and callbacks, preserve TypedArraySetElement conversion-before-no-op writes, and create filter/map/slice results through the selected species constructor with content-type and minimum-length checks. Shared prototype descriptors expose set, slice, indexOf, lastIndexOf, join, and reverse for borrowed calls as well as direct dispatch. lastIndexOf distinguishes omitted fromIndex from explicit undefined/null; join coerces separators even for empty views; reverse preserves floating-point bit encodings; toLocaleString invokes element methods without reading a user-defined length."
       },
       {
         "clause": "23.2",

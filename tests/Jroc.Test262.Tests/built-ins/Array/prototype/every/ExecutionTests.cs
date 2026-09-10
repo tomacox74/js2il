@@ -159,4 +159,10 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     public Task _15_4_4_16_3_22()
         => ExecutionTestFromFile("15.4.4.16-3-22");
 
+    [Fact(DisplayName = "resizable-buffer-grow-mid-iteration.js")]
+    public Task resizable_buffer_grow_mid_iteration() => ExecutionTestFromFile("resizable-buffer-grow-mid-iteration");
+    [Fact(DisplayName = "resizable-buffer-shrink-mid-iteration.js")]
+    public Task resizable_buffer_shrink_mid_iteration() => ExecutionTestFromFile("resizable-buffer-shrink-mid-iteration");
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }

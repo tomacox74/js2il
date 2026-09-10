@@ -157,4 +157,11 @@ public partial class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.4.4.18-7-1")]
     public Task _15_4_4_18_7_1()
         => ExecutionTestFromFile("15.4.4.18-7-1");
+
+    [Fact(DisplayName = "resizable-buffer-grow-mid-iteration.js")]
+    public Task resizable_buffer_grow_mid_iteration() => ExecutionTestFromFile("resizable-buffer-grow-mid-iteration");
+    [Fact(DisplayName = "resizable-buffer-shrink-mid-iteration.js")]
+    public Task resizable_buffer_shrink_mid_iteration() => ExecutionTestFromFile("resizable-buffer-shrink-mid-iteration");
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }

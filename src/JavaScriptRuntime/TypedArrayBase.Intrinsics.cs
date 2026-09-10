@@ -17,7 +17,7 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction0 _typedArrayByteLengthGetterValue = TypedArrayPrototypeByteLength;
         private static readonly BuiltinFunction0 _typedArrayToStringTagGetterValue = TypedArrayPrototypeToStringTag;
         private static readonly BuiltinFunction0 _typedArrayToStringValue = TypedArrayPrototypeToString;
-        private static readonly BuiltinFunction0 _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
+        private static readonly BuiltinFunction2 _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly BuiltinFunctionVariadic _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
@@ -120,6 +120,12 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findIndex", _typedArrayFindIndexValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "forEach", _typedArrayForEachValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "includes", _typedArrayIncludesValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "set", (BuiltinFunction2)TypedArrayPrototypeSet, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "slice", (BuiltinFunction2)TypedArrayPrototypeSlice, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "indexOf", (BuiltinFunction2)TypedArrayPrototypeIndexOf, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "lastIndexOf", (BuiltinFunctionVariadic)TypedArrayPrototypeLastIndexOf, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "join", (BuiltinFunction1)TypedArrayPrototypeJoin, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "reverse", (BuiltinFunction0)TypedArrayPrototypeReverse, 0d);
             PropertyDescriptorStore.DefineOrUpdate(
                 prototype,
                 global::JavaScriptRuntime.Symbol.iterator.DebugId,
@@ -579,15 +585,34 @@ namespace JavaScriptRuntime
             return typedArray.toString();
         }
 
-        private static object? TypedArrayPrototypeToLocaleString(object? thisArgument)
+        private static object? TypedArrayPrototypeToLocaleString(object? thisArgument, object? locales, object? options)
         {
             if (thisArgument is not TypedArrayBase typedArray)
             {
                 throw new TypeError("TypedArray.prototype.toLocaleString called on incompatible receiver");
             }
 
-            return typedArray.toLocaleString();
+            return typedArray.toLocaleString(new object?[] { locales, options });
         }
+
+        private static object? TypedArrayPrototypeSet(object? receiver, object? source, object? offset)
+            => GetTypedArrayReceiver(receiver, "set").set(new object?[] { source, offset });
+
+        private static object? TypedArrayPrototypeSlice(object? receiver, object? start, object? end)
+            => GetTypedArrayReceiver(receiver, "slice").SliceCore(start, end);
+
+        private static object? TypedArrayPrototypeIndexOf(object? receiver, object? searchElement, object? fromIndex)
+            => GetTypedArrayReceiver(receiver, "indexOf").IndexOfCore(searchElement, fromIndex);
+
+        private static object? TypedArrayPrototypeLastIndexOf(object? receiver, in JsCallArguments arguments)
+            => GetTypedArrayReceiver(receiver, "lastIndexOf").LastIndexOfCore(
+                arguments.GetArgument(0), arguments.GetArgument(1), arguments.Count > 1);
+
+        private static object? TypedArrayPrototypeJoin(object? receiver, object? separator)
+            => GetTypedArrayReceiver(receiver, "join").join(separator);
+
+        private static object? TypedArrayPrototypeReverse(object? receiver)
+            => GetTypedArrayReceiver(receiver, "reverse").reverse();
 
         private static object? TypedArrayPrototypeFindLastIndex(object? thisArgument, in JsCallArguments arguments)
         {

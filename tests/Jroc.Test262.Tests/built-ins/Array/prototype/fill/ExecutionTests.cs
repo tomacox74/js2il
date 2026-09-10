@@ -26,4 +26,6 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     public Task call_with_boolean()
         => ExecutionTestFromFile("call-with-boolean");
 
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 }
