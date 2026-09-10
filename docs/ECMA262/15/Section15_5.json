@@ -50,12 +50,21 @@
         "testScripts": [
           "tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js",
           "tests/Jroc.Tests/Generator/JavaScript/Generator_GeneratedFunctionObject_Semantics.js",
-          "tests/Jroc.Test262.Tests/language/expressions/generators/JavaScript/arguments-with-arguments-lex.js"
+          "tests/Jroc.Test262.Tests/language/expressions/generators/JavaScript/arguments-with-arguments-lex.js",
+          "tests/Jroc.Test262.Tests/language/expressions/generators/GeneratorFunctionExpressionConformance11BatchTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/generators/GeneratorFunctionDeclarationConformance11BatchTests.cs"
+        ],
+        "test262Suites": [
+          "language.expressions.generators",
+          "language.statements.generators"
         ],
         "test262Paths": [
-          "test/language/expressions/generators/arguments-with-arguments-lex.js"
+          "test/language/expressions/generators/dstr/ary-ptrn-elem-id-iter-val.js",
+          "test/language/expressions/generators/yield-star-before-newline.js",
+          "test/language/statements/generators/dstr/dflt-obj-ptrn-rest-getter.js",
+          "test/language/statements/generators/restricted-properties.js"
         ],
-        "notes": "Generator declarations, expressions, object methods, and class methods materialize as generated non-constructable JsFunctionObject instances. Every call creates a fresh iterator scope/state machine; captures are shared through environments while mutable execution state remains isolated per invocation. Known limitations: non-simple parameter initialization remains deferred until first resumption, and throw/return propagation through try/finally is not fully implemented."
+        "notes": "Generator declarations, expressions, object methods, and class methods materialize as generated non-constructable JsFunctionObject instances. Every call creates a fresh iterator scope/state machine; captures are shared through environments while mutable execution state remains isolated per invocation. The native Test262 harness now verifies 346 additional current-provenance generator declaration/expression fixtures, including destructuring parameters, default parameters, yield grammar, restricted properties, and static early errors. Known limitations: non-simple parameter initialization remains deferred until first resumption, and throw/return propagation through try/finally is not fully implemented."
       },
       {
         "clause": "15.5.1",
