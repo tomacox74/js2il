@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:09:52Z
+> Last generated (UTC): 2026-09-09T22:40:32Z
 
 JROC covers the unary operator forms exercised by the current repo tests and imported test262 cases. `delete` remains tracked as limited because strict-mode early errors and some host-object deletion edge cases are not yet exhaustively validated.
 
@@ -41,6 +41,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | delete for identifiers, properties, and index accesses | Supported with Limitations | [`11.4.1-0-1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-0-1.js)<br>[`11.4.1-2-2.js`](../../../tests/Jroc.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-2-2.js)<br>[`11.4.1-3-1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-3-1.js)<br>[`11.4.1-3-2.js`](../../../tests/Jroc.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-3-2.js)<br>[`11.4.1-3-3.js`](../../../tests/Jroc.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-3-3.js) |  | Unary lowering implements property/index deletion through `ObjectRuntime.DeleteProperty` / `DeleteItem`, returns `false` for declared identifier bindings, and returns `true` for the non-strict unresolvable-identifier cases covered by test262. This clause remains limited because strict-mode early-error coverage and some host-object deletion edge cases are not yet exhaustively validated. |
+
+### 13.5.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-delete-operator-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Strict-mode delete identifier early errors | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs` | `test/language/expressions/delete/identifier-strict-recursive.js`<br>`test/language/expressions/delete/identifier-strict.js` | The native Test262 harness rejects the two pinned strict-mode parse-negative fixtures for deleting identifier references, including the recursively nested case. |
 
 ### 13.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-void-operator))
 
