@@ -706,6 +706,16 @@
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
         ],
         "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Class method early-error conformance expansion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs"
+        ],
+        "notes": "The native Test262 harness verifies 46 additional pinned parse-negative class expression fixtures: generator, async-generator, ordinary instance, and static method parameter/default grammar restrictions."
       }
     ]
   }

@@ -184,6 +184,20 @@
           "tests/Jroc.Test262.Tests/language/expressions/logical-not/JavaScript/S11.4.9_A2.1_T1.js"
         ],
         "notes": "Supported end-to-end in the IR pipeline through `LIRLogicalNot`, using JavaScript truthiness coercion before inversion. Coverage includes both direct `!` / `!!` cases and imported test262 GetValue checks."
+      },
+      {
+        "clause": "13.5.1.1",
+        "feature": "Strict-mode delete identifier early errors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-delete-operator-static-semantics-early-errors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/delete/identifier-strict-recursive.js",
+          "test/language/expressions/delete/identifier-strict.js"
+        ],
+        "notes": "The native Test262 harness rejects the two pinned strict-mode parse-negative fixtures for deleting identifier references, including the recursively nested case."
       }
     ]
   }
