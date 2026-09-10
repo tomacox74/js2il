@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T23:26:17Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,6 +23,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 15.8 ([tc39.es](https://tc39.es/ecma262/#sec-async-function-definitions))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/async-function/early-errors-declaration-NSPL-with-USD.js`<br>`test/language/statements/async-function/early-errors-declaration-arguments-in-formal-parameters.js` | The native Test262 harness verifies 12 additional pinned parse-negative statement fixtures (12 `async-function`). All 19 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 15.8.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncfunctionobject))
 

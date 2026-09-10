@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-08T12:01:20Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,6 +23,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 15.5 ([tc39.es](https://tc39.es/ecma262/#sec-generator-function-definitions))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/generators/array-destructuring-param-strict-body.js`<br>`test/language/statements/generators/dflt-params-duplicates.js` | The native Test262 harness verifies 32 additional pinned parse-negative statement fixtures (32 `generators`). All 62 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 15.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-generator-function-definitions-static-semantics-early-errors))
 

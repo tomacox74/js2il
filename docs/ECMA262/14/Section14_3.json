@@ -238,6 +238,24 @@
           "test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js"
         ],
         "notes": "Computed object binding names are supported in binding patterns, including the observable lookup ordering exercised by sloppy-mode `with` environments and default initializers."
+      },
+      {
+        "clause": "14.3",
+        "feature": "Statement syntax parse-negative conformance expansion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-declarations-and-the-variable-statement",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/const/dstr/ary-ptrn-rest-init-ary.js",
+          "test/language/statements/const/dstr/ary-ptrn-rest-init-id.js",
+          "test/language/statements/let/dstr/ary-ptrn-rest-init-ary.js",
+          "test/language/statements/let/dstr/ary-ptrn-rest-init-id.js",
+          "test/language/statements/using/redeclaration-error-from-within-strict-mode-function-using.js",
+          "test/language/statements/using/static-init-await-binding-invalid.js"
+        ],
+        "notes": "The native Test262 harness verifies 74 additional pinned parse-negative statement fixtures (26 `const`, 27 `let`, 21 `using`). All 144 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required."
       }
     ]
   }

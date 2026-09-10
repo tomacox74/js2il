@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-08T21:54:24Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 Block statements are supported, including lexical scoping for `let`/`const` declarations and temporal dead zone checks for lexical bindings. Some early-error edge cases and full spec fidelity around declaration instantiation are not exhaustively validated.
 
@@ -23,6 +23,12 @@ Block statements are supported, including lexical scoping for `let`/`const` decl
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.2 ([tc39.es](https://tc39.es/ecma262/#sec-block))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/block/early-errors/invalid-names-call-expression-bad-reference.js`<br>`test/language/statements/block/early-errors/invalid-names-call-expression-this.js` | The native Test262 harness verifies 4 additional pinned parse-negative statement fixtures (4 `block`). All 8 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-block-static-semantics-early-errors))
 

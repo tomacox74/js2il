@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-09T22:40:32Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. Computed class field names and literal/simple computed method names are supported; arbitrary runtime-computed class method names remain limited.
 
@@ -36,6 +36,12 @@ JROC supports class declarations/expressions, methods (including async and gener
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 15.7 ([tc39.es](https://tc39.es/ecma262/#sec-class-definitions))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/class/elements/syntax/early-errors/grammar-privatename-whitespace-error-static-field-init.js`<br>`test/language/statements/class/elements/syntax/early-errors/grammar-privatename-whitespace-error-static-field.js` | The native Test262 harness verifies 145 additional pinned parse-negative statement fixtures (145 `class`). All 286 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 15.7.1 ([tc39.es](https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors))
 
