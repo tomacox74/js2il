@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 pinned Promise fixtures covering constructor
+  capabilities, combinators, static methods, species, and prototype methods.
+  Make Promise.reject constructor-generic so custom constructors receive and
+  validate the NewPromiseCapability executor and rejection function.
 - test262/docs: verify 100 additional pinned Number fixtures covering
   constructor/static property descriptors and Number.prototype formatting,
   coercion, receiver validation, radix conversion, and callable metadata. All
