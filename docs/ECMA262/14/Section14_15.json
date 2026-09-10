@@ -105,6 +105,20 @@
           "tests/Jroc.Test262.Tests/language/statements/try/ExecutionTests.cs"
         ],
         "notes": "The legacy ports cover catch binding visibility, loop-inside-try throw propagation across while/for/for-in, nested try/catch/finally evaluation, try/finally sequencing, and abrupt break/continue completion routing through every enclosing finally block."
+      },
+      {
+        "clause": "14.15",
+        "feature": "Statement syntax parse-negative conformance expansion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/try/catch-parameter-boundnames-restriction-arguments-negative-early.js",
+          "test/language/statements/try/catch-parameter-boundnames-restriction-eval-negative-early.js"
+        ],
+        "notes": "The native Test262 harness verifies 2 additional pinned parse-negative statement fixtures (2 `try`). All 2 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required."
       }
     ]
   }

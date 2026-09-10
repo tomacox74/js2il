@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional pinned statement syntax parse-negative
+  fixtures: 145 class, 66 switch, 49 for, 33 async-generator, 32 generator,
+  29 if, 27 let, 26 const, 25 await-using, 21 using, and 47 other
+  async-function, block, break, continue, debugger, do-while, labelled, and
+  try grammar cases. All 965 metadata-selected variants and all 500 native
+  fixtures pass without compiler, runtime, or harness changes.
+
 - test262/runtime/docs: port 100 Test262 fixtures: 66 Array, 30 TypedArray,
   and four DisposableStack cases. Align direct Array calls with the generic
   algorithms for coercion, holes, species, sparse lengths, and resizable views;

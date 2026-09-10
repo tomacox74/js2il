@@ -82,6 +82,20 @@
           "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js"
         ],
         "notes": "Supports delegation through the iterator protocol for arrays, strings, typed arrays, nested jroc GeneratorObject instances, and user-defined [Symbol.iterator] iterables. Limitations: full custom throw/return forwarding and IteratorClose behavior for abrupt delegating-generator completion remain incomplete; throw/return propagation through try/finally remains incomplete."
+      },
+      {
+        "clause": "15.5",
+        "feature": "Statement syntax parse-negative conformance expansion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/generators/array-destructuring-param-strict-body.js",
+          "test/language/statements/generators/dflt-params-duplicates.js"
+        ],
+        "notes": "The native Test262 harness verifies 32 additional pinned parse-negative statement fixtures (32 `generators`). All 62 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required."
       }
     ]
   }

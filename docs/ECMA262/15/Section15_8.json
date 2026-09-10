@@ -75,6 +75,20 @@
           "tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js"
         ],
         "notes": "Full state machine implementation with suspension/resumption. Generated async function objects share immutable captures while each invocation creates independent Promise/state-machine state, so overlapping calls remain isolated. Each await point stores _asyncState, schedules a continuation, and resumes through the state switch. Await rejection and finally completion semantics are preserved."
+      },
+      {
+        "clause": "15.8",
+        "feature": "Statement syntax parse-negative conformance expansion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-function-definitions",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/async-function/early-errors-declaration-NSPL-with-USD.js",
+          "test/language/statements/async-function/early-errors-declaration-arguments-in-formal-parameters.js"
+        ],
+        "notes": "The native Test262 harness verifies 12 additional pinned parse-negative statement fixtures (12 `async-function`). All 19 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required."
       }
     ]
   }
