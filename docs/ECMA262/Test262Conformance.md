@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 14,183 | 12 | 9,317 | 23,512 | **60.32%** |
+| Built-in objects and APIs | 14,283 | 12 | 9,217 | 23,512 | **60.75%** |
 | Language syntax and semantics | 11,412 | 46 | 12,185 | 23,643 | **48.27%** |
-| **Total** | 25,595 | 58 | 22,588 | 48,241 | **53.06%** |
+| **Total** | 25,695 | 58 | 22,488 | 48,241 | **53.26%** |
 
 ## Language Areas
 
@@ -188,7 +188,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Date` | 521 | 0 | 73 | 594 | **87.71%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
-| `DisposableStack` | 4 | 0 | 89 | 93 | **4.30%** |
+| `DisposableStack` | 92 | 0 | 1 | 93 | **98.92%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
 | `Error` | 19 | 0 | 39 | 58 | **32.76%** |
@@ -224,7 +224,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `String` | 1,093 | 1 | 129 | 1,223 | **89.37%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
-| `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
+| `Symbol` | 62 | 0 | 36 | 98 | **63.27%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
 | `TypedArray` | 1,162 | 0 | 276 | 1,438 | **80.81%** |

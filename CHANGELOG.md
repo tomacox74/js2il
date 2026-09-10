@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 100 additional explicit-resource-management and Symbol
+  fixtures: 88 DisposableStack cases and 12 well-known Symbol descriptor and
+  Symbol.prototype cases. All 100 native fixtures pass without compiler,
+  runtime, or harness changes.
 - test262/runtime/docs: port 100 Test262 fixtures: 66 Array, 30 TypedArray,
   and four DisposableStack cases. Align direct Array calls with the generic
   algorithms for coercion, holes, species, sparse lengths, and resizable views;
