@@ -73,6 +73,8 @@ internal enum RuntimeIntrinsicSlot
     RegExpPrototype,
     RegExpStringIteratorPrototype,
     IteratorPrototype,
+    IteratorAdapterPrototype,
+    IteratorWrapperPrototype,
     IteratorHelperPrototype,
     AsyncIteratorPrototype,
     GeneratorPrototype,
@@ -82,6 +84,7 @@ internal enum RuntimeIntrinsicSlot
     AsyncFunctionPrototype,
     UrlPrototype,
     UrlSearchParamsPrototype,
+    UrlSearchParamsIteratorPrototype,
     AbortControllerPrototype,
     AbortSignalPrototype,
 
@@ -149,6 +152,12 @@ internal sealed class RuntimeIntrinsics
     private static readonly TimeSpan WaitSlice = TimeSpan.FromMilliseconds(20);
 
     private static readonly object _processDefaultGate = new();
+    private static readonly ConditionalWeakTable<object, FunctionRealmOwner> _functionRealms = new();
+
+    private sealed class FunctionRealmOwner(RuntimeIntrinsics intrinsics)
+    {
+        internal RuntimeIntrinsics Intrinsics { get; } = intrinsics;
+    }
 
     /// <summary>
     /// Wait-for graph used to detect intrinsic initialization cycles that span threads.
@@ -309,6 +318,42 @@ internal sealed class RuntimeIntrinsics
                 ? context.Realm.Intrinsics
                 : ResolveWithoutAmbientFrame();
         }
+    }
+
+    internal static void AssociateFunction(
+        object functionObject,
+        RuntimeIntrinsics? intrinsics = null)
+    {
+        ArgumentNullException.ThrowIfNull(functionObject);
+        if (functionObject is not JsFunctionObject)
+        {
+            return;
+        }
+
+        _functionRealms.GetValue(
+            functionObject,
+            _ => new FunctionRealmOwner(intrinsics ?? Current));
+    }
+
+    internal static RuntimeIntrinsics GetFunctionRealm(object? functionObject)
+    {
+        if (functionObject is Proxy proxy)
+        {
+            return GetFunctionRealm(proxy.GetTarget("GetFunctionRealm"));
+        }
+
+        if (functionObject is BoundFunctionObject boundFunction)
+        {
+            return GetFunctionRealm(boundFunction.Target);
+        }
+
+        if (functionObject is not null
+            && _functionRealms.TryGetValue(functionObject, out var owner))
+        {
+            return owner.Intrinsics;
+        }
+
+        return Current;
     }
 
     /// <summary>

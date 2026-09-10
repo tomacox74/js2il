@@ -6,10 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- test262/docs: verify 100 additional pinned primitive-conversion fixtures:
-  71 String constructor, exotic-object, and static-method cases, plus 29
-  Number conversion, radix-formatting, and Number.prototype.valueOf cases.
-  All 100 native fixtures pass without compiler, runtime, or harness changes.
+- test262/runtime/docs: port 100 previously failing pinned Iterator fixtures
+  covering helper protocol validation, callback ordering, iterator closing,
+  lazy return forwarding, reentrancy, flatMap flattening, subclassing, and
+  intrinsic descriptors. Align iterator records and helper state transitions
+  with ECMA-262.
 - test262/runtime/docs: port 100 pinned Promise fixtures covering constructor
   capabilities, combinators, static methods, species, and prototype methods.
   Make Promise.reject constructor-generic so custom constructors receive and

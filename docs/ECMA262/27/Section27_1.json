@@ -333,9 +333,18 @@
           "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/take/IteratorConformanceBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/toArray/IteratorConformanceBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Iterator/zip/IteratorConformanceBatchExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Iterator/zipKeyed/IteratorConformanceBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/zipKeyed/IteratorConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/Symbol.dispose/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/Symbol.toStringTag/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/constructor/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/drop/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/every/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/filter/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/find/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/flatMap/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/forEach/FailingBatch100ExecutionTests.cs"
         ],
-        "notes": "208 additional pinned Test262 cases verify Iterator.from plus lazy drop, take, filter, map, flatMap, and terminal every, find, forEach, reduce, some, and toArray helpers. The verified cases include callback and iterator protocol behavior, coercion, abrupt completion, metadata, and supported error paths. Iterator.concat, Iterator.zip, Iterator.zipKeyed, cross-realm behavior, and remaining iterator close/reentrancy edge cases remain limited."
+        "notes": "308 additional pinned Test262 cases verify Iterator.from plus lazy drop, take, filter, map, flatMap, and terminal every, find, forEach, reduce, some, and toArray helpers. The verified cases include single next-method acquisition, iterator-result validation and access order, callback validation order, IteratorClose completion precedence, lazy return forwarding, helper reentrancy, subclassing, disposal, metadata, and supported error paths. Iterator.concat, Iterator.zip, Iterator.zipKeyed, cross-realm behavior, and remaining iterator helper edge cases remain limited."
       },
       {
         "clause": "27.1.1",
@@ -374,7 +383,7 @@
           "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
           "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
         ],
-        "notes": "Helper objects are lazy, iterable, and expose `next()` / `return()` through the public iterator-helper surface. Iterator, @@iterator, drop, every, and the remaining helper functions expose their covered standard name/length metadata, but only the synchronous helper family is implemented here."
+        "notes": "Helper objects are lazy, iterable, and expose `next()` / `return()` through the public iterator-helper surface. Iterator records acquire `next` once, validate iterator-result objects, preserve `done`/`value` access order, forward `return` lazily, apply IteratorClose completion precedence, and reject reentrant execution. Iterator, @@iterator, Symbol.dispose, drop, every, and the remaining helper functions expose their covered standard metadata; only the synchronous helper family is implemented here."
       },
       {
         "clause": "27.1.3",

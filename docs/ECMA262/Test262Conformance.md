@@ -201,14 +201,14 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Infinity` | 0 | 0 | 6 | 6 | **0.00%** |
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
 | `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
-| `Iterator` | 217 | 0 | 293 | 510 | **42.55%** |
+| `Iterator` | 317 | 0 | 193 | 510 | **62.16%** |
 | `JSON` | 161 | 0 | 4 | 165 | **97.58%** |
 | `Map` | 142 | 0 | 62 | 204 | **69.61%** |
 | `MapIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 0 | 0 | 6 | 6 | **0.00%** |
 | `NativeErrors` | 15 | 0 | 79 | 94 | **15.96%** |
-| `Number` | 311 | 0 | 27 | 338 | **92.01%** |
+| `Number` | 282 | 0 | 56 | 338 | **83.43%** |
 | `Object` | 3,200 | 0 | 211 | 3,411 | **93.81%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
@@ -221,7 +221,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 69 | 0 | 35 | 104 | **66.35%** |
-| `String` | 1,164 | 1 | 58 | 1,223 | **95.18%** |
+| `String` | 1,093 | 1 | 129 | 1,223 | **89.37%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 62 | 0 | 36 | 98 | **63.27%** |
