@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional positive pinned class-declaration
+  method-parameter-destructuring fixtures: 236 private generator methods, 116
+  private static methods, 87 static methods with default parameters, and 61
+  private methods with default parameters. All 1,000 metadata-selected
+  strict/non-strict variants and all 500 native fixtures pass without compiler,
+  runtime, or harness changes.
+
 - test262/docs: verify 500 additional pinned statement syntax parse-negative
   fixtures: 145 class, 66 switch, 49 for, 33 async-generator, 32 generator,
   29 if, 27 let, 26 const, 25 await-using, 21 using, and 47 other
