@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional current-provenance pinned language
+  fixtures: 161 arguments-object, 165 class-expression, 53 call-expression,
+  42 `super`, 32 `new`, 12 function-expression, 11 `new.target`, 11 `yield`,
+  six `await`, two arrow-function, one async-function, and four
+  function-code cases. All 934 metadata-selected variants and all 500 native
+  fixtures pass without compiler, runtime, or harness changes.
+
 - test262/runtime/docs: port 100 previously failing pinned Iterator fixtures
   covering helper protocol validation, callback ordering, iterator closing,
   lazy return forwarding, reentrancy, flatMap flattening, subclassing, and

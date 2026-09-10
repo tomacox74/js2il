@@ -73,9 +73,15 @@
         "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js",
-          "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js"
+          "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js",
+          "tests/Jroc.Test262.Tests/language/expressions/yield/RelatedLanguageConformance12BatchTests.cs"
         ],
-        "notes": "Supports yielding values, parent-scope captures in yielded operands, and resumption via next()."
+        "test262Paths": [
+          "test/language/expressions/yield/arguments-object-attributes.js",
+          "test/language/expressions/yield/from-with.js",
+          "test/language/expressions/yield/within-for.js"
+        ],
+        "notes": "Supports yielding values, parent-scope captures in yielded operands, and resumption via next(). The native Test262 harness additionally verifies 11 current-provenance yield fixtures, including three parse-negative grammar cases."
       },
       {
         "clause": "15.5.1",

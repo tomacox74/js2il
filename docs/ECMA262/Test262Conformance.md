@@ -22,14 +22,14 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 14,583 | 12 | 8,917 | 23,512 | **62.02%** |
-| Language syntax and semantics | 13,412 | 46 | 10,185 | 23,643 | **56.73%** |
-| **Total** | 27,995 | 58 | 20,188 | 48,241 | **58.03%** |
+| Language syntax and semantics | 13,912 | 46 | 9,685 | 23,643 | **58.84%** |
+| **Total** | 28,495 | 58 | 19,688 | 48,241 | **59.07%** |
 
 ## Language Areas
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| `arguments-object` | 15 | 0 | 248 | 263 | **5.70%** |
+| `arguments-object` | 176 | 0 | 87 | 263 | **66.92%** |
 | `asi` | 102 | 0 | 0 | 102 | **100.00%** |
 | `block-scope` | 35 | 1 | 109 | 145 | **24.14%** |
 | `comments` | 22 | 0 | 30 | 52 | **42.31%** |
@@ -38,8 +38,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 6,455 | 10 | 4,573 | 11,038 | **58.48%** |
-| `function-code` | 36 | 0 | 181 | 217 | **16.59%** |
+| `expressions` | 6,790 | 10 | 4,238 | 11,038 | **61.51%** |
+| `function-code` | 40 | 0 | 177 | 217 | **18.43%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
 | `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
@@ -64,19 +64,19 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `addition` | 45 | 0 | 3 | 48 | **93.75%** |
 | `array` | 14 | 0 | 38 | 52 | **26.92%** |
-| `arrow-function` | 334 | 0 | 9 | 343 | **97.38%** |
+| `arrow-function` | 336 | 0 | 7 | 343 | **97.96%** |
 | `assignment` | 485 | 0 | 0 | 485 | **100.00%** |
 | `assignmenttargettype` | 310 | 0 | 14 | 324 | **95.68%** |
 | `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
-| `async-function` | 37 | 0 | 56 | 93 | **39.78%** |
+| `async-function` | 38 | 0 | 55 | 93 | **40.86%** |
 | `async-generator` | 212 | 0 | 411 | 623 | **34.03%** |
-| `await` | 3 | 0 | 19 | 22 | **13.64%** |
+| `await` | 9 | 0 | 13 | 22 | **40.91%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
-| `call` | 20 | 1 | 71 | 92 | **21.74%** |
-| `class` | 2,130 | 0 | 1,929 | 4,059 | **52.48%** |
+| `call` | 73 | 1 | 18 | 92 | **79.35%** |
+| `class` | 2,295 | 0 | 1,764 | 4,059 | **56.54%** |
 | `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
@@ -88,7 +88,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `dynamic-import` | 301 | 0 | 640 | 941 | **31.99%** |
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
-| `function` | 234 | 3 | 27 | 264 | **88.64%** |
+| `function` | 246 | 3 | 15 | 264 | **93.18%** |
 | `generators` | 212 | 0 | 78 | 290 | **73.10%** |
 | `greater-than-or-equal` | 42 | 0 | 1 | 43 | **97.67%** |
 | `greater-than` | 48 | 0 | 1 | 49 | **97.96%** |
@@ -106,8 +106,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `member-expression` | 1 | 0 | 0 | 1 | **100.00%** |
 | `modulus` | 39 | 0 | 1 | 40 | **97.50%** |
 | `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
-| `new.target` | 0 | 0 | 14 | 14 | **0.00%** |
-| `new` | 0 | 0 | 59 | 59 | **0.00%** |
+| `new.target` | 11 | 0 | 3 | 14 | **78.57%** |
+| `new` | 32 | 0 | 27 | 59 | **54.24%** |
 | `object` | 800 | 6 | 364 | 1,170 | **68.38%** |
 | `optional-chaining` | 6 | 0 | 32 | 38 | **15.79%** |
 | `postfix-decrement` | 2 | 0 | 35 | 37 | **5.41%** |
@@ -120,7 +120,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `strict-does-not-equals` | 28 | 0 | 2 | 30 | **93.33%** |
 | `strict-equals` | 25 | 0 | 5 | 30 | **83.33%** |
 | `subtraction` | 37 | 0 | 1 | 38 | **97.37%** |
-| `super` | 0 | 0 | 94 | 94 | **0.00%** |
+| `super` | 42 | 0 | 52 | 94 | **44.68%** |
 | `tagged-template` | 0 | 0 | 27 | 27 | **0.00%** |
 | `tco-pos.js` | 1 | 0 | 0 | 1 | **100.00%** |
 | `template-literal` | 3 | 0 | 54 | 57 | **5.26%** |
@@ -130,7 +130,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `unary-plus` | 10 | 0 | 7 | 17 | **58.82%** |
 | `unsigned-right-shift` | 45 | 0 | 0 | 45 | **100.00%** |
 | `void` | 4 | 0 | 5 | 9 | **44.44%** |
-| `yield` | 16 | 0 | 47 | 63 | **25.40%** |
+| `yield` | 27 | 0 | 36 | 63 | **42.86%** |
 
 ## Statement and Declaration Features
 
