@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 14,583 | 12 | 8,917 | 23,512 | **62.02%** |
-| Language syntax and semantics | 12,912 | 46 | 10,685 | 23,643 | **54.61%** |
-| **Total** | 27,495 | 58 | 20,688 | 48,241 | **57.00%** |
+| Language syntax and semantics | 13,412 | 46 | 10,185 | 23,643 | **56.73%** |
+| **Total** | 27,995 | 58 | 20,188 | 48,241 | **58.03%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 6,176 | 10 | 4,852 | 11,038 | **55.95%** |
+| `expressions` | 6,455 | 10 | 4,573 | 11,038 | **58.48%** |
 | `function-code` | 36 | 0 | 181 | 217 | **16.59%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 5,525 | 35 | 3,777 | 9,337 | **59.17%** |
+| `statements` | 5,746 | 35 | 3,556 | 9,337 | **61.54%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -69,7 +69,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `assignmenttargettype` | 310 | 0 | 14 | 324 | **95.68%** |
 | `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
 | `async-function` | 37 | 0 | 56 | 93 | **39.78%** |
-| `async-generator` | 207 | 0 | 416 | 623 | **33.23%** |
+| `async-generator` | 212 | 0 | 411 | 623 | **34.03%** |
 | `await` | 3 | 0 | 19 | 22 | **13.64%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |
@@ -89,7 +89,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
 | `function` | 234 | 3 | 27 | 264 | **88.64%** |
-| `generators` | 31 | 0 | 259 | 290 | **10.69%** |
+| `generators` | 212 | 0 | 78 | 290 | **73.10%** |
 | `greater-than-or-equal` | 42 | 0 | 1 | 43 | **97.67%** |
 | `greater-than` | 48 | 0 | 1 | 49 | **97.96%** |
 | `grouping` | 6 | 0 | 3 | 9 | **66.67%** |
@@ -108,7 +108,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
 | `new.target` | 0 | 0 | 14 | 14 | **0.00%** |
 | `new` | 0 | 0 | 59 | 59 | **0.00%** |
-| `object` | 707 | 6 | 457 | 1,170 | **60.43%** |
+| `object` | 800 | 6 | 364 | 1,170 | **68.38%** |
 | `optional-chaining` | 6 | 0 | 32 | 38 | **15.79%** |
 | `postfix-decrement` | 2 | 0 | 35 | 37 | **5.41%** |
 | `postfix-increment` | 2 | 0 | 36 | 38 | **5.26%** |
@@ -137,7 +137,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `async-function` | 45 | 0 | 29 | 74 | **60.81%** |
-| `async-generator` | 33 | 0 | 268 | 301 | **10.96%** |
+| `async-generator` | 89 | 0 | 212 | 301 | **29.57%** |
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
@@ -153,7 +153,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `for-of` | 744 | 7 | 0 | 751 | **99.07%** |
 | `for` | 110 | 0 | 275 | 385 | **28.57%** |
 | `function` | 402 | 14 | 35 | 451 | **89.14%** |
-| `generators` | 32 | 0 | 234 | 266 | **12.03%** |
+| `generators` | 197 | 0 | 69 | 266 | **74.06%** |
 | `if` | 59 | 0 | 10 | 69 | **85.51%** |
 | `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
 | `let` | 36 | 0 | 109 | 145 | **24.83%** |
