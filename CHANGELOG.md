@@ -15,6 +15,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   lazy return forwarding, reentrancy, flatMap flattening, subclassing, and
   intrinsic descriptors. Align iterator records and helper state transitions
   with ECMA-262.
+
+- test262/docs: verify 500 additional current-provenance pinned generator and
+  method-definition fixtures: 181 generator expressions, 165 generator
+  declarations, 61 async-generator declaration/expression cases, and 93
+  object method-definition cases. All 952 metadata-selected variants and all
+  500 native fixtures pass; the native Test262 language harness now correctly
+  registers parse-negative fixtures alongside execution cases.
+
 - test262/docs: verify 500 additional positive pinned class-declaration
   fixtures: 209 method-parameter-destructuring cases, including static and
   private methods, plus 291 class-element cases covering private names, class
