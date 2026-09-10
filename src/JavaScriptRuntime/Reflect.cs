@@ -73,8 +73,7 @@ namespace JavaScriptRuntime
         public static bool preventExtensions(object target)
         {
             RequireObjectTarget(target, "preventExtensions");
-            ObjectRuntime.preventExtensions(target);
-            return true;
+            return ObjectRuntime.TryPreventExtensionsInternal(target);
         }
 
         public static bool setPrototypeOf(object target, object? proto)

@@ -1199,20 +1199,41 @@ public sealed partial class HIRToLIRLowerer
 
                     // Global bindings are resolved through the runtime global object so user code can
                     // observe mutations like `globalThis.Object = fakeObject`.
-                    if (varExpr.Name.Kind == BindingKind.Global)
+                    if (varExpr.Name.Kind == BindingKind.Global
+                        || binding.DeclaringScope?.Kind == ScopeKind.Global)
                     {
                         var globalName = varExpr.Name.Name;
+
+                        if (activeWithBindingProbe is { } activeProbe)
+                        {
+                            resultTempVar =
+                                EmitResolveActiveWithGlobalBinding(
+                                    activeProbe);
+                            return true;
+                        }
 
                         var keyTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstString(globalName, keyTemp));
                         DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
                         resultTempVar = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                            nameof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue),
-                            new[] { EnsureObject(keyTemp) },
-                            resultTempVar));
+                        if (_scope?.MayUseBoundWithObject == true)
+                        {
+                            _methodBodyIR.Instructions.Add(
+                                new LIRCallRuntimeServicesStatic(
+                                    nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
+                                    new[] { EnsureObject(keyTemp) },
+                                    resultTempVar));
+                        }
+                        else
+                        {
+                            _methodBodyIR.Instructions.Add(
+                                new LIRCallIntrinsicStatic(
+                                    nameof(JavaScriptRuntime.ObjectRuntime),
+                                    nameof(JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue),
+                                    new[] { EnsureObject(keyTemp) },
+                                    resultTempVar));
+                        }
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                         resultTempVar = EmitResolveActiveWithBindingOrDefault(
                             activeWithBindingProbe,

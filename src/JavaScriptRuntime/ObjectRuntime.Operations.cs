@@ -191,8 +191,6 @@ namespace JavaScriptRuntime
         private sealed class ObjectIntegrityState
         {
             public bool Extensible = true;
-            public bool Sealed;
-            public bool Frozen;
         }
 
         private sealed class RequestedPropertyDescriptor
@@ -670,6 +668,7 @@ namespace JavaScriptRuntime
                 && obj is not IDictionary<string, object?>
                 && obj is not System.Collections.IDictionary
                 && obj is not JavaScriptRuntime.TypedArrayBase
+                && obj is not JavaScriptRuntime.Error
                 && obj is not string
                 && obj is not JavaScriptRuntime.Symbol
                 && !CallableOperations.IsCallable(obj)
@@ -678,12 +677,18 @@ namespace JavaScriptRuntime
                 var type = obj.GetType();
                 foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(property => property.Name, StringComparer.Ordinal))
                 {
-                    AddKey(keys, seen, property.Name);
+                    if (!PropertyDescriptorStore.IsDeleted(obj, property.Name))
+                    {
+                        AddKey(keys, seen, property.Name);
+                    }
                 }
 
                 foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(field => field.Name, StringComparer.Ordinal))
                 {
-                    AddKey(keys, seen, field.Name);
+                    if (!PropertyDescriptorStore.IsDeleted(obj, field.Name))
+                    {
+                        AddKey(keys, seen, field.Name);
+                    }
                 }
             }
 
@@ -692,43 +697,114 @@ namespace JavaScriptRuntime
 
         private static List<string> GetOrderedOwnKeys(object obj, bool includeEncodedSymbolKeys)
         {
-            if (obj is JavaScriptRuntime.Proxy proxy)
-            {
-                if (proxy.TryInvokeTrap("ownKeys", "ownKeys", new object?[] { proxy.GetTarget("ownKeys") }, out var trapResult))
-                {
-                    return CoerceOwnKeys(trapResult, includeEncodedSymbolKeys).ToList();
-                }
-
-                return GetOrderedOwnKeys(proxy.GetTarget("ownKeys"), includeEncodedSymbolKeys);
-            }
-
-            return ReorderOwnKeys(CollectOwnKeysInEncounterOrder(obj), includeEncodedSymbolKeys);
+            var keys = GetOrderedOwnKeysIncludingSymbols(obj);
+            return includeEncodedSymbolKeys
+                ? keys
+                : keys.Where(key => !IsEncodedSymbolKey(key)).ToList();
         }
 
-        private static IEnumerable<string> CoerceOwnKeys(object? trapResult, bool includeEncodedSymbolKeys)
+        private static List<string> GetOrderedOwnKeysIncludingSymbols(object obj)
+        {
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                var target = proxy.GetTarget("ownKeys");
+                if (proxy.TryInvokeTrap("ownKeys", "ownKeys", new object?[] { target }, out var trapResult))
+                {
+                    var trapKeys = CoerceOwnKeys(trapResult).ToList();
+                    var seen = new HashSet<string>(StringComparer.Ordinal);
+                    foreach (var key in trapKeys)
+                    {
+                        if (!seen.Add(key))
+                        {
+                            throw new TypeError("Proxy ownKeys trap returned duplicate entries");
+                        }
+                    }
+
+                    var targetKeys = GetOrderedOwnKeysIncludingSymbols(target);
+                    var targetNonconfigurableKeys = new List<string>();
+                    var targetConfigurableKeys = new List<string>();
+                    foreach (var key in targetKeys)
+                    {
+                        if (TryGetOwnPropertyDescriptor(target, key, out var descriptor)
+                            && !descriptor.Configurable)
+                        {
+                            targetNonconfigurableKeys.Add(key);
+                        }
+                        else
+                        {
+                            targetConfigurableKeys.Add(key);
+                        }
+                    }
+
+                    var extensibleTarget = isExtensible(target);
+                    if (extensibleTarget && targetNonconfigurableKeys.Count == 0)
+                    {
+                        return trapKeys;
+                    }
+
+                    var uncheckedResultKeys = new HashSet<string>(
+                        trapKeys,
+                        StringComparer.Ordinal);
+                    foreach (var key in targetNonconfigurableKeys)
+                    {
+                        if (!uncheckedResultKeys.Remove(key))
+                        {
+                            throw new TypeError(
+                                "Proxy ownKeys trap omitted a non-configurable target property");
+                        }
+                    }
+
+                    if (extensibleTarget)
+                    {
+                        return trapKeys;
+                    }
+
+                    foreach (var key in targetConfigurableKeys)
+                    {
+                        if (!uncheckedResultKeys.Remove(key))
+                        {
+                            throw new TypeError(
+                                "Proxy ownKeys trap omitted a property of a non-extensible target");
+                        }
+                    }
+
+                    if (uncheckedResultKeys.Count != 0)
+                    {
+                        throw new TypeError(
+                            "Proxy ownKeys trap returned an extra property for a non-extensible target");
+                    }
+
+                    return trapKeys;
+                }
+
+                return GetOrderedOwnKeysIncludingSymbols(target);
+            }
+
+            return ReorderOwnKeys(
+                CollectOwnKeysInEncounterOrder(obj),
+                includeEncodedSymbolKeys: true);
+        }
+
+        private static IEnumerable<string> CoerceOwnKeys(object? trapResult)
         {
             if (!JavaScriptRuntime.Proxy.IsObjectLikeValue(trapResult))
             {
                 throw new TypeError("Proxy ownKeys trap must return an object");
             }
 
-            foreach (var key in EnumerateProxyOwnKeysResult(trapResult!, includeEncodedSymbolKeys))
+            foreach (var key in EnumerateProxyOwnKeysResult(trapResult!))
             {
                 yield return key;
             }
         }
 
-        private static IEnumerable<string> EnumerateProxyOwnKeysResult(object trapResult, bool includeEncodedSymbolKeys)
+        private static IEnumerable<string> EnumerateProxyOwnKeysResult(object trapResult)
         {
             if (trapResult is JavaScriptRuntime.Array arrayResult)
             {
                 foreach (var key in arrayResult)
                 {
-                    var propertyKey = CoerceProxyOwnKey(key);
-                    if (includeEncodedSymbolKeys || !IsEncodedSymbolKey(propertyKey))
-                    {
-                        yield return propertyKey;
-                    }
+                    yield return CoerceProxyOwnKey(key);
                 }
 
                 yield break;
@@ -738,11 +814,7 @@ namespace JavaScriptRuntime
             {
                 for (int i = 0; i < listResult.Count; i++)
                 {
-                    var propertyKey = CoerceProxyOwnKey(listResult[i]);
-                    if (includeEncodedSymbolKeys || !IsEncodedSymbolKey(propertyKey))
-                    {
-                        yield return propertyKey;
-                    }
+                    yield return CoerceProxyOwnKey(listResult[i]);
                 }
 
                 yield break;
@@ -757,11 +829,8 @@ namespace JavaScriptRuntime
             var length = global::System.Math.Max(0, TypeUtilities.ToInt32(lengthValue));
             for (int i = 0; i < length; i++)
             {
-                var propertyKey = CoerceProxyOwnKey(ObjectRuntime.GetItem(trapResult, (double)i));
-                if (includeEncodedSymbolKeys || !IsEncodedSymbolKey(propertyKey))
-                {
-                    yield return propertyKey;
-                }
+                yield return CoerceProxyOwnKey(
+                    ObjectRuntime.GetItem(trapResult, (double)i));
             }
         }
 
@@ -787,31 +856,13 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
-                if (IsOwnPropertyEnumerableOrDefaultTrue(obj, key))
+                if (IsOwnPropertyPresentAndEnumerable(obj, key))
                 {
                     enumerableKeys.Add(key);
                 }
             }
 
             return enumerableKeys;
-        }
-
-        private static bool IsOwnPropertyEnumerableOrDefaultTrue(object obj, string key)
-        {
-            if (obj is JavaScriptRuntime.Proxy)
-            {
-                return TryGetOwnPropertyDescriptor(obj, key, out var descriptor)
-                    && descriptor.Enumerable;
-            }
-
-            if (TryGetOwnPropertyDescriptor(obj, key, out var ownDescriptor))
-            {
-                return ownDescriptor.Enumerable;
-            }
-
-            return RuntimeServices.TryEnsureLazyClassMethodDataProperty(obj, key, out var lazyClassMethodDescriptor)
-                ? lazyClassMethodDescriptor.Enumerable
-                : PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, key);
         }
 
         /// <summary>
@@ -835,8 +886,16 @@ namespace JavaScriptRuntime
                 return ownDescriptor.Enumerable;
             }
 
-            return RuntimeServices.TryEnsureLazyClassMethodDataProperty(obj, key, out var lazyClassMethodDescriptor)
-                && lazyClassMethodDescriptor.Enumerable;
+            if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(
+                    obj,
+                    key,
+                    out var lazyClassMethodDescriptor))
+            {
+                return lazyClassMethodDescriptor.Enumerable;
+            }
+
+            return HasOwnProperty(obj, key)
+                && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, key);
         }
 
         internal static List<string> GetOwnPropertyKeysInOrder(
@@ -1107,22 +1166,32 @@ namespace JavaScriptRuntime
 
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("getPrototypeOf", "getPrototypeOf", new object?[] { proxy.GetTarget("getPrototypeOf") }, out var trapResult))
+                var target = proxy.GetTarget("getPrototypeOf");
+                if (proxy.TryInvokeTrap("getPrototypeOf", "getPrototypeOf", new object?[] { target }, out var trapResult))
                 {
-                    if (trapResult is JsNull)
+                    if (trapResult is not JsNull
+                        && (trapResult is null || !IsObjectLikeForPrototype(trapResult)))
+                    {
+                        throw new TypeError(
+                            "Proxy getPrototypeOf trap must return an object or null");
+                    }
+
+                    if (isExtensible(target))
                     {
                         return trapResult;
                     }
 
-                    if (trapResult is not null && IsObjectLikeForPrototype(trapResult))
+                    var targetPrototype = getPrototypeOf(target);
+                    if (!SamePrototypeValue(trapResult, targetPrototype))
                     {
-                        return trapResult;
+                        throw new TypeError(
+                            "Proxy getPrototypeOf trap returned an incompatible prototype");
                     }
 
-                    throw new TypeError("Proxy getPrototypeOf trap must return an object or null");
+                    return trapResult;
                 }
 
-                obj = proxy.GetTarget("getPrototypeOf");
+                return getPrototypeOf(target);
             }
 
             if (obj is JavaScriptRuntime.Symbol)
@@ -1192,20 +1261,6 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            if (obj is JavaScriptRuntime.Proxy proxy)
-            {
-                if (proxy.TryInvokeTrap("setPrototypeOf", "setPrototypeOf", new object?[] { proxy.GetTarget("setPrototypeOf"), prototype }, out var trapResult))
-                {
-                    if (!TypeUtilities.ToBoolean(trapResult))
-                    {
-                        throw new TypeError("Proxy setPrototypeOf trap returned false");
-                    }
-
-                    return obj;
-                }
-
-                obj = proxy.GetTarget("setPrototypeOf");
-            }
             if (!IsValidPrototypeValue(prototype))
             {
                 throw new TypeError("Object prototype may only be an Object or null");
@@ -1215,7 +1270,7 @@ namespace JavaScriptRuntime
                 return obj;
             }
 
-            if (!OrdinarySetPrototypeOfInternal(obj, prototype))
+            if (!SetPrototypeOfInternal(obj, prototype))
             {
                 throw new TypeError("#<Object> is not extensible");
             }
@@ -1308,12 +1363,15 @@ namespace JavaScriptRuntime
             }
 
             var keys = new List<string>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-
-            EnumerateOwnEnumerableProperties(
-                obj,
-                seen,
-                (name, _) => keys.Add(name));
+            foreach (var key in GetOrderedOwnKeys(
+                         obj,
+                         includeEncodedSymbolKeys: false))
+            {
+                if (IsOwnPropertyPresentAndEnumerable(obj, key))
+                {
+                    keys.Add(key);
+                }
+            }
 
             return new JavaScriptRuntime.Array(keys);
         }
@@ -1372,22 +1430,13 @@ namespace JavaScriptRuntime
         {
             foreach (var k in GetOrderedOwnKeys(obj, includeEncodedSymbolKeys))
             {
-                if (!seen.Add(k) || !IsOwnPropertyEnumerableOrDefaultTrue(obj, k))
+                if (!seen.Add(k)
+                    || !IsOwnPropertyPresentAndEnumerable(obj, k))
                 {
                     continue;
                 }
 
-                if (!TryGetOwnPropertyValue(obj, k, out var value))
-                {
-                    if (!HasOwnProperty(obj, k))
-                    {
-                        continue;
-                    }
-
-                    value = GetProperty(obj, k);
-                }
-
-                processProperty(k, value);
+                processProperty(k, GetProperty(obj, k));
             }
         }
 
@@ -1417,8 +1466,31 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
-                // Use SpreadInto which handles enumerable own properties
-                SpreadInto(targetObject, source);
+                var sourceObject = Construct(source);
+                foreach (var key in GetOrderedOwnKeys(
+                             sourceObject,
+                             includeEncodedSymbolKeys: true))
+                {
+                    if (!TryGetOwnPropertyDescriptor(
+                            sourceObject,
+                            key,
+                            out var descriptor)
+                        || !descriptor.Enumerable)
+                    {
+                        continue;
+                    }
+
+                    var value = GetProperty(sourceObject, key);
+                    if (!ReflectSetOrdinary(
+                            targetObject,
+                            key,
+                            value,
+                            targetObject))
+                    {
+                        throw new TypeError(
+                            $"Cannot assign to property: {key}");
+                    }
+                }
             }
 
             return targetObject;
@@ -1749,30 +1821,22 @@ namespace JavaScriptRuntime
             }
 
             var propertiesObject = Construct(properties);
-            var enumerableKeys = GetEnumerableKeys(propertiesObject);
-            var keys = new List<string>(enumerableKeys.Count);
-            foreach (var key in enumerableKeys)
-            {
-                keys.Add(ToPropertyKeyString(key));
-            }
-
-            var seenKeys = new HashSet<string>(keys, StringComparer.Ordinal);
-            foreach (var key in GetOwnEnumerableKeysInOrder(
+            var pending =
+                new List<(string Key, RequestedPropertyDescriptor Descriptor, object Attributes)>(
+                    0);
+            foreach (var key in GetOrderedOwnKeys(
                          propertiesObject,
                          includeEncodedSymbolKeys: true))
             {
-                if (IsEncodedSymbolKey(key) && seenKeys.Add(key))
+                if (!TryGetOwnPropertyDescriptor(
+                        propertiesObject,
+                        key,
+                        out var propertyDescriptor)
+                    || !propertyDescriptor.Enumerable)
                 {
-                    keys.Add(key);
+                    continue;
                 }
-            }
 
-            var pending =
-                new List<(string Key, RequestedPropertyDescriptor Descriptor, object Attributes)>(
-                    keys.Count);
-            for (int i = 0; i < keys.Count; i++)
-            {
-                var key = keys[i];
                 var attributes = GetProperty(propertiesObject, key);
                 if (!IsPropertyDescriptorObject(attributes))
                 {
@@ -1907,58 +1971,22 @@ namespace JavaScriptRuntime
 
         public static object preventExtensions(object obj)
         {
-            if (obj is null || obj is JsNull)
+            if (obj is null || obj is JsNull || IsPrimitiveObjectOperationTarget(obj))
             {
-                throw new TypeError("Cannot convert undefined or null to object");
+                return obj!;
             }
 
-            if (IsPrimitiveObjectOperationTarget(obj))
+            if (!TryPreventExtensionsInternal(obj))
             {
-                return obj;
+                throw new TypeError("Cannot prevent extensions");
             }
 
-            if (obj is JavaScriptRuntime.Proxy proxy)
-            {
-                var target = proxy.GetTarget("preventExtensions");
-                if (proxy.TryInvokeTrap(
-                        "preventExtensions",
-                        "preventExtensions",
-                        [target],
-                        out var trapResult))
-                {
-                    if (!TypeUtilities.ToBoolean(trapResult))
-                    {
-                        throw new TypeError(
-                            "Proxy preventExtensions trap returned false");
-                    }
-                    if (isExtensible(target))
-                    {
-                        throw new TypeError(
-                            "Proxy preventExtensions trap returned true for an extensible target");
-                    }
-                    return proxy;
-                }
-
-                preventExtensions(target);
-                return proxy;
-            }
-
-            GetIntegrityState(obj).Extensible = false;
-            if (obj is Array array)
-            {
-                array.DisableDenseGrowthFastPath();
-            }
             return obj;
         }
 
         public static bool isExtensible(object obj)
         {
-            if (obj is null || obj is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            if (IsPrimitiveObjectOperationTarget(obj))
+            if (obj is null || obj is JsNull || IsPrimitiveObjectOperationTarget(obj))
             {
                 return false;
             }
@@ -2006,45 +2034,42 @@ namespace JavaScriptRuntime
                 return obj;
             }
 
-            EnsureIntegrityDescriptorsForExistingOwnProperties(obj);
-            foreach (var key in GetOwnKeysForIntegrity(obj))
+            if (!TryPreventExtensionsInternal(obj))
             {
-                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc))
-                {
-                    continue;
-                }
+                throw new TypeError(
+                    $"Cannot {(frozen ? "freeze" : "seal")} object");
+            }
 
-                desc = PropertyDescriptorStore.CloneDescriptor(desc);
-                desc.Configurable = false;
-                if (frozen && desc.Kind == JsPropertyDescriptorKind.Data)
+            var keys = GetOwnKeysForIntegrity(obj);
+            foreach (var key in keys)
+            {
+                var requested = new RequestedPropertyDescriptor
                 {
-                    desc.Writable = false;
-                }
+                    HasConfigurable = true,
+                    Configurable = false
+                };
 
-                if (obj is JsObject jsObject)
+                if (frozen)
                 {
-                    if (!jsObject.DefineOwnProperty(key, desc))
+                    if (!TryGetOwnPropertyDescriptor(obj, key, out var currentDescriptor))
                     {
-                        throw new TypeError($"Cannot define property: {key}");
+                        continue;
+                    }
+
+                    if (currentDescriptor.Kind == JsPropertyDescriptorKind.Data)
+                    {
+                        requested.HasWritable = true;
+                        requested.Writable = false;
                     }
                 }
-                else
+
+                var attributes = CreatePropertyDescriptorObject(requested);
+                if (!TryDefineProperty(obj, key, requested, attributes))
                 {
-                    PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+                    throw new TypeError($"Cannot define property: {key}");
                 }
             }
 
-            var state = GetIntegrityState(obj);
-            state.Extensible = false;
-            state.Sealed = true;
-            if (frozen)
-            {
-                state.Frozen = true;
-            }
-            if (obj is Array array)
-            {
-                array.DisableDenseGrowthFastPath();
-            }
             return obj;
         }
 
@@ -2066,15 +2091,19 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (IsExtensibleInternal(obj))
+            if (isExtensible(obj))
             {
                 return false;
             }
 
             foreach (var key in GetOwnKeysForIntegrity(obj))
             {
-                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc)
-                    || desc.Configurable
+                if (!TryGetOwnPropertyDescriptor(obj, key, out var desc))
+                {
+                    continue;
+                }
+
+                if (desc.Configurable
                     || frozen && desc.Kind == JsPropertyDescriptorKind.Data && desc.Writable)
                 {
                     return false;
@@ -3709,12 +3738,34 @@ namespace JavaScriptRuntime
 
             if (target is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("has", "has", new object?[] { proxy.GetTarget("has"), ToExternalPropertyKey(name) }, out var trapResult))
+                var proxyTarget = proxy.GetTarget("has");
+                if (proxy.TryInvokeTrap(
+                        "has",
+                        "has",
+                        new object?[] { proxyTarget, ToExternalPropertyKey(name) },
+                        out var trapResult))
                 {
-                    return TypeUtilities.ToBoolean(trapResult);
+                    var booleanTrapResult = TypeUtilities.ToBoolean(trapResult);
+                    if (booleanTrapResult)
+                    {
+                        return true;
+                    }
+
+                    if (TryGetOwnPropertyDescriptor(
+                            proxyTarget,
+                            name,
+                            out var targetDescriptor)
+                        && (!targetDescriptor.Configurable
+                            || !isExtensible(proxyTarget)))
+                    {
+                        throw new TypeError(
+                            "Proxy has trap cannot hide this target property");
+                    }
+
+                    return false;
                 }
 
-                target = proxy.GetTarget("has");
+                return HasProperty(proxyTarget, name);
             }
 
             if (HasOwnPropertyForPropertyLookup(target, name))
@@ -3834,7 +3885,8 @@ namespace JavaScriptRuntime
                     }
 
                     var extensibleTarget = isExtensible(proxyTarget);
-                    descriptor = CreateDescriptorForNewProperty(ParseRequestedPropertyDescriptor(trapResult!));
+                    descriptor = CreateDescriptorForNewProperty(
+                        ParseRequestedPropertyDescriptor(trapResult!));
                     if (!targetHasDescriptor)
                     {
                         if (!extensibleTarget || !descriptor.Configurable)
@@ -3848,6 +3900,16 @@ namespace JavaScriptRuntime
                     if (!IsCompatibleProxyOwnPropertyDescriptor(descriptor, targetDescriptor))
                     {
                         throw new TypeError("Proxy getOwnPropertyDescriptor trap reported an incompatible property descriptor");
+                    }
+
+                    if (!descriptor.Configurable
+                        && descriptor.Kind == JsPropertyDescriptorKind.Data
+                        && !descriptor.Writable
+                        && targetDescriptor.Kind == JsPropertyDescriptorKind.Data
+                        && targetDescriptor.Writable)
+                    {
+                        throw new TypeError(
+                            "Proxy getOwnPropertyDescriptor trap cannot report a writable target property as non-writable");
                     }
 
                     return true;
@@ -4147,12 +4209,15 @@ namespace JavaScriptRuntime
 
             if (targetDescriptor.Kind == JsPropertyDescriptorKind.Data)
             {
-                if (targetDescriptor.Writable != reportedDescriptor.Writable)
+                if (!targetDescriptor.Writable && reportedDescriptor.Writable)
                 {
                     return false;
                 }
 
-                return targetDescriptor.Writable || Operators.SameValue(reportedDescriptor.Value, targetDescriptor.Value);
+                return targetDescriptor.Writable
+                    || Operators.SameValue(
+                        reportedDescriptor.Value,
+                        targetDescriptor.Value);
             }
 
             return ReferenceEquals(reportedDescriptor.Get, targetDescriptor.Get)
@@ -4563,6 +4628,12 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (proto is JavaScriptRuntime.Proxy)
+            {
+                value = ReflectGet(proto, propName, receiverForAccessors);
+                return true;
+            }
+
             if (TryGetOwnPropertyValue(proto, propName, receiverForAccessors, out value))
             {
                 return true;
@@ -4589,6 +4660,12 @@ namespace JavaScriptRuntime
                 {
                     value = null;
                     return false;
+                }
+
+                if (proto is JavaScriptRuntime.Proxy)
+                {
+                    value = ReflectGet(proto, propName, receiverForAccessors);
+                    return true;
                 }
 
                 if (TryGetOwnPropertyValue(proto, propName, receiverForAccessors, out value))
@@ -4636,6 +4713,22 @@ namespace JavaScriptRuntime
                 if (ReferenceEquals(proto, receiver) || ++depth > MaxPrototypeChainDepth)
                 {
                     return false;
+                }
+
+                if (proto is JavaScriptRuntime.Proxy)
+                {
+                    var succeeded = ReflectSetOrdinary(
+                        proto,
+                        propName,
+                        value,
+                        receiver);
+                    if (!succeeded && throwOnError)
+                    {
+                        throw new TypeError(
+                            $"Cannot assign to property '{propName}' of object");
+                    }
+
+                    return true;
                 }
 
                 if (PropertyDescriptorStore.TryGetOwn(proto, propName, out var desc))
@@ -5895,12 +5988,7 @@ namespace JavaScriptRuntime
             // Proxy get trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("get", "get", new object?[] { proxy.GetTarget("get"), ToExternalPropertyKey(name), obj }, out var trapResult))
-                {
-                    return trapResult;
-                }
-
-                return GetProperty(proxy.GetTarget("get"), name);
+                return ReflectGet(proxy, name, proxy);
             }
 
             if (obj is TypedArrayBase typedArrayWithOwnLength
@@ -6081,16 +6169,48 @@ namespace JavaScriptRuntime
         {
             if (target is Proxy proxy)
             {
+                var proxyTarget = proxy.GetTarget("set");
                 if (proxy.TryInvokeTrap(
                     "set",
                     "set",
-                    new object?[] { proxy.GetTarget("set"), ToExternalPropertyKey(key), value, receiver },
+                    new object?[] { proxyTarget, ToExternalPropertyKey(key), value, receiver },
                     out var trapResult))
                 {
-                    return Operators.IsTruthy(trapResult);
+                    var booleanTrapResult = Operators.IsTruthy(trapResult);
+                    if (!booleanTrapResult)
+                    {
+                        return false;
+                    }
+
+                    if (TryGetOwnPropertyDescriptor(
+                            proxyTarget,
+                            key,
+                            out var targetDescriptor)
+                        && !targetDescriptor.Configurable)
+                    {
+                        if (targetDescriptor.Kind == JsPropertyDescriptorKind.Data
+                            && !targetDescriptor.Writable
+                            && !Operators.SameValue(
+                                value,
+                                targetDescriptor.Value))
+                        {
+                            throw new TypeError(
+                                "Proxy set trap cannot change a frozen data property");
+                        }
+
+                        if (targetDescriptor.Kind == JsPropertyDescriptorKind.Accessor
+                            && (targetDescriptor.Set is null
+                                || targetDescriptor.Set is JsNull))
+                        {
+                            throw new TypeError(
+                                "Proxy set trap cannot set an accessor without a setter");
+                        }
+                    }
+
+                    return true;
                 }
 
-                return ReflectSetOrdinary(proxy.GetTarget("set"), key, value, receiver);
+                return ReflectSetOrdinary(proxyTarget, key, value, receiver);
             }
 
             if (target is TypedArrayBase typedArray
@@ -6174,8 +6294,16 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                SetProperty(receiver!, key, value, throwOnError: false);
-                return true;
+                var requested = new RequestedPropertyDescriptor
+                {
+                    HasValue = true,
+                    Value = value
+                };
+                return TryDefineProperty(
+                    receiver!,
+                    key,
+                    requested,
+                    CreatePropertyDescriptorObject(requested));
             }
 
             return CreateDataProperty(receiver!, key, value);
@@ -6192,16 +6320,43 @@ namespace JavaScriptRuntime
 
             if (target is Proxy proxy)
             {
+                var proxyTarget = proxy.GetTarget("get");
                 if (proxy.TryInvokeTrap(
                     "get",
                     "get",
-                    new object?[] { proxy.GetTarget("get"), ToExternalPropertyKey(key), receiver },
+                    new object?[] { proxyTarget, ToExternalPropertyKey(key), receiver },
                     out var trapResult))
                 {
+                    if (TryGetOwnPropertyDescriptor(
+                            proxyTarget,
+                            key,
+                            out var targetDescriptor)
+                        && !targetDescriptor.Configurable)
+                    {
+                        if (targetDescriptor.Kind == JsPropertyDescriptorKind.Data
+                            && !targetDescriptor.Writable
+                            && !Operators.SameValue(
+                                trapResult,
+                                targetDescriptor.Value))
+                        {
+                            throw new TypeError(
+                                "Proxy get trap returned a different value for a frozen data property");
+                        }
+
+                        if (targetDescriptor.Kind == JsPropertyDescriptorKind.Accessor
+                            && (targetDescriptor.Get is null
+                                || targetDescriptor.Get is JsNull)
+                            && trapResult is not null)
+                        {
+                            throw new TypeError(
+                                "Proxy get trap returned a value for an accessor without a getter");
+                        }
+                    }
+
                     return trapResult;
                 }
 
-                return ReflectGet(proxy.GetTarget("get"), propertyKey, receiver);
+                return ReflectGet(proxyTarget, propertyKey, receiver);
             }
 
             for (object? current = target; current is not null and not JsNull; current = PrototypeChain.GetPrototypeOrNull(current))
@@ -6239,13 +6394,102 @@ namespace JavaScriptRuntime
         /// </summary>
         internal static bool ReflectSetPrototypeOf(object target, object? prototype)
         {
-            if (target is Proxy || !IsObjectLikeForPrototype(target))
+            if (!IsValidPrototypeValue(prototype))
             {
-                setPrototypeOf(target, prototype);
+                throw new TypeError(
+                    "Reflect.setPrototypeOf proto must be an object or null");
+            }
+
+            if (!IsObjectLikeForPrototype(target))
+            {
+                return false;
+            }
+
+            return SetPrototypeOfInternal(target, prototype);
+        }
+
+        private static bool SetPrototypeOfInternal(
+            object target,
+            object? prototype)
+        {
+            if (target is not JavaScriptRuntime.Proxy proxy)
+            {
+                return OrdinarySetPrototypeOfInternal(target, prototype);
+            }
+
+            var proxyTarget = proxy.GetTarget("setPrototypeOf");
+            if (!proxy.TryInvokeTrap(
+                    "setPrototypeOf",
+                    "setPrototypeOf",
+                    new object?[]
+                    {
+                        proxyTarget,
+                        prototype
+                    },
+                    out var trapResult))
+            {
+                return SetPrototypeOfInternal(proxyTarget, prototype);
+            }
+
+            if (!TypeUtilities.ToBoolean(trapResult))
+            {
+                return false;
+            }
+
+            if (isExtensible(proxyTarget))
+            {
                 return true;
             }
 
-            return OrdinarySetPrototypeOfInternal(target, prototype);
+            var targetPrototype = getPrototypeOf(proxyTarget);
+            if (!SamePrototypeValue(prototype, targetPrototype))
+            {
+                throw new TypeError(
+                    "Proxy setPrototypeOf trap returned true for an incompatible prototype");
+            }
+
+            return true;
+        }
+
+        internal static bool TryPreventExtensionsInternal(object target)
+        {
+            if (target is JavaScriptRuntime.Proxy proxy)
+            {
+                var proxyTarget = proxy.GetTarget("preventExtensions");
+                if (!proxy.TryInvokeTrap(
+                        "preventExtensions",
+                        "preventExtensions",
+                        new object?[] { proxyTarget },
+                        out var trapResult))
+                {
+                    return TryPreventExtensionsInternal(proxyTarget);
+                }
+
+                var booleanTrapResult = TypeUtilities.ToBoolean(trapResult);
+                if (booleanTrapResult && isExtensible(proxyTarget))
+                {
+                    throw new TypeError(
+                        "Proxy preventExtensions trap returned true for an extensible target");
+                }
+
+                return booleanTrapResult;
+            }
+
+            if (target is TypedArrayBase
+                {
+                    IsBackedByResizableBuffer: true
+                })
+            {
+                return false;
+            }
+
+            GetIntegrityState(target).Extensible = false;
+            if (target is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -6383,18 +6627,19 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            var hasOwn = HasOwnProperty(obj, name);
-            // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("set", "set", new object?[] { proxy.GetTarget("set"), ToExternalPropertyKey(name), value, obj }, out _))
+                if (!ReflectSetOrdinary(proxy, name, value, proxy)
+                    && throwOnError)
                 {
-                    return value;
+                    throw new TypeError(
+                        $"Cannot assign to property '{name}' of object");
                 }
 
-                return SetProperty(proxy.GetTarget("set"), name, value, throwOnError);
+                return value;
             }
 
+            var hasOwn = HasOwnProperty(obj, name);
             if (IsReadOnlyStringObjectIndex(obj, name))
             {
                 if (!throwOnError)

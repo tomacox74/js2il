@@ -163,8 +163,32 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Number.ToLocaleStringString(thisArgument);
         private static readonly BuiltinFunction1 _numberPrototypeToPrecisionValue = static (thisArgument, precision) =>
             JavaScriptRuntime.Number.ToPrecisionString(thisArgument, precision);
-        private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
-            throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
+        private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, body) =>
+        {
+            if (body is null)
+            {
+                var bodyObject = new EmptyDynamicFunctionBody();
+                BuiltinFunctionVariadic function = bodyObject.Invoke;
+                JavaScriptRuntime.Function.InitializeFunctionInstance(
+                    function,
+                    0d,
+                    "anonymous",
+                    requiresInvocationContext: false);
+                JavaScriptRuntime.Function.MarkConstructible(function);
+                return function;
+            }
+
+            throw new JavaScriptRuntime.Error(
+                "The Function constructor only supports compile-time string literal arguments in jroc.");
+        };
+
+        private sealed class EmptyDynamicFunctionBody
+        {
+            internal object? Invoke(
+                object? thisArgument,
+                in JsCallArguments arguments)
+                => null;
+        }
 
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue =
             static (_, args) => JavaScriptRuntime.Array.Construct(args ?? System.Array.Empty<object?>());
@@ -509,8 +533,8 @@ namespace JavaScriptRuntime
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
-                Configurable = true,
-                Writable = true,
+                Configurable = false,
+                Writable = false,
                 Value = JavaScriptRuntime.Function.Prototype
             });
             PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Function.Prototype, "constructor", new JsPropertyDescriptor
@@ -528,7 +552,17 @@ namespace JavaScriptRuntime
                 _proxyConstructorValue);
             JavaScriptRuntime.Function.MarkUndefinedPrototype(
                 _proxyConstructorValue);
-            DefineBuiltinFunctionProperty(_proxyConstructorValue, "revocable", _proxyRevocableValue, 2d);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                _proxyRevocableValue,
+                2d,
+                "revocable",
+                requiresInvocationContext: false);
+            JavaScriptRuntime.Function.MarkUndefinedPrototype(
+                _proxyRevocableValue);
+            DefineIntrinsicDataProperty(
+                _proxyConstructorValue,
+                "revocable",
+                _proxyRevocableValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);

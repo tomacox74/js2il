@@ -106,11 +106,18 @@ namespace JavaScriptRuntime
             var proxy = new Proxy(target, handler);
             var result = new JsObject();
             result["proxy"] = proxy;
-            result["revoke"] = (BuiltinFunction0)(thisArgument =>
+            BuiltinFunction0 revoke = thisArgument =>
             {
                 proxy.Revoke();
                 return null;
-            });
+            };
+            Function.InitializeFunctionInstance(
+                revoke,
+                0d,
+                string.Empty,
+                requiresInvocationContext: false);
+            Function.MarkUndefinedPrototype(revoke);
+            result["revoke"] = revoke;
             return result;
         }
     }

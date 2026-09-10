@@ -43,8 +43,8 @@ namespace JavaScriptRuntime
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
-                Configurable = true,
-                Writable = true,
+                Configurable = false,
+                Writable = false,
                 Value = ImmutablePrototype
             });
             PropertyDescriptorStore.DefineOrUpdate(ImmutablePrototype, "constructor", new JsPropertyDescriptor

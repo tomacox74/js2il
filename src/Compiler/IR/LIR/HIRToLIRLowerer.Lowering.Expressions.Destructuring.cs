@@ -79,6 +79,50 @@ public sealed partial class HIRToLIRLowerer
         return result;
     }
 
+    private TempVariable EmitResolveActiveWithGlobalBinding(
+        ActiveWithBindingProbe probe)
+    {
+        var globalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        var result = CreateTempVariable();
+
+        _methodBodyIR.Instructions.Add(
+            new LIRBranchIfFalse(probe.HasBinding, globalLabel));
+
+        var withValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+            new[] { probe.WithObject, probe.Name },
+            withValue));
+        DefineTempStorage(
+            withValue,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(
+            new LIRCopyTemp(EnsureObject(withValue), result));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(globalLabel));
+        ClearNumericRefinementsAtLabel();
+        var fallbackValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
+            new[] { EnsureObject(probe.Name) },
+            fallbackValue));
+        DefineTempStorage(
+            fallbackValue,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(
+            new LIRCopyTemp(EnsureObject(fallbackValue), result));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(
+            result,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return result;
+    }
+
     private bool TryLowerDestructuringPattern(
         HIRPattern pattern,
         TempVariable sourceValue,

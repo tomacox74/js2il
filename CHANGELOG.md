@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 previously failing pinned Object and Proxy
+  fixtures covering internal-method forwarding, trap invariants, own-key
+  ordering, descriptor transitions, extensibility, sealing, and freezing.
+  Correct the associated object-property and Proxy runtime behavior.
 - test262/runtime/docs: port 100 previously failing pinned Iterator fixtures
   covering helper protocol validation, callback ordering, iterator closing,
   lazy return forwarding, reentrancy, flatMap flattening, subclassing, and
