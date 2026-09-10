@@ -11,8 +11,8 @@ public class GlobalThisTests
         var globalObject = Assert.IsType<GlobalThis>(GlobalThis.globalThis);
 
         Assert.IsAssignableFrom<JsObject>(globalObject);
-        Assert.IsType<JsObject>(JavaScriptRuntime.Array.ImmutablePrototype);
-        Assert.IsType<JsObject>(JavaScriptRuntime.Array.Prototype);
+        Assert.IsType<JavaScriptRuntime.Array>(JavaScriptRuntime.Array.ImmutablePrototype);
+        Assert.IsType<JavaScriptRuntime.Array>(JavaScriptRuntime.Array.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.String.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.String.StringIteratorPrototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.RegExp.Prototype);

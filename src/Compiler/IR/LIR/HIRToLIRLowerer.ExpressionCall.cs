@@ -1333,7 +1333,12 @@ public sealed partial class HIRToLIRLowerer
         // If the receiver CLR type is known to be JavaScriptRuntime.Array, emit a typed instance call.
         {
             var receiverStorage = GetTempStorage(receiverTempVar);
-            if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+            if (receiverStorage.Kind == ValueStorageKind.Reference
+                && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array)
+                // flat and flatMap can return arbitrary species-created objects.
+                // Preserve their JavaScript return values through generic dispatch
+                // rather than the Array-typed CLR compatibility methods.
+                && calleePropAccess.PropertyName is not ("flat" or "flatMap"))
             {
                 if (hasSpreadArgs)
                 {

@@ -50,6 +50,11 @@ namespace JavaScriptRuntime
             set => SetElement(index, value);
         }
 
+        internal object? GetElementOrUndefinedForPropertyAccess(double index)
+            => TryGetElementIndex(index, out var elementIndex)
+                ? ReadElementObject(elementIndex)
+                : null;
+
         internal void SetFromDouble(int index, double value)
         {
             if ((uint)index >= (uint)GetCurrentLengthOrZero())

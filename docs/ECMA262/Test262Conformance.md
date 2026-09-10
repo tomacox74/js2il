@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 14,083 | 12 | 9,417 | 23,512 | **59.90%** |
+| Built-in objects and APIs | 14,183 | 12 | 9,317 | 23,512 | **60.32%** |
 | Language syntax and semantics | 11,412 | 46 | 12,185 | 23,643 | **48.27%** |
-| **Total** | 25,495 | 58 | 22,688 | 48,241 | **52.85%** |
+| **Total** | 25,595 | 58 | 22,588 | 48,241 | **53.06%** |
 
 ## Language Areas
 
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 2,805 | 0 | 276 | 3,081 | **91.04%** |
+| `Array` | 2,871 | 0 | 210 | 3,081 | **93.18%** |
 | `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 100 | 0 | 4 | 104 | **96.15%** |
@@ -188,7 +188,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Date` | 521 | 0 | 73 | 594 | **87.71%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
-| `DisposableStack` | 0 | 0 | 93 | 93 | **0.00%** |
+| `DisposableStack` | 4 | 0 | 89 | 93 | **4.30%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
 | `Error` | 19 | 0 | 39 | 58 | **32.76%** |
@@ -227,7 +227,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Symbol` | 50 | 0 | 48 | 98 | **51.02%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 1,132 | 0 | 306 | 1,438 | **78.72%** |
+| `TypedArray` | 1,162 | 0 | 276 | 1,438 | **80.81%** |
 | `TypedArrayConstructors` | 573 | 0 | 163 | 736 | **77.85%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |

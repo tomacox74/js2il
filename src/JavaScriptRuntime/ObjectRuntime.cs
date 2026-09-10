@@ -887,15 +887,15 @@ namespace JavaScriptRuntime
 
                 return GetProperty(obj, propName)!;
             }
+            else if (obj is TypedArrayBase typedArray)
+            {
+                return typedArray.GetElementOrUndefinedForPropertyAccess(index)!;
+            }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
             else if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
-            }
-            else if (obj is TypedArrayBase typedArray)
-            {
-                return typedArray[index];
             }
             else if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {

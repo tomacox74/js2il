@@ -989,9 +989,30 @@ public class JavaScriptAstValidator : IAstValidator
                                 break;
                             }
 
-                            // Locals and known built-in constants are always allowed.
-                            if (IsDeclared(name)
-                                || KnownGlobalConstants.Value.Contains(name)
+                            // Locally shadowed eval is an ordinary binding.
+                            if (IsDeclared(name))
+                            {
+                                break;
+                            }
+
+                            if (IsUnsupportedEvalIdentifier(name))
+                            {
+                                if (IsSupportedDirectEvalLiteralIdentifier(id)
+                                    || parent is not CallExpression callExpression
+                                    || !ReferenceEquals(callExpression.Callee, id))
+                                {
+                                    break;
+                                }
+
+                                AddError(
+                                    result,
+                                    "eval is not supported by JROC at this time; support will be added in a future release",
+                                    id);
+                                break;
+                            }
+
+                            // Known built-in constants are always allowed.
+                            if (KnownGlobalConstants.Value.Contains(name)
                                 || _runtimeIntrinsicCatalog.TryGetGlobalBinding(name, out _)
                                 || _runtimeIntrinsicCatalog.TryGetKnownGlobal(name, out _)
                                 || _runtimeIntrinsicCatalog.TryGetIntrinsicObject(name, out _))
@@ -1002,20 +1023,6 @@ public class JavaScriptAstValidator : IAstValidator
                             // CommonJS injected values.
                             if (AllowedInjectedGlobals.Value.Contains(name))
                             {
-                                break;
-                            }
-
-                            if (IsUnsupportedEvalIdentifier(name))
-                            {
-                                if (IsSupportedDirectEvalLiteralIdentifier(id))
-                                {
-                                    break;
-                                }
-
-                                AddError(
-                                    result,
-                                    "eval is not supported by JROC at this time; support will be added in a future release",
-                                    id);
                                 break;
                             }
 

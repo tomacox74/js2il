@@ -339,9 +339,9 @@ public class ValidatorTests
         }
 
         [Fact]
-        public void Validate_EvalCall_ReportsFutureReleaseError()
+        public void Validate_DynamicEvalCall_ReportsFutureReleaseError()
         {
-            var js = "eval('1 + 1');";
+            var js = "const source = '1 + 1'; eval(source);";
             var ast = ParseStrict(js);
             var result = _validator.Validate(ast);
             Assert.False(result.IsValid);
@@ -350,13 +350,13 @@ public class ValidatorTests
         }
 
         [Fact]
-        public void Validate_EvalIdentifierValue_ReportsFutureReleaseError()
+        public void Validate_EvalIdentifierValue_IsValid()
         {
             var js = "const runtimeEval = eval;";
             var ast = ParseStrict(js);
             var result = _validator.Validate(ast);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, e => e.Contains("eval is not supported by JROC at this time", StringComparison.Ordinal));
+            Assert.True(result.IsValid);
+            Assert.Empty(result.Errors);
         }
 
         [Fact]

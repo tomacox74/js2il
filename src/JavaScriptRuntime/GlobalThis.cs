@@ -132,6 +132,9 @@ namespace JavaScriptRuntime
 
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.Number.FromNumberConstructorArgument(value);
+        private static readonly BuiltinFunction1 _evalValue = static (_, _) =>
+            throw new NotSupportedException(
+                "eval is not supported by JROC at this time; support will be added in a future release");
         private static readonly Func<object[], object?, object> _bigIntFunctionValue = static (_, value) =>
             global::JavaScriptRuntime.BigInt.Call(value);
         // Static; the receiver is ignored (issue #1895).
@@ -1060,6 +1063,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.BigInt), BigInt);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.BigInt), dict[nameof(GlobalThis.BigInt)]);
 
+            dict.TryAdd(nameof(GlobalThis.eval), eval);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.eval), dict[nameof(GlobalThis.eval)]);
+
             dict.TryAdd(nameof(GlobalThis.Function), Function);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Function), dict[nameof(GlobalThis.Function)]);
 
@@ -1402,6 +1408,8 @@ namespace JavaScriptRuntime
         /// ECMAScript global BigInt conversion function value.
         /// </summary>
         public static Func<object[], object?, object> BigInt => _bigIntFunctionValue;
+
+        public static Delegate eval => _evalValue;
 
         /// <summary>
         /// ECMAScript global Function constructor value (placeholder).

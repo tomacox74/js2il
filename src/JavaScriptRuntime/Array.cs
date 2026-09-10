@@ -130,7 +130,7 @@ namespace JavaScriptRuntime
         internal static JsObject ImmutablePrototype
             => RuntimeIntrinsics.Current.GetOrCreate(
                 RuntimeIntrinsicSlot.ArrayImmutablePrototype,
-                static () => new JsObject(),
+                static () => new Array(initializeIntrinsicSurface: false),
                 static prototype =>
                 {
                     using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
@@ -189,7 +189,7 @@ namespace JavaScriptRuntime
         internal static JsObject Prototype
             => RuntimeIntrinsics.Current.GetOrCreate(
                 RuntimeIntrinsicSlot.ArrayPrototype,
-                static () => new JsObject(),
+                static () => new Array(initializeIntrinsicSurface: false),
                 static prototype =>
                 {
                     CopyImmutablePrototypeSurface(prototype);
@@ -534,16 +534,6 @@ namespace JavaScriptRuntime
 
         private static object PrototypeJoin(object? thisArgument, object? separator)
         {
-            // A missing separator and an explicit `undefined` separator are
-            // indistinguishable once bound to a fixed-arity parameter; both take
-            // the default-separator path here (matching real engines).
-            if (thisArgument is JavaScriptRuntime.Array jsArray)
-            {
-                return separator is null
-                    ? jsArray.join(System.Array.Empty<object>())
-                    : jsArray.join(new object[] { separator });
-            }
-
             // Array.prototype.join is intentionally generic (23.1.3.18): it operates on
             // any ToObject-coercible receiver via the array-like Get/length protocol
             // rather than requiring a real Array.
@@ -1016,20 +1006,16 @@ namespace JavaScriptRuntime
                 throw new TypeError("Array.prototype.indexOf called on null or undefined");
             }
 
-            // Fast path for real JS array. A missing fromIndex and an explicit
-            // `undefined` fromIndex are indistinguishable once bound to a
-            // fixed-arity parameter; ToInt(null, 0) below already treats both
-            // the same as omitted (default 0), so no special-casing is needed.
-            if (thisArgument is JavaScriptRuntime.Array jsArray)
+            // Generic array-like indexOf. LengthOfArrayLike precedes fromIndex
+            // coercion, and a zero length returns before coercion. Property access
+            // retains the primitive receiver so its intrinsic prototype is observed.
+            var length = ToArrayLikeLengthAsDouble(thisArgument);
+            if (length == 0d)
             {
-                return jsArray.indexOf(new object[] { searchElement!, fromIndex! });
+                return -1d;
             }
 
-            // Generic array-like indexOf
-            int length = ToArrayLikeLength(thisArgument);
-            double fromIndexNum;
-            try { fromIndexNum = TypeUtilities.ToNumber(fromIndex); }
-            catch { fromIndexNum = double.NaN; }
+            var fromIndexNum = TypeUtilities.ToNumber(fromIndex);
             if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum))
             {
                 fromIndexNum = 0;
@@ -1044,14 +1030,14 @@ namespace JavaScriptRuntime
                 fromIndexNum = global::System.Math.Truncate(fromIndexNum);
             }
 
-            int k;
+            double k;
             if (fromIndexNum >= length)
             {
                 k = length;
             }
             else if (fromIndexNum >= 0)
             {
-                k = (int)fromIndexNum;
+                k = fromIndexNum == 0d ? 0d : fromIndexNum;
             }
             else
             {
@@ -1066,13 +1052,18 @@ namespace JavaScriptRuntime
                 }
                 else
                 {
-                    k = (int)start;
+                    k = start;
                 }
             }
 
-            for (int i = k; i < length; i++)
+            for (var i = k; i < length; i += 1d)
             {
-                var element = JavaScriptRuntime.ObjectRuntime.GetItem(thisArgument, (double)i);
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike(i, thisArgument))
+                {
+                    continue;
+                }
+
+                var element = JavaScriptRuntime.ObjectRuntime.GetItem(thisArgument, i);
                 if (JavaScriptRuntime.Operators.StrictEqual(element, searchElement))
                 {
                     return (double)i;
@@ -1748,20 +1739,23 @@ namespace JavaScriptRuntime
                 throw new TypeError("Array.prototype.at called on null or undefined");
             }
 
-            // Fast path for real JS array. A missing index and an explicit
-            // `undefined` index are indistinguishable once bound to a
-            // fixed-arity parameter; both resolve to relative index 0 here
-            // (matching real engines), rather than the previous zero-arg
-            // shortcut that always returned undefined.
             if (thisArgument is JavaScriptRuntime.Array jsArray)
             {
-                return jsArray.at(index);
+                var arrayLength = jsArray.length;
+                var arrayRelativeIndex = ToIntegerOrInfinityForAt(index);
+                var arrayIndexValue = arrayRelativeIndex >= 0
+                    ? arrayRelativeIndex
+                    : arrayLength + arrayRelativeIndex;
+
+                return arrayIndexValue < 0 || arrayIndexValue >= arrayLength
+                    ? null
+                    : jsArray[arrayIndexValue];
             }
 
-            // Generic array-like at
-            double relativeIndex = ToIntegerOrInfinityForAt(index);
-
+            // Generic array-like at. LengthOfArrayLike precedes index coercion,
+            // so a resizable receiver can become out of bounds while coercing index.
             int length = ToArrayLikeLength(thisArgument);
+            double relativeIndex = ToIntegerOrInfinityForAt(index);
             int arrayIndex;
             if (relativeIndex >= 0)
             {
@@ -1790,18 +1784,31 @@ namespace JavaScriptRuntime
         {
             var receiver = RequireArrayLikeReceiver(thisArgument, "flat");
 
-            int depth = 1;
+            var depth = 1;
             if (depthArgument != null)
             {
-                depth = ToInt(depthArgument, 0);
+                var relativeDepth = ToIntegerOrInfinity(depthArgument);
+                depth = relativeDepth >= int.MaxValue
+                    ? int.MaxValue
+                    : relativeDepth <= int.MinValue
+                        ? int.MinValue
+                        : (int)relativeDepth;
             }
             if (depth < 0)
             {
                 depth = 0;
             }
 
-            var result = new Array();
-            FlattenIntoArrayLike(result, receiver, depth);
+            var sourceLength = ToArrayLikeLength(receiver);
+            var result = ArraySpeciesCreate(receiver);
+            FlattenIntoArrayGeneric(
+                result,
+                receiver,
+                sourceLength,
+                0,
+                depth,
+                mapperFunc: null,
+                thisArg: null);
             return result;
         }
 
@@ -1831,11 +1838,6 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeLastIndexOf(object? thisArgument, in JsCallArguments arguments)
         {
-            if (thisArgument is JavaScriptRuntime.Array jsArray)
-            {
-                return jsArray.lastIndexOf(ToNonNullableObjectArray(arguments.ToArray()));
-            }
-
             // Array.prototype.lastIndexOf is intentionally generic (23.1.3.20): it operates on
             // any ToObject-coercible receiver via the array-like Get/HasProperty/length protocol.
             // Uses the double-precision length (not the Int32-clamped ToArrayLikeLength) because
@@ -1885,18 +1887,13 @@ namespace JavaScriptRuntime
 
         private static object PrototypeCopyWithin(object? thisArgument, object? target, object? start, object? end)
         {
-            if (thisArgument is JavaScriptRuntime.Array jsArray)
-            {
-                return jsArray.copyWithin(new object?[] { target, start, end }!);
-            }
-
             // Array.prototype.copyWithin is intentionally generic (23.1.3.4): it operates on
             // any ToObject-coercible receiver via the array-like Get/Set/HasProperty/Delete protocol.
             var receiver = ToArrayMethodObject(thisArgument, "copyWithin");
-            var length = ToArrayLikeLength(receiver);
-            var to = ToClampedIndex(target, length);
-            var from = ToClampedIndex(start, length);
-            var final = end is null ? length : ToClampedIndex(end, length);
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var to = ToClampedIndexAsDouble(target, length);
+            var from = ToClampedIndexAsDouble(start, length);
+            var final = end is null ? length : ToClampedIndexAsDouble(end, length);
             var count = global::System.Math.Min(final - from, length - to);
 
             var direction = 1;
@@ -1929,21 +1926,16 @@ namespace JavaScriptRuntime
 
         private static object PrototypeFill(object? thisArgument, object? value, object? start, object? end)
         {
-            if (thisArgument is JavaScriptRuntime.Array jsArray)
-            {
-                return jsArray.fill(new object?[] { value, start, end }!);
-            }
-
             // Array.prototype.fill is intentionally generic (23.1.3.7): it operates on
             // any ToObject-coercible receiver via the array-like Set/length protocol.
             var receiver = ToArrayMethodObject(thisArgument, "fill");
-            var length = ToArrayLikeLength(receiver);
-            var k = ToClampedIndex(start, length);
-            var final = end is null ? length : ToClampedIndex(end, length);
+            var length = ToArrayLikeLengthAsDouble(receiver);
+            var k = ToClampedIndexAsDouble(start, length);
+            var final = end is null ? length : ToClampedIndexAsDouble(end, length);
 
-            for (; k < final; k++)
+            for (; k < final; k += 1d)
             {
-                SetArrayLikePropertyOrThrow(receiver, (double)k, value);
+                SetArrayLikePropertyOrThrow(receiver, k, value);
             }
 
             return receiver;
@@ -1994,7 +1986,7 @@ namespace JavaScriptRuntime
                         null);
                 }
 
-                var shouldFlatten = depth > 0 && element is JavaScriptRuntime.Array;
+                var shouldFlatten = depth > 0 && IsArrayForConcat(element);
                 if (shouldFlatten)
                 {
                     var elementLength = ToArrayLikeLength(element!);
@@ -2436,10 +2428,18 @@ namespace JavaScriptRuntime
         }
 
         public Array()
+            : this(initializeIntrinsicSurface: true)
+        {
+        }
+
+        private Array(bool initializeIntrinsicSurface)
         {
             _logicalLength = 0;
             _virtualLength = 0;
-            InitializeIntrinsicSurface();
+            if (initializeIntrinsicSurface)
+            {
+                InitializeIntrinsicSurface();
+            }
         }
         public Array(int capacity)
         {
@@ -3552,7 +3552,12 @@ namespace JavaScriptRuntime
             var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
             while (visited.Add(current))
             {
-                if (current is not JsObject || current is IExoticJsObject)
+                // Array.prototype is an Array exotic object. Dense writable elements
+                // do not block creation of an own element on an ordinary Array, and
+                // non-default indexed descriptors are checked below.
+                if (current is not JsObject
+                    || current is IExoticJsObject
+                        && current is not JavaScriptRuntime.Array)
                 {
                     return true;
                 }
@@ -5223,32 +5228,15 @@ namespace JavaScriptRuntime
         /// </summary>
         public double indexOf(object[]? args)
         {
-            int len = this.Count;
-            if (len == 0) return -1d;
-
-            object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
-            int from = 0;
-            if (args != null && args.Length > 1)
-            {
-                from = ToInt(args[1]!, 0);
-            }
-            if (from < 0)
-            {
-                from = len + from;
-                if (from < 0) from = 0;
-            }
-            if (from >= len) return -1d;
-
-            for (int i = from; i < len; i++)
-            {
-                if (Operators.StrictEqual(this[i], searchElement)) return (double)i;
-            }
-            return -1d;
+            return (double)PrototypeIndexOf(
+                this,
+                args is { Length: > 0 } ? args[0] : null,
+                args is { Length: > 1 } ? args[1] : null)!;
         }
 
         public double indexOf()
         {
-            return -1d;
+            return indexOf(null);
         }
 
         /// <summary>
@@ -5257,33 +5245,12 @@ namespace JavaScriptRuntime
         /// </summary>
         public double lastIndexOf(object[]? args)
         {
-            int len = this.Count;
-            if (len == 0) return -1d;
-
-            object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
-            int from = len - 1;
-            if (args != null && args.Length > 1)
-            {
-                // Spec: fromIndex defaults to len-1
-                from = ToInt(args[1]!, len - 1);
-            }
-            if (from < 0)
-            {
-                from = len + from;
-            }
-            if (from >= len) from = len - 1;
-            if (from < 0) return -1d;
-
-            for (int i = from; i >= 0; i--)
-            {
-                if (Operators.StrictEqual(this[i], searchElement)) return (double)i;
-            }
-            return -1d;
+            return (double)PrototypeLastIndexOf(this, JsCallArguments.FromArray(args))!;
         }
 
         public double lastIndexOf()
         {
-            return -1d;
+            return lastIndexOf(null);
         }
 
         /// <summary>
@@ -5291,18 +5258,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public object? at(object? index)
         {
-            int len = this.Count;
-            var relativeIndex = ToIntegerOrInfinityForAt(index);
-            var actualIndex = relativeIndex >= 0
-                ? relativeIndex
-                : len + relativeIndex;
-
-            if (actualIndex < 0 || actualIndex >= len)
-            {
-                return null;
-            }
-
-            return this[(int)actualIndex];
+            return PrototypeAt(this, index);
         }
 
         public object? at()
@@ -5338,26 +5294,9 @@ namespace JavaScriptRuntime
         /// </summary>
         public string join(object[]? args)
         {
-            string separator = ",";
-            if (args != null && args.Length > 0)
-            {
-                separator = DotNet2JSConversions.ToString(args[0]);
-            }
-            if (this.Count == 0) return string.Empty;
-
-            var builder = new StringBuilder();
-            for (int i = 0; i < this.Count; i++)
-            {
-                if (i > 0)
-                {
-                    builder.Append(separator);
-                }
-
-                var v = this[i];
-                builder.Append(DotNet2JSConversions.ToString(v));
-            }
-
-            return builder.ToString();
+            return (string)PrototypeJoin(
+                this,
+                args is { Length: > 0 } ? args[0] : null);
         }
 
         /// <summary>
@@ -5401,24 +5340,10 @@ namespace JavaScriptRuntime
         /// </summary>
         public bool includes(object[]? args)
         {
-            int len = this.Count;
-            if (len == 0) return false;
-
-            object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
-
-            var startIndex = args != null && args.Length > 1
-                ? CoerceArrayLikeSearchStartIndex(args[1], len)
-                : 0d;
-            if (startIndex >= len)
-            {
-                return false;
-            }
-
-            for (int i = (int)startIndex; i < len; i++)
-            {
-                if (SameValueZero(ObjectRuntime.GetItem(this, (double)i), searchElement)) return true;
-            }
-            return false;
+            return (bool)PrototypeIncludes(
+                this,
+                args is { Length: > 0 } ? args[0] : null,
+                args is { Length: > 1 } ? args[1] : null)!;
         }
 
         /// <summary>
@@ -5426,7 +5351,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public bool includes()
         {
-            return false;
+            return includes(null);
         }
 
         private static bool SameValueZero(object? x, object? y)
@@ -5481,8 +5406,6 @@ namespace JavaScriptRuntime
                     d = ss; return true;
                 case byte bb:
                     d = bb; return true;
-                case string s when double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var pd):
-                    d = pd; return true;
                 default:
                     d = 0; return false;
             }
@@ -5824,35 +5747,11 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array fill(object[]? args)
         {
-            var value = (args != null && args.Length > 0) ? args[0] : null;
-            int len = this.Count;
-            int start = 0;
-            int end = len;
-
-            if (args != null && args.Length > 1)
-            {
-                start = CoerceStartIndex(args[1], len, 0);
-            }
-            if (args != null && args.Length > 2)
-            {
-                var endArg = args[2];
-                end = endArg == null ? len : ToInt(endArg, len);
-                if (end < 0)
-                {
-                    end = len + end;
-                    if (end < 0) end = 0;
-                }
-                else if (end > len)
-                {
-                    end = len;
-                }
-            }
-
-            for (int i = start; i < end; i++)
-            {
-                this[i] = value;
-            }
-            return this;
+            return (Array)PrototypeFill(
+                this,
+                args is { Length: > 0 } ? args[0] : null,
+                args is { Length: > 1 } ? args[1] : null,
+                args is { Length: > 2 } ? args[2] : null);
         }
 
         public Array fill()
@@ -5865,51 +5764,16 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array copyWithin(object[]? args)
         {
-            int len = this.Count;
-            if (len == 0) return this;
-
-            int target = 0;
-            int start = 0;
-            int end = len;
-
-            if (args != null && args.Length > 0)
-            {
-                target = ToInt(args[0]!, 0);
-            }
-            if (args != null && args.Length > 1)
-            {
-                start = ToInt(args[1]!, 0);
-            }
-            if (args != null && args.Length > 2 && args[2] != null)
-            {
-                end = ToInt(args[2]!, len);
-            }
-
-            // Normalize indexes
-            if (target < 0) target = len + target;
-            if (start < 0) start = len + start;
-            if (end < 0) end = len + end;
-
-            if (target < 0) target = 0;
-            if (start < 0) start = 0;
-            if (end > len) end = len;
-            if (target >= len) return this;
-
-            int count = end - start;
-            if (count <= 0) return this;
-            if (count > len - target) count = len - target;
-
-            // Copy via temp buffer to handle overlap safely.
-            var temp = new object?[count];
-            for (int i = 0; i < count; i++) temp[i] = this[start + i];
-            for (int i = 0; i < count; i++) this[target + i] = temp[i];
-
-            return this;
+            return (Array)PrototypeCopyWithin(
+                this,
+                args is { Length: > 0 } ? args[0] : null,
+                args is { Length: > 1 } ? args[1] : null,
+                args is { Length: > 2 } ? args[2] : null);
         }
 
         public Array copyWithin()
         {
-            return this;
+            return copyWithin(null);
         }
 
         /// <summary>
@@ -5917,16 +5781,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array flat(object[]? args)
         {
-            int depth = 1;
-            if (args != null && args.Length > 0 && args[0] != null)
-            {
-                depth = ToInt(args[0], 0);
-            }
-            if (depth < 0) depth = 0;
-
-            var result = new Array();
-            FlattenInto(result, this, depth);
-            return result;
+            return (Array)PrototypeFlat(this, args is { Length: > 0 } ? args[0] : null)!;
         }
 
         public Array flat()
