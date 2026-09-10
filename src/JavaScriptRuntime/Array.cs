@@ -208,14 +208,7 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
             PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
-            PropertyDescriptorStore.DefineOrUpdate(prototype, "next", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (BuiltinFunction0)Iterator.PrototypeNext
-            });
+            DefinePrototypeMethod(prototype, "next", (BuiltinFunction0)IteratorPrototypeNext, 0d);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -224,6 +217,17 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Array Iterator"
             });
+        }
+
+        private static object? IteratorPrototypeNext(object? thisArgument)
+        {
+            return thisArgument switch
+            {
+                ArrayIterator iterator => iterator.Next(),
+                TypedArrayIterator iterator => iterator.Next(),
+                _ => throw new TypeError(
+                    "Array Iterator.prototype.next called on incompatible receiver")
+            };
         }
 
         internal static void ResetPrototypeForTests()

@@ -73,6 +73,8 @@ internal enum RuntimeIntrinsicSlot
     RegExpPrototype,
     RegExpStringIteratorPrototype,
     IteratorPrototype,
+    IteratorAdapterPrototype,
+    IteratorWrapperPrototype,
     IteratorHelperPrototype,
     AsyncIteratorPrototype,
     GeneratorPrototype,
@@ -82,6 +84,7 @@ internal enum RuntimeIntrinsicSlot
     AsyncFunctionPrototype,
     UrlPrototype,
     UrlSearchParamsPrototype,
+    UrlSearchParamsIteratorPrototype,
     AbortControllerPrototype,
     AbortSignalPrototype,
 
@@ -149,7 +152,6 @@ internal sealed class RuntimeIntrinsics
     private static readonly TimeSpan WaitSlice = TimeSpan.FromMilliseconds(20);
 
     private static readonly object _processDefaultGate = new();
-
     /// <summary>
     /// Wait-for graph used to detect intrinsic initialization cycles that span threads.
     /// Maps a blocked thread to the slot it is blocked on.
@@ -309,6 +311,41 @@ internal sealed class RuntimeIntrinsics
                 ? context.Realm.Intrinsics
                 : ResolveWithoutAmbientFrame();
         }
+    }
+
+    internal static void AssociateFunction(
+        object functionObject,
+        RuntimeIntrinsics? intrinsics = null)
+    {
+        ArgumentNullException.ThrowIfNull(functionObject);
+        if (functionObject is JsFunctionObject jsFunctionObject
+            && !ReferenceEquals(
+                jsFunctionObject.OwningIntrinsics,
+                intrinsics ?? Current))
+        {
+            throw new InvalidOperationException(
+                "A function cannot be associated with a different realm.");
+        }
+    }
+
+    internal static RuntimeIntrinsics GetFunctionRealm(object? functionObject)
+    {
+        if (functionObject is Proxy proxy)
+        {
+            return GetFunctionRealm(proxy.GetTarget("GetFunctionRealm"));
+        }
+
+        if (functionObject is BoundFunctionObject boundFunction)
+        {
+            return GetFunctionRealm(boundFunction.Target);
+        }
+
+        if (functionObject is JsFunctionObject jsFunctionObject)
+        {
+            return jsFunctionObject.OwningIntrinsics;
+        }
+
+        return Current;
     }
 
     /// <summary>

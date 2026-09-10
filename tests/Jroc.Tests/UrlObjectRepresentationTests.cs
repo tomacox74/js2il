@@ -21,7 +21,9 @@ public sealed class UrlObjectRepresentationTests
         Assert.IsAssignableFrom<JsObject>(iterator);
         Assert.Same(JavaScriptRuntime.Node.URL.Prototype, JsObjectConstructor.getPrototypeOf(url));
         Assert.Same(JavaScriptRuntime.Node.URLSearchParams.Prototype, JsObjectConstructor.getPrototypeOf(searchParams));
-        Assert.Same(JavaScriptRuntime.Iterator.Prototype, JsObjectConstructor.getPrototypeOf(iterator));
+        Assert.Same(
+            JavaScriptRuntime.Node.URLSearchParams.IteratorPrototype,
+            JsObjectConstructor.getPrototypeOf(iterator));
 
         Assert.Equal(url.href, ObjectRuntime.GetProperty(url, "href"));
         Assert.Equal(url.origin, ObjectRuntime.GetProperty(url, "origin"));

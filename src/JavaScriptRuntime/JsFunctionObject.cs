@@ -5,6 +5,7 @@ namespace JavaScriptRuntime;
 /// </summary>
 public abstract class JsFunctionObject : JsObject
 {
+    private readonly WeakReference<RuntimeIntrinsics> _owningIntrinsics;
     private object? _boundWithObject;
     private InvocationContextRequirements _plannedInvocationRequirements;
     private bool _hasPlannedInvocationRequirements;
@@ -12,8 +13,15 @@ public abstract class JsFunctionObject : JsObject
 
     protected JsFunctionObject()
     {
+        _owningIntrinsics = new WeakReference<RuntimeIntrinsics>(
+            RuntimeIntrinsics.Current);
         PrototypeChain.InitializePrototype(this, Function.Prototype);
     }
+
+    internal RuntimeIntrinsics OwningIntrinsics
+        => _owningIntrinsics.TryGetTarget(out var intrinsics)
+            ? intrinsics
+            : RuntimeIntrinsics.Current;
 
     /// <summary>
     /// Gets whether this function implements ECMAScript [[Construct]].

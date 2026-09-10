@@ -465,6 +465,12 @@ namespace JavaScriptRuntime.Node
                     Url.ConfigureUrlSearchParamsConstructorSurface(prototype);
                 });
 
+        internal static JsObject IteratorPrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.UrlSearchParamsIteratorPrototype,
+                static () => new JsObject(),
+                static prototype => InitializeIteratorPrototype(prototype));
+
         private readonly List<KeyValuePair<string, string>> _entries;
 
         public URLSearchParams()
@@ -730,7 +736,7 @@ namespace JavaScriptRuntime.Node
             {
                 _entries = entries;
                 _kind = kind;
-                PrototypeChain.InitializePrototype(this, JavaScriptRuntime.Iterator.Prototype);
+                PrototypeChain.InitializePrototype(this, IteratorPrototype);
             }
 
             public bool HasReturn => true;
@@ -761,6 +767,55 @@ namespace JavaScriptRuntime.Node
             {
                 _closed = true;
             }
+        }
+
+        private static void InitializeIteratorPrototype(JsObject prototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PrototypeChain.SetPrototype(
+                prototype,
+                global::JavaScriptRuntime.Iterator.Prototype);
+            BuiltinFunction0 next = IteratorPrototypeNext;
+            global::JavaScriptRuntime.Function.InitializeFunctionInstance(
+                next,
+                0d,
+                "next",
+                requiresInvocationContext: false);
+            global::JavaScriptRuntime.Function.MarkUndefinedPrototype(next);
+            PropertyDescriptorStore.DefineOrUpdate(
+                prototype,
+                "next",
+                new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = next
+                });
+            PropertyDescriptorStore.DefineOrUpdate(
+                prototype,
+                global::JavaScriptRuntime.Symbol.toStringTag.DebugId,
+                new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = false,
+                    Value = "URLSearchParams Iterator"
+                });
+        }
+
+        private static object? IteratorPrototypeNext(object? thisArgument)
+        {
+            if (thisArgument is not SearchParamsIterator iterator)
+            {
+                throw new TypeError(
+                    "URLSearchParams Iterator.prototype.next called on incompatible receiver");
+            }
+
+            return iterator.Next();
         }
 
         private static void InitializePrototype(JsObject prototype)

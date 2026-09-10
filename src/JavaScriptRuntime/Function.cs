@@ -541,6 +541,7 @@ public static class Function
 
         private static void InitializeFunctionPrototype(object functionObject, JsObject prototype)
         {
+            RuntimeIntrinsics.AssociateFunction(functionObject);
             if (PrototypeChain.GetPrototypeOrNull(functionObject) == null)
             {
                 PrototypeChain.SetPrototype(functionObject, prototype);

@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 100 previously failing pinned Iterator fixtures
+  covering helper protocol validation, callback ordering, iterator closing,
+  lazy return forwarding, reentrancy, flatMap flattening, subclassing, and
+  intrinsic descriptors. Align iterator records and helper state transitions
+  with ECMA-262.
 - test262/docs: verify 500 additional positive pinned class-declaration
   fixtures: 209 method-parameter-destructuring cases, including static and
   private methods, plus 291 class-element cases covering private names, class
