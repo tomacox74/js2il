@@ -152,13 +152,6 @@ internal sealed class RuntimeIntrinsics
     private static readonly TimeSpan WaitSlice = TimeSpan.FromMilliseconds(20);
 
     private static readonly object _processDefaultGate = new();
-    private static readonly ConditionalWeakTable<object, FunctionRealmOwner> _functionRealms = new();
-
-    private sealed class FunctionRealmOwner(RuntimeIntrinsics intrinsics)
-    {
-        internal RuntimeIntrinsics Intrinsics { get; } = intrinsics;
-    }
-
     /// <summary>
     /// Wait-for graph used to detect intrinsic initialization cycles that span threads.
     /// Maps a blocked thread to the slot it is blocked on.
@@ -325,14 +318,14 @@ internal sealed class RuntimeIntrinsics
         RuntimeIntrinsics? intrinsics = null)
     {
         ArgumentNullException.ThrowIfNull(functionObject);
-        if (functionObject is not JsFunctionObject)
+        if (functionObject is JsFunctionObject jsFunctionObject
+            && !ReferenceEquals(
+                jsFunctionObject.OwningIntrinsics,
+                intrinsics ?? Current))
         {
-            return;
+            throw new InvalidOperationException(
+                "A function cannot be associated with a different realm.");
         }
-
-        _functionRealms.GetValue(
-            functionObject,
-            _ => new FunctionRealmOwner(intrinsics ?? Current));
     }
 
     internal static RuntimeIntrinsics GetFunctionRealm(object? functionObject)
@@ -347,10 +340,9 @@ internal sealed class RuntimeIntrinsics
             return GetFunctionRealm(boundFunction.Target);
         }
 
-        if (functionObject is not null
-            && _functionRealms.TryGetValue(functionObject, out var owner))
+        if (functionObject is JsFunctionObject jsFunctionObject)
         {
-            return owner.Intrinsics;
+            return jsFunctionObject.OwningIntrinsics;
         }
 
         return Current;
