@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-02T16:37:58Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 JROC supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
 
@@ -29,6 +29,12 @@ JROC supports common declaration forms (`let`, `const`, `var`) and destructuring
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.3 ([tc39.es](https://tc39.es/ecma262/#sec-declarations-and-the-variable-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/const/dstr/ary-ptrn-rest-init-ary.js`<br>`test/language/statements/const/dstr/ary-ptrn-rest-init-id.js`<br>`test/language/statements/let/dstr/ary-ptrn-rest-init-ary.js`<br>`test/language/statements/let/dstr/ary-ptrn-rest-init-id.js`<br>`test/language/statements/using/redeclaration-error-from-within-strict-mode-function-using.js`<br>`test/language/statements/using/static-init-await-binding-invalid.js` | The native Test262 harness verifies 74 additional pinned parse-negative statement fixtures (26 `const`, 27 `let`, 21 `using`). All 144 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.3.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations-runtime-semantics-evaluation))
 

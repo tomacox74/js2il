@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-26T20:12:10Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.9 ([tc39.es](https://tc39.es/ecma262/#sec-break-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/break/S12.8_A1_T3.js`<br>`test/language/statements/break/S12.8_A1_T4.js` | The native Test262 harness verifies 6 additional pinned parse-negative statement fixtures (6 `break`). All 12 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.9.1 ([tc39.es](https://tc39.es/ecma262/#sec-break-statement-static-semantics-early-errors))
 

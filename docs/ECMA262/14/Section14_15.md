@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T07:03:44Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 try/catch/finally is supported for the synchronous cases covered by the current repo tests, including throwing and catching arbitrary JS values plus `finally` blocks on normal completion, return, and escaping throw paths. Remaining caveats are early-error coverage and exact host-level fidelity for uncaught throws after `finally` runs.
 
@@ -23,6 +23,12 @@ try/catch/finally is supported for the synchronous cases covered by the current 
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.15 ([tc39.es](https://tc39.es/ecma262/#sec-try-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/try/catch-parameter-boundnames-restriction-arguments-negative-early.js`<br>`test/language/statements/try/catch-parameter-boundnames-restriction-eval-negative-early.js` | The native Test262 harness verifies 2 additional pinned parse-negative statement fixtures (2 `try`). All 2 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.15.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-catchclauseevaluation))
 

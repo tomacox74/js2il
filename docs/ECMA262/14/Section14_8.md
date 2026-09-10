@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-26T20:12:10Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.8 ([tc39.es](https://tc39.es/ecma262/#sec-continue-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/continue/S12.7_A1_T3.js`<br>`test/language/statements/continue/S12.7_A1_T4.js` | The native Test262 harness verifies 7 additional pinned parse-negative statement fixtures (7 `continue`). All 14 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.8.1 ([tc39.es](https://tc39.es/ecma262/#sec-continue-statement-static-semantics-early-errors))
 

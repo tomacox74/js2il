@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T05:08:49Z
+> Last generated (UTC): 2026-09-10T01:08:36Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -49,6 +49,12 @@ do/while/for loops are supported including break/continue (with labels). for..of
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.7 ([tc39.es](https://tc39.es/ecma262/#sec-iteration-statements))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/await-using/redeclaration-error-from-within-strict-mode-function-await-using.js`<br>`test/language/statements/await-using/syntax/await-using-invalid-arraybindingpattern-after-bindingidentifier.js`<br>`test/language/statements/do-while/decl-async-fun.js`<br>`test/language/statements/do-while/decl-async-gen.js`<br>`test/language/statements/for/S12.6.3_A11.1_T3.js`<br>`test/language/statements/for/S12.6.3_A11_T3.js` | The native Test262 harness verifies 80 additional pinned parse-negative statement fixtures (25 `await-using`, 6 `do-while`, 49 `for`). All 157 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.7.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-do-while-statement-static-semantics-early-errors))
 
