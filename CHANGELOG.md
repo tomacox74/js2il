@@ -7,6 +7,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - test262/docs: verify 500 additional positive pinned class-declaration
+  fixtures: 209 method-parameter-destructuring cases, including static and
+  private methods, plus 291 class-element cases covering private names, class
+  fields, line-terminator separation, computed Symbol names, and static element
+  grammar. All 1,000 metadata-selected strict/non-strict variants and all 500
+  native fixtures pass without compiler, runtime, or harness changes.
+
+- test262/docs: verify 500 additional positive pinned class-declaration
   method-parameter-destructuring fixtures: 236 private generator methods, 116
   private static methods, 87 static methods with default parameters, and 61
   private methods with default parameters. All 1,000 metadata-selected
