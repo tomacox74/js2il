@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.20](https://github.com/tomacox74/js2il/releases/tag/v0.12.20).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.21](https://github.com/tomacox74/js2il/releases/tag/v0.12.21).
 
 ## How to Read This Report
 
@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 14,583 | 12 | 8,917 | 23,512 | **62.02%** |
-| Language syntax and semantics | 11,912 | 46 | 11,685 | 23,643 | **50.38%** |
-| **Total** | 26,495 | 58 | 21,688 | 48,241 | **54.92%** |
+| Language syntax and semantics | 12,412 | 46 | 11,185 | 23,643 | **52.50%** |
+| **Total** | 26,995 | 58 | 21,188 | 48,241 | **55.96%** |
 
 ## Language Areas
 
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 4,525 | 35 | 4,777 | 9,337 | **48.46%** |
+| `statements` | 5,025 | 35 | 4,277 | 9,337 | **53.82%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -141,7 +141,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 1,275 | 0 | 3,092 | 4,367 | **29.20%** |
+| `class` | 1,775 | 0 | 2,592 | 4,367 | **40.65%** |
 | `const` | 59 | 1 | 76 | 136 | **43.38%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |
