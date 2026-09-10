@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-09-10T06:32:01Z
 
 JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. Computed class field names and literal/simple computed method names are supported; arbitrary runtime-computed class method names remain limited.
 
@@ -115,6 +115,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Class static blocks (static { ... }) | Supported | `tests/Jroc.Tests/ValidatorTests.cs`<br>[`Classes_ClassStaticBlock_DeclarationOrder.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js) |  | Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization. |
+
+### 15.7.13 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Class declaration private and static method parameter destructuring conformance | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/class/dstr/ClassDeclarationDestructuringConformance9BatchExecutionTests.cs` | `test/language/statements/class/dstr/meth-static-dflt-ary-init-iter-close.js`<br>`test/language/statements/class/dstr/private-gen-meth-ary-init-iter-close.js`<br>`test/language/statements/class/dstr/private-meth-dflt-ary-init-iter-close.js`<br>`test/language/statements/class/dstr/private-meth-static-ary-init-iter-close.js` | The native Test262 harness verifies 500 additional positive pinned class-declaration fixtures: 87 static methods with default destructuring parameters, 236 private generator methods, 61 private methods with default destructuring parameters, and 116 private static methods. All 1,000 metadata-selected strict/non-strict variants passed the catalog preflight under one current compiler provenance, and all 500 native fixtures pass without compiler, runtime, or harness changes. |
 
 ## Reference: Converted Spec Text
 

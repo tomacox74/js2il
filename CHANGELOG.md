@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/docs: verify 500 additional positive pinned class-declaration
+  method-parameter-destructuring fixtures: 236 private generator methods, 116
+  private static methods, 87 static methods with default parameters, and 61
+  private methods with default parameters. All 1,000 metadata-selected
+  strict/non-strict variants and all 500 native fixtures pass without compiler,
+  runtime, or harness changes.
+
 - test262/runtime/docs: port 100 pinned Promise fixtures covering constructor
   capabilities, combinators, static methods, species, and prototype methods.
   Make Promise.reject constructor-generic so custom constructors receive and
