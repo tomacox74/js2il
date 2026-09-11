@@ -1334,96 +1334,15 @@ namespace JavaScriptRuntime
             if (obj is string || obj.GetType().IsValueType)
                 throw new TypeError("Right-hand side of 'in' should be an object");
 
-            // Proxy has trap
-            if (obj is JavaScriptRuntime.Proxy proxy)
+            if (obj is object?[] array)
             {
-                // Convert property to string key (minimal; symbols not yet surfaced here)
-                var proxyPropName = DotNet2JSConversions.ToString(property);
-                if (proxy.TryInvokeTrap("has", "has", new object?[] { proxy.GetTarget("has"), proxyPropName }, out var trapResult))
-                {
-                    return TypeUtilities.ToBoolean(trapResult);
-                }
-
-                // Fallback: apply normal 'in' semantics to the proxy target.
-                return In(proxyPropName, proxy.GetTarget("has"));
+                var name = DotNet2JSConversions.ToString(property);
+                return int.TryParse(name, out var index)
+                    && index >= 0
+                    && index < array.Length;
             }
 
-            // Convert property to string
-            var propName = DotNet2JSConversions.ToString(property);
-            
-            static bool HasOwn(object target, string name)
-            {
-                if (target is object?[] array)
-                {
-                    return int.TryParse(name, out var index)
-                        && index >= 0
-                        && index < array.Length;
-                }
-
-                return ObjectRuntime.hasOwn(target, name);
-            }
-
-            if (HasOwn(obj, propName))
-            {
-                return true;
-            }
-
-            if (!JavaScriptRuntime.PrototypeChain.Enabled)
-            {
-                return false;
-            }
-
-            // Avoid allocating cycle-detection state for the common case where no prototype
-            // has been assigned.
-            var current = obj;
-            var proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
-            if (proto is null || proto is JsNull)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(proto, obj))
-            {
-                return false;
-            }
-
-            if (HasOwn(proto, propName))
-            {
-                return true;
-            }
-
-            current = proto;
-            proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
-            if (proto is null || proto is JsNull)
-            {
-                return false;
-            }
-
-            var visited = new System.Collections.Generic.HashSet<object>(System.Collections.Generic.ReferenceEqualityComparer.Instance)
-            {
-                obj,
-                current
-            };
-
-            while (true)
-            {
-                if (!visited.Add(proto))
-                {
-                    return false;
-                }
-
-                if (HasOwn(proto, propName))
-                {
-                    return true;
-                }
-
-                current = proto;
-                proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
-                if (proto is null || proto is JsNull)
-                {
-                    return false;
-                }
-            }
+            return ObjectRuntime.HasPropertyIn(property, obj);
         }
 
         /// <summary>
@@ -1487,7 +1406,7 @@ namespace JavaScriptRuntime
             }
 
             var current = value;
-            var next = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+            var next = JavaScriptRuntime.ObjectRuntime.getPrototypeOf(current);
             if (next is null || next is JsNull)
             {
                 return false;
@@ -1505,7 +1424,7 @@ namespace JavaScriptRuntime
             }
 
             current = next;
-            next = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+            next = JavaScriptRuntime.ObjectRuntime.getPrototypeOf(current);
             if (next is null || next is JsNull)
             {
                 return false;
@@ -1531,7 +1450,7 @@ namespace JavaScriptRuntime
                 }
 
                 current = next;
-                next = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+                next = JavaScriptRuntime.ObjectRuntime.getPrototypeOf(current);
                 if (next is null || next is JsNull)
                 {
                     return false;

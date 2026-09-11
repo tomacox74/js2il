@@ -312,9 +312,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object.assign",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Assign_Basic.js",
-          "tests/Jroc.Test262.Tests/built-ins/Object/assign/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/assign/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/assign/FailingBatch100ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.assign. Copies enumerable own properties from source objects to the target using SpreadInto semantics, including the covered primitive-target coercion cases from test262. Symbol-keyed properties, property descriptor copying, and full error handling are not implemented."
+        "notes": "Implemented in JavaScriptRuntime.Object.assign. Copies enumerable own string and symbol properties in [[OwnPropertyKeys]] order, consulting each source descriptor before reading and setting the value. FailingBatch100ExecutionTests covers missing descriptors, abrupt ownKeys/descriptor completions, mixed string/symbol Proxy ordering, and Array targets. Broader host and exotic-object edge cases remain limited."
       },
       {
         "clause": "20.1.2.2",
@@ -342,12 +343,13 @@
           "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.Batch.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.IntegrityDescriptorBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/ExecutionTests.IntegrityDescriptorBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperties/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.defineProperties"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. Expanded test262 coverage exercises descriptor-bag validation, ordinary property definitions, primitive targets, and attribute transitions. Proxy invariants, resizable typed-array receivers, and specialized redefinition edges remain limited."
+        "notes": "Implemented in JavaScriptRuntime.Object.defineProperties with descriptor collection and validation before mutation. Supports data/accessor descriptors, enumerable own-key filtering, primitive Properties boxing, and all-or-throw behavior for the covered ordinary objects. FailingBatch100ExecutionTests adds Proxy own-key ordering, Arguments descriptor, and resizable typed-array coverage. Broader Proxy, typed-array, and specialized redefinition edges remain limited."
       },
       {
         "clause": "20.1.2.3.1",
@@ -375,12 +377,13 @@
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.Batch.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.FollowupBatch.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.PropertyModelBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.PropertyModelBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.defineProperty"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, primitive-target TypeError behavior, and non-extensible/sealed/frozen interactions for ordinary objects. Expanded test262 coverage exercises descriptor conflict rejection, default attribute filling for data/accessor/generic descriptors, no-op same-descriptor redefinitions, and non-configurable enumerable/configurable transition failures. Mapped/unmapped Arguments exotic-object descriptors, symbol-keyed descriptor redefinition, resizable typed-array, host-object, and full proxy invariants remain partial."
+        "notes": "Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, primitive-target TypeError behavior, and non-extensible/sealed/frozen interactions. FailingBatch100ExecutionTests adds mapped and unmapped Arguments-object accessor/data transitions and invariant failures. Symbol-keyed redefinition, resizable typed arrays, host objects, and broader Proxy invariants remain partial."
       },
       {
         "clause": "20.1.2.5",
@@ -427,12 +430,13 @@
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/freeze/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/freeze/ExecutionTests.IntegrityDescriptorBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/freeze/ExecutionTests.IntegrityDescriptorBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/freeze/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.freeze"
         ],
-        "notes": "For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, sets own properties non-configurable, and makes own data properties non-writable. Nullish and primitive inputs are returned unchanged, and String wrapper index properties retain their required non-writable/non-configurable descriptors. Current bounded test262 coverage exercises the function surface plus freezing ordinary own data properties and preserving pre-existing non-writable attributes while forcing configurability off. Subsequent strict-mode writes, deletes, and incompatible Object.defineProperty redefinitions fail through the ordinary property paths with TypeError. Array and other exotic-object invariants remain partial."
+        "notes": "For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, sets own properties non-configurable, and makes own data properties non-writable. Nullish and primitive inputs are returned unchanged. FailingBatch100ExecutionTests adds abrupt-completion and false-trap handling for Proxies, Proxy defineProperty interaction, and bounded resizable typed-array coverage. Array and broader exotic-object invariants remain partial."
       },
       {
         "clause": "20.1.2.7",
@@ -463,12 +467,13 @@
           "tests/Jroc.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.Batch.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.IntegrityDescriptorBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.IntegrityDescriptorBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.getOwnPropertyDescriptor"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary jroc objects, and expanded test262 coverage exercises descriptor reflection for several ordinary/built-in receivers, including property-key normalization for numeric -0, accessor/data descriptor shape, and primitive boxing. Specialized descriptor-reflection edges and full host-object descriptor fidelity remain limited.",
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary jroc objects. FailingBatch100ExecutionTests adds descriptor fidelity for Function.prototype and Array.prototype constructor properties. Specialized descriptor-reflection edges and full host-object fidelity remain limited.",
         "test262Paths": [
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-0-1.js",
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-1-1.js",
@@ -502,12 +507,13 @@
           "tests/Jroc.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js",
           "tests/Jroc.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyNames/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyNames/ExecutionTests.PropertyModelBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyNames/ExecutionTests.PropertyModelBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyNames/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.getOwnPropertyNames"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using ordered own-key helpers plus descriptor/dynamic stores. Returns only string keys, preserving ordinary-object numeric-then-string ordering while excluding symbol keys. Current bounded test262 coverage exercises the function surface, returned-array identity/length, ordinary object and global own-name lookup, primitive boxing, and String wrapper index properties."
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using ordered own-key helpers plus descriptor/dynamic stores. Returns only string keys while excluding symbol keys. FailingBatch100ExecutionTests verifies that Proxy ownKeys duplicate, missing non-configurable, and non-extensible target invariants are enforced before symbol keys are filtered. Broader exotic-object ordering remains limited."
       },
       {
         "clause": "20.1.2.11",
@@ -519,12 +525,13 @@
           "tests/Jroc.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js",
           "tests/Jroc.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertySymbols/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertySymbols/ExecutionTests.PropertyModelBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertySymbols/ExecutionTests.PropertyModelBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertySymbols/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.getOwnPropertySymbols"
         ],
-        "notes": "Supported through jroc's encoded-symbol-key mapping. Returns only symbol keys, preserving ordinary-object symbol insertion order and keeping symbols out of the string-key enumeration APIs."
+        "notes": "Supported through jroc's encoded-symbol-key mapping. Returns only symbol keys and preserves ordinary-object symbol insertion order. FailingBatch100ExecutionTests verifies that Proxy ownKeys duplicate, missing non-configurable, and non-extensible target invariants are enforced before string keys are filtered. Broader exotic-object ordering remains limited."
       },
       {
         "clause": "20.1.2.11.1",
@@ -668,12 +675,13 @@
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/isExtensible/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/isExtensible/ExecutionTests.IntegrityDescriptorBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/isExtensible/ExecutionTests.IntegrityDescriptorBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/isExtensible/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.isExtensible"
         ],
-        "notes": "Backed by a runtime integrity side-table; primitives return false. Ordinary objects transition to false after preventExtensions/seal/freeze and that state is consulted by assignment and Object.defineProperty paths. Exotic object behavior and complete realm invariants are partial."
+        "notes": "Backed by runtime integrity state; primitives return false, as additionally covered by FailingBatch100ExecutionTests. Ordinary objects transition to false after preventExtensions, seal, or freeze, and assignment and Object.defineProperty consult that state. Proxy and broader exotic-object invariants remain partial."
       },
       {
         "clause": "20.1.2.17",
@@ -713,12 +721,13 @@
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Keys_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/keys/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/keys/ExecutionTests.PropertyModelBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/keys/ExecutionTests.PropertyModelBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/keys/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.keys"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.keys. Returns own enumerable string keys in ordinary property order, including primitive boxing, descriptor-backed properties, inherited-key omission, and mutation-sensitive enumeration covered by test262. Symbol-keyed properties and exotic ordering guarantees remain limited."
+        "notes": "Implemented in JavaScriptRuntime.Object.keys. Returns own enumerable string keys in ordinary property order, including primitive boxing and descriptor-backed filtering. FailingBatch100ExecutionTests adds Proxy enumeration and non-enumerable descriptor cases while preserving Proxy invariants. Broader exotic-object ordering guarantees remain limited."
       },
       {
         "clause": "20.1.2.20",
@@ -729,12 +738,13 @@
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
           "tests/Jroc.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/preventExtensions/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/preventExtensions/ExecutionTests.IntegrityDescriptorBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/preventExtensions/ExecutionTests.IntegrityDescriptorBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/preventExtensions/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.preventExtensions"
         ],
-        "notes": "Marks ordinary objects non-extensible in runtime integrity state and blocks adding new properties through assignment and Object.defineProperty. Failed additions currently surface as TypeError. Exotic object behavior remains partial."
+        "notes": "Marks ordinary objects non-extensible in runtime integrity state and blocks adding new properties through assignment and Object.defineProperty. FailingBatch100ExecutionTests adds the required primitive-return behavior. Proxy and broader exotic-object behavior remain partial."
       },
       {
         "clause": "20.1.2.21",
@@ -760,12 +770,13 @@
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/seal/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/seal/ExecutionTests.IntegrityDescriptorBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/seal/ExecutionTests.IntegrityDescriptorBatch.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/seal/FailingBatch100ExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.seal"
         ],
-        "notes": "For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, and sets own properties non-configurable while leaving writable data properties writable. delete and incompatible Object.defineProperty redefinitions then fail through ordinary descriptor enforcement. Full host and exotic-object invariants are partial."
+        "notes": "For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, and sets own properties non-configurable while leaving writable data properties writable. FailingBatch100ExecutionTests adds Error and arrow-function receivers plus Proxy ownKeys ordering, defineProperty, abrupt-completion, and false-trap behavior. Broader host and exotic-object invariants remain partial."
       },
       {
         "clause": "20.1.2.23",

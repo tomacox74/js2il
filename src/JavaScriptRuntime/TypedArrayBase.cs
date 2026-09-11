@@ -34,6 +34,7 @@ namespace JavaScriptRuntime
             => WriteElementValue(index, (double)CoerceElementValue(value)!);
 
         internal string TypedArrayNameValue => TypedArrayName;
+        internal bool IsBackedByResizableBuffer => _buffer.IsResizable;
         protected ArrayBuffer BufferObject => _buffer;
         protected int ByteOffsetBytes => _byteOffset;
         protected int LengthElements => GetCurrentLengthOrZero();
@@ -1230,14 +1231,18 @@ namespace JavaScriptRuntime
 
         internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
         {
-            if (!ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
-                || (uint)index >= (uint)GetCurrentLengthOrZero())
+            if (!ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
             {
                 return base.DefineOwnProperty(key, descriptor);
             }
 
+            if ((uint)index >= (uint)GetCurrentLengthOrZero())
+            {
+                return false;
+            }
+
             if (descriptor.Kind != JsPropertyDescriptorKind.Data
-                || descriptor.Configurable
+                || !descriptor.Configurable
                 || !descriptor.Enumerable
                 || !descriptor.Writable)
             {

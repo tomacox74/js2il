@@ -375,4 +375,47 @@ public sealed class TypedArrayRuntimeTests
 
         Assert.Equal($"1,2,0,0{Environment.NewLine}", result.Output);
     }
+
+    [Fact]
+    public void ResizableBackedTypedArray_PreventExtensionsFailsWithoutMutation()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "typed-array-resizable-prevent-extensions",
+            "TypedArray.ResizablePreventExtensions",
+            static _ => ("""
+                const buffer = new ArrayBuffer(4, { maxByteLength: 8 });
+                const view = new Uint8Array(buffer);
+
+                console.log(Reflect.preventExtensions(view));
+                console.log(Object.isExtensible(view));
+
+                for (const operation of [
+                  Object.preventExtensions,
+                  Object.seal,
+                  Object.freeze
+                ]) {
+                  try {
+                    operation(view);
+                    console.log(false);
+                  } catch (error) {
+                    console.log(error instanceof TypeError);
+                  }
+                  console.log(Object.isExtensible(view));
+                }
+                """, null));
+
+        Assert.Equal(
+            string.Join(
+                Environment.NewLine,
+                "false",
+                "true",
+                "true",
+                "true",
+                "true",
+                "true",
+                "true",
+                "true",
+                string.Empty),
+            result.Output);
+    }
 }

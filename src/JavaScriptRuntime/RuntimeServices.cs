@@ -1375,10 +1375,29 @@ public class RuntimeServices
             return false;
         }
 
-        return PropertyDescriptorStore.TryGetOwn(receiver, "constructor", out var constructorDescriptor)
-            && constructorDescriptor.Kind == JsPropertyDescriptorKind.Data
-            && constructorDescriptor.Value is JsClassConstructorObject classConstructorValue
-            && classConstructorValue.Type == ownerType;
+        var current = receiver;
+        var visited = new HashSet<object>(
+            ReferenceEqualityComparer.Instance);
+        while (current is not null and not JsNull
+            && visited.Add(current))
+        {
+            if (PropertyDescriptorStore.TryGetOwn(
+                    current,
+                    "constructor",
+                    out var constructorDescriptor)
+                && constructorDescriptor.Kind
+                    == JsPropertyDescriptorKind.Data
+                && constructorDescriptor.Value
+                    is JsClassConstructorObject classConstructorValue
+                && classConstructorValue.Type == ownerType)
+            {
+                return true;
+            }
+
+            current = PrototypeChain.GetPrototypeOrNull(current);
+        }
+
+        return false;
     }
 
     private static bool HasClassPrivateMethodBrand(object? receiver, Type ownerType, bool isStatic)
@@ -1756,6 +1775,28 @@ public class RuntimeServices
         }
 
         return defaultValue;
+    }
+
+    public static object? ResolveWithBindingOrGlobal(object? nameValue)
+    {
+        var name = nameValue as string
+            ?? DotNet2JSConversions.ToString(nameValue);
+        var callee = _currentInvocation.Value?.CurrentCallee;
+        if (callee is not null
+            && JavaScriptRuntime.Function.TryGetBoundWithObject(
+                callee,
+                out var withObject)
+            && withObject is not null
+            && JavaScriptRuntime.ObjectRuntime.HasPropertyIn(
+                name,
+                withObject))
+        {
+            return JavaScriptRuntime.ObjectRuntime.GetProperty(
+                withObject,
+                name);
+        }
+
+        return JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue(name);
     }
 
     public static bool HasBoundWithBinding(object? nameValue)

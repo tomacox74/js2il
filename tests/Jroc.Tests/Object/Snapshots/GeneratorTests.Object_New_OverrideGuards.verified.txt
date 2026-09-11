@@ -440,75 +440,77 @@
 			IL_003c: ldloc.3
 			IL_003d: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasPropertyIn(object, object)
 			IL_0042: stloc.s 4
-			IL_0044: ldstr "console"
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_004e: stloc.s 5
-			IL_0050: ldloc.s 4
-			IL_0052: brfalse IL_006d
+			IL_0044: ldloc.s 4
+			IL_0046: brfalse IL_0061
 
-			IL_0057: ldloc.3
-			IL_0058: ldstr "console"
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_0062: stloc.s 6
-			IL_0064: ldloc.s 6
-			IL_0066: stloc.s 5
-			IL_0068: br IL_006d
+			IL_004b: ldloc.3
+			IL_004c: ldstr "console"
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0056: stloc.s 5
+			IL_0058: ldloc.s 5
+			IL_005a: stloc.s 6
+			IL_005c: br IL_006d
 
-			IL_006d: ldloc.s 5
+			IL_0061: ldstr "console"
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrGlobal(object)
+			IL_006b: stloc.s 6
+
+			IL_006d: ldloc.s 6
 			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0074: stloc.s 5
+			IL_0074: stloc.s 6
 			IL_0076: ldstr "Object"
 			IL_007b: ldloc.3
 			IL_007c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasPropertyIn(object, object)
 			IL_0081: stloc.s 4
-			IL_0083: ldstr "Object"
-			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_008d: stloc.s 7
-			IL_008f: ldloc.s 4
-			IL_0091: brfalse IL_00ac
+			IL_0083: ldloc.s 4
+			IL_0085: brfalse IL_00a0
 
-			IL_0096: ldloc.3
-			IL_0097: ldstr "Object"
-			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_00a1: stloc.s 8
-			IL_00a3: ldloc.s 8
-			IL_00a5: stloc.s 7
-			IL_00a7: br IL_00ac
+			IL_008a: ldloc.3
+			IL_008b: ldstr "Object"
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0095: stloc.s 7
+			IL_0097: ldloc.s 7
+			IL_0099: stloc.s 8
+			IL_009b: br IL_00ac
 
-			IL_00ac: ldloc.s 7
+			IL_00a0: ldstr "Object"
+			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrGlobal(object)
+			IL_00aa: stloc.s 8
+
+			IL_00ac: ldloc.s 8
 			IL_00ae: dup
 			IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
-			IL_00b4: stloc.s 7
+			IL_00b4: stloc.s 8
 			IL_00b6: volatile.
 			IL_00b8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
 			IL_00bd: brfalse IL_00d3
 
-			IL_00c2: ldloc.s 7
+			IL_00c2: ldloc.s 8
 			IL_00c4: ldstr "withValue"
 			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_00ce: br IL_00e9
 
-			IL_00d3: ldloc.s 7
+			IL_00d3: ldloc.s 8
 			IL_00d5: ldstr "withValue"
-			IL_00da: ldstr "Object_New_OverrideGuards:<TwoPhaseDummy_M4>:__js_call__:31"
+			IL_00da: ldstr "Object_New_OverrideGuards:<TwoPhaseDummy_M4>:__js_call__:29"
 			IL_00df: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
 			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00e9: stloc.s 7
+			IL_00e9: stloc.s 8
 			IL_00eb: volatile.
 			IL_00ed: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
 			IL_00f2: brfalse IL_010a
 
-			IL_00f7: ldloc.s 5
+			IL_00f7: ldloc.s 6
 			IL_00f9: ldstr "log"
-			IL_00fe: ldloc.s 7
+			IL_00fe: ldloc.s 8
 			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0105: br IL_0122
 
-			IL_010a: ldloc.s 5
+			IL_010a: ldloc.s 6
 			IL_010c: ldstr "log"
-			IL_0111: ldloc.s 7
-			IL_0113: ldstr "Object_New_OverrideGuards:<TwoPhaseDummy_M4>:__js_call__:32"
+			IL_0111: ldloc.s 8
+			IL_0113: ldstr "Object_New_OverrideGuards:<TwoPhaseDummy_M4>:__js_call__:30"
 			IL_0118: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
 			IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 

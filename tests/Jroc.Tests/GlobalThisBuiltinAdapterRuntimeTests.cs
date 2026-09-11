@@ -170,6 +170,33 @@ public sealed class GlobalThisBuiltinAdapterRuntimeTests
         });
     }
 
+    [Fact]
+    public void EmptyFunctionConstructorCreatesFreshConstructibleFunctions()
+    {
+        WithRealm(() =>
+        {
+            var functionConstructor =
+                BuiltinDelegateFunctionAdapter.FromDelegate(
+                    GlobalThis.Function);
+            var first = Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                CallableOperations.Call0(functionConstructor, null));
+            var second = Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                CallableOperations.Call0(functionConstructor, null));
+
+            Assert.NotSame(first, second);
+            Assert.True(first.IsConstructor);
+            Assert.Equal("anonymous", ObjectRuntime.GetItem(first, "name"));
+            Assert.Equal(0d, ObjectRuntime.GetItem(first, "length"));
+            Assert.True(JavaScriptRuntime.Object.hasOwn(first, "prototype"));
+
+            var prototype = ObjectRuntime.GetItem(first, "prototype");
+            var instance = CallableOperations.Construct0(first, first);
+            Assert.Same(
+                prototype,
+                JavaScriptRuntime.Object.getPrototypeOf(instance!));
+        });
+    }
+
     private static T WithRealm<T>(Func<T> body)
     {
         var context = RuntimeExecutionContext.GetOrCreate(

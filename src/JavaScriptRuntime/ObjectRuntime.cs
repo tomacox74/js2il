@@ -773,6 +773,10 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             else if (obj is ArgumentsObject argumentsObject
+                && PropertyDescriptorStore.GetOwnLookupCore(
+                    argumentsObject,
+                    propName,
+                    out _) == PropertyDescriptorLookup.None
                 && argumentsObject.TryGetValue(propName, out var argumentsValue))
             {
                 return argumentsValue!;
@@ -880,7 +884,11 @@ namespace JavaScriptRuntime
             else if (obj is ArgumentsObject argumentsObject)
             {
                 var propName = ToPropertyKeyString(index);
-                if (argumentsObject.TryGetValue(propName, out var argumentsValue))
+                if (PropertyDescriptorStore.GetOwnLookupCore(
+                        argumentsObject,
+                        propName,
+                        out _) == PropertyDescriptorLookup.None
+                    && argumentsObject.TryGetValue(propName, out var argumentsValue))
                 {
                     return argumentsValue!;
                 }
@@ -1024,6 +1032,10 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             else if (obj is ArgumentsObject argumentsObject
+                && PropertyDescriptorStore.GetOwnLookupCore(
+                    argumentsObject,
+                    key,
+                    out _) == PropertyDescriptorLookup.None
                 && argumentsObject.TryGetValue(key, out var argumentsValue))
             {
                 return argumentsValue!;

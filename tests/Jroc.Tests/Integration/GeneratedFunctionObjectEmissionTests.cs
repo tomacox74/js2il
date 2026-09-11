@@ -500,6 +500,28 @@ public sealed class GeneratedFunctionObjectEmissionTests
         Assert.Equal(0, allocated);
     }
 
+    [Fact]
+    public void NestedWithFallsBackToCapturedWithEnvironmentBeforeGlobal()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "nested-with-captured-binding",
+            "WithEnvironment.NestedCapturedBinding",
+            static _ => ("""
+                var x = 1;
+                var f;
+                with ({ x: 2 }) {
+                  f = function() {
+                    with ({}) {
+                      return x;
+                    }
+                  };
+                }
+                console.log(f());
+                """, null));
+
+        Assert.Equal($"2{Environment.NewLine}", result.Output);
+    }
+
     [Theory]
     [InlineData(
         "function count() { \"use strict\"; return arguments.length; }",
