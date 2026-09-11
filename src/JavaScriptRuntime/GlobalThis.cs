@@ -208,8 +208,6 @@ namespace JavaScriptRuntime
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static iterable => new JavaScriptRuntime.Map(iterable));
-        private static readonly BuiltinFunction2 _mapGroupByValue = static (_, items, callback) =>
-            JavaScriptRuntime.Map.groupBy(items, callback);
 
         private static readonly Delegate _setConstructorValue =
             CreateCollectionConstructorValue("Set", static iterable => new JavaScriptRuntime.Set(iterable));
@@ -524,17 +522,14 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Array.ConfigureIntrinsicSurface(_arrayConstructorValue);
             JavaScriptRuntime.Promise.ConfigureIntrinsicPrototype(_promiseConstructorValue, _intrinsics);
             JavaScriptRuntime.Proxy.ConfigureIntrinsicSurface(_proxyConstructorValue);
-            ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
-            ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
+            JavaScriptRuntime.Map.ConfigureIntrinsicSurface(_mapConstructorValue, _intrinsics);
+            JavaScriptRuntime.Set.ConfigureIntrinsicSurface(_setConstructorValue, _intrinsics);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
             ConfigureWeakRefIntrinsicSurface();
             ConfigureFinalizationRegistryIntrinsicSurface();
-            ConfigureCollectionConstructorMetadata(_mapConstructorValue, "Map");
-            ConfigureCollectionConstructorMetadata(_setConstructorValue, "Set");
             ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
             ConfigureCollectionConstructorMetadata(_weakSetConstructorValue, "WeakSet");
-            DefineBuiltinFunctionProperty(_mapConstructorValue, "groupBy", _mapGroupByValue, 2d);
             JavaScriptRuntime.Promise.ConfigureIntrinsicSurface(_promiseConstructorValue, _intrinsics);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
