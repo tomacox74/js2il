@@ -523,28 +523,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(_intlValue, "NumberFormat", typeof(JavaScriptRuntime.IntlNumberFormat));
             DefineIntrinsicDataProperty(_intlValue, "Segmenter", typeof(JavaScriptRuntime.IntlSegmenter));
 
-            // Attach minimal prototypes to callable globals so patterns like
-            // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
-            // references GlobalThis static properties and never touches the globalThis object.
-            ConfigureBuiltinFunctionObject(_functionConstructorValue);
-            JavaScriptRuntime.Function.MarkConstructible(
-                _functionConstructorValue);
-            PropertyDescriptorStore.DefineOrUpdate(_functionConstructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = JavaScriptRuntime.Function.Prototype
-            });
-            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Function.Prototype, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _functionConstructorValue
-            });
+            JavaScriptRuntime.Function.ConfigureIntrinsicSurface(_functionConstructorValue);
             JavaScriptRuntime.Array.ConfigureIntrinsicSurface(_arrayConstructorValue);
             JavaScriptRuntime.Promise.ConfigureIntrinsicPrototype(_promiseConstructorValue, _intrinsics);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
