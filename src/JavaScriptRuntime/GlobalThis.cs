@@ -596,9 +596,6 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_jsonValue, "parse", _jsonParseValue, 2d);
             DefineBuiltinFunctionProperty(_jsonValue, "rawJSON", _jsonRawJsonValue, 1d);
             DefineBuiltinFunctionProperty(_jsonValue, "isRawJSON", _jsonIsRawJsonValue, 1d);
-            PropertyDescriptorStore.Delete(_jsonParseValue, "prototype");
-            PropertyDescriptorStore.Delete(_jsonRawJsonValue, "prototype");
-            PropertyDescriptorStore.Delete(_jsonIsRawJsonValue, "prototype");
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
             ConfigureBuiltinFunctionObject(_jsonStringifyValue);
@@ -1014,7 +1011,7 @@ namespace JavaScriptRuntime
                 length,
                 key,
                 requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(functionValue));
-            DefineUndefinedPrototypeProperty(functionValue);
+            JavaScriptRuntime.Function.MarkUndefinedPrototype(functionValue);
             DefineIntrinsicDataProperty(target, key, functionValue);
         }
 
