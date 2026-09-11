@@ -14,9 +14,35 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Proxy")]
     public sealed class Proxy
     {
+        private static readonly BuiltinFunction2 _revocableValue =
+            static (_, target, handler) => revocable(target, handler);
+
         private object? _target;
         private object? _handler;
         private readonly bool _isCallableTarget;
+
+        internal static void ConfigureIntrinsicSurface(object constructorValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            Function.InitializeFunctionInstance(constructorValue, 2d, "Proxy");
+            Function.MarkConstructible(constructorValue);
+            Function.MarkUndefinedPrototype(constructorValue);
+            Function.InitializeFunctionInstance(
+                _revocableValue,
+                2d,
+                "revocable",
+                requiresInvocationContext: false);
+            Function.MarkUndefinedPrototype(_revocableValue);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "revocable", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _revocableValue
+            });
+        }
 
         internal static bool IsObjectLikeValue(object? value)
         {

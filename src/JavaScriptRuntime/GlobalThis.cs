@@ -289,9 +289,6 @@ namespace JavaScriptRuntime
             return new global::JavaScriptRuntime.Proxy(target, handler);
         };
 
-        private static readonly BuiltinFunction2 _proxyRevocableValue = static (_, target, handler) =>
-            global::JavaScriptRuntime.Proxy.revocable(target, handler);
-
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
@@ -526,22 +523,7 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Function.ConfigureIntrinsicSurface(_functionConstructorValue);
             JavaScriptRuntime.Array.ConfigureIntrinsicSurface(_arrayConstructorValue);
             JavaScriptRuntime.Promise.ConfigureIntrinsicPrototype(_promiseConstructorValue, _intrinsics);
-            JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
-            JavaScriptRuntime.Function.MarkConstructible(
-                _proxyConstructorValue);
-            JavaScriptRuntime.Function.MarkUndefinedPrototype(
-                _proxyConstructorValue);
-            JavaScriptRuntime.Function.InitializeFunctionInstance(
-                _proxyRevocableValue,
-                2d,
-                "revocable",
-                requiresInvocationContext: false);
-            JavaScriptRuntime.Function.MarkUndefinedPrototype(
-                _proxyRevocableValue);
-            DefineIntrinsicDataProperty(
-                _proxyConstructorValue,
-                "revocable",
-                _proxyRevocableValue);
+            JavaScriptRuntime.Proxy.ConfigureIntrinsicSurface(_proxyConstructorValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
