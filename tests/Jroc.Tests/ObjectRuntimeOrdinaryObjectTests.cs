@@ -202,6 +202,38 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
     }
 
     [Fact]
+    public void IntegrityChecksSkipKeysDeletedDuringDescriptorLookup()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope =
+            RuntimeExecutionContext.GetOrCreate(services).EnterAsRoot();
+        RuntimeExecutionContext.Current!.GetOrCreateGlobalObject();
+
+        Assert.True(JavaScriptRuntime.Object.isSealed(
+            CreateDeletingDescriptorProxy()));
+        Assert.True(JavaScriptRuntime.Object.isFrozen(
+            CreateDeletingDescriptorProxy()));
+
+        static JavaScriptRuntime.Proxy CreateDeletingDescriptorProxy()
+        {
+            var target = new JsObject();
+            ObjectRuntime.SetProperty(target, "removed", 1d);
+            JavaScriptRuntime.Object.preventExtensions(target);
+
+            var handler = new JsObject();
+            ObjectRuntime.SetProperty(
+                handler,
+                "getOwnPropertyDescriptor",
+                (BuiltinFunction2)((_, _, key) =>
+                {
+                    ObjectRuntime.DeleteProperty(target, key);
+                    return null;
+                }));
+            return new JavaScriptRuntime.Proxy(target, handler);
+        }
+    }
+
+    [Fact]
     public void DeletedIntrinsicProperty_IsMaskedAcrossCoreDispatch()
     {
         object target = new JsObject();

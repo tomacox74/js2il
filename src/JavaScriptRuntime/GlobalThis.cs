@@ -163,8 +163,32 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Number.ToLocaleStringString(thisArgument);
         private static readonly BuiltinFunction1 _numberPrototypeToPrecisionValue = static (thisArgument, precision) =>
             JavaScriptRuntime.Number.ToPrecisionString(thisArgument, precision);
-        private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
-            throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
+        private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, body) =>
+        {
+            if (body is null)
+            {
+                var bodyObject = new EmptyDynamicFunctionBody();
+                BuiltinFunctionVariadic function = bodyObject.Invoke;
+                JavaScriptRuntime.Function.InitializeFunctionInstance(
+                    function,
+                    0d,
+                    "anonymous",
+                    requiresInvocationContext: false);
+                JavaScriptRuntime.Function.MarkConstructible(function);
+                return function;
+            }
+
+            throw new JavaScriptRuntime.Error(
+                "The Function constructor only supports compile-time string literal arguments in jroc.");
+        };
+
+        private sealed class EmptyDynamicFunctionBody
+        {
+            internal object? Invoke(
+                object? thisArgument,
+                in JsCallArguments arguments)
+                => null;
+        }
 
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue =
             static (_, args) => JavaScriptRuntime.Array.Construct(args ?? System.Array.Empty<object?>());
@@ -184,8 +208,6 @@ namespace JavaScriptRuntime
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static iterable => new JavaScriptRuntime.Map(iterable));
-        private static readonly BuiltinFunction2 _mapGroupByValue = static (_, items, callback) =>
-            JavaScriptRuntime.Map.groupBy(items, callback);
 
         private static readonly Delegate _setConstructorValue =
             CreateCollectionConstructorValue("Set", static iterable => new JavaScriptRuntime.Set(iterable));
@@ -264,9 +286,6 @@ namespace JavaScriptRuntime
 
             return new global::JavaScriptRuntime.Proxy(target, handler);
         };
-
-        private static readonly BuiltinFunction2 _proxyRevocableValue = static (_, target, handler) =>
-            global::JavaScriptRuntime.Proxy.revocable(target, handler);
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
@@ -499,47 +518,16 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(_intlValue, "NumberFormat", typeof(JavaScriptRuntime.IntlNumberFormat));
             DefineIntrinsicDataProperty(_intlValue, "Segmenter", typeof(JavaScriptRuntime.IntlSegmenter));
 
-            // Attach minimal prototypes to callable globals so patterns like
-            // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
-            // references GlobalThis static properties and never touches the globalThis object.
-            ConfigureBuiltinFunctionObject(_functionConstructorValue);
-            JavaScriptRuntime.Function.MarkConstructible(
-                _functionConstructorValue);
-            PropertyDescriptorStore.DefineOrUpdate(_functionConstructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = JavaScriptRuntime.Function.Prototype
-            });
-            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Function.Prototype, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _functionConstructorValue
-            });
+            JavaScriptRuntime.Function.ConfigureIntrinsicSurface(_functionConstructorValue);
             JavaScriptRuntime.Array.ConfigureIntrinsicSurface(_arrayConstructorValue);
             JavaScriptRuntime.Promise.ConfigureIntrinsicPrototype(_promiseConstructorValue, _intrinsics);
-            JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
-            JavaScriptRuntime.Function.MarkConstructible(
-                _proxyConstructorValue);
-            JavaScriptRuntime.Function.MarkUndefinedPrototype(
-                _proxyConstructorValue);
-            DefineBuiltinFunctionProperty(_proxyConstructorValue, "revocable", _proxyRevocableValue, 2d);
-            ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
-            ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
-            ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
-            ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
+            JavaScriptRuntime.Proxy.ConfigureIntrinsicSurface(_proxyConstructorValue);
+            JavaScriptRuntime.Map.ConfigureIntrinsicSurface(_mapConstructorValue, _intrinsics);
+            JavaScriptRuntime.Set.ConfigureIntrinsicSurface(_setConstructorValue, _intrinsics);
+            JavaScriptRuntime.WeakMap.ConfigureIntrinsicSurface(_weakMapConstructorValue, _intrinsics);
+            JavaScriptRuntime.WeakSet.ConfigureIntrinsicSurface(_weakSetConstructorValue, _intrinsics);
             ConfigureWeakRefIntrinsicSurface();
             ConfigureFinalizationRegistryIntrinsicSurface();
-            ConfigureCollectionConstructorMetadata(_mapConstructorValue, "Map");
-            ConfigureCollectionConstructorMetadata(_setConstructorValue, "Set");
-            ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
-            ConfigureCollectionConstructorMetadata(_weakSetConstructorValue, "WeakSet");
-            DefineBuiltinFunctionProperty(_mapConstructorValue, "groupBy", _mapGroupByValue, 2d);
             JavaScriptRuntime.Promise.ConfigureIntrinsicSurface(_promiseConstructorValue, _intrinsics);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
@@ -606,9 +594,6 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_jsonValue, "parse", _jsonParseValue, 2d);
             DefineBuiltinFunctionProperty(_jsonValue, "rawJSON", _jsonRawJsonValue, 1d);
             DefineBuiltinFunctionProperty(_jsonValue, "isRawJSON", _jsonIsRawJsonValue, 1d);
-            PropertyDescriptorStore.Delete(_jsonParseValue, "prototype");
-            PropertyDescriptorStore.Delete(_jsonRawJsonValue, "prototype");
-            PropertyDescriptorStore.Delete(_jsonIsRawJsonValue, "prototype");
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
             ConfigureBuiltinFunctionObject(_jsonStringifyValue);
@@ -1024,7 +1009,7 @@ namespace JavaScriptRuntime
                 length,
                 key,
                 requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(functionValue));
-            DefineUndefinedPrototypeProperty(functionValue);
+            JavaScriptRuntime.Function.MarkUndefinedPrototype(functionValue);
             DefineIntrinsicDataProperty(target, key, functionValue);
         }
 
@@ -2022,12 +2007,6 @@ namespace JavaScriptRuntime
             };
         }
 
-        private void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
-        {
-            ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
-            DefineSpeciesAccessorProperty(constructorValue);
-        }
-
         private void ConfigureWeakRefIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(_weakRefConstructorValue, JavaScriptRuntime.WeakRef.Prototype);
@@ -2383,26 +2362,6 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = constructorValue
-            });
-        }
-
-        private static void ConfigureCollectionConstructorMetadata(object constructorValue, string name)
-        {
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 0d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = name
             });
         }
 

@@ -32,6 +32,51 @@ namespace JavaScriptRuntime
         private int _activeIndexedTraversals;
         private int _emptySlotCount;
 
+        internal static void ConfigureIntrinsicSurface(
+            object constructorValue,
+            RuntimeIntrinsics intrinsics)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+            var prototypeValue = Prototype;
+
+            GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+            Function.MarkConstructible(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, intrinsics.ObjectPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 0d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Set"
+            });
+            GlobalThis.DefineSpeciesAccessorProperty(constructorValue);
+        }
+
         private static void InitializePrototype(JsObject exp)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();

@@ -38,6 +38,30 @@ public static class Function
             static () => new JsObject(),
             static prototype => InitializeRestrictedPropertiesPrototype(prototype));
 
+    internal static void ConfigureIntrinsicSurface(object constructorValue)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+        MarkConstructible(constructorValue);
+        PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = Prototype
+        });
+        PropertyDescriptorStore.DefineOrUpdate(Prototype, "constructor", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = constructorValue
+        });
+    }
+
     private static void InitializePrototypeSurface(JsObject prototype)
     {
         prototype.MarkFunctionPrototype();

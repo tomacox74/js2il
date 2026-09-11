@@ -12,6 +12,52 @@ namespace JavaScriptRuntime
                 RuntimeIntrinsicSlot.WeakMapPrototype,
                 static () => new JsObject(),
                 static prototype => InitializePrototype(prototype));
+
+        internal static void ConfigureIntrinsicSurface(
+            object constructorValue,
+            RuntimeIntrinsics intrinsics)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+            var prototypeValue = Prototype;
+
+            GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+            Function.MarkConstructible(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, intrinsics.ObjectPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 0d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "WeakMap"
+            });
+            GlobalThis.DefineSpeciesAccessorProperty(constructorValue);
+        }
+
         // ConditionalWeakTable allows keys to be garbage collected when no other references exist
         private readonly ConditionalWeakTable<object, object> _table = new ConditionalWeakTable<object, object>();
 

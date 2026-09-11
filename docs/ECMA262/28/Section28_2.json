@@ -53,10 +53,18 @@
           "tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Proxy/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Proxy/apply/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/construct/FailingBatch100ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Proxy/defineProperty/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Proxy/deleteProperty/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/deleteProperty/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/get/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/getPrototypeOf/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/has/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/ownKeys/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/preventExtensions/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/set/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/setPrototypeOf/FailingBatch100ExecutionTests.cs"
         ],
-        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation. Currently implemented traps are get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct, each with fallback-to-target behavior when the trap is absent. The defineProperty and deleteProperty operations validate target configurability, writability, and extensibility invariants, preserve abrupt completions, and forward recursively through nested Proxy targets when a trap is null or undefined. Proxy intentionally remains a non-JsObject exotic representation: its own-property operations dispatch through descriptor traps or target forwarding rather than JsObject shape/slot fast paths. Full ECMAScript Proxy coverage remains limited to the documented and tested behavior; cross-realm trap cases are not yet covered."
+        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation. Implemented traps include get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct, with fallback-to-target behavior when absent. The new FailingBatch100ExecutionTests classes cover nested-Proxy fallback and receiver handling plus non-configurable, non-writable, non-extensible, duplicate-key, prototype, call-order, abrupt-completion, and boolean-result invariants across get, set, has, ownKeys, getPrototypeOf, setPrototypeOf, preventExtensions, and construct. Full Proxy coverage, including cross-realm cases, remains incomplete."
       },
       {
         "clause": "28.2.2.1",
@@ -65,9 +73,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-proxy.revocable",
         "testScripts": [
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
-          "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
+          "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/revocable/FailingBatch100ExecutionTests.cs"
         ],
-        "notes": "Proxy.revocable(target, handler) validates object target/handler values, returns { proxy, revoke }, and makes the currently implemented proxy operations (get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct) throw TypeError once revoked."
+        "notes": "Proxy.revocable(target, handler) validates object target/handler values, returns { proxy, revoke }, and makes the currently implemented proxy operations throw TypeError once revoked. FailingBatch100ExecutionTests adds coverage for the built-in surface and the revocation function name. Broader realm and exotic-target cases remain limited."
       }
     ]
   }

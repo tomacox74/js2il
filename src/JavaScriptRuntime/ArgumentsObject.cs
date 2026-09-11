@@ -389,6 +389,47 @@ public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<str
         return TryGetValue(key, out value);
     }
 
+    internal override bool TryGetBoxedValue(
+        string key,
+        object receiverForAccessors,
+        out object? value)
+    {
+        if (TryGetIndexedSlot(key, out var index)
+            && index < _mappedParameterNames.Length
+            && _mappedParameterNames[index] is { } mappedParameterName
+            && PropertyDescriptorStore.GetOwnLookupCore(
+                this,
+                key,
+                out var descriptor) == PropertyDescriptorLookup.Found
+            && descriptor.Kind == JsPropertyDescriptorKind.Data)
+        {
+            value = ReadMappedParameterValue(mappedParameterName);
+            return true;
+        }
+
+        return base.TryGetBoxedValue(
+            key,
+            receiverForAccessors,
+            out value);
+    }
+
+    internal override PropertyDescriptorLookup GetOwnPropertyDescriptor(
+        string key,
+        out JsPropertyDescriptor descriptor)
+    {
+        var lookup = base.GetOwnPropertyDescriptor(key, out descriptor);
+        if (lookup == PropertyDescriptorLookup.Found
+            && descriptor.Kind == JsPropertyDescriptorKind.Data
+            && TryGetIndexedSlot(key, out var index)
+            && index < _mappedParameterNames.Length
+            && _mappedParameterNames[index] is { } mappedParameterName)
+        {
+            descriptor.Value = ReadMappedParameterValue(mappedParameterName);
+        }
+
+        return lookup;
+    }
+
     internal override bool HasOwnPropertyValue(string key)
         => ContainsKey(key);
 
@@ -403,6 +444,17 @@ public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<str
         if (descriptor.Kind == JsPropertyDescriptorKind.Data)
         {
             SetArgumentValue(key, descriptor.Value);
+            if (!descriptor.Writable
+                && TryGetIndexedSlot(key, out var index)
+                && index < _mappedParameterNames.Length)
+            {
+                _mappedParameterNames[index] = null;
+            }
+        }
+        else if (TryGetIndexedSlot(key, out var index)
+            && index < _mappedParameterNames.Length)
+        {
+            _mappedParameterNames[index] = null;
         }
 
         PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
