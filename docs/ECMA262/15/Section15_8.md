@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-09-10T23:04:11Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,7 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| async function (no await) | Supported | [`Async_HelloWorld.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_HelloWorld.js)<br>[`Async_ReturnValue.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ReturnValue.js)<br>[`Async_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js)<br>`tests/Jroc.Test262.Tests/language/expressions/async-function/FunctionExpressionAsyncFunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-function/FunctionExpressionAsyncFunctionConformanceBatchParseTests.cs` | suite `language.expressions.async_function` | Async declarations and expressions materialize as generated non-constructable JsFunctionObject instances and use the common callable ABI. Calls return Promises, including no-await bodies; synchronous parameter/body setup failures are converted into rejected Promises by the generated adapter. The native Test262 harness additionally verifies 37 current all-variant async-function-expression fixtures: 3 positive execution cases and 34 parse-negative early-error cases. |
+| async function (no await) | Supported | [`Async_HelloWorld.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_HelloWorld.js)<br>[`Async_ReturnValue.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ReturnValue.js)<br>[`Async_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js)<br>`tests/Jroc.Test262.Tests/language/expressions/async-function/FunctionExpressionAsyncFunctionConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-function/FunctionExpressionAsyncFunctionConformanceBatchParseTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-function/RelatedLanguageConformance12BatchTests.cs` | suite `language.expressions.async_function` | Async declarations and expressions materialize as generated non-constructable JsFunctionObject instances and use the common callable ABI. Calls return Promises, including no-await bodies; synchronous parameter/body setup failures are converted into rejected Promises by the generated adapter. The native Test262 harness additionally verifies 38 current all-variant async-function-expression fixtures: 3 positive execution cases and 35 parse-negative early-error cases. |
 
 ### 15.8.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateasyncfunctionbody))
 
