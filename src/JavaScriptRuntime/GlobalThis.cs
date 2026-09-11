@@ -524,12 +524,10 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Proxy.ConfigureIntrinsicSurface(_proxyConstructorValue);
             JavaScriptRuntime.Map.ConfigureIntrinsicSurface(_mapConstructorValue, _intrinsics);
             JavaScriptRuntime.Set.ConfigureIntrinsicSurface(_setConstructorValue, _intrinsics);
-            ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
-            ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
+            JavaScriptRuntime.WeakMap.ConfigureIntrinsicSurface(_weakMapConstructorValue, _intrinsics);
+            JavaScriptRuntime.WeakSet.ConfigureIntrinsicSurface(_weakSetConstructorValue, _intrinsics);
             ConfigureWeakRefIntrinsicSurface();
             ConfigureFinalizationRegistryIntrinsicSurface();
-            ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
-            ConfigureCollectionConstructorMetadata(_weakSetConstructorValue, "WeakSet");
             JavaScriptRuntime.Promise.ConfigureIntrinsicSurface(_promiseConstructorValue, _intrinsics);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
@@ -2009,12 +2007,6 @@ namespace JavaScriptRuntime
             };
         }
 
-        private void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
-        {
-            ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
-            DefineSpeciesAccessorProperty(constructorValue);
-        }
-
         private void ConfigureWeakRefIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(_weakRefConstructorValue, JavaScriptRuntime.WeakRef.Prototype);
@@ -2370,26 +2362,6 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = constructorValue
-            });
-        }
-
-        private static void ConfigureCollectionConstructorMetadata(object constructorValue, string name)
-        {
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 0d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = name
             });
         }
 
