@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-09-15T07:25:41Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -103,6 +103,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | for loop: continue | Supported | [`ControlFlow_ForLoop_Continue_SkipEven.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js) |  | Implements continue by branching to the update expression (LoopContext). |
 | for loop: labeled break | Supported | [`ControlFlow_ForLoop_LabeledBreak.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js) |  | Supports break <label> where <label> targets an enclosing loop. |
 | for loop: labeled continue | Supported | [`ControlFlow_ForLoop_LabeledContinue.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js) |  | Supports continue <label> where <label> targets an enclosing loop. |
+| for-loop initializer destructuring conformance expansion | Supported | `tests/Jroc.Test262.Tests/language/statements/for/ForDestructuringConformanceBatchExecutionTests.cs` | `test/language/statements/for/dstr/const-ary-ptrn-rest-id.js`<br>`test/language/statements/for/dstr/let-obj-ptrn-prop-id-init.js`<br>`test/language/statements/for/dstr/var-ary-ptrn-elem-id-iter-val.js` | The native Test262 harness verifies 258 additional positive classic-for initializer fixtures: 80 `const`, 89 `let`, and 89 `var` destructuring cases. The coverage exercises nested array and object binding, iterator acquisition, stepping and closing, defaults, rest elements, inferred function names, abrupt completion, and lexical or variable initialization. All 516 strict/non-strict catalog variants pass under one current compiler provenance. |
 
 ### 14.7.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-createperiterationenvironment))
 
