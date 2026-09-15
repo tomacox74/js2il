@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 previously failing pinned Array and String
+  fixtures. Correct Array `length` coercion order, canonical-equivalent
+  `localeCompare` results, and Unicode 16.0 full/context-sensitive case
+  conversion.
+
 - test262/docs: verify 500 additional current-provenance pinned language
   fixtures: 161 arguments-object, 165 class-expression, 53 call-expression,
   42 `super`, 32 `new`, 12 function-expression, 11 `new.target`, 11 `yield`,

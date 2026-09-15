@@ -3147,7 +3147,16 @@ namespace JavaScriptRuntime
         }
 
         internal static double ValidateLengthValue(object? value)
-            => ValidateLengthValue(TypeUtilities.ToNumber(value));
+        {
+            var newLength = TypeUtilities.ToUint32(value);
+            var numberLength = TypeUtilities.ToNumber(value);
+            if (newLength != numberLength)
+            {
+                throw new RangeError("Invalid array length");
+            }
+
+            return newLength;
+        }
 
         private static double ValidateLengthValue(double newLength)
         {

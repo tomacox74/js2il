@@ -426,10 +426,12 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/length/JavaScript/define-own-prop-length-no-value-order.js"
         ],
         "test262Paths": [
+          "test/built-ins/Array/length/define-own-prop-length-coercion-order-set.js",
+          "test/built-ins/Array/length/define-own-prop-length-coercion-order.js",
           "test/built-ins/Array/length/define-own-prop-length-overflow-order.js",
           "test/built-ins/Array/length/define-own-prop-length-no-value-order.js"
         ],
-        "notes": "Canonical array indices use dedicated dense storage for ordinary elements and descriptor-backed sparse storage for exceptional indices. Indexed data/accessor descriptors, holes, deletion, non-writable length, failed highest-to-lowest truncation, strict/sloppy writes, maximum index boundaries, and preventExtensions/seal/freeze invariants are enforced through the Array [[DefineOwnProperty]] and ArraySetLength paths. ArraySpeciesCreate remains separately unsupported."
+        "notes": "Canonical array indices use dedicated dense storage for ordinary elements and descriptor-backed sparse storage for exceptional indices. Indexed data/accessor descriptors, holes, deletion, non-writable length, failed highest-to-lowest truncation, strict/sloppy writes, maximum index boundaries, observable ToUint32/ToNumber coercion order, and preventExtensions/seal/freeze invariants are enforced through the Array [[DefineOwnProperty]] and ArraySetLength paths. ArraySpeciesCreate remains separately unsupported."
       },
       {
         "clause": "10.4.3.5",
