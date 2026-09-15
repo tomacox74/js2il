@@ -352,6 +352,21 @@
         "notes": "Loop test expressions lower through JavaScript truthiness coercion, so falsy strings such as \"\" terminate the loop instead of behaving like non-null CLR references."
       },
       {
+        "clause": "14.7.4.2",
+        "feature": "for-loop initializer destructuring conformance expansion",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/for/ForDestructuringConformanceBatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/for/dstr/const-ary-ptrn-rest-id.js",
+          "test/language/statements/for/dstr/let-obj-ptrn-prop-id-init.js",
+          "test/language/statements/for/dstr/var-ary-ptrn-elem-id-iter-val.js"
+        ],
+        "notes": "The native Test262 harness verifies 258 additional positive classic-for initializer fixtures: 80 `const`, 89 `let`, and 89 `var` destructuring cases. The coverage exercises nested array and object binding, iterator acquisition, stepping and closing, defaults, rest elements, inferred function names, abrupt completion, and lexical or variable initialization. All 516 strict/non-strict catalog variants pass under one current compiler provenance."
+      },
+      {
         "clause": "14.7.4.4",
         "feature": "for-loop per-iteration lexical environment (let closure capture)",
         "status": "Supported",
