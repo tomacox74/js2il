@@ -3148,8 +3148,28 @@ namespace JavaScriptRuntime
 
         internal static double ValidateLengthValue(object? value)
         {
-            var newLength = TypeUtilities.ToUint32(value);
-            var numberLength = TypeUtilities.ToNumber(value);
+            if (value is double number)
+            {
+                var length = TypeUtilities.ToUint32(number);
+                if (length != number)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                return length;
+            }
+
+            return ValidateLengthValueSlow(value);
+        }
+
+        private static double ValidateLengthValueSlow(object? value)
+        {
+            var firstNumber = TypeUtilities.ToNumber(value);
+            var newLength = TypeUtilities.ToUint32(firstNumber);
+            // Primitive conversions are pure; objects must observe both coercions.
+            var numberLength = TypeUtilities.IsPrimitive(value)
+                ? firstNumber
+                : TypeUtilities.ToNumber(value);
             if (newLength != numberLength)
             {
                 throw new RangeError("Invalid array length");

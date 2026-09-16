@@ -10,6 +10,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   fixtures. Correct Array `length` coercion order, canonical-equivalent
   `localeCompare` results, and Unicode 16.0 full/context-sensitive case
   conversion.
+  Optimize Array length validation with an inline-friendly numeric fast path
+  and single-pass primitive coercion while retaining both object coercions.
 
 - test262/docs: verify 500 additional current-provenance pinned language
   fixtures: 161 arguments-object, 165 class-expression, 53 call-expression,
