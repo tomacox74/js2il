@@ -139,6 +139,52 @@ public sealed class ArrayReceiverSpecializationRuntimeTests
             });
     }
 
+    [Fact]
+    public void JoinRechecksDenseStorageAfterElementCoercion()
+    {
+        WithRealm(() =>
+        {
+            var first = new JsObject();
+            var array = new JavaScriptRuntime.Array(new object?[] { first, "old", "removed" });
+            ObjectRuntime.SetProperty(first, "toString",
+                new BuiltinDelegateFunctionAdapter((BuiltinFunction0)(_ =>
+                {
+                    array.length = 2d;
+                    PropertyDescriptorStore.DefineOrUpdate(array, "1", new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Accessor,
+                        Get = new BuiltinDelegateFunctionAdapter((BuiltinFunction0)(_ => "getter")),
+                        Enumerable = true,
+                        Configurable = true
+                    });
+                    ObjectRuntime.SetProperty(JavaScriptRuntime.Array.Prototype, "2", "inherited");
+                    return "first";
+                })));
+
+            Assert.Equal("first,getter,inherited", array.join());
+        });
+    }
+
+    [Fact]
+    public void DenseJoinAvoidsPerElementDispatchAllocations()
+    {
+        WithRealm(() =>
+        {
+            var array = CreateDenseArray(10_000);
+            ObjectRuntime.SetProperty(array, "note", "non-indexed metadata");
+            var args = new object[] { "" };
+            array.join(args);
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            var result = array.join(args);
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.Equal(50_000, result.Length);
+            // Allow builder growth and the result string, but not property-key
+            // strings for every dense element of an array with named metadata.
+            Assert.InRange(allocated, 0, 250_000);
+        });
+    }
+
     private static JavaScriptRuntime.Array CreateDenseArray(
         int count,
         int? capacity = null)

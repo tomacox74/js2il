@@ -6,7 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: restore the `dromaeo-object-string` lead over Jint with
+  vectorized ASCII detection before Unicode case conversion and guarded dense
+  Array `join` reads. Preserve culture-specific casing, Unicode 16.0 mappings,
+  indexed getters, inherited values, and mutation during coercion. The exact
+  local scenario improves from 29.35 ms to 24.90-25.01 ms, versus
+  Jint 4.16.2 at 26.50-27.18 ms in the corresponding runs.
 
 ## v0.12.22 - 2026-09-16
 

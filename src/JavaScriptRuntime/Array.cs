@@ -555,7 +555,13 @@ namespace JavaScriptRuntime
                     builder.Append(sep);
                 }
 
-                var element = ObjectRuntime.GetItem(receiver, (double)k);
+                // Element coercion can mutate the array, so recheck dense storage
+                // for each read and retain ordinary Get for holes and descriptors.
+                var element = receiver is Array array
+                    && !array.HasNonDataDescriptors
+                    && array.HasDenseIndex(k)
+                        ? array.GetDenseValue(k)
+                        : ObjectRuntime.GetItem(receiver, (double)k);
                 if (element is not null && element is not JsNull)
                 {
                     builder.Append(DotNet2JSConversions.ToStringRejectingSymbols(element));
