@@ -240,6 +240,23 @@
         "notes": "Computed object binding names are supported in binding patterns, including the observable lookup ordering exercised by sloppy-mode `with` environments and default initializers."
       },
       {
+        "clause": "14.3.3",
+        "feature": "declaration destructuring conformance expansion",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/const/ConstDestructuringConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/let/LetDestructuringConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/variable/VariableDestructuringConformanceBatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/const/dstr/ary-ptrn-elem-id-iter-val.js",
+          "test/language/statements/let/dstr/obj-ptrn-prop-id-init.js",
+          "test/language/statements/variable/dstr/ary-ptrn-rest-id.js"
+        ],
+        "notes": "The native Test262 harness verifies 179 additional positive declaration-binding fixtures: 75 `const`, 87 `let`, and 17 `var` cases. The coverage exercises iterator acquisition, stepping, closing, nested array and object patterns, elisions, rest elements, defaults, inferred function names, object rest, and abrupt completion. All 358 strict/non-strict catalog variants pass under one current compiler provenance."
+      },
+      {
         "clause": "14.3",
         "feature": "Statement syntax parse-negative conformance expansion",
         "status": "Supported with Limitations",

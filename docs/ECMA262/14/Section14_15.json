@@ -60,6 +60,21 @@
         "notes": "Catch parameter binding is block-scoped to the catch clause, including the covered scope-removal checks after catch exits and the destructuring catch-parameter TypeError case added by the current test262 slice."
       },
       {
+        "clause": "14.15.2",
+        "feature": "catch-parameter destructuring conformance expansion",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-catchclauseevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/try/TryDestructuringConformanceBatchExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/try/dstr/ary-ptrn-rest-id.js",
+          "test/language/statements/try/dstr/obj-ptrn-id-init-skipped.js",
+          "test/language/statements/try/dstr/obj-ptrn-prop-id-init.js"
+        ],
+        "notes": "The native Test262 harness verifies 63 additional positive destructuring catch-parameter fixtures. The coverage exercises iterator acquisition, stepping and closing, nested binding patterns, elisions, rest elements, defaults, inferred function names, object property access, and abrupt completion while initializing the catch environment. All 126 strict/non-strict catalog variants pass under one current compiler provenance."
+      },
+      {
         "clause": "14.15.3",
         "feature": "try/catch/finally",
         "status": "Supported",

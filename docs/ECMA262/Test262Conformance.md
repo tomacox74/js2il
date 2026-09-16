@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 14,693 | 12 | 8,807 | 23,512 | **62.49%** |
-| Language syntax and semantics | 13,912 | 46 | 9,685 | 23,643 | **58.84%** |
-| **Total** | 28,605 | 58 | 19,578 | 48,241 | **59.30%** |
+| Language syntax and semantics | 14,412 | 46 | 9,185 | 23,643 | **60.96%** |
+| **Total** | 29,105 | 58 | 19,078 | 48,241 | **60.33%** |
 
 ## Language Areas
 
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 5,746 | 35 | 3,556 | 9,337 | **61.54%** |
+| `statements` | 6,246 | 35 | 3,056 | 9,337 | **66.90%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -142,7 +142,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
 | `class` | 2,275 | 0 | 2,092 | 4,367 | **52.10%** |
-| `const` | 59 | 1 | 76 | 136 | **43.38%** |
+| `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |
 | `do-while` | 30 | 0 | 6 | 36 | **83.33%** |
@@ -151,18 +151,18 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `for-await-of` | 1,234 | 0 | 0 | 1,234 | **100.00%** |
 | `for-in` | 102 | 13 | 0 | 115 | **88.70%** |
 | `for-of` | 744 | 7 | 0 | 751 | **99.07%** |
-| `for` | 110 | 0 | 275 | 385 | **28.57%** |
+| `for` | 368 | 0 | 17 | 385 | **95.58%** |
 | `function` | 402 | 14 | 35 | 451 | **89.14%** |
 | `generators` | 197 | 0 | 69 | 266 | **74.06%** |
 | `if` | 59 | 0 | 10 | 69 | **85.51%** |
 | `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
-| `let` | 36 | 0 | 109 | 145 | **24.83%** |
+| `let` | 123 | 0 | 22 | 145 | **84.83%** |
 | `return` | 1 | 0 | 15 | 16 | **6.25%** |
 | `switch` | 86 | 0 | 25 | 111 | **77.48%** |
 | `throw` | 14 | 0 | 0 | 14 | **100.00%** |
-| `try` | 89 | 0 | 112 | 201 | **44.28%** |
+| `try` | 152 | 0 | 49 | 201 | **75.62%** |
 | `using` | 23 | 0 | 55 | 78 | **29.49%** |
-| `variable` | 18 | 0 | 160 | 178 | **10.11%** |
+| `variable` | 35 | 0 | 143 | 178 | **19.66%** |
 | `while` | 19 | 0 | 19 | 38 | **50.00%** |
 | `with` | 0 | 0 | 181 | 181 | **0.00%** |
 

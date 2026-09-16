@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-09-15T07:25:42Z
 
 try/catch/finally is supported for the synchronous cases covered by the current repo tests, including throwing and catching arbitrary JS values plus `finally` blocks on normal completion, return, and escaping throw paths. Remaining caveats are early-error coverage and exact host-level fidelity for uncaught throws after `finally` runs.
 
@@ -34,6 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| catch-parameter destructuring conformance expansion | Supported | `tests/Jroc.Test262.Tests/language/statements/try/TryDestructuringConformanceBatchExecutionTests.cs` | `test/language/statements/try/dstr/ary-ptrn-rest-id.js`<br>`test/language/statements/try/dstr/obj-ptrn-id-init-skipped.js`<br>`test/language/statements/try/dstr/obj-ptrn-prop-id-init.js` | The native Test262 harness verifies 63 additional positive destructuring catch-parameter fixtures. The coverage exercises iterator acquisition, stepping and closing, nested binding patterns, elisions, rest elements, defaults, inferred function names, object property access, and abrupt completion while initializing the catch environment. All 126 strict/non-strict catalog variants pass under one current compiler provenance. |
 | try/catch (with binding; block-scoped catch parameter) | Supported | [`TryCatch_ScopedParam.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js)<br>[`ControlFlow_TryCatch_ScopedParam.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_TryCatch_ScopedParam.js)<br>[`12.14-13.js`](../../../tests/Jroc.Test262.Tests/language/statements/try/JavaScript/12.14-13.js)<br>[`12.14-14.js`](../../../tests/Jroc.Test262.Tests/language/statements/try/JavaScript/12.14-14.js)<br>[`12.14-15.js`](../../../tests/Jroc.Test262.Tests/language/statements/try/JavaScript/12.14-15.js)<br>[`12.14-16.js`](../../../tests/Jroc.Test262.Tests/language/statements/try/JavaScript/12.14-16.js)<br>[`12.14-7.js`](../../../tests/Jroc.Test262.Tests/language/statements/try/JavaScript/12.14-7.js)<br>[`obj-init-null.js`](../../../tests/Jroc.Test262.Tests/language/statements/try/JavaScript/dstr/obj-init-null.js) |  | Catch parameter binding is block-scoped to the catch clause, including the covered scope-removal checks after catch exits and the destructuring catch-parameter TypeError case added by the current test262 slice. |
 
 ### 14.15.3 ([tc39.es](https://tc39.es/ecma262/#sec-try-statement-runtime-semantics-evaluation))
