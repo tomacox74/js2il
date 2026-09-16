@@ -301,6 +301,8 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        TryEnableDynamicConcatAccumulator(binding, exprStmt.Initializer, value);
+
         // Non-captured variable - store into a stable local slot.
         // IMPORTANT: declared locals should never store raw unboxed JsNull into an object-typed IL local.
         // Use unboxed locals only for proven-stable primitives (double/bool); otherwise box to object.

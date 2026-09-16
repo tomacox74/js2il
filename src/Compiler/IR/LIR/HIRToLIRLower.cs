@@ -97,6 +97,13 @@ public sealed partial class HIRToLIRLowerer
     private readonly HashSet<BindingInfo> _stringBuilderAccumulatorCandidates = new HashSet<BindingInfo>();
     private readonly HashSet<BindingInfo> _stringBuilderAccumulatorDisqualifiedBindings = new HashSet<BindingInfo>();
 
+    // Locals whose `+=` sites use a statically-string RHS but whose initializer is not statically a string
+    // (e.g. `var s = new String();`). These keep an object-typed slot that may hold a runtime
+    // String.ConcatAccumulator; every JS-visible read materializes via String.MaterializeConcatValue.
+    private readonly HashSet<BindingInfo> _stringRhsAccumulatorCandidates = new HashSet<BindingInfo>();
+    private readonly HashSet<BindingInfo> _dynamicConcatAccumulatorBindings = new HashSet<BindingInfo>();
+    private bool _containsWithStatement;
+
     // Maps parameter bindings to their 0-based JS parameter index (not IL arg index)
     private readonly Dictionary<BindingInfo, int> _parameterIndexMap = new Dictionary<BindingInfo, int>();
     private int? _currentDefaultParameterIndex;

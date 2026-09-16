@@ -1144,7 +1144,8 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
                 
-                if (TryMaterializeStringBuilderAccumulator(binding, out resultTempVar))
+                if (TryMaterializeStringBuilderAccumulator(binding, out resultTempVar)
+                    || TryMaterializeDynamicConcatAccumulator(binding, out resultTempVar))
                 {
                     resultTempVar = EmitResolveActiveWithBindingOrDefault(
                         activeWithBindingProbe,

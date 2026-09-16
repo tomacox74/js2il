@@ -44,6 +44,18 @@ Benchmarks/
 
 ## Benchmark Scenarios
 
+### String-object regression investigation
+
+See [Dromaeo string-object performance](../../../docs/compiler/DromaeoObjectStringPerformance.md)
+for the v0.12.22 regression diagnosis, semantic safeguards, alternatives, and
+same-host measurements. Reproduce the unmodified scenario with:
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --dromaeo --filter '*DromaeoExecutionBenchmarks*' \
+  --scenario dromaeo-object-string --artifacts artifacts/string-performance
+```
+
 ### Array length validation microbenchmarks
 
 Run the source-runtime validators and retained alternatives on the same host:

@@ -9,6 +9,13 @@ internal static class UnicodeCaseConversion
     // version required by ECMA-262. The CLR supplies older simple mappings.
     public static string ToLower(string value, CultureInfo culture)
     {
+        // ASCII needs no full mappings or contextual rules. Keep culture-aware
+        // CLR casing here: Turkic ASCII 'I' still maps to a non-ASCII character.
+        if (Ascii.IsValid(value))
+        {
+            return value.ToLower(culture);
+        }
+
         StringBuilder? result = null;
         var segmentStart = 0;
 
@@ -57,6 +64,11 @@ internal static class UnicodeCaseConversion
 
     public static string ToUpper(string value, CultureInfo culture)
     {
+        if (Ascii.IsValid(value))
+        {
+            return value.ToUpper(culture);
+        }
+
         StringBuilder? result = null;
         var segmentStart = 0;
 

@@ -987,6 +987,7 @@ public sealed partial class HIRToLIRLowerer
                 return;
 
             case HIRWithStatement withStatement:
+                _containsWithStatement = true;
                 CollectStringBuilderAccumulatorCandidates(withStatement.Object);
                 CollectStringBuilderAccumulatorCandidates(withStatement.Body);
                 return;
@@ -1016,6 +1017,10 @@ public sealed partial class HIRToLIRLowerer
                     && !ExpressionMayAssignBinding(assignment.Value, assignment.Target.BindingInfo))
                 {
                     _stringBuilderAccumulatorCandidates.Add(assignment.Target.BindingInfo);
+                    if (IsStaticallyStringExpression(assignment.Value))
+                    {
+                        _stringRhsAccumulatorCandidates.Add(assignment.Target.BindingInfo);
+                    }
                 }
                 CollectStringBuilderAccumulatorCandidates(assignment.Value);
                 return;
@@ -1267,6 +1272,141 @@ public sealed partial class HIRToLIRLowerer
         _variableMap[binding] = materialized;
         InvalidateStringBuilderAccumulator(binding);
         return true;
+    }
+
+    private static bool IsStaticallyStringExpression(HIRExpression expression)
+    {
+        return expression switch
+        {
+            HIRLiteralExpression literal => literal.Kind == JavascriptType.String && literal.Value is string,
+            HIRTemplateLiteralExpression => true,
+            _ => false,
+        };
+    }
+
+    /// <summary>
+    /// Enables the dynamic concat accumulator for a declared local whose initializer is not statically a
+    /// string but which is appended to with statically-string values (e.g. <c>var s = new String();</c>).
+    /// The local keeps its ordinary object-typed slot; only the <c>+=</c> and read lowering change.
+    /// </summary>
+    private void TryEnableDynamicConcatAccumulator(BindingInfo binding, HIRExpression? initializer, TempVariable initialValue)
+    {
+        if (initializer == null
+            || _containsWithStatement
+            || binding.IsStableType
+            || !_stringRhsAccumulatorCandidates.Contains(binding)
+            || !CanUseStringBuilderAccumulator(binding)
+            || CanUseStablePrimitiveLocal(binding, typeof(double))
+            || CanUseStablePrimitiveLocal(binding, typeof(bool)))
+        {
+            return;
+        }
+
+        var initialStorage = GetTempStorage(initialValue);
+        if (initialStorage.Kind != ValueStorageKind.Reference || initialStorage.ClrType != typeof(object))
+        {
+            return;
+        }
+
+        _dynamicConcatAccumulatorBindings.Add(binding);
+    }
+
+    private bool TryMaterializeDynamicConcatAccumulator(BindingInfo binding, out TempVariable result)
+    {
+        result = default;
+
+        if (!_dynamicConcatAccumulatorBindings.Contains(binding)
+            || !_variableMap.TryGetValue(binding, out var current))
+        {
+            return false;
+        }
+
+        result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            "String",
+            nameof(JavaScriptRuntime.String.MaterializeConcatValue),
+            new[] { EnsureObject(current) },
+            result));
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryLowerDynamicConcatAccumulatorAssignment(
+        HIRAssignmentExpression assignExpr,
+        BindingInfo binding,
+        bool resultUsed,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!_dynamicConcatAccumulatorBindings.Contains(binding)
+            || assignExpr.Operator != Acornima.Operator.AdditionAssignment
+            || ExpressionMayAssignBinding(assignExpr.Value, binding)
+            || !_variableMap.TryGetValue(binding, out var current))
+        {
+            return false;
+        }
+
+        // Only statically-string RHS values can skip the generic `+` operator: `x + "s"` is always a
+        // string concatenation once ToPrimitive(x) runs, which AppendConcatValue performs on first use.
+        if (!TryLowerExpression(assignExpr.Value, out var rhsValue))
+        {
+            return false;
+        }
+
+        var rhsStorage = GetTempStorage(rhsValue);
+        if (rhsStorage.Kind != ValueStorageKind.Reference || rhsStorage.ClrType != typeof(string))
+        {
+            // Fall back to the generic compound assignment using the already lowered RHS.
+            if (!TryMaterializeDynamicConcatAccumulator(binding, out var materialized)
+                || !TryLowerCompoundOperation(assignExpr.Operator, materialized, rhsValue, out var summed))
+            {
+                return false;
+            }
+
+            resultTempVar = StoreDynamicConcatAccumulatorValue(binding, assignExpr.Target.Name, EnsureObject(summed));
+            return true;
+        }
+
+        var appended = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            "String",
+            nameof(JavaScriptRuntime.String.AppendConcatValue),
+            new[] { EnsureObject(current), rhsValue },
+            appended));
+        DefineTempStorage(appended, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var stored = StoreDynamicConcatAccumulatorValue(binding, assignExpr.Target.Name, appended);
+        if (resultUsed)
+        {
+            return TryMaterializeDynamicConcatAccumulator(binding, out resultTempVar);
+        }
+
+        resultTempVar = stored;
+        return true;
+    }
+
+    private TempVariable StoreDynamicConcatAccumulatorValue(BindingInfo binding, string displayName, TempVariable value)
+    {
+        var slotStorage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        var slot = GetOrCreateVariableSlot(binding, displayName, slotStorage);
+        var slotValue = CoerceToVariableSlotStorage(slot, value);
+
+        // Mirror the generic local-store path: copy through a slot-less temp so the store is never elided.
+        var sourceCopy = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(slotValue, sourceCopy));
+        DefineTempStorage(sourceCopy, GetTempStorage(slotValue));
+
+        var storeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(sourceCopy, storeTemp));
+        DefineTempStorage(storeTemp, GetTempStorage(sourceCopy));
+        SetTempVariableSlot(storeTemp, slot);
+
+        _variableMap[binding] = storeTemp;
+        InvalidateNumericRefinement(binding, storeTemp);
+        MirrorEsModuleExport(binding, storeTemp);
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+        return storeTemp;
     }
 
     private bool TryLowerStringBuilderAccumulatorAssignment(
@@ -1972,6 +2112,10 @@ public sealed partial class HIRToLIRLowerer
             TryPrepareStringBuilderAccumulatorForGenericAssignment(binding);
         }
         else if (TryLowerStringBuilderAccumulatorAssignment(assignExpr, binding, resultUsed, out resultTempVar))
+        {
+            return true;
+        }
+        else if (TryLowerDynamicConcatAccumulatorAssignment(assignExpr, binding, resultUsed, out resultTempVar))
         {
             return true;
         }
