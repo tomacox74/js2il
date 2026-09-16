@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.23 - 2026-09-16
+
 - perf/runtime: restore the `dromaeo-object-string` lead over Jint with
   vectorized ASCII detection before Unicode case conversion and guarded dense
   Array `join` reads. Preserve culture-specific casing, Unicode 16.0 mappings,
