@@ -6,31 +6,31 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.22 - 2026-09-16
+
 - perf/dependencies: update benchmark comparison runtimes to Jint 4.16.2,
   YantraJS.Core 1.2.476, and ClearScript V8 7.5.1.1. Keep Okojo on its
   latest published package, 0.1.2-preview.1, because no stable release is
   available.
-
 - test262/runtime/docs: port 10 previously failing pinned Array and String
   fixtures. Correct Array `length` coercion order, canonical-equivalent
   `localeCompare` results, and Unicode 16.0 full/context-sensitive case
   conversion.
   Optimize Array length validation with an inline-friendly numeric fast path
   and single-pass primitive coercion while retaining both object coercions.
-
 - test262/docs: verify 500 additional current-provenance pinned
   destructuring-binding fixtures: 75 `const`, 258 `for`, 87 `let`, 63
   `try`, and 17 `var` declaration cases. All 1,000 metadata-selected
   strict/non-strict variants and all 500 native fixtures pass without
   compiler, runtime, or harness changes.
-
 - test262/docs: verify 500 additional current-provenance pinned language
   fixtures: 161 arguments-object, 165 class-expression, 53 call-expression,
   42 `super`, 32 `new`, 12 function-expression, 11 `new.target`, 11 `yield`,
   six `await`, two arrow-function, one async-function, and four
   function-code cases. All 934 metadata-selected variants and all 500 native
   fixtures pass without compiler, runtime, or harness changes.
-
 - test262/runtime/docs: port 100 previously failing pinned Object and Proxy
   fixtures covering internal-method forwarding, trap invariants, own-key
   ordering, descriptor transitions, extensibility, sealing, and freezing.
@@ -40,28 +40,24 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   lazy return forwarding, reentrancy, flatMap flattening, subclassing, and
   intrinsic descriptors. Align iterator records and helper state transitions
   with ECMA-262.
-
 - test262/docs: verify 500 additional current-provenance pinned generator and
   method-definition fixtures: 181 generator expressions, 165 generator
   declarations, 61 async-generator declaration/expression cases, and 93
   object method-definition cases. All 952 metadata-selected variants and all
   500 native fixtures pass; the native Test262 language harness now correctly
   registers parse-negative fixtures alongside execution cases.
-
 - test262/docs: verify 500 additional positive pinned class-declaration
   fixtures: 209 method-parameter-destructuring cases, including static and
   private methods, plus 291 class-element cases covering private names, class
   fields, line-terminator separation, computed Symbol names, and static element
   grammar. All 1,000 metadata-selected strict/non-strict variants and all 500
   native fixtures pass without compiler, runtime, or harness changes.
-
 - test262/docs: verify 500 additional positive pinned class-declaration
   method-parameter-destructuring fixtures: 236 private generator methods, 116
   private static methods, 87 static methods with default parameters, and 61
   private methods with default parameters. All 1,000 metadata-selected
   strict/non-strict variants and all 500 native fixtures pass without compiler,
   runtime, or harness changes.
-
 - test262/runtime/docs: port 100 pinned Promise fixtures covering constructor
   capabilities, combinators, static methods, species, and prototype methods.
   Make Promise.reject constructor-generic so custom constructors receive and
@@ -81,7 +77,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   async-function, block, break, continue, debugger, do-while, labelled, and
   try grammar cases. All 965 metadata-selected variants and all 500 native
   fixtures pass without compiler, runtime, or harness changes.
-
 - test262/runtime/docs: port 100 Test262 fixtures: 66 Array, 30 TypedArray,
   and four DisposableStack cases. Align direct Array calls with the generic
   algorithms for coercion, holes, species, sparse lengths, and resizable views;
@@ -94,7 +89,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   14 other assignment, call, coalesce, conditional, and delete grammar cases.
   All 960 metadata-selected variants and all 500 native fixtures pass without
   compiler, runtime, or harness changes.
-
 - runtime: correct Array/TypedArray review edge cases: ordered array-like `set`
   reads and overlap handling, species-aware bit-preserving `slice`, permanently
   completed iterators, explicit `lastIndexOf` arguments, empty `join` coercion,
