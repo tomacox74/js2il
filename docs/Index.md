@@ -5,9 +5,10 @@ This documentation covers using JROC, its compiler and runtime design, JavaScrip
 ## Package and project guides
 
 - [Project README](../README.md) — project overview, installation, and command-line usage.
+- [Building and releasing JROC](BuildingAndReleasing.md) — contributor builds, tests, package validation, and maintainer release workflows.
 - [jroc NuGet package guide](NuGet.README.md) — using the compiler package.
-- [Jroc.Core NuGet package guide](Jroc.Core.NuGet.README.md) — programmatic compilation APIs.
-- [Jroc.Runtime NuGet package guide](Jroc.Runtime.NuGet.README.md) — runtime hosting APIs.
+- [Jroc.Core NuGet package guide](Jroc.Core.NuGet.README.md) — in-memory compilation for runtime-supplied scripts.
+- [Jroc.Runtime NuGet package guide](Jroc.Runtime.NuGet.README.md) — execution support for the three consumer workflows.
 - [Jroc.SDK NuGet package guide](Jroc.SDK.NuGet.README.md) — MSBuild-integrated compilation and hosting.
 
 ## Documentation areas
@@ -20,5 +21,5 @@ This documentation covers using JROC, its compiler and runtime design, JavaScrip
 - [Node.js support](nodejs/Index.md) — Node.js module and global compatibility coverage.
 - [Planning](planning/Index.md) — future project direction.
 - [Runtime](runtime/Index.md) — runtime lifecycle, object model, hosting, and scheduling designs.
-- [SDK](sdk/Index.md) — .NET SDK tutorials, API references, and package validation.
+- [SDK](sdk/Index.md) — CLI, MSBuild-generated APIs, and in-memory compilation tutorials and references.
 - [Tracking issues](tracking-issues/Index.md) — prioritized compatibility backlogs and issue triage.

@@ -8,14 +8,15 @@ It imports MSBuild props/targets, invokes `Jroc.Core` in-process, and exposes th
 
 - [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK)
   - Use this when your project should compile JavaScript during `dotnet build`.
+    Consume the newly compiled assembly through its generated typed `Import`
+    and `Run` APIs.
 - [`jroc`](https://www.nuget.org/packages/jroc)
   - Use this when you want the standalone CLI/global tool for manual compilation.
 - [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core)
-  - Use this when you need the compiler as a reusable .NET library.
+  - Use this for in-memory compilation when scripts are supplied at runtime.
 - [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime)
-  - Use this directly only for advanced hosting APIs such as `JsEngine`;
-    generated-facade projects receive the implementation transitively from
-    `Jroc.SDK`.
+  - Runtime execution support; generated-facade projects receive the
+    implementation transitively from `Jroc.SDK`.
 
 Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK`
 together at the same version. Local-feed validation must include

@@ -1,149 +1,121 @@
-# JROC SDK
+# Using JROC
 
-JROC's SDK documentation covers the .NET library workflow: compile JavaScript from a .NET project, load compiled modules from C#, or compile and run a module entirely in memory.
+JROC compiles JavaScript to .NET assemblies. There are three supported ways to
+use it:
 
-This page is the **canonical user documentation** for SDK consumers. The older document [`docs/runtime/DotNetLibraryHosting.md`](../runtime/DotNetLibraryHosting.md) is kept as a design/implementation reference.
+| Scenario | Start here | Entry point |
+|---|---|---|
+| Compile and run from a terminal | [Command-line quick start](tutorials/GettingStarted.md) | `jroc script.js out`, then `dotnet out/script.dll` |
+| JavaScript is known when your .NET project is built | [MSBuild integration](tutorials/MSBuildBuildTask.md) | `Jroc.SDK` + `JrocCompile`, then generated `Import()` / `Run()` methods |
+| JavaScript is supplied at runtime and is not known in advance | [In-memory compilation](tutorials/InMemoryCompileAndRun.md) | `JrocInMemoryCompiler.CompileAndLoadModule(...)` |
 
-## What the SDK gives you
+The examples use C#. Generated assemblies expose ordinary .NET types and can
+also be consumed by other .NET languages that support those signatures.
+JROC targets .NET 10 and ECMAScript 2025; see the
+[compatibility documentation](../ECMA262/Index.md) for current limitations.
 
-- **Build-integrated compilation**: declare `JrocCompile` items and let `Jroc.SDK` compile JavaScript during `dotnet build`.
-- **Library hosting**: import compiled JavaScript assemblies through generated
-  `Run`/`Import` facades and call `module.exports` from C#.
-- **Generated script facades**: run an assembly or published script directly through assembly-named static types without referencing runtime APIs from C#.
-- **BCL iterable and built-in projections**: consume generators with
-  `foreach`/`await foreach`, and use generated contracts for Date, RegExp,
-  Error, Symbol, collections, buffers, DataView, and supported typed arrays.
-- **In-memory compile-and-run**: use `Jroc.Core` to produce PE/PDB bytes and optionally load them into a collectible context without writing generated assemblies to disk.
-- A dedicated **script thread** per hosted runtime instance.
-- Optional **debug symbols**: emit Portable PDB (`.pdb`) data for stepping and better stack traces against the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code.
-- Two ways to call exports from hosted modules:
-  - **Generated typed facades**: use `MyModule.Import()` and compiler-generated
-    contracts with no runtime types in public signatures.
-  - **Advanced dynamic**: use `dynamic` with
-    `JsEngine.LoadDynamicModule(Assembly, moduleId)`.
-- Stable SDK/runtime exception types (`JsModuleLoadException`, `JsInvocationException`, etc.).
+## 1. Compile and run on the command line
 
-For build-integrated host projects, start with the `Jroc.SDK` NuGet package and declare one or more `JrocCompile` items in your `.csproj`. For source-text or artifact-only workflows, use the `Jroc.Core` in-memory APIs.
+Install the .NET 10 SDK, then install the compiler:
 
-## Quick start (MSBuild)
+```shell
+dotnet tool install --global jroc
+jroc hello.js out
+dotnet out/hello.dll
+```
+
+No C# host project is needed. The generated program runs on .NET with the
+runtime files JROC places alongside it.
+
+See the [complete quick start](tutorials/GettingStarted.md) for a sample script,
+output files, updates, and diagnostic options.
+
+## 2. Compile during MSBuild and call generated APIs
+
+Use this workflow when the JavaScript source or npm package is known at build
+time. In a .NET project, add:
 
 ```xml
 <ItemGroup>
   <PackageReference Include="Jroc.SDK" Version="VERSION" />
-
-  <JrocCompile Include="JavaScript\math.js" />
+  <JrocCompile Include="JavaScript/math.js" AssemblyName="HostedMath" />
 </ItemGroup>
 ```
 
-`Jroc.SDK` compiles the JavaScript module before `ResolveAssemblyReferences`, adds the generated module assembly as a normal project reference, and makes generated exports contracts available to C# code in the same build.
-It also supplies the matching runtime implementation transitively for build,
-run, and publish. Add a direct `Jroc.Runtime` reference only when host source
-uses advanced runtime APIs such as `JsEngine`.
+Replace `VERSION` with a released JROC version. The SDK compiles the module
+before the host language compiler runs and references the newly generated
+assembly automatically. It restores and deploys the matching runtime
+transitively; no global `jroc` installation or manually loaded assembly is
+needed.
 
-## Quick start (typed)
-
-When contracts are generated into the compiled module assembly (default), the easiest pattern is:
+For `math.js` that exports `version` and `add`:
 
 ```csharp
-using var exports = MyModule.Import();
-
+using var exports = HostedMath.Import();
 Console.WriteLine(exports.Version);
-Console.WriteLine(exports.Add(1, 2));
+Console.WriteLine(exports.Add(1d, 2d));
 ```
 
-## Quick start (run a script)
-
-Given an assembly named `HelloAssembly` compiled from `hello.js`:
+The returned type is a strongly typed contract generated **in the compiled
+JavaScript assembly**, not a handwritten host interface. To execute a script
+rather than retain its exports:
 
 ```csharp
-HelloAssembly.Run();
-HelloAssembly.Scripts.hello.Run("--mode", "test");
+HostedMath.Run();
 ```
 
-The root method runs the manifest entry module. Each call uses an isolated
-runtime and maps its arguments to `process.argv[2..]`. See
-[generated script facades](api/GeneratedFacades.md) for naming, lifecycle,
-failure, and deployment details.
+`Run()` owns a temporary runtime and drains asynchronous work before returning.
+`Import()` keeps an isolated runtime alive until its returned contract is
+disposed. Side-effect-only scripts expose `Run()` without `Import()`.
 
-If the entry module exports values, the same facade exposes a generated import
-contract without requiring host source to reference `Jroc.Runtime`:
+See [MSBuild integration](tutorials/MSBuildBuildTask.md),
+[typed imports](tutorials/TypedHosting.md), and the
+[generated API reference](api/GeneratedFacades.md).
+The MSBuild tutorial also shows how to restore and compile an npm package,
+then invoke it from C# through its generated `Import()` contract.
 
-```csharp
-using var exports = HelloAssembly.Import();
-Console.WriteLine(exports.Version);
-```
+## 3. Compile source supplied at runtime in memory
 
-Side-effect-only modules expose `Run` only. Modules with dynamic or computed
-exports still expose `Import` through a safe fallback contract.
-
-If you need to target a specific module id in that same compiled assembly:
-
-```csharp
-using MyModule.Scripts.calculator.index.IExports exports =
-    MyModule.Scripts.calculator.index.Import();
-```
-
-## Quick start (dynamic)
-
-```csharp
-using Jroc.Runtime;
-using System.Reflection;
-
-var asm = Assembly.LoadFrom("path\\to\\compiled.dll");
-
-// Returns a JsDynamicExports dynamic exports proxy.
-using dynamic exports = JsEngine.LoadDynamicModule(asm, moduleId: "math");
-
-Console.WriteLine((string)exports.version);
-Console.WriteLine((double)exports.add(1, 2));
-```
-
-## Quick start (in memory)
+Use `Jroc.Core` when the script is not known when the host is built:
 
 ```csharp
 using Jroc;
 
+// In an application, sourceText can come from a runtime-selected file or service.
+var sourceText = "exports.add = (left, right) => left + right;";
+var sourcePath = Path.Combine(Path.GetTempPath(), "jroc-input", "math.js");
+
 using var module = JrocInMemoryCompiler.CompileAndLoadModule(
-    new JrocInMemoryCompileRequest(@"C:\app\math.js")
-    {
-        SourceText = "exports.add = (left, right) => left + right;"
-    });
+    new JrocInMemoryCompileRequest(sourcePath) { SourceText = sourceText });
 
 dynamic exports = module.Exports;
-Console.WriteLine((double)exports.add(1, 2));
+Console.WriteLine((double)exports.add(1d, 2d));
 ```
 
-## [Tutorials](tutorials/Index.md)
+The source path provides identity and dependency-resolution context; with
+`SourceText` supplied, the entry file need not exist. Compilation and loading
+do not write generated assemblies to disk. Because the assembly is created
+after the host was built, its generated types cannot be referenced statically
+by that host. Access exports dynamically or use `Get` / `Invoke` on
+`module.Exports`.
 
-- [Getting started](tutorials/GettingStarted.md)
-- [MSBuild build task](tutorials/MSBuildBuildTask.md)
-- [In-memory compile-and-run](tutorials/InMemoryCompileAndRun.md)
-- [Typed hosting](tutorials/TypedHosting.md)
-- [Dynamic hosting](tutorials/DynamicHosting.md)
-- [Async + event loop](tutorials/AsyncAndEventLoop.md)
-- [Lifetime + disposal](tutorials/LifetimeAndDisposal.md)
-- [Diagnostics + exceptions](tutorials/DiagnosticsAndExceptions.md)
-- [Module ids + discovery](tutorials/ModuleIdsAndDiscovery.md)
+See [in-memory compilation](tutorials/InMemoryCompileAndRun.md) for packages,
+async calls, lifetime, and limitations. In-memory execution is not a sandbox:
+only execute scripts you trust within the host process.
 
-## [API reference](api/Index.md)
+## Workflow references
 
-- [`JrocCompile` MSBuild task](api/JrocCompile.md)
-- [Generated script facades](api/GeneratedFacades.md)
-- [In-memory compiler APIs](api/InMemoryCompiler.md)
-- [`JsEngine`](api/JsEngine.md)
-- [Handles + constructors](api/Handles.md)
-- [Exceptions](api/Exceptions.md)
-- [JS ↔ CLR type mapping](api/TypeMapping.md)
+- [Tutorial index](tutorials/Index.md)
+- [API reference](api/Index.md)
+- [Async calls and event-loop behavior](tutorials/AsyncAndEventLoop.md)
+- [Lifetime and disposal](tutorials/LifetimeAndDisposal.md)
+- [Diagnostics and exceptions](tutorials/DiagnosticsAndExceptions.md)
 
-## Samples
+Runnable MSBuild examples are in [Basic](../../samples/Basic),
+[Typed](../../samples/Typed), [Domino](../../samples/Domino), and
+[Picocolors](../../samples/Picocolors).
 
-The repo includes runnable `Jroc.SDK`-based samples:
-
-- `samples/Basic`
-- `samples/Typed`
-- `samples/Domino`
-- `samples/Picocolors`
-
-## Validation and release smoke
-
-- [SDK/NuGet package validation](PackagingValidation.md)
+For maintainers, see [building and releasing](../BuildingAndReleasing.md)
+and [package validation](PackagingValidation.md). Compiler/runtime design
+documents describe implementation details, not additional supported consumer
+workflows.

@@ -1,21 +1,18 @@
-# SDK tutorials
+# JROC tutorials
 
-These tutorials walk .NET developers through compiling JavaScript with JROC, integrating compilation with MSBuild, hosting exports, handling asynchronous work, and diagnosing runtime behavior.
+## Choose one of the three workflows
 
-## Getting started and compilation
+1. [Compile and run on the command line](GettingStarted.md).
+2. [Compile with MSBuild and call generated APIs](MSBuildBuildTask.md).
+3. [Compile runtime-supplied scripts in memory](InMemoryCompileAndRun.md).
 
-- [Getting started](GettingStarted.md)
-- [MSBuild build task](MSBuildBuildTask.md)
-- [In-memory compile-and-run](InMemoryCompileAndRun.md)
+## Working with generated assemblies
 
-## Hosting modules
+- [Typed imports, classes, and mutable exports](TypedHosting.md)
+- [Module IDs and generated facade names](ModuleIdsAndDiscovery.md)
 
-- [Typed hosting](TypedHosting.md)
-- [Dynamic hosting](DynamicHosting.md)
-- [Module IDs and discovery](ModuleIdsAndDiscovery.md)
+## Lifecycle and diagnostics
 
-## Runtime operation
-
-- [Async exports and event loop](AsyncAndEventLoop.md)
+- [Async calls and event loop](AsyncAndEventLoop.md)
 - [Lifetime and disposal](LifetimeAndDisposal.md)
 - [Diagnostics and exceptions](DiagnosticsAndExceptions.md)

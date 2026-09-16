@@ -2,10 +2,14 @@
 
 This document is the audit trail for the coordinated package migration tracked by issues `#850` and `#439`.
 
+This is maintainer validation guidance. For the three supported consumer
+workflows (CLI, MSBuild-generated APIs, and in-memory compilation), start with
+the [SDK overview](Index.md).
+
 The package split is considered release-ready only when the following package flows are validated together:
 
 - `jroc` - dotnet tool for CLI users
-- `Jroc.Core` - reusable compiler library
+- `Jroc.Core` - in-memory compilation for runtime-supplied scripts
 - `Jroc.SDK` - MSBuild integration for `JrocCompile`
 - `Jroc.Runtime` - runtime and hosting package
 

@@ -1358,25 +1358,33 @@ namespace JavaScriptRuntime
         public static string ToLowerCase(string input)
         {
             input ??= string.Empty;
-            return input.ToLowerInvariant();
+            return UnicodeCaseConversion.ToLower(
+                input,
+                global::System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public static string ToUpperCase(string input)
         {
             input ??= string.Empty;
-            return input.ToUpperInvariant();
+            return UnicodeCaseConversion.ToUpper(
+                input,
+                global::System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public static string ToLocaleLowerCase(string input)
         {
             input ??= string.Empty;
-            return input.ToLower(global::System.Globalization.CultureInfo.CurrentCulture);
+            return UnicodeCaseConversion.ToLower(
+                input,
+                global::System.Globalization.CultureInfo.CurrentCulture);
         }
 
         public static string ToLocaleUpperCase(string input)
         {
             input ??= string.Empty;
-            return input.ToUpper(global::System.Globalization.CultureInfo.CurrentCulture);
+            return UnicodeCaseConversion.ToUpper(
+                input,
+                global::System.Globalization.CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -2039,6 +2047,9 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
             other ??= string.Empty;
+            input = NormalizeForLocaleCompare(input);
+            other = NormalizeForLocaleCompare(other);
+
             var numeric = OptionsHasNumericTrue(options);
             if (!numeric)
             {
@@ -2051,6 +2062,62 @@ namespace JavaScriptRuntime
             }
             var cmp = NumericAwareCompare(input, other);
             return cmp < 0 ? -1d : (cmp > 0 ? 1d : 0d);
+        }
+
+        private static string NormalizeForLocaleCompare(string value)
+        {
+            if (IsWellFormed(value))
+            {
+                return value.Normalize(NormalizationForm.FormC);
+            }
+
+            var result = new StringBuilder(value.Length);
+            var segmentStart = 0;
+            for (var index = 0; index < value.Length; index++)
+            {
+                var isUnpairedSurrogate = char.IsSurrogate(value[index])
+                    && !(char.IsHighSurrogate(value[index])
+                        && index + 1 < value.Length
+                        && char.IsLowSurrogate(value[index + 1]));
+                if (!isUnpairedSurrogate)
+                {
+                    if (char.IsHighSurrogate(value[index]))
+                    {
+                        index++;
+                    }
+
+                    continue;
+                }
+
+                AppendNormalizedSegment(
+                    result,
+                    value,
+                    segmentStart,
+                    index - segmentStart);
+                result.Append(value[index]);
+                segmentStart = index + 1;
+            }
+
+            AppendNormalizedSegment(
+                result,
+                value,
+                segmentStart,
+                value.Length - segmentStart);
+            return result.ToString();
+        }
+
+        private static void AppendNormalizedSegment(
+            StringBuilder result,
+            string value,
+            int start,
+            int length)
+        {
+            if (length > 0)
+            {
+                result.Append(
+                    value.Substring(start, length)
+                        .Normalize(NormalizationForm.FormC));
+            }
         }
 
         private static bool OptionsHasNumericTrue(object? options)

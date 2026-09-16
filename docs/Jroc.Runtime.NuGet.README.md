@@ -1,43 +1,42 @@
 # Jroc.Runtime
 
-`Jroc.Runtime` is the runtime support package for executing JROC-compiled assemblies and hosting compiled modules from .NET.
+[`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime) provides
+`JavaScriptRuntime.dll`, the execution support library
+for JROC-generated assemblies. It is a dependency of the supported workflows,
+not a separate assembly-loading workflow.
 
-It ships the `JavaScriptRuntime.dll` assembly plus the `Jroc.Runtime` hosting APIs, including `JsEngine`.
+## Choose your workflow
 
-## Which package should I use?
+- [`jroc`](https://www.nuget.org/packages/jroc): compile and run JavaScript on
+  the command line. The compiler places the runtime beside generated output.
+- [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK): compile known scripts
+  during MSBuild and call generated `Import` / `Run` APIs. The SDK restores and
+  deploys the runtime transitively.
+- [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core): compile source not
+  known until runtime using `JrocInMemoryCompiler`.
 
-- [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime)
-  - Use this when your application needs the runtime support library or the public hosting APIs used to load compiled modules.
-- [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK)
-  - Use this when your project should compile JavaScript during `dotnet build`.
-- [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core)
-  - Use this when you need the compiler as a reusable .NET library.
-- [`jroc`](https://www.nuget.org/packages/jroc)
-  - Use this when you want the standalone CLI/global tool for manual compilation.
+Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK`
+together at the same version. Keep their versions aligned.
 
-Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` together at the same version. Keep the versions aligned when you mix them in one workflow.
+## In-memory execution dependency
 
-## Install
+A host compiling and executing runtime-supplied scripts can reference:
 
 ```xml
 <ItemGroup>
+  <PackageReference Include="Jroc.Core" Version="VERSION" />
   <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 </ItemGroup>
 ```
 
-## Package surface
+Use `JrocInMemoryCompiler.CompileAndLoadModule(...)` to obtain the live module.
+Its exports provide dynamic access or explicit `Get` / `Invoke` operations.
+The `Jroc.Runtime` namespace includes the callable and exception types used
+at this boundary.
 
-- NuGet package: `Jroc.Runtime`
-- Public namespace: `Jroc.Runtime`
-- Runtime assembly copied next to compiled outputs: `JavaScriptRuntime.dll`
-
-## Hosting compiled JavaScript from C#
-
-If you want to load a compiled module from C#, start with the hosting docs:
-
-- https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
-
-The main entry point is `Jroc.Runtime.JsEngine`, which can discover module ids and load typed or dynamic exports from compiled assemblies.
+For MSBuild-generated imports, consume the types generated in the compiled
+JavaScript assembly. A normal `Jroc.SDK` host does not need a direct runtime
+package reference or manual runtime loading.
 
 ## Links
 

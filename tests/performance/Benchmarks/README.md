@@ -44,6 +44,34 @@ Benchmarks/
 
 ## Benchmark Scenarios
 
+### Array length validation microbenchmarks
+
+Run the source-runtime validators and retained alternatives on the same host:
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --array-length-validation --filter '*' \
+  --warmupCount 5 --iterationCount 10 --launchCount 2 --iterationTime 150 \
+  --exporters json --artifacts artifacts/array-length-validation
+```
+
+`ArrayLengthObjectValidationBenchmarks` compares the original PR #2113
+validator (`ab85c3d26`), a boxed-double fast path, string-only conversion reuse,
+primitive conversion reuse, their combined fast path, and the current product
+implementation. Inputs are
+preallocated boxed doubles, integers, short strings, zero-padded long strings,
+JavaScript objects with a `valueOf` callback, and an equally weighted mixture
+of doubles, integers, short strings, and objects. Realm creation, boxing, and
+input construction are outside the timed region.
+
+`ArrayLengthNumericValidationBenchmarks` compares the original numeric
+validator with range/cast and range/truncation alternatives. Each invocation
+consumes eight varying lengths, including zero and `uint.MaxValue`; results
+are reported per validation. Memory and native disassembly reports accompany
+the timing results. These are method-level comparisons, not end-to-end
+JavaScript performance measurements. Exception behavior is covered by the
+runtime tests rather than included in successful-validation timings.
+
 ### Core Scenarios
 
 The cross-runtime runner discovers the root-level `Scenarios\*.js` catalog, while the Dromaeo execution runner discovers `Scenarios\dromaeo\*.js`. The list below highlights a few representative scenarios.
