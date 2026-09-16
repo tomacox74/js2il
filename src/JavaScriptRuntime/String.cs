@@ -1288,6 +1288,65 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Compiler-internal accumulator for <c>+=</c> string concatenation on a non-captured local whose
+        /// initial value is not statically a string (for example <c>var s = new String(); s += "a";</c>).
+        /// The compiler materializes every JavaScript-visible read through
+        /// <see cref="MaterializeConcatValue"/>, so this type is never observable from script.
+        /// </summary>
+        internal sealed class ConcatAccumulator
+        {
+            private readonly StringBuilder _builder;
+            private string? _materialized;
+
+            internal ConcatAccumulator(string seed)
+            {
+                _builder = CreateConcatBuilder(seed);
+                _materialized = seed;
+            }
+
+            internal void Append(string value)
+            {
+                if (value.Length == 0)
+                {
+                    return;
+                }
+
+                _builder.Append(value);
+                _materialized = null;
+            }
+
+            internal string Materialize()
+            {
+                return _materialized ??= _builder.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Implements <c>local += value</c> for a compiler-managed concat local. The first append applies
+        /// the full <c>+</c> operator to the current value (ToPrimitive on wrapper objects, TypeError on
+        /// symbols) and seeds an accumulator; subsequent appends reuse the accumulator.
+        /// </summary>
+        public static object AppendConcatValue(object? current, string value)
+        {
+            if (current is ConcatAccumulator accumulator)
+            {
+                accumulator.Append(value);
+                return accumulator;
+            }
+
+            var seed = (string)Operators.Add(current, value);
+            return new ConcatAccumulator(seed);
+        }
+
+        /// <summary>
+        /// Converts a compiler-managed concat local back to its JavaScript-visible value.
+        /// </summary>
+        public static object? MaterializeConcatValue(object? value)
+        {
+            return value is ConcatAccumulator accumulator ? accumulator.Materialize() : value;
+        }
+
+        /// <summary>
         /// Implements String.prototype.charCodeAt([index]).
         /// Returns a UTF-16 code unit as a number, or NaN when out of range.
         /// </summary>

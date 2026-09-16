@@ -26,6 +26,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_PlusEquals_WrapperObjectAccumulator()
+        {
+            return ExecutionTest(nameof(String_PlusEquals_WrapperObjectAccumulator));
+        }
+
+        [Fact]
         public Task String_PlusEquals_PlainAssignmentKeepsAssignedType()
         {
             return ExecutionTest(nameof(String_PlusEquals_PlainAssignmentKeepsAssignedType));

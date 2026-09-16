@@ -76,6 +76,22 @@ holes, or install indexed getters. All other reads retain `ObjectRuntime.GetItem
 including sparse, inherited, accessor, and Proxy behavior. Length still gets
 captured before separator coercion, and element conversion is unchanged.
 
+The compiler's `+=` concatenation builder previously required the local's
+initializer to be statically a string, so `var str = new String(); str += "a"`
+in a 5,000-iteration loop ran the generic `Operators.Add` path and copied the
+growing string every iteration (about 25 MB, more than half of the scenario's
+allocations). A dynamic variant now applies when a non-captured, non-parameter
+local has an object-typed initializer and at least one `+=` with a string
+literal or template literal RHS. The local keeps its object-typed slot; each
+qualifying `+=` lowers to `String.AppendConcatValue`, which runs the full `+`
+operator on the first append (ToPrimitive on the wrapper, `TypeError` for
+symbols) and then appends into a compiler-private `ConcatAccumulator`. Every
+JavaScript-visible read of the local lowers to `String.MaterializeConcatValue`,
+so the accumulator is never observable; the materialized string is cached until
+the next append. Non-string `+=` operands, plain reassignments, `with`
+statements, `++`/`--`, captured locals, and generator/async bodies fall back to
+the generic path exactly as before.
+
 No compiler intrinsic guards, benchmark bodies, runtime versions, or
 benchmark configuration are changed.
 
@@ -97,17 +113,25 @@ artifact directories. The Jint package remains 4.16.2 in every local run.
 | ASCII + dense join | Jint | 27.182 | 27.172 | 0.744 | 26 | 22,078,358 |
 | Confirmation, both changes | JROC | 25.008 | 25.030 | 0.805 | 34 | 46,746,556 |
 | Confirmation, both changes | Jint | 26.503 | 26.407 | 0.822 | 32 | 22,092,775 |
+| + dynamic concat accumulator | JROC | 20.157 | 20.146 | 0.330 | 15 | 21,708,978 |
+| + dynamic concat accumulator | Jint | 26.577 | 26.514 | 0.646 | 23 | 22,092,616 |
 
-The final two runs put JROC 8.4% and 5.6% ahead of Jint by mean duration,
-respectively, and 14.8-15.2% faster than the baseline. Allocations for the
-full scenario are essentially unchanged: this is a CPU optimization, not an
-allocation victory. The script uses `Math.random`, so split sizes and allocation
-counts vary slightly between invocations. Host-specific timings and the
-single-change join delta must not be treated as universal speedups.
+The ASCII and join changes put JROC 8.4% and 5.6% ahead of Jint by mean
+duration, and 14.8-15.2% faster than the baseline, without changing
+allocations. The dynamic concat accumulator then removes the `Concat String
+Object` copying: allocations fall from 46.7 MB to 21.7 MB per operation (below
+Jint's 22.1 MB), Gen0 collections from 46 to 37, and the mean improves to
+20.16 ms, 24.2% ahead of Jint and 31.3% faster than the v0.12.22 baseline.
+An instrumented per-test control (not the benchmark fixture) showed that
+phase dropping from 2.7 ms to 0.06 ms steady state, and the GC time previously
+attributed to later `lastIndexOf`/`slice`/`split` phases disappearing with it.
+The script uses `Math.random`, so split sizes and allocation counts vary
+slightly between invocations. Host-specific timings and the single-change join
+delta must not be treated as universal speedups.
 
 Raw local reports are in ignored `artifacts/string-baseline`,
-`artifacts/string-ascii`, `artifacts/string-ascii-join`, and
-`artifacts/string-confirmation`, under
+`artifacts/string-ascii`, `artifacts/string-ascii-join`,
+`artifacts/string-confirmation`, and `artifacts/string-concat`, under
 `results/Benchmarks.DromaeoExecutionBenchmarks-report-full-compressed.json`.
 
 ## Alternatives considered
@@ -118,7 +142,8 @@ Raw local reports are in ignored `artifacts/string-baseline`,
 | Scalar ASCII casing loop | Prefer framework vectorization; a custom loop duplicates optimized CLR work and needs locale exceptions. |
 | Cache casing results | Not needed to regain the lead; adds retention/ownership concerns and locale-sensitive cache keys. |
 | Restore the old Array join implementation | Rejected: reintroduces incorrect undefined separators, nullish values, and mutation semantics. Keep the generic algorithm with guarded reads. |
-| Expand concatenation-builder optimization to `new String()` | Potentially valuable: this scenario's boxed-string concatenation is not rewritten to a builder. Requires proof of coercion and alias behavior; separate compiler work rather than a risky regression fix. |
+| Expand concatenation-builder optimization to `new String()` | Implemented as the dynamic concat accumulator described above; the first append keeps full `+` coercion semantics and all reads materialize. |
+| Typed numeric overloads for `charAt`/`charCodeAt`/`slice`/`substr`/`substring` | Remaining opportunity: literal arguments are boxed per call (about 135K `box double` allocations per operation) and re-coerced through `ToNumber`. Compiler-side work with broad snapshot churn; not included here. |
 | Improve split sizing or substring caching | Existing presizing, one-character reuse, and bounded substring caching already apply. Further changes need allocation/profile evidence; full-scenario allocations did not materially improve here. |
 | Remove prototype guards or hoist mutable global reads | Rejected without invalidation/side-effect proof. `String.prototype` overrides and callback mutations remain observable. |
 | Optimize realm/module initialization or dynamic dispatch globally | Broader opportunity, but not the identified casing regression. Measure separately and avoid weakening isolation. |

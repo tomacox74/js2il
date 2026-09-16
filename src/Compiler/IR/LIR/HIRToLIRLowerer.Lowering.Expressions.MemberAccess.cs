@@ -858,7 +858,8 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        if (TryMaterializeStringBuilderAccumulator(binding, out result))
+        if (TryMaterializeStringBuilderAccumulator(binding, out result)
+            || TryMaterializeDynamicConcatAccumulator(binding, out result))
         {
             return true;
         }

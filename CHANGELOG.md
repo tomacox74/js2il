@@ -12,6 +12,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   indexed getters, inherited values, and mutation during coercion. The exact
   local scenario improves from 29.35 ms to 24.90-25.01 ms, versus
   Jint 4.16.2 at 26.50-27.18 ms in the corresponding runs.
+- perf(compiler): extend the `+=` string concatenation builder to non-captured
+  locals whose initializer is not statically a string (for example
+  `var s = new String(); s += "a"`). The first append applies the full `+`
+  operator (ToPrimitive, Symbol TypeError) and later appends reuse a
+  compiler-private accumulator that every JavaScript-visible read
+  materializes. `dromaeo-object-string` allocations fall from 46.7 MB to
+  21.7 MB per operation and the mean improves to 20.16 ms versus Jint at
+  26.58 ms in the same run.
 
 ## v0.12.22 - 2026-09-16
 

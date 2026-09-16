@@ -28,6 +28,13 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_PlusEquals_WrapperObjectAccumulator()
+        {
+            var testName = nameof(String_PlusEquals_WrapperObjectAccumulator);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_PlusEquals_PlainAssignmentKeepsAssignedType()
         {
             var testName = nameof(String_PlusEquals_PlainAssignmentKeepsAssignedType);
