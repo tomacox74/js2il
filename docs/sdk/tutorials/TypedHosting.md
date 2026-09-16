@@ -1,6 +1,8 @@
 # Tutorial: Typed hosting
 
-Typed hosting is the recommended UX when you control the compilation step (or you distribute a compiled module assembly that already contains contracts).
+Use generated typed imports for JavaScript compiled during your .NET project's
+MSBuild step. Start with the [MSBuild tutorial](MSBuildBuildTask.md); this page
+extends that workflow to classes, asynchronous functions, and mutable exports.
 
 ## Key idea
 
@@ -20,6 +22,12 @@ Contracts follow these conventions (see the generator for the authoritative rule
   `HostedCounterModule.Scripts.counter.Import()` return that same interface.
 
 ## Example module
+
+Save this as `JavaScript/counter.js` and declare it in the host project:
+
+```xml
+<JrocCompile Include="JavaScript/counter.js" AssemblyName="HostedCounterModule" />
+```
 
 ```js
 class Counter {
@@ -85,8 +93,8 @@ Name matching for setters follows the same contract-to-JavaScript rules as gette
 
 Exported classes are surfaced as generated constructor contracts. Constructed
 instances and nested object/array handles are also generated contracts that
-implement `IDisposable`; they do not inherit from `IJsHandle`, and constructor
-properties do not use `IJsConstructor<T>`.
+implement `IDisposable`. Their types are generated into the compiled assembly;
+the host uses those contracts rather than runtime-owned marker interfaces.
 
 Object literal contracts expose properties, methods, and accessors with the
 correct JavaScript receiver. Array contracts expose `Length`, `Get`, `Set`,

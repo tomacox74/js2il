@@ -108,11 +108,12 @@ The JROC packages serve different integration scenarios:
 |---|---|
 | [`jroc`](https://www.nuget.org/packages/jroc) | You want the command-line compiler shown above. |
 | [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK) | Your project should compile JavaScript as part of `dotnet build`. |
-| [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core) | You are building custom compiler tooling or need programmatic compilation. |
-| [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime) | You are hosting or running JROC-generated code from .NET. |
+| [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core) | Your scripts are not known until runtime and need in-memory compilation. |
+| [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime) | You need execution support for generated code; `Jroc.SDK` supplies it transitively. |
 
-See the [JROC SDK documentation](docs/sdk/Index.md) for build integration,
-hosting, typed facades, and compiler APIs. Keep JROC package versions aligned
+See the [JROC SDK documentation](docs/sdk/Index.md) for the three supported
+workflows: command-line execution, MSBuild with generated typed `Import` / `Run`
+APIs, and in-memory compilation. Keep JROC package versions aligned
 when using more than one package in the same application.
 
 ## Compatibility and project status

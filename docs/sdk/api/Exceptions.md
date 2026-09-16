@@ -11,7 +11,8 @@ Typically carries additional context such as module id, member name, contract ty
 
 ## JsModuleLoadException
 
-Thrown when a module cannot be loaded/evaluated via `JsEngine.LoadModule(...)`.
+Thrown when a generated `Import()` or in-memory `CompileAndLoadModule(...)`
+cannot load or evaluate the selected module.
 
 Common causes:
 
@@ -26,8 +27,7 @@ Common causes:
 
 - missing export member
 - export shape mismatch (expected function but got object)
-- contract type missing required module metadata (generated metadata for facade
-  contracts, or `[JsModule]` for legacy hand-authored contracts)
+- a host-defined in-memory contract does not match the runtime script
 
 ## JsInvocationException
 
@@ -60,3 +60,16 @@ When available, it carries:
 - JS error name
 - JS message
 - JS stack
+
+## Compilation failures
+
+`JrocInMemoryCompiler.Compile(...)` and `CompileAndLoadModule(...)` throw
+`InvalidOperationException` when compilation fails, with compiler diagnostics
+in the message. This is distinct from a successfully compiled script failing
+during evaluation or invocation.
+
+## Disposal failures
+
+Using exports or derived values after their import or in-memory module has
+been disposed throws `ObjectDisposedException`. Pending Promise bridge tasks
+also fault when the owning runtime is disposed.

@@ -30,9 +30,10 @@ dotnet tool uninstall --global jroc
 - [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK)
   - The MSBuild/NuGet integration for host projects that should compile JavaScript during `dotnet build`.
 - [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core)
-  - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
+  - In-memory compilation for scripts not known until runtime.
 - [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime)
-  - The runtime support library used by generated assemblies and .NET hosting scenarios.
+  - Execution support for generated assemblies and in-memory modules;
+    `Jroc.SDK` supplies it transitively to MSBuild consumers.
 
 Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
 

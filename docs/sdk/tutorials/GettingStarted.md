@@ -1,106 +1,64 @@
-# Tutorial: Getting started
+# Tutorial: compile and run on the command line
 
-This tutorial walks through compiling a JavaScript module and calling it from a .NET app.
+Use the command-line workflow to turn a JavaScript file into a runnable .NET
+program without creating a C# host project.
 
-## Prerequisites
+## 1. Install JROC
 
-- .NET 10 SDK
-- `jroc` installed:
+Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0),
+then install the global tool:
 
-```powershell
+```shell
 dotnet tool install --global jroc
+jroc --version
 ```
 
-## 1) Create a JavaScript module
+For subsequent updates, use `dotnet tool update --global jroc`.
 
-Create `math.js`:
+## 2. Create a script
 
-```js
-function add(x, y) {
-  return x + y;
-}
+Save this as `hello.js`:
 
-const version = "1.0.0";
-
-module.exports = {
-  version,
-  add,
-};
+```javascript
+const name = "JROC";
+console.log(`Hello from ${name}!`);
 ```
 
-## 2) Compile it with jroc
+## 3. Compile and run
 
-```powershell
-# Default (no debug symbols)
-jroc .\math.js .\out
-
-# Optional: emit Portable PDB debug symbols (.pdb) for stepping and better stack traces
-jroc .\math.js .\out --pdb
+```shell
+jroc hello.js out
+dotnet out/hello.dll
 ```
 
-This produces (at minimum):
+Expected output:
 
-- `out\math.dll` (compiled module assembly)
-- `out\math.runtimeconfig.json`
-- `out\JavaScriptRuntime.dll`
-
-If you pass `--pdb`, it also produces:
-
-- `out\math.pdb`
-
-Portable PDBs map back to the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code, so managed debuggers and source-mapped stack traces resolve the original file and line numbers. Uncaptured locals appear as normal debugger locals; captured closure variables still surface through generated scope objects rather than ordinary local slots.
-
-## 3) Create a host console app
-
-```powershell
-dotnet new console -n HostApp
-cd .\HostApp
+```text
+Hello from JROC!
 ```
 
-Reference the compiled module assembly (`out\math.dll`):
+Keep `hello.dll`, `hello.runtimeconfig.json`, and `JavaScriptRuntime.dll`
+together in the output directory. Running the generated program requires the
+.NET 10 runtime. If no output directory is specified, JROC writes next to the
+input file.
 
-```xml
-<!-- HostApp.csproj -->
-<ItemGroup>
-  <Reference Include="math">
-    <HintPath>..\out\math.dll</HintPath>
-  </Reference>
-</ItemGroup>
+## Diagnostics and debugging
+
+```shell
+jroc hello.js out --pdb -v
 ```
 
-## 4) Call exports (typed)
+`--pdb` emits Portable PDB symbols referring to the original source path;
+`-v` enables compiler diagnostics. Use `--diagnostic-file <path>` to capture
+diagnostics and `jroc --help` for CLI options. Keep the source and PDB available
+for source-level debugging.
 
-If contract generation is enabled (it is **enabled by default**), `math.dll`
-contains `math.Scripts.math.IExports` and an assembly-root `math.Import()`
-shortcut for the entry module.
+## Choose a .NET integration workflow
 
-In your host app:
+If you want to call JavaScript from a .NET project rather than run it as a
+standalone program, use:
 
-```csharp
-using var exports = math.Import();
-
-Console.WriteLine(exports.Version);
-Console.WriteLine(exports.Add(1, 2));
-```
-
-## 5) Call exports (dynamic)
-
-If you want to avoid compile-time references to generated contracts:
-
-```csharp
-using Jroc.Runtime;
-using System.Reflection;
-
-var asm = Assembly.LoadFrom("..\\out\\math.dll");
-using dynamic exports = JsEngine.LoadDynamicModule(asm, moduleId: "math");
-
-Console.WriteLine((string)exports.version);
-Console.WriteLine((double)exports.add(1, 2));
-```
-
-## Notes
-
-- **Threading**: calls from any host thread are marshalled to the module’s dedicated script thread.
-- **Disposal**: always dispose the object returned by `Import()`/`LoadModule(...)` to shut down the script thread.
-- **Deployment**: the runtime assembly is still required at run time, but it is
-  not part of the generated facade's public signatures.
+- [MSBuild integration](MSBuildBuildTask.md) for scripts known at build time;
+  call the resulting assembly's generated `Import()` / `Run()` APIs.
+- [In-memory compilation](InMemoryCompileAndRun.md) for scripts supplied at
+  runtime.
