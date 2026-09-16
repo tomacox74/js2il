@@ -6,6 +6,9 @@ public static facade types run or import published scripts directly from C#
 or another compatible .NET language. The facade is rooted at the sanitized
 assembly name:
 
+See [JavaScript to .NET type mapping](TypeMapping.md) for primitive, object,
+function, iterable, and async projections used by generated contracts.
+
 ```csharp
 HelloAssembly.Run();
 HelloAssembly.Scripts.hello.Run();

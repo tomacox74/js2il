@@ -6,6 +6,9 @@ Use these APIs for JavaScript selected or supplied at runtime. For build-time
 scripts, use [`JrocCompile`](JrocCompile.md) and the generated assembly's
 [`Import` / `Run` APIs](GeneratedFacades.md).
 
+See [JavaScript to .NET type mapping](TypeMapping.md) for the values returned
+through dynamic exports, `JsCallable`, and optional host-defined contracts.
+
 ## Request
 
 Create a `JrocInMemoryCompileRequest` with a stable entry path:

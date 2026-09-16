@@ -21,4 +21,5 @@ APIs, and the in-memory compiler. Start with the
 ## Shared behavior
 
 - [Exceptions](Exceptions.md)
-- [JavaScript and CLR type mapping](TypeMapping.md)
+- [JavaScript to .NET type mapping](TypeMapping.md) — primitive values,
+  generated contracts, dynamic objects, functions, and async projections

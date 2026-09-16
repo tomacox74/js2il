@@ -1,11 +1,18 @@
-# API: JavaScript and CLR type mapping
+# API: JavaScript to .NET type mapping
 
 These projections apply to generated imports from MSBuild-compiled assemblies
 and to values returned by the in-memory compilation workflow.
 
+The mapping depends on how the script is consumed:
+
+| Workflow | Mapping source |
+|---|---|
+| MSBuild-generated `Import()` | JROC emits CLR signatures and generated contracts into the compiled JavaScript assembly. Use those generated signatures as the authoritative mapping. |
+| In-memory compilation | Primitive exports become CLR values; functions become `JsCallable`; other objects use dynamic proxies unless the host supplies an optional contract. |
+
 ## Primitive values
 
-| JavaScript value | CLR value in hosting |
+| JavaScript value | Typical .NET projection |
 |---|---|
 | `number` | `double` (the runtime represents numbers as `System.Double`) |
 | `string` | `string` |
