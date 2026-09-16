@@ -1,57 +1,66 @@
-# Tutorial: Async exports + event loop
+# Tutorial: async calls and event loop
 
-JROC’s runtime includes a per-instance event-loop pump so that Promises and timers can make progress even when the host is idle.
+JROC runs hosted JavaScript on an owning script thread and pumps its event
+loop so Promises and timers can progress while the .NET host is idle.
 
-## Promise → Task mapping
+## MSBuild-generated imports
 
-If your JS export returns a Promise:
+For a module compiled as `HostedMath`:
 
-```js
-async function addAsync(x, y) {
-  return x + y;
-}
-module.exports = { addAsync };
+```javascript
+exports.addAsync = async (left, right) => left + right;
 ```
 
-The generated contract will use `Task<T>`:
+Call its generated method and await the result:
 
 ```csharp
-Task<double> AddAsync(double x, double y);
+using var exports = HostedMath.Import();
+var result = await exports.AddAsync(1d, 2d);
+Console.WriteLine(result);
 ```
 
-At runtime:
+Generated async exports use `Task` or `Task<T>`. Exact parameter and result
+types depend on inference or package declarations; do not assume JavaScript
+arithmetic alone guarantees `double` parameters or a `Task<double>` result.
+Use the generated signature rather than declaring an alternative interface.
 
-- If the JS value is a `Promise`, it is bridged to a `Task`.
-- If the JS value is not a Promise but the contract expects a `Task`, it is treated as already completed.
+## In-memory compilation
 
-## Host-side usage
+When the script is supplied at runtime, access its async callable through the
+loaded module:
 
 ```csharp
-using var exports = JsEngine.LoadModule<IMyExports>();
-var result = await exports.AddAsync(1, 2);
+using Jroc.Runtime;
+
+// module is the live result of CompileAndLoadModule(request).
+var addAsync = (JsCallable)module.Exports.Get("addAsync")!;
+var result = await addAsync.CallAsync<double>(1d, 2d);
 ```
 
-## Event loop pumping model
+Here the host explicitly requests the Promise result projection. See the
+[in-memory tutorial](InMemoryCompileAndRun.md) for compilation and ownership.
 
-Each module runtime instance:
+## Running a whole script
 
-- owns a dedicated script thread,
-- processes host invocations serially, and
-- periodically pumps the JS event loop (microtasks + timers) even if no new host calls arrive.
+Generated `HostedMath.Run(...)` calls, and the command-line program entry
+point, execute the selected script and drain its asynchronous work before
+completing. Use `Run` for whole-script execution; use `Import` or in-memory
+loading when the host needs to retain exports and call them over time.
 
-This prevents deadlocks where a Promise resolves via `setTimeout` but nothing is driving the runtime forward.
+## Lifetime, timeouts, and cancellation
 
-## Timeouts and cancellation
+Keep the import or in-memory module alive until needed tasks settle. Promise
+rejections fault their tasks. Disposing the owner while a bridge task is
+pending faults it with `ObjectDisposedException`.
 
-Today, hosting APIs are synchronous (for non-Task signatures) and do not accept cancellation tokens.
-If you need timeouts, apply them at the Task boundary:
+For a timeout on a host wait:
 
 ```csharp
-using var exports = JsEngine.LoadModule<IMyExports>();
-
-var task = exports.AddAsync(1, 2);
-var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(2)));
-if (completed != task) throw new TimeoutException();
-
-Console.WriteLine(await task);
+using var exports = HostedMath.Import();
+var result = await exports.AddAsync(1d, 2d)
+    .WaitAsync(TimeSpan.FromSeconds(2));
 ```
+
+A host timeout does not cancel JavaScript execution. Synchronous export calls
+do not accept cancellation tokens. Do not treat task timeouts as isolation
+or resource limits for untrusted scripts.

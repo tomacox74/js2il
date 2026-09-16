@@ -1,49 +1,46 @@
-# Tutorial: Module ids + discovery
+# Tutorial: module IDs and generated facade names
 
-When hosting, you select a module using a **module id** (CommonJS module specifier).
+An assembly name identifies the .NET output; a module ID identifies a
+JavaScript module compiled into it. Consumers normally select a generated
+facade, not a module ID string.
 
-## How module ids are used
+## MSBuild output names
 
-- Typed hosting:
-  - Generated facades use `<Assembly>.Import()` for the entry module and
-    `<Assembly>.Scripts.<path>.Import()` for explicit modules.
-  - `JsEngine.LoadModule<TExports>()` uses generated module metadata (or the
-    legacy `[JsModule("<moduleId>")]` on hand-authored contracts).
-  - `JsEngine.LoadModule<TExports>(moduleId)` lets you override/select a module id explicitly.
-- Dynamic hosting:
-  - `JsEngine.LoadDynamicModule(Assembly compiledAssembly, string moduleId)`
-    loads that module from that assembly.
-
-## Discover module ids in a compiled assembly
-
-If you are loading an assembly dynamically and need to know what it contains:
-
-```csharp
-using Jroc.Runtime;
-using System.Reflection;
-
-var asm = Assembly.LoadFrom("compiled.dll");
-var ids = JsEngine.GetModuleIds(asm);
-var entryId = JsEngine.GetEntryModuleId(asm);
-
-foreach (var id in ids)
-{
-    Console.WriteLine(id);
-}
+```xml
+<JrocCompile Include="JavaScript/math.js"
+             AssemblyName="HostedMath"
+             RootModuleId="calculator/math" />
 ```
 
-`GetModuleIds` uses the assembly-level manifest (`[JsCompiledModule]` attributes) when present, and falls back to scanning well-known namespaces for older assemblies.
+This produces assembly `HostedMath.dll`. Its entry module can be imported
+through either generated path:
 
-`GetEntryModuleId` reads the separate entry-module declaration. It returns the
-canonical id even when the entry also has package or root aliases.
+```csharp
+using var exports = HostedMath.Import();
+// Alternative for explicitly selecting the published module:
+// using var exports = HostedMath.Scripts.calculator.math.Import();
+```
 
-## Bare vs path-like ids
+Use the root facade unless the host needs a specific published module.
+`Run()` has equivalent root and nested entry points.
 
-Some module ids are bare specifiers like `math`. Others are path-like like `calculator/index`.
+With no overrides, the source filename determines the assembly name and the
+entry's normal module identity. Package entrypoints derive names from their
+package ID. For example, `@mixmark-io/domino` has facade
+`mixmark_io_domino`; use an explicit `AssemblyName` for a different root name.
 
-When loading, the runtime treats bare specifiers as local modules by default (`"math"` behaves like `"./math"`).
+Facade names are normalized to valid CLR identifiers. Ambiguous normalized
+names fail compilation instead of silently selecting one module. See
+[generated facade naming](../api/GeneratedFacades.md).
 
-## Package ids
+## In-memory source identity
 
-JROC also supports compiling and hosting modules with package-like ids (e.g., `@mixmark-io/domino`).
-In those cases, you typically pass the full id to `LoadModule(...)`.
+The request's `EntryFilePath` supplies the source identity even when the
+source comes from `SourceText`. Optional `AssemblyName` and
+`RootModuleIdOverride` control output identity.
+
+`CompileAndLoadModule(request)` evaluates the compiler-selected entry by
+default. The returned module exposes `EntryModuleId`, `EntryModuleAliases`,
+and `ModuleIds` for diagnostics. Artifact-only compilation exposes the same
+identifiers on `JrocCompiledAssemblyArtifact`; no reflection-based type scan
+is needed.

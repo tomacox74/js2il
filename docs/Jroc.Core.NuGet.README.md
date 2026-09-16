@@ -1,87 +1,79 @@
 # Jroc.Core
 
-`Jroc.Core` is the referenceable NuGet package for the reusable jroc compiler library.
+`Jroc.Core` provides in-memory JavaScript compilation for .NET applications
+whose scripts are not known at build time. It ships `Jroc.Compiler.dll` and
+the compiler dependencies.
 
-It ships the `Jroc.Compiler.dll` assembly and compiler dependencies so custom .NET tools, build tasks, test harnesses, and hosts can compile JavaScript to .NET assemblies without shelling out to the `jroc` CLI tool.
+The consumer entry point is `Jroc.JrocInMemoryCompiler`: compile runtime source
+to PE/PDB bytes, or compile and evaluate it in a disposable in-memory module.
 
-The primary entry points are the existing `Jroc.Compiler`, `Jroc.CompilerOptions`, and `Jroc.CompilerServices` types in the `Jroc` namespace.
+## Choose your workflow
 
-## Which package should I use?
+- [`jroc`](https://www.nuget.org/packages/jroc): compile and run from the command line.
+- [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK): compile known JavaScript
+  during MSBuild, then call the generated assembly's typed `Import` / `Run` APIs.
+- [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core): compile scripts supplied
+  at runtime in memory.
 
-- [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core)
-  - Use this when you want to embed the compiler directly in your own .NET code.
-- [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK)
-  - Use this when your project should compile JavaScript during `dotnet build`.
-- [`jroc`](https://www.nuget.org/packages/jroc)
-  - Use this when you want the command-line tool for manual or ad-hoc compilation.
-- [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime)
-  - Use this when your host application needs the runtime support library used by generated assemblies.
-
-Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` together at the same version. Keep the versions aligned when you mix them in one workflow.
+[`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime) supplies execution
+support. Official releases publish all four packages together; keep versions
+aligned when using them in one application.
 
 ## Install
+
+For a .NET 10 application that compiles and executes runtime-supplied scripts:
 
 ```xml
 <ItemGroup>
   <PackageReference Include="Jroc.Core" Version="VERSION" />
+  <PackageReference Include="Jroc.Runtime" Version="VERSION" />
 </ItemGroup>
 ```
 
-## Basic usage
+Replace `VERSION` with the same released version for both packages.
+
+## Compile and execute in memory
 
 ```csharp
 using Jroc;
-using Microsoft.Extensions.DependencyInjection;
 
-var options = new CompilerOptions
-{
-    OutputDirectory = @"C:\code\out",
-    Verbose = true,
-    EmitPdb = true
-};
+// Replace with source selected by the application at runtime.
+var sourceText = "exports.add = (left, right) => left + right;";
+var path = Path.Combine(Path.GetTempPath(), "jroc-input", "math.js");
 
-using var services = CompilerServices.BuildServiceProvider(options);
-var compiler = services.GetRequiredService<Compiler>();
+using var module = JrocInMemoryCompiler.CompileAndLoadModule(
+    new JrocInMemoryCompileRequest(path) { SourceText = sourceText });
 
-if (!compiler.Compile(@"C:\code\sample.js"))
-{
-    throw new InvalidOperationException("Compilation failed.");
-}
+Console.WriteLine(module.Exports.Invoke("add", 1d, 2d));
 ```
 
-`Compiler.Compile(...)` returns `true` on success and writes the generated files to `CompilerOptions.OutputDirectory`. If `OutputDirectory` is omitted, JROC writes next to the input file.
+The entry path supplies identity and dependency-resolution context. It need
+not exist when `SourceText` is provided. Omitting `SourceText` reads an
+existing entry file while still emitting and loading the generated assembly
+in memory.
 
-## What gets generated?
+`module.Exports` supports `Get`, `Invoke`, `Value`, and C# `dynamic` access.
+Dispose the module when finished; it owns the execution runtime and
+collectible load context. Keep it alive until any required async work settles.
+No generated output files are written implicitly.
 
-Given an input like `C:\code\sample.js`, JROC emits the following into the output directory:
+In-memory execution is not a sandbox. Only execute trusted scripts in the
+host process.
 
-- `sample.dll`
-  - The compiled .NET assembly for your JavaScript.
-- `sample.runtimeconfig.json`
-  - Runtime configuration for the `dotnet` host.
-- `JavaScriptRuntime.dll` (+ optional `JavaScriptRuntime.pdb`)
-  - The runtime support library required to execute the generated assembly.
+## Artifact-only compilation
 
-## Useful options
+Use `JrocInMemoryCompiler.Compile(request)` when the application needs
+`JrocCompiledAssemblyArtifact.PeBytes` and optional `PdbBytes` without
+evaluating the script. Set `EmitPdb` on the request for debug symbols,
+`AssemblyName` for a custom identity, and `DiagnosticFilePath` to capture
+compiler diagnostics.
 
-- `OutputDirectory`
-  - Where generated files are written. If omitted, output is written next to the input file.
-- `Verbose`
-  - Enables compiler progress logging.
-- `DiagnosticFilePath`
-  - Writes compiler diagnostics to a text file.
-- `AnalyzeUnused`
-  - Reports unused functions, properties, and variables.
-- `StrictMode`
-  - Controls how missing `"use strict"` directive prologues are reported.
-- `EmitPdb`
-  - Emits Portable PDB symbols next to the generated assembly, mapping both plain scripts and rewritten `import` / `export` modules back to the original source path for breakpoints and stack traces.
-  - Uncaptured locals emit debugger local names; captured closure variables currently remain visible through generated scope types instead of ordinary local slots.
-- `GenerateModuleExportContracts`
-  - Emits typed CommonJS export contracts for .NET hosting scenarios.
+For JavaScript known at build time, prefer `Jroc.SDK` and generated typed
+contracts rather than embedding compiler services in application code.
 
 ## Links
 
 - SDK docs: https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
+- In-memory tutorial: https://github.com/tomacox74/jroc/blob/master/docs/sdk/tutorials/InMemoryCompileAndRun.md
 - Source, issues, docs: https://github.com/tomacox74/jroc
 - License: Apache-2.0

@@ -1,16 +1,24 @@
-# SDK API reference
+# JROC API reference
 
-This reference describes the public .NET APIs used to compile JavaScript, host compiled modules, invoke exports, configure MSBuild compilation, and interpret interop and exception behavior.
+The supported consumer entry points are the CLI, MSBuild-generated assembly
+APIs, and the in-memory compiler. Start with the
+[workflow overview](../Index.md) to choose the appropriate path.
 
-## Compilation and build integration
+## Command line
 
-- [In-memory compiler API](InMemoryCompiler.md)
-- [`JrocCompile` MSBuild task](JrocCompile.md)
+- [CLI usage and options](../../../README.md#command-line-usage)
 
-## Module hosting and invocation
+## MSBuild and generated assemblies
 
-- [Generated script facades](GeneratedFacades.md)
-- [JsEngine](JsEngine.md)
-- [Handles and constructors](Handles.md)
-- [Hosting exceptions](Exceptions.md)
+- [`JrocCompile` items, metadata, and targets](JrocCompile.md)
+- [Generated `Run`, `Import`, and export contracts](GeneratedFacades.md)
+- [Generated handles and constructors](Handles.md)
+
+## In-memory compilation
+
+- [Requests, compiled artifacts, and loaded modules](InMemoryCompiler.md)
+
+## Shared behavior
+
+- [Exceptions](Exceptions.md)
 - [JavaScript and CLR type mapping](TypeMapping.md)

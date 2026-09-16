@@ -1,8 +1,10 @@
 # API: generated script facades
 
-Every compiled assembly exposes public static facade types for running or
-importing its published scripts directly from C#. The facade is rooted at the
-sanitized assembly name:
+In the [MSBuild workflow](../tutorials/MSBuildBuildTask.md), the generated
+assembly is referenced by the host project before the host is compiled. Its
+public static facade types run or import published scripts directly from C#
+or another compatible .NET language. The facade is rooted at the sanitized
+assembly name:
 
 ```csharp
 HelloAssembly.Run();
@@ -132,9 +134,8 @@ Console.WriteLine(window.Document.Title);
 ## Rich export contracts
 
 Generated public signatures use only BCL types and types emitted into the
-compiled assembly. Runtime implementation types such as `IJsHandle`,
-`IJsConstructor<T>`, `JsCallable`, `Promise`, `JavaScriptRuntime`, and
-`Jroc.Runtime` attributes are not part of the facade contract. Runtime metadata
+compiled assembly. Runtime-owned handles, Promise implementations, and hosting
+attributes are not part of the facade contract. Runtime metadata
 needed by the proxy layer is emitted as generated implementation metadata.
 
 Class exports produce generated constructor and instance contracts:
@@ -322,11 +323,12 @@ Console.WriteLine(exports.Bytes.ByteOffset);
 Console.WriteLine(exports.Bytes.Buffer.IsShared);
 ```
 
-JROC does not currently implement ArrayBuffer detachment, BigInt typed arrays,
-typed-array `slice`/`subarray`, or growable `SharedArrayBuffer`. Generated
-contracts do not claim those operations. Fixed buffers reject `Resize`
-explicitly, and `SharedArrayBuffer` is exposed only for the runtime behavior
-JROC currently executes.
+This list describes the generated facade projection, not the complete
+JavaScript runtime feature set. Do not infer that every operation supported
+inside JavaScript is also exposed by these host contracts. Consult
+[ECMAScript coverage](../../ECMA262/Index.md) for runtime support and the
+generated interface for available host members. Fixed buffers reject `Resize`
+explicitly.
 
 ## Supported compatibility boundary
 
@@ -349,30 +351,21 @@ after JavaScript asynchronous work drains. `Import` is the module-hosting API:
 it returns exports and keeps an isolated runtime alive until the returned
 contract is disposed.
 
-## Migrating from runtime hosting APIs
+## Updating older host code
 
-Replace reflection and runtime-owned loading:
-
-```csharp
-using Jroc.Runtime;
-using System.Reflection;
-
-var assembly = Assembly.LoadFrom("HostedMathModule.dll");
-using dynamic exports = JsEngine.LoadDynamicModule(assembly, "math");
-Console.WriteLine(exports.add(1, 2));
-```
-
-with the generated facade:
+For scripts known at build time, declare a `JrocCompile` item in the host
+project and replace runtime assembly loading with the generated facade:
 
 ```csharp
 using var exports = HostedMathModule.Import();
 Console.WriteLine(exports.Add(1, 2));
 ```
 
-Remove the direct `Jroc.Runtime` package reference when host source no longer
-uses advanced runtime APIs. Keep only `Jroc.SDK`; it supplies the compatible
-runtime implementation transitively. Replace module-id strings with the root
-facade or a nested `Scripts` path, replace `dynamic`/conversion calls with
-generated members, and use `using`/`await using` for exports, handles, and
-enumerators. `JsEngine` remains available for hosts that intentionally select
-assemblies or module ids at runtime.
+`Jroc.SDK` supplies the compatible runtime implementation transitively.
+Replace module-ID strings with the root facade or a nested `Scripts` path,
+replace handwritten interfaces and dynamic calls with generated contracts,
+and dispose exports and handles according to their generated interfaces.
+
+When the JavaScript source is not known until runtime, use the
+[in-memory compiler](InMemoryCompiler.md) instead of adding a separate
+reflection-based loading workflow.
