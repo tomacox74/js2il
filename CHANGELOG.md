@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/dependencies: update benchmark comparison runtimes to Jint 4.16.2,
+  YantraJS.Core 1.2.476, and ClearScript V8 7.5.1.1. Keep Okojo on its
+  latest published package, 0.1.2-preview.1, because no stable release is
+  available.
+
 - test262/runtime/docs: port 10 previously failing pinned Array and String
   fixtures. Correct Array `length` coercion order, canonical-equivalent
   `localeCompare` results, and Unicode 16.0 full/context-sensitive case
