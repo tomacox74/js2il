@@ -98,6 +98,13 @@ else
         SetExitCodeFromSummaries([summary]);
     }
 #if SOURCE_JROC_PROJECTS
+    else if (programArgs.Length > 0 && programArgs[0] == "--array-length-validation")
+    {
+        var summaries = BenchmarkSwitcher.FromTypes(
+            [typeof(ArrayLengthObjectValidationBenchmarks), typeof(ArrayLengthNumericValidationBenchmarks)])
+            .Run(programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries(summaries);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
     {
         var summary = BenchmarkRunner.Run<JsShapeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -168,6 +175,7 @@ Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparis
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
 #if SOURCE_JROC_PROJECTS
 Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape storage microbenchmarks");
+Console.WriteLine("  dotnet run -c Release -- --array-length-validation --filter '*' # Compare Array length validators");
 #endif
 Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-object operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline descriptor storage microbenchmarks");

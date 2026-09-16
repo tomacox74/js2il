@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 14,683 | 12 | 8,817 | 23,512 | **62.45%** |
+| Built-in objects and APIs | 14,693 | 12 | 8,807 | 23,512 | **62.49%** |
 | Language syntax and semantics | 14,412 | 46 | 9,185 | 23,643 | **60.96%** |
-| **Total** | 29,095 | 58 | 19,088 | 48,241 | **60.31%** |
+| **Total** | 29,105 | 58 | 19,078 | 48,241 | **60.33%** |
 
 ## Language Areas
 
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 2,871 | 0 | 210 | 3,081 | **93.18%** |
+| `Array` | 2,873 | 0 | 208 | 3,081 | **93.25%** |
 | `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
 | `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
 | `AsyncDisposableStack` | 100 | 0 | 4 | 104 | **96.15%** |
@@ -221,7 +221,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 69 | 0 | 35 | 104 | **66.35%** |
-| `String` | 1,093 | 1 | 129 | 1,223 | **89.37%** |
+| `String` | 1,101 | 1 | 121 | 1,223 | **90.02%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 62 | 0 | 36 | 98 | **63.27%** |

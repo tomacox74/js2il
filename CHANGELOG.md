@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262/runtime/docs: port 10 previously failing pinned Array and String
+  fixtures. Correct Array `length` coercion order, canonical-equivalent
+  `localeCompare` results, and Unicode 16.0 full/context-sensitive case
+  conversion.
+  Optimize Array length validation with an inline-friendly numeric fast path
+  and single-pass primitive coercion while retaining both object coercions.
+
 - test262/docs: verify 500 additional current-provenance pinned
   destructuring-binding fixtures: 75 `const`, 258 `for`, 87 `let`, 63
   `try`, and 17 `var` declaration cases. All 1,000 metadata-selected
