@@ -5,6 +5,7 @@ This documentation covers using JROC, its compiler and runtime design, JavaScrip
 ## Package and project guides
 
 - [Project README](../README.md) — project overview, installation, and command-line usage.
+- [Building and releasing JROC](BuildingAndReleasing.md) — contributor builds, tests, package validation, and maintainer release workflows.
 - [jroc NuGet package guide](NuGet.README.md) — using the compiler package.
 - [Jroc.Core NuGet package guide](Jroc.Core.NuGet.README.md) — programmatic compilation APIs.
 - [Jroc.Runtime NuGet package guide](Jroc.Runtime.NuGet.README.md) — runtime hosting APIs.
