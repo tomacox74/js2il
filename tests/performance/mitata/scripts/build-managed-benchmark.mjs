@@ -11,9 +11,27 @@ const outputDirectory = path.join(benchmarkDirectory, ".managed");
 const outputPath = path.join(outputDirectory, `${benchmarkName}.js`);
 const modulePath = path.join(outputDirectory, `${benchmarkName}.mjs`);
 
-const source = readFileSync(inputPath, "utf8")
+let source = readFileSync(inputPath, "utf8")
   .replace(/from\s+["']\.\.\/runner\.mjs["']/g, 'from "../runner-simple.mjs"')
   .replace("await run();", "void run();");
+
+if (benchmarkName === "string-width") {
+  const upstreamSetup =
+    "const maxInputLength = Math.max(...inputs.map(([input]) => input.repeat(Math.max(...repeatCounts)).length));";
+  const managedSetup = `let maxInputLength = 0;
+for (const [input] of inputs) {
+  const repeatedInputLength = input.repeat(5000).length;
+  if (repeatedInputLength > maxInputLength) {
+    maxInputLength = repeatedInputLength;
+  }
+}`;
+
+  if (!source.includes(upstreamSetup)) {
+    throw new Error("Could not find the string-width maxInputLength setup to rewrite.");
+  }
+
+  source = source.replace(upstreamSetup, managedSetup);
+}
 
 mkdirSync(outputDirectory, { recursive: true });
 writeFileSync(modulePath, source, "utf8");
