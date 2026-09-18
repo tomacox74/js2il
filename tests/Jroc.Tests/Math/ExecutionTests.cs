@@ -80,6 +80,12 @@ namespace Jroc.Tests.Math
         }
 
         [Fact]
+        public Task Math_DynamicParamsDispatch()
+        {
+            return ExecutionTest(nameof(Math_DynamicParamsDispatch));
+        }
+
+        [Fact]
         public Task Math_GlobalThisReplacement_Dispatch()
         {
             return ExecutionTest(nameof(Math_GlobalThisReplacement_Dispatch));

@@ -88,6 +88,16 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
     }
 
     [Fact]
+    public void StaticClassDispatch_PacksParamsArrayArguments()
+    {
+        var math = typeof(JavaScriptRuntime.Math);
+
+        Assert.Equal(3d, ObjectRuntime.CallMember2(math, "max", 1d, 3d));
+        Assert.Equal(6d, ObjectRuntime.CallMember(math, "max", [2d, 6d, 4d]));
+        Assert.Equal(double.NegativeInfinity, ObjectRuntime.CallMember0(math, "max"));
+    }
+
+    [Fact]
     public void CoreDispatch_PreservesJsObjectBehavior()
     {
         var runtime = RuntimeServices.BuildServiceProvider();

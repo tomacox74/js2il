@@ -7194,19 +7194,54 @@ namespace JavaScriptRuntime
             var srcArgs = args ?? System.Array.Empty<object>();
 
             // JavaScript callers may pass fewer or more arguments than the CLR signature declares.
-            // Prefer an exact arity match, then the smallest overload that can receive every
-            // supplied argument, and only then the smallest overload overall.
-            MethodInfo? chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == srcArgs.Length)
+            // Prefer a fixed-arity exact match, then a params overload, then the smallest
+            // fixed-arity overload that can receive every supplied argument.
+            static bool HasParamArray(MethodInfo method)
+            {
+                var methodParameters = method.GetParameters();
+                return methodParameters.Length > 0
+                    && methodParameters[^1].GetCustomAttribute<ParamArrayAttribute>() != null;
+            }
+
+            MethodInfo? chosen = methods.FirstOrDefault(mi =>
+                    !HasParamArray(mi) && mi.GetParameters().Length == srcArgs.Length)
                 ?? methods
-                    .Where(mi => mi.GetParameters().Length > srcArgs.Length)
+                    .Where(mi =>
+                        HasParamArray(mi) &&
+                        srcArgs.Length >= mi.GetParameters().Length - 1)
+                    .OrderByDescending(mi => mi.GetParameters().Length)
+                    .FirstOrDefault()
+                ?? methods
+                    .Where(mi => !HasParamArray(mi) && mi.GetParameters().Length > srcArgs.Length)
+                    .OrderBy(mi => mi.GetParameters().Length)
+                    .FirstOrDefault()
+                ?? methods
+                    .Where(HasParamArray)
                     .OrderBy(mi => mi.GetParameters().Length)
                     .FirstOrDefault()
                 ?? methods.OrderBy(mi => mi.GetParameters().Length).First();
 
             var parameters = chosen.GetParameters();
             var invokeArgs = new object?[parameters.Length];
+            var paramsIndex = HasParamArray(chosen) ? parameters.Length - 1 : -1;
             for (var i = 0; i < parameters.Length; i++)
             {
+                if (i == paramsIndex)
+                {
+                    var elementType = parameters[i].ParameterType.GetElementType()
+                        ?? throw new InvalidOperationException(
+                            $"Params parameter '{parameters[i].Name}' must be an array.");
+                    var packedCount = System.Math.Max(0, srcArgs.Length - paramsIndex);
+                    var packedArgs = System.Array.CreateInstance(elementType, packedCount);
+                    for (var packedIndex = 0; packedIndex < packedCount; packedIndex++)
+                    {
+                        packedArgs.SetValue(srcArgs[paramsIndex + packedIndex], packedIndex);
+                    }
+
+                    invokeArgs[i] = packedArgs;
+                    continue;
+                }
+
                 if (i < srcArgs.Length)
                 {
                     invokeArgs[i] = srcArgs[i];
