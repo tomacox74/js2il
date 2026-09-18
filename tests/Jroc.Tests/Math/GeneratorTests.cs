@@ -43,6 +43,9 @@ namespace Jroc.Tests.Math
         public Task Math_DefinePropertyReplacement_Dispatch() { var testName = nameof(Math_DefinePropertyReplacement_Dispatch); return GenerateTest(testName); }
 
         [Fact]
+        public Task Math_DynamicParamsDispatch() { var testName = nameof(Math_DynamicParamsDispatch); return GenerateTest(testName); }
+
+        [Fact]
         public Task Math_GlobalThisReplacement_Dispatch() { var testName = nameof(Math_GlobalThisReplacement_Dispatch); return GenerateTest(testName); }
 
         [Fact]

@@ -6,9 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- perf(mitata): preserve the upstream-derived `string-width` benchmark source
-  unchanged and apply its temporary JROC variadic-call compatibility rewrite
-  only while generating the managed-runtime bundle; track removal in #2127.
+- fix(runtime): pack JavaScript arguments into CLR `params` arrays during
+  dynamic static-class dispatch, including zero-argument and fixed-prefix
+  calls. Remove the temporary JROC-only `string-width` benchmark rewrite so
+  every runtime uses the common upstream-derived scenario source.
 
 ## v0.12.25 - 2026-09-18
 
