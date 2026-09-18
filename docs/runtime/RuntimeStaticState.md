@@ -60,6 +60,7 @@ oversized keys must remain collectible, as covered by `JSONShapeStorageTests`.
 | `ObjectRuntime._integrityStates` | Process identity metadata | Target objects are weak keys |
 | `PropertyDescriptorStore._defaultRuntimeStore` | CLR thread | Context-less descriptor fallback only |
 | `PropertyDescriptorStore._intrinsicInitializationDepth` | CLR thread | Reentrant intrinsic bootstrap state |
+| `RegExp.CompiledPatternCache` | Process metadata | Immutable, source-derived `Regex` compilation artifacts keyed by pattern plus compilation-affecting flags; bounded and cleared when the capacity is exceeded, holds no realm or JavaScript state |
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
 | `RuntimeServices._currentInvocation` | Async flow | Immutable residual invocation frame captured/restored by root frames |

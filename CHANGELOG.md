@@ -6,6 +6,20 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): cache the compiled `Regex`, named-group table, and
+  capture-reset metadata derived from a JavaScript pattern so re-evaluating the
+  same regular expression literal or `new RegExp(source, flags)` no longer
+  re-parses and re-compiles the pattern. Re-creating `emoji-regex`'s 14 KB
+  literal drops from about 1 ms to 0.6 us, which is the dominant cost in the
+  `string-width` mitata scenario (for example `npm ascii 25,000` improves from
+  8,761 ms to 200 ms). The cache is keyed by pattern source plus the flags that
+  affect compilation, hashes in constant time, compares interned literal
+  sources by reference, and is cleared when it exceeds its capacity.
+- perf(compiler): early-bind `String.prototype.codePointAt` and
+  `String.prototype.at` to their guarded string intrinsics, matching
+  `charAt`/`charCodeAt`. `"世".codePointAt(0)` in a hot loop improves from about
+  373 ns to 50 ns per call while preserving the pristine-prototype guard and the
+  dynamic fallback.
 - fix(runtime): pack JavaScript arguments into CLR `params` arrays during
   dynamic static-class dispatch, including zero-argument and fixed-prefix
   calls. Remove the temporary JROC-only `string-width` benchmark rewrite so

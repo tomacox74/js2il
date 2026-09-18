@@ -758,8 +758,10 @@ internal static class LIRIntrinsicNormalization
                 or "toLowerCase"
                 or "toUpperCase",
             1 => methodName is
-                "charAt"
+                "at"
+                or "charAt"
                 or "charCodeAt"
+                or "codePointAt"
                 or "substring"
                 or "substr"
                 or "slice"

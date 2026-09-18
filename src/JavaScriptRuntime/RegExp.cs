@@ -88,24 +88,14 @@ namespace JavaScriptRuntime
             _dotAll = parsedFlags.DotAll;
             _unicode = parsedFlags.Unicode;
             _hasIndices = parsedFlags.HasIndices;
-            _simpleLiteralPattern = TryGetSimpleLiteralPattern(_source, parsedFlags);
+            _simpleLiteralPattern = null;
 
-            try
-            {
-                var preparedPattern = PreparePatternForDotNetRegex(_source, _unicode, _dotAll);
-                _regex = new Regex(preparedPattern, parsedFlags.ToRegexOptions());
-                _namedGroups = GetNamedGroups(_regex);
-                (_captureResetAncestors, _captureBoundaryKinds) =
-                    GetCaptureResetAncestors(_source, _regex);
-            }
-            catch (RegexParseException ex)
-            {
-                throw new SyntaxError(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new SyntaxError(ex.Message);
-            }
+            var compiled = GetOrCreateCompiledPattern(_source, _unicode, _dotAll, parsedFlags.ToRegexOptions());
+            _regex = compiled.Regex!;
+            _namedGroups = compiled.NamedGroups!;
+            _captureResetAncestors = compiled.CaptureResetAncestors!;
+            _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
+            _simpleLiteralPattern = IsSimpleLiteralPattern(compiled, parsedFlags) ? _source : null;
 
             lastIndex = 0;
             _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
@@ -935,15 +925,20 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(flags) ?? string.Empty;
         }
 
-        private static string? TryGetSimpleLiteralPattern(string source, ParsedFlags parsedFlags)
+        private static bool IsSimpleLiteralPattern(CompiledPattern compiled, ParsedFlags parsedFlags)
         {
-            if (source.Length == 0
-                || parsedFlags.IgnoreCase
-                || parsedFlags.Sticky
-                || parsedFlags.Unicode
-                || parsedFlags.HasIndices)
+            return compiled.SourceHasNoSpecialCharacters
+                && !parsedFlags.IgnoreCase
+                && !parsedFlags.Sticky
+                && !parsedFlags.Unicode
+                && !parsedFlags.HasIndices;
+        }
+
+        private static bool HasNoSpecialRegexCharacters(string source)
+        {
+            if (source.Length == 0)
             {
-                return null;
+                return false;
             }
 
             foreach (var ch in source)
@@ -964,11 +959,11 @@ namespace JavaScriptRuntime
                     case '{':
                     case '}':
                     case '|':
-                        return null;
+                        return false;
                 }
             }
 
-            return source;
+            return true;
         }
 
         private static ParsedFlags ParseFlags(string flags)
@@ -1436,8 +1431,145 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static (string Name, int Number)[] GetNamedGroups(Regex regex)
+        /// <summary>
+        /// Immutable, pattern-derived compilation artifacts shared by every <see cref="RegExp"/>
+        /// created from the same source/flag combination.
+        /// </summary>
+        private sealed class CompiledPattern
         {
+            public Regex? Regex;
+            public (string Name, int Number)[]? NamedGroups;
+            public int[]? CaptureResetAncestors;
+            public CaptureBoundaryKind[]? CaptureBoundaryKinds;
+            public bool SourceHasNoSpecialCharacters;
+            public string? SyntaxErrorMessage;
+        }
+
+        private readonly record struct CompiledPatternKey(
+            string Source,
+            bool Unicode,
+            bool DotAll,
+            RegexOptions Options);
+
+        private const int CompiledPatternCacheCapacity = 1024;
+
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<CompiledPatternKey, CompiledPattern> CompiledPatternCache =
+            new(CompiledPatternKeyComparer.Instance);
+
+        /// <summary>
+        /// Hashes pattern keys in constant time (length plus a bounded sample of the source) and
+        /// compares sources by reference first. Regex literals lower to interned IL string literals,
+        /// so hot loops that re-create the same literal never pay a full hash or compare of a large
+        /// pattern.
+        /// </summary>
+        private sealed class CompiledPatternKeyComparer : IEqualityComparer<CompiledPatternKey>
+        {
+            internal static readonly CompiledPatternKeyComparer Instance = new();
+
+            public bool Equals(CompiledPatternKey x, CompiledPatternKey y)
+            {
+                return x.Unicode == y.Unicode
+                    && x.DotAll == y.DotAll
+                    && x.Options == y.Options
+                    && (ReferenceEquals(x.Source, y.Source) || string.Equals(x.Source, y.Source, StringComparison.Ordinal));
+            }
+
+            public int GetHashCode(CompiledPatternKey key)
+            {
+                var source = key.Source;
+                var hash = new HashCode();
+                hash.Add(source.Length);
+                hash.Add(key.Options);
+                hash.Add(key.Unicode);
+                hash.Add(key.DotAll);
+
+                const int SampleLength = 16;
+                var prefix = System.Math.Min(SampleLength, source.Length);
+                for (var i = 0; i < prefix; i++)
+                {
+                    hash.Add(source[i]);
+                }
+
+                for (var i = System.Math.Max(prefix, source.Length - SampleLength); i < source.Length; i++)
+                {
+                    hash.Add(source[i]);
+                }
+
+                return hash.ToHashCode();
+            }
+        }
+
+        /// <summary>
+        /// Compiling a JavaScript pattern into a .NET <see cref="Regex"/> is expensive (milliseconds
+        /// for large patterns) and is a pure function of the source plus the flags that affect
+        /// compilation, so results are cached. Real-world code re-creates the same literal inside hot
+        /// loops (for example <c>emoji-regex</c>), which engines such as V8 also serve from a
+        /// compilation cache. Matching state (<c>lastIndex</c>) stays per <see cref="RegExp"/>
+        /// instance, and .NET <see cref="Regex"/> instances are immutable and thread-safe, so sharing
+        /// them is observationally transparent.
+        /// </summary>
+        private static CompiledPattern GetOrCreateCompiledPattern(
+            string source,
+            bool unicode,
+            bool dotAll,
+            RegexOptions options)
+        {
+            var key = new CompiledPatternKey(source, unicode, dotAll, options);
+
+            if (!CompiledPatternCache.TryGetValue(key, out var compiled))
+            {
+                compiled = CreateCompiledPattern(source, unicode, dotAll, options);
+
+                if (CompiledPatternCache.Count >= CompiledPatternCacheCapacity)
+                {
+                    // Scripts can generate unbounded numbers of distinct patterns; drop the cache
+                    // instead of growing without limit.
+                    CompiledPatternCache.Clear();
+                }
+
+                CompiledPatternCache[key] = compiled;
+            }
+
+            if (compiled.SyntaxErrorMessage is not null)
+            {
+                throw new SyntaxError(compiled.SyntaxErrorMessage);
+            }
+
+            return compiled;
+        }
+
+        private static CompiledPattern CreateCompiledPattern(
+            string source,
+            bool unicode,
+            bool dotAll,
+            RegexOptions options)
+        {
+            try
+            {
+                var preparedPattern = PreparePatternForDotNetRegex(source, unicode, dotAll);
+                var regex = new Regex(preparedPattern, options);
+                var (ancestors, boundaryKinds) = GetCaptureResetAncestors(source, regex);
+
+                return new CompiledPattern
+                {
+                    Regex = regex,
+                    NamedGroups = GetNamedGroups(regex),
+                    CaptureResetAncestors = ancestors,
+                    CaptureBoundaryKinds = boundaryKinds,
+                    SourceHasNoSpecialCharacters = HasNoSpecialRegexCharacters(source)
+                };
+            }
+            catch (RegexParseException ex)
+            {
+                return new CompiledPattern { SyntaxErrorMessage = ex.Message };
+            }
+            catch (ArgumentException ex)
+            {
+                return new CompiledPattern { SyntaxErrorMessage = ex.Message };
+            }
+        }
+
+        private static (string Name, int Number)[] GetNamedGroups(Regex regex)        {
             var groups = new List<(string Name, int Number)>();
             foreach (var name in regex.GetGroupNames())
             {

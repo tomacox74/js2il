@@ -93,6 +93,8 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.PropertyDescriptorStore._intrinsicInitializationDepth", "thread-local bootstrap state"),
         new("JavaScriptRuntime.PropertyDescriptorStore+DescriptorSnapshot.Empty", "immutable snapshot"),
         new("JavaScriptRuntime.PropertyDescriptorStore+OverrideSnapshot.Empty", "immutable snapshot"),
+        new("JavaScriptRuntime.RegExp.CompiledPatternCache", "process-wide pattern compilation cache"),
+        new("JavaScriptRuntime.RegExp+CompiledPatternKeyComparer.Instance", "immutable comparer"),
         new("JavaScriptRuntime.RuntimeExecutionContext.Ambient", "async-flow execution pointer"),
         new("JavaScriptRuntime.RuntimeIntrinsics._blockedThreads", "transient bootstrap wait graph"),
         new("JavaScriptRuntime.RuntimeIntrinsics._processDefaultGate", "process fallback synchronization"),
