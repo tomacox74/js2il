@@ -64,22 +64,36 @@ async function simpleRun() {
     : () => Date.now() * 1e6;
   const iterations = Number.parseInt(process?.env?.JROC_SIMPLE_BENCH_ITERATIONS ?? "", 10);
   const runsPerBenchmark = Number.isFinite(iterations) && iterations > 0 ? iterations : 1;
+  const configuredMinimumDurationNs = Number.parseFloat(
+    process?.env?.JROC_SIMPLE_BENCH_MIN_DURATION_NS ?? "",
+  );
+  const minimumDurationNs =
+    Number.isFinite(configuredMinimumDurationNs) && configuredMinimumDurationNs > 0
+      ? configuredMinimumDurationNs
+      : 10_000_000;
   const results = [];
 
   for (const benchmark of simpleBenchmarks) {
     let error = null;
     let totalNs = 0;
+    let measuredIterations = 0;
 
     try {
       console.log(`running ${benchmark.name}`);
       for (let i = 0; i < runsPerBenchmark; i++) {
         const start = now();
-        const result = benchmark.fn();
-        if (result instanceof Promise) {
-          await result;
-        }
+        let elapsedNs = 0;
+        do {
+          const result = benchmark.fn();
+          if (result instanceof Promise) {
+            await result;
+          }
 
-        totalNs += now() - start;
+          measuredIterations++;
+          elapsedNs = now() - start;
+        } while (elapsedNs < minimumDurationNs);
+
+        totalNs += elapsedNs;
       }
     }
     catch (err) {
@@ -88,8 +102,8 @@ async function simpleRun() {
 
     results.push({
       name: benchmark.name,
-      iterations: runsPerBenchmark,
-      avgNs: error ? null : totalNs / runsPerBenchmark,
+      iterations: measuredIterations,
+      avgNs: error ? null : totalNs / measuredIterations,
       totalNs: error ? null : totalNs,
       error,
     });
@@ -98,7 +112,7 @@ async function simpleRun() {
   if (process?.env?.BENCHMARK_RUNNER) {
     console.log(JSON.stringify({
       runtime: runtimeLabel,
-      iterations: runsPerBenchmark,
+      iterations: results.reduce((total, result) => total + result.iterations, 0),
       benchmarks: results.map(result => ({
         ...result,
         error: result.error ? { message: result.error.message ?? String(result.error) } : null,
