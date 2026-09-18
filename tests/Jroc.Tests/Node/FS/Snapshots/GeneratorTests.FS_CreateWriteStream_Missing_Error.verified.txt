@@ -172,7 +172,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 120 (0x78)
+			// Code size: 172 (0xac)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -187,48 +187,65 @@
 			IL_0005: stloc.0
 			IL_0006: ldstr "^ENOENT:"
 			IL_000b: ldstr ""
-			IL_0010: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_0015: stloc.1
-			IL_0016: ldarg.1
-			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_001c: stloc.2
-			IL_001d: ldloc.2
-			IL_001e: brfalse IL_005d
+			IL_0016: ldloc.1
+			IL_0017: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.RegExp>(!!0)
+			IL_001c: stloc.1
+			IL_001d: ldarg.1
+			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0023: stloc.2
+			IL_0024: ldloc.2
+			IL_0025: brfalse IL_0064
 
-			IL_0023: volatile.
-			IL_0025: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_002a: brfalse IL_003f
+			IL_002a: volatile.
+			IL_002c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0031: brfalse IL_0046
 
-			IL_002f: ldarg.1
-			IL_0030: ldstr "message"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003a: br IL_0054
+			IL_0036: ldarg.1
+			IL_0037: ldstr "message"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0041: br IL_005b
 
-			IL_003f: ldarg.1
-			IL_0040: ldstr "message"
-			IL_0045: ldstr "FS_CreateWriteStream_Missing_Error:<TwoPhaseDummy_M4>:__js_call__:11"
-			IL_004a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0046: ldarg.1
+			IL_0047: ldstr "message"
+			IL_004c: ldstr "FS_CreateWriteStream_Missing_Error:<TwoPhaseDummy_M4>:__js_call__:12"
+			IL_0051: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0054: stloc.3
-			IL_0055: ldloc.3
-			IL_0056: stloc.s 5
-			IL_0058: br IL_0060
+			IL_005b: stloc.3
+			IL_005c: ldloc.3
+			IL_005d: stloc.s 5
+			IL_005f: br IL_0067
 
-			IL_005d: ldarg.1
-			IL_005e: stloc.s 5
+			IL_0064: ldarg.1
+			IL_0065: stloc.s 5
 
-			IL_0060: ldloc.1
-			IL_0061: ldloc.s 5
-			IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_0068: stloc.3
-			IL_0069: ldloc.0
-			IL_006a: ldstr "ErrorStartsWithENOENT:"
-			IL_006f: ldloc.3
-			IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0075: pop
-			IL_0076: ldnull
-			IL_0077: ret
+			IL_0067: volatile.
+			IL_0069: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_006e: brfalse IL_0085
+
+			IL_0073: ldloc.1
+			IL_0074: ldstr "test"
+			IL_0079: ldloc.s 5
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0080: br IL_009c
+
+			IL_0085: ldloc.1
+			IL_0086: ldstr "test"
+			IL_008b: ldloc.s 5
+			IL_008d: ldstr "FS_CreateWriteStream_Missing_Error:<TwoPhaseDummy_M4>:__js_call__:18"
+			IL_0092: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_009c: stloc.3
+			IL_009d: ldloc.0
+			IL_009e: ldstr "ErrorStartsWithENOENT:"
+			IL_00a3: ldloc.3
+			IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00a9: pop
+			IL_00aa: ldnull
+			IL_00ab: ret
 		} // end of method ArrowFunction_L14C20::__js_call__
 
 	} // end of class ArrowFunction_L14C20
@@ -619,6 +636,7 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_2
 	.field assembly static int32 __jroc_dynamicLookup_3
+	.field assembly static int32 __jroc_dynamicLookup_4
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

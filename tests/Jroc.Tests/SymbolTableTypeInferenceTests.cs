@@ -1391,6 +1391,82 @@ public class SymbolTableTypeInferenceTests
             ("phi", typeof(double)));
     }
 
+    [Theory]
+    [InlineData("let")]
+    [InlineData("var")]
+    public void SymbolTable_InferTypes_StableParameters_UnmodifiedMutableSyntaxArrowInfersNumbers(
+        string declarationKind)
+    {
+        var source = $$"""
+            {{declarationKind}} inRange = (value, low, high) =>
+                value >= low && value <= high;
+            {{declarationKind}} isWide = codePoint =>
+                inRange(codePoint, 0x1100, 0x115f);
+
+            isWide(0x1100);
+            """;
+
+        var symbolTable = BuildSymbolTable(source);
+        var inRangeScope = FindFirstScope(symbolTable.Root, scope =>
+            scope.AstNode is ArrowFunctionExpression
+            && scope.Parameters.Contains("low"));
+        var isWideScope = FindFirstScope(symbolTable.Root, scope =>
+            scope.AstNode is ArrowFunctionExpression
+            && scope.Parameters.Contains("codePoint"));
+
+        Assert.NotNull(inRangeScope);
+        Assert.NotNull(isWideScope);
+        AssertStableParameterTypes(
+            inRangeScope!,
+            ("value", typeof(double)),
+            ("low", typeof(double)),
+            ("high", typeof(double)));
+        AssertStableParameterTypes(
+            isWideScope!,
+            ("codePoint", typeof(double)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_LeadingSimpleParameterBeforeDestructuring()
+    {
+        var symbolTable = BuildSymbolTable("""
+            var isInRange = (ranges, codePoint) => codePoint >= ranges[0];
+            var isWide = codePoint => isInRange([0], codePoint);
+            function eastAsianWidth(codePoint, { ambiguousAsWide = false } = {}) {
+                return isWide(codePoint) ? 2 : 1;
+            }
+            eastAsianWidth(0x1100, {});
+            """);
+
+        var eastAsianWidthScope = FindFirstScope(symbolTable.Root, scope =>
+            string.Equals(scope.Name, "eastAsianWidth", StringComparison.Ordinal));
+        var isWideScope = FindFirstScope(symbolTable.Root, scope =>
+            scope.AstNode is ArrowFunctionExpression
+            && scope.Parameters.Contains("codePoint")
+            && scope.Parameters.Count == 1);
+        var isInRangeScope = FindFirstScope(symbolTable.Root, scope =>
+            scope.AstNode is ArrowFunctionExpression
+            && scope.Parameters.Contains("ranges"));
+
+        Assert.NotNull(eastAsianWidthScope);
+        Assert.NotNull(isWideScope);
+        Assert.NotNull(isInRangeScope);
+        AssertStableParameterType(
+            eastAsianWidthScope!,
+            0,
+            "codePoint",
+            typeof(double));
+        AssertStableParameterType(
+            isWideScope!,
+            0,
+            "codePoint",
+            typeof(double));
+        AssertStableParameterTypes(
+            isInRangeScope!,
+            ("ranges", typeof(JavaScriptRuntime.Array)),
+            ("codePoint", typeof(double)));
+    }
+
     [Fact]
     public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_EscapedFunctionKeepsObjectParameters()
     {

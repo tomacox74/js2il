@@ -6,7 +6,7 @@
 | --- | --- |
 | Type | module |
 | Status | partial |
-| Node.js Version | 22.x LTS |
+| Node.js Version | 24.x LTS |
 | Documentation | [Node.js Docs](https://nodejs.org/api/perf_hooks.html) |
 
 ## Implementation
@@ -21,6 +21,10 @@
 | performance.now() | function | supported | [docs](https://nodejs.org/api/perf_hooks.html#performancenow) |
 
 ## API Details
+
+### performance
+
+Returns the same realm-owned object exposed as globalThis.performance.
 
 ### performance.now()
 

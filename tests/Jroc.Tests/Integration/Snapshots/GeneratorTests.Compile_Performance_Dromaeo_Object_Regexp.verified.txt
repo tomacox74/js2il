@@ -1433,7 +1433,7 @@
 
 			IL_0000: ldstr "(?:)"
 			IL_0005: ldstr ""
-			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldloc.0
@@ -1804,7 +1804,7 @@
 
 			IL_0000: ldstr "a"
 			IL_0005: ldstr ""
-			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldloc.0
@@ -2175,7 +2175,7 @@
 
 			IL_0000: ldstr ".*"
 			IL_0005: ldstr ""
-			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldloc.0
@@ -2546,7 +2546,7 @@
 
 			IL_0000: ldstr "aaaaaaaaaa"
 			IL_0005: ldstr "g"
-			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldloc.0
@@ -3067,7 +3067,7 @@
 				74 61 54 6f 6b 65 6e 54 00 00 02
 			)
 			// Header size: 12
-			// Code size: 103 (0x67)
+			// Code size: 142 (0x8e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -3084,7 +3084,7 @@
 				IL_000c: ldloc.1
 				IL_000d: ldc.r8 100
 				IL_0016: clt
-				IL_0018: brfalse IL_0065
+				IL_0018: brfalse IL_008c
 
 				IL_001d: ldarg.0
 				IL_001e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
@@ -3097,23 +3097,36 @@
 				IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 				IL_003a: castclass [System.Runtime]System.String
 				IL_003f: stloc.3
-				IL_0040: ldloc.2
-				IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.RegExp
-				IL_0046: ldloc.3
-				IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-				IL_004c: stloc.2
-				IL_004d: ldarg.0
-				IL_004e: ldloc.2
-				IL_004f: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
-				IL_0054: ldloc.0
-				IL_0055: ldc.r8 1
-				IL_005e: add
-				IL_005f: stloc.0
-				IL_0060: br IL_000a
+				IL_0040: volatile.
+				IL_0042: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+				IL_0047: brfalse IL_005d
+
+				IL_004c: ldloc.2
+				IL_004d: ldstr "test"
+				IL_0052: ldloc.3
+				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0058: br IL_0073
+
+				IL_005d: ldloc.2
+				IL_005e: ldstr "test"
+				IL_0063: ldloc.3
+				IL_0064: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M19>:__js_call__:13"
+				IL_0069: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0073: stloc.2
+				IL_0074: ldarg.0
+				IL_0075: ldloc.2
+				IL_0076: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
+				IL_007b: ldloc.0
+				IL_007c: ldc.r8 1
+				IL_0085: add
+				IL_0086: stloc.0
+				IL_0087: br IL_000a
 			// end loop
 
-			IL_0065: ldnull
-			IL_0066: ret
+			IL_008c: ldnull
+			IL_008d: ret
 		} // end of method FunctionExpression_L97C22::__js_call__
 
 	} // end of class FunctionExpression_L97C22
@@ -4158,7 +4171,7 @@
 				IL_003c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
 				IL_0041: stloc.3
 				IL_0042: volatile.
-				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
 				IL_0049: brfalse IL_005f
 
 				IL_004e: ldloc.2
@@ -4171,7 +4184,7 @@
 				IL_0060: ldstr "match"
 				IL_0065: ldloc.3
 				IL_0066: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M25>:__js_call__:13"
-				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_86
+				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
 				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 				IL_0075: stloc.3
@@ -4488,7 +4501,7 @@
 				74 61 54 6f 6b 65 6e 54 00 00 02
 			)
 			// Header size: 12
-			// Code size: 103 (0x67)
+			// Code size: 142 (0x8e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -4505,7 +4518,7 @@
 				IL_000c: ldloc.1
 				IL_000d: ldc.r8 100
 				IL_0016: clt
-				IL_0018: brfalse IL_0065
+				IL_0018: brfalse IL_008c
 
 				IL_001d: ldarg.0
 				IL_001e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
@@ -4518,23 +4531,36 @@
 				IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 				IL_003a: castclass [System.Runtime]System.String
 				IL_003f: stloc.3
-				IL_0040: ldloc.2
-				IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.RegExp
-				IL_0046: ldloc.3
-				IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-				IL_004c: stloc.2
-				IL_004d: ldarg.0
-				IL_004e: ldloc.2
-				IL_004f: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
-				IL_0054: ldloc.0
-				IL_0055: ldc.r8 1
-				IL_005e: add
-				IL_005f: stloc.0
-				IL_0060: br IL_000a
+				IL_0040: volatile.
+				IL_0042: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_88
+				IL_0047: brfalse IL_005d
+
+				IL_004c: ldloc.2
+				IL_004d: ldstr "test"
+				IL_0052: ldloc.3
+				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0058: br IL_0073
+
+				IL_005d: ldloc.2
+				IL_005e: ldstr "test"
+				IL_0063: ldloc.3
+				IL_0064: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M27>:__js_call__:13"
+				IL_0069: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_88
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0073: stloc.2
+				IL_0074: ldarg.0
+				IL_0075: ldloc.2
+				IL_0076: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
+				IL_007b: ldloc.0
+				IL_007c: ldc.r8 1
+				IL_0085: add
+				IL_0086: stloc.0
+				IL_0087: br IL_000a
 			// end loop
 
-			IL_0065: ldnull
-			IL_0066: ret
+			IL_008c: ldnull
+			IL_008d: ret
 		} // end of method FunctionExpression_L134C29::__js_call__
 
 	} // end of class FunctionExpression_L134C29
@@ -5898,7 +5924,7 @@
 
 			IL_0000: ldstr "a.*a"
 			IL_0005: ldstr ""
-			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldloc.0
@@ -6089,7 +6115,7 @@
 				IL_003c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
 				IL_0041: stloc.3
 				IL_0042: volatile.
-				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
+				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
 				IL_0049: brfalse IL_005f
 
 				IL_004e: ldloc.2
@@ -6102,7 +6128,7 @@
 				IL_0060: ldstr "match"
 				IL_0065: ldloc.3
 				IL_0066: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M35>:__js_call__:13"
-				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_87
+				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
 				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 				IL_0075: stloc.3
@@ -6419,7 +6445,7 @@
 				74 61 54 6f 6b 65 6e 54 00 00 02
 			)
 			// Header size: 12
-			// Code size: 103 (0x67)
+			// Code size: 142 (0x8e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -6436,7 +6462,7 @@
 				IL_000c: ldloc.1
 				IL_000d: ldc.r8 100
 				IL_0016: clt
-				IL_0018: brfalse IL_0065
+				IL_0018: brfalse IL_008c
 
 				IL_001d: ldarg.0
 				IL_001e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
@@ -6449,23 +6475,36 @@
 				IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 				IL_003a: castclass [System.Runtime]System.String
 				IL_003f: stloc.3
-				IL_0040: ldloc.2
-				IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.RegExp
-				IL_0046: ldloc.3
-				IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-				IL_004c: stloc.2
-				IL_004d: ldarg.0
-				IL_004e: ldloc.2
-				IL_004f: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
-				IL_0054: ldloc.0
-				IL_0055: ldc.r8 1
-				IL_005e: add
-				IL_005f: stloc.0
-				IL_0060: br IL_000a
+				IL_0040: volatile.
+				IL_0042: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
+				IL_0047: brfalse IL_005d
+
+				IL_004c: ldloc.2
+				IL_004d: ldstr "test"
+				IL_0052: ldloc.3
+				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0058: br IL_0073
+
+				IL_005d: ldloc.2
+				IL_005e: ldstr "test"
+				IL_0063: ldloc.3
+				IL_0064: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M37>:__js_call__:13"
+				IL_0069: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0073: stloc.2
+				IL_0074: ldarg.0
+				IL_0075: ldloc.2
+				IL_0076: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
+				IL_007b: ldloc.0
+				IL_007c: ldc.r8 1
+				IL_0085: add
+				IL_0086: stloc.0
+				IL_0087: br IL_000a
 			// end loop
 
-			IL_0065: ldnull
-			IL_0066: ret
+			IL_008c: ldnull
+			IL_008d: ret
 		} // end of method FunctionExpression_L184C31::__js_call__
 
 	} // end of class FunctionExpression_L184C31
@@ -7510,7 +7549,7 @@
 				IL_003c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
 				IL_0041: stloc.3
 				IL_0042: volatile.
-				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_88
+				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
 				IL_0049: brfalse IL_005f
 
 				IL_004e: ldloc.2
@@ -7523,7 +7562,7 @@
 				IL_0060: ldstr "match"
 				IL_0065: ldloc.3
 				IL_0066: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M43>:__js_call__:13"
-				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_88
+				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
 				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 				IL_0075: stloc.3
@@ -7840,7 +7879,7 @@
 				74 61 54 6f 6b 65 6e 54 00 00 02
 			)
 			// Header size: 12
-			// Code size: 103 (0x67)
+			// Code size: 142 (0x8e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -7857,7 +7896,7 @@
 				IL_000c: ldloc.1
 				IL_000d: ldc.r8 100
 				IL_0016: clt
-				IL_0018: brfalse IL_0065
+				IL_0018: brfalse IL_008c
 
 				IL_001d: ldarg.0
 				IL_001e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
@@ -7870,23 +7909,36 @@
 				IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 				IL_003a: castclass [System.Runtime]System.String
 				IL_003f: stloc.3
-				IL_0040: ldloc.2
-				IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.RegExp
-				IL_0046: ldloc.3
-				IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-				IL_004c: stloc.2
-				IL_004d: ldarg.0
-				IL_004e: ldloc.2
-				IL_004f: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
-				IL_0054: ldloc.0
-				IL_0055: ldc.r8 1
-				IL_005e: add
-				IL_005f: stloc.0
-				IL_0060: br IL_000a
+				IL_0040: volatile.
+				IL_0042: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
+				IL_0047: brfalse IL_005d
+
+				IL_004c: ldloc.2
+				IL_004d: ldstr "test"
+				IL_0052: ldloc.3
+				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0058: br IL_0073
+
+				IL_005d: ldloc.2
+				IL_005e: ldstr "test"
+				IL_0063: ldloc.3
+				IL_0064: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M45>:__js_call__:13"
+				IL_0069: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0073: stloc.2
+				IL_0074: ldarg.0
+				IL_0075: ldloc.2
+				IL_0076: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
+				IL_007b: ldloc.0
+				IL_007c: ldc.r8 1
+				IL_0085: add
+				IL_0086: stloc.0
+				IL_0087: br IL_000a
 			// end loop
 
-			IL_0065: ldnull
-			IL_0066: ret
+			IL_008c: ldnull
+			IL_008d: ret
 		} // end of method FunctionExpression_L221C38::__js_call__
 
 	} // end of class FunctionExpression_L221C38
@@ -9250,7 +9302,7 @@
 
 			IL_0000: ldstr "aa(b)aa"
 			IL_0005: ldstr "g"
-			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldloc.0
@@ -9441,7 +9493,7 @@
 				IL_003c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.RegExp Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::re
 				IL_0041: stloc.3
 				IL_0042: volatile.
-				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
+				IL_0044: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_93
 				IL_0049: brfalse IL_005f
 
 				IL_004e: ldloc.2
@@ -9454,7 +9506,7 @@
 				IL_0060: ldstr "match"
 				IL_0065: ldloc.3
 				IL_0066: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M53>:__js_call__:13"
-				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
+				IL_006b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_93
 				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 				IL_0075: stloc.3
@@ -11583,10 +11635,10 @@
 				IL_003a: stloc.2
 				IL_003b: ldstr "aaaaaaaaaa"
 				IL_0040: ldstr "g"
-				IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+				IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 				IL_004a: stloc.3
 				IL_004b: volatile.
-				IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
+				IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_94
 				IL_0052: brfalse IL_0068
 
 				IL_0057: ldloc.2
@@ -11599,7 +11651,7 @@
 				IL_0069: ldstr "match"
 				IL_006e: ldloc.3
 				IL_006f: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M63>:__js_call__:15"
-				IL_0074: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
+				IL_0074: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_94
 				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 				IL_007e: stloc.s 4
@@ -11916,7 +11968,7 @@
 				74 61 54 6f 6b 65 6e 54 00 00 02
 			)
 			// Header size: 12
-			// Code size: 104 (0x68)
+			// Code size: 155 (0x9b)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -11934,35 +11986,52 @@
 				IL_000c: ldloc.1
 				IL_000d: ldc.r8 100
 				IL_0016: clt
-				IL_0018: brfalse IL_0066
+				IL_0018: brfalse IL_0099
 
 				IL_001d: ldstr "aaaaaaaaaa"
 				IL_0022: ldstr "g"
-				IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+				IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 				IL_002c: stloc.2
-				IL_002d: ldarg.0
-				IL_002e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::tmp
-				IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-				IL_0038: ldloc.0
-				IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-				IL_003e: castclass [System.Runtime]System.String
-				IL_0043: stloc.3
-				IL_0044: ldloc.2
-				IL_0045: ldloc.3
-				IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-				IL_004b: stloc.s 4
-				IL_004d: ldarg.0
-				IL_004e: ldloc.s 4
-				IL_0050: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
-				IL_0055: ldloc.0
-				IL_0056: ldc.r8 1
-				IL_005f: add
-				IL_0060: stloc.0
-				IL_0061: br IL_000a
+				IL_002d: ldloc.2
+				IL_002e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.RegExp>(!!0)
+				IL_0033: stloc.2
+				IL_0034: ldarg.0
+				IL_0035: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::tmp
+				IL_003a: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+				IL_003f: ldloc.0
+				IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+				IL_0045: castclass [System.Runtime]System.String
+				IL_004a: stloc.3
+				IL_004b: volatile.
+				IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_95
+				IL_0052: brfalse IL_0068
+
+				IL_0057: ldloc.2
+				IL_0058: ldstr "test"
+				IL_005d: ldloc.3
+				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0063: br IL_007e
+
+				IL_0068: ldloc.2
+				IL_0069: ldstr "test"
+				IL_006e: ldloc.3
+				IL_006f: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M65>:__js_call__:15"
+				IL_0074: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_95
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_007e: stloc.s 4
+				IL_0080: ldarg.0
+				IL_0081: ldloc.s 4
+				IL_0083: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
+				IL_0088: ldloc.0
+				IL_0089: ldc.r8 1
+				IL_0092: add
+				IL_0093: stloc.0
+				IL_0094: br IL_000a
 			// end loop
 
-			IL_0066: ldnull
-			IL_0067: ret
+			IL_0099: ldnull
+			IL_009a: ret
 		} // end of method FunctionExpression_L322C24::__js_call__
 
 	} // end of class FunctionExpression_L322C24
@@ -12296,7 +12365,7 @@
 				IL_003a: stloc.2
 				IL_003b: ldstr "aaaaaaaaaa"
 				IL_0040: ldstr "g"
-				IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+				IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 				IL_004a: stloc.3
 				IL_004b: ldloc.2
 				IL_004c: ldstr "replace"
@@ -12649,7 +12718,7 @@
 				IL_003a: stloc.2
 				IL_003b: ldstr "aaaaaaaaaa"
 				IL_0040: ldstr "g"
-				IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+				IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 				IL_004a: stloc.3
 				IL_004b: ldloc.2
 				IL_004c: ldstr "replace"
@@ -13005,7 +13074,7 @@
 				IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
 				IL_004a: stloc.3
 				IL_004b: volatile.
-				IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
+				IL_004d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_96
 				IL_0052: brfalse IL_0068
 
 				IL_0057: ldloc.2
@@ -13018,7 +13087,7 @@
 				IL_0069: ldstr "match"
 				IL_006e: ldloc.3
 				IL_006f: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M71>:__js_call__:15"
-				IL_0074: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
+				IL_0074: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_96
 				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
 				IL_007e: stloc.s 4
@@ -13335,7 +13404,7 @@
 				74 61 54 6f 6b 65 6e 54 00 00 02
 			)
 			// Header size: 12
-			// Code size: 104 (0x68)
+			// Code size: 148 (0x94)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -13353,7 +13422,7 @@
 				IL_000c: ldloc.1
 				IL_000d: ldc.r8 100
 				IL_0016: clt
-				IL_0018: brfalse IL_0066
+				IL_0018: brfalse IL_0092
 
 				IL_001d: ldstr "aaaaaaaaaa"
 				IL_0022: ldstr "g"
@@ -13366,22 +13435,36 @@
 				IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 				IL_003e: castclass [System.Runtime]System.String
 				IL_0043: stloc.3
-				IL_0044: ldloc.2
-				IL_0045: ldloc.3
-				IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-				IL_004b: stloc.s 4
-				IL_004d: ldarg.0
-				IL_004e: ldloc.s 4
-				IL_0050: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
-				IL_0055: ldloc.0
-				IL_0056: ldc.r8 1
-				IL_005f: add
-				IL_0060: stloc.0
-				IL_0061: br IL_000a
+				IL_0044: volatile.
+				IL_0046: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_97
+				IL_004b: brfalse IL_0061
+
+				IL_0050: ldloc.2
+				IL_0051: ldstr "test"
+				IL_0056: ldloc.3
+				IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_005c: br IL_0077
+
+				IL_0061: ldloc.2
+				IL_0062: ldstr "test"
+				IL_0067: ldloc.3
+				IL_0068: ldstr "Compile_Performance_Dromaeo_Object_Regexp:<TwoPhaseDummy_M73>:__js_call__:14"
+				IL_006d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_97
+				IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_0077: stloc.s 4
+				IL_0079: ldarg.0
+				IL_007a: ldloc.s 4
+				IL_007c: stfld object Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope::'ret'
+				IL_0081: ldloc.0
+				IL_0082: ldc.r8 1
+				IL_008b: add
+				IL_008c: stloc.0
+				IL_008d: br IL_000a
 			// end loop
 
-			IL_0066: ldnull
-			IL_0067: ret
+			IL_0092: ldnull
+			IL_0093: ret
 		} // end of method FunctionExpression_L358C31::__js_call__
 
 	} // end of class FunctionExpression_L358C31
@@ -16123,6 +16206,12 @@
 	.field assembly static int32 __jroc_dynamicLookup_89
 	.field assembly static int32 __jroc_dynamicLookup_90
 	.field assembly static int32 __jroc_dynamicLookup_91
+	.field assembly static int32 __jroc_dynamicLookup_92
+	.field assembly static int32 __jroc_dynamicLookup_93
+	.field assembly static int32 __jroc_dynamicLookup_94
+	.field assembly static int32 __jroc_dynamicLookup_95
+	.field assembly static int32 __jroc_dynamicLookup_96
+	.field assembly static int32 __jroc_dynamicLookup_97
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

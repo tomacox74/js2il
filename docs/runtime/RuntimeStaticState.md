@@ -24,6 +24,7 @@ hints, resource identity allocators, and context-less compatibility fallbacks.
 | `AsyncContextRuntime._enabledHookCount` | Process | Fast-path activity count; actual hooks are agent-owned |
 | `FsCommon._nextFileDescriptor` | Process | Identity allocator for process file resources |
 | `JSON._parseShapes` | CLR thread | At most 128 cached layout transitions and 8,192 key characters; no parsed values, descriptors, realm objects, or interned keys |
+| `RegExp._compiledPatternCacheSourceCharacters` | Process | Atomic size accounting for the bounded compiled-pattern cache |
 | `RegExp._prototypeWellKnownSymbolFastPathFlags` | Process | Monotonic deoptimization flags; can only disable an optimization |
 | `RuntimeIntrinsics._initializationDepth` | CLR thread | Reentrant bootstrap state for the calling thread |
 | `RuntimeIntrinsics._nextId` | Process | Metadata identity allocator |
@@ -60,7 +61,9 @@ oversized keys must remain collectible, as covered by `JSONShapeStorageTests`.
 | `ObjectRuntime._integrityStates` | Process identity metadata | Target objects are weak keys |
 | `PropertyDescriptorStore._defaultRuntimeStore` | CLR thread | Context-less descriptor fallback only |
 | `PropertyDescriptorStore._intrinsicInitializationDepth` | CLR thread | Reentrant intrinsic bootstrap state |
-| `RegExp.CompiledPatternCache` | Process metadata | Immutable, source-derived `Regex` compilation artifacts keyed by pattern plus compilation-affecting flags; bounded and cleared when the capacity is exceeded, holds no realm or JavaScript state |
+| `RegExp.CompiledPatternCache` | Process metadata | Immutable, source-derived `Regex` compilation artifacts keyed by pattern plus compilation-affecting flags; bounded by entry count and source characters, holds no realm or JavaScript state |
+| `RegExp.CompiledPatternCacheInsertionOrder` | Process metadata | FIFO keys for incremental cache eviction; bounded with the compiled-pattern cache |
+| `RegExp.LiteralTemplates` | Process metadata | Weak-keyed immutable literal metadata; source strings are weak keys and templates hold no realm or JavaScript object state |
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
 | `RuntimeServices._currentInvocation` | Async flow | Immutable residual invocation frame captured/restored by root frames |

@@ -20,6 +20,12 @@ namespace Jroc.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_RegExp_Literal_FreshAndConstructorIndependent()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Literal_FreshAndConstructorIndependent));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_RegExp_Prototype_Getters_Basic()
         {
             return ExecutionTest(nameof(IntrinsicCallables_RegExp_Prototype_Getters_Basic));
@@ -29,6 +35,12 @@ namespace Jroc.Tests.IntrinsicCallables
         public Task IntrinsicCallables_RegExp_Test_LastIndex_Global()
         {
             return ExecutionTest(nameof(IntrinsicCallables_RegExp_Test_LastIndex_Global));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_RegExp_Test_GuardedOverrides()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Test_GuardedOverrides));
         }
 
         [Fact]

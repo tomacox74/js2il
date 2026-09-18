@@ -29,7 +29,7 @@ internal static class StableDirectCallableEligibility
             return false;
         }
 
-        if (binding.Kind != BindingKind.Const
+        if (binding.Kind is not (BindingKind.Const or BindingKind.Let or BindingKind.Var)
             || binding.DeclarationNode is not VariableDeclarator { Init: { } candidateInitializer }
             || candidateInitializer is not ArrowFunctionExpression and not FunctionExpression)
         {
@@ -236,10 +236,202 @@ internal static class StableDirectCallableEligibility
                     or ArrowFunctionExpression
                     or ClassDeclaration
                     or ClassExpression);
-            return outermostDeferredBoundary is not FunctionDeclaration;
+            return outermostDeferredBoundary switch
+            {
+                FunctionDeclaration functionDeclaration =>
+                    IsFunctionDeclarationActivatedAfterInitialization(
+                        root.AstNode,
+                        statementList,
+                        declarationStatementIndex,
+                        functionDeclaration,
+                        new HashSet<Node>()),
+                _ => outermostDeferredBoundary is not FunctionDeclaration
+            };
         }
 
         return false;
+    }
+
+    private static bool IsFunctionDeclarationActivatedAfterInitialization(
+        Node root,
+        Node declarationStatementList,
+        int declarationStatementIndex,
+        FunctionDeclaration function,
+        HashSet<Node> visited)
+    {
+        if (!visited.Add(function))
+        {
+            return true;
+        }
+
+        var isSafe = true;
+        var walker = new AstWalker();
+        walker.Visit(root, node =>
+        {
+            if (!isSafe
+                || node is not Identifier identifier
+                || !string.Equals(
+                    identifier.Name,
+                    function.Id?.Name,
+                    StringComparison.Ordinal)
+                || !TryFindAstPath(root, identifier, out var referencePath)
+                || referencePath.Any(candidate =>
+                    AstNodesMatch(candidate, function)))
+            {
+                return;
+            }
+
+            var declarationListPathIndex = referencePath.FindIndex(candidate =>
+                AstNodesMatch(candidate, declarationStatementList));
+            if (declarationListPathIndex < 0)
+            {
+                isSafe = false;
+                return;
+            }
+
+            var deferredBoundary = referencePath
+                .Skip(declarationListPathIndex + 1)
+                .FirstOrDefault(candidate => candidate is FunctionDeclaration
+                    or FunctionExpression
+                    or ArrowFunctionExpression
+                    or ClassDeclaration
+                    or ClassExpression);
+            if (deferredBoundary is FunctionDeclaration containingFunction)
+            {
+                isSafe = IsFunctionDeclarationActivatedAfterInitialization(
+                    root,
+                    declarationStatementList,
+                    declarationStatementIndex,
+                    containingFunction,
+                    visited);
+                return;
+            }
+
+            if (deferredBoundary is FunctionExpression
+                or ArrowFunctionExpression)
+            {
+                isSafe = IsNodeEvaluatedAfterInitialization(
+                    root,
+                    declarationStatementList,
+                    declarationStatementIndex,
+                    deferredBoundary,
+                    visited);
+                return;
+            }
+
+            if (deferredBoundary != null)
+            {
+                isSafe = false;
+                return;
+            }
+
+            var listIndex = referencePath.FindIndex(candidate =>
+                AstNodesMatch(candidate, declarationStatementList));
+            if (listIndex < 0 || listIndex + 1 >= referencePath.Count)
+            {
+                isSafe = false;
+                return;
+            }
+
+            var referenceStatement = referencePath[listIndex + 1];
+            var statements = declarationStatementList switch
+            {
+                Acornima.Ast.Program program => program.Body.Cast<Node>().ToArray(),
+                BlockStatement block => block.Body.Cast<Node>().ToArray(),
+                SwitchCase switchCase => switchCase.Consequent.Cast<Node>().ToArray(),
+                _ => Array.Empty<Node>()
+            };
+            var referenceStatementIndex = Array.FindIndex(
+                statements,
+                statement => AstNodesMatch(statement, referenceStatement));
+            if (referenceStatementIndex <= declarationStatementIndex)
+            {
+                isSafe = false;
+            }
+        });
+
+        return isSafe;
+    }
+
+    private static bool IsNodeEvaluatedAfterInitialization(
+        Node root,
+        Node declarationStatementList,
+        int declarationStatementIndex,
+        Node node,
+        HashSet<Node> visited)
+    {
+        if (!visited.Add(node))
+        {
+            return true;
+        }
+        if (!TryFindAstPath(root, node, out var path))
+        {
+            return false;
+        }
+
+        var declarationListPathIndex = path.FindIndex(candidate =>
+            AstNodesMatch(candidate, declarationStatementList));
+        var nodeIndex = path.FindIndex(candidate => AstNodesMatch(candidate, node));
+        if (declarationListPathIndex < 0)
+        {
+            return false;
+        }
+
+        var enclosingBoundary = path
+            .Skip(declarationListPathIndex + 1)
+            .Take(Math.Max(
+                0,
+                nodeIndex - declarationListPathIndex - 1))
+            .FirstOrDefault(candidate => candidate is FunctionDeclaration
+                or FunctionExpression
+                or ArrowFunctionExpression
+                or ClassDeclaration
+                or ClassExpression);
+        if (enclosingBoundary is FunctionDeclaration containingFunction)
+        {
+            return IsFunctionDeclarationActivatedAfterInitialization(
+                root,
+                declarationStatementList,
+                declarationStatementIndex,
+                containingFunction,
+                visited);
+        }
+
+        if (enclosingBoundary is FunctionExpression
+            or ArrowFunctionExpression)
+        {
+            return IsNodeEvaluatedAfterInitialization(
+                root,
+                declarationStatementList,
+                declarationStatementIndex,
+                enclosingBoundary,
+                visited);
+        }
+
+        if (enclosingBoundary != null)
+        {
+            return false;
+        }
+
+        var listIndex = path.FindIndex(candidate =>
+            AstNodesMatch(candidate, declarationStatementList));
+        if (listIndex < 0 || listIndex + 1 >= path.Count)
+        {
+            return false;
+        }
+
+        var containingStatement = path[listIndex + 1];
+        var statements = declarationStatementList switch
+        {
+            Acornima.Ast.Program program => program.Body.Cast<Node>().ToArray(),
+            BlockStatement block => block.Body.Cast<Node>().ToArray(),
+            SwitchCase switchCase => switchCase.Consequent.Cast<Node>().ToArray(),
+            _ => Array.Empty<Node>()
+        };
+        return Array.FindIndex(
+                statements,
+                statement => AstNodesMatch(statement, containingStatement))
+            > declarationStatementIndex;
     }
 
     private static bool UsesLexicalInvocationContext(ArrowFunctionExpression arrow)

@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 644 (0x284)
+		// Code size: 641 (0x281)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Types_Expanded/Scope,
@@ -310,34 +310,31 @@
 		IL_022c: stloc.3
 		IL_022d: ldloc.3
 		IL_022e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0233: stloc.3
-		IL_0234: ldstr "abc"
-		IL_0239: ldstr ""
-		IL_023e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_0243: stloc.s 11
-		IL_0245: volatile.
-		IL_0247: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_024c: brfalse IL_0263
+		IL_0233: ldstr "abc"
+		IL_0238: ldstr ""
+		IL_023d: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
+		IL_0242: stloc.s 11
+		IL_0244: volatile.
+		IL_0246: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_024b: brfalse IL_0261
 
-		IL_0251: ldloc.3
-		IL_0252: ldstr "isRegExp"
-		IL_0257: ldloc.s 11
-		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_025e: br IL_027a
+		IL_0250: ldstr "isRegExp"
+		IL_0255: ldloc.s 11
+		IL_0257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_025c: br IL_0277
 
-		IL_0263: ldloc.3
-		IL_0264: ldstr "isRegExp"
-		IL_0269: ldloc.s 11
-		IL_026b: ldstr "Require_Util_Types_Expanded:Modules.Require_Util_Types_Expanded:__js_module_init__:58"
-		IL_0270: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_0275: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_0261: ldstr "isRegExp"
+		IL_0266: ldloc.s 11
+		IL_0268: ldstr "Require_Util_Types_Expanded:Modules.Require_Util_Types_Expanded:__js_module_init__:58"
+		IL_026d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0272: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_027a: stloc.3
-		IL_027b: ldloc.2
-		IL_027c: ldloc.3
-		IL_027d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0282: pop
-		IL_0283: ret
+		IL_0277: stloc.3
+		IL_0278: ldloc.2
+		IL_0279: ldloc.3
+		IL_027a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_027f: pop
+		IL_0280: ret
 	} // end of method Require_Util_Types_Expanded::__js_module_init__
 
 } // end of class Modules.Require_Util_Types_Expanded

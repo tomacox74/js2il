@@ -724,12 +724,12 @@ public partial class SymbolTableBuilder
                 continue;
             }
 
-            return false;
+            break;
         }
 
         parameterNames = names;
         hasDefaultValue = defaults;
-        return true;
+        return names.Count > 0 || parameters.Count == 0;
     }
 
     private bool TryResolveParameterInferenceCallTarget(

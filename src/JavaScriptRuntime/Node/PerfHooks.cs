@@ -7,16 +7,22 @@ namespace JavaScriptRuntime.Node
     [NodeModule("perf_hooks")]
     public sealed partial class PerfHooks
     {
-        private readonly Performance _performance = new Performance();
-        public Performance performance => _performance;
+        public Performance performance => RuntimeIntrinsics.Current.Performance;
 
-        public sealed partial class Performance
+        public sealed partial class Performance : JsObject
         {
             private static readonly long _origin = Stopwatch.GetTimestamp();
 
+            public Performance()
+            {
+                SetObject("now", (BuiltinFunction0)(static _ => NowCore()));
+            }
+
             object? Jroc.Runtime.Node.Contracts.IJavaScriptValueHost.JavaScriptValue => this;
 
-            public double now()
+            public double now() => NowCore();
+
+            private static double NowCore()
             {
                 long ticks = Stopwatch.GetTimestamp() - _origin;
                 return (double)ticks * 1000.0 / Stopwatch.Frequency;

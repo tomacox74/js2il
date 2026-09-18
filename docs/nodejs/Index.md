@@ -4,13 +4,13 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-08-10T00:36:16Z`
+**Generated:** `2026-09-18T19:18:33Z`
 
 ## Summary
 
 - **Modules:** 28
-- **Globals:** 18
-  - Supported: 15
+- **Globals:** 19
+  - Supported: 16
   - Partial: 28
 
 ## Modules
@@ -60,6 +60,7 @@
 | [console.error](console_error.md) | supported | [Node.js](https://nodejs.org/api/console.html#consoleerrordata-args) |
 | [console.log](console_log.md) | supported | [Node.js](https://nodejs.org/api/console.html#consolelogdata-args) |
 | [console.warn](console_warn.md) | supported | [Node.js](https://nodejs.org/api/console.html#consolewarndata-args) |
+| [performance](performance.md) | supported | [Node.js](https://nodejs.org/docs/latest-v24.x/api/globals.html#performance) |
 | [Promise](Promise.md) | supported | [Node.js](https://nodejs.org/api/globals.html#promise) |
 | [require(id)](require(id).md) | supported | [Node.js](https://nodejs.org/api/modules.html#requireid) |
 | [setImmediate](setImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#setimmediatecallback-args) |

@@ -33,6 +33,11 @@ export function summary(name, fn) {
 export function run() {
   const iterations = Number(globals.__BENCHMARK_ITERATIONS ?? 1);
   const runsPerBenchmark = Number.isFinite(iterations) && iterations > 0 ? Math.floor(iterations) : 1;
+  const configuredWarmupIterations = Number(globals.__BENCHMARK_WARMUP_ITERATIONS ?? 1);
+  const warmupIterations =
+    Number.isFinite(configuredWarmupIterations) && configuredWarmupIterations > 0
+      ? Math.floor(configuredWarmupIterations)
+      : 0;
   const configuredMinimumDurationNs = Number(globals.__BENCHMARK_MIN_DURATION_NS ?? 10_000_000);
   const minimumDurationNs =
     Number.isFinite(configuredMinimumDurationNs) && configuredMinimumDurationNs > 0
@@ -49,6 +54,13 @@ export function run() {
     let error = null;
 
     try {
+      for (let iteration = 0; iteration < warmupIterations; iteration++) {
+        const result = benchmark.fn();
+        if (result instanceof Promise) {
+          throw new Error("The managed benchmark runner does not support asynchronous benchmarks.");
+        }
+      }
+
       for (let iteration = 0; iteration < runsPerBenchmark; iteration++) {
         const start = now();
         let elapsedNs = 0;

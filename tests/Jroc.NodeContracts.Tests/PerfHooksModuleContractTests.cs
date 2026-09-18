@@ -93,19 +93,32 @@ public class PerfHooksModuleContractTests
     [Fact]
     public void IntrinsicPerfHooksModule_DelegatesPerformanceNowThroughTheTypedContract()
     {
-        IPerfHooksModule module = new PerfHooks();
+        var services = RuntimeServices.BuildServiceProvider();
+        SetRuntimeServiceProvider(services);
+        try
+        {
+            var intrinsic = new PerfHooks();
+            IPerfHooksModule module = intrinsic;
 
-        IPerfHooksPerformance performance = module.performance;
+            IPerfHooksPerformance performance = module.performance;
 
-        Assert.IsType<double>(performance.now());
-        Assert.Null(
-            typeof(PerfHooks).GetMethod(
-                "InvokeContractMember",
-                BindingFlags.NonPublic | BindingFlags.Instance));
-        Assert.Null(
-            typeof(PerfHooks.Performance).GetMethod(
-                "InvokeContractMember",
-                BindingFlags.NonPublic | BindingFlags.Instance));
+            Assert.IsType<double>(performance.now());
+            Assert.Same(
+                intrinsic.performance,
+                ObjectRuntime.GetProperty(GlobalThis.globalThis, "performance"));
+            Assert.Null(
+                typeof(PerfHooks).GetMethod(
+                    "InvokeContractMember",
+                    BindingFlags.NonPublic | BindingFlags.Instance));
+            Assert.Null(
+                typeof(PerfHooks.Performance).GetMethod(
+                    "InvokeContractMember",
+                    BindingFlags.NonPublic | BindingFlags.Instance));
+        }
+        finally
+        {
+            SetRuntimeServiceProvider(null);
+        }
     }
 
     [Fact]
@@ -131,6 +144,15 @@ public class PerfHooksModuleContractTests
             .GetMethods()
             .Where(method => GetNodeMemberName(method) == memberName)
             .ToArray();
+    }
+
+    private static void SetRuntimeServiceProvider(object? serviceProvider)
+    {
+        typeof(GlobalThis)
+            .GetProperty(
+                "ServiceProvider",
+                BindingFlags.Static | BindingFlags.NonPublic)!
+            .SetValue(null, serviceProvider);
     }
 
     private static string? GetNodeMemberName(MethodInfo method)

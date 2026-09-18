@@ -67,6 +67,19 @@ namespace JavaScriptRuntime
             };
         }
 
+        public static object? GuardedIsSafeInteger(object? value)
+        {
+            if (GlobalThis.HasDefaultNumberIsSafeInteger())
+            {
+                return isSafeInteger(value);
+            }
+
+            return ObjectRuntime.CallMember1(
+                ObjectRuntime.GetGlobalBindingValue("Number")!,
+                "isSafeInteger",
+                value);
+        }
+
         internal static double FromNumberConstructorArgument(object? value)
             => value is System.Numerics.BigInteger bigInteger
                 ? ConvertBigIntegerToDouble(bigInteger)

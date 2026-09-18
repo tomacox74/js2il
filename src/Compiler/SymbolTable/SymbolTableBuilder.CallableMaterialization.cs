@@ -81,11 +81,6 @@ public partial class SymbolTableBuilder
                     state.Reasons |= CallableMaterializationReason.Export;
                 }
 
-                if (binding.Kind != BindingKind.Const)
-                {
-                    state.Reasons |= CallableMaterializationReason.MutableOrHoistedBinding;
-                }
-
                 if (binding.HasNonInitializationWrite)
                 {
                     state.Reasons |= CallableMaterializationReason.Reassigned;

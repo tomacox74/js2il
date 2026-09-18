@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -100,6 +103,42 @@ namespace JavaScriptRuntime
             lastIndex = 0;
             _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
             InitializeIntrinsicSurface();
+        }
+
+        private RegExp(LiteralTemplate template)
+        {
+            _source = template.Source;
+            _global = template.Flags.Global;
+            _sticky = template.Flags.Sticky;
+            _dotAll = template.Flags.DotAll;
+            _unicode = template.Flags.Unicode;
+            _hasIndices = template.Flags.HasIndices;
+            _regex = template.Compiled.Regex!;
+            _namedGroups = template.Compiled.NamedGroups!;
+            _captureResetAncestors = template.Compiled.CaptureResetAncestors!;
+            _captureBoundaryKinds = template.Compiled.CaptureBoundaryKinds!;
+            _simpleLiteralPattern = IsSimpleLiteralPattern(template.Compiled, template.Flags)
+                ? _source
+                : null;
+            lastIndex = 0;
+            _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
+            InitializeIntrinsicSurface();
+        }
+
+        public static RegExp CreateLiteral(string source, string flags)
+        {
+            source ??= string.Empty;
+            flags ??= string.Empty;
+            var templatesByFlags = LiteralTemplates.GetValue(
+                source,
+                static _ => new ConcurrentDictionary<string, Lazy<LiteralTemplate>>(
+                    StringComparer.Ordinal));
+            var template = templatesByFlags.GetOrAdd(
+                flags,
+                currentFlags => new Lazy<LiteralTemplate>(
+                    () => CreateLiteralTemplate(source, currentFlags),
+                    LazyThreadSafetyMode.ExecutionAndPublication));
+            return new RegExp(template.Value);
         }
 
         public static object Call()
@@ -1445,6 +1484,17 @@ namespace JavaScriptRuntime
             public string? SyntaxErrorMessage;
         }
 
+        private sealed class LiteralTemplate
+        {
+            public required string Source { get; init; }
+            public required ParsedFlags Flags { get; init; }
+            public required CompiledPattern Compiled { get; init; }
+        }
+
+        private static readonly ConditionalWeakTable<
+            string,
+            ConcurrentDictionary<string, Lazy<LiteralTemplate>>> LiteralTemplates = new();
+
         private readonly record struct CompiledPatternKey(
             string Source,
             bool Unicode,
@@ -1452,52 +1502,12 @@ namespace JavaScriptRuntime
             RegexOptions Options);
 
         private const int CompiledPatternCacheCapacity = 1024;
+        private const int CompiledPatternCacheSourceCharacterBudget = 4 * 1024 * 1024;
 
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<CompiledPatternKey, CompiledPattern> CompiledPatternCache =
-            new(CompiledPatternKeyComparer.Instance);
-
-        /// <summary>
-        /// Hashes pattern keys in constant time (length plus a bounded sample of the source) and
-        /// compares sources by reference first. Regex literals lower to interned IL string literals,
-        /// so hot loops that re-create the same literal never pay a full hash or compare of a large
-        /// pattern.
-        /// </summary>
-        private sealed class CompiledPatternKeyComparer : IEqualityComparer<CompiledPatternKey>
-        {
-            internal static readonly CompiledPatternKeyComparer Instance = new();
-
-            public bool Equals(CompiledPatternKey x, CompiledPatternKey y)
-            {
-                return x.Unicode == y.Unicode
-                    && x.DotAll == y.DotAll
-                    && x.Options == y.Options
-                    && (ReferenceEquals(x.Source, y.Source) || string.Equals(x.Source, y.Source, StringComparison.Ordinal));
-            }
-
-            public int GetHashCode(CompiledPatternKey key)
-            {
-                var source = key.Source;
-                var hash = new HashCode();
-                hash.Add(source.Length);
-                hash.Add(key.Options);
-                hash.Add(key.Unicode);
-                hash.Add(key.DotAll);
-
-                const int SampleLength = 16;
-                var prefix = System.Math.Min(SampleLength, source.Length);
-                for (var i = 0; i < prefix; i++)
-                {
-                    hash.Add(source[i]);
-                }
-
-                for (var i = System.Math.Max(prefix, source.Length - SampleLength); i < source.Length; i++)
-                {
-                    hash.Add(source[i]);
-                }
-
-                return hash.ToHashCode();
-            }
-        }
+        private static readonly ConcurrentDictionary<CompiledPatternKey, Lazy<CompiledPattern>>
+            CompiledPatternCache = new();
+        private static readonly ConcurrentQueue<CompiledPatternKey> CompiledPatternCacheInsertionOrder = new();
+        private static long _compiledPatternCacheSourceCharacters;
 
         /// <summary>
         /// Compiling a JavaScript pattern into a .NET <see cref="Regex"/> is expensive (milliseconds
@@ -1515,27 +1525,40 @@ namespace JavaScriptRuntime
             RegexOptions options)
         {
             var key = new CompiledPatternKey(source, unicode, dotAll, options);
-
-            if (!CompiledPatternCache.TryGetValue(key, out var compiled))
+            var candidate = new Lazy<CompiledPattern>(
+                () => CreateCompiledPattern(source, unicode, dotAll, options),
+                LazyThreadSafetyMode.ExecutionAndPublication);
+            var cached = CompiledPatternCache.GetOrAdd(key, candidate);
+            if (ReferenceEquals(candidate, cached))
             {
-                compiled = CreateCompiledPattern(source, unicode, dotAll, options);
-
-                if (CompiledPatternCache.Count >= CompiledPatternCacheCapacity)
-                {
-                    // Scripts can generate unbounded numbers of distinct patterns; drop the cache
-                    // instead of growing without limit.
-                    CompiledPatternCache.Clear();
-                }
-
-                CompiledPatternCache[key] = compiled;
+                CompiledPatternCacheInsertionOrder.Enqueue(key);
+                Interlocked.Add(ref _compiledPatternCacheSourceCharacters, source.Length);
+                TrimCompiledPatternCache();
             }
 
+            var compiled = cached.Value;
             if (compiled.SyntaxErrorMessage is not null)
             {
                 throw new SyntaxError(compiled.SyntaxErrorMessage);
             }
 
             return compiled;
+        }
+
+        private static void TrimCompiledPatternCache()
+        {
+            while ((CompiledPatternCache.Count > CompiledPatternCacheCapacity
+                    || Volatile.Read(ref _compiledPatternCacheSourceCharacters)
+                        > CompiledPatternCacheSourceCharacterBudget)
+                && CompiledPatternCacheInsertionOrder.TryDequeue(out var oldestKey))
+            {
+                if (CompiledPatternCache.TryRemove(oldestKey, out _))
+                {
+                    Interlocked.Add(
+                        ref _compiledPatternCacheSourceCharacters,
+                        -oldestKey.Source.Length);
+                }
+            }
         }
 
         private static CompiledPattern CreateCompiledPattern(
@@ -1569,7 +1592,23 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static (string Name, int Number)[] GetNamedGroups(Regex regex)        {
+        private static LiteralTemplate CreateLiteralTemplate(string source, string flags)
+        {
+            var parsedFlags = ParseFlags(flags);
+            return new LiteralTemplate
+            {
+                Source = source,
+                Flags = parsedFlags,
+                Compiled = GetOrCreateCompiledPattern(
+                    source,
+                    parsedFlags.Unicode,
+                    parsedFlags.DotAll,
+                    parsedFlags.ToRegexOptions())
+            };
+        }
+
+        private static (string Name, int Number)[] GetNamedGroups(Regex regex)
+        {
             var groups = new List<(string Name, int Number)>();
             foreach (var name in regex.GetGroupNames())
             {
@@ -1971,7 +2010,7 @@ namespace JavaScriptRuntime
 
             public RegexOptions ToRegexOptions()
             {
-                var options = RegexOptions.None;
+                var options = RegexOptions.CultureInvariant;
                 if (IgnoreCase)
                 {
                     options |= RegexOptions.IgnoreCase;

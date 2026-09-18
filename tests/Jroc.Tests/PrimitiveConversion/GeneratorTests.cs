@@ -29,6 +29,12 @@ namespace Jroc.Tests.PrimitiveConversion
         }
 
         [Fact]
+        public Task PrimitiveConversion_Number_IsSafeInteger_GuardedOverrides()
+        {
+            return GenerateTest(nameof(PrimitiveConversion_Number_IsSafeInteger_GuardedOverrides));
+        }
+
+        [Fact]
         public Task PrimitiveConversion_Boolean_Callable()
         {
             var testName = nameof(PrimitiveConversion_Boolean_Callable);

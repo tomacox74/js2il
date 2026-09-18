@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2119 (0x847)
+		// Code size: 2174 (0x87e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Versions_Expanded/Scope,
@@ -762,18 +762,35 @@
 		IL_0819: stloc.s 18
 		IL_081b: ldstr "^\\d+\\.\\d+\\.\\d+$"
 		IL_0820: ldstr ""
-		IL_0825: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0825: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
 		IL_082a: stloc.s 19
 		IL_082c: ldloc.s 19
-		IL_082e: ldloc.s 6
-		IL_0830: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-		IL_0835: stloc.s 7
-		IL_0837: ldloc.s 18
-		IL_0839: ldstr "node version format valid"
-		IL_083e: ldloc.s 7
-		IL_0840: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0845: pop
-		IL_0846: ret
+		IL_082e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.RegExp>(!!0)
+		IL_0833: stloc.s 19
+		IL_0835: volatile.
+		IL_0837: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_083c: brfalse IL_0854
+
+		IL_0841: ldloc.s 19
+		IL_0843: ldstr "test"
+		IL_0848: ldloc.s 6
+		IL_084a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_084f: br IL_086c
+
+		IL_0854: ldloc.s 19
+		IL_0856: ldstr "test"
+		IL_085b: ldloc.s 6
+		IL_085d: ldstr "Process_Versions_Expanded:Modules.Process_Versions_Expanded:__js_module_init__:188"
+		IL_0862: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_0867: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_086c: stloc.s 7
+		IL_086e: ldloc.s 18
+		IL_0870: ldstr "node version format valid"
+		IL_0875: ldloc.s 7
+		IL_0877: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_087c: pop
+		IL_087d: ret
 	} // end of method Process_Versions_Expanded::__js_module_init__
 
 } // end of class Modules.Process_Versions_Expanded
@@ -830,6 +847,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_25
 	.field assembly static int32 __jroc_dynamicLookup_26
 	.field assembly static int32 __jroc_dynamicLookup_27
+	.field assembly static int32 __jroc_dynamicLookup_28
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

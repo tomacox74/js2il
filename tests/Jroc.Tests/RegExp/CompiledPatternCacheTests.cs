@@ -1,4 +1,5 @@
 using JavaScriptRuntime;
+using System.Globalization;
 
 namespace Jroc.Tests.RegExp;
 
@@ -74,5 +75,25 @@ public sealed class CompiledPatternCacheTests
 
         Assert.Throws<SyntaxError>(() => new JavaScriptRuntime.RegExp("(", string.Empty));
         Assert.Throws<SyntaxError>(() => new JavaScriptRuntime.RegExp("(", string.Empty));
+    }
+
+    [Fact]
+    public void IgnoreCaseCompilationDoesNotDependOnCurrentCulture()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        var previousCulture = CultureInfo.CurrentCulture;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
+            var regExp = new JavaScriptRuntime.RegExp("^(?:i)$", "i");
+
+            Assert.False(Matches(regExp, "\u0130"));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previousCulture;
+        }
     }
 }

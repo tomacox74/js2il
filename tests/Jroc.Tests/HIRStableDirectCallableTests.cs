@@ -13,8 +13,10 @@ public class HIRStableDirectCallableTests
 {
     [Theory]
     [InlineData("const target = value => value + 1; target(2);")]
+    [InlineData("let target = value => value + 1; target(2);")]
+    [InlineData("var target = value => value + 1; target(2);")]
     [InlineData("const target = function (value, ...rest) { return value + rest.length; }; target(2);")]
-    public void StableConstCallableCall_CarriesCanonicalDirectTarget(string source)
+    public void StableCallableCall_CarriesCanonicalDirectTarget(string source)
     {
         var (program, module, method) = ParseProgram(source);
         var call = GetTopLevelCall(method);
@@ -52,7 +54,10 @@ public class HIRStableDirectCallableTests
     [InlineData("const target = async () => 1; target();")]
     [InlineData("const target = function* () { yield 1; }; target();")]
     [InlineData("const target = function self() { return self; }; target();")]
-    public void UnsafeStableConstCallableCall_DoesNotCarryDirectTarget(string source)
+    [InlineData("target(); var target = () => 1;")]
+    [InlineData("let target = () => 1; target = () => 2; target();")]
+    [InlineData("var target = () => 1; target = () => 2; target();")]
+    public void UnsafeStableCallableCall_DoesNotCarryDirectTarget(string source)
     {
         var (_, _, method) = ParseProgram(source);
 
@@ -119,6 +124,149 @@ public class HIRStableDirectCallableTests
         var returnStatement = Assert.Single(method!.Body.Statements.OfType<HIRReturnStatement>());
         var call = Assert.IsType<HIRCallExpression>(returnStatement.Expression);
         Assert.Null(call.StableDirectCallableTarget);
+    }
+
+    [Fact]
+    public void HoistedFunctionTransitivelyCalledBeforeVarInitialization_DoesNotCarryDirectTarget()
+    {
+        const string source = """
+            outer();
+            var target = value => value + 1;
+            function outer() {
+                return inner();
+            }
+            function inner() {
+                return target(1);
+            }
+            """;
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript(source, "hir-stable-call.js");
+        var module = CreateModule(program);
+        new SymbolTableBuilder().Build(module);
+        var inner = Assert.IsType<FunctionDeclaration>(program.Body[3]);
+        var innerScope = Assert.Single(
+            module.SymbolTable!.Root.Children,
+            scope => ReferenceEquals(scope.AstNode, inner));
+
+        Assert.True(HIRBuilder.TryParseMethod(
+            inner,
+            innerScope,
+            ScopesCallableKind.Function,
+            hasScopesParameter: true,
+            out var method));
+
+        var returnStatement = Assert.Single(
+            method!.Body.Statements.OfType<HIRReturnStatement>());
+        var call = Assert.IsType<HIRCallExpression>(
+            returnStatement.Expression);
+        Assert.Null(call.StableDirectCallableTarget);
+    }
+
+    [Fact]
+    public void HoistedFunctionActivatedAfterVarInitialization_CarriesDirectTarget()
+    {
+        const string source = """
+            var target = value => value + 1;
+            function outer(value) {
+                return target(value);
+            }
+            consume(outer);
+            """;
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript(source, "hir-stable-call.js");
+        var module = CreateModule(program);
+        new SymbolTableBuilder().Build(module);
+        var outer = Assert.IsType<FunctionDeclaration>(program.Body[1]);
+        var outerScope = Assert.Single(
+            module.SymbolTable!.Root.Children,
+            scope => ReferenceEquals(scope.AstNode, outer));
+
+        Assert.True(HIRBuilder.TryParseMethod(
+            outer,
+            outerScope,
+            ScopesCallableKind.Function,
+            hasScopesParameter: true,
+            out var method));
+
+        var returnStatement = Assert.Single(
+            method!.Body.Statements.OfType<HIRReturnStatement>());
+        var call = Assert.IsType<HIRCallExpression>(
+            returnStatement.Expression);
+        Assert.NotNull(call.StableDirectCallableTarget);
+    }
+
+    [Fact]
+    public void HoistedFunctionEscapedThroughLaterArrow_CarriesVarDirectTarget()
+    {
+        const string source = """
+            var target = value => value + 1;
+            function outer(value) {
+                return target(value);
+            }
+            consume(() => outer(1));
+            """;
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript(source, "hir-stable-call.js");
+        var module = CreateModule(program);
+        new SymbolTableBuilder().Build(module);
+        var outer = Assert.IsType<FunctionDeclaration>(program.Body[1]);
+        var outerScope = Assert.Single(
+            module.SymbolTable!.Root.Children,
+            scope => ReferenceEquals(scope.AstNode, outer));
+
+        Assert.True(HIRBuilder.TryParseMethod(
+            outer,
+            outerScope,
+            ScopesCallableKind.Function,
+            hasScopesParameter: true,
+            out var method));
+
+        var returnStatement = Assert.Single(
+            method!.Body.Statements.OfType<HIRReturnStatement>());
+        var call = Assert.IsType<HIRCallExpression>(
+            returnStatement.Expression);
+        Assert.NotNull(call.StableDirectCallableTarget);
+    }
+
+    [Fact]
+    public void BundledScopeHoistedFunctionEscapedThroughLaterArrow_CarriesVarDirectTarget()
+    {
+        const string source = """
+            (() => {
+                var target = value => value + 1;
+                function outer(value) {
+                    return target(value);
+                }
+                consume(() => outer(1));
+            })();
+            """;
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript(source, "hir-stable-call.js");
+        var module = CreateModule(program);
+        new SymbolTableBuilder().Build(module);
+        var outer = Assert.IsType<FunctionDeclaration>(
+            Assert.IsAssignableFrom<BlockStatement>(
+                Assert.IsType<ArrowFunctionExpression>(
+                    Assert.IsType<CallExpression>(
+                        Assert.IsAssignableFrom<ExpressionStatement>(
+                            program.Body[0]).Expression).Callee).Body).Body[1]);
+        var outerScope = FindScope(
+            module.SymbolTable!.Root,
+            scope => ReferenceEquals(scope.AstNode, outer));
+
+        Assert.NotNull(outerScope);
+        Assert.True(HIRBuilder.TryParseMethod(
+            outer,
+            outerScope!,
+            ScopesCallableKind.Function,
+            hasScopesParameter: true,
+            out var method));
+
+        var returnStatement = Assert.Single(
+            method!.Body.Statements.OfType<HIRReturnStatement>());
+        var call = Assert.IsType<HIRCallExpression>(
+            returnStatement.Expression);
+        Assert.NotNull(call.StableDirectCallableTarget);
     }
 
     [Fact]
@@ -240,9 +388,30 @@ public class HIRStableDirectCallableTests
             ModuleId = "hir-stable-call"
         };
 
+    private static Jroc.SymbolTables.Scope? FindScope(
+        Jroc.SymbolTables.Scope scope,
+        Func<Jroc.SymbolTables.Scope, bool> predicate)
+    {
+        if (predicate(scope))
+        {
+            return scope;
+        }
+
+        foreach (var child in scope.Children)
+        {
+            var match = FindScope(child, predicate);
+            if (match != null)
+            {
+                return match;
+            }
+        }
+
+        return null;
+    }
+
     private static HIRCallExpression GetTopLevelCall(HIRMethod method)
         => Assert.IsType<HIRCallExpression>(
-            Assert.Single(method.Body.Statements.OfType<HIRExpressionStatement>()).Expression);
+            method.Body.Statements.OfType<HIRExpressionStatement>().Last().Expression);
 
     private static void AssertCallableMatchesPhase1(
         CallableId expected,
