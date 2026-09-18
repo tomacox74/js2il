@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(mitata): use a shared monotonic high-resolution host clock for
+  ClearScript, Jint, YantraJS, and Okojo benchmark timing instead of the
+  millisecond-resolution `Date.now()`, preventing short scenarios from being
+  recorded as zero-duration results.
 
 ## v0.12.23 - 2026-09-16
 
