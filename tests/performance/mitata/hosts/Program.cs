@@ -14,10 +14,11 @@ if (args.Length != 2)
 
 var runtime = args[0].ToLowerInvariant();
 var script = File.ReadAllText(args[1]);
+var highResolutionNow = () => (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency * 1000.0;
 var prelude = $$"""
 globalThis.__BENCHMARK_RUNTIME = "{{runtime}}";
 globalThis.__BENCHMARK_ITERATIONS = 1;
-globalThis.performance = { now: () => Date.now() };
+globalThis.performance = { now: () => __hostNow() };
 """;
 
 switch (runtime)
@@ -26,6 +27,7 @@ switch (runtime)
         using (var engine = new V8ScriptEngine())
         {
             engine.AddHostObject("__hostLog", (Action<object?>)(value => Console.WriteLine(value)));
+            engine.AddHostObject("__hostNow", highResolutionNow);
             engine.Execute("globalThis.console = { log: value => __hostLog(value) };");
             engine.Execute(prelude);
             engine.Execute(script);
@@ -36,6 +38,7 @@ switch (runtime)
         {
             var engine = new Engine();
             engine.SetValue("__hostLog", (Action<object?>)(value => Console.WriteLine(value)));
+            engine.SetValue("__hostNow", highResolutionNow);
             engine.Execute("globalThis.console = { log: value => __hostLog(value) };");
             engine.Execute(prelude);
             engine.Execute(script);
@@ -58,7 +61,7 @@ switch (runtime)
             });
             var performance = new JSObject();
             performance[KeyString.now] = new JSFunction((in Arguments _) =>
-                new JSNumber((double)Stopwatch.GetTimestamp() / Stopwatch.Frequency * 1000.0));
+                new JSNumber(highResolutionNow()));
             context[KeyString.console] = console;
             context[new JSString("performance")] = performance;
             context[new JSString("__BENCHMARK_RUNTIME")] = new JSString(runtime);
@@ -73,7 +76,7 @@ switch (runtime)
             {
                 Console.WriteLine(info.GetArgumentStringOrDefault(0, string.Empty));
                 return JsValue.Undefined;
-            }))
+            }).Function("__hostNow", 0, _ => highResolutionNow()))
             .Build())
         {
             var realm = host.MainRealm;
