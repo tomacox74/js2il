@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.25 - 2026-09-18
+
 - perf(mitata): measure simple-runner benchmarks in batches lasting at least
   10 ms so JROC and other runtimes cannot round sub-millisecond scenarios down
   to zero.
