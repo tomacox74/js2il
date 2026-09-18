@@ -66,7 +66,13 @@ const inputs = [
 
 const repeatCounts = [1, 10, 100, 1000, 5000];
 
-const maxInputLength = Math.max(...inputs.map(([input]) => input.repeat(Math.max(...repeatCounts)).length));
+let maxInputLength = 0;
+for (const [input] of inputs) {
+  const repeatedInputLength = input.repeat(5000).length;
+  if (repeatedInputLength > maxInputLength) {
+    maxInputLength = repeatedInputLength;
+  }
+}
 
 for (const [input, textLabel, opts = {}] of inputs) {
   for (let repeatCount of repeatCounts) {
@@ -95,4 +101,3 @@ for (const [input, textLabel, opts = {}] of inputs) {
 }
 
 await run();
-

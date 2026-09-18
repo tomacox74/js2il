@@ -12,7 +12,9 @@ _Nothing yet._
 
 - perf(mitata): measure simple-runner benchmarks in batches lasting at least
   10 ms so JROC and other runtimes cannot round sub-millisecond scenarios down
-  to zero.
+  to zero. Restore the bundled JROC path for `string-width` so the suite does
+  not compile Mitata's unsupported optional dynamic import, and avoid a
+  spread-to-variadic setup expression that JROC cannot lower correctly yet.
 
 ## v0.12.24 - 2026-09-18
 
