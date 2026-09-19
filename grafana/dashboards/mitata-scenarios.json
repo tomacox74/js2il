@@ -59,7 +59,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^Last run \\(UTC\\)$/",
+          "fields": "/^Last string-width run \\(UTC\\)$/",
           "values": false
         },
         "showPercentChange": false,
@@ -77,7 +77,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "  WITH latest_run AS (\r\n     SELECT run_id, run_attempt, run_at\r\n     FROM public.perf_results\r\n     WHERE source = 'mitata'\r\n       AND os_platform = 'linux'\r\n     ORDER BY run_at DESC\r\n     LIMIT 1\r\n   )\r\n   SELECT run_at AS \"Last run (UTC)\" FROM latest_run;",
+          "rawSql": "WITH latest_run AS (\n  SELECT run_id, run_attempt, run_at\n  FROM public.perf_results\n  WHERE source = 'mitata'\n    AND os_platform = 'linux'\n    AND meta->>'benchmark' = 'string-width'\n  ORDER BY run_at DESC\n  LIMIT 1\n)\nSELECT run_at AS \"Last string-width run (UTC)\" FROM latest_run;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -98,7 +98,7 @@
           }
         }
       ],
-      "title": "Last mitata run (linux)",
+      "title": "Last string-width Mitata run (linux)",
       "type": "stat"
     },
     {
@@ -106,7 +106,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "dfdvmewbhyccga"
       },
-      "description": "Latest Linux Mitata run. Green/positive means JROC is faster; red/negative means the named runtime is faster. Magnitude is the winner speed advantage from the elapsed-time ratio (for example, runtime 100 ms versus JROC 150 ms is -50%, meaning the runtime is 50% faster). Missing or zero-resolution timings are unavailable.",
+      "description": "Latest Linux Mitata string-width run. Green/positive means JROC is faster; red/negative means the named runtime is faster. Magnitude is the winner speed advantage from the elapsed-time ratio (for example, runtime 100 ms versus JROC 150 ms is -50%, meaning the runtime is 50% faster). Missing or zero-resolution timings are unavailable.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -233,7 +233,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH latest_run AS (\n  SELECT run_id, run_attempt\n  FROM public.perf_results\n  WHERE source = 'mitata' AND os_platform = 'linux'\n  ORDER BY run_at DESC\n  LIMIT 1\n), timings AS (\n  SELECT p.scenario, p.runtime, NULLIF(p.value, 0) AS avg_ns\n  FROM public.perf_results p\n  JOIN latest_run lr\n    ON p.run_id = lr.run_id\n   AND p.run_attempt = lr.run_attempt\n  WHERE p.source = 'mitata'\n    AND p.os_platform = 'linux'\n    AND p.metric = 'avg_ns'\n), runtime_times AS (\n  SELECT\n    scenario,\n    MAX(avg_ns) FILTER (WHERE runtime = 'jroc') AS jroc_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'node') AS node_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'clearscript') AS clearscript_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'jint') AS jint_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'okojo') AS okojo_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'yantrajs') AS yantrajs_ns\n  FROM timings\n  GROUP BY scenario\n)\nSELECT\n  scenario AS \"Scenario\",\n  ROUND((jroc_ns / 1000000.0)::numeric, 3) AS \"JROC (ms)\",\n  ROUND((100.0 * CASE WHEN node_ns < jroc_ns THEN 1.0 - jroc_ns / node_ns ELSE node_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"Node vs JROC\",\n  ROUND((100.0 * CASE WHEN clearscript_ns < jroc_ns THEN 1.0 - jroc_ns / clearscript_ns ELSE clearscript_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"ClearScript vs JROC\",\n  ROUND((100.0 * CASE WHEN jint_ns < jroc_ns THEN 1.0 - jroc_ns / jint_ns ELSE jint_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"Jint vs JROC\",\n  ROUND((100.0 * CASE WHEN okojo_ns < jroc_ns THEN 1.0 - jroc_ns / okojo_ns ELSE okojo_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"Okojo vs JROC\",\n  ROUND((100.0 * CASE WHEN yantrajs_ns < jroc_ns THEN 1.0 - jroc_ns / yantrajs_ns ELSE yantrajs_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"YantraJS vs JROC\"\nFROM runtime_times\nWHERE jroc_ns IS NOT NULL\nORDER BY scenario;",
+          "rawSql": "WITH latest_run AS (\n  SELECT run_id, run_attempt\n  FROM public.perf_results\n  WHERE source = 'mitata'\n    AND os_platform = 'linux'\n    AND meta->>'benchmark' = 'string-width'\n  ORDER BY run_at DESC\n  LIMIT 1\n), timings AS (\n  SELECT p.scenario, p.runtime, NULLIF(p.value, 0) AS avg_ns\n  FROM public.perf_results p\n  JOIN latest_run lr\n    ON p.run_id = lr.run_id\n   AND p.run_attempt = lr.run_attempt\n  WHERE p.source = 'mitata'\n    AND p.os_platform = 'linux'\n    AND p.meta->>'benchmark' = 'string-width'\n    AND p.metric = 'avg_ns'\n), runtime_times AS (\n  SELECT\n    scenario,\n    MAX(avg_ns) FILTER (WHERE runtime = 'jroc') AS jroc_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'node') AS node_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'clearscript') AS clearscript_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'jint') AS jint_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'okojo') AS okojo_ns,\n    MAX(avg_ns) FILTER (WHERE runtime = 'yantrajs') AS yantrajs_ns\n  FROM timings\n  GROUP BY scenario\n)\nSELECT\n  scenario AS \"Scenario\",\n  ROUND((jroc_ns / 1000000.0)::numeric, 3) AS \"JROC (ms)\",\n  ROUND((100.0 * CASE WHEN node_ns < jroc_ns THEN 1.0 - jroc_ns / node_ns ELSE node_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"Node vs JROC\",\n  ROUND((100.0 * CASE WHEN clearscript_ns < jroc_ns THEN 1.0 - jroc_ns / clearscript_ns ELSE clearscript_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"ClearScript vs JROC\",\n  ROUND((100.0 * CASE WHEN jint_ns < jroc_ns THEN 1.0 - jroc_ns / jint_ns ELSE jint_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"Jint vs JROC\",\n  ROUND((100.0 * CASE WHEN okojo_ns < jroc_ns THEN 1.0 - jroc_ns / okojo_ns ELSE okojo_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"Okojo vs JROC\",\n  ROUND((100.0 * CASE WHEN yantrajs_ns < jroc_ns THEN 1.0 - jroc_ns / yantrajs_ns ELSE yantrajs_ns / jroc_ns - 1.0 END)::numeric, 1) AS \"YantraJS vs JROC\"\nFROM runtime_times\nWHERE jroc_ns IS NOT NULL\nORDER BY scenario;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -289,7 +289,7 @@
           "table": "perf_results"
         }
       ],
-      "title": "Mitata scenarios",
+      "title": "Mitata string-width scenarios",
       "type": "table"
     }
   ],
@@ -315,7 +315,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Mitata Scenarios",
+  "title": "Mitata String-Width Scenarios",
   "uid": "to866n7",
   "version": 13
 }
