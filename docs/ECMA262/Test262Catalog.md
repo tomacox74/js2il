@@ -60,9 +60,10 @@ in `results` under any provenance; this is only a cursor for choosing future
 work. Current-provenance validation means that the same variant has a result for
 the active provenance and is the only evidence used for current pass/fail and
 conformance-style summaries. Normal bounded scans prefer globally unobserved
-variants first, balancing across top-level Test262 areas, then use remaining work
-for variants already seen historically but missing from the current provenance.
-Historical evidence can guide breadth, but it never inflates current conformance.
+variants, balancing across top-level Test262 areas, while interleaving current
+provenance refresh work at a four-discovery-to-one-refresh cadence when stale
+variants are also available. Historical evidence can guide breadth, but it never
+inflates current conformance.
 
 ## Exports and completeness
 

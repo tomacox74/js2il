@@ -2,6 +2,7 @@
 """Artifact-only, resumable Test262 MVP evidence catalog (stdlib only)."""
 
 import argparse
+from collections import deque
 import csv
 import hashlib
 import json
@@ -179,20 +180,55 @@ def top_level_area(path):
 def area_balanced(items):
     by_area = {}
     for item in items:
-        by_area.setdefault(top_level_area(item[0]["path"]), []).append(item)
+        by_area.setdefault(top_level_area(item[0]["path"]), deque()).append(item)
     while by_area:
         for area in sorted(list(by_area)):
             queue = by_area[area]
-            yield queue.pop(0)
+            yield queue.popleft()
             if not queue:
                 del by_area[area]
+
+
+def matching_global_results(db, provenance):
+    return {(r[0], r[1]) for r in db.execute("""
+        SELECT DISTINCT r.path,r.variant
+        FROM results r
+        JOIN fixtures observed_fixture
+          ON observed_fixture.provenance=r.provenance
+         AND observed_fixture.path=r.path
+        JOIN fixtures current_fixture
+          ON current_fixture.provenance=?
+         AND current_fixture.path=r.path
+        WHERE observed_fixture.sha256=current_fixture.sha256
+    """, (provenance,))}
+
+
+def interleave_discovery_and_refresh(unseen, stale, discovery_per_refresh=4):
+    unseen_items = area_balanced(unseen)
+    stale_items = area_balanced(stale)
+    while True:
+        yielded = False
+        for _ in range(discovery_per_refresh):
+            try:
+                yield next(unseen_items)
+                yielded = True
+            except StopIteration:
+                break
+        try:
+            yield next(stale_items)
+            yielded = True
+        except StopIteration:
+            pass
+        if not yielded:
+            break
+    yield from unseen_items
+    yield from stale_items
 
 
 def pending(db, provenance, shard, shards, filter_text="", retry=False):
     current_done = set() if retry else {(r[0], r[1]) for r in db.execute(
         "SELECT path,variant FROM results WHERE provenance=?", (provenance,))}
-    globally_done = set() if retry else {(r[0], r[1]) for r in db.execute(
-        "SELECT DISTINCT path,variant FROM results")}
+    globally_done = set() if retry else matching_global_results(db, provenance)
     unseen = []
     stale = []
     for fixture in db.execute(
@@ -205,8 +241,7 @@ def pending(db, provenance, shard, shards, filter_text="", retry=False):
                 continue
             target = stale if key in globally_done else unseen
             target.append((fixture, variant))
-    yield from area_balanced(unseen)
-    yield from area_balanced(stale)
+    yield from interleave_discovery_and_refresh(unseen, stale)
 
 
 def scan(db, args):
@@ -275,10 +310,19 @@ def export(db, output):
     registered = {r[0] for r in db.execute("SELECT path FROM registrations")}
     evidence, passing = passing_sets(db)
     current_pass = passing.get(provenance, set())
-    historical = set().union(*(s for p, s in passing.items() if p != provenance))
     fixtures = list(db.execute("SELECT * FROM fixtures WHERE provenance=? ORDER BY path", (provenance,)))
     paths = {f["path"] for f in fixtures}
-    global_observed = {(r[0], r[1]) for r in db.execute("SELECT DISTINCT path,variant FROM results")}
+    current_sha = {f["path"]: f["sha256"] for f in fixtures}
+    historical = set()
+    for old_provenance, passed_paths in passing.items():
+        if old_provenance == provenance:
+            continue
+        old_sha = {r[0]: r[1] for r in db.execute(
+            "SELECT path,sha256 FROM fixtures WHERE provenance=?", (old_provenance,))}
+        historical.update(
+            path for path in passed_paths
+            if path in current_sha and old_sha.get(path) == current_sha[path])
+    global_observed = matching_global_results(db, provenance)
     current_observed = {(r[0], r[1]) for r in db.execute(
         "SELECT path,variant FROM results WHERE provenance=?", (provenance,))}
     incomplete = []

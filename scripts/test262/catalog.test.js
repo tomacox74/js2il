@@ -163,21 +163,39 @@ areas = ["built-ins", "language", "intl402"]
 for area in areas:
     for i in range(3):
         fixture("current", name=f"test/{area}/{i}.js", variants=("default",))
+fixture("old", name="test/built-ins/0.js", variants=("default",))
+fixture("old", name="test/language/0.js", variants=("default",))
 result("old", "default", name="test/built-ins/0.js")
 result("old", "default", name="test/language/0.js")
 single = [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
-assert single[:3] == [
+assert single[:5] == [
     ("test/built-ins/1.js", "default"),
     ("test/intl402/0.js", "default"),
     ("test/language/1.js", "default"),
-]
-assert single[-2:] == [
+    ("test/built-ins/2.js", "default"),
     ("test/built-ins/0.js", "default"),
-    ("test/language/0.js", "default"),
 ]
+assert single[-1] == ("test/language/0.js", "default")
 assert single == [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
 shards = [{(f["path"], v) for f,v in c.pending(db, "current", i, 4)} for i in range(4)]
 assert len(set.union(*shards)) == sum(map(len, shards)) == len(single)
+`);
+
+pythonTest('global discovery only counts matching fixture content', `
+fixture("old")
+result("old", "non-strict")
+result("old", "strict")
+db.execute("UPDATE fixtures SET sha256='old-hash' WHERE provenance='old'")
+fixture("current")
+db.execute("UPDATE fixtures SET sha256='current-hash' WHERE provenance='current'")
+db.commit()
+pending = [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
+assert pending == [("test/built-ins/A/name.js", "non-strict"), ("test/built-ins/A/name.js", "strict")]
+s = c.export(db, root / "export")
+assert s["globally_observed_variants"] == 0
+assert s["globally_unobserved_variants"] == 2
+assert not s["global_discovery_complete"]
+assert s["historical_passing_unported"] == 0
 `);
 
 pythonTest('after global discovery completes pending refreshes stale current-provenance work', `
