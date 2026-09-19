@@ -5450,29 +5450,6 @@ namespace JavaScriptRuntime
             }
         }
 
-        // Shared index coercion: converts start-like argument to a clamped index in [0, len]
-        private static int CoerceStartIndex(object? arg, int len, int defaultValue)
-        {
-            int idx = defaultValue;
-            if (arg == null)
-            {
-                idx = defaultValue;
-            }
-            else
-            {
-                try { idx = ToInt(arg, defaultValue); } catch { idx = defaultValue; }
-            }
-            if (idx < 0)
-            {
-                idx = len + idx;
-                if (idx < 0) idx = 0;
-            }
-            else if (idx > len)
-            {
-                idx = len;
-            }
-            return idx;
-        }
 
         /// <summary>
         /// JavaScript Array.slice([start[, end]]) implementation.

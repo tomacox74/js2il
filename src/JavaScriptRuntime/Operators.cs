@@ -11,9 +11,6 @@ namespace JavaScriptRuntime
         private const string MixedBigIntTypeError = "Cannot mix BigInt and other types, use explicit conversions";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsBigInt(object? value) => value is BigInteger;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsEcmaNumber(object? value)
             => value is double or float or int or long or short or byte or sbyte or uint or ulong or ushort;
 

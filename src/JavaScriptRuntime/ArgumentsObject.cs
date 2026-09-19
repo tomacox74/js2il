@@ -266,48 +266,6 @@ public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<str
         return mappedNames;
     }
 
-    private int GetArrayLikeLength()
-    {
-        if (!_hasLengthProperty)
-        {
-            return 0;
-        }
-
-        double length;
-        try
-        {
-            length = TypeUtilities.ToNumber(_lengthValue);
-        }
-        catch
-        {
-            length = 0d;
-        }
-
-        if (double.IsNaN(length) || double.IsNegativeInfinity(length) || length < 0)
-        {
-            length = 0d;
-        }
-
-        if (double.IsPositiveInfinity(length))
-        {
-            length = int.MaxValue;
-        }
-
-        length = System.Math.Truncate(length);
-        if (length > int.MaxValue)
-        {
-            length = int.MaxValue;
-        }
-
-        return (int)length;
-    }
-
-    private object? GetValueForIteration(int index)
-    {
-        var key = index.ToString(CultureInfo.InvariantCulture);
-        return TryGetValue(key, out var value) ? value : null;
-    }
-
     private IEnumerable<string> EnumerateOwnKeys()
     {
         for (var i = 0; i < _indexedPresent.Length; i++)

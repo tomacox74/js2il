@@ -2378,38 +2378,6 @@ namespace JavaScriptRuntime
             });
         }
 
-        private void ConfigureErrorSubclassIntrinsicSurface(object constructorValue, object prototypeValue, string name)
-        {
-            ConfigureBuiltinFunctionObject(constructorValue);
-            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
-            PrototypeChain.SetPrototype(prototypeValue, _errorPrototypeValue);
-
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = prototypeValue
-            });
-            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = constructorValue
-            });
-            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = name
-            });
-        }
-
         private static object? SpeciesGetter(object? thisArgument)
         {
             return thisArgument;
@@ -2636,29 +2604,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _suppressedErrorPrototypeValue
             });
-        }
-
-        internal static void AssignBuiltInErrorPrototype(JavaScriptRuntime.Error error)
-        {
-            ArgumentNullException.ThrowIfNull(error);
-
-            var current = BootstrappedIntrinsics();
-
-            // Keep this aligned with the explicitly exposed built-in error constructor values above.
-            var prototype = error switch
-            {
-                JavaScriptRuntime.EvalError => current.EvalErrorPrototype,
-                JavaScriptRuntime.RangeError => current.RangeErrorPrototype,
-                JavaScriptRuntime.ReferenceError => current.ReferenceErrorPrototype,
-                JavaScriptRuntime.SyntaxError => current.SyntaxErrorPrototype,
-                JavaScriptRuntime.TypeError => current.TypeErrorPrototype,
-                JavaScriptRuntime.URIError => current.URIErrorPrototype,
-                JavaScriptRuntime.AggregateError => current.AggregateErrorPrototype,
-                JavaScriptRuntime.SuppressedError => current.SuppressedErrorPrototype,
-                _ => current.ErrorPrototype
-            };
-
-            PrototypeChain.SetPrototype(error, prototype);
         }
 
         internal static void ConfigureBuiltinFunctionObject(object functionValue)
