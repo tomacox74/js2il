@@ -211,9 +211,15 @@ jobs:
           s = json.load(open("artifacts/test262/summary.json"))
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
               f.write("## Test262 catalog — MVP evidence, not native conformance\n\n")
-              for key in ("inventory_files", "recorded_variants", "passing_unported",
-                          "historical_passing_unported", "incomplete_files",
-                          "runnable_scan_complete", "complete_passing_unported_list"):
+              for key in ("inventory_files", "globally_observed_variants",
+                          "globally_unobserved_variants",
+                          "current_provenance_recorded_variants",
+                          "current_provenance_missing_variants",
+                          "passing_unported", "historical_passing_unported",
+                          "incomplete_files", "global_discovery_complete",
+                          "current_provenance_scan_complete",
+                          "complete_passing_unported_list"):
                   f.write(f"- {key}: **{s[key]}**\n")
+              f.write("\nHistorical evidence guides discovery only; current conformance uses current-provenance results.\n")
               f.write("\nDownload **test262-catalog** for SQLite and deterministic exports.\n")
           PY
