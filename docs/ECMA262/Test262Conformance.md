@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 15,800 | 12 | 7,700 | 23,512 | **67.20%** |
+| Built-in objects and APIs | 16,023 | 12 | 7,477 | 23,512 | **68.15%** |
 | Language syntax and semantics | 14,412 | 46 | 9,185 | 23,643 | **60.96%** |
-| **Total** | 30,212 | 58 | 17,971 | 48,241 | **62.63%** |
+| **Total** | 30,435 | 58 | 17,748 | 48,241 | **63.09%** |
 
 ## Language Areas
 
@@ -209,11 +209,11 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
 | `NativeErrors` | 88 | 0 | 6 | 94 | **93.62%** |
 | `Number` | 303 | 0 | 35 | 338 | **89.64%** |
-| `Object` | 3,254 | 0 | 157 | 3,411 | **95.40%** |
+| `Object` | 3,328 | 0 | 83 | 3,411 | **97.57%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
 | `Promise` | 384 | 0 | 293 | 677 | **56.72%** |
-| `Proxy` | 221 | 0 | 90 | 311 | **71.06%** |
+| `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
 | `RegExp` | 1,006 | 0 | 873 | 1,879 | **53.54%** |
 | `RegExpStringIteratorPrototype` | 5 | 0 | 12 | 17 | **29.41%** |
@@ -221,13 +221,13 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 69 | 0 | 35 | 104 | **66.35%** |
-| `String` | 1,101 | 1 | 121 | 1,223 | **90.02%** |
-| `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
+| `String` | 1,194 | 1 | 28 | 1,223 | **97.63%** |
+| `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 1,361 | 0 | 77 | 1,438 | **94.65%** |
+| `TypedArray` | 1,365 | 0 | 73 | 1,438 | **94.92%** |
 | `TypedArrayConstructors` | 593 | 0 | 143 | 736 | **80.57%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
