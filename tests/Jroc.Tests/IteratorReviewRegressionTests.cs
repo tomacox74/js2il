@@ -4,6 +4,13 @@ using JsIterator = JavaScriptRuntime.Iterator;
 
 namespace Jroc.Tests;
 
+[CollectionDefinition(CollectionName, DisableParallelization = true)]
+public sealed class IteratorReviewRegressionTestsCollection
+{
+    public const string CollectionName = "IteratorReviewRegressionTests";
+}
+
+[Collection(IteratorReviewRegressionTestsCollection.CollectionName)]
 public sealed class IteratorReviewRegressionTests
 {
     [Fact]

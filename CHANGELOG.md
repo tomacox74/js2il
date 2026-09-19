@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.26 - 2026-09-19
+
 - perf(runtime): cache the compiled `Regex`, named-group table, and
   capture-reset metadata derived from a JavaScript pattern so re-evaluating the
   same regular expression literal or `new RegExp(source, flags)` no longer
