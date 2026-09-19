@@ -171,16 +171,42 @@ def shard_for(path, count):
     return int(hashlib.sha256(path.encode()).hexdigest(), 16) % count
 
 
+def top_level_area(path):
+    parts = path.split("/")
+    return parts[1] if len(parts) > 2 and parts[0] == "test" else ""
+
+
+def area_balanced(items):
+    by_area = {}
+    for item in items:
+        by_area.setdefault(top_level_area(item[0]["path"]), []).append(item)
+    while by_area:
+        for area in sorted(list(by_area)):
+            queue = by_area[area]
+            yield queue.pop(0)
+            if not queue:
+                del by_area[area]
+
+
 def pending(db, provenance, shard, shards, filter_text="", retry=False):
-    done = set() if retry else {(r[0], r[1]) for r in db.execute(
+    current_done = set() if retry else {(r[0], r[1]) for r in db.execute(
         "SELECT path,variant FROM results WHERE provenance=?", (provenance,))}
+    globally_done = set() if retry else {(r[0], r[1]) for r in db.execute(
+        "SELECT DISTINCT path,variant FROM results")}
+    unseen = []
+    stale = []
     for fixture in db.execute(
             "SELECT * FROM fixtures WHERE provenance=? AND state='runnable' ORDER BY path", (provenance,)):
         if filter_text not in fixture["path"] or shard_for(fixture["path"], shards) != shard:
             continue
         for variant in json.loads(fixture["variants"]):
-            if (fixture["path"], variant) not in done:
-                yield fixture, variant
+            key = (fixture["path"], variant)
+            if key in current_done:
+                continue
+            target = stale if key in globally_done else unseen
+            target.append((fixture, variant))
+    yield from area_balanced(unseen)
+    yield from area_balanced(stale)
 
 
 def scan(db, args):
@@ -252,12 +278,18 @@ def export(db, output):
     historical = set().union(*(s for p, s in passing.items() if p != provenance))
     fixtures = list(db.execute("SELECT * FROM fixtures WHERE provenance=? ORDER BY path", (provenance,)))
     paths = {f["path"] for f in fixtures}
+    global_observed = {(r[0], r[1]) for r in db.execute("SELECT DISTINCT path,variant FROM results")}
+    current_observed = {(r[0], r[1]) for r in db.execute(
+        "SELECT path,variant FROM results WHERE provenance=?", (provenance,))}
     incomplete = []
     unrun = []
     states = {}
+    required_variants = set()
     for fixture in fixtures:
         states[fixture["state"]] = states.get(fixture["state"], 0) + 1
         variants = json.loads(fixture["variants"])
+        if fixture["state"] == "runnable":
+            required_variants.update((fixture["path"], v) for v in variants)
         observed = evidence.get((provenance, fixture["path"]), {})
         if fixture["state"] != "runnable" or not variants or any(v not in observed for v in variants):
             incomplete.append(fixture["path"])
@@ -278,14 +310,22 @@ def export(db, output):
         for f in fixtures:
             if f["state"] != "runnable":
                 writer.writerow([f["path"], "", f["state"], f["reasons"]])
-    required = sum(len(json.loads(f["variants"])) for f in fixtures if f["state"] == "runnable")
-    observed = db.execute("SELECT count(*) FROM results WHERE provenance=?", (provenance,)).fetchone()[0]
+    required = len(required_variants)
+    global_required_observed = required_variants & global_observed
+    current_required_observed = required_variants & current_observed
     summary = {"schema": SCHEMA_VERSION, "provenance": provenance,
                "compiler_source_commit_at_init": dict(db.execute("SELECT key,value FROM settings"))
                .get("compiler_commit"),
                "runner": "mvp-composite-js-not-native", "inventory_complete": True,
                "inventory_files": len(fixtures), "states": states,
-               "runnable_required_variants": required, "recorded_variants": observed,
+               "runnable_required_variants": required,
+               "recorded_variants": len(current_required_observed),
+               "globally_observed_variants": len(global_required_observed),
+               "globally_unobserved_variants": required - len(global_required_observed),
+               "current_provenance_recorded_variants": len(current_required_observed),
+               "current_provenance_missing_variants": required - len(current_required_observed),
+               "global_discovery_complete": len(global_required_observed) == required,
+               "current_provenance_scan_complete": len(current_required_observed) == required,
                "runnable_scan_complete": not (set(incomplete) &
                                              {f["path"] for f in fixtures if f["state"] == "runnable"}),
                "complete_passing_unported_list": not incomplete,

@@ -54,6 +54,16 @@ binary hashes—not a claim that the worktree matches a build—establish compil
 identity. Do not import old MVP `summary.json` files or the earlier 568-item list:
 they lack trustworthy fingerprints and may aggregate any passing variant.
 
+The scan scheduler separates **global discovery** from **current-provenance
+validation**. Global discovery means that a runnable fixture variant has appeared
+in `results` under any provenance; this is only a cursor for choosing future
+work. Current-provenance validation means that the same variant has a result for
+the active provenance and is the only evidence used for current pass/fail and
+conformance-style summaries. Normal bounded scans prefer globally unobserved
+variants first, balancing across top-level Test262 areas, then use remaining work
+for variants already seen historically but missing from the current provenance.
+Historical evidence can guide breadth, but it never inflates current conformance.
+
 ## Exports and completeness
 
 `export` writes deterministic sorted outputs:
@@ -74,6 +84,11 @@ they have been executed. `runnable_scan_complete` covers only MVP-runnable
 fixtures. `complete_passing_unported_list` remains false while any inventory
 entry is unresolved/blocked. Thus even a fully scanned MVP cannot claim a
 complete native-harness pass list across the full Test262 corpus.
+`globally_observed_variants` and `globally_unobserved_variants` describe discovery
+breadth across all provenances. `current_provenance_recorded_variants`,
+`current_provenance_missing_variants`, and `current_provenance_scan_complete`
+describe only the active provenance. Treat historical passing lists as porting
+leads, not as current compatibility evidence.
 
 Registration inventory resolves literal `ExecutionTestFromFile`, legacy
 `ExecutionTest`, and `CompilationFailureTest` calls in all C# files under

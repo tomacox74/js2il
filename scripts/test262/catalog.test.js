@@ -135,6 +135,68 @@ c.export(db, root / "two")
 assert {p.name:p.read_bytes() for p in (root / "one").iterdir()} == {p.name:p.read_bytes() for p in (root / "two").iterdir()}
 `);
 
+pythonTest('new provenance keeps global discovery cursor and never mixes current evidence', `
+fixture("old", name="test/built-ins/A/name.js")
+fixture("old", name="test/language/B/name.js", variants=("default",))
+result("old", "non-strict", name="test/built-ins/A/name.js")
+result("old", "strict", name="test/built-ins/A/name.js")
+result("old", "default", name="test/language/B/name.js")
+fixture("current", name="test/built-ins/A/name.js")
+fixture("current", name="test/language/B/name.js", variants=("default",))
+fixture("current", name="test/intl402/C/name.js", variants=("default",))
+pending = [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
+assert pending[0] == ("test/intl402/C/name.js", "default")
+assert ("test/built-ins/A/name.js", "non-strict") in pending[1:]
+s = c.export(db, root / "export")
+assert s["globally_observed_variants"] == 3
+assert s["globally_unobserved_variants"] == 1
+assert s["current_provenance_recorded_variants"] == 0
+assert s["current_provenance_missing_variants"] == 4
+assert not s["global_discovery_complete"]
+assert not s["current_provenance_scan_complete"]
+assert s["passing_unported"] == 0
+assert s["historical_passing_unported"] == 2
+`);
+
+pythonTest('pending prefers globally unseen variants, balances areas, and shards are disjoint', `
+areas = ["built-ins", "language", "intl402"]
+for area in areas:
+    for i in range(3):
+        fixture("current", name=f"test/{area}/{i}.js", variants=("default",))
+result("old", "default", name="test/built-ins/0.js")
+result("old", "default", name="test/language/0.js")
+single = [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
+assert single[:3] == [
+    ("test/built-ins/1.js", "default"),
+    ("test/intl402/0.js", "default"),
+    ("test/language/1.js", "default"),
+]
+assert single[-2:] == [
+    ("test/built-ins/0.js", "default"),
+    ("test/language/0.js", "default"),
+]
+assert single == [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
+shards = [{(f["path"], v) for f,v in c.pending(db, "current", i, 4)} for i in range(4)]
+assert len(set.union(*shards)) == sum(map(len, shards)) == len(single)
+`);
+
+pythonTest('after global discovery completes pending refreshes stale current-provenance work', `
+fixture("old")
+result("old", "non-strict")
+result("old", "strict")
+fixture("current")
+pending = [(f["path"], v) for f,v in c.pending(db, "current", 0, 1)]
+assert pending == [("test/built-ins/A/name.js", "non-strict"), ("test/built-ins/A/name.js", "strict")]
+s = c.export(db, root / "export")
+assert s["global_discovery_complete"]
+assert not s["current_provenance_scan_complete"]
+result("current", "non-strict")
+result("current", "strict")
+s = c.export(db, root / "export")
+assert s["current_provenance_scan_complete"]
+assert s["recorded_variants"] == s["current_provenance_recorded_variants"] == 2
+`);
+
 pythonTest('merges checkpointed shards idempotently and rejects incompatible provenance', `
 fixture("current")
 result("current", "non-strict")
