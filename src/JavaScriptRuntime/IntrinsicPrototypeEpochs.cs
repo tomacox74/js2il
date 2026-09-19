@@ -10,7 +10,8 @@ public enum IntrinsicPrototypeFamily
 {
     String = 0,
     Array = 1,
-    TypedArray = 2
+    TypedArray = 2,
+    RegExp = 3
 }
 
 /// <summary>
@@ -47,6 +48,8 @@ public static class IntrinsicPrototypeEpochs
             IntrinsicPrototypeFamily.TypedArray
                 when receiver is TypedArrayBase typedArray =>
                     GlobalThis.GetTypedArrayInstancePrototype(typedArray),
+            IntrinsicPrototypeFamily.RegExp
+                when receiver is RegExp => RegExp.Prototype,
             _ => null
         };
 

@@ -77,6 +77,10 @@ public sealed partial class HIRToLIRLowerer
     private static bool IsNumericMathUnaryFastPathMethod(string methodName)
         => NumericMathUnaryFastPathMethods.Contains(methodName);
 
+    private static bool IsGuardStableArgument(HIRExpression expression)
+        => expression is HIRLiteralExpression
+            or HIRVariableExpression;
+
     private TempVariable RequireObjectCoercible(TempVariable receiverTemp)
     {
         var objectReceiver = EnsureObject(receiverTemp);

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -88,28 +91,63 @@ namespace JavaScriptRuntime
             _dotAll = parsedFlags.DotAll;
             _unicode = parsedFlags.Unicode;
             _hasIndices = parsedFlags.HasIndices;
-            _simpleLiteralPattern = TryGetSimpleLiteralPattern(_source, parsedFlags);
+            _simpleLiteralPattern = null;
 
-            try
-            {
-                var preparedPattern = PreparePatternForDotNetRegex(_source, _unicode, _dotAll);
-                _regex = new Regex(preparedPattern, parsedFlags.ToRegexOptions());
-                _namedGroups = GetNamedGroups(_regex);
-                (_captureResetAncestors, _captureBoundaryKinds) =
-                    GetCaptureResetAncestors(_source, _regex);
-            }
-            catch (RegexParseException ex)
-            {
-                throw new SyntaxError(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new SyntaxError(ex.Message);
-            }
+            var compiled = GetOrCreateCompiledPattern(_source, _unicode, _dotAll, parsedFlags.ToRegexOptions());
+            _regex = compiled.Regex!;
+            _namedGroups = compiled.NamedGroups!;
+            _captureResetAncestors = compiled.CaptureResetAncestors!;
+            _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
+            _simpleLiteralPattern = IsSimpleLiteralPattern(compiled, parsedFlags) ? _source : null;
 
             lastIndex = 0;
             _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
             InitializeIntrinsicSurface();
+        }
+
+        private RegExp(LiteralTemplate template)
+        {
+            var flags = template.Flags!;
+            var compiled = template.Compiled!;
+            _source = template.Source;
+            _global = flags.Global;
+            _sticky = flags.Sticky;
+            _dotAll = flags.DotAll;
+            _unicode = flags.Unicode;
+            _hasIndices = flags.HasIndices;
+            _regex = compiled.Regex!;
+            _namedGroups = compiled.NamedGroups!;
+            _captureResetAncestors = compiled.CaptureResetAncestors!;
+            _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
+            _simpleLiteralPattern = IsSimpleLiteralPattern(compiled, flags)
+                ? _source
+                : null;
+            lastIndex = 0;
+            _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
+            InitializeIntrinsicSurface();
+        }
+
+        public static RegExp CreateLiteral(string source, string flags)
+        {
+            source ??= string.Empty;
+            flags ??= string.Empty;
+            var templatesByFlags = LiteralTemplates.GetValue(
+                source,
+                static _ => new ConcurrentDictionary<string, Lazy<LiteralTemplate>>(
+                    StringComparer.Ordinal));
+            var template = templatesByFlags.GetOrAdd(
+                flags,
+                currentFlags => new Lazy<LiteralTemplate>(
+                    () => CreateLiteralTemplate(source, currentFlags),
+                    LazyThreadSafetyMode.ExecutionAndPublication)).Value;
+            // Each evaluation must surface a fresh error object; a throwing Lazy would
+            // replay the same SyntaxError instance (and any caller mutations of it).
+            if (template.SyntaxErrorMessage is { } syntaxErrorMessage)
+            {
+                throw new SyntaxError(syntaxErrorMessage);
+            }
+
+            return new RegExp(template);
         }
 
         public static object Call()
@@ -935,15 +973,20 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(flags) ?? string.Empty;
         }
 
-        private static string? TryGetSimpleLiteralPattern(string source, ParsedFlags parsedFlags)
+        private static bool IsSimpleLiteralPattern(CompiledPattern compiled, ParsedFlags parsedFlags)
         {
-            if (source.Length == 0
-                || parsedFlags.IgnoreCase
-                || parsedFlags.Sticky
-                || parsedFlags.Unicode
-                || parsedFlags.HasIndices)
+            return compiled.SourceHasNoSpecialCharacters
+                && !parsedFlags.IgnoreCase
+                && !parsedFlags.Sticky
+                && !parsedFlags.Unicode
+                && !parsedFlags.HasIndices;
+        }
+
+        private static bool HasNoSpecialRegexCharacters(string source)
+        {
+            if (source.Length == 0)
             {
-                return null;
+                return false;
             }
 
             foreach (var ch in source)
@@ -964,11 +1007,11 @@ namespace JavaScriptRuntime
                     case '{':
                     case '}':
                     case '|':
-                        return null;
+                        return false;
                 }
             }
 
-            return source;
+            return true;
         }
 
         private static ParsedFlags ParseFlags(string flags)
@@ -1436,6 +1479,187 @@ namespace JavaScriptRuntime
             });
         }
 
+        /// <summary>
+        /// Immutable, pattern-derived compilation artifacts shared by every <see cref="RegExp"/>
+        /// created from the same source/flag combination.
+        /// </summary>
+        private sealed class CompiledPattern
+        {
+            public Regex? Regex;
+            public (string Name, int Number)[]? NamedGroups;
+            public int[]? CaptureResetAncestors;
+            public CaptureBoundaryKind[]? CaptureBoundaryKinds;
+            public bool SourceHasNoSpecialCharacters;
+            public string? SyntaxErrorMessage;
+        }
+
+        private sealed class LiteralTemplate
+        {
+            public required string Source { get; init; }
+            public ParsedFlags? Flags { get; init; }
+            public CompiledPattern? Compiled { get; init; }
+            public string? SyntaxErrorMessage { get; init; }
+        }
+
+        private static readonly ConditionalWeakTable<
+            string,
+            ConcurrentDictionary<string, Lazy<LiteralTemplate>>> LiteralTemplates = new();
+
+        private readonly record struct CompiledPatternKey(
+            string Source,
+            bool Unicode,
+            bool DotAll,
+            RegexOptions Options);
+
+        private const int CompiledPatternCacheCapacity = 1024;
+        private const int CompiledPatternCacheSourceCharacterBudget = 4 * 1024 * 1024;
+
+        private static readonly ConcurrentDictionary<CompiledPatternKey, Lazy<CompiledPattern>>
+            CompiledPatternCache = new();
+        private static readonly ConcurrentQueue<CompiledPatternKey> CompiledPatternCacheInsertionOrder = new();
+        private static long _compiledPatternCacheSourceCharacters;
+        private static int _compiledPatternCacheEntryCount;
+
+        /// <summary>
+        /// Compiling a JavaScript pattern into a .NET <see cref="Regex"/> is expensive (milliseconds
+        /// for large patterns) and is a pure function of the source plus the flags that affect
+        /// compilation, so results are cached. Real-world code re-creates the same literal inside hot
+        /// loops (for example <c>emoji-regex</c>), which engines such as V8 also serve from a
+        /// compilation cache. Matching state (<c>lastIndex</c>) stays per <see cref="RegExp"/>
+        /// instance, and .NET <see cref="Regex"/> instances are immutable and thread-safe, so sharing
+        /// them is observationally transparent.
+        /// </summary>
+        private static CompiledPattern GetOrCreateCompiledPattern(
+            string source,
+            bool unicode,
+            bool dotAll,
+            RegexOptions options)
+        {
+            var compiled = GetOrCreateCompiledPatternCore(source, unicode, dotAll, options);
+            if (compiled.SyntaxErrorMessage is not null)
+            {
+                throw new SyntaxError(compiled.SyntaxErrorMessage);
+            }
+
+            return compiled;
+        }
+
+        /// <summary>
+        /// Returns the cached artifacts without throwing; a failed compilation is reported through
+        /// <see cref="CompiledPattern.SyntaxErrorMessage"/> so callers decide when to raise it.
+        /// </summary>
+        private static CompiledPattern GetOrCreateCompiledPatternCore(
+            string source,
+            bool unicode,
+            bool dotAll,
+            RegexOptions options)
+        {
+            var key = new CompiledPatternKey(source, unicode, dotAll, options);
+            var candidate = new Lazy<CompiledPattern>(
+                () => CreateCompiledPattern(source, unicode, dotAll, options),
+                LazyThreadSafetyMode.ExecutionAndPublication);
+            var cached = CompiledPatternCache.GetOrAdd(key, candidate);
+            if (ReferenceEquals(candidate, cached))
+            {
+                CompiledPatternCacheInsertionOrder.Enqueue(key);
+                Interlocked.Increment(ref _compiledPatternCacheEntryCount);
+                Interlocked.Add(ref _compiledPatternCacheSourceCharacters, source.Length);
+                TrimCompiledPatternCache();
+            }
+
+            return cached.Value;
+        }
+
+        private static void TrimCompiledPatternCache()
+        {
+            // ConcurrentDictionary.Count acquires every lock stripe, so the bounds are tracked
+            // with interlocked counters that only inserting threads touch.
+            while ((Volatile.Read(ref _compiledPatternCacheEntryCount) > CompiledPatternCacheCapacity
+                    || Volatile.Read(ref _compiledPatternCacheSourceCharacters)
+                        > CompiledPatternCacheSourceCharacterBudget)
+                && CompiledPatternCacheInsertionOrder.TryDequeue(out var oldestKey))
+            {
+                if (CompiledPatternCache.TryRemove(oldestKey, out _))
+                {
+                    Interlocked.Decrement(ref _compiledPatternCacheEntryCount);
+                    Interlocked.Add(
+                        ref _compiledPatternCacheSourceCharacters,
+                        -oldestKey.Source.Length);
+                }
+            }
+        }
+
+        private static CompiledPattern CreateCompiledPattern(
+            string source,
+            bool unicode,
+            bool dotAll,
+            RegexOptions options)
+        {
+            try
+            {
+                var preparedPattern = PreparePatternForDotNetRegex(source, unicode, dotAll);
+                var regex = new Regex(preparedPattern, options);
+                var (ancestors, boundaryKinds) = GetCaptureResetAncestors(source, regex);
+
+                return new CompiledPattern
+                {
+                    Regex = regex,
+                    NamedGroups = GetNamedGroups(regex),
+                    CaptureResetAncestors = ancestors,
+                    CaptureBoundaryKinds = boundaryKinds,
+                    SourceHasNoSpecialCharacters = HasNoSpecialRegexCharacters(source)
+                };
+            }
+            catch (RegexParseException ex)
+            {
+                return new CompiledPattern { SyntaxErrorMessage = ex.Message };
+            }
+            catch (ArgumentException ex)
+            {
+                return new CompiledPattern { SyntaxErrorMessage = ex.Message };
+            }
+            catch (SyntaxError ex)
+            {
+                // Pattern translation rejects unsupported syntax with a JS SyntaxError; it must be
+                // recorded rather than thrown so the caching Lazy never replays one instance.
+                return new CompiledPattern { SyntaxErrorMessage = ex.Message };
+            }
+        }
+
+        private static LiteralTemplate CreateLiteralTemplate(string source, string flags)
+        {
+            // Never let the caching Lazy observe an exception: a cached failure would replay one
+            // SyntaxError instance to every evaluation of the literal.
+            try
+            {
+                var parsedFlags = ParseFlags(flags);
+                var compiled = GetOrCreateCompiledPatternCore(
+                    source,
+                    parsedFlags.Unicode,
+                    parsedFlags.DotAll,
+                    parsedFlags.ToRegexOptions());
+                if (compiled.SyntaxErrorMessage is not null)
+                {
+                    return new LiteralTemplate
+                    {
+                        Source = source,
+                        SyntaxErrorMessage = compiled.SyntaxErrorMessage
+                    };
+                }
+
+                return new LiteralTemplate
+                {
+                    Source = source,
+                    Flags = parsedFlags,
+                    Compiled = compiled
+                };
+            }
+            catch (SyntaxError ex)
+            {
+                return new LiteralTemplate { Source = source, SyntaxErrorMessage = ex.Message };
+            }
+        }
+
         private static (string Name, int Number)[] GetNamedGroups(Regex regex)
         {
             var groups = new List<(string Name, int Number)>();
@@ -1839,7 +2063,7 @@ namespace JavaScriptRuntime
 
             public RegexOptions ToRegexOptions()
             {
-                var options = RegexOptions.None;
+                var options = RegexOptions.CultureInvariant;
                 if (IgnoreCase)
                 {
                     options |= RegexOptions.IgnoreCase;

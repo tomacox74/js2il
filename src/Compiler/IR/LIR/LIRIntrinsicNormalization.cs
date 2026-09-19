@@ -413,17 +413,27 @@ internal static class LIRIntrinsicNormalization
 
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var receiverType)
                     || receiverType != typeof(JavaScriptRuntime.RegExp)
-                    || !string.Equals(callMember1.MethodName, "test", StringComparison.Ordinal))
+                    || !string.Equals(callMember1.MethodName, "test", StringComparison.Ordinal)
+                    || !HasGuardStableArgumentProducer(
+                        methodBody,
+                        i,
+                        callMember1.A0))
                 {
                     continue;
                 }
 
-                methodBody.Instructions[i] = new LIRCallInstanceMethod(
+                methodBody.Instructions[i] = new LIRCallGuardedIntrinsicMember(
                     Receiver: callMember1.Receiver,
                     ReceiverClrType: typeof(JavaScriptRuntime.RegExp),
-                    MethodName: callMember1.MethodName,
+                    PrototypeFamily: JavaScriptRuntime.IntrinsicPrototypeFamily.RegExp,
+                    MemberName: callMember1.MethodName,
+                    ReceiverIsProvenType: true,
                     Arguments: new[] { callMember1.A0 },
                     Result: callMember1.Result);
+                methodBody.TempStorages[callMember1.Result.Index] =
+                    new ValueStorage(
+                        ValueStorageKind.Reference,
+                        typeof(object));
 
                 continue;
             }
@@ -569,6 +579,31 @@ internal static class LIRIntrinsicNormalization
 
         FuseGetItemWithConvertToNumber(methodBody);
 
+    }
+
+    private static bool HasGuardStableArgumentProducer(
+        MethodBodyIR methodBody,
+        int callIndex,
+        TempVariable argument)
+    {
+        if (callIndex <= 0)
+        {
+            return false;
+        }
+
+        return methodBody.Instructions[callIndex - 1] switch
+        {
+            LIRConstNumber value => value.Result == argument,
+            LIRConstString value => value.Result == argument,
+            LIRConstBoolean value => value.Result == argument,
+            LIRConstUndefined value => value.Result == argument,
+            LIRConstNull value => value.Result == argument,
+            LIRCopyTemp value => value.Destination == argument,
+            LIRLoadScopeField value => value.Result == argument,
+            LIRLoadLeafScopeField value => value.Result == argument,
+            LIRLoadParentScopeField value => value.Result == argument,
+            _ => false
+        };
     }
 
     public static void NormalizeLateNumericMemberCalls(MethodBodyIR methodBody)
@@ -758,8 +793,10 @@ internal static class LIRIntrinsicNormalization
                 or "toLowerCase"
                 or "toUpperCase",
             1 => methodName is
-                "charAt"
+                "at"
+                or "charAt"
                 or "charCodeAt"
+                or "codePointAt"
                 or "substring"
                 or "substr"
                 or "slice"

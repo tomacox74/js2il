@@ -4546,7 +4546,8 @@ partial class HIRMethodBuilder
                         {
                             new HIRLiteralExpression(JavascriptType.String, pattern),
                             new HIRLiteralExpression(JavascriptType.String, flags)
-                        });
+                        },
+                        isRegExpLiteral: true);
                     return true;
                 }
                 return false;

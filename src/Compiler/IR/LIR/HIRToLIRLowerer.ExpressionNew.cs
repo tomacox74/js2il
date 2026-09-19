@@ -13,6 +13,30 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (newExpr.IsRegExpLiteral)
+        {
+            if (newExpr.Arguments.Count != 2
+                || !TryLowerExpression(newExpr.Arguments[0], out var pattern)
+                || !TryLowerExpression(newExpr.Arguments[1], out var flags))
+            {
+                return false;
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRCallIntrinsicStatic(
+                    "RegExp",
+                    nameof(JavaScriptRuntime.RegExp.CreateLiteral),
+                    new[] { pattern, flags },
+                    resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(JavaScriptRuntime.RegExp)));
+            return true;
+        }
+
         // Prefer the existing fast-paths for statically known constructors.
         // If those don't apply, fall back to dynamic construction via JavaScriptRuntime.ObjectRuntime.ConstructValue.
         var calleeVar = newExpr.Callee as HIRVariableExpression;

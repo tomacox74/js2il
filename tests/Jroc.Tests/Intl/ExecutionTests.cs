@@ -8,5 +8,9 @@ namespace Jroc.Tests.Intl
 
         [Fact]
         public Task Intl_NumberFormat_And_Segmenter_Basic() { var testName = nameof(Intl_NumberFormat_And_Segmenter_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Intl_Segmenter_LazySegmentsIterator()
+            => ExecutionTest(nameof(Intl_Segmenter_LazySegmentsIterator));
     }
 }

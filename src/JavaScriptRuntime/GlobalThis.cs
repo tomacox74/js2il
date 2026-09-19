@@ -394,6 +394,7 @@ namespace JavaScriptRuntime
         private object _objectPrototypeValue => _intrinsics.ObjectPrototype;
         private object _jsonValue => _intrinsics.Json;
         private object _intlValue => _intrinsics.Intl;
+        private object _performanceValue => _intrinsics.Performance;
         private object _atomicsValue => _intrinsics.Atomics;
         private object _numberPrototypeValue => _intrinsics.NumberPrototype;
         private object _booleanPrototypeValue => _intrinsics.BooleanPrototype;
@@ -896,6 +897,9 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object GetGlobalThis() => globalThis;
 
+        internal static bool HasDefaultNumberIsSafeInteger()
+            => RuntimeIntrinsics.Current.ReadNumberStaticMutationEpoch() == 0;
+
         private static GlobalThis GetOrCreateGlobalObject()
         {
             if (RuntimeExecutionContext.Current is { } executionContext)
@@ -1049,6 +1053,9 @@ namespace JavaScriptRuntime
 
             dict.TryAdd(nameof(GlobalThis.process), process);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.process), dict[nameof(GlobalThis.process)]);
+
+            dict.TryAdd(nameof(GlobalThis.performance), _performanceValue);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.performance), dict[nameof(GlobalThis.performance)]);
 
             dict.TryAdd(nameof(GlobalThis.Infinity), Infinity);
             DefineNonEnumerableConstantDataProperty(nameof(GlobalThis.Infinity), dict[nameof(GlobalThis.Infinity)]);
@@ -1378,6 +1385,12 @@ namespace JavaScriptRuntime
                     : _defaultProcess;
             }
         }
+
+        /// <summary>
+        /// Node.js global high-resolution performance clock.
+        /// </summary>
+        public static JavaScriptRuntime.Node.PerfHooks.Performance performance
+            => BootstrappedIntrinsics().Performance;
 
         /// <summary>
         /// Global console object (lowercase) to mirror JS global. Provides access to log/error/warn via the Console intrinsic.

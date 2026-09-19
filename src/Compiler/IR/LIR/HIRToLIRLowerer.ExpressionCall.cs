@@ -1172,6 +1172,31 @@ public sealed partial class HIRToLIRLowerer
                     if (chosen != null)
                     {
                         if (!hasSpreadArgs
+                            && callExpr.Arguments.Length == 1
+                            && string.Equals(intrinsicName, "Number", StringComparison.Ordinal)
+                            && string.Equals(methodName, "isSafeInteger", StringComparison.Ordinal)
+                            && IsGuardStableArgument(callExpr.Arguments[0]))
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[0], out var numberArg))
+                            {
+                                return false;
+                            }
+
+                            _methodBodyIR.Instructions.Add(
+                                new LIRCallIntrinsicStatic(
+                                    intrinsicName,
+                                    nameof(JavaScriptRuntime.Number.GuardedIsSafeInteger),
+                                    new[] { EnsureObject(numberArg) },
+                                    resultTempVar));
+                            DefineTempStorage(
+                                resultTempVar,
+                                new ValueStorage(
+                                    ValueStorageKind.Reference,
+                                    typeof(object)));
+                            return true;
+                        }
+
+                        if (!hasSpreadArgs
                             && string.Equals(intrinsicName, "Math", StringComparison.Ordinal)
                             && callExpr.Arguments.Length == 1
                             && IsNumericMathUnaryFastPathMethod(methodName))

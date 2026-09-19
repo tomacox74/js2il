@@ -1112,7 +1112,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 490 (0x1ea)
+			// Code size: 484 (0x1e4)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1246,55 +1246,49 @@
 			IL_0146: stloc.0
 			IL_0147: ldarg.2
 			IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_014d: stloc.2
-			IL_014e: ldstr "[.*+?^${}()|[\\]\\\\]"
-			IL_0153: ldstr "g"
-			IL_0158: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_015d: stloc.s 4
-			IL_015f: ldloc.2
-			IL_0160: ldstr "replace"
-			IL_0165: ldloc.s 4
-			IL_0167: ldstr "\\$&"
-			IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0171: stloc.2
-			IL_0172: ldloc.2
-			IL_0173: ldstr "g"
-			IL_0178: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_017d: stloc.s 4
-			IL_017f: ldloc.0
-			IL_0180: ldstr "replace"
-			IL_0185: ldloc.s 4
-			IL_0187: ldstr "<outFile>"
-			IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0191: stloc.0
-			IL_0192: ldloc.0
-			IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0198: stloc.0
-			IL_0199: ldstr "127\\.0\\.0\\.1:\\d+"
-			IL_019e: ldstr "g"
-			IL_01a3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_01a8: stloc.s 4
-			IL_01aa: ldloc.0
-			IL_01ab: ldstr "replace"
-			IL_01b0: ldloc.s 4
-			IL_01b2: ldstr "127.0.0.1:<port>"
-			IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_01bc: stloc.0
-			IL_01bd: ldloc.0
-			IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01c3: stloc.0
-			IL_01c4: ldstr "\\r\\n"
-			IL_01c9: ldstr "g"
-			IL_01ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_01d3: stloc.s 4
-			IL_01d5: ldloc.0
-			IL_01d6: ldstr "replace"
-			IL_01db: ldloc.s 4
-			IL_01dd: ldstr "\n"
-			IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_01e7: stloc.0
-			IL_01e8: ldloc.0
-			IL_01e9: ret
+			IL_014d: ldstr "[.*+?^${}()|[\\]\\\\]"
+			IL_0152: ldstr "g"
+			IL_0157: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
+			IL_015c: stloc.s 4
+			IL_015e: ldstr "replace"
+			IL_0163: ldloc.s 4
+			IL_0165: ldstr "\\$&"
+			IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_016f: stloc.2
+			IL_0170: ldloc.2
+			IL_0171: ldstr "g"
+			IL_0176: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_017b: stloc.s 4
+			IL_017d: ldloc.0
+			IL_017e: ldstr "replace"
+			IL_0183: ldloc.s 4
+			IL_0185: ldstr "<outFile>"
+			IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_018f: stloc.0
+			IL_0190: ldloc.0
+			IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0196: ldstr "127\\.0\\.0\\.1:\\d+"
+			IL_019b: ldstr "g"
+			IL_01a0: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
+			IL_01a5: stloc.s 4
+			IL_01a7: ldstr "replace"
+			IL_01ac: ldloc.s 4
+			IL_01ae: ldstr "127.0.0.1:<port>"
+			IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_01b8: stloc.0
+			IL_01b9: ldloc.0
+			IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01bf: ldstr "\\r\\n"
+			IL_01c4: ldstr "g"
+			IL_01c9: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
+			IL_01ce: stloc.s 4
+			IL_01d0: ldstr "replace"
+			IL_01d5: ldloc.s 4
+			IL_01d7: ldstr "\n"
+			IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_01e1: stloc.0
+			IL_01e2: ldloc.0
+			IL_01e3: ret
 		} // end of method normalize::__js_call__
 
 	} // end of class normalize
@@ -3828,28 +3822,26 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 43 (0x2b)
+			// Code size: 41 (0x29)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[1] object
 			)
 
 			IL_0000: ldarg.1
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0006: stloc.0
-			IL_0007: ldstr "[.*+?^${}()|[\\]\\\\]"
-			IL_000c: ldstr "g"
-			IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_0016: stloc.1
-			IL_0017: ldloc.0
-			IL_0018: ldstr "replace"
-			IL_001d: ldloc.1
-			IL_001e: ldstr "\\$&"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0028: stloc.0
-			IL_0029: ldloc.0
-			IL_002a: ret
+			IL_0006: ldstr "[.*+?^${}()|[\\]\\\\]"
+			IL_000b: ldstr "g"
+			IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.RegExp [JavaScriptRuntime]JavaScriptRuntime.RegExp::CreateLiteral(string, string)
+			IL_0015: stloc.0
+			IL_0016: ldstr "replace"
+			IL_001b: ldloc.0
+			IL_001c: ldstr "\\$&"
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0026: stloc.1
+			IL_0027: ldloc.1
+			IL_0028: ret
 		} // end of method escapeRegExp::__js_call__
 
 	} // end of class escapeRegExp

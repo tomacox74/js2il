@@ -43,6 +43,9 @@ internal enum RuntimeIntrinsicSlot
     AsyncDisposableStackPrototype,
     Json,
     Intl,
+    IntlSegmentsPrototype,
+    IntlSegmentIteratorPrototype,
+    Performance,
     Atomics,
     GlobalPromisePrototype,
     PromisePrototype,
@@ -147,7 +150,7 @@ internal enum RuntimeIntrinsicSlot
 internal sealed class RuntimeIntrinsics
 {
     private const int MaxWaitChainLength = 64;
-    private const int PrototypeFamilyCount = 3;
+    private const int PrototypeFamilyCount = 4;
 
     private static readonly TimeSpan WaitSlice = TimeSpan.FromMilliseconds(20);
 
@@ -168,6 +171,7 @@ internal sealed class RuntimeIntrinsics
     private readonly SlotEntry?[] _slots = new SlotEntry?[(int)RuntimeIntrinsicSlot.Count];
     private readonly long[] _prototypeMutationEpochs =
         new long[PrototypeFamilyCount];
+    private long _numberStaticMutationEpoch;
 
     /// <summary>
     /// Fully initialized slot values. Only written after the slot's initializer has
@@ -198,6 +202,9 @@ internal sealed class RuntimeIntrinsics
 
         return Volatile.Read(ref _prototypeMutationEpochs[index]);
     }
+
+    internal long ReadNumberStaticMutationEpoch()
+        => Volatile.Read(ref _numberStaticMutationEpoch);
 
     internal static void NotifyPrototypeMutation(object target)
     {
@@ -249,6 +256,26 @@ internal sealed class RuntimeIntrinsics
             Interlocked.Increment(
                 ref _prototypeMutationEpochs[
                     (int)IntrinsicPrototypeFamily.TypedArray]);
+        }
+
+        if (ReferenceEquals(
+                target,
+                Volatile.Read(
+                    ref _published[
+                        (int)RuntimeIntrinsicSlot.RegExpPrototype]))
+            || ReferenceEquals(target, objectPrototype))
+        {
+            Interlocked.Increment(
+                ref _prototypeMutationEpochs[
+                    (int)IntrinsicPrototypeFamily.RegExp]);
+        }
+
+        if (target is GlobalThis
+            || target is BuiltinDelegateFunctionAdapter numberAdapter
+                && GlobalThis.IsNumberConstructorTarget(numberAdapter.Target))
+        {
+            Interlocked.Increment(
+                ref _numberStaticMutationEpoch);
         }
     }
 
@@ -402,6 +429,11 @@ internal sealed class RuntimeIntrinsics
 
     internal object Intl
         => GetOrCreate(RuntimeIntrinsicSlot.Intl, static () => new JsObject());
+
+    internal Node.PerfHooks.Performance Performance
+        => GetOrCreate(
+            RuntimeIntrinsicSlot.Performance,
+            static () => new Node.PerfHooks.Performance());
 
     internal object Atomics
         => GetOrCreate(RuntimeIntrinsicSlot.Atomics, static () => new JsObject());
