@@ -14,6 +14,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `MapIteratorPrototype`, `Date`, `NativeErrors`, and several other built-ins.
   Extended the native harness with `dateConstants.js` support so ported `Date`
   fixtures relying on the upstream date-constant helper values run natively.
+- test(test262): port 591 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering `TypedArray`/`TypedArray.prototype`, `TypedArrayConstructors`,
+  `Proxy`, `Reflect`, `NativeErrors`, `WeakMap.prototype`, `Number.prototype`,
+  `Symbol`, `Object.prototype`, and `Promise`. No product or harness changes
+  were required; all fixtures already passed under the existing runtime.
 
 ## v0.12.26 - 2026-09-19
 

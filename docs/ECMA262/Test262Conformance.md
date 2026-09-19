@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 15,209 | 12 | 8,291 | 23,512 | **64.68%** |
+| Built-in objects and APIs | 15,800 | 12 | 7,700 | 23,512 | **67.20%** |
 | Language syntax and semantics | 14,412 | 46 | 9,185 | 23,643 | **60.96%** |
-| **Total** | 29,621 | 58 | 18,562 | 48,241 | **61.40%** |
+| **Total** | 30,212 | 58 | 17,971 | 48,241 | **62.63%** |
 
 ## Language Areas
 
@@ -207,14 +207,14 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `MapIteratorPrototype` | 6 | 0 | 5 | 11 | **54.55%** |
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
-| `NativeErrors` | 19 | 0 | 75 | 94 | **20.21%** |
-| `Number` | 282 | 0 | 56 | 338 | **83.43%** |
-| `Object` | 3,250 | 0 | 161 | 3,411 | **95.28%** |
+| `NativeErrors` | 88 | 0 | 6 | 94 | **93.62%** |
+| `Number` | 303 | 0 | 35 | 338 | **89.64%** |
+| `Object` | 3,254 | 0 | 157 | 3,411 | **95.40%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
-| `Promise` | 380 | 0 | 297 | 677 | **56.13%** |
-| `Proxy` | 95 | 0 | 216 | 311 | **30.55%** |
-| `Reflect` | 54 | 0 | 99 | 153 | **35.29%** |
+| `Promise` | 384 | 0 | 293 | 677 | **56.72%** |
+| `Proxy` | 221 | 0 | 90 | 311 | **71.06%** |
+| `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
 | `RegExp` | 1,006 | 0 | 873 | 1,879 | **53.54%** |
 | `RegExpStringIteratorPrototype` | 5 | 0 | 12 | 17 | **29.41%** |
 | `Set` | 382 | 0 | 1 | 383 | **99.74%** |
@@ -224,14 +224,14 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `String` | 1,101 | 1 | 121 | 1,223 | **90.02%** |
 | `StringIteratorPrototype` | 0 | 0 | 7 | 7 | **0.00%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
-| `Symbol` | 62 | 0 | 36 | 98 | **63.27%** |
+| `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 1,162 | 0 | 276 | 1,438 | **80.81%** |
-| `TypedArrayConstructors` | 573 | 0 | 163 | 736 | **77.85%** |
+| `TypedArray` | 1,361 | 0 | 77 | 1,438 | **94.65%** |
+| `TypedArrayConstructors` | 593 | 0 | 143 | 736 | **80.57%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
-| `WeakMap` | 105 | 0 | 36 | 141 | **74.47%** |
+| `WeakMap` | 141 | 0 | 0 | 141 | **100.00%** |
 | `WeakRef` | 20 | 0 | 9 | 29 | **68.97%** |
 | `WeakSet` | 75 | 0 | 10 | 85 | **88.24%** |
 
