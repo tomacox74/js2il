@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.21](https://github.com/tomacox74/js2il/releases/tag/v0.12.21).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.26](https://github.com/tomacox74/js2il/releases/tag/v0.12.26).
 
 ## How to Read This Report
 
@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 14,693 | 12 | 8,807 | 23,512 | **62.49%** |
+| Built-in objects and APIs | 15,209 | 12 | 8,291 | 23,512 | **64.68%** |
 | Language syntax and semantics | 14,412 | 46 | 9,185 | 23,643 | **60.96%** |
-| **Total** | 29,105 | 58 | 19,078 | 48,241 | **60.33%** |
+| **Total** | 29,621 | 58 | 18,562 | 48,241 | **61.40%** |
 
 ## Language Areas
 
@@ -172,42 +172,42 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 2,873 | 0 | 208 | 3,081 | **93.25%** |
+| `Array` | 3,025 | 0 | 56 | 3,081 | **98.18%** |
 | `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
-| `ArrayIteratorPrototype` | 8 | 0 | 19 | 27 | **29.63%** |
-| `AsyncDisposableStack` | 100 | 0 | 4 | 104 | **96.15%** |
-| `AsyncFromSyncIteratorPrototype` | 0 | 0 | 38 | 38 | **0.00%** |
+| `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
+| `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |
+| `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
-| `AsyncGeneratorFunction` | 6 | 0 | 17 | 23 | **26.09%** |
-| `AsyncGeneratorPrototype` | 0 | 0 | 48 | 48 | **0.00%** |
-| `AsyncIteratorPrototype` | 0 | 0 | 13 | 13 | **0.00%** |
+| `AsyncGeneratorFunction` | 9 | 0 | 14 | 23 | **39.13%** |
+| `AsyncGeneratorPrototype` | 2 | 0 | 46 | 48 | **4.17%** |
+| `AsyncIteratorPrototype` | 3 | 0 | 10 | 13 | **23.08%** |
 | `Atomics` | 71 | 0 | 311 | 382 | **18.59%** |
-| `BigInt` | 49 | 0 | 28 | 77 | **63.64%** |
-| `Boolean` | 14 | 0 | 37 | 51 | **27.45%** |
+| `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
+| `Boolean` | 49 | 0 | 2 | 51 | **96.08%** |
 | `DataView` | 502 | 0 | 59 | 561 | **89.48%** |
-| `Date` | 521 | 0 | 73 | 594 | **87.71%** |
+| `Date` | 525 | 0 | 69 | 594 | **88.38%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
 | `DisposableStack` | 92 | 0 | 1 | 93 | **98.92%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
-| `Error` | 19 | 0 | 39 | 58 | **32.76%** |
+| `Error` | 55 | 0 | 3 | 58 | **94.83%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
-| `FinalizationRegistry` | 20 | 0 | 27 | 47 | **42.55%** |
-| `Function` | 392 | 1 | 116 | 509 | **77.01%** |
-| `GeneratorFunction` | 14 | 0 | 9 | 23 | **60.87%** |
-| `GeneratorPrototype` | 0 | 0 | 61 | 61 | **0.00%** |
+| `FinalizationRegistry` | 46 | 0 | 1 | 47 | **97.87%** |
+| `Function` | 399 | 1 | 109 | 509 | **78.39%** |
+| `GeneratorFunction` | 17 | 0 | 6 | 23 | **73.91%** |
+| `GeneratorPrototype` | 45 | 0 | 16 | 61 | **73.77%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
-| `Infinity` | 0 | 0 | 6 | 6 | **0.00%** |
+| `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
 | `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
-| `Iterator` | 317 | 0 | 193 | 510 | **62.16%** |
-| `JSON` | 161 | 0 | 4 | 165 | **97.58%** |
-| `Map` | 142 | 0 | 62 | 204 | **69.61%** |
-| `MapIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
+| `Iterator` | 403 | 0 | 107 | 510 | **79.02%** |
+| `JSON` | 162 | 0 | 3 | 165 | **98.18%** |
+| `Map` | 197 | 0 | 7 | 204 | **96.57%** |
+| `MapIteratorPrototype` | 6 | 0 | 5 | 11 | **54.55%** |
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
-| `NaN` | 0 | 0 | 6 | 6 | **0.00%** |
-| `NativeErrors` | 15 | 0 | 79 | 94 | **15.96%** |
+| `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
+| `NativeErrors` | 19 | 0 | 75 | 94 | **20.21%** |
 | `Number` | 282 | 0 | 56 | 338 | **83.43%** |
 | `Object` | 3,250 | 0 | 161 | 3,411 | **95.28%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |

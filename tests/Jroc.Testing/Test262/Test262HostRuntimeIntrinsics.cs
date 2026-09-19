@@ -93,6 +93,21 @@ public static class Test262HostRuntimeIntrinsics
             builder.AddGlobalFactory("NaNs", CreateNaNs);
         }
 
+        if (included.Contains("dateConstants.js"))
+        {
+            // Pure data harness helper (harness/dateConstants.js); values mirror the upstream constants exactly.
+            builder.AddGlobalValue("date_1899_end", -2208988800001d);
+            builder.AddGlobalValue("date_1900_start", -2208988800000d);
+            builder.AddGlobalValue("date_1969_end", -1d);
+            builder.AddGlobalValue("date_1970_start", 0d);
+            builder.AddGlobalValue("date_1999_end", 946684799999d);
+            builder.AddGlobalValue("date_2000_start", 946684800000d);
+            builder.AddGlobalValue("date_2099_end", 4102444799999d);
+            builder.AddGlobalValue("date_2100_start", 4102444800000d);
+            builder.AddGlobalValue("start_of_time", -8.64e15);
+            builder.AddGlobalValue("end_of_time", 8.64e15);
+        }
+
         if (included.Contains("regExpUtils.js"))
         {
             Test262RegExpHelpers.Register(builder);
