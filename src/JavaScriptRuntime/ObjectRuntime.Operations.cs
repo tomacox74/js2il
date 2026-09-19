@@ -1953,22 +1953,6 @@ namespace JavaScriptRuntime
             return GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: true);
         }
 
-        private static void EnsureIntegrityDescriptorsForExistingOwnProperties(object obj)
-        {
-            foreach (var key in GetOwnKeysForIntegrity(obj))
-            {
-                if (PropertyDescriptorStore.TryGetOwn(obj, key, out _))
-                {
-                    continue;
-                }
-
-                if (TryGetOwnPropertyDescriptor(obj, key, out var descriptor))
-                {
-                    PropertyDescriptorStore.DefineOrUpdate(obj, key, descriptor);
-                }
-            }
-        }
-
         public static object preventExtensions(object obj)
         {
             if (obj is null || obj is JsNull || IsPrimitiveObjectOperationTarget(obj))

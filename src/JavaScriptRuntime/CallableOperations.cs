@@ -19,9 +19,6 @@ public static class CallableOperations
         return false;
     }
 
-    internal static bool IsBuiltinAdapter(object? value)
-        => TryGetBuiltinAdapter(value, out _);
-
     internal static bool HasSameBuiltinDelegateMethod(
         object? left,
         object? right)

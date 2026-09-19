@@ -199,14 +199,6 @@ public sealed class NodeSchedulerState :
         }
     }
 
-    internal int GetCleanupJobCountSnapshot(int max)
-    {
-        lock (_cleanup)
-        {
-            return System.Math.Min(_cleanup.Count, max);
-        }
-    }
-
     internal bool TryDequeueNextTick(out Action? callback)
     {
         lock (_nextTickLock)

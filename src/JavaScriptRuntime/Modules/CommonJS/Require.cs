@@ -109,11 +109,6 @@ namespace JavaScriptRuntime.Modules.CommonJS
             _currentParentModule = parent;
         }
 
-        /// <summary>
-        /// Gets the Module object for a given module key, if it exists.
-        /// </summary>
-        internal Module? GetModule(string key) => _modules.TryGetValue(key, out var m) ? m : null;
-
         // Deferred type lookup to avoid startup cost; scans assembly only on demand.
         private static Type? FindModuleType(string name)
         {

@@ -763,11 +763,6 @@ public static class Function
             return false;
         }
 
-        internal static bool HasBoundWithObject(object functionValue)
-            => TryGetBoundWithObject(
-                functionValue,
-                out _);
-
         internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
         {
             if (args.Length <= 1)
@@ -1222,71 +1217,6 @@ public static class Function
             return string.IsNullOrEmpty(name) ? string.Empty : name;
         }
 
-        internal static object GetPrototypeObject(Delegate target)
-        {
-            if (target is null) throw new ArgumentNullException(nameof(target));
-
-            var existingPrototype = PrototypeChain.GetPrototypeOrNull(target);
-            if (existingPrototype != null)
-            {
-                return existingPrototype;
-            }
-
-            var prototype = IsGeneratorFunction(target)
-                ? GeneratorObject.GeneratorFunctionPrototypeObject
-                : Prototype;
-
-            PrototypeChain.SetPrototype(target, prototype);
-            return prototype;
-        }
-
-        internal static bool TryEnsureOwnMetadataPropertyDescriptor(Delegate target, string propName, out JsPropertyDescriptor descriptor)
-        {
-            if (target is null) throw new ArgumentNullException(nameof(target));
-
-            if (IsMetadataPropertyName(propName) && PropertyDescriptorStore.IsDeleted(target, propName))
-            {
-                descriptor = default;
-                return false;
-            }
-
-            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
-            {
-                return true;
-            }
-
-            if (string.Equals(propName, "length", StringComparison.Ordinal))
-            {
-                descriptor = new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = false,
-                    Value = GetLength(target)
-                };
-                PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
-                return true;
-            }
-
-            if (string.Equals(propName, "name", StringComparison.Ordinal))
-            {
-                descriptor = new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = false,
-                    Value = GetName(target)
-                };
-                PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
-                return true;
-            }
-
-            descriptor = default;
-            return false;
-        }
-
         internal static bool DeleteOwnProperty(Delegate target, string propName)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
@@ -1294,11 +1224,6 @@ public static class Function
             PropertyDescriptorStore.Delete(target, propName);
 
             return true;
-        }
-
-        internal static void ClearDeletedMetadataProperty(Delegate target, string propName)
-        {
-            if (target is null) throw new ArgumentNullException(nameof(target));
         }
 
         private static bool IsSyntheticDynamicFunctionDeclaringTypeName(string? declaringTypeName)
