@@ -19,6 +19,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   immutable templates. Each evaluation still creates a distinct JavaScript
   `RegExp` with independent `lastIndex`, but skips repeated flag parsing and
   compiled-artifact lookup and does not observe a rebound global `RegExp`.
+  A literal that fails at runtime (for example an unsupported flag) throws a
+  fresh `SyntaxError` on every evaluation rather than replaying one instance.
 - perf(compiler): early-bind `String.prototype.codePointAt` and
   `String.prototype.at` to their guarded string intrinsics, matching
   `charAt`/`charCodeAt`. `"世".codePointAt(0)` in a hot loop improves from about
@@ -33,8 +35,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   parameters when later parameters use destructuring.
 - perf(runtime): iterate `Intl.Segmenter` results lazily with fresh iterators and
   allocation-light segment records instead of eagerly materializing an Array.
+  Segment records support `delete` and re-add with ordinary key ordering, and
+  the segment iterator prototype exposes `next` plus the
+  `"Segmenter String Iterator"` toStringTag while inheriting `[Symbol.iterator]`.
 - feat(node): expose the realm-owned `performance` global with
-  `performance.now()`, identical to `require("node:perf_hooks").performance`.
+  `performance.now()`, identical to `require("node:perf_hooks").performance`;
+  `now` is non-enumerable so `Object.keys(performance)` matches Node.
   The mitata managed runner now warms each case and uses this monotonic,
   high-resolution clock.
 - fix(runtime): pack JavaScript arguments into CLR `params` arrays during

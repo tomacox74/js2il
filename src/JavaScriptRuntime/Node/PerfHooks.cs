@@ -15,7 +15,20 @@ namespace JavaScriptRuntime.Node
 
             public Performance()
             {
-                SetObject("now", (BuiltinFunction0)(static _ => NowCore()));
+                var now = (BuiltinFunction0)(static _ => NowCore());
+                Function.InitializeFunctionInstance(now, 0d, "now");
+                // Node exposes `now` via Performance.prototype, so it must not enumerate as an own key.
+                PropertyDescriptorStore.DefineOrUpdate(
+                    this,
+                    "now",
+                    new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Enumerable = false,
+                        Configurable = true,
+                        Writable = true,
+                        Value = now
+                    });
             }
 
             object? Jroc.Runtime.Node.Contracts.IJavaScriptValueHost.JavaScriptValue => this;

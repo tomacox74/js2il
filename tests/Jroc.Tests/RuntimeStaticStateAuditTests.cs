@@ -34,6 +34,7 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.Node.AsyncContextRuntime._activeContextRuntimeCount", "process-wide fast-path activity count"),
         new("JavaScriptRuntime.Node.AsyncContextRuntime._enabledHookCount", "process-wide fast-path activity count"),
         new("JavaScriptRuntime.Node.FsCommon._nextFileDescriptor", "process-wide resource identity allocator"),
+        new("JavaScriptRuntime.RegExp._compiledPatternCacheEntryCount", "process-wide cache size accounting"),
         new("JavaScriptRuntime.RegExp._compiledPatternCacheSourceCharacters", "process-wide cache size accounting"),
         new("JavaScriptRuntime.RegExp._prototypeWellKnownSymbolFastPathFlags", "process-wide monotonic deoptimization flags"),
         new("JavaScriptRuntime.RuntimeExecutionContext._threadCurrent", "thread-local execution-context mirror"),

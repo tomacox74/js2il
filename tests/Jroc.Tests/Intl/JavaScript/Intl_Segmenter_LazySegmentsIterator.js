@@ -23,3 +23,18 @@ console.log(third.value.index);
 
 console.log(iterator.next().done);
 console.log(iterator.next().done);
+
+// Segment records are ordinary mutable objects: delete removes the key and a
+// later re-add appends it in encounter order.
+const record = new Intl.Segmenter().segment("x")[Symbol.iterator]().next().value;
+console.log(Object.keys(record).join(","));
+console.log(delete record.segment);
+console.log(record.segment, "segment" in record, Object.keys(record).join(","));
+record.segment = "y";
+console.log(record.segment, Object.keys(record).join(","));
+
+// %SegmentIteratorPrototype% carries only next + @@toStringTag and inherits @@iterator.
+const iteratorPrototype = Object.getPrototypeOf(iterator);
+console.log(Object.prototype.toString.call(iterator));
+console.log(Object.getOwnPropertySymbols(iteratorPrototype).map(String).join(","));
+console.log(iterator[Symbol.iterator]() === iterator);

@@ -24,6 +24,7 @@ hints, resource identity allocators, and context-less compatibility fallbacks.
 | `AsyncContextRuntime._enabledHookCount` | Process | Fast-path activity count; actual hooks are agent-owned |
 | `FsCommon._nextFileDescriptor` | Process | Identity allocator for process file resources |
 | `JSON._parseShapes` | CLR thread | At most 128 cached layout transitions and 8,192 key characters; no parsed values, descriptors, realm objects, or interned keys |
+| `RegExp._compiledPatternCacheEntryCount` | Process | Atomic entry-count accounting for the bounded compiled-pattern cache |
 | `RegExp._compiledPatternCacheSourceCharacters` | Process | Atomic size accounting for the bounded compiled-pattern cache |
 | `RegExp._prototypeWellKnownSymbolFastPathFlags` | Process | Monotonic deoptimization flags; can only disable an optimization |
 | `RuntimeIntrinsics._initializationDepth` | CLR thread | Reentrant bootstrap state for the calling thread |

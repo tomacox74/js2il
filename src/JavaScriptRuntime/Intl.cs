@@ -38,8 +38,6 @@ public sealed class IntlSegmenter
         CreateSegmentsIterator;
     private static readonly BuiltinFunction0 SegmentIteratorNext =
         InvokeSegmentIteratorNext;
-    private static readonly BuiltinFunction0 SegmentIteratorSelf =
-        ReturnSegmentIterator;
 
     private static JsObject SegmentsPrototype
         => RuntimeIntrinsics.Current.GetOrCreate(
@@ -63,6 +61,8 @@ public sealed class IntlSegmenter
             static () => new JsObject(),
             static prototype =>
             {
+                // %IteratorPrototype% already supplies [Symbol.iterator]; the spec gives this
+                // prototype only `next` and its @@toStringTag.
                 PrototypeChain.SetPrototype(
                     prototype,
                     Iterator.Prototype);
@@ -71,11 +71,7 @@ public sealed class IntlSegmenter
                     "next",
                     SegmentIteratorNext,
                     "next");
-                DefineIteratorMethod(
-                    prototype,
-                    Symbol.iterator.DebugId,
-                    SegmentIteratorSelf,
-                    "[Symbol.iterator]");
+                DefineToStringTag(prototype, "Segmenter String Iterator");
             });
 
     public Segments segment(object? input)
@@ -135,9 +131,16 @@ public sealed class IntlSegmenter
 
         private sealed class SegmentData : JsObject, IExoticJsObject
         {
+            private const int SegmentSlot = 0;
+            private const int IndexSlot = 1;
+            private const int InputSlot = 2;
+
             private object? _segment;
             private object? _index;
             private object? _input;
+            // Bit per inline slot; once deleted, the key falls back to ordinary storage so a
+            // later re-add lands at the end of the key order like any fresh property.
+            private byte _deletedSlots;
 
             public SegmentData(
                 string segment,
@@ -149,69 +152,102 @@ public sealed class IntlSegmenter
                 _input = input;
             }
 
+            private static int SlotOf(string key)
+                => key switch
+                {
+                    "segment" => SegmentSlot,
+                    "index" => IndexSlot,
+                    "input" => InputSlot,
+                    _ => -1
+                };
+
+            private static string KeyOf(int slot)
+                => slot switch
+                {
+                    SegmentSlot => "segment",
+                    IndexSlot => "index",
+                    _ => "input"
+                };
+
+            private bool IsInlineSlot(int slot)
+                => slot >= 0 && (_deletedSlots & (1 << slot)) == 0;
+
+            private ref object? SlotRef(int slot)
+            {
+                switch (slot)
+                {
+                    case SegmentSlot:
+                        return ref _segment;
+                    case IndexSlot:
+                        return ref _index;
+                    default:
+                        return ref _input;
+                }
+            }
+
             internal override bool TryGetOwnPropertyValue(
                 string key,
                 out object? value)
             {
-                value = key switch
+                var slot = SlotOf(key);
+                if (IsInlineSlot(slot))
                 {
-                    "segment" => _segment,
-                    "index" => _index,
-                    "input" => _input,
-                    _ => null
-                };
-                return key is "segment" or "index" or "input";
+                    value = SlotRef(slot);
+                    return true;
+                }
+
+                return base.TryGetOwnPropertyValue(key, out value);
             }
 
             internal override bool HasOwnPropertyValue(string key)
-                => key is "segment" or "index" or "input"
-                    && !PropertyDescriptorStore.IsDeleted(this, key);
+                => IsInlineSlot(SlotOf(key)) || base.HasOwnPropertyValue(key);
 
             internal override bool SetOwnPropertyValue(
                 string key,
                 object? value)
             {
-                switch (key)
+                var slot = SlotOf(key);
+                if (IsInlineSlot(slot))
                 {
-                    case "segment":
-                        _segment = value;
-                        return true;
-                    case "index":
-                        _index = value;
-                        return true;
-                    case "input":
-                        _input = value;
-                        return true;
-                    default:
-                        return base.SetOwnPropertyValue(key, value);
+                    SlotRef(slot) = value;
+                    return true;
                 }
+
+                return base.SetOwnPropertyValue(key, value);
+            }
+
+            internal override bool DeleteOwnProperty(string key)
+            {
+                var slot = SlotOf(key);
+                if (IsInlineSlot(slot))
+                {
+                    _deletedSlots |= (byte)(1 << slot);
+                    SlotRef(slot) = null;
+                    return true;
+                }
+
+                return base.DeleteOwnProperty(key);
             }
 
             internal override IEnumerable<string> GetOwnPropertyKeys()
             {
                 var seen = new HashSet<string>(StringComparer.Ordinal);
+                for (var slot = SegmentSlot; slot <= InputSlot; slot++)
+                {
+                    if (IsInlineSlot(slot))
+                    {
+                        var key = KeyOf(slot);
+                        seen.Add(key);
+                        yield return key;
+                    }
+                }
+
                 foreach (var key in base.GetOwnPropertyKeys())
                 {
                     if (seen.Add(key))
                     {
                         yield return key;
                     }
-                }
-
-                if (seen.Add("segment")
-                    && !PropertyDescriptorStore.IsDeleted(this, "segment"))
-                {
-                    yield return "segment";
-                }
-                if (seen.Add("index")
-                    && !PropertyDescriptorStore.IsDeleted(this, "index"))
-                {
-                    yield return "index";
-                }
-                if (seen.Add("input")
-                    && !PropertyDescriptorStore.IsDeleted(this, "input"))
-                {
-                    yield return "input";
                 }
             }
         }
@@ -239,17 +275,6 @@ public sealed class IntlSegmenter
         return iterator.Next();
     }
 
-    private static object ReturnSegmentIterator(object? thisArgument)
-    {
-        if (thisArgument is not Segments.SegmentIterator)
-        {
-            throw new TypeError(
-                "Intl.Segmenter iterator called on incompatible receiver");
-        }
-
-        return thisArgument;
-    }
-
     private static void DefineIteratorMethod(
         object target,
         string key,
@@ -268,6 +293,22 @@ public sealed class IntlSegmenter
                 Configurable = true,
                 Writable = true,
                 Value = value
+            });
+    }
+
+    private static void DefineToStringTag(object target, string tag)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+        PropertyDescriptorStore.DefineOrUpdate(
+            target,
+            Symbol.toStringTag.DebugId,
+            new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = tag
             });
     }
 }

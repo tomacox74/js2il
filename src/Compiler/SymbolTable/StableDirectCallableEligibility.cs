@@ -245,7 +245,7 @@ internal static class StableDirectCallableEligibility
                         declarationStatementIndex,
                         functionDeclaration,
                         new HashSet<Node>()),
-                _ => outermostDeferredBoundary is not FunctionDeclaration
+                _ => true
             };
         }
 
