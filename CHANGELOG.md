@@ -19,6 +19,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `Proxy`, `Reflect`, `NativeErrors`, `WeakMap.prototype`, `Number.prototype`,
   `Symbol`, `Object.prototype`, and `Promise`. No product or harness changes
   were required; all fixtures already passed under the existing runtime.
+- test(test262): port 223 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering `String`/`String.prototype`, `Object`/`Object.prototype`, `Proxy`,
+  `StringIteratorPrototype`, and additional `TypedArray` cases. No product or
+  harness changes were required; all fixtures already passed under the
+  existing runtime.
 
 ## v0.12.26 - 2026-09-19
 
