@@ -6,7 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test(test262): port 516 upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering `Array`/`Array.prototype` iteration and sorting methods,
+  `Iterator`/`Iterator.prototype` helper methods, `Map`/`Map.prototype`,
+  `GeneratorPrototype`, `Error`/`Error.prototype`, `Boolean`, `BigInt`,
+  `FinalizationRegistry`, `ArrayIteratorPrototype`, `Function.prototype.bind`,
+  `MapIteratorPrototype`, `Date`, `NativeErrors`, and several other built-ins.
+  Extended the native harness with `dateConstants.js` support so ported `Date`
+  fixtures relying on the upstream date-constant helper values run natively.
 
 ## v0.12.26 - 2026-09-19
 
