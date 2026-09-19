@@ -491,14 +491,6 @@ namespace Jroc.Utilities.Ecma335
         }
 
         /// <summary>
-        /// Gets or creates a property getter member reference handle.
-        /// </summary>
-        public MemberReferenceHandle GetOrAddPropertyGetter(Type declaringType, string propertyName)
-        {
-            throw new NotImplementedException("GetOrAddPropertyGetter not yet implemented. Use GetOrAddMethod with 'get_PropertyName' for now.");
-        }
-
-        /// <summary>
         /// Gets or creates a field member reference handle.
         /// </summary>
         public MemberReferenceHandle GetOrAddField(Type declaringType, string fieldName)

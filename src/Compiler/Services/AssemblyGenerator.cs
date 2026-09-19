@@ -18,12 +18,6 @@ namespace Jroc.Services
 {
     internal class AssemblyGenerator
     {
-        // Standard public key as defined in ECMA-335 for reference assemblies
-        private static readonly byte[] StandardPublicKey = new byte[] {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
-
         public MetadataBuilder _metadataBuilder;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
