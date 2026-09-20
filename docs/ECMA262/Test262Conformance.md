@@ -22,28 +22,28 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 16,023 | 12 | 7,477 | 23,512 | **68.15%** |
-| Language syntax and semantics | 14,412 | 46 | 9,185 | 23,643 | **60.96%** |
-| **Total** | 30,435 | 58 | 17,748 | 48,241 | **63.09%** |
+| Language syntax and semantics | 14,755 | 46 | 8,842 | 23,643 | **62.41%** |
+| **Total** | 30,778 | 58 | 17,405 | 48,241 | **63.80%** |
 
 ## Language Areas
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| `arguments-object` | 176 | 0 | 87 | 263 | **66.92%** |
+| `arguments-object` | 199 | 0 | 64 | 263 | **75.67%** |
 | `asi` | 102 | 0 | 0 | 102 | **100.00%** |
-| `block-scope` | 35 | 1 | 109 | 145 | **24.14%** |
+| `block-scope` | 42 | 1 | 102 | 145 | **28.97%** |
 | `comments` | 22 | 0 | 30 | 52 | **42.31%** |
 | `computed-property-names` | 0 | 0 | 48 | 48 | **0.00%** |
 | `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 6,790 | 10 | 4,238 | 11,038 | **61.51%** |
+| `expressions` | 6,816 | 10 | 4,212 | 11,038 | **61.75%** |
 | `function-code` | 40 | 0 | 177 | 217 | **18.43%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
 | `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
-| `identifiers` | 89 | 0 | 179 | 268 | **33.21%** |
+| `identifiers` | 152 | 0 | 116 | 268 | **56.72%** |
 | `import` | 10 | 0 | 117 | 127 | **7.87%** |
 | `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
 | `line-terminators` | 25 | 0 | 16 | 41 | **60.98%** |
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,246 | 35 | 3,056 | 9,337 | **66.90%** |
+| `statements` | 6,470 | 35 | 2,832 | 9,337 | **69.29%** |
 | `types` | 11 | 0 | 102 | 113 | **9.73%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
