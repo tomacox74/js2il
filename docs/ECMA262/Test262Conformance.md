@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,023 | 12 | 7,477 | 23,512 | **68.15%** |
-| Language syntax and semantics | 14,755 | 46 | 8,842 | 23,643 | **62.41%** |
-| **Total** | 30,778 | 58 | 17,405 | 48,241 | **63.80%** |
+| Built-in objects and APIs | 16,068 | 12 | 7,432 | 23,512 | **68.34%** |
+| Language syntax and semantics | 15,143 | 46 | 8,454 | 23,643 | **64.05%** |
+| **Total** | 31,211 | 58 | 16,972 | 48,241 | **64.70%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 6,816 | 10 | 4,212 | 11,038 | **61.75%** |
+| `expressions` | 7,124 | 10 | 3,904 | 11,038 | **64.54%** |
 | `function-code` | 40 | 0 | 177 | 217 | **18.43%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -55,7 +55,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
 | `statements` | 6,470 | 35 | 2,832 | 9,337 | **69.29%** |
-| `types` | 11 | 0 | 102 | 113 | **9.73%** |
+| `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
 ## Expression Features
@@ -215,7 +215,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Promise` | 384 | 0 | 293 | 677 | **56.72%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,006 | 0 | 873 | 1,879 | **53.54%** |
+| `RegExp` | 1,033 | 0 | 846 | 1,879 | **54.98%** |
 | `RegExpStringIteratorPrototype` | 5 | 0 | 12 | 17 | **29.41%** |
 | `Set` | 382 | 0 | 1 | 383 | **99.74%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
@@ -232,8 +232,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
 | `WeakMap` | 141 | 0 | 0 | 141 | **100.00%** |
-| `WeakRef` | 20 | 0 | 9 | 29 | **68.97%** |
-| `WeakSet` | 75 | 0 | 10 | 85 | **88.24%** |
+| `WeakRef` | 28 | 0 | 1 | 29 | **96.55%** |
+| `WeakSet` | 85 | 0 | 0 | 85 | **100.00%** |
 
 ## Annex B Features
 
