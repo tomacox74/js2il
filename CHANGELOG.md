@@ -25,6 +25,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   harness changes were required; all fixtures already passed under the
   existing runtime.
 
+- test(test262): port 343 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering `language/statements` (`variable`, `with`, `try`, `for`, `using`),
+  `language/identifiers`, `language/expressions` (`object`, `dynamic-import`),
+  `language/arguments-object`, and `language/block-scope`. This is the first
+  round to draw candidates primarily from `test/language` rather than
+  `test/built-ins`. No product or harness changes were required; all
+  fixtures already passed under the existing runtime.
+
 ## v0.12.26 - 2026-09-19
 
 - perf(runtime): cache the compiled `Regex`, named-group table, and
