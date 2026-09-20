@@ -32,6 +32,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   round to draw candidates primarily from `test/language` rather than
   `test/built-ins`. No product or harness changes were required; all
   fixtures already passed under the existing runtime.
+- test(test262): port 433 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering language expression operators, template literals, language types,
+  and additional `RegExp`, `WeakRef`, and `WeakSet` cases. No product or
+  harness changes were required; all fixtures already passed under the
+  existing runtime.
 
 ## v0.12.26 - 2026-09-19
 
