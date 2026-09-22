@@ -256,9 +256,23 @@
         "specUrl": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js",
-          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/dstr/PrivateMethodNestedDestructuringExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/dstr/PrivateMethodNestedDestructuringExecutionTests.cs"
         ],
-        "notes": "Class constructors and instance methods support object destructuring parameters with full default value support (e.g., constructor({host=\"localhost\", port=8080})). Uses the same conditional IL generation as functions/arrows. Shared implementation in MethodBuilder.EmitObjectPatternParameterDestructuring handles all function types uniformly. Supports shorthand, aliasing, and default values. Limitations: no nested patterns, no rest properties, no array patterns."
+        "test262Paths": [
+          "test/language/statements/class/dstr/private-meth-obj-ptrn-prop-ary-init.js",
+          "test/language/statements/class/dstr/private-meth-obj-ptrn-prop-ary.js",
+          "test/language/statements/class/dstr/private-meth-obj-ptrn-prop-obj-init.js",
+          "test/language/statements/class/dstr/private-meth-obj-ptrn-prop-obj.js",
+          "test/language/statements/class/dstr/private-meth-static-obj-ptrn-prop-ary-init.js",
+          "test/language/statements/class/dstr/private-meth-static-obj-ptrn-prop-ary.js",
+          "test/language/statements/class/dstr/private-meth-static-obj-ptrn-prop-obj-init.js",
+          "test/language/statements/class/dstr/private-meth-static-obj-ptrn-prop-obj.js",
+          "test/language/expressions/class/dstr/private-meth-static-obj-ptrn-prop-ary-init.js",
+          "test/language/expressions/class/dstr/private-meth-static-obj-ptrn-prop-ary.js"
+        ],
+        "notes": "Class constructors and methods support object destructuring parameters with default values, shorthand, aliasing, and nested object or array binding patterns. Private instance and static methods share recursive binding-target registration, so property keys never become local bindings. Remaining limitations include rest properties and broader array-pattern parameter forms."
       },
       {
         "clause": "13.2.2",

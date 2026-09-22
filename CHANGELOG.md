@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): recursively register only binding targets from nested
+  destructuring parameters in class methods, preventing object property keys
+  from leaking into method scope; port 10 corresponding upstream Test262 cases.
 - fix(runtime): make `Array.prototype.reduceRight` dynamically probe indexed
   properties across its captured length, correctly handling sparse arrays,
   inherited values, accessors, deletions, and length mutation; port 10

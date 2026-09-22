@@ -1370,49 +1370,7 @@ namespace Jroc.SymbolTables
                                 methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
                             }
 
-                            foreach (var p in mfunc.Params)
-                            {
-                                if (p is Identifier pid)
-                                {
-                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, methodScope, pid);
-                                    methodScope.Parameters.Add(pid.Name);
-                                }
-                                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
-                                {
-                                    // Parameter with default value (e.g., a = 10)
-                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, methodScope, apId);
-                                    methodScope.Parameters.Add(apId.Name);
-                                }
-                                else if (p is ObjectPattern op)
-                                {
-                                    // Destructuring parameter - register bindings for each property
-                                    foreach (var prop in op.Properties.OfType<Property>())
-                                    {
-                                        // Handle default values: {a = 10} where Value is AssignmentPattern
-                                        Identifier? bindId = null;
-                                        if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                                        {
-                                            bindId = apLeftId;
-                                        }
-                                        else
-                                        {
-                                            bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                        }
-
-                                        if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
-                                        {
-                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, methodScope, bindId);
-                                            // Mark as parameter so TypeGenerator creates fields/locals for them
-                                            methodScope.Parameters.Add(bindId.Name);
-                                        }
-                                        // Track that this is a destructured parameter (needs field for storage)
-                                        if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
-                                        {
-                                            methodScope.DestructuredParameters.Add(bindId.Name);
-                                        }
-                                    }
-                                }
-                            }
+                            BindObjectPatternParameters(mfunc.Params, methodScope);
 
                             methodScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(mfunc);
                             BuildFunctionParameterScopes(globalScope, mfunc.Params, methodScope);
@@ -1515,44 +1473,7 @@ namespace Jroc.SymbolTables
                                 methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
                             }
 
-                            foreach (var p in mfunc.Params)
-                            {
-                                if (p is Identifier pid)
-                                {
-                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, methodScope, pid);
-                                    methodScope.Parameters.Add(pid.Name);
-                                }
-                                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
-                                {
-                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, methodScope, apId);
-                                    methodScope.Parameters.Add(apId.Name);
-                                }
-                                else if (p is ObjectPattern op)
-                                {
-                                    foreach (var prop in op.Properties.OfType<Property>())
-                                    {
-                                        Identifier? bindId = null;
-                                        if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                                        {
-                                            bindId = apLeftId;
-                                        }
-                                        else
-                                        {
-                                            bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                        }
-
-                                        if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
-                                        {
-                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, methodScope, bindId);
-                                            methodScope.Parameters.Add(bindId.Name);
-                                        }
-                                        if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
-                                        {
-                                            methodScope.DestructuredParameters.Add(bindId.Name);
-                                        }
-                                    }
-                                }
-                            }
+                            BindObjectPatternParameters(mfunc.Params, methodScope);
 
                             methodScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(mfunc);
                             BuildFunctionParameterScopes(globalScope, mfunc.Params, methodScope);
@@ -3185,75 +3106,100 @@ namespace Jroc.SymbolTables
                         // They are initialized from the ambient arguments array at runtime
                     }
                 }
-                else if (p is ObjectPattern op)
+                else if (p is ObjectPattern or ArrayPattern)
                 {
-                    foreach (var pnode in op.Properties)
+                    foreach (var bindId in EnumerateBindingIdentifiers(p))
                     {
-                        if (pnode is Property prop)
+                        if (!scope.Bindings.ContainsKey(bindId.Name))
                         {
-                            // Handle default values: {a = 10} where Value is AssignmentPattern
-                            Identifier? bindId = null;
-                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                            {
-                                bindId = apLeftId;
-                            }
-                            else
-                            {
-                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                            }
-                            
-                            if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
-                            {
-                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
-                            }
-                            // Add destructured properties to Parameters set so TypeGenerator creates fields/locals
-                            if (bindId != null && !scope.Parameters.Contains(bindId.Name))
-                            {
-                                scope.Parameters.Add(bindId.Name);
-                            }
-                            // Track that this is a destructured parameter (needs field for storage)
-                            if (bindId != null && !scope.DestructuredParameters.Contains(bindId.Name))
-                            {
-                                scope.DestructuredParameters.Add(bindId.Name);
-                            }
+                            scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
+                        }
+                        if (!scope.Parameters.Contains(bindId.Name))
+                        {
+                            scope.Parameters.Add(bindId.Name);
+                        }
+                        if (!scope.DestructuredParameters.Contains(bindId.Name))
+                        {
+                            scope.DestructuredParameters.Add(bindId.Name);
                         }
                     }
                 }
-                else if (p is AssignmentPattern ap2 && ap2.Left is ObjectPattern opWithDefault)
+                else if (p is AssignmentPattern { Left: ObjectPattern or ArrayPattern } patternWithDefault)
                 {
-                    // Handle destructured parameter with default value: { x, y } = { x: 0, y: 0 }
-                    foreach (var pnode in opWithDefault.Properties)
+                    foreach (var bindId in EnumerateBindingIdentifiers(patternWithDefault.Left))
                     {
-                        if (pnode is Property prop)
+                        if (!scope.Bindings.ContainsKey(bindId.Name))
                         {
-                            // Handle nested default values: {a = 10} = {...} where Value is AssignmentPattern
-                            Identifier? bindId = null;
-                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                            {
-                                bindId = apLeftId;
-                            }
-                            else
-                            {
-                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                            }
-                            
-                            if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
-                            {
-                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
-                            }
-                            // Add destructured properties to Parameters set
-                            if (bindId != null && !scope.Parameters.Contains(bindId.Name))
-                            {
-                                scope.Parameters.Add(bindId.Name);
-                            }
-                            // Track that this is a destructured parameter (needs field for storage)
-                            if (bindId != null && !scope.DestructuredParameters.Contains(bindId.Name))
-                            {
-                                scope.DestructuredParameters.Add(bindId.Name);
-                            }
+                            scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
+                        }
+                        if (!scope.Parameters.Contains(bindId.Name))
+                        {
+                            scope.Parameters.Add(bindId.Name);
+                        }
+                        if (!scope.DestructuredParameters.Contains(bindId.Name))
+                        {
+                            scope.DestructuredParameters.Add(bindId.Name);
                         }
                     }
                 }
+            }
+        }
+
+        private static IEnumerable<Identifier> EnumerateBindingIdentifiers(Node pattern)
+        {
+            switch (pattern)
+            {
+                case Identifier identifier:
+                    yield return identifier;
+                    yield break;
+
+                case AssignmentPattern assignment:
+                    foreach (var identifier in EnumerateBindingIdentifiers(assignment.Left))
+                    {
+                        yield return identifier;
+                    }
+                    yield break;
+
+                case RestElement rest:
+                    foreach (var identifier in EnumerateBindingIdentifiers(rest.Argument))
+                    {
+                        yield return identifier;
+                    }
+                    yield break;
+
+                case ObjectPattern objectPattern:
+                    foreach (var property in objectPattern.Properties)
+                    {
+                        var target = property switch
+                        {
+                            Property item => item.Value,
+                            RestElement restProperty => restProperty.Argument,
+                            _ => null
+                        };
+                        if (target == null)
+                        {
+                            continue;
+                        }
+                        foreach (var identifier in EnumerateBindingIdentifiers(target))
+                        {
+                            yield return identifier;
+                        }
+                    }
+                    yield break;
+
+                case ArrayPattern arrayPattern:
+                    foreach (var element in arrayPattern.Elements)
+                    {
+                        if (element == null)
+                        {
+                            continue;
+                        }
+                        foreach (var identifier in EnumerateBindingIdentifiers(element))
+                        {
+                            yield return identifier;
+                        }
+                    }
+                    yield break;
             }
         }
 
