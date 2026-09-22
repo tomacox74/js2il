@@ -6,9 +6,9 @@ For resumable passing-but-unported discovery, see the [Test262 artifact catalog]
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
 This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.26](https://github.com/tomacox74/js2il/releases/tag/v0.12.26).
-| Built-in objects and APIs | 16,120 | 12 | 7,380 | 23,512 | **68.56%** |
-| Language syntax and semantics | 15,336 | 46 | 8,265 | 23,647 | **64.85%** |
-| **Total** | 31,456 | 58 | 16,731 | 48,245 | **65.20%** |
+
+## How to Read This Report
+
 - **Verified passing**: the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse or runtime phase.
 - **Known unsupported**: the test exercises behavior explicitly excluded from the release, primarily `eval`.
 - **No published result**: JROC has not published a conformance result for the test. This does not imply either support or failure.
@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,120 | 12 | 7,380 | 23,512 | **68.56%** |
-| Language syntax and semantics | 15,299 | 46 | 8,298 | 23,643 | **64.71%** |
-| **Total** | 31,419 | 58 | 16,764 | 48,241 | **65.13%** |
+| Built-in objects and APIs | 16,130 | 12 | 7,370 | 23,512 | **68.60%** |
+| Language syntax and semantics | 15,336 | 46 | 8,265 | 23,647 | **64.85%** |
+| **Total** | 31,466 | 58 | 16,721 | 48,245 | **65.22%** |
 
 ## Language Areas
 
@@ -172,7 +172,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 3,025 | 0 | 56 | 3,081 | **98.18%** |
+| `Array` | 3,035 | 0 | 46 | 3,081 | **98.51%** |
 | `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
 | `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
 | `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |

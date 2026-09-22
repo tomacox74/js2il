@@ -5148,29 +5148,48 @@ namespace JavaScriptRuntime
                 throw new TypeError("reduceRight callback is not a function");
             }
 
-            if (this.Count == 0 && !hasInitial)
-            {
-                throw new TypeError("Reduce of empty array with no initial value");
-            }
-
+            int length = Count;
             object? acc;
             int startIndex;
             if (hasInitial)
             {
                 acc = args![1];
-                startIndex = this.Count - 1;
+                startIndex = length - 1;
             }
             else
             {
-                acc = this[this.Count - 1];
-                startIndex = this.Count - 2;
+                bool found = false;
+                acc = null;
+                startIndex = length - 1;
+                for (int i = length - 1; i >= 0; i--)
+                {
+                    if (!ObjectRuntime.HasPropertyForArrayLike((double)i, this))
+                    {
+                        continue;
+                    }
+
+                    acc = ObjectRuntime.GetItem(this, (double)i);
+                    startIndex = i - 1;
+                    found = true;
+                    break;
+                }
+
+                if (!found)
+                {
+                    throw new TypeError("Reduce of empty array with no initial value");
+                }
             }
 
             ArrayCallbackInvoker? invoke = null;
             for (int i = startIndex; i >= 0; i--)
             {
+                if (!ObjectRuntime.HasPropertyForArrayLike((double)i, this))
+                {
+                    continue;
+                }
+
                 invoke ??= CreateArrayCallbackInvoker(cb, 4, "reduceRight");
-                acc = invoke(acc, this[i], (double)i, this);
+                acc = invoke(acc, ObjectRuntime.GetItem(this, (double)i), (double)i, this);
             }
 
             return acc;
