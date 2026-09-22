@@ -6,9 +6,9 @@ For resumable passing-but-unported discovery, see the [Test262 artifact catalog]
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
 This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.26](https://github.com/tomacox74/js2il/releases/tag/v0.12.26).
-
-## How to Read This Report
-
+| Built-in objects and APIs | 16,120 | 12 | 7,380 | 23,512 | **68.56%** |
+| Language syntax and semantics | 15,336 | 46 | 8,265 | 23,647 | **64.85%** |
+| **Total** | 31,456 | 58 | 16,731 | 48,245 | **65.20%** |
 - **Verified passing**: the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse or runtime phase.
 - **Known unsupported**: the test exercises behavior explicitly excluded from the release, primarily `eval`.
 - **No published result**: JROC has not published a conformance result for the test. This does not imply either support or failure.
@@ -65,8 +65,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `addition` | 45 | 0 | 3 | 48 | **93.75%** |
 | `array` | 14 | 0 | 38 | 52 | **26.92%** |
 | `arrow-function` | 336 | 0 | 7 | 343 | **97.96%** |
-| `assignment` | 485 | 0 | 0 | 485 | **100.00%** |
-| `assignmenttargettype` | 310 | 0 | 14 | 324 | **95.68%** |
+| `assignment` | 489 | 0 | 0 | 489 | **100.00%** |
+| `assignmenttargettype` | 318 | 0 | 6 | 324 | **98.15%** |
 | `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
 | `async-function` | 38 | 0 | 55 | 93 | **40.86%** |
 | `async-generator` | 212 | 0 | 411 | 623 | **34.03%** |
@@ -108,7 +108,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
 | `new.target` | 11 | 0 | 3 | 14 | **78.57%** |
 | `new` | 32 | 0 | 27 | 59 | **54.24%** |
-| `object` | 800 | 6 | 364 | 1,170 | **68.38%** |
+| `object` | 808 | 6 | 356 | 1,170 | **69.06%** |
 | `optional-chaining` | 6 | 0 | 32 | 38 | **15.79%** |
 | `postfix-decrement` | 2 | 0 | 35 | 37 | **5.41%** |
 | `postfix-increment` | 2 | 0 | 36 | 38 | **5.26%** |
@@ -156,7 +156,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `generators` | 197 | 0 | 69 | 266 | **74.06%** |
 | `if` | 59 | 0 | 10 | 69 | **85.51%** |
 | `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
-| `let` | 123 | 0 | 22 | 145 | **84.83%** |
+| `let` | 140 | 0 | 5 | 145 | **96.55%** |
 | `return` | 1 | 0 | 15 | 16 | **6.25%** |
 | `switch` | 86 | 0 | 25 | 111 | **77.48%** |
 | `throw` | 14 | 0 | 0 | 14 | **100.00%** |
