@@ -3106,7 +3106,7 @@ namespace Jroc.SymbolTables
                         // They are initialized from the ambient arguments array at runtime
                     }
                 }
-                else if (p is ObjectPattern or ArrayPattern)
+                else if (p is ObjectPattern)
                 {
                     foreach (var bindId in EnumerateBindingIdentifiers(p))
                     {
@@ -3124,7 +3124,7 @@ namespace Jroc.SymbolTables
                         }
                     }
                 }
-                else if (p is AssignmentPattern { Left: ObjectPattern or ArrayPattern } patternWithDefault)
+                else if (p is AssignmentPattern { Left: ObjectPattern } patternWithDefault)
                 {
                     foreach (var bindId in EnumerateBindingIdentifiers(patternWithDefault.Left))
                     {
