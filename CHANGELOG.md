@@ -37,6 +37,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and additional `RegExp`, `WeakRef`, and `WeakSet` cases. No product or
   harness changes were required; all fixtures already passed under the
   existing runtime.
+- test(test262): port 208 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering `language/function-code`, `Number` numeric-literal string
+  conversions, `RegExpStringIteratorPrototype`, additional `RegExp`, and one
+  `Set` case. No product or harness changes were required; all fixtures
+  already passed under the existing runtime.
 
 ## v0.12.26 - 2026-09-19
 

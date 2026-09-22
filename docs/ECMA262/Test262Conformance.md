@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,068 | 12 | 7,432 | 23,512 | **68.34%** |
-| Language syntax and semantics | 15,143 | 46 | 8,454 | 23,643 | **64.05%** |
-| **Total** | 31,211 | 58 | 16,972 | 48,241 | **64.70%** |
+| Built-in objects and APIs | 16,120 | 12 | 7,380 | 23,512 | **68.56%** |
+| Language syntax and semantics | 15,299 | 46 | 8,298 | 23,643 | **64.71%** |
+| **Total** | 31,419 | 58 | 16,764 | 48,241 | **65.13%** |
 
 ## Language Areas
 
@@ -39,7 +39,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
 | `expressions` | 7,124 | 10 | 3,904 | 11,038 | **64.54%** |
-| `function-code` | 40 | 0 | 177 | 217 | **18.43%** |
+| `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
 | `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
@@ -208,16 +208,16 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
 | `NativeErrors` | 88 | 0 | 6 | 94 | **93.62%** |
-| `Number` | 303 | 0 | 35 | 338 | **89.64%** |
+| `Number` | 337 | 0 | 1 | 338 | **99.70%** |
 | `Object` | 3,328 | 0 | 83 | 3,411 | **97.57%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
 | `Promise` | 384 | 0 | 293 | 677 | **56.72%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,033 | 0 | 846 | 1,879 | **54.98%** |
-| `RegExpStringIteratorPrototype` | 5 | 0 | 12 | 17 | **29.41%** |
-| `Set` | 382 | 0 | 1 | 383 | **99.74%** |
+| `RegExp` | 1,040 | 0 | 839 | 1,879 | **55.35%** |
+| `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
+| `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 69 | 0 | 35 | 104 | **66.35%** |
