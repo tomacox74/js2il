@@ -42,6 +42,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   conversions, `RegExpStringIteratorPrototype`, additional `RegExp`, and one
   `Set` case. No product or harness changes were required; all fixtures
   already passed under the existing runtime.
+- test(test262): port 37 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
+  covering `language/statements/let`, `language/expressions/object`,
+  `language/expressions/assignmenttargettype`, and additional
+  `language/expressions/assignment` cases. No product or harness changes
+  were required; all fixtures already passed under the existing runtime.
 
 ## v0.12.26 - 2026-09-19
 
