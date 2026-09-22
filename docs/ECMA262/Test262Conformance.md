@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 16,130 | 12 | 7,370 | 23,512 | **68.60%** |
-| Language syntax and semantics | 15,346 | 46 | 8,255 | 23,647 | **64.90%** |
-| **Total** | 31,476 | 58 | 16,711 | 48,245 | **65.24%** |
+| Language syntax and semantics | 15,356 | 46 | 8,245 | 23,647 | **64.94%** |
+| **Total** | 31,486 | 58 | 16,701 | 48,245 | **65.26%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 7,126 | 10 | 3,902 | 11,038 | **64.56%** |
+| `expressions` | 7,131 | 10 | 3,897 | 11,038 | **64.60%** |
 | `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,478 | 35 | 2,824 | 9,337 | **69.38%** |
+| `statements` | 6,483 | 35 | 2,819 | 9,337 | **69.43%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -76,7 +76,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
 | `call` | 73 | 1 | 18 | 92 | **79.35%** |
-| `class` | 2,297 | 0 | 1,762 | 4,059 | **56.59%** |
+| `class` | 2,302 | 0 | 1,757 | 4,059 | **56.71%** |
 | `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |

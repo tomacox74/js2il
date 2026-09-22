@@ -4167,6 +4167,28 @@ namespace JavaScriptRuntime
                 }
             }
 
+            var clrField = target is Type clrStaticType
+                ? FindClrField(
+                    clrStaticType,
+                    propName,
+                    BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase)
+                : FindClrField(
+                    target.GetType(),
+                    propName,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (clrField != null)
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Configurable = true,
+                    Enumerable = true,
+                    Writable = !clrField.IsInitOnly,
+                    Value = clrField.GetValue(target is Type ? null : target)
+                };
+                return true;
+            }
+
             // No implicit descriptor support for arrays/typed arrays/strings here.
             descriptor = default;
             return false;
