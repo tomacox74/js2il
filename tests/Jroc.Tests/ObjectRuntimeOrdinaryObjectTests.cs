@@ -98,6 +98,36 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
     }
 
     [Fact]
+    public void OwnPropertyDescriptor_DoesNotExposeRuntimeClrFields()
+    {
+        var stream = new JavaScriptRuntime.Node.Writable();
+
+        Assert.Null(JavaScriptRuntime.Object.getOwnPropertyDescriptor(stream, "_write"));
+        Assert.Null(JavaScriptRuntime.Object.getOwnPropertyDescriptor(stream, "_WRITE"));
+        Assert.Null(JavaScriptRuntime.Object.getOwnPropertyDescriptor(
+            typeof(RuntimeServices),
+            nameof(RuntimeServices.EmptyScopes)));
+    }
+
+    [Fact]
+    public void OwnPropertyDescriptor_OnlyMatchesDeclaredClassFieldName()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "class-field-descriptor-name",
+            "Classes",
+            _ => ("""
+                const assert = require("assert");
+                class Example { foo = 42; }
+                const instance = new Example();
+                assert.strictEqual(Object.getOwnPropertyDescriptor(instance, "foo").value, 42);
+                assert.strictEqual(Object.getOwnPropertyDescriptor(instance, "FOO"), undefined);
+                console.log("ok");
+                """, null));
+
+        Assert.Equal($"ok{Environment.NewLine}", result.Output);
+    }
+
+    [Fact]
     public void CoreDispatch_PreservesJsObjectBehavior()
     {
         var runtime = RuntimeServices.BuildServiceProvider();

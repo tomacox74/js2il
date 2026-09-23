@@ -114,6 +114,23 @@
   "support": {
     "entries": [
       {
+        "clause": "15.7.10",
+        "feature": "Public field own-property descriptors around private methods",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/elements/multiple-definitions-private-method-usage.js",
+          "test/language/expressions/class/elements/multiple-definitions-private-names.js",
+          "test/language/statements/class/elements/multiple-definitions-private-method-usage.js",
+          "test/language/statements/class/elements/multiple-definitions-private-names.js"
+        ],
+        "notes": "Compiler-marked public instance fields now expose exact-name own data-property descriptors with their current values and writable, enumerable, configurable class-field attributes. Unrelated CLR fields are not exposed by this descriptor fallback. The native harness also verifies six related private-method and private-name sequencing fixtures in class expressions and declarations."
+      },
+      {
         "clause": "15.7",
         "feature": "Class-expression conformance expansion",
         "status": "Supported with Limitations",

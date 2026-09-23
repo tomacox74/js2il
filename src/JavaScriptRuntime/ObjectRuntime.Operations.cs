@@ -4167,6 +4167,33 @@ namespace JavaScriptRuntime
                 }
             }
 
+            var clrField = target is Type clrStaticType
+                ? FindClrField(
+                    clrStaticType,
+                    propName,
+                    BindingFlags.Static | BindingFlags.Public)
+                : FindClrField(
+                    target.GetType(),
+                    propName,
+                    BindingFlags.Instance | BindingFlags.Public);
+            if (clrField != null
+                && clrField.IsDefined(typeof(Jroc.Runtime.JsCompiledClassFieldAttribute), inherit: false)
+                && clrField.DeclaringType?.Assembly.IsDefined(
+                    typeof(Jroc.Runtime.JsCompiledModuleAttribute),
+                    inherit: false) == true
+                && (target is not Type staticOwner || clrField.DeclaringType == staticOwner))
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Configurable = true,
+                    Enumerable = true,
+                    Writable = !clrField.IsInitOnly,
+                    Value = clrField.GetValue(target is Type ? null : target)
+                };
+                return true;
+            }
+
             // No implicit descriptor support for arrays/typed arrays/strings here.
             descriptor = default;
             return false;
