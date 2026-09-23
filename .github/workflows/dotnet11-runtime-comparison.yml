@@ -1,0 +1,177 @@
+name: .NET 10 vs .NET 11 JROC Performance
+
+on:
+  workflow_dispatch:
+
+jobs:
+  compare:
+    name: ${{ matrix.benchmark_name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - benchmark_name: PrimeExecuteBenchmark
+            mode_argument: --prime-execute
+            artifact_suffix: prime-execute
+            jroc_method_filter: '*Jroc_ExecuteOnly*'
+          - benchmark_name: DromaeoExecutionBenchmarks
+            mode_argument: --dromaeo
+            artifact_suffix: dromaeo-execution
+            jroc_method_filter: '*Jroc_ExecuteOnly*'
+          - benchmark_name: KrackenExecutionBenchmarks
+            mode_argument: --kracken
+            artifact_suffix: kracken
+            jroc_method_filter: '*RunJrocTest*'
+          - benchmark_name: JavaScriptRuntimeBenchmarks
+            mode_argument: ''
+            artifact_suffix: javascript-runtime
+            jroc_method_filter: '*Jroc_Total*'
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup .NET 10 and .NET 11 RC1
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0.401
+            11.0.100-rc.1.26425.128
+
+      - name: Select .NET 11 SDK in this checkout
+        shell: bash
+        run: |
+          cat > global.json <<'JSON'
+          {
+            "sdk": {
+              "version": "11.0.100-rc.1.26425.128",
+              "rollForward": "disable",
+              "allowPrerelease": true
+            }
+          }
+          JSON
+
+      - name: Verify .NET installations
+        shell: bash
+        env:
+          BENCHMARK_NAME: ${{ matrix.benchmark_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/dotnet11-comparison
+          {
+            printf 'JROC SHA: %s\nBenchmark group: %s\nRun: %s attempt %s\nRunner: %s %s\n' \
+              "$GITHUB_SHA" "$BENCHMARK_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_OS" "$RUNNER_ARCH"
+            printf 'BenchmarkDotNet: 0.16.0-preview.2\n\n'
+            dotnet --version
+            dotnet --info
+            dotnet --list-sdks
+            dotnet --list-runtimes
+            uname -a
+            lscpu
+          } | tee artifacts/dotnet11-comparison/environment.txt
+          test "$(dotnet --version)" = '11.0.100-rc.1.26425.128'
+          dotnet --list-sdks | grep -F '10.0.401 '
+          dotnet --list-sdks | grep -F '11.0.100-rc.1.26425.128 '
+          dotnet --list-runtimes | grep -F 'Microsoft.NETCore.App 10.0.12 '
+          dotnet --list-runtimes | grep -F 'Microsoft.NETCore.App 11.0.0-rc.1.26425.128 '
+
+      - name: Restore benchmark project
+        working-directory: tests/performance/Benchmarks
+        run: dotnet restore Benchmarks.csproj -p:DotNet11Comparison=true
+
+      - name: Build benchmark host
+        working-directory: tests/performance/Benchmarks
+        run: dotnet build Benchmarks.csproj -c Release -f net10.0 --no-restore -p:DotNet11Comparison=true
+
+      - name: Shutdown build server
+        run: dotnet build-server shutdown
+
+      - name: Run paired CLR benchmarks
+        shell: bash
+        working-directory: tests/performance/Benchmarks
+        env:
+          BENCHMARK_MODE_ARGUMENT: ${{ matrix.mode_argument }}
+          JROC_METHOD_FILTER: ${{ matrix.jroc_method_filter }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [ -n "$BENCHMARK_MODE_ARGUMENT" ]; then
+            args+=("$BENCHMARK_MODE_ARGUMENT")
+          fi
+          dotnet run --project Benchmarks.csproj -c Release -f net10.0 --no-build \
+            -p:DotNet11Comparison=true -- "${args[@]}" \
+            --filter "$JROC_METHOD_FILTER" --runtimes net10.0 net11.0 --exporters json markdown
+
+      - name: Verify paired CLR results and write summary
+        shell: bash
+        env:
+          BENCHMARK_NAME: ${{ matrix.benchmark_name }}
+        run: |
+          set -euo pipefail
+          results=tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results
+          shopt -s nullglob
+          json=("$results"/*.json)
+          reports=("$results"/*-report-default.md)
+          if [ "${#json[@]}" -eq 0 ] || [ "${#reports[@]}" -eq 0 ]; then
+            echo "BenchmarkDotNet produced no JSON results or Markdown reports." >&2
+            exit 1
+          fi
+          node - "${reports[@]}" <<'JS'
+          const fs = require('node:fs');
+          for (const file of process.argv.slice(2)) {
+            const lines = fs.readFileSync(file, 'utf8').split(/\r?\n/);
+            const table = lines.filter(line => line.includes('|')).map(line =>
+              line.replace(/^\s*\|/, '').replace(/\|\s*$/, '')
+                .split('|').map(cell => cell.trim()));
+            const header = table.find(row => row.includes('Runtime') && row.includes('Mean'));
+            if (!header) throw new Error(`No runtime/mean table in ${file}`);
+            const runtime = header.indexOf('Runtime');
+            const mean = header.indexOf('Mean');
+            for (const clr of ['.NET 10.0', '.NET 11.0']) {
+              if (!table.some(row => row[runtime] === clr && /\d/.test(row[mean] ?? '') &&
+                  row[mean] !== 'NA')) {
+                throw new Error(`No measured ${clr} row in ${file}`);
+              }
+            }
+          }
+          JS
+          cpu_model="$(lscpu | sed -n 's/^Model name:[[:space:]]*//p' | head -n 1)"
+          {
+            printf '## .NET 10 vs .NET 11: %s\n\n' "$BENCHMARK_NAME"
+            printf 'JROC SHA: `%s` | Run: `%s` attempt `%s` | Runner: `%s` `%s` | CPU: `%s`\n\n' \
+              "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_OS" "$RUNNER_ARCH" "$cpu_model"
+            printf 'SDKs: `10.0.401`, `11.0.100-rc.1.26425.128` | Runtimes: `10.0.12`, `11.0.0-rc.1.26425.128` | BenchmarkDotNet: `0.16.0-preview.2`\n\n'
+            printf '.NET 10 is the ratio baseline. Both runtimes ran in this job on the same runner.\n\n'
+            for report in "${reports[@]}"; do
+              cat "$report"
+              printf '\n'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Ingest paired results
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          : "${SUPABASE_URL:?SUPABASE_URL is required for comparison ingestion}"
+          : "${SUPABASE_SERVICE_ROLE_KEY:?SUPABASE_SERVICE_ROLE_KEY is required for comparison ingestion}"
+          node tests/performance/ingestPerfToSupabase.js \
+            --source benchmarkdotnet \
+            --input tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results \
+            --benchmark-profile dotnet-runtime-comparison
+
+      - name: Upload comparison artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dotnet11-comparison-${{ matrix.artifact_suffix }}
+          path: |
+            tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/**/*
+            artifacts/dotnet11-comparison/environment.txt
+          retention-days: 90
