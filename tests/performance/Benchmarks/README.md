@@ -189,6 +189,28 @@ Runs a single `PrimeJavaScript` sieve pass after JROC compilation and interprete
 dotnet run -c Release -- --prime-execute
 ```
 
+#### .NET 10 vs .NET 11 runtime comparison
+
+This opt-in experiment compares the same checked-out JROC source on two CLRs
+within one GitHub-hosted job per benchmark group. Normal JROC and benchmark
+targets remain on .NET 10; the canonical run is the manually dispatched
+`.NET 10 vs .NET 11 JROC Performance` workflow. It installs .NET 10 SDK
+10.0.401/runtime 10.0.12 and .NET 11 RC1 SDK 11.0.100-rc.1.26425.128/runtime
+11.0.0-rc.1.26425.128. The comparison benchmark host opts into
+`net10.0;net11.0` with `-p:DotNet11Comparison=true`; both ordinary and
+comparison hosts use BenchmarkDotNet 0.16.0-preview.2. Production JROC targets
+and the committed root `global.json` do not change.
+
+The workflow runs the existing Prime, Dromaeo, Kraken, and
+JavaScriptRuntime JROC methods with `--runtimes net10.0 net11.0` in **that
+order**: .NET 10 is the ratio baseline. Use paired results from the same run
+and host; different hosted jobs can have different CPU models and are not
+controlled CLR comparisons. The workflow ingests results only after the
+eight-field database constraint cutover has completed, under
+`benchmark_profile=dotnet-runtime-comparison`. This profile is shared by
+BenchmarkDotNet, Mitata, and Prime; Prime remains the `prime-javascript`
+scenario, not a profile.
+
 #### Branch comparison workflow
 
 Run the manual `Benchmark branch comparison` workflow to compare a scenario from

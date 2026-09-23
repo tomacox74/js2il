@@ -78,7 +78,7 @@ Filter at the database whenever possible. For example, compare the latest
 
 ```bash
 curl --fail-with-body --silent --show-error \
-  "$SUPABASE_URL/rest/v1/perf_results?source=eq.benchmarkdotnet&scenario=eq.prime-javascript&metric=eq.mean_ns&order=run_at.desc&limit=100" \
+  "$SUPABASE_URL/rest/v1/perf_results?source=eq.benchmarkdotnet&scenario=eq.primejavascript-onepass&metric=eq.mean_ns&benchmark_profile=eq.dotnet-runtime-comparison&dotnet_runtime=in.(net10.0,net11.0)&select=run_id,run_attempt,source,scenario,runtime,runtime_version,dotnet_runtime,dotnet_runtime_version,benchmark_profile,metric,value,unit,run_at&order=run_at.desc&limit=100" \
   -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
   -H "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" |
   jq .
@@ -94,7 +94,7 @@ The checked-in ingester is the authoritative write contract. It writes one row
 per metric, not one row per benchmark case. The conflict identity is:
 
 ```text
-(run_id, run_attempt, source, scenario, runtime, metric)
+(run_id, run_attempt, source, scenario, runtime, dotnet_runtime, benchmark_profile, metric)
 ```
 
 Core columns written by every row:
@@ -111,6 +111,9 @@ Core columns written by every row:
 | `scenario` | Lowercase slug for the benchmark/script scenario |
 | `runtime` | Normalized runtime identity |
 | `runtime_version` | Version matched to the normalized runtime when known; may be null |
+| `dotnet_runtime` | Measured CLR target (`net10.0` or `net11.0` for the comparison); null when unknown or non-.NET |
+| `dotnet_runtime_version` | Exact measured child CLR version/build only (for example `10.0.12` or `11.0.0-rc.1.26425.128`); not the verbose BDN display or host version |
+| `benchmark_profile` | Harness-neutral configuration; `default` unless passed with `--benchmark-profile` |
 | `metric` | Measurement name |
 | `value` | Numeric measurement |
 | `unit` | Unit for `value` |
@@ -127,8 +130,10 @@ runner_os, runner_arch, github_image_os, github_image_version
 
 They are optional for backward compatibility: if the deployed table does not
 yet have them, the ingester retries with these columns and `runtime_version`
-removed, retaining the data in `meta`. Do not assume a structured host column
-exists without checking the deployed schema or an actual returned row.
+removed, retaining the data in `meta`. The CLR and profile columns are part
+of the required eight-field upsert identity, not optional fallback columns.
+Do not assume a structured host column exists without checking the deployed
+schema or an actual returned row.
 
 The table can have database-managed columns (for example an ID or creation
 timestamp) that are not supplied by the ingester. Obtain exact SQL types,
@@ -154,6 +159,18 @@ Runtime names are normalized by the ingester. Relevant examples include
 `jint-prepare`, `jint-execute`, `jint-execute-prepared`, `clearscript`,
 `yantrajs`, and `yantrajs-execute`.
 
+For comparison runs pass `--benchmark-profile dotnet-runtime-comparison`.
+The BenchmarkDotNet full-compressed JSON identifies each job's target CLR in
+`DisplayInfo`; its top-level `HostEnvironmentInfo.RuntimeVersion` is only the
+host CLR. The exact measured CLR builds are in the corresponding report's
+`-report-default.md` or `-report-github.md` environment summary. The ingester
+stores the child build (the first parenthesized version when present), not
+the display label or assembly version. Legacy 0.15.8 `DefaultJob` JSON does
+not identify a child CLR, so it keeps nullable CLR columns instead of copying
+the host CLR. Keep both reports together when ingesting; comparison ingestion
+rejects JROC rows without an unambiguous child CLR identity/build. Mitata and Prime default to
+null CLR identity, and Prime retains scenario `prime-javascript`.
+
 Release BenchmarkDotNet jobs run current JROC first, then build
 `Benchmarks.Previous.csproj` against the prior published patch and rerun the
 same suite's JROC method in that job. The `jroc-previous-*` rows therefore
@@ -169,12 +186,14 @@ the raw artifact and `normalizeRuntime()` before constructing a filter.
 Group comparable Supabase rows by at least:
 
 ```text
-(run_id, run_attempt, source, scenario)
+(run_id, run_attempt, source, scenario, benchmark_profile, dotnet_runtime)
 ```
 
 Rows for the same run can have slightly different `run_at` timestamps. Do not
 group by timestamp equality. Compare commits only when source, scenario,
-runtime, metric/unit, benchmark version, and host are compatible.
+runtime, metric/unit, benchmark version, profile, CLR version, and host are
+compatible. For CLR comparisons, compare both target rows within the same run
+and profile, not across unrelated runs.
 
 ## Understand the Timed Boundary
 
@@ -259,8 +278,9 @@ node scripts/runCubePhasedGuardrails.js --dry --il-smells
 
 ## Investigation Workflow
 
-1. Identify the exact scenario, source, metric, runtime, commit SHA, and
-   runner/host. Do not compare unrelated benchmark types or machines.
+1. Identify the exact scenario, source, metric, runtime, benchmark profile,
+   target CLR and exact child CLR version, commit SHA, and runner/host. Do not
+   compare unrelated benchmark types or machines.
 2. Retrieve the matching workflow artifact and inspect the raw JSON before
    querying aggregate table results.
 3. Query recent comparable rows using the same `source`, `scenario`, `metric`,
@@ -276,9 +296,10 @@ node scripts/runCubePhasedGuardrails.js --dry --il-smells
    node scripts/runPhasedBenchmarkScenario.js <scenario>
    ```
 
-7. Report the result with provenance: workflow run, SHA, source, scenario,
-   metric/unit, runtime version, host, and sample size. State uncertainty when
-   data is sparse or runners differ.
+7. Report the result with provenance: workflow run and attempt, SHA, source,
+   scenario, benchmark profile, JavaScript runtime/version, target CLR and
+   exact child CLR version, metric/unit, host, and sample size. State
+   uncertainty when data is sparse or runners differ.
 
 ## Guardrails
 

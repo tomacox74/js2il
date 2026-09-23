@@ -35,7 +35,10 @@ const HOST_COLUMN_KEYS = [
     'github_image_version'
 ];
 
-const UPSERT_CONFLICT_KEYS = ['run_id', 'run_attempt', 'source', 'scenario', 'runtime', 'metric'];
+const UPSERT_CONFLICT_KEYS = [
+    'run_id', 'run_attempt', 'source', 'scenario', 'runtime',
+    'dotnet_runtime', 'benchmark_profile', 'metric'
+];
 
 const HTML_ENTITY_MAP = {
     '&#39;': "'",
@@ -300,10 +303,70 @@ function compactObject(obj) {
     );
 }
 
+function parseDotNetMonikers(value) {
+    const matches = String(value ?? '').matchAll(/(?:net|\.NET\s*)(10|11)\.0(?!\d)/gi);
+    return [...new Set(Array.from(matches, match => `net${match[1]}.0`))];
+}
+
+function parseDotNetBuild(value) {
+    const text = String(value ?? '').trim();
+    const match = text.match(/^(?:\.NET\s+)?(\d+\.\d+\.\d+(?:-[\w.+-]+)?)(?:\s+\(([^,\s)]+)(?:,\s*[^)]*)?\))?$/i);
+    if (!match) return null;
+    const build = match[2] ?? match[1];
+    return /^\d+\.\d+\.\d+(?:-[\w.+-]+)?$/.test(build) ? build : null;
+}
+
+function readBenchmarkDotNetJobVersions(resultsDir, reportFile) {
+    const prefix = reportFile.replace(/-report(?:-full-compressed)?\.json$/i, '');
+    const versions = new Map();
+    for (const suffix of ['-report-default.md', '-report-github.md']) {
+        const file = path.join(resultsDir, prefix + suffix);
+        if (!fs.existsSync(file)) continue;
+        for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+            const match = line.match(/^\s*(\.NET\s+(?:10|11)\.0)\s*:\s*(\.NET\s+\S+\s+\([^)]+\))/i);
+            if (!match) continue;
+            const moniker = parseDotNetMonikers(match[1])[0];
+            const version = parseDotNetBuild(match[2]);
+            if (!version || !version.startsWith(moniker.slice(3) + '.')) {
+                throw new Error(`Invalid child CLR build for ${moniker} in ${reportFile}`);
+            }
+            if (versions.has(moniker) && versions.get(moniker) !== version) {
+                throw new Error(`Conflicting CLR builds for ${moniker} in ${reportFile}`);
+            }
+            versions.set(moniker, version);
+        }
+    }
+    return versions;
+}
+
+function benchmarkDotNetClr(benchmark, jobVersions, profile) {
+    const candidates = [
+        benchmark.DisplayInfo ?? benchmark.displayInfo,
+        benchmark.Job?.Runtime ?? benchmark.job?.runtime,
+        benchmark.Runtime ?? benchmark.runtime
+    ];
+    const monikers = [...new Set(candidates.flatMap(parseDotNetMonikers))];
+    const runtime = monikers.length === 1 ? monikers[0] : null;
+    const directVersion = benchmark.RuntimeVersion ?? benchmark.runtimeVersion
+        ?? benchmark.Job?.RuntimeVersion ?? benchmark.job?.runtimeVersion ?? null;
+    const directBuild = directVersion == null ? null : parseDotNetBuild(directVersion);
+    const version = runtime ? (directBuild ?? jobVersions.get(runtime) ?? null) : null;
+    const inconsistentVersion = directVersion && (
+        !directBuild
+        || (runtime && !directBuild.startsWith(runtime.slice(3) + '.'))
+        || (jobVersions.has(runtime) && jobVersions.get(runtime) !== directBuild)
+    );
+    if (profile === 'dotnet-runtime-comparison' && normalizeRuntime(
+        benchmark.Description ?? benchmark.description ?? benchmark.MethodTitle ?? benchmark.methodTitle
+        ?? benchmark.Method ?? benchmark.method ?? ''
+    ).startsWith('jroc') && (!runtime || !version || inconsistentVersion)) {
+        throw new Error(`Missing or ambiguous child CLR identity for JROC benchmark: ${benchmark.DisplayInfo ?? benchmark.Method ?? 'unknown'}`);
+    }
+    return { dotnet_runtime: runtime, dotnet_runtime_version: version };
+}
+
 function buildUpsertConflictKey(row) {
-    return UPSERT_CONFLICT_KEYS
-        .map(key => String(row?.[key] ?? ''))
-        .join('||');
+    return JSON.stringify(UPSERT_CONFLICT_KEYS.map(key => row?.[key] ?? null));
 }
 
 function dedupeRowsForUpsert(rows) {
@@ -375,7 +438,7 @@ function extractBenchmarkDotNetHostMetadata(data) {
     });
 }
 
-function createRow(base, source, scenario, runtime, metric, value, unit, runAt, meta = {}, hostColumns = {}, runtimeVersions = {}) {
+function createRow(base, source, scenario, runtime, metric, value, unit, runAt, meta = {}, hostColumns = {}, runtimeVersions = {}, profile = 'default', clr = {}) {
     const normalizedRuntime = normalizeRuntime(runtime);
     return {
         ...base,
@@ -384,6 +447,9 @@ function createRow(base, source, scenario, runtime, metric, value, unit, runAt, 
         scenario: slugify(scenario),
         runtime: normalizedRuntime,
         runtime_version: resolveRuntimeVersion(normalizedRuntime, runtimeVersions),
+        dotnet_runtime: clr.dotnet_runtime ?? null,
+        dotnet_runtime_version: clr.dotnet_runtime_version ?? null,
+        benchmark_profile: profile,
         metric,
         value,
         unit,
@@ -392,7 +458,7 @@ function createRow(base, source, scenario, runtime, metric, value, unit, runAt, 
     };
 }
 
-function parsePrimeResults(inputPath, base, hostMetadata, runtimeVersions) {
+function parsePrimeResults(inputPath, base, hostMetadata, runtimeVersions, profile = 'default') {
     if (!fs.existsSync(inputPath)) {
         console.log(`Prime results file not found: ${inputPath}`);
         return [];
@@ -418,24 +484,24 @@ function parsePrimeResults(inputPath, base, hostMetadata, runtimeVersions) {
         if (passes !== null) {
             rows.push(createRow(base, 'prime-script', scenario, runtime, 'passes', passes, 'count', runAt, {
                 host: hostMetadata
-            }, hostColumns, runtimeVersions));
+            }, hostColumns, runtimeVersions, profile));
         }
         if (passesPerSecond !== null) {
             rows.push(createRow(base, 'prime-script', scenario, runtime, 'passes_per_second', passesPerSecond, 'count_per_sec', runAt, {
                 host: hostMetadata
-            }, hostColumns, runtimeVersions));
+            }, hostColumns, runtimeVersions, profile));
         }
         if (compileDuration !== null) {
             rows.push(createRow(base, 'prime-script', scenario, runtime, 'compile_duration_ms', compileDuration, 'ms', runAt, {
                 host: hostMetadata
-            }, hostColumns, runtimeVersions));
+            }, hostColumns, runtimeVersions, profile));
         }
     }
 
     return rows;
 }
 
-function parseMitataResults(inputPath, base, hostMetadata, runtimeVersions) {
+function parseMitataResults(inputPath, base, hostMetadata, runtimeVersions, profile = 'default') {
     if (!fs.existsSync(inputPath)) {
         console.log(`Mitata results file not found: ${inputPath}`);
         return [];
@@ -486,13 +552,13 @@ function parseMitataResults(inputPath, base, hostMetadata, runtimeVersions) {
             };
 
             if (avgNs !== null) {
-                rows.push(createRow(base, 'mitata', scenario, runtime, 'avg_ns', avgNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'avg_ns', avgNs, 'ns', runAt, meta, hostColumns, runtimeVersions, profile));
             }
             if (totalNs !== null) {
-                rows.push(createRow(base, 'mitata', scenario, runtime, 'total_ns', totalNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'total_ns', totalNs, 'ns', runAt, meta, hostColumns, runtimeVersions, profile));
             }
             if (benchmarkIterations !== null) {
-                rows.push(createRow(base, 'mitata', scenario, runtime, 'iterations', benchmarkIterations, 'count', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'iterations', benchmarkIterations, 'count', runAt, meta, hostColumns, runtimeVersions, profile));
             }
             if (errorMessage) {
                 rows.push(createRow(
@@ -506,7 +572,8 @@ function parseMitataResults(inputPath, base, hostMetadata, runtimeVersions) {
                     runAt,
                     { ...meta, error: errorMessage },
                     hostColumns,
-                    runtimeVersions
+                    runtimeVersions,
+                    profile
                 ));
             }
         }
@@ -526,7 +593,7 @@ function extractBenchmarksFromJson(data) {
     return [];
 }
 
-function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVersions) {
+function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVersions, profile = 'default') {
     if (!fs.existsSync(resultsDir)) {
         console.log(`BenchmarkDotNet results directory not found: ${resultsDir}`);
         return [];
@@ -555,6 +622,7 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVers
             ...extractBenchmarkDotNetHostMetadata(data)
         });
         const hostColumns = buildHostColumns(bdnHostMetadata);
+        const jobVersions = readBenchmarkDotNetJobVersions(resultsDir, path.basename(filePath));
 
         for (const benchmark of benchmarks) {
             const params = benchmark.Parameters ?? benchmark.parameters ?? benchmark.Params ?? {};
@@ -572,6 +640,7 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVers
                 ?? benchmark.method
                 ?? displayInfo
                 ?? 'unknown';
+            const clr = benchmarkDotNetClr(benchmark, jobVersions, profile);
             const stats = benchmark.Statistics ?? benchmark.statistics ?? benchmark.ResultStatistics ?? benchmark.resultStatistics ?? {};
             const runAt = new Date().toISOString();
             const meta = {
@@ -637,28 +706,28 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVers
             );
 
             if (mean !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'mean_ns', mean, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'mean_ns', mean, 'ns', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (median !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'median_ns', median, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'median_ns', median, 'ns', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (stdDev !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'stddev_ns', stdDev, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'stddev_ns', stdDev, 'ns', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (allocatedBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (allocatedNativeMemoryBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (gen0Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (gen1Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (gen2Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
         }
     }
@@ -667,10 +736,10 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVers
         return rows;
     }
 
-    return parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, runtimeVersions);
+    return parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, runtimeVersions, profile);
 }
 
-function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, runtimeVersions) {
+function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, runtimeVersions, profile = 'default') {
     const files = fs.readdirSync(resultsDir)
         .filter(file => file.endsWith('.md'))
         .map(file => path.join(resultsDir, file));
@@ -699,6 +768,8 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, run
         const gen0Index = normalizedHeaders.indexOf('gen0');
         const gen1Index = normalizedHeaders.indexOf('gen1');
         const gen2Index = normalizedHeaders.indexOf('gen2');
+        const jobIndex = normalizedHeaders.indexOf('job');
+        const clrIndex = normalizedHeaders.indexOf('runtime');
 
         if (methodIndex < 0 || scenarioIndex < 0) {
             continue;
@@ -706,6 +777,7 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, run
 
         const hostColumns = buildHostColumns(hostMetadata);
         const runAt = new Date().toISOString();
+        const jobVersions = readBenchmarkDotNetJobVersions(resultsDir, path.basename(filePath).replace(/-report(?:-default|-github)?\.md$/, '-report.json'));
 
         for (let i = headerIndex + 2; i < lines.length; i++) {
             const line = lines[i];
@@ -744,6 +816,12 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, run
             }
 
             const runtime = method || 'unknown';
+            const monikers = [...new Set([jobIndex >= 0 ? columns[jobIndex] : null, clrIndex >= 0 ? columns[clrIndex] : null].flatMap(parseDotNetMonikers))];
+            const clr = { dotnet_runtime: monikers.length === 1 ? monikers[0] : null };
+            clr.dotnet_runtime_version = jobVersions.get(clr.dotnet_runtime) ?? null;
+            if (profile === 'dotnet-runtime-comparison' && normalizeRuntime(runtime).startsWith('jroc') && (!clr.dotnet_runtime || !clr.dotnet_runtime_version)) {
+                throw new Error(`Missing or ambiguous child CLR identity for JROC benchmark: ${method}`);
+            }
             const meta = {
                 report_file: path.basename(filePath),
                 source_format: 'benchmarkdotnet-markdown',
@@ -760,28 +838,28 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, run
             const gen2Collections = getNumber(gen2Text);
 
             if (meanNs !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'mean_ns', meanNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'mean_ns', meanNs, 'ns', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (medianNs !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'median_ns', medianNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'median_ns', medianNs, 'ns', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (stdDevNs !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'stddev_ns', stdDevNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'stddev_ns', stdDevNs, 'ns', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (allocatedBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (allocatedNativeMemoryBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (gen0Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (gen1Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
             if (gen2Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions, profile, clr));
             }
         }
     }
@@ -854,6 +932,11 @@ async function main() {
     const args = parseArgs(process.argv.slice(2));
     const source = String(args.source ?? '').trim();
     const input = String(args.input ?? '').trim();
+    const profileArg = args['benchmark-profile'] ?? 'default';
+    if (typeof profileArg !== 'string' || !profileArg.trim()) {
+        throw new Error('--benchmark-profile requires a nonempty value');
+    }
+    const profile = profileArg.trim();
 
     if (!source) {
         console.error('Missing required argument: --source');
@@ -866,11 +949,11 @@ async function main() {
     let rows = [];
 
     if (source === 'benchmarkdotnet') {
-        rows = parseBenchmarkDotNetResults(input || path.join('tests', 'performance', 'Benchmarks', 'BenchmarkDotNet.Artifacts', 'results'), base, hostMetadata, runtimeVersions);
+        rows = parseBenchmarkDotNetResults(input || path.join('tests', 'performance', 'Benchmarks', 'BenchmarkDotNet.Artifacts', 'results'), base, hostMetadata, runtimeVersions, profile);
     } else if (source === 'prime-script') {
-        rows = parsePrimeResults(input || path.join('tests', 'performance', 'results.json'), base, hostMetadata, runtimeVersions);
+        rows = parsePrimeResults(input || path.join('tests', 'performance', 'results.json'), base, hostMetadata, runtimeVersions, profile);
     } else if (source === 'mitata') {
-        rows = parseMitataResults(input || path.join('tests', 'performance', 'mitata', 'results.json'), base, hostMetadata, runtimeVersions);
+        rows = parseMitataResults(input || path.join('tests', 'performance', 'mitata', 'results.json'), base, hostMetadata, runtimeVersions, profile);
     } else {
         console.error(`Unsupported source: ${source}`);
         process.exit(1);
@@ -903,7 +986,14 @@ if (require.main === module) {
 }
 
 module.exports = {
+    UPSERT_CONFLICT_KEYS,
+    benchmarkDotNetClr,
+    readBenchmarkDotNetJobVersions,
+    buildUpsertConflictKey,
+    dedupeRowsForUpsert,
     normalizeRuntime,
     parseBenchmarkDotNetResults,
+    parseMitataResults,
+    parsePrimeResults,
     resolveRuntimeVersion
 };
