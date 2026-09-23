@@ -115,7 +115,7 @@ Additional discovered scenarios include the broader Dromaeo-derived object/strin
 ### Prerequisites
 
 - .NET 10.0 SDK or later
-- BenchmarkDotNet (installed via NuGet)
+- BenchmarkDotNet 0.16.0-preview.2 (restored via NuGet for both the current and previous JROC benchmark hosts)
 
 ### Build
 
