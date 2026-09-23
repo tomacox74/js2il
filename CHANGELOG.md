@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.27 - 2026-09-23
+
+- perf/tooling: upgrade both benchmark hosts to BenchmarkDotNet
+  `0.16.0-preview.2` and add a manual same-runner .NET 10 versus .NET 11 RC1
+  JROC comparison workflow with per-child CLR telemetry and a shared
+  benchmark profile. Regular benchmark and production targets remain .NET 10.
 - fix(runtime): expose compiler-marked public class fields through exact-name
   own-property descriptors with current values and JavaScript class-field
   attributes, without reflecting unrelated CLR fields; port 10 upstream
@@ -35,7 +43,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `StringIteratorPrototype`, and additional `TypedArray` cases. No product or
   harness changes were required; all fixtures already passed under the
   existing runtime.
-
 - test(test262): port 343 more upstream `test262` cases to `tests/Jroc.Test262.Tests`,
   covering `language/statements` (`variable`, `with`, `try`, `for`, `using`),
   `language/identifiers`, `language/expressions` (`object`, `dynamic-import`),
