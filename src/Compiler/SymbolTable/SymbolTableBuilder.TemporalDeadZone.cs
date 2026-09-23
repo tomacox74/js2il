@@ -166,18 +166,4 @@ public partial class SymbolTableBuilder
         }
     }
 
-    private static bool TryGetDirectChildScope(Scope scope, Node node, out Scope childScope)
-    {
-        foreach (var candidate in scope.Children)
-        {
-            if (ReferenceEquals(candidate.AstNode, node))
-            {
-                childScope = candidate;
-                return true;
-            }
-        }
-
-        childScope = null!;
-        return false;
-    }
 }
