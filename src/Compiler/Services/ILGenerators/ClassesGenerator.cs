@@ -380,6 +380,17 @@ namespace Jroc.Services.ILGenerators
             // Fields (instance + static)
             var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
 
+            void MarkClassField(FieldDefinitionHandle field)
+            {
+                var blob = new BlobBuilder();
+                blob.WriteUInt16(0x0001);
+                blob.WriteUInt16(0);
+                _metadata.AddCustomAttribute(
+                    field,
+                    _bcl.JsCompiledClassFieldAttribute_Ctor_Ref,
+                    _metadata.GetOrAddBlob(blob));
+            }
+
             bool TryGetStableInstanceFieldUserClassTypeHandle(string fieldName, out EntityHandle typeHandle)
             {
                 typeHandle = default;
@@ -484,12 +495,14 @@ namespace Jroc.Services.ILGenerators
                     if (pdef.Static)
                     {
                         var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
+                        MarkClassField(fh);
                         _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
                         _classRegistry.RegisterStaticFieldClrType(registryClassName, pid.Name, typeof(object));
                     }
                     else
                     {
                         var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
+                        MarkClassField(fh);
                         _classRegistry.RegisterField(registryClassName, pid.Name, fh);
                         _classRegistry.RegisterFieldClrType(registryClassName, pid.Name, clrType ?? typeof(object));
 

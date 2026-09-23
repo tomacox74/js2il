@@ -4171,12 +4171,17 @@ namespace JavaScriptRuntime
                 ? FindClrField(
                     clrStaticType,
                     propName,
-                    BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase)
+                    BindingFlags.Static | BindingFlags.Public)
                 : FindClrField(
                     target.GetType(),
                     propName,
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (clrField != null)
+                    BindingFlags.Instance | BindingFlags.Public);
+            if (clrField != null
+                && clrField.IsDefined(typeof(Jroc.Runtime.JsCompiledClassFieldAttribute), inherit: false)
+                && clrField.DeclaringType?.Assembly.IsDefined(
+                    typeof(Jroc.Runtime.JsCompiledModuleAttribute),
+                    inherit: false) == true
+                && (target is not Type staticOwner || clrField.DeclaringType == staticOwner))
             {
                 descriptor = new JsPropertyDescriptor
                 {

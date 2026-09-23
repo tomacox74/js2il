@@ -6,9 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- fix(runtime): expose CLR-backed public class fields through own-property
-  descriptors with current values and JavaScript class-field attributes; port
-  10 upstream Test262 private-method/class-field sequencing cases.
+- fix(runtime): expose compiler-marked public class fields through exact-name
+  own-property descriptors with current values and JavaScript class-field
+  attributes, without reflecting unrelated CLR fields; port 10 upstream
+  Test262 private-method/class-field sequencing cases.
 - fix(compiler): recursively register only binding targets from nested
   destructuring parameters in class methods, preventing object property keys
   from leaking into method scope; port 10 corresponding upstream Test262 cases.
