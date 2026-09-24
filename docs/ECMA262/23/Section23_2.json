@@ -619,13 +619,15 @@
       },
       {
         "clause": "23.2.5.1",
-        "feature": "Uint16Array and Uint32Array constructors",
+        "feature": "TypedArray constructors and ArrayBuffer views",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/buffer-arg/JavaScript/toindex-byteoffset.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/buffer-arg/JavaScript/toindex-bytelength.js"
         ],
-        "notes": "Uint16Array and Uint32Array now support length, iterable, array-like, typed-array, and ArrayBuffer view construction with unsigned element coercion. Dynamic constructors for all supported TypedArray families preserve zero through three constructor arguments and expose BYTES_PER_ELEMENT. BigInt families, detached buffers, species construction, and complete prototype metadata remain unsupported."
+        "notes": "Uint16Array and Uint32Array support length, iterable, array-like, typed-array, and ArrayBuffer view construction with unsigned element coercion. Dynamic constructors for supported Number and BigInt typed-array families preserve zero through three constructor arguments and expose BYTES_PER_ELEMENT. ArrayBuffer view byte offsets and explicit lengths use ToIndex conversion, including negative fractions rounding to zero and null lengths producing empty views. Six additional native Test262 buffer-argument cases verify coercion and detached or resizable buffer behavior; species construction and complete prototype metadata remain limited."
       },
       {
         "clause": "23.2.3",

@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.27](https://github.com/tomacox74/js2il/releases/tag/v0.12.27).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.28](https://github.com/tomacox74/js2il/releases/tag/v0.12.28).
 
 ## How to Read This Report
 
@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,270 | 12 | 7,230 | 23,512 | **69.20%** |
+| Built-in objects and APIs | 16,370 | 12 | 7,130 | 23,512 | **69.62%** |
 | Language syntax and semantics | 15,458 | 46 | 8,143 | 23,647 | **65.37%** |
-| **Total** | 31,728 | 58 | 16,459 | 48,245 | **65.76%** |
+| **Total** | 31,828 | 58 | 16,359 | 48,245 | **65.97%** |
 
 ## Language Areas
 
@@ -228,7 +228,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
 | `TypedArray` | 1,365 | 0 | 73 | 1,438 | **94.92%** |
-| `TypedArrayConstructors` | 593 | 0 | 143 | 736 | **80.57%** |
+| `TypedArrayConstructors` | 693 | 0 | 43 | 736 | **94.16%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
 | `WeakMap` | 141 | 0 | 0 | 141 | **100.00%** |

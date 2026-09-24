@@ -1676,6 +1676,32 @@ namespace JavaScriptRuntime
                 validatedArrayLength = JavaScriptRuntime.Array.ValidateLengthValue(requested.Value);
             }
 
+            if (obj is TypedArrayBase typedArray
+                && TryGetCanonicalNumericIndex(key, out var numericIndex))
+            {
+                if (double.IsNaN(numericIndex)
+                    || double.IsInfinity(numericIndex)
+                    || numericIndex < 0
+                    || numericIndex == 0d && double.IsNegative(numericIndex)
+                    || global::System.Math.Truncate(numericIndex) != numericIndex
+                    || numericIndex >= typedArray.length
+                    || requested.IsAccessorDescriptor
+                    || requested.HasConfigurable && !requested.Configurable
+                    || requested.HasEnumerable && !requested.Enumerable
+                    || requested.HasWritable && !requested.Writable)
+                {
+                    return false;
+                }
+
+                if (requested.HasValue)
+                {
+                    var value = typedArray.CoerceElementValue(requested.Value);
+                    _ = typedArray.TrySetElementValue((int)numericIndex, value);
+                }
+
+                return true;
+            }
+
             var typedArrayLengthProperty = obj is TypedArrayBase
                 && string.Equals(key, "length", StringComparison.Ordinal);
             var hasOwnProperty = typedArrayLengthProperty
@@ -3752,6 +3778,15 @@ namespace JavaScriptRuntime
                 return HasProperty(proxyTarget, name);
             }
 
+            if (target is TypedArrayBase typedArray
+                && TryGetCanonicalNumericIndex(name, out var numericIndex))
+            {
+                return numericIndex >= 0
+                    && global::System.Math.Truncate(numericIndex) == numericIndex
+                    && !double.IsNegative(numericIndex)
+                    && numericIndex < typedArray.length;
+            }
+
             if (HasOwnPropertyForPropertyLookup(target, name))
             {
                 return true;
@@ -3802,6 +3837,12 @@ namespace JavaScriptRuntime
                 // A Proxy in the prototype chain contributes its [[HasProperty]]
                 // internal method, not a direct [[GetOwnProperty]] lookup.
                 if (proto is JavaScriptRuntime.Proxy)
+                {
+                    return HasProperty(proto, name);
+                }
+
+                if (proto is TypedArrayBase
+                    && TryGetCanonicalNumericIndex(name, out _))
                 {
                     return HasProperty(proto, name);
                 }
@@ -4645,6 +4686,13 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (proto is TypedArrayBase indexedPrototype
+                && TryGetCanonicalNumericIndex(propName, out var prototypeNumericIndex))
+            {
+                value = indexedPrototype.GetElementOrUndefinedForPropertyAccess(prototypeNumericIndex);
+                return true;
+            }
+
             if (TryGetOwnPropertyValue(proto, propName, receiverForAccessors, out value))
             {
                 return true;
@@ -4676,6 +4724,13 @@ namespace JavaScriptRuntime
                 if (proto is JavaScriptRuntime.Proxy)
                 {
                     value = ReflectGet(proto, propName, receiverForAccessors);
+                    return true;
+                }
+
+                if (proto is TypedArrayBase typedArray
+                    && TryGetCanonicalNumericIndex(propName, out var numericIndex))
+                {
+                    value = typedArray.GetElementOrUndefinedForPropertyAccess(numericIndex);
                     return true;
                 }
 
@@ -4737,6 +4792,18 @@ namespace JavaScriptRuntime
                     {
                         throw new TypeError(
                             $"Cannot assign to property '{propName}' of object");
+                    }
+
+                    return true;
+                }
+
+                if (proto is TypedArrayBase
+                    && TryGetCanonicalNumericIndex(propName, out _))
+                {
+                    var succeeded = ReflectSetOrdinary(proto, propName, value, receiver);
+                    if (!succeeded && throwOnError)
+                    {
+                        throw new TypeError($"Cannot assign to property '{propName}' of object");
                     }
 
                     return true;
@@ -5955,6 +6022,12 @@ namespace JavaScriptRuntime
                 throw new TypeError($"Cannot access restricted function property '{name}'");
             }
 
+            if (obj is TypedArrayBase numericTypedArray
+                && TryGetCanonicalNumericIndex(name, out var numericIndex))
+            {
+                return numericTypedArray.GetElementOrUndefinedForPropertyAccess(numericIndex);
+            }
+
             if (obj is JavaScriptRuntime.Node.Buffer nodeBuffer
                 && TryGetOwnPropertyValue(nodeBuffer, name, out var bufferValue))
             {
@@ -6227,14 +6300,27 @@ namespace JavaScriptRuntime
             if (target is TypedArrayBase typedArray
                 && TryGetCanonicalNumericIndex(key, out var numericIndex))
             {
-                if (!double.IsNaN(numericIndex)
+                var validIndex = !double.IsNaN(numericIndex)
                     && !double.IsInfinity(numericIndex)
                     && numericIndex >= 0
                     && !(numericIndex == 0d && double.IsNegative(numericIndex))
                     && global::System.Math.Truncate(numericIndex) == numericIndex
-                    && numericIndex <= int.MaxValue)
+                    && numericIndex < typedArray.length;
+                if (!ReferenceEquals(receiver, target))
                 {
-                    _ = typedArray.TrySetElementValue((int)numericIndex, value);
+                    if (!validIndex)
+                    {
+                        return true;
+                    }
+
+                    _ = TryGetOwnPropertyDescriptor(target, key, out var descriptor);
+                    return ApplyReflectSetOwnDescriptor(descriptor, key, value, receiver);
+                }
+
+                var converted = typedArray.CoerceElementValue(value);
+                if (validIndex)
+                {
+                    _ = typedArray.TrySetElementValue((int)numericIndex, converted);
                 }
 
                 return true;
@@ -6375,6 +6461,12 @@ namespace JavaScriptRuntime
                 if (current is Proxy)
                 {
                     return ReflectGet(current, propertyKey, receiver);
+                }
+
+                if (current is TypedArrayBase typedArray
+                    && TryGetCanonicalNumericIndex(key, out var numericIndex))
+                {
+                    return typedArray.GetElementOrUndefinedForPropertyAccess(numericIndex);
                 }
 
                 if (!TryGetOwnPropertyDescriptor(current, key, out var descriptor))
@@ -6632,9 +6724,17 @@ namespace JavaScriptRuntime
             InvalidateRegExpWellKnownSymbolFastPath(obj, name);
 
             if (obj is TypedArrayBase typedArray
-                && TryParseCanonicalIndexString(name, out var typedArrayIndex))
+                && TryGetCanonicalNumericIndex(name, out var numericIndex))
             {
-                typedArray.TrySetElementValue(typedArrayIndex, typedArray.CoerceElementValue(value));
+                var converted = typedArray.CoerceElementValue(value);
+                if (numericIndex >= 0
+                    && !(numericIndex == 0d && double.IsNegative(numericIndex))
+                    && global::System.Math.Truncate(numericIndex) == numericIndex
+                    && numericIndex < typedArray.length)
+                {
+                    _ = typedArray.TrySetElementValue((int)numericIndex, converted);
+                }
+
                 return value;
             }
 

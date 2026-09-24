@@ -515,13 +515,17 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/from/BigInt/JavaScript/custom-ctor-returns-other-instance.js",
-          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/BigInt/JavaScript/custom-ctor-returns-other-instance.js"
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/BigInt/JavaScript/custom-ctor-returns-other-instance.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Get/JavaScript/key-is-not-integer.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Set/JavaScript/key-is-valid-index-reflect-set.js"
         ],
         "test262Paths": [
           "test/built-ins/TypedArrayConstructors/from/BigInt/custom-ctor-returns-other-instance.js",
-          "test/built-ins/TypedArrayConstructors/of/BigInt/custom-ctor-returns-other-instance.js"
+          "test/built-ins/TypedArrayConstructors/of/BigInt/custom-ctor-returns-other-instance.js",
+          "test/built-ins/TypedArrayConstructors/internals/Get/key-is-not-integer.js",
+          "test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-reflect-set.js"
         ],
-        "notes": "Supported Number and BigInt typed-array families provide construction and integer-indexed element access. The indexed property-write path used by from() and of() applies the target's Number or BigInt conversion before checking the current index validity, so conversion errors propagate and conversion-triggered detachment or resizing is observed. Full integer-indexed exotic invariants and every indexed-write dispatch path are not yet exhaustively verified."
+        "notes": "Supported Number and BigInt typed-array families provide construction and integer-indexed element access. Canonical numeric keys use integer-indexed get, has, define, and set semantics rather than falling through to inherited properties: invalid indices do not become ordinary properties, detached views report undefined or missing elements, and indexed writes coerce values before checking current bounds. Reflect.set respects a distinct receiver for valid indices. The native Test262 harness verifies 94 additional integer-indexed exotic cases across Number and BigInt families. Other exotic invariants and proxy interactions remain subject to the documented limitations."
       },
       {
         "clause": "10.4.6",
