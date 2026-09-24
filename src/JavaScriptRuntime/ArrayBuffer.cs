@@ -8,9 +8,9 @@ namespace JavaScriptRuntime
         internal static object Prototype
             => RuntimeIntrinsics.Current.ArrayBufferPrototype;
 
-        private static readonly Func<object[], object?, bool> _arrayBufferIsViewValue =
+        private static readonly Func<object[], object?, bool> _isViewValue =
             static (_, value) => isView(value);
-        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
+        private static readonly BuiltinFunction2 _prototypeSliceValue = static (thisArgument, start, end) =>
         {
             if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
             {
@@ -19,7 +19,7 @@ namespace JavaScriptRuntime
 
             return buffer.slice(start, end);
         };
-        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceToImmutableValue = static (thisArgument, start, end) =>
+        private static readonly BuiltinFunction2 _prototypeSliceToImmutableValue = static (thisArgument, start, end) =>
         {
             if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
             {
@@ -28,7 +28,7 @@ namespace JavaScriptRuntime
 
             return buffer.sliceToImmutable(start, end);
         };
-        private static readonly BuiltinFunction1 _arrayBufferPrototypeResizeValue = static (thisArgument, newLength) =>
+        private static readonly BuiltinFunction1 _prototypeResizeValue = static (thisArgument, newLength) =>
         {
             if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
             {
@@ -37,7 +37,7 @@ namespace JavaScriptRuntime
 
             return buffer.resize(newLength);
         };
-        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferValue = static (thisArgument, newLength) =>
+        private static readonly BuiltinFunction1 _prototypeTransferValue = static (thisArgument, newLength) =>
         {
             if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
             {
@@ -46,7 +46,7 @@ namespace JavaScriptRuntime
 
             return buffer.transfer(newLength);
         };
-        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferToFixedLengthValue = static (thisArgument, newLength) =>
+        private static readonly BuiltinFunction1 _prototypeTransferToFixedLengthValue = static (thisArgument, newLength) =>
         {
             if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
             {
@@ -55,7 +55,7 @@ namespace JavaScriptRuntime
 
             return buffer.transferToFixedLength(newLength);
         };
-        private static readonly BuiltinFunction0 _arrayBufferPrototypeTransferToImmutableValue = static thisArgument =>
+        private static readonly BuiltinFunction0 _prototypeTransferToImmutableValue = static thisArgument =>
         {
             if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
             {
@@ -76,19 +76,19 @@ namespace JavaScriptRuntime
             {
                 Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = "ArrayBuffer"
             });
-            GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "isView", _arrayBufferIsViewValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "isView", _isViewValue, 1d);
             GlobalThis.DefineSpeciesAccessorProperty(constructorValue);
             DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
             DefineArrayBufferAccessor("detached", static buffer => buffer.detached);
             DefineArrayBufferAccessor("immutable", static buffer => buffer.immutable);
             DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
-            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
-            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
-            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "sliceToImmutable", _arrayBufferPrototypeSliceToImmutableValue, 2d);
-            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transfer", _arrayBufferPrototypeTransferValue, 0d);
-            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transferToFixedLength", _arrayBufferPrototypeTransferToFixedLengthValue, 0d);
-            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transferToImmutable", _arrayBufferPrototypeTransferToImmutableValue, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "resize", _prototypeResizeValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "slice", _prototypeSliceValue, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "sliceToImmutable", _prototypeSliceToImmutableValue, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transfer", _prototypeTransferValue, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transferToFixedLength", _prototypeTransferToFixedLengthValue, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transferToImmutable", _prototypeTransferToImmutableValue, 0d);
             GlobalThis.DefineIntrinsicToStringTagProperty(Prototype, "ArrayBuffer");
         }
 
