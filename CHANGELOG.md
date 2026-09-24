@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): preserve Date setter argument count and conversion order,
+  including invalid-date snapshot behavior, full-year recovery, and TimeClip
+  at extended-year limits; port 50 previously failing Test262 Date setter
+  cases across local and UTC methods.
 - fix(runtime): expose `Function.prototype[Symbol.hasInstance]` with its
   specified metadata and descriptor, including bound-function prototype checks
   and Symbol-as-primitive handling; port 10 previously failing Test262 cases.

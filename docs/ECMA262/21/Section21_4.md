@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-22T01:38:44Z
+> Last generated (UTC): 2026-09-24T05:59:18Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -151,6 +151,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Broader Date.prototype surface tracked by Section21_4 buckets | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_4_1/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_4_37/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_4_45/ExecutionTests.cs` |  | The Section21_4 representative buckets now cover the previously untracked Date.prototype constructor, local/UTC getters, setters, string/JSON conversions, and Symbol.toPrimitive metadata. Those APIs are now tracked in-repo, but many remain documented as supported with limitations because the current coverage is representative rather than full conformance. |
+| Date.prototype local and UTC setters | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/setDate/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setFullYear/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setHours/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setMilliseconds/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setMinutes/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setMonth/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setSeconds/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCDate/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCFullYear/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCHours/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCMilliseconds/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCMinutes/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCMonth/ExecutionTests.SetterFailures.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCSeconds/ExecutionTests.SetterFailures.cs` | `test/built-ins/Date/prototype/setHours/arg-coercion-order.js`<br>`test/built-ins/Date/prototype/setUTCMinutes/date-value-read-before-tonumber-when-date-is-invalid.js`<br>`test/built-ins/Date/prototype/setFullYear/this-value-invalid-date.js`<br>`test/built-ins/Date/prototype/setUTCHours/new-value-time-clip.js` | Fifty new native Test262 cases cover ordered numeric coercion, explicit undefined versus omitted arguments, reading the stored date before coercion, recovery by the full-year setters, and clipping at the time-value limit. Historical local-time-zone offsets beyond the host calendar range remain limited. |
 
 ### 21.4.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getfullyear))
 
