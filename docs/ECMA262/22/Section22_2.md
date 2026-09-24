@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T21:58:21Z
+> Last generated (UTC): 2026-09-24T05:35:41Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -164,7 +164,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js) |  | Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuvy). The g, i, m, s, u, d, and y flags are currently reflected; v is rejected during construction. |
+| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/flags/ExecutionTests.cs` | suite `built_ins.RegExp.prototype.flags` | The intrinsic flags getter reads and boolean-coerces properties on any object receiver in canonical order (dgimsuvy), propagating accessor errors. The g, i, m, s, u, d, and y flags are currently reflected; v is rejected during construction. |
 
 ### 22.2.6.5 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.global))
 
@@ -260,3 +260,4 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js) |  | Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in exec() and test() for both /g and /y regexes, and resets to 0 after failed sticky/global matches or when the stored start position is past the end of the input. |

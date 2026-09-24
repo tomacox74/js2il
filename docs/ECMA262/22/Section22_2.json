@@ -721,9 +721,13 @@
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/flags/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuvy). The g, i, m, s, u, d, and y flags are currently reflected; v is rejected during construction."
+        "notes": "The intrinsic flags getter reads and boolean-coerces properties on any object receiver in canonical order (dgimsuvy), propagating accessor errors. The g, i, m, s, u, d, and y flags are currently reflected; v is rejected during construction.",
+        "test262Suites": [
+          "built_ins.RegExp.prototype.flags"
+        ]
       },
       {
         "clause": "22.2.6.5",
