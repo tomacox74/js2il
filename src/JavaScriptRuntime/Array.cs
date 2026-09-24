@@ -5108,11 +5108,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("reduce callback is not a function");
             }
 
-            if (this.Count == 0 && !hasInitial)
-            {
-                throw new TypeError("Reduce of empty array with no initial value");
-            }
-
+            int length = Count;
             object? acc;
             int startIndex;
             if (hasInitial)
@@ -5122,15 +5118,38 @@ namespace JavaScriptRuntime
             }
             else
             {
-                acc = this[0];
-                startIndex = 1;
+                bool found = false;
+                acc = null;
+                startIndex = length;
+                for (int i = 0; i < length; i++)
+                {
+                    if (!ObjectRuntime.HasPropertyForArrayLike((double)i, this))
+                    {
+                        continue;
+                    }
+
+                    acc = ObjectRuntime.GetItem(this, (double)i);
+                    startIndex = i + 1;
+                    found = true;
+                    break;
+                }
+
+                if (!found)
+                {
+                    throw new TypeError("Reduce of empty array with no initial value");
+                }
             }
 
             ArrayCallbackInvoker? invoke = null;
-            for (int i = startIndex; i < this.Count; i++)
+            for (int i = startIndex; i < length; i++)
             {
+                if (!ObjectRuntime.HasPropertyForArrayLike((double)i, this))
+                {
+                    continue;
+                }
+
                 invoke ??= CreateArrayCallbackInvoker(cb, 4, "reduce");
-                acc = invoke(acc, this[i], (double)i, this);
+                acc = invoke(acc, ObjectRuntime.GetItem(this, (double)i), (double)i, this);
             }
 
             return acc;
