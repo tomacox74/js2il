@@ -50,13 +50,16 @@ Re-run `init` after a build/toolchain change. Compatible evidence is retained;
 different compiler/runtime binaries, harness, upstream content, runner tooling,
 timeouts or execution environment identity create a **new provenance**. The
 environment identity intentionally includes only compatibility boundaries: OS
-family, CPU architecture, Node.js major version, and the selected
+family and release (Linux distribution `ID` and `VERSION_ID`, or the platform
+release on other systems), CPU architecture, Node.js major version, and the selected
 `Microsoft.NETCore.App` runtime version that executes the JROC compiler and
 generated `net10.0` programs. Node.js minor/patch drift within major 24 and
-unrelated preinstalled .NET runtimes are recorded as diagnostics only; they do
-not change the provenance hash and do not block shard resume. A Node.js major
-change or selected .NET execution-runtime change is incompatible and requires a
-new current provenance. Old evidence stays historical. Source commit is recorded
+unrelated preinstalled .NET runtimes are recorded as diagnostics only; the full
+Linux `os-release` record is diagnostic, not identity. Runner image revisions and
+other volatile `os-release` fields do not change the provenance hash or block
+shard resume. A Node.js major, OS distribution/release, or selected .NET
+execution-runtime change is incompatible and requires a new current provenance.
+Old evidence stays historical. Source commit is recorded
 as a settings value, while actual binary hashes—not a claim that the worktree
 matches a build—establish compiler identity. Do not import old MVP `summary.json`
 files or the earlier 568-item list: they lack trustworthy fingerprints and may

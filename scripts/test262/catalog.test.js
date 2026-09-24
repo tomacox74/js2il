@@ -89,10 +89,19 @@ def fake_command(*args):
         return runtime_list
     raise AssertionError(args)
 c.command = fake_command
+release = {"ID": "ubuntu", "VERSION_ID": "24.04", "PRETTY_NAME": "Ubuntu 24.04 runner A"}
+c.platform.freedesktop_os_release = lambda: release
 first = c.environment(jroc)["identity"]
 node_version = "v24.21.0"
 runtime_list = "Microsoft.AspNetCore.App 10.0.99 [/dotnet/shared/Microsoft.AspNetCore.App]\\nMicrosoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+release = {"ID": "ubuntu", "VERSION_ID": "24.04", "PRETTY_NAME": "Ubuntu 24.04 runner B"}
 assert c.environment(jroc)["identity"] == first
+assert first["os_release"] == {"id": "ubuntu", "version_id": "24.04"}
+release = {"ID": "ubuntu", "VERSION_ID": "22.04"}
+assert c.environment(jroc)["identity"]["os_release"] != first["os_release"]
+release = {"ID": "debian", "VERSION_ID": "24.04"}
+assert c.environment(jroc)["identity"]["os_release"] != first["os_release"]
+release = {"ID": "ubuntu", "VERSION_ID": "24.04"}
 node_version = "v25.0.0"
 assert c.environment(jroc)["identity"]["node"]["major"] == 25
 node_version = "v24.21.0"
@@ -118,6 +127,8 @@ def fake_command(*args):
         return runtime_list
     raise AssertionError(args)
 c.command = fake_command
+release = {"ID": "ubuntu", "VERSION_ID": "24.04"}
+c.platform.freedesktop_os_release = lambda: release
 info = {"compiler_entry": "Jroc.dll",
         "binaries": c.hash_files(root, ["*.dll", "*.deps.json", "*.runtimeconfig.json"]),
         "harness": {}, "tooling": {},
@@ -146,6 +157,22 @@ except ValueError as error:
     assert "dotnet_runtime.selected" in str(error), str(error)
 else:
     raise AssertionError("selected dotnet runtime mismatch accepted")
+runtime_list = "Microsoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+release = {"ID": "ubuntu", "VERSION_ID": "22.04"}
+try:
+    c.scan(db,args)
+except ValueError as error:
+    assert "os_release.version_id" in str(error), str(error)
+else:
+    raise AssertionError("OS release mismatch accepted")
+release = {"ID": "debian", "VERSION_ID": "24.04"}
+try:
+    c.scan(db,args)
+except ValueError as error:
+    assert "os_release.id" in str(error), str(error)
+else:
+    raise AssertionError("OS distribution mismatch accepted")
+assert db.execute("SELECT COUNT(*) FROM results").fetchone()[0] == 0
 `);
 
 pythonTest('init reuses provenance across Node 24 minor changes', `
@@ -169,6 +196,8 @@ def fake_command(*args):
         return "compiler-commit"
     raise AssertionError(args)
 c.command = fake_command
+release = {"ID": "ubuntu", "VERSION_ID": "24.04", "IMAGE_REVISION": "old"}
+c.platform.freedesktop_os_release = lambda: release
 c.bridge = lambda request, timeout=None: [{
     "path": "test/built-ins/A/name.js", "sha256": "hash",
     "variants": ["default"], "state": "runnable", "reasons": []
@@ -179,9 +208,16 @@ first = c.current(db)
 c.record(db, first, "test/built-ins/A/name.js", "default",
          {"classification":{"verdict":"matched","kind":"pass"}}, 1)
 node_version = "v24.21.0"
+release = {"ID": "ubuntu", "VERSION_ID": "24.04", "IMAGE_REVISION": "new"}
 c.initialize(db, args)
 assert c.current(db) == first
 assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (first,)).fetchone()[0] == 1
+release = {"ID": "ubuntu", "VERSION_ID": "22.04", "IMAGE_REVISION": "new"}
+c.initialize(db, args)
+assert c.current(db) != first
+assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (first,)).fetchone()[0] == 1
+assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (c.current(db),)).fetchone()[0] == 0
+assert db.execute("SELECT COUNT(*) FROM provenance").fetchone()[0] == 2
 `);
 
 pythonTest('never combines variants across provenance; historical passes stay historical', `

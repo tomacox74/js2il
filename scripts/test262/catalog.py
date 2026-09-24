@@ -100,11 +100,19 @@ def environment(jroc=None):
     runtime = select_dotnet_runtime(Path(jroc).resolve()) if jroc else None
     identity = {"os": platform.system(), "machine": platform.machine(),
                 "node": {"major": parse_node_major(node_version)}}
+    if sys.platform == "linux":
+        distribution = platform.freedesktop_os_release()
+        if not distribution.get("ID") or not distribution.get("VERSION_ID"):
+            raise ValueError("Unable to determine Linux distribution ID and VERSION_ID")
+        identity["os_release"] = {"id": distribution["ID"], "version_id": distribution["VERSION_ID"]}
+    else:
+        distribution = platform.version()
+        identity["os_release"] = platform.release()
     if runtime:
         identity["dotnet_runtime"] = runtime
     diagnostics = {
         "node_version": node_version,
-        "distribution": platform.freedesktop_os_release() if sys.platform == "linux" else platform.version(),
+        "distribution": distribution,
         "dotnet_runtimes": dotnet_runtimes(),
     }
     if jroc:
