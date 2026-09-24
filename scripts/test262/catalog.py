@@ -33,6 +33,111 @@ def command(*args):
     return subprocess.check_output(args, cwd=REPO, text=True).strip()
 
 
+def parse_version(value):
+    match = re.search(r"(\d+)\.(\d+)\.(\d+)", value or "")
+    if not match:
+        return None
+    return tuple(int(part) for part in match.groups())
+
+
+def parse_node_major(version):
+    parsed = parse_version(version)
+    if not parsed:
+        raise ValueError(f"Unable to determine Node.js major version from {version!r}")
+    return parsed[0]
+
+
+def runtimeconfig_frameworks(jroc):
+    runtimeconfig = jroc.with_suffix(".runtimeconfig.json")
+    if not runtimeconfig.is_file():
+        return []
+    options = json.loads(runtimeconfig.read_text(encoding="utf8")).get("runtimeOptions", {})
+    frameworks = []
+    if "framework" in options:
+        frameworks.append(options["framework"])
+    frameworks.extend(options.get("frameworks", []))
+    return [{"name": f["name"], "version": f["version"]} for f in frameworks if "name" in f and "version" in f]
+
+
+def dotnet_runtimes():
+    runtimes = []
+    dotnet = shutil.which("dotnet")
+    dotnet_dir = str(Path(dotnet).resolve().parent) if dotnet else ""
+    for line in command("dotnet", "--list-runtimes").splitlines():
+        match = re.match(r"^(\S+)\s+(\S+)\s+\[(.*)\]$", line.strip())
+        if match:
+            location = match.group(3)
+            if dotnet_dir:
+                location = location.replace(dotnet_dir, "<dotnet>")
+            runtimes.append({"name": match.group(1), "version": match.group(2), "path": location})
+    return runtimes
+
+
+def select_dotnet_runtime(jroc):
+    frameworks = runtimeconfig_frameworks(jroc)
+    framework = next((f for f in frameworks if f["name"] == "Microsoft.NETCore.App"), frameworks[0] if frameworks else None)
+    if not framework:
+        return {"name": "unknown", "requested": "unknown", "selected": "unknown"}
+    requested = parse_version(framework["version"])
+    candidates = [runtime for runtime in dotnet_runtimes() if runtime["name"] == framework["name"]]
+    if requested:
+        same_minor = [runtime for runtime in candidates
+                      if (version := parse_version(runtime["version"]))
+                      and version[0] == requested[0] and version[1] == requested[1] and version >= requested]
+        if same_minor:
+            selected = max(same_minor, key=lambda runtime: parse_version(runtime["version"]))
+            return {"name": framework["name"], "requested": framework["version"],
+                    "selected": selected["version"]}
+    selected = next((runtime for runtime in candidates if runtime["version"] == framework["version"]), None)
+    if selected:
+        return {"name": framework["name"], "requested": framework["version"],
+                "selected": selected["version"]}
+    raise ValueError(f"Required .NET runtime not found: {framework['name']} {framework['version']}")
+
+
+def environment(jroc=None):
+    node_version = command("node", "--version")
+    runtime = select_dotnet_runtime(Path(jroc).resolve()) if jroc else None
+    identity = {"os": platform.system(), "machine": platform.machine(),
+                "node": {"major": parse_node_major(node_version)}}
+    if runtime:
+        identity["dotnet_runtime"] = runtime
+    diagnostics = {
+        "node_version": node_version,
+        "distribution": platform.freedesktop_os_release() if sys.platform == "linux" else platform.version(),
+        "dotnet_runtimes": dotnet_runtimes(),
+    }
+    if jroc:
+        diagnostics["dotnet_frameworks"] = runtimeconfig_frameworks(Path(jroc).resolve())
+    return {"identity": identity, "diagnostics": diagnostics}
+
+
+def provenance_hash_document(document):
+    return {key: value for key, value in document.items() if key != "environment_diagnostics"}
+
+
+def flattened(value, prefix=""):
+    if isinstance(value, dict):
+        items = {}
+        for key, child in value.items():
+            child_prefix = f"{prefix}.{key}" if prefix else key
+            items.update(flattened(child, child_prefix))
+        return items
+    return {prefix: value}
+
+
+def mismatch_message(label, expected, actual):
+    expected_flat = flattened(expected)
+    actual_flat = flattened(actual)
+    fields = sorted(key for key in set(expected_flat) | set(actual_flat)
+                    if expected_flat.get(key) != actual_flat.get(key))
+    details = ", ".join(f"{field}: expected {expected_flat.get(field)!r}, actual {actual_flat.get(field)!r}"
+                        for field in fields[:8])
+    if len(fields) > 8:
+        details += f", ... {len(fields) - 8} more"
+    return f"{label} changed ({details}); run init again"
+
+
 def bridge(request, timeout=None):
     result = subprocess.run(
         ["node", str(REPO / "scripts/test262/catalogBridge.js")],
@@ -112,13 +217,6 @@ def hash_files(root, patterns):
     return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 
-def environment():
-    return {"os": platform.system(), "machine": platform.machine(),
-            "distribution": platform.freedesktop_os_release() if sys.platform == "linux" else platform.version(),
-            "node": command("node", "--version"), "dotnet_runtimes": command("dotnet", "--list-runtimes")
-            .replace(str(Path(shutil.which("dotnet")).resolve().parent), "<dotnet>")}
-
-
 def initialize(db, args):
     pin = json.loads((REPO / "tests/test262/test262.pin.json").read_text())
     root = Path(args.root or command("node", "scripts/test262/bootstrap.js", "--print-root")).resolve()
@@ -138,16 +236,18 @@ def initialize(db, args):
     tools = hash_files(REPO, ["scripts/test262/catalog.py", "scripts/test262/catalogBridge.js",
                               "scripts/test262/runMvp.js", "scripts/test262/metadataParser.js",
                               "scripts/test262/bootstrap.js", "tests/test262/test262.pin.json"])
+    env = environment(jroc)
     document = {
         "schema": SCHEMA_VERSION, "runner": "mvp-composite-js-not-native",
         "upstream": pin["upstream"], "binaries": binaries, "tooling": tools,
         "compiler_entry": jroc.name,
         "harness": hash_files(root, ["harness/**/*"]),
         "inventory_sha256": digest(canonical(fixtures).encode()),
-        "environment": environment(),
+        "environment_identity": env["identity"],
+        "environment_diagnostics": env["diagnostics"],
         "timeouts": {"runtime": args.timeout, "compile": args.compile_timeout},
     }
-    provenance = digest(canonical(document).encode())
+    provenance = digest(canonical(provenance_hash_document(document)).encode())
     with db:
         db.execute("INSERT OR IGNORE INTO provenance VALUES(?,?)", (provenance, canonical(document)))
         db.executemany("INSERT OR IGNORE INTO fixtures VALUES(?,?,?,?,?,?)", [
@@ -158,6 +258,9 @@ def initialize(db, args):
             db.execute("INSERT OR REPLACE INTO settings VALUES(?,?)", (key, value))
     refresh_registrations(db)
     print(f"Initialized {len(fixtures)} fixtures; provenance {provenance}", flush=True)
+    print(f"Environment identity: {canonical(env['identity'])}", flush=True)
+    print(f"Environment diagnostics: node={env['diagnostics']['node_version']} "
+          f"dotnet={env['identity'].get('dotnet_runtime', {}).get('selected', 'unknown')}", flush=True)
 
 
 def record(db, provenance, fixture, variant, result, finished=None):
@@ -260,8 +363,15 @@ def scan(db, args):
         raise ValueError("Harness fingerprint changed; run init again")
     if any(digest((REPO / p).read_bytes()) != sha for p, sha in info["tooling"].items()):
         raise ValueError("Catalog/runner fingerprint changed; run init again")
-    if environment() != info["environment"]:
-        raise ValueError("Execution environment changed; run init again")
+    env = environment(jroc)
+    actual_environment = env.get("identity", env)
+    expected_environment = info.get("environment_identity", info.get("environment", {}))
+    if actual_environment != expected_environment:
+        raise ValueError(mismatch_message("Execution environment identity", expected_environment, actual_environment))
+    print(f"Environment identity: {canonical(actual_environment)}", flush=True)
+    if "diagnostics" in env:
+        print(f"Environment diagnostics: node={env['diagnostics']['node_version']} "
+              f"dotnet={actual_environment.get('dotnet_runtime', {}).get('selected', 'unknown')}", flush=True)
     start = time.monotonic()
     completed = 0
     work = Path(args.db).resolve().parent / f"catalog-work-{os.getpid()}"

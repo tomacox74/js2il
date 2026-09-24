@@ -48,11 +48,19 @@ protects committed evidence. Never copy a database while its worker is writing.
 
 Re-run `init` after a build/toolchain change. Compatible evidence is retained;
 different compiler/runtime binaries, harness, upstream content, runner tooling,
-timeouts or execution environment create a **new provenance**. Old evidence
-stays historical. Source commit is recorded as a settings value, while actual
-binary hashes—not a claim that the worktree matches a build—establish compiler
-identity. Do not import old MVP `summary.json` files or the earlier 568-item list:
-they lack trustworthy fingerprints and may aggregate any passing variant.
+timeouts or execution environment identity create a **new provenance**. The
+environment identity intentionally includes only compatibility boundaries: OS
+family, CPU architecture, Node.js major version, and the selected
+`Microsoft.NETCore.App` runtime version that executes the JROC compiler and
+generated `net10.0` programs. Node.js minor/patch drift within major 24 and
+unrelated preinstalled .NET runtimes are recorded as diagnostics only; they do
+not change the provenance hash and do not block shard resume. A Node.js major
+change or selected .NET execution-runtime change is incompatible and requires a
+new current provenance. Old evidence stays historical. Source commit is recorded
+as a settings value, while actual binary hashes—not a claim that the worktree
+matches a build—establish compiler identity. Do not import old MVP `summary.json`
+files or the earlier 568-item list: they lack trustworthy fingerprints and may
+aggregate any passing variant.
 
 The scan scheduler separates **global discovery** from **current-provenance
 validation**. Global discovery means that a runnable fixture variant has appeared
@@ -120,6 +128,9 @@ is merged and becomes available for manual dispatch.
 - Serializes runs on each branch to prevent lost updates.
 - Checkpoints are uploaded even on worker failure; aggregation merges available
   shards without inventing results for absent shards.
+- Each prepare/scan job logs the compatibility identity plus diagnostic Node.js
+  and selected .NET runtime versions, so runner-image drift can be diagnosed
+  without becoming execution identity.
 - Download **test262-catalog** for the database and exports (90-day retention).
   Per-shard/base/compiler artifacts have 14-day retention.
 

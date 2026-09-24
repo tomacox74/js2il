@@ -74,6 +74,116 @@ for name, message in (("missing.dll", "existing compiler DLL"),
 assert db.execute("SELECT COUNT(*) FROM results").fetchone()[0] == 0
 `);
 
+pythonTest('environment identity allows Node minor drift and ignores unrelated dotnet runtimes', `
+jroc = root / "Jroc.dll"
+jroc.write_bytes(b"compiler")
+(root / "Jroc.runtimeconfig.json").write_text(json.dumps({
+    "runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App", "version": "10.0.0"}}
+}))
+node_version = "v24.20.0"
+runtime_list = "Microsoft.AspNetCore.App 10.0.1 [/dotnet/shared/Microsoft.AspNetCore.App]\\nMicrosoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+def fake_command(*args):
+    if args == ("node", "--version"):
+        return node_version
+    if args == ("dotnet", "--list-runtimes"):
+        return runtime_list
+    raise AssertionError(args)
+c.command = fake_command
+first = c.environment(jroc)["identity"]
+node_version = "v24.21.0"
+runtime_list = "Microsoft.AspNetCore.App 10.0.99 [/dotnet/shared/Microsoft.AspNetCore.App]\\nMicrosoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+assert c.environment(jroc)["identity"] == first
+node_version = "v25.0.0"
+assert c.environment(jroc)["identity"]["node"]["major"] == 25
+node_version = "v24.21.0"
+runtime_list = "Microsoft.AspNetCore.App 10.0.99 [/dotnet/shared/Microsoft.AspNetCore.App]\\nMicrosoft.NETCore.App 10.0.13 [/dotnet/shared/Microsoft.NETCore.App]"
+assert c.environment(jroc)["identity"]["dotnet_runtime"]["selected"] == "10.0.13"
+`);
+
+pythonTest('scan compares normalized identity with useful mismatch fields', `
+fixture("current")
+(root / "test/built-ins/A").mkdir(parents=True)
+(root / "test/built-ins/A/name.js").write_text("source")
+jroc = root / "Jroc.dll"
+jroc.write_bytes(b"compiler")
+(root / "Jroc.runtimeconfig.json").write_text(json.dumps({
+    "runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App", "version": "10.0.0"}}
+}))
+node_version = "v24.20.0"
+runtime_list = "Microsoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+def fake_command(*args):
+    if args == ("node", "--version"):
+        return node_version
+    if args == ("dotnet", "--list-runtimes"):
+        return runtime_list
+    raise AssertionError(args)
+c.command = fake_command
+info = {"compiler_entry": "Jroc.dll",
+        "binaries": c.hash_files(root, ["*.dll", "*.deps.json", "*.runtimeconfig.json"]),
+        "harness": {}, "tooling": {},
+        "environment_identity": c.environment(jroc)["identity"],
+        "timeouts": {"runtime":1, "compile":1}}
+db.execute("UPDATE provenance SET document=? WHERE id='current'", (c.canonical(info),))
+for k,v in {"root":str(root), "jroc":str(jroc)}.items():
+    db.execute("INSERT OR REPLACE INTO settings VALUES(?,?)", (k,v))
+db.commit()
+args = SimpleNamespace(db=str(root / "catalog.sqlite"), root=None, jroc=None,
+                       shard=0, shards=1, limit=0, seconds=30, filter="", retry=False)
+node_version = "v24.21.0"
+c.scan(db,args)
+node_version = "v25.0.0"
+try:
+    c.scan(db,args)
+except ValueError as error:
+    assert "node.major" in str(error), str(error)
+else:
+    raise AssertionError("Node major mismatch accepted")
+node_version = "v24.21.0"
+runtime_list = "Microsoft.NETCore.App 10.0.13 [/dotnet/shared/Microsoft.NETCore.App]"
+try:
+    c.scan(db,args)
+except ValueError as error:
+    assert "dotnet_runtime.selected" in str(error), str(error)
+else:
+    raise AssertionError("selected dotnet runtime mismatch accepted")
+`);
+
+pythonTest('init reuses provenance across Node 24 minor changes', `
+source_root = root / "upstream"
+source_root.mkdir()
+jroc = root / "Jroc.dll"
+jroc.write_bytes(b"compiler")
+(root / "Jroc.runtimeconfig.json").write_text(json.dumps({
+    "runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App", "version": "10.0.0"}}
+}))
+node_version = "v24.20.0"
+runtime_list = "Microsoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+def fake_command(*args):
+    if args == ("node", "--version"):
+        return node_version
+    if args == ("dotnet", "--list-runtimes"):
+        return runtime_list
+    if args[:3] == ("git", "-C", str(source_root)) and args[3] == "status":
+        return ""
+    if args == ("git", "rev-parse", "HEAD"):
+        return "compiler-commit"
+    raise AssertionError(args)
+c.command = fake_command
+c.bridge = lambda request, timeout=None: [{
+    "path": "test/built-ins/A/name.js", "sha256": "hash",
+    "variants": ["default"], "state": "runnable", "reasons": []
+}]
+args = SimpleNamespace(root=str(source_root), expand=False, jroc=str(jroc), timeout=1, compile_timeout=1)
+c.initialize(db, args)
+first = c.current(db)
+c.record(db, first, "test/built-ins/A/name.js", "default",
+         {"classification":{"verdict":"matched","kind":"pass"}}, 1)
+node_version = "v24.21.0"
+c.initialize(db, args)
+assert c.current(db) == first
+assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (first,)).fetchone()[0] == 1
+`);
+
 pythonTest('never combines variants across provenance; historical passes stay historical', `
 fixture("old")
 result("old", "non-strict")
@@ -248,7 +358,7 @@ db.execute("UPDATE provenance SET document=?", (c.canonical(info),))
 for k,v in {"root":str(root), "jroc":str(root / "Jroc.dll")}.items():
     db.execute("INSERT INTO settings VALUES(?,?)", (k,v))
 db.commit()
-c.environment = lambda: {}
+c.environment = lambda jroc=None: {}
 calls = []
 def fake(request, timeout):
     calls.append(request["variant"])
