@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,220 | 12 | 7,280 | 23,512 | **68.99%** |
+| Built-in objects and APIs | 16,270 | 12 | 7,230 | 23,512 | **69.20%** |
 | Language syntax and semantics | 15,356 | 46 | 8,245 | 23,647 | **64.94%** |
-| **Total** | 31,576 | 58 | 16,611 | 48,245 | **65.45%** |
+| **Total** | 31,626 | 58 | 16,561 | 48,245 | **65.55%** |
 
 ## Language Areas
 
@@ -173,7 +173,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
 | `Array` | 3,045 | 0 | 36 | 3,081 | **98.83%** |
-| `ArrayBuffer` | 189 | 0 | 7 | 196 | **96.43%** |
+| `ArrayBuffer` | 191 | 0 | 5 | 196 | **97.45%** |
 | `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
 | `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |
 | `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
@@ -184,7 +184,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Atomics` | 71 | 0 | 311 | 382 | **18.59%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
 | `Boolean` | 49 | 0 | 2 | 51 | **96.08%** |
-| `DataView` | 502 | 0 | 59 | 561 | **89.48%** |
+| `DataView` | 550 | 0 | 11 | 561 | **98.04%** |
 | `Date` | 575 | 0 | 19 | 594 | **96.80%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |

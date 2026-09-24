@@ -291,15 +291,18 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/DetachmentBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/DataViewConstructorExecutionTests.cs",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js"
         ],
         "test262Paths": [
           "test/built-ins/DataView/newtarget-undefined-throws.js",
-          "test/built-ins/DataView/detached-buffer.js"
+          "test/built-ins/DataView/detached-buffer.js",
+          "test/built-ins/DataView/toindex-bytelength.js",
+          "test/built-ins/DataView/toindex-bytelength-sab.js"
         ],
-        "notes": "Supports a first-class DataView constructor plus fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, bounds checks, and rejection of detached buffers after observable argument coercions. SharedArrayBuffer, resizable buffers, and custom newTarget prototypes are not implemented."
+        "notes": "Supports DataView construction over ArrayBuffer and SharedArrayBuffer, including byteOffset/byteLength ToIndex coercion (explicit null is zero), resizable views, and rejection of detached buffers after observable argument coercions. Custom newTarget prototype side effects remain limited."
       },
       {
         "clause": "25.3.3",
@@ -329,8 +332,10 @@
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/buffer/DetachmentBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/DetachmentBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/DataViewConformanceExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/DetachmentBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/DataViewConformanceExecutionTests.cs",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js"
         ],
         "test262Paths": [
@@ -351,9 +356,11 @@
           "test/built-ins/DataView/prototype/byteOffset/length.js",
           "test/built-ins/DataView/prototype/byteOffset/name.js",
           "test/built-ins/DataView/prototype/byteOffset/prop-desc.js",
-          "test/built-ins/DataView/prototype/byteOffset/detached-buffer.js"
+          "test/built-ins/DataView/prototype/byteOffset/detached-buffer.js",
+          "test/built-ins/DataView/prototype/byteLength/resizable-array-buffer-fixed.js",
+          "test/built-ins/DataView/prototype/byteOffset/resizable-array-buffer-auto.js"
         ],
-        "notes": "DataView.prototype inherits Object.prototype and owns constructor, buffer, byteOffset, byteLength, and @@toStringTag properties. The accessors enforce DataView receivers, expose standard getter metadata, preserve access to the backing buffer after detachment, and reject byte-length and byte-offset access on detached buffers."
+        "notes": "DataView.prototype inherits Object.prototype and owns constructor, buffer, byteOffset, byteLength, and @@toStringTag properties. Accessors enforce receiver checks and reject detached or out-of-bounds resizable views for byteLength and byteOffset, while the buffer accessor remains available after detachment."
       },
       {
         "clause": "25.3.4",
@@ -391,7 +398,27 @@
           "test/built-ins/DataView/prototype/setBigInt64/set-values-return-undefined.js",
           "test/built-ins/DataView/prototype/setBigUint64/this-is-not-object.js"
         ],
-        "notes": "Implements get/set for BigInt64, BigUint64, Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). Each operation is exposed as a receiver-aware, non-constructible prototype method with standard name, length, and property attributes. Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt writes use modulo-2^64 conversion. Float16 and immutable ArrayBuffer write rejection remain unimplemented."
+        "notes": "Implements get/set for BigInt64, BigUint64, Int8, Uint8, Int16, Uint16, Int32, Uint32, Float16, Float32, and Float64 with optional littleEndian support (default big-endian). Each operation is exposed as a receiver-aware, non-constructible prototype method with standard name, length, and property attributes. Byte offsets use ToIndex coercion, including truncation of negative fractional values before range validation. Numeric accessors reject detached backing buffers after required argument coercions, and setters validate the offset before converting the value. BigInt writes use modulo-2^64 conversion; immutable backing buffers reject writes before argument coercion."
+      },
+      {
+        "clause": "25.3.4",
+        "feature": "DataView Float16 and immutable-buffer conformance",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/getFloat16/DataViewConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setFloat16/DataViewConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setInt8/DataViewConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setBigInt64/DataViewConformanceExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/DataView/prototype/getFloat16/return-values.js",
+          "test/built-ins/DataView/prototype/getFloat16/return-nan.js",
+          "test/built-ins/DataView/prototype/setFloat16/set-values-little-endian-order.js",
+          "test/built-ins/DataView/prototype/setFloat16/immutable-buffer.js",
+          "test/built-ins/DataView/prototype/setInt8/immutable-buffer.js"
+        ],
+        "notes": "Native Test262 cases verify binary16 numeric conversion, endianness, standard method metadata, detachment and resize behavior, plus TypeError before coercing any write arguments when the backing ArrayBuffer is immutable. Other immutable-buffer consumers remain limited."
       }
     ]
   }
