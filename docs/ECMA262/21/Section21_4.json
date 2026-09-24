@@ -752,6 +752,35 @@
           "notes": "Date.UTC implements ordered numeric coercion, IEEE-754 MakeTime/MakeDate arithmetic, truncation, the 0–99 year offset, and TimeClip range handling. Descriptor and length coverage remains in the Section21_4 representative bucket."
           },
           {
+            "clause": "21.4.4",
+            "feature": "Date.prototype local and UTC setters",
+            "status": "Supported with Limitations",
+            "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-date-prototype-object",
+            "testScripts": [
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setDate/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setFullYear/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setHours/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setMilliseconds/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setMinutes/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setMonth/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setSeconds/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCDate/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCFullYear/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCHours/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCMilliseconds/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCMinutes/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCMonth/ExecutionTests.SetterFailures.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/setUTCSeconds/ExecutionTests.SetterFailures.cs"
+            ],
+            "test262Paths": [
+              "test/built-ins/Date/prototype/setHours/arg-coercion-order.js",
+              "test/built-ins/Date/prototype/setUTCMinutes/date-value-read-before-tonumber-when-date-is-invalid.js",
+              "test/built-ins/Date/prototype/setFullYear/this-value-invalid-date.js",
+              "test/built-ins/Date/prototype/setUTCHours/new-value-time-clip.js"
+            ],
+            "notes": "Fifty new native Test262 cases cover ordered numeric coercion, explicit undefined versus omitted arguments, reading the stored date before coercion, recovery by the full-year setters, and clipping at the time-value limit. Historical local-time-zone offsets beyond the host calendar range remain limited."
+          },
+          {
             "clause": "21.4.4.11",
             "feature": "Date.prototype.getTimezoneOffset",
             "status": "Supported with Limitations",
