@@ -80,9 +80,24 @@ public static class Function
         DefinePrototypeMethod(prototype, "call", (BuiltinFunctionVariadic)PrototypeCall, 1);
         DefinePrototypeMethod(prototype, "bind", (BuiltinFunctionVariadic)PrototypeBind, 1);
         DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0);
+        var hasInstance = CreateBuiltinPrototypeFunction(
+            (BuiltinFunction1)PrototypeHasInstance, 1, "[Symbol.hasInstance]");
+        PrototypeChain.SetPrototype(hasInstance, prototype);
+        PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.hasInstance.DebugId, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = hasInstance
+        });
         DefineRestrictedProperty(prototype, "caller");
         DefineRestrictedProperty(prototype, "arguments");
     }
+
+    private static object PrototypeHasInstance(object? thisArgument, object? value)
+        => CallableOperations.IsCallable(thisArgument)
+            && Operators.InstanceOf(value, thisArgument);
 
     private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method, double length)
     {

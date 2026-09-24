@@ -1359,10 +1359,7 @@ namespace JavaScriptRuntime
             }
 
             // Primitives (including undefined/null) are never instances once the RHS is validated.
-            if (value is null) return false;
-            if (value is JsNull) return false;
-            if (value is string) return false;
-            if (value.GetType().IsValueType) return false;
+            if (value is null || TypeUtilities.IsPrimitive(value)) return false;
 
             while (ctor is BoundFunctionObject boundFunction)
             {
@@ -1371,7 +1368,7 @@ namespace JavaScriptRuntime
 
             // Spec: let proto = ctor.prototype; if proto is not an object, throw.
             var proto = JavaScriptRuntime.ObjectRuntime.GetItem(ctor, "prototype");
-            if (proto is null || proto is JsNull || proto is string || proto.GetType().IsValueType)
+            if (TypeUtilities.IsPrimitive(proto))
             {
                 throw new TypeError("Function has non-object prototype in instanceof check");
             }
@@ -1380,7 +1377,7 @@ namespace JavaScriptRuntime
             if (ctor is JsClassConstructorObject classConstructorValue)
             {
                 rawTypePrototype = JavaScriptRuntime.ObjectRuntime.GetItem(classConstructorValue.Type, "prototype");
-                if (rawTypePrototype is string || rawTypePrototype?.GetType().IsValueType == true)
+                if (rawTypePrototype != null && TypeUtilities.IsPrimitive(rawTypePrototype))
                 {
                     rawTypePrototype = null;
                 }

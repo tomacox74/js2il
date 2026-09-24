@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): expose `Function.prototype[Symbol.hasInstance]` with its
+  specified metadata and descriptor, including bound-function prototype checks
+  and Symbol-as-primitive handling; port 10 previously failing Test262 cases.
 - fix(runtime): make the `RegExp.prototype.flags` getter work on arbitrary
   object receivers, reading flag properties in specification order and
   propagating getter errors; port 10 previously failing Test262 cases.
