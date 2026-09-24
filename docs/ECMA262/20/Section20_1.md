@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T22:10:46Z
+> Last generated (UTC): 2026-09-24T05:11:16Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -183,13 +183,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.isFrozen | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/isFrozen/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/isFrozen/ExecutionTests.IntegrityDescriptorBatch.cs` | suite `built_ins.Object.isFrozen` | Computed from non-extensible state plus own descriptor configurability and writability for ordinary objects; empty non-extensible ordinary objects report true. Full array-index and other exotic-property semantics are partial. |
+| Object.isFrozen | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/isFrozen/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/isFrozen/ExecutionTests.IntegrityDescriptorBatch.cs` | suite `built_ins.Object.isFrozen` | Computed from non-extensible state plus own descriptor configurability and writability for ordinary objects; null, undefined, and empty non-extensible ordinary objects report true. Full array-index and other exotic-property semantics are partial. |
 
 ### 20.1.2.18 ([tc39.es](https://tc39.es/ecma262/#sec-object.issealed))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.isSealed | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/isSealed/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/isSealed/ExecutionTests.IntegrityDescriptorBatch.cs` | suite `built_ins.Object.isSealed` | Computed from non-extensible state plus own descriptor configurability for ordinary objects; empty non-extensible ordinary objects report true. Exotic object semantics are partial. |
+| Object.isSealed | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/isSealed/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/isSealed/ExecutionTests.IntegrityDescriptorBatch.cs` | suite `built_ins.Object.isSealed` | Computed from non-extensible state plus own descriptor configurability for ordinary objects; null, undefined, and empty non-extensible ordinary objects report true. Exotic object semantics are partial. |
 
 ### 20.1.2.19 ([tc39.es](https://tc39.es/ecma262/#sec-object.keys))
 

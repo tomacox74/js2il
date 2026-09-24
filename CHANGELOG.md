@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- fix(runtime): treat `null` and `undefined` as already frozen or sealed in
+  `Object.isFrozen` and `Object.isSealed`; port 10 pinned Test262 `Object` cases
+  covering integrity checks, argument-object accessor descriptors, and
+  observable `entries`/`values` operations.
 
 ## v0.12.27 - 2026-09-23
 
