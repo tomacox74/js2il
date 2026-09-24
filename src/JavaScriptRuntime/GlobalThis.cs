@@ -427,6 +427,15 @@ namespace JavaScriptRuntime
 
             return buffer.slice(start, end);
         };
+        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceToImmutableValue = static (thisArgument, start, end) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.sliceToImmutable called on incompatible receiver");
+            }
+
+            return buffer.sliceToImmutable(start, end);
+        };
         private static readonly BuiltinFunction1 _arrayBufferPrototypeResizeValue = static (thisArgument, newLength) =>
         {
             if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
@@ -453,6 +462,15 @@ namespace JavaScriptRuntime
             }
 
             return buffer.transferToFixedLength(newLength);
+        };
+        private static readonly BuiltinFunction0 _arrayBufferPrototypeTransferToImmutableValue = static thisArgument =>
+        {
+            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.transferToImmutable called on incompatible receiver");
+            }
+
+            return buffer.transferToImmutable();
         };
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
@@ -2092,6 +2110,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint16", (BuiltinFunction2)DataViewGetUint16, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt32", (BuiltinFunction2)DataViewGetInt32, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint32", (BuiltinFunction2)DataViewGetUint32, 1d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat16", (BuiltinFunction2)DataViewGetFloat16, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat32", (BuiltinFunction2)DataViewGetFloat32, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat64", (BuiltinFunction2)DataViewGetFloat64, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getBigInt64", (BuiltinFunction2)DataViewGetBigInt64, 1d);
@@ -2102,6 +2121,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint16", (BuiltinFunction3)DataViewSetUint16, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt32", (BuiltinFunction3)DataViewSetInt32, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint32", (BuiltinFunction3)DataViewSetUint32, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat16", (BuiltinFunction3)DataViewSetFloat16, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat32", (BuiltinFunction3)DataViewSetFloat32, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat64", (BuiltinFunction3)DataViewSetFloat64, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setBigInt64", (BuiltinFunction3)DataViewSetBigInt64, 2d);
@@ -2124,12 +2144,15 @@ namespace JavaScriptRuntime
             DefineSpeciesAccessorProperty(_arrayBufferConstructorValue);
             DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
             DefineArrayBufferAccessor("detached", static buffer => buffer.detached);
+            DefineArrayBufferAccessor("immutable", static buffer => buffer.immutable);
             DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "sliceToImmutable", _arrayBufferPrototypeSliceToImmutableValue, 2d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transfer", _arrayBufferPrototypeTransferValue, 0d);
             DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transferToFixedLength", _arrayBufferPrototypeTransferToFixedLengthValue, 0d);
+            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transferToImmutable", _arrayBufferPrototypeTransferToImmutableValue, 0d);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
         }
 
@@ -2247,6 +2270,9 @@ namespace JavaScriptRuntime
         private static object? DataViewGetUint32(object? thisArgument, object? byteOffset, object? littleEndian)
             => GetDataViewThis(thisArgument, "getUint32").getUint32(byteOffset, littleEndian);
 
+        private static object? DataViewGetFloat16(object? thisArgument, object? byteOffset, object? littleEndian)
+            => GetDataViewThis(thisArgument, "getFloat16").getFloat16(byteOffset, littleEndian);
+
         private static object? DataViewGetFloat32(object? thisArgument, object? byteOffset, object? littleEndian)
             => GetDataViewThis(thisArgument, "getFloat32").getFloat32(byteOffset, littleEndian);
 
@@ -2292,6 +2318,13 @@ namespace JavaScriptRuntime
             object? value,
             object? littleEndian)
             => GetDataViewThis(thisArgument, "setUint32").setUint32(byteOffset, value, littleEndian);
+
+        private static object? DataViewSetFloat16(
+            object? thisArgument,
+            object? byteOffset,
+            object? value,
+            object? littleEndian)
+            => GetDataViewThis(thisArgument, "setFloat16").setFloat16(byteOffset, value, littleEndian);
 
         private static object? DataViewSetFloat32(
             object? thisArgument,

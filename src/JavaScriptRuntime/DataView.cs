@@ -48,8 +48,8 @@ namespace JavaScriptRuntime
             _byteOffset = (int)requestedByteOffset;
             long remainingLong = (long)arrayBuffer.ByteLengthInt - _byteOffset;
             var remaining = (int)remainingLong;
-            _isLengthTracking = (byteLength is null || byteLength is JsNull) && arrayBuffer.IsResizable;
-            var requestedByteLength = byteLength is null || byteLength is JsNull
+            _isLengthTracking = byteLength is null && arrayBuffer.IsResizable;
+            var requestedByteLength = byteLength is null
                 ? remaining
                 : CoerceIndex(byteLength, 0, "Invalid DataView byteLength");
             arrayBuffer.EnsureAttached();
@@ -70,7 +70,12 @@ namespace JavaScriptRuntime
             get
             {
                 _buffer.EnsureAttached();
-                return IsOutOfBounds ? 0 : _byteOffset;
+                if (IsOutOfBounds)
+                {
+                    throw new TypeError("DataView is out of bounds");
+                }
+
+                return _byteOffset;
             }
         }
 
@@ -79,7 +84,12 @@ namespace JavaScriptRuntime
             get
             {
                 _buffer.EnsureAttached();
-                return IsOutOfBounds ? 0 : CurrentByteLength;
+                if (IsOutOfBounds)
+                {
+                    throw new TypeError("DataView is out of bounds");
+                }
+
+                return CurrentByteLength;
             }
         }
 
@@ -137,6 +147,19 @@ namespace JavaScriptRuntime
                 : (uint)((bytes[index] << 24) | (bytes[index + 1] << 16) | (bytes[index + 2] << 8) | bytes[index + 3]);
         }
 
+        public double getFloat16(object? byteOffset)
+            => getFloat16(byteOffset, null);
+
+        public double getFloat16(object? byteOffset, object? littleEndian)
+        {
+            var index = GetAbsoluteIndex(byteOffset, 2);
+            var bytes = _buffer.RawBytes;
+            var bits = UseLittleEndian(littleEndian)
+                ? (ushort)(bytes[index] | (bytes[index + 1] << 8))
+                : (ushort)((bytes[index] << 8) | bytes[index + 1]);
+            return (double)BitConverter.UInt16BitsToHalf(bits);
+        }
+
         public double getFloat32(object? byteOffset)
             => getFloat32(byteOffset, null);
 
@@ -177,6 +200,7 @@ namespace JavaScriptRuntime
 
         public object? setInt8(object? byteOffset, object? value)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteByte(index, unchecked((byte)TypeUtilities.ToInt8(value)));
             return null;
@@ -184,6 +208,7 @@ namespace JavaScriptRuntime
 
         public object? setUint8(object? byteOffset, object? value)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteByte(index, TypeUtilities.ToUint8(value));
             return null;
@@ -194,6 +219,7 @@ namespace JavaScriptRuntime
 
         public object? setInt16(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteUInt16(index, unchecked((ushort)TypeUtilities.ToInt16(value)), UseLittleEndian(littleEndian));
             return null;
@@ -204,6 +230,7 @@ namespace JavaScriptRuntime
 
         public object? setUint16(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteUInt16(index, TypeUtilities.ToUint16(value), UseLittleEndian(littleEndian));
             return null;
@@ -214,6 +241,7 @@ namespace JavaScriptRuntime
 
         public object? setInt32(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteUInt32(index, unchecked((uint)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
             return null;
@@ -224,8 +252,21 @@ namespace JavaScriptRuntime
 
         public object? setUint32(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteUInt32(index, unchecked((uint)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
+            return null;
+        }
+
+        public object? setFloat16(object? byteOffset, object? value)
+            => setFloat16(byteOffset, value, null);
+
+        public object? setFloat16(object? byteOffset, object? value, object? littleEndian)
+        {
+            EnsureMutableBuffer();
+            var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
+            var bits = BitConverter.HalfToUInt16Bits((Half)TypeUtilities.ToNumber(value));
+            WriteUInt16(index, bits, UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -234,6 +275,7 @@ namespace JavaScriptRuntime
 
         public object? setFloat32(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteSingle(index, (float)TypeUtilities.ToNumber(value), UseLittleEndian(littleEndian));
             return null;
@@ -244,6 +286,7 @@ namespace JavaScriptRuntime
 
         public object? setFloat64(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteDouble(index, TypeUtilities.ToNumber(value), UseLittleEndian(littleEndian));
             return null;
@@ -254,6 +297,7 @@ namespace JavaScriptRuntime
 
         public object? setBigInt64(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteBigInt64(index, BigInt.ToBigIntForTypedArray(value), UseLittleEndian(littleEndian));
             return null;
@@ -264,9 +308,18 @@ namespace JavaScriptRuntime
 
         public object? setBigUint64(object? byteOffset, object? value, object? littleEndian)
         {
+            EnsureMutableBuffer();
             var index = CoerceIndex(byteOffset, 0, "Offset is outside the bounds of the DataView");
             WriteBigInt64(index, BigInt.ToBigIntForTypedArray(value), UseLittleEndian(littleEndian));
             return null;
+        }
+
+        private void EnsureMutableBuffer()
+        {
+            if (_buffer.IsImmutable)
+            {
+                throw new TypeError("Cannot write to an immutable ArrayBuffer");
+            }
         }
 
         private byte ReadByte(object? requestedOffset)

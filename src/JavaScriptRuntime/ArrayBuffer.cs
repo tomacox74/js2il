@@ -11,6 +11,7 @@ namespace JavaScriptRuntime
         private readonly int _maxByteLength;
         private readonly bool _isResizable;
         private bool _isDetached;
+        private bool _isImmutable;
 
         public ArrayBuffer()
         {
@@ -87,6 +88,7 @@ namespace JavaScriptRuntime
         public double maxByteLength => _isDetached ? 0 : _maxByteLength;
         public bool resizable => _isResizable;
         public bool detached => _isDetached;
+        public bool immutable => _isImmutable;
 
         public ArrayBuffer slice(object? start)
             => slice(start, null);
@@ -117,6 +119,10 @@ namespace JavaScriptRuntime
 
             EnsureAttached();
             resultBuffer.EnsureAttached();
+            if (resultBuffer.IsImmutable)
+            {
+                throw new TypeError("ArrayBuffer species constructor returned an immutable buffer");
+            }
             if (resultBuffer.ByteLengthInt < length)
             {
                 throw new TypeError("ArrayBuffer species constructor returned a buffer that is too small");
@@ -134,6 +140,32 @@ namespace JavaScriptRuntime
             }
 
             return resultBuffer;
+        }
+
+        public ArrayBuffer sliceToImmutable()
+            => sliceToImmutable(null, null);
+
+        public ArrayBuffer sliceToImmutable(object? start)
+            => sliceToImmutable(start, null);
+
+        public ArrayBuffer sliceToImmutable(object? start, object? end)
+        {
+            EnsureAttached();
+            var initialByteLength = ByteLengthInt;
+            var startIndex = CoerceRelativeIndex(start, 0, initialByteLength);
+            var endIndex = CoerceRelativeIndex(end, initialByteLength, initialByteLength);
+            var length = System.Math.Max(endIndex - startIndex, 0);
+            EnsureAttached();
+
+            var result = new ArrayBuffer(new byte[length], cloneBuffer: false) { _isImmutable = true };
+            var sourceBytes = _storage.Bytes;
+            var copyLength = System.Math.Min(length, System.Math.Max(sourceBytes.Length - startIndex, 0));
+            if (copyLength > 0)
+            {
+                System.Buffer.BlockCopy(sourceBytes, startIndex, result.RawBytes, 0, copyLength);
+            }
+
+            return result;
         }
 
         public object? resize()
@@ -179,6 +211,13 @@ namespace JavaScriptRuntime
         public ArrayBuffer transferToFixedLength(object? newLength)
             => TransferCore(newLength, preserveResizability: false);
 
+        public ArrayBuffer transferToImmutable()
+        {
+            var result = TransferCore(null, preserveResizability: false);
+            result._isImmutable = true;
+            return result;
+        }
+
         public static bool isView(object? arg)
             => arg is DataView or TypedArrayBase;
 
@@ -187,12 +226,18 @@ namespace JavaScriptRuntime
         internal byte[] RawBytes => _storage.Bytes;
         internal bool IsResizable => _isResizable;
         internal bool IsDetached => _isDetached;
+        internal bool IsImmutable => _isImmutable;
 
         internal void Detach()
         {
             if (this is SharedArrayBuffer)
             {
                 throw new TypeError("SharedArrayBuffer cannot be detached");
+            }
+
+            if (_isImmutable)
+            {
+                throw new TypeError("Immutable ArrayBuffer cannot be detached");
             }
 
             _storage.Bytes = System.Array.Empty<byte>();
@@ -213,6 +258,10 @@ namespace JavaScriptRuntime
                 ? ByteLengthInt
                 : CoerceByteLength(newLength);
             EnsureAttached();
+            if (_isImmutable)
+            {
+                throw new TypeError("Immutable ArrayBuffer cannot be transferred");
+            }
 
             if (preserveResizability && _isResizable && newByteLength > _maxByteLength)
             {
