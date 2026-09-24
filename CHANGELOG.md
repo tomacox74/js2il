@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.28 - 2026-09-24
+
 - test262: verify 102 additional pinned block-scope syntax cases covering
   redeclarations, for-in lexical bindings, and function-declaration positions.
 - fix(runtime): add DataView Float16 reads and writes, reject writes to immutable
