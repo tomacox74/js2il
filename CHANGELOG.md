@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 102 additional pinned block-scope syntax cases covering
+  redeclarations, for-in lexical bindings, and function-declaration positions.
 - fix(runtime): expose `Function.prototype[Symbol.hasInstance]` with its
   specified metadata and descriptor, including bound-function prototype checks
   and Symbol-as-primitive handling; port 10 previously failing Test262 cases.

@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 16,170 | 12 | 7,330 | 23,512 | **68.77%** |
-| Language syntax and semantics | 15,356 | 46 | 8,245 | 23,647 | **64.94%** |
-| **Total** | 31,526 | 58 | 16,661 | 48,245 | **65.35%** |
+| Language syntax and semantics | 15,458 | 46 | 8,143 | 23,647 | **65.37%** |
+| **Total** | 31,628 | 58 | 16,559 | 48,245 | **65.56%** |
 
 ## Language Areas
 
@@ -31,7 +31,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | `arguments-object` | 199 | 0 | 64 | 263 | **75.67%** |
 | `asi` | 102 | 0 | 0 | 102 | **100.00%** |
-| `block-scope` | 42 | 1 | 102 | 145 | **28.97%** |
+| `block-scope` | 144 | 1 | 0 | 145 | **99.31%** |
 | `comments` | 22 | 0 | 30 | 52 | **42.31%** |
 | `computed-property-names` | 0 | 0 | 48 | 48 | **0.00%** |
 | `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
