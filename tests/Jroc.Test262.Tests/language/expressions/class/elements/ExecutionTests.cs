@@ -61,4 +61,43 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "new-sc-line-method-computed-symbol-names")]
     public Task new_sc_line_method_computed_symbol_names()
         => ExecutionTest("new-sc-line-method-computed-symbol-names");
+
+    [Fact(DisplayName = "after-same-line-gen-string-literal-names.js")]
+    public Task ported_after_same_line_gen_string_literal_names() => ExecutionTest("after-same-line-gen-string-literal-names");
+
+    [Fact(DisplayName = "after-same-line-method-string-literal-names.js")]
+    public Task ported_after_same_line_method_string_literal_names() => ExecutionTest("after-same-line-method-string-literal-names");
+
+    [Fact(DisplayName = "after-same-line-static-gen-string-literal-names.js")]
+    public Task ported_after_same_line_static_gen_string_literal_names() => ExecutionTest("after-same-line-static-gen-string-literal-names");
+
+    [Fact(DisplayName = "after-same-line-static-method-string-literal-names.js")]
+    public Task ported_after_same_line_static_method_string_literal_names() => ExecutionTest("after-same-line-static-method-string-literal-names");
+
+    [Fact(DisplayName = "multiple-definitions-string-literal-names.js")]
+    public Task ported_multiple_definitions_string_literal_names() => ExecutionTest("multiple-definitions-string-literal-names");
+
+    [Fact(DisplayName = "multiple-stacked-definitions-string-literal-names.js")]
+    public Task ported_multiple_stacked_definitions_string_literal_names() => ExecutionTest("multiple-stacked-definitions-string-literal-names");
+
+    [Fact(DisplayName = "new-no-sc-line-method-string-literal-names.js")]
+    public Task ported_new_no_sc_line_method_string_literal_names() => ExecutionTest("new-no-sc-line-method-string-literal-names");
+
+    [Fact(DisplayName = "new-sc-line-gen-string-literal-names.js")]
+    public Task ported_new_sc_line_gen_string_literal_names() => ExecutionTest("new-sc-line-gen-string-literal-names");
+
+    [Fact(DisplayName = "new-sc-line-method-string-literal-names.js")]
+    public Task ported_new_sc_line_method_string_literal_names() => ExecutionTest("new-sc-line-method-string-literal-names");
+
+    [Fact(DisplayName = "regular-definitions-string-literal-names.js")]
+    public Task ported_regular_definitions_string_literal_names() => ExecutionTest("regular-definitions-string-literal-names");
+
+    [Fact(DisplayName = "same-line-gen-string-literal-names.js")]
+    public Task ported_same_line_gen_string_literal_names() => ExecutionTest("same-line-gen-string-literal-names");
+
+    [Fact(DisplayName = "same-line-method-string-literal-names.js")]
+    public Task ported_same_line_method_string_literal_names() => ExecutionTest("same-line-method-string-literal-names");
+
+    [Fact(DisplayName = "wrapped-in-sc-string-literal-names.js")]
+    public Task ported_wrapped_in_sc_string_literal_names() => ExecutionTest("wrapped-in-sc-string-literal-names");
 }

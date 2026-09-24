@@ -1326,6 +1326,11 @@ namespace Jroc.SymbolTables
                         // Methods are represented as MethodDefinition (not to be confused with IL). We can capture their keys if needed later.
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
                         {
+                            if (mdef.Computed)
+                            {
+                                BuildScopeRecursive(globalScope, mdef.Key, classScope);
+                            }
+
                             // Create a pseudo-scope for the method if we compile methods as functions later
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
@@ -1439,6 +1444,11 @@ namespace Jroc.SymbolTables
                     {
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
                         {
+                            if (mdef.Computed)
+                            {
+                                BuildScopeRecursive(globalScope, mdef.Key, classExprScope);
+                            }
+
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classExprScope, mfunc);
                             methodScope.MayUseBoundWithObject = _activeWithDepth > 0;

@@ -747,7 +747,7 @@ namespace Jroc.Services.ILGenerators
             // Register instance methods (tokens are preallocated in Phase 1, bodies emitted in Phase 2).
             foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
-                if (!ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out var memberName) || string.IsNullOrWhiteSpace(memberName))
+                if (!ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out var memberName) || memberName == null)
                 {
                     continue;
                 }

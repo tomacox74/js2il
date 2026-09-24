@@ -37,4 +37,10 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "gen-method-length-dflt")]
     public Task gen_method_length_dflt()
         => ExecutionTest("gen-method-length-dflt");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-arrow-function-expression.js")]
+    public Task ported_cpn_class_expr_accessors_computed_property_name_from_arrow_function_expression() => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-arrow-function-expression");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-function-expression.js")]
+    public Task ported_cpn_class_expr_accessors_computed_property_name_from_function_expression() => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-function-expression");
 }

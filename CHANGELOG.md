@@ -6,7 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- fix(compiler): support literal-named class accessors and fields and
+  callable-expression computed class method and accessor names; port 100
+  previously failing Test262 class expression and declaration cases.
 
 ## v0.12.28 - 2026-09-24
 
