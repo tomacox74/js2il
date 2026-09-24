@@ -387,7 +387,7 @@ public sealed class CallableDiscovery
                 continue;
             }
 
-            if (!hasResolvedMethodName || string.IsNullOrWhiteSpace(methodName))
+            if (!hasResolvedMethodName || methodName == null)
             {
                 continue;
             }

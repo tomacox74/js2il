@@ -496,6 +496,16 @@ public static class HIRBuilder
                                             initExpr!,
                                             isField: true)));
                                 }
+                                else if (propertyDefinition.Key is not Identifier and not PrivateIdentifier
+                                    && ClassElementNames.TryGetPropertyName(propertyDefinition.Key, computed: false, out var literalFieldName))
+                                {
+                                    ctorStatements.Add(new HIRExpressionStatement(
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            new HIRLiteralExpression(JavascriptType.String, literalFieldName),
+                                            initExpr!,
+                                            isField: true)));
+                                }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {
                                     ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
@@ -663,6 +673,16 @@ public static class HIRBuilder
                                         new HIRDefineClassDataPropertyExpression(
                                             new HIRThisExpression(),
                                             new HIRLiteralExpression(JavascriptType.String, computedInstanceFieldName!),
+                                            initExpr!,
+                                            isField: true)));
+                                }
+                                else if (propertyDefinition.Key is not Identifier and not PrivateIdentifier
+                                    && ClassElementNames.TryGetPropertyName(propertyDefinition.Key, computed: false, out var literalFieldName))
+                                {
+                                    initStatements.Add(new HIRExpressionStatement(
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            new HIRLiteralExpression(JavascriptType.String, literalFieldName),
                                             initExpr!,
                                             isField: true)));
                                 }
@@ -876,18 +896,30 @@ public static class HIRBuilder
                                     }
 
                                     initStatements.Add(new HIRExpressionStatement(
-                                        new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, initExpr!)));
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            computedKeyExpr,
+                                            initExpr!,
+                                            isField: true)));
                                 }
                                 else if (hasResolvedInstanceFieldName)
                                 {
-                                    initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
-                                    {
-                                        RegistryClassName = registryClassName,
-                                        FieldName = computedInstanceFieldName!,
-                                        IsPrivateField = false,
-                                        Value = initExpr!,
-                                        Location = SourceLocation.FromNode(propertyDefinition)
-                                    });
+                                    initStatements.Add(new HIRExpressionStatement(
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            new HIRLiteralExpression(JavascriptType.String, computedInstanceFieldName!),
+                                            initExpr!,
+                                            isField: true)));
+                                }
+                                else if (propertyDefinition.Key is not Identifier and not PrivateIdentifier
+                                    && ClassElementNames.TryGetPropertyName(propertyDefinition.Key, computed: false, out var literalFieldName))
+                                {
+                                    initStatements.Add(new HIRExpressionStatement(
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            new HIRLiteralExpression(JavascriptType.String, literalFieldName),
+                                            initExpr!,
+                                            isField: true)));
                                 }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {
@@ -1841,16 +1873,15 @@ partial class HIRMethodBuilder
                             break;
                         }
 
-                        if (hasResolvedStaticFieldName)
+                        if (propertyDefinition.Key is not Identifier and not PrivateIdentifier
+                            && ClassElementNames.TryGetPropertyName(propertyDefinition.Key, computed: false, out var literalStaticFieldName))
                         {
-                            statements.Add(new HIRStoreUserClassStaticFieldStatement
-                            {
-                                RegistryClassName = registryClassName,
-                                FieldName = computedStaticFieldName!,
-                                IsPrivateField = false,
-                                Value = hirValue!,
-                                Location = SourceLocation.FromNode(propertyDefinition)
-                            });
+                            statements.Add(new HIRExpressionStatement(
+                                new HIRDefineClassDataPropertyExpression(
+                                    classTypeExpr,
+                                    new HIRLiteralExpression(JavascriptType.String, literalStaticFieldName),
+                                    hirValue!,
+                                    isField: true)));
                             break;
                         }
 
@@ -1883,7 +1914,7 @@ partial class HIRMethodBuilder
                         when !ClassElementNames.IsConstructor(methodDefinition)
                             && methodDefinition.Kind is PropertyKind.Get or PropertyKind.Set
                             && ClassElementNames.TryGetPropertyName(methodDefinition.Key, methodDefinition.Computed, out var accessorName)
-                            && !string.IsNullOrWhiteSpace(accessorName):
+                            && accessorName != null:
                     {
                         HIRExpression targetExpr = methodDefinition.Static ? classTypeExpr : prototypeTypeExpr;
                         var keyExpr = new HIRLiteralExpression(JavascriptType.String, accessorName);
@@ -1934,7 +1965,7 @@ partial class HIRMethodBuilder
                         var propertyKey = isPrivate
                             ? clrMethodName
                             : ClassElementNames.TryGetPropertyName(methodDefinition.Key, methodDefinition.Computed, out var resolvedName)
-                                && !string.IsNullOrWhiteSpace(resolvedName)
+                                && resolvedName != null
                                     ? resolvedName!
                                     : clrMethodName;
                         var functionName = methodDefinition.Key is PrivateIdentifier privateIdentifier
@@ -2337,7 +2368,7 @@ partial class HIRMethodBuilder
                 methodDefinition.Key,
                 methodDefinition.Computed,
                 out var methodName)
-            || string.IsNullOrWhiteSpace(methodName))
+            || methodName == null)
         {
             throw new InvalidOperationException(
                 "A generated class method object requires a stable property name.");

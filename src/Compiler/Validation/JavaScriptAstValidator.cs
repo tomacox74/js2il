@@ -1684,9 +1684,7 @@ public class JavaScriptAstValidator : IAstValidator
         if (node is MethodDefinition method)
         {
             if (!method.Computed
-                && method.Key is not Identifier
-                && method.Key is not PrivateIdentifier
-                && !IsBigIntPropertyName(method.Key))
+                && !Jroc.Services.ClassElementNames.TryGetPropertyName(method.Key, computed: false, out _))
             {
                 result.Errors.Add($"Computed/non-identifier method names in classes are not yet supported (line {node.Location.Start.Line})");
                 result.IsValid = false;
@@ -1696,16 +1694,11 @@ public class JavaScriptAstValidator : IAstValidator
         }
     }
 
-    private static bool IsBigIntPropertyName(Node? key)
-        => key is Literal literal
-            && literal.Raw?.Trim().EndsWith("n", StringComparison.Ordinal) == true;
-
     private void ValidatePropertyDefinition(Node node, ValidationResult result)
     {
         if (node is PropertyDefinition pdef
             && !pdef.Computed
-            && pdef.Key is not Identifier
-            && pdef.Key is not PrivateIdentifier)
+            && !Jroc.Services.ClassElementNames.TryGetPropertyName(pdef.Key, computed: false, out _))
         {
             result.Errors.Add($"Computed/non-identifier class field names are not yet supported (line {node.Location.Start.Line})");
             result.IsValid = false;
