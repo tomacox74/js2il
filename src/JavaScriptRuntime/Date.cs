@@ -223,21 +223,21 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod("getUTCMonth", static date => date.getUTCMonth(), 0d);
             DefinePrototypeMethod("getUTCSeconds", static date => date.getUTCSeconds(), 0d);
 
-            DefinePrototypeMethod("setDate", static (date, arg0) => date.setDate(arg0), 1d);
-            DefinePrototypeMethod("setFullYear", static (date, arg0, arg1, arg2) => date.setFullYear(arg0, arg1, arg2), 3d);
-            DefinePrototypeMethod("setHours", static (date, arg0, arg1, arg2, arg3) => date.setHours(arg0, arg1, arg2, arg3), 4d);
-            DefinePrototypeMethod("setMilliseconds", static (date, arg0) => date.setMilliseconds(arg0), 1d);
-            DefinePrototypeMethod("setMinutes", static (date, arg0, arg1, arg2) => date.setMinutes(arg0, arg1, arg2), 3d);
-            DefinePrototypeMethod("setMonth", static (date, arg0, arg1) => date.setMonth(arg0, arg1), 2d);
-            DefinePrototypeMethod("setSeconds", static (date, arg0, arg1) => date.setSeconds(arg0, arg1), 2d);
+            DefineDateSetter("setDate", 2, 1d);
+            DefineDateSetter("setFullYear", 0, 3d, recoverInvalidDate: true);
+            DefineDateSetter("setHours", 3, 4d);
+            DefineDateSetter("setMilliseconds", 6, 1d);
+            DefineDateSetter("setMinutes", 4, 3d);
+            DefineDateSetter("setMonth", 1, 2d);
+            DefineDateSetter("setSeconds", 5, 2d);
             DefinePrototypeMethod("setTime", static (date, arg0) => date.setTime(arg0), 1d);
-            DefinePrototypeMethod("setUTCDate", static (date, arg0) => date.setUTCDate(arg0), 1d);
-            DefinePrototypeMethod("setUTCFullYear", static (date, arg0, arg1, arg2) => date.setUTCFullYear(arg0, arg1, arg2), 3d);
-            DefinePrototypeMethod("setUTCHours", static (date, arg0, arg1, arg2, arg3) => date.setUTCHours(arg0, arg1, arg2, arg3), 4d);
-            DefinePrototypeMethod("setUTCMilliseconds", static (date, arg0) => date.setUTCMilliseconds(arg0), 1d);
-            DefinePrototypeMethod("setUTCMinutes", static (date, arg0, arg1, arg2) => date.setUTCMinutes(arg0, arg1, arg2), 3d);
-            DefinePrototypeMethod("setUTCMonth", static (date, arg0, arg1) => date.setUTCMonth(arg0, arg1), 2d);
-            DefinePrototypeMethod("setUTCSeconds", static (date, arg0, arg1) => date.setUTCSeconds(arg0, arg1), 2d);
+            DefineDateSetter("setUTCDate", 2, 1d, utc: true);
+            DefineDateSetter("setUTCFullYear", 0, 3d, utc: true, recoverInvalidDate: true);
+            DefineDateSetter("setUTCHours", 3, 4d, utc: true);
+            DefineDateSetter("setUTCMilliseconds", 6, 1d, utc: true);
+            DefineDateSetter("setUTCMinutes", 4, 3d, utc: true);
+            DefineDateSetter("setUTCMonth", 1, 2d, utc: true);
+            DefineDateSetter("setUTCSeconds", 5, 2d, utc: true);
 
             DefinePrototypeMethod("toDateString", static date => date.toDateString(), 0d);
             DefinePrototypeMethod("toISOString", static date => date.toISOString(), 0d);
@@ -657,13 +657,13 @@ namespace JavaScriptRuntime
                 return TimeClipLike(result);
             }
 
-            if (result < -62_135_596_800_000d || result > 253_402_300_799_999d)
+            if (result >= -62_135_596_800_000d && result <= 253_402_300_799_999d)
             {
-                return double.NaN;
+                var local = DateTimeOffset.FromUnixTimeMilliseconds((long)result).DateTime;
+                result -= TimeZoneInfo.Local.GetUtcOffset(local).TotalMilliseconds;
             }
 
-            var local = DateTimeOffset.FromUnixTimeMilliseconds((long)result).DateTime;
-            return TimeClipLike(result - TimeZoneInfo.Local.GetUtcOffset(local).TotalMilliseconds);
+            return TimeClipLike(result);
         }
 
         // Instance methods
@@ -737,41 +737,41 @@ namespace JavaScriptRuntime
             return _msSinceEpoch;
         }
 
-        public object setDate(object? date) => SetLocalDateParts(day: date);
+        public object setDate(object? date) => SetLocalDateParts(requiredPart: 2, day: date);
 
         public object setFullYear(object? year, object? month = null, object? date = null) =>
-            SetLocalDateParts(year: year, month: month, day: date);
+            SetLocalDateParts(requiredPart: 0, recoverInvalidDate: true, year: year, month: month, day: date);
 
         public object setHours(object? hours, object? minutes = null, object? seconds = null, object? milliseconds = null) =>
-            SetLocalDateParts(hour: hours, minute: minutes, second: seconds, millisecond: milliseconds);
+            SetLocalDateParts(requiredPart: 3, hour: hours, minute: minutes, second: seconds, millisecond: milliseconds);
 
-        public object setMilliseconds(object? milliseconds) => SetLocalDateParts(millisecond: milliseconds);
+        public object setMilliseconds(object? milliseconds) => SetLocalDateParts(requiredPart: 6, millisecond: milliseconds);
 
         public object setMinutes(object? minutes, object? seconds = null, object? milliseconds = null) =>
-            SetLocalDateParts(minute: minutes, second: seconds, millisecond: milliseconds);
+            SetLocalDateParts(requiredPart: 4, minute: minutes, second: seconds, millisecond: milliseconds);
 
-        public object setMonth(object? month, object? date = null) => SetLocalDateParts(month: month, day: date);
+        public object setMonth(object? month, object? date = null) => SetLocalDateParts(requiredPart: 1, month: month, day: date);
 
         public object setSeconds(object? seconds, object? milliseconds = null) =>
-            SetLocalDateParts(second: seconds, millisecond: milliseconds);
+            SetLocalDateParts(requiredPart: 5, second: seconds, millisecond: milliseconds);
 
-        public object setUTCDate(object? date) => SetUtcDateParts(day: date);
+        public object setUTCDate(object? date) => SetUtcDateParts(requiredPart: 2, day: date);
 
         public object setUTCFullYear(object? year, object? month = null, object? date = null) =>
-            SetUtcDateParts(year: year, month: month, day: date);
+            SetUtcDateParts(requiredPart: 0, recoverInvalidDate: true, year: year, month: month, day: date);
 
         public object setUTCHours(object? hours, object? minutes = null, object? seconds = null, object? milliseconds = null) =>
-            SetUtcDateParts(hour: hours, minute: minutes, second: seconds, millisecond: milliseconds);
+            SetUtcDateParts(requiredPart: 3, hour: hours, minute: minutes, second: seconds, millisecond: milliseconds);
 
-        public object setUTCMilliseconds(object? milliseconds) => SetUtcDateParts(millisecond: milliseconds);
+        public object setUTCMilliseconds(object? milliseconds) => SetUtcDateParts(requiredPart: 6, millisecond: milliseconds);
 
         public object setUTCMinutes(object? minutes, object? seconds = null, object? milliseconds = null) =>
-            SetUtcDateParts(minute: minutes, second: seconds, millisecond: milliseconds);
+            SetUtcDateParts(requiredPart: 4, minute: minutes, second: seconds, millisecond: milliseconds);
 
-        public object setUTCMonth(object? month, object? date = null) => SetUtcDateParts(month: month, day: date);
+        public object setUTCMonth(object? month, object? date = null) => SetUtcDateParts(requiredPart: 1, month: month, day: date);
 
         public object setUTCSeconds(object? seconds, object? milliseconds = null) =>
-            SetUtcDateParts(second: seconds, millisecond: milliseconds);
+            SetUtcDateParts(requiredPart: 5, second: seconds, millisecond: milliseconds);
 
         public string toDateString()
         {
@@ -1091,6 +1091,8 @@ namespace JavaScriptRuntime
         }
 
         private object SetLocalDateParts(
+            int requiredPart,
+            bool recoverInvalidDate = false,
             object? year = null,
             object? month = null,
             object? day = null,
@@ -1099,10 +1101,12 @@ namespace JavaScriptRuntime
             object? second = null,
             object? millisecond = null)
         {
-            return SetDateParts(year, month, day, hour, minute, second, millisecond);
+            return SetDateParts(false, requiredPart, recoverInvalidDate, -1, year, month, day, hour, minute, second, millisecond);
         }
 
         private object SetUtcDateParts(
+            int requiredPart,
+            bool recoverInvalidDate = false,
             object? year = null,
             object? month = null,
             object? day = null,
@@ -1110,35 +1114,13 @@ namespace JavaScriptRuntime
             object? minute = null,
             object? second = null,
             object? millisecond = null)
-        {
-            if (double.IsNaN(_msSinceEpoch))
-            {
-                _msSinceEpoch = double.NaN;
-                return _msSinceEpoch;
-            }
-
-            var current = GetDateParts(_msSinceEpoch);
-            var valid = TryResolveUtcDatePart(year, current.Year, out var resolvedYear);
-            valid = TryResolveUtcDatePart(month, current.Month - 1, out var resolvedMonth) & valid;
-            valid = TryResolveUtcDatePart(day, current.Day, out var resolvedDay) & valid;
-            valid = TryResolveUtcDatePart(hour, current.Hour, out var resolvedHour) & valid;
-            valid = TryResolveUtcDatePart(minute, current.Minute, out var resolvedMinute) & valid;
-            valid = TryResolveUtcDatePart(second, current.Second, out var resolvedSecond) & valid;
-            valid = TryResolveUtcDatePart(millisecond, current.Millisecond, out var resolvedMillisecond) & valid;
-            if (!valid)
-            {
-                _msSinceEpoch = double.NaN;
-                return _msSinceEpoch;
-            }
-
-            var date = MakeDate(
-                MakeDay(resolvedYear, resolvedMonth, resolvedDay),
-                MakeTime(resolvedHour, resolvedMinute, resolvedSecond, resolvedMillisecond));
-            _msSinceEpoch = TimeClipLike(date);
-            return _msSinceEpoch;
-        }
+            => SetDateParts(true, requiredPart, recoverInvalidDate, -1, year, month, day, hour, minute, second, millisecond);
 
         private object SetDateParts(
+            bool utc,
+            int requiredPart,
+            bool recoverInvalidDate,
+            int argumentCount,
             object? year,
             object? month,
             object? day,
@@ -1147,67 +1129,49 @@ namespace JavaScriptRuntime
             object? second,
             object? millisecond)
         {
-            if (double.IsNaN(_msSinceEpoch))
+            // Capture [[DateValue]] before any user-defined ToNumber conversion can mutate it.
+            var storedTime = _msSinceEpoch;
+            var invalid = double.IsNaN(storedTime);
+            var current = utc
+                ? GetDateParts(invalid ? 0d : storedTime)
+                : invalid ? GetDateParts(0d) : GetLocalParts(out _);
+
+            bool Supplied(int index) => index == requiredPart || (index > requiredPart && argumentCount > index - requiredPart);
+            var valid = TryResolveUtcDatePart(year, current.Year, Supplied(0), out var resolvedYear);
+            valid = TryResolveUtcDatePart(month, current.Month - 1, Supplied(1), out var resolvedMonth) & valid;
+            valid = TryResolveUtcDatePart(day, current.Day, Supplied(2), out var resolvedDay) & valid;
+            valid = TryResolveUtcDatePart(hour, current.Hour, Supplied(3), out var resolvedHour) & valid;
+            valid = TryResolveUtcDatePart(minute, current.Minute, Supplied(4), out var resolvedMinute) & valid;
+            valid = TryResolveUtcDatePart(second, current.Second, Supplied(5), out var resolvedSecond) & valid;
+            valid = TryResolveUtcDatePart(millisecond, current.Millisecond, Supplied(6), out var resolvedMillisecond) & valid;
+            if (invalid && !recoverInvalidDate)
+            {
+                return double.NaN;
+            }
+
+            if (!valid)
             {
                 _msSinceEpoch = double.NaN;
                 return _msSinceEpoch;
             }
 
-            var current = GetLocalDateTime();
-            if (!TryResolveDatePart(year, current.Year, out var resolvedYear)
-                || !TryResolveDatePart(month, current.Month - 1, out var resolvedMonth)
-                || !TryResolveDatePart(day, current.Day, out var resolvedDay)
-                || !TryResolveDatePart(hour, current.Hour, out var resolvedHour)
-                || !TryResolveDatePart(minute, current.Minute, out var resolvedMinute)
-                || !TryResolveDatePart(second, current.Second, out var resolvedSecond)
-                || !TryResolveDatePart(millisecond, current.Millisecond, out var resolvedMillisecond))
+            var localTime = MakeDate(
+                MakeDay(resolvedYear, resolvedMonth, resolvedDay),
+                MakeTime(resolvedHour, resolvedMinute, resolvedSecond, resolvedMillisecond));
+            if (!utc && double.IsFinite(localTime)
+                && localTime >= -62_135_596_800_000d && localTime <= 253_402_300_799_999d)
             {
-                _msSinceEpoch = double.NaN;
-                return _msSinceEpoch;
+                var localDateTime = DateTime.SpecifyKind(DateTime.UnixEpoch.AddMilliseconds(localTime), DateTimeKind.Unspecified);
+                localTime -= TimeZoneInfo.Local.GetUtcOffset(localDateTime).TotalMilliseconds;
             }
 
-            try
-            {
-                var localDateTime = new DateTime(resolvedYear, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)
-                    .AddMonths(resolvedMonth)
-                    .AddDays(resolvedDay - 1)
-                    .AddHours(resolvedHour)
-                    .AddMinutes(resolvedMinute)
-                    .AddSeconds(resolvedSecond)
-                    .AddMilliseconds(resolvedMillisecond);
-                var localOffset = TimeZoneInfo.Local.GetUtcOffset(localDateTime);
-                _msSinceEpoch = TimeClipLike(new DateTimeOffset(localDateTime, localOffset).ToUniversalTime().ToUnixTimeMilliseconds());
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                _msSinceEpoch = double.NaN;
-            }
-
+            _msSinceEpoch = TimeClipLike(localTime);
             return _msSinceEpoch;
         }
 
-        private static bool TryResolveDatePart(object? value, int currentValue, out int resolvedValue)
+        private static bool TryResolveUtcDatePart(object? value, double currentValue, bool required, out double resolvedValue)
         {
-            if (value == null)
-            {
-                resolvedValue = currentValue;
-                return true;
-            }
-
-            var number = TypeUtilities.ToNumber(value);
-            if (double.IsNaN(number) || double.IsInfinity(number))
-            {
-                resolvedValue = 0;
-                return false;
-            }
-
-            resolvedValue = (int)System.Math.Truncate(number);
-            return true;
-        }
-
-        private static bool TryResolveUtcDatePart(object? value, double currentValue, out double resolvedValue)
-        {
-            if (value == null)
+            if (value == null && !required)
             {
                 resolvedValue = currentValue;
                 return true;
@@ -1222,6 +1186,19 @@ namespace JavaScriptRuntime
 
             resolvedValue = System.Math.Truncate(number);
             return true;
+        }
+
+        private static void DefineDateSetter(string key, int firstPart, double length, bool utc = false, bool recoverInvalidDate = false)
+        {
+            BuiltinFunctionVariadic functionValue = (object? thisArgument, in JsCallArguments arguments) =>
+            {
+                var date = ThisDateValue(thisArgument);
+                var supplied = arguments;
+                object? Part(int index) => index < firstPart ? null : supplied.GetArgument(index - firstPart);
+                return date.SetDateParts(utc, firstPart, recoverInvalidDate, arguments.Count,
+                    Part(0), Part(1), Part(2), Part(3), Part(4), Part(5), Part(6));
+            };
+            DefinePrototypeFunction(key, functionValue, length);
         }
 
         private static void DefineConstructorMethod(string key, Delegate implementation, double length)
