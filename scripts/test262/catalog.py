@@ -50,13 +50,27 @@ def parse_node_major(version):
 def runtimeconfig_frameworks(jroc):
     runtimeconfig = jroc.with_suffix(".runtimeconfig.json")
     if not runtimeconfig.is_file():
-        return []
-    options = json.loads(runtimeconfig.read_text(encoding="utf8")).get("runtimeOptions", {})
+        raise ValueError(f"JROC runtime config missing: {runtimeconfig}; build Jroc.dll again")
+    try:
+        document = json.loads(runtimeconfig.read_text(encoding="utf8"))
+    except (OSError, UnicodeError) as error:
+        raise ValueError(f"Cannot read JROC runtime config {runtimeconfig}: {error}") from error
+    except json.JSONDecodeError as error:
+        raise ValueError(f"JROC runtime config malformed: {runtimeconfig}: {error}") from error
+    if not isinstance(document, dict) or not isinstance(document.get("runtimeOptions"), dict):
+        raise ValueError(f"JROC runtime config {runtimeconfig} must contain runtimeOptions")
+    options = document["runtimeOptions"]
     frameworks = []
     if "framework" in options:
         frameworks.append(options["framework"])
-    frameworks.extend(options.get("frameworks", []))
-    return [{"name": f["name"], "version": f["version"]} for f in frameworks if "name" in f and "version" in f]
+    multiple = options.get("frameworks", [])
+    if not isinstance(multiple, list):
+        raise ValueError(f"JROC runtime config {runtimeconfig} has invalid frameworks")
+    frameworks.extend(multiple)
+    if any(not isinstance(f, dict) or not isinstance(f.get("name"), str)
+           or not isinstance(f.get("version"), str) for f in frameworks):
+        raise ValueError(f"JROC runtime config {runtimeconfig} has invalid framework entries")
+    return [{"name": f["name"], "version": f["version"]} for f in frameworks]
 
 
 def dotnet_runtimes():
@@ -75,9 +89,13 @@ def dotnet_runtimes():
 
 def select_dotnet_runtime(jroc):
     frameworks = runtimeconfig_frameworks(jroc)
-    framework = next((f for f in frameworks if f["name"] == "Microsoft.NETCore.App"), frameworks[0] if frameworks else None)
+    framework = next((f for f in frameworks if f["name"] == "Microsoft.NETCore.App"), None)
     if not framework:
-        return {"name": "unknown", "requested": "unknown", "selected": "unknown"}
+        raise ValueError(f"JROC runtime config {jroc.with_suffix('.runtimeconfig.json')} "
+                         "requires a Microsoft.NETCore.App framework/version")
+    if not re.fullmatch(r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?", framework["version"]):
+        raise ValueError(f"JROC runtime config {jroc.with_suffix('.runtimeconfig.json')} "
+                         f"has invalid Microsoft.NETCore.App version: {framework['version']!r}")
     requested = parse_version(framework["version"])
     candidates = [runtime for runtime in dotnet_runtimes() if runtime["name"] == framework["name"]]
     if requested:
@@ -365,6 +383,7 @@ def scan(db, args):
         raise ValueError("--jroc must name an existing compiler DLL")
     if jroc.name != info.get("compiler_entry"):
         raise ValueError("Compiler entry point changed; run init again")
+    select_dotnet_runtime(jroc)
     if hash_files(jroc.parent, ["*.dll", "*.deps.json", "*.runtimeconfig.json"]) != info["binaries"]:
         raise ValueError("Compiler/runtime fingerprint changed; run init again")
     if hash_files(root, ["harness/**/*"]) != info["harness"]:
