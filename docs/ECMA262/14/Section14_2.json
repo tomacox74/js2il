@@ -84,7 +84,13 @@
         "feature": "block early-error edge cases",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-block-static-semantics-early-errors",
-        "notes": "Relies on Acornima parsing plus JROC validation/symbol table; not all early-error combinations are explicitly covered by tests."
+        "test262Paths": [
+          "test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js",
+          "test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-var.js",
+          "test/language/block-scope/syntax/for-in/disallow-initialization-assignment.js",
+          "test/language/block-scope/syntax/function-declarations/in-statement-position-for-statement.js"
+        ],
+        "notes": "The native harness verifies 102 additional pinned parse-negative block-scope syntax fixtures covering redeclarations, for-in lexical bindings, and disallowed function-declaration positions. Other early-error combinations remain unverified."
       },
       {
         "clause": "14.2.2",

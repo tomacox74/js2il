@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-09-24T06:16:11Z
 
 Block statements are supported, including lexical scoping for `let`/`const` declarations and temporal dead zone checks for lexical bindings. Some early-error edge cases and full spec fidelity around declaration instantiation are not exhaustively validated.
 
@@ -34,7 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| block early-error edge cases | Supported with Limitations |  |  | Relies on Acornima parsing plus JROC validation/symbol table; not all early-error combinations are explicitly covered by tests. |
+| block early-error edge cases | Supported with Limitations |  | `test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js`<br>`test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-var.js`<br>`test/language/block-scope/syntax/for-in/disallow-initialization-assignment.js`<br>`test/language/block-scope/syntax/function-declarations/in-statement-position-for-statement.js` | The native harness verifies 102 additional pinned parse-negative block-scope syntax fixtures covering redeclarations, for-in lexical bindings, and disallowed function-declaration positions. Other early-error combinations remain unverified. |
 
 ### 14.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-block-runtime-semantics-evaluation))
 

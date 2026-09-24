@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 102 additional pinned block-scope syntax cases covering
+  redeclarations, for-in lexical bindings, and function-declaration positions.
 - fix(runtime): add DataView Float16 reads and writes, reject writes to immutable
   ArrayBuffers before argument coercion, and correct resizable-view accessors
   and explicit-null byte lengths; port 50 previously failing Test262 DataView
