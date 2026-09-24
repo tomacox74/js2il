@@ -450,7 +450,13 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "test", (BuiltinFunction1)PrototypeTest, 1d);
             DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0d);
             DefinePrototypeGetter(prototype, "dotAll", static regExp => regExp.dotAll);
-            DefinePrototypeGetter(prototype, "flags", static regExp => regExp.flags);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "flags", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (BuiltinFunction0)PrototypeFlags
+            });
             DefinePrototypeGetter(prototype, "global", static regExp => regExp.global);
             DefinePrototypeGetter(prototype, "hasIndices", static regExp => regExp.hasIndices);
             DefinePrototypeGetter(prototype, "ignoreCase", static regExp => regExp.ignoreCase);
@@ -504,8 +510,30 @@ namespace JavaScriptRuntime
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (BuiltinFunction0)(thisArgument => getter(GetRegExpReceiver(thisArgument, key)))
+                Get = (BuiltinFunction0)(thisArgument =>
+                    ReferenceEquals(thisArgument, prototype)
+                        ? key == "source" ? "(?:)" : false
+                        : getter(GetRegExpReceiver(thisArgument, key)))
             });
+        }
+
+        private static object PrototypeFlags(object? thisArgument)
+        {
+            if (TypeUtilities.IsPrimitive(thisArgument))
+            {
+                throw new TypeError("RegExp.prototype.flags called on incompatible receiver");
+            }
+
+            var flags = new StringBuilder(8);
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "hasIndices"))) flags.Append('d');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "global"))) flags.Append('g');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "ignoreCase"))) flags.Append('i');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "multiline"))) flags.Append('m');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "dotAll"))) flags.Append('s');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "unicode"))) flags.Append('u');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "unicodeSets"))) flags.Append('v');
+            if (TypeUtilities.ToBoolean(ObjectRuntime.GetItem(thisArgument!, "sticky"))) flags.Append('y');
+            return flags.ToString();
         }
 
         private static RegExp GetRegExpReceiver(object? thisArgument, string propertyName)
