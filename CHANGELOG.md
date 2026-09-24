@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): add DataView Float16 reads and writes, reject writes to immutable
+  ArrayBuffers before argument coercion, and correct resizable-view accessors
+  and explicit-null byte lengths; port 50 previously failing Test262 DataView
+  and ArrayBuffer cases.
 - fix(runtime): preserve Date setter argument count and conversion order,
   including invalid-date snapshot behavior, full-year recovery, and TimeClip
   at extended-year limits; port 50 previously failing Test262 Date setter
