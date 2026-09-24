@@ -52,7 +52,8 @@ namespace JavaScriptRuntime
         }
 
         internal object? GetElementOrUndefinedForPropertyAccess(double index)
-            => TryGetElementIndex(index, out var elementIndex)
+            => !(index == 0d && double.IsNegative(index))
+                && TryGetElementIndex(index, out var elementIndex)
                 ? ReadElementObject(elementIndex)
                 : null;
 
@@ -648,7 +649,7 @@ namespace JavaScriptRuntime
 
             var remainingBytes = buffer.ByteLengthInt - offset;
             int elementLength;
-            if (length is null || length is JsNull)
+            if (length is null)
             {
                 if (!buffer.IsResizable && remainingBytes % BytesPerElement != 0)
                 {
@@ -670,7 +671,7 @@ namespace JavaScriptRuntime
             _buffer = buffer;
             _byteOffset = offset;
             _length = elementLength;
-            _isLengthTracking = (length is null || length is JsNull) && buffer.IsResizable;
+            _isLengthTracking = length is null && buffer.IsResizable;
             UpdateFastLength();
             InitializeIntrinsicSurface();
         }
@@ -1143,7 +1144,7 @@ namespace JavaScriptRuntime
 
         protected static int CoerceNonNegativeIndex(object? value, int defaultValue, string errorMessage)
         {
-            if (value is null || value is JsNull)
+            if (value is null)
             {
                 return defaultValue;
             }
@@ -1154,13 +1155,13 @@ namespace JavaScriptRuntime
                 return defaultValue;
             }
 
-            if (double.IsInfinity(number) || number < 0)
+            if (double.IsInfinity(number))
             {
                 throw new RangeError(errorMessage);
             }
 
             var truncated = global::System.Math.Truncate(number);
-            if (truncated > int.MaxValue)
+            if (truncated < 0 || truncated > int.MaxValue)
             {
                 throw new RangeError(errorMessage);
             }

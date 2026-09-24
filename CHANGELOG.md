@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): implement canonical numeric-index get, has, define, and set
+  semantics for Number and BigInt typed arrays, including receiver-aware writes,
+  detached buffers, and coercion ordering. Correct ToIndex conversion for
+  buffer-backed typed-array constructor offsets and explicit null lengths;
+  verify 100 additional pinned Test262 typed-array cases.
 - fix(compiler): support literal-named class accessors and fields and
   callable-expression computed class method and accessor names; port 100
   previously failing Test262 class expression and declaration cases.
