@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T19:02:34Z
+> Last generated (UTC): 2026-09-24T05:46:46Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -25,7 +25,7 @@
 | 20.2.3.3 | Function.prototype.call ( thisArg , ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.call) |
 | 20.2.3.4 | Function.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.constructor) |
 | 20.2.3.5 | Function.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring) |
-| 20.2.3.6 | Function.prototype [ %Symbol.hasInstance% ] ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%) |
+| 20.2.3.6 | Function.prototype [ %Symbol.hasInstance% ] ( V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%) |
 | 20.2.4 | Function Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances) |
 | 20.2.4.1 | length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-length) |
 | 20.2.4.2 | name | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-name) |
@@ -77,6 +77,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Function.prototype.toString ( ) returns a function-like source string | Supported with Limitations | [`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs` |  | Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. The pinned Test262 coverage includes 70 source-form and native-function syntax cases. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented. |
+
+### 20.2.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Function.prototype[Symbol.hasInstance] | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Function/prototype/Symbol.hasInstance/FunctionConformanceBatchExecutionTests.cs` | suite `built_ins.Function.prototype.Symbol.hasInstance` | The inherited non-writable, non-configurable method applies ordinary instanceof prototype-chain checks to callable receivers, including bound targets, non-object arguments, and abrupt prototype access. Custom Symbol.hasInstance overrides in the instanceof operator and exotic callable edge cases remain limited. |
 
 ### 20.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances))
 

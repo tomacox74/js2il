@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,160 | 12 | 7,340 | 23,512 | **68.73%** |
+| Built-in objects and APIs | 16,170 | 12 | 7,330 | 23,512 | **68.77%** |
 | Language syntax and semantics | 15,356 | 46 | 8,245 | 23,647 | **64.94%** |
-| **Total** | 31,516 | 58 | 16,671 | 48,245 | **65.32%** |
+| **Total** | 31,526 | 58 | 16,661 | 48,245 | **65.35%** |
 
 ## Language Areas
 
@@ -194,7 +194,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Error` | 55 | 0 | 3 | 58 | **94.83%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 46 | 0 | 1 | 47 | **97.87%** |
-| `Function` | 399 | 1 | 109 | 509 | **78.39%** |
+| `Function` | 409 | 1 | 99 | 509 | **80.35%** |
 | `GeneratorFunction` | 17 | 0 | 6 | 23 | **73.91%** |
 | `GeneratorPrototype` | 45 | 0 | 16 | 61 | **73.77%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |

@@ -78,7 +78,7 @@
     {
       "clause": "20.2.3.6",
       "title": "Function.prototype [ %Symbol.hasInstance% ] ( V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%"
     },
     {
@@ -150,6 +150,19 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_SyntaxError.js"
         ],
         "notes": "Stage 1 support only: direct `Function(...)` and `new Function(...)` sites are compiled ahead-of-time when every parameter/body argument is a string literal. JROC parses the generated source during compilation, emits a synthetic callable with global-scope semantics (so module locals and enclosing locals are not captured), derives `.length` from the parsed parameter list, reports `.name` as `anonymous`, throws `SyntaxError` for invalid literal source, and throws `Error` for non-literal runtime forms."
+      },
+      {
+        "clause": "20.2.3.6",
+        "feature": "Function.prototype[Symbol.hasInstance]",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/Symbol.hasInstance/FunctionConformanceBatchExecutionTests.cs"
+        ],
+        "test262Suites": [
+          "built_ins.Function.prototype.Symbol.hasInstance"
+        ],
+        "notes": "The inherited non-writable, non-configurable method applies ordinary instanceof prototype-chain checks to callable receivers, including bound targets, non-object arguments, and abrupt prototype access. Custom Symbol.hasInstance overrides in the instanceof operator and exotic callable edge cases remain limited."
       },
       {
         "clause": "20.2.4",
