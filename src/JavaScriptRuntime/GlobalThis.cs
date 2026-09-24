@@ -416,62 +416,6 @@ namespace JavaScriptRuntime
             static (_, args) => args != null && args.Length > 1
                 ? new ArrayBuffer(args[0], args[1])
                 : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
-        private static readonly Func<object[], object?, bool> _arrayBufferIsViewValue =
-            static (_, value) => JavaScriptRuntime.ArrayBuffer.isView(value);
-        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
-        {
-            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-            {
-                throw new TypeError("ArrayBuffer.prototype.slice called on incompatible receiver");
-            }
-
-            return buffer.slice(start, end);
-        };
-        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceToImmutableValue = static (thisArgument, start, end) =>
-        {
-            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-            {
-                throw new TypeError("ArrayBuffer.prototype.sliceToImmutable called on incompatible receiver");
-            }
-
-            return buffer.sliceToImmutable(start, end);
-        };
-        private static readonly BuiltinFunction1 _arrayBufferPrototypeResizeValue = static (thisArgument, newLength) =>
-        {
-            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-            {
-                throw new TypeError("ArrayBuffer.prototype.resize called on incompatible receiver");
-            }
-
-            return buffer.resize(newLength);
-        };
-        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferValue = static (thisArgument, newLength) =>
-        {
-            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-            {
-                throw new TypeError("ArrayBuffer.prototype.transfer called on incompatible receiver");
-            }
-
-            return buffer.transfer(newLength);
-        };
-        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferToFixedLengthValue = static (thisArgument, newLength) =>
-        {
-            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-            {
-                throw new TypeError("ArrayBuffer.prototype.transferToFixedLength called on incompatible receiver");
-            }
-
-            return buffer.transferToFixedLength(newLength);
-        };
-        private static readonly BuiltinFunction0 _arrayBufferPrototypeTransferToImmutableValue = static thisArgument =>
-        {
-            if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-            {
-                throw new TypeError("ArrayBuffer.prototype.transferToImmutable called on incompatible receiver");
-            }
-
-            return buffer.transferToImmutable();
-        };
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly BuiltinFunction2 _sharedArrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
@@ -843,9 +787,9 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_errorPrototypeValue, "toString", (BuiltinFunction0)ErrorPrototypeToString, 0d);
 
             TypedArrayBase.ConfigureIntrinsicSurface(_intrinsics);
-            ConfigureArrayBufferIntrinsicSurface();
+            JavaScriptRuntime.ArrayBuffer.ConfigureIntrinsicSurface(_arrayBufferConstructorValue, _objectPrototypeValue);
             ConfigureSharedArrayBufferIntrinsicSurface();
-            ConfigureDataViewIntrinsicSurface();
+            JavaScriptRuntime.DataView.ConfigureIntrinsicSurface(_dataViewConstructorValue, _objectPrototypeValue);
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
@@ -1012,7 +956,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefineIntrinsicToStringTagProperty(object target, string value)
+        internal static void DefineIntrinsicToStringTagProperty(object target, string value)
         {
             PropertyDescriptorStore.DefineOrUpdate(target, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
@@ -2082,80 +2026,6 @@ namespace JavaScriptRuntime
             });
         }
 
-        private void ConfigureDataViewIntrinsicSurface()
-        {
-            ConfigureConstructorPrototypeSurface(_dataViewConstructorValue, JavaScriptRuntime.DataView.Prototype);
-            PropertyDescriptorStore.DefineOrUpdate(_dataViewConstructorValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 1d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_dataViewConstructorValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "DataView"
-            });
-            DefineDataViewAccessor("buffer", DataViewBufferGetter);
-            DefineDataViewAccessor("byteLength", DataViewByteLengthGetter);
-            DefineDataViewAccessor("byteOffset", DataViewByteOffsetGetter);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt8", (BuiltinFunction1)DataViewGetInt8, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint8", (BuiltinFunction1)DataViewGetUint8, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt16", (BuiltinFunction2)DataViewGetInt16, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint16", (BuiltinFunction2)DataViewGetUint16, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getInt32", (BuiltinFunction2)DataViewGetInt32, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getUint32", (BuiltinFunction2)DataViewGetUint32, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat16", (BuiltinFunction2)DataViewGetFloat16, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat32", (BuiltinFunction2)DataViewGetFloat32, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getFloat64", (BuiltinFunction2)DataViewGetFloat64, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getBigInt64", (BuiltinFunction2)DataViewGetBigInt64, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "getBigUint64", (BuiltinFunction2)DataViewGetBigUint64, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt8", (BuiltinFunction2)DataViewSetInt8, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint8", (BuiltinFunction2)DataViewSetUint8, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt16", (BuiltinFunction3)DataViewSetInt16, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint16", (BuiltinFunction3)DataViewSetUint16, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setInt32", (BuiltinFunction3)DataViewSetInt32, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setUint32", (BuiltinFunction3)DataViewSetUint32, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat16", (BuiltinFunction3)DataViewSetFloat16, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat32", (BuiltinFunction3)DataViewSetFloat32, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setFloat64", (BuiltinFunction3)DataViewSetFloat64, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setBigInt64", (BuiltinFunction3)DataViewSetBigInt64, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.DataView.Prototype, "setBigUint64", (BuiltinFunction3)DataViewSetBigUint64, 2d);
-            DefineIntrinsicToStringTagProperty(JavaScriptRuntime.DataView.Prototype, "DataView");
-        }
-
-        private void ConfigureArrayBufferIntrinsicSurface()
-        {
-            ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, JavaScriptRuntime.ArrayBuffer.Prototype);
-            PropertyDescriptorStore.DefineOrUpdate(_arrayBufferConstructorValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = 1d
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_arrayBufferConstructorValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = "ArrayBuffer"
-            });
-            DefineBuiltinFunctionProperty(_arrayBufferConstructorValue, "isView", _arrayBufferIsViewValue, 1d);
-            DefineSpeciesAccessorProperty(_arrayBufferConstructorValue);
-            DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
-            DefineArrayBufferAccessor("detached", static buffer => buffer.detached);
-            DefineArrayBufferAccessor("immutable", static buffer => buffer.immutable);
-            DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
-            DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "sliceToImmutable", _arrayBufferPrototypeSliceToImmutableValue, 2d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transfer", _arrayBufferPrototypeTransferValue, 0d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transferToFixedLength", _arrayBufferPrototypeTransferToFixedLengthValue, 0d);
-            DefineBuiltinFunctionProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "transferToImmutable", _arrayBufferPrototypeTransferToImmutableValue, 0d);
-            DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
-        }
-
         private void ConfigureSharedArrayBufferIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(
@@ -2203,172 +2073,6 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefineArrayBufferAccessor(string propertyName, Func<JavaScriptRuntime.ArrayBuffer, object?> read)
-        {
-            BuiltinFunction0 getter = thisArgument =>
-            {
-                if (thisArgument is not JavaScriptRuntime.ArrayBuffer buffer
-                    || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
-                {
-                    throw new TypeError($"get ArrayBuffer.prototype.{propertyName} called on incompatible receiver");
-                }
-                return read(buffer);
-            };
-            JavaScriptRuntime.Function.InitializeFunctionInstance(
-                getter,
-                0d,
-                $"get {propertyName}",
-                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(getter));
-            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.ArrayBuffer.Prototype, propertyName, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor, Enumerable = false, Configurable = true, Get = getter
-            });
-        }
-
-        private static void DefineDataViewAccessor(
-            string propertyName,
-            BuiltinFunction0 getter)
-        {
-            JavaScriptRuntime.Function.InitializeFunctionInstance(
-                getter,
-                0d,
-                $"get {propertyName}",
-                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(getter));
-            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.DataView.Prototype, propertyName, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = false,
-                Configurable = true,
-                Get = getter
-            });
-        }
-
-        private static object? DataViewBufferGetter(object? thisArgument)
-            => GetDataViewThis(thisArgument, "buffer", isAccessor: true).buffer;
-
-        private static object? DataViewByteLengthGetter(object? thisArgument)
-            => GetDataViewThis(thisArgument, "byteLength", isAccessor: true).byteLength;
-
-        private static object? DataViewByteOffsetGetter(object? thisArgument)
-            => GetDataViewThis(thisArgument, "byteOffset", isAccessor: true).byteOffset;
-
-        private static object? DataViewGetInt8(object? thisArgument, object? byteOffset)
-            => GetDataViewThis(thisArgument, "getInt8").getInt8(byteOffset);
-
-        private static object? DataViewGetUint8(object? thisArgument, object? byteOffset)
-            => GetDataViewThis(thisArgument, "getUint8").getUint8(byteOffset);
-
-        private static object? DataViewGetInt16(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getInt16").getInt16(byteOffset, littleEndian);
-
-        private static object? DataViewGetUint16(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getUint16").getUint16(byteOffset, littleEndian);
-
-        private static object? DataViewGetInt32(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getInt32").getInt32(byteOffset, littleEndian);
-
-        private static object? DataViewGetUint32(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getUint32").getUint32(byteOffset, littleEndian);
-
-        private static object? DataViewGetFloat16(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getFloat16").getFloat16(byteOffset, littleEndian);
-
-        private static object? DataViewGetFloat32(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getFloat32").getFloat32(byteOffset, littleEndian);
-
-        private static object? DataViewGetFloat64(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getFloat64").getFloat64(byteOffset, littleEndian);
-
-        private static object? DataViewGetBigInt64(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getBigInt64").getBigInt64(byteOffset, littleEndian);
-
-        private static object? DataViewGetBigUint64(object? thisArgument, object? byteOffset, object? littleEndian)
-            => GetDataViewThis(thisArgument, "getBigUint64").getBigUint64(byteOffset, littleEndian);
-
-        private static object? DataViewSetInt8(object? thisArgument, object? byteOffset, object? value)
-            => GetDataViewThis(thisArgument, "setInt8").setInt8(byteOffset, value);
-
-        private static object? DataViewSetUint8(object? thisArgument, object? byteOffset, object? value)
-            => GetDataViewThis(thisArgument, "setUint8").setUint8(byteOffset, value);
-
-        private static object? DataViewSetInt16(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setInt16").setInt16(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetUint16(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setUint16").setUint16(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetInt32(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setInt32").setInt32(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetUint32(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setUint32").setUint32(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetFloat16(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setFloat16").setFloat16(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetFloat32(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setFloat32").setFloat32(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetFloat64(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setFloat64").setFloat64(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetBigInt64(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setBigInt64").setBigInt64(byteOffset, value, littleEndian);
-
-        private static object? DataViewSetBigUint64(
-            object? thisArgument,
-            object? byteOffset,
-            object? value,
-            object? littleEndian)
-            => GetDataViewThis(thisArgument, "setBigUint64").setBigUint64(byteOffset, value, littleEndian);
-
-        private static JavaScriptRuntime.DataView GetDataViewThis(
-            object? thisArgument,
-            string memberName,
-            bool isAccessor = false)
-        {
-            if (thisArgument is not JavaScriptRuntime.DataView dataView)
-            {
-                var prefix = isAccessor ? "get " : string.Empty;
-                throw new TypeError($"{prefix}DataView.prototype.{memberName} called on incompatible receiver");
-            }
-
-            return dataView;
-        }
-
-
         internal static void DefineSpeciesAccessorProperty(object constructorValue, BuiltinFunction0? getter = null)
         {
             var getterValue = getter ?? _speciesGetterValue;
@@ -2388,10 +2092,16 @@ namespace JavaScriptRuntime
         }
 
         private void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
+            => ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue, _objectPrototypeValue);
+
+        internal static void ConfigureConstructorPrototypeSurface(
+            object constructorValue,
+            object prototypeValue,
+            object objectPrototype)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             JavaScriptRuntime.Function.MarkConstructible(constructorValue);
-            PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(prototypeValue, objectPrototype);
 
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
             {

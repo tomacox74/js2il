@@ -7,6 +7,113 @@ namespace JavaScriptRuntime
     {
         internal static object Prototype
             => RuntimeIntrinsics.Current.ArrayBufferPrototype;
+
+        private static readonly Func<object[], object?, bool> _arrayBufferIsViewValue =
+            static (_, value) => isView(value);
+        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
+        {
+            if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.slice called on incompatible receiver");
+            }
+
+            return buffer.slice(start, end);
+        };
+        private static readonly BuiltinFunction2 _arrayBufferPrototypeSliceToImmutableValue = static (thisArgument, start, end) =>
+        {
+            if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.sliceToImmutable called on incompatible receiver");
+            }
+
+            return buffer.sliceToImmutable(start, end);
+        };
+        private static readonly BuiltinFunction1 _arrayBufferPrototypeResizeValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.resize called on incompatible receiver");
+            }
+
+            return buffer.resize(newLength);
+        };
+        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.transfer called on incompatible receiver");
+            }
+
+            return buffer.transfer(newLength);
+        };
+        private static readonly BuiltinFunction1 _arrayBufferPrototypeTransferToFixedLengthValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.transferToFixedLength called on incompatible receiver");
+            }
+
+            return buffer.transferToFixedLength(newLength);
+        };
+        private static readonly BuiltinFunction0 _arrayBufferPrototypeTransferToImmutableValue = static thisArgument =>
+        {
+            if (thisArgument is not ArrayBuffer buffer || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+            {
+                throw new TypeError("ArrayBuffer.prototype.transferToImmutable called on incompatible receiver");
+            }
+
+            return buffer.transferToImmutable();
+        };
+
+        internal static void ConfigureIntrinsicSurface(object constructorValue, object objectPrototype)
+        {
+            GlobalThis.ConfigureConstructorPrototypeSurface(constructorValue, Prototype, objectPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = "ArrayBuffer"
+            });
+            GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "isView", _arrayBufferIsViewValue, 1d);
+            GlobalThis.DefineSpeciesAccessorProperty(constructorValue);
+            DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
+            DefineArrayBufferAccessor("detached", static buffer => buffer.detached);
+            DefineArrayBufferAccessor("immutable", static buffer => buffer.immutable);
+            DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
+            DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "resize", _arrayBufferPrototypeResizeValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "slice", _arrayBufferPrototypeSliceValue, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "sliceToImmutable", _arrayBufferPrototypeSliceToImmutableValue, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transfer", _arrayBufferPrototypeTransferValue, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transferToFixedLength", _arrayBufferPrototypeTransferToFixedLengthValue, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(Prototype, "transferToImmutable", _arrayBufferPrototypeTransferToImmutableValue, 0d);
+            GlobalThis.DefineIntrinsicToStringTagProperty(Prototype, "ArrayBuffer");
+        }
+
+        private static void DefineArrayBufferAccessor(string propertyName, Func<ArrayBuffer, object?> read)
+        {
+            BuiltinFunction0 getter = thisArgument =>
+            {
+                if (thisArgument is not ArrayBuffer buffer
+                    || thisArgument is JavaScriptRuntime.SharedArrayBuffer)
+                {
+                    throw new TypeError($"get ArrayBuffer.prototype.{propertyName} called on incompatible receiver");
+                }
+                return read(buffer);
+            };
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                getter,
+                0d,
+                $"get {propertyName}",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(getter));
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, propertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor, Enumerable = false, Configurable = true, Get = getter
+            });
+        }
+
         private readonly RuntimeArrayBufferStorage _storage;
         private readonly int _maxByteLength;
         private readonly bool _isResizable;
