@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): make the `RegExp.prototype.flags` getter work on arbitrary
+  object receivers, reading flag properties in specification order and
+  propagating getter errors; port 10 previously failing Test262 cases.
 - fix(runtime): snapshot `Array.prototype.reduce` length and dynamically probe
   each index, respecting holes, inherited elements, getters, deletions, and
   length changes; port 10 previously failing native Test262 cases.
