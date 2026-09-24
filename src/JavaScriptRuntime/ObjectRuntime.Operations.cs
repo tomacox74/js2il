@@ -2067,7 +2067,7 @@ namespace JavaScriptRuntime
         {
             if (obj is null || obj is JsNull)
             {
-                throw new TypeError("Cannot convert undefined or null to object");
+                return true;
             }
 
             if (IsPrimitiveObjectOperationTarget(obj))

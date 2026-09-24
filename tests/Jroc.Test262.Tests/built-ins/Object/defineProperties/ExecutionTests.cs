@@ -177,4 +177,12 @@ public partial class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.7-1")]
     public Task _15_2_3_7_1()
         => ExecutionTestFromFile("15.2.3.7-1");
+
+    [Fact(DisplayName = "15.2.3.7-6-a-279.js")]
+    public Task _15_2_3_7_6_a_279_js()
+        => ExecutionTestFromFile("15.2.3.7-6-a-279");
+
+    [Fact(DisplayName = "15.2.3.7-6-a-303.js")]
+    public Task _15_2_3_7_6_a_303_js()
+        => ExecutionTestFromFile("15.2.3.7-6-a-303");
 }

@@ -69,4 +69,20 @@ public partial class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.6-1-4.js")]
     public Task _15_2_3_6_1_4_js()
         => ExecutionTestFromFile("15.2.3.6-1-4");
+
+    [Fact(DisplayName = "15.2.3.6-4-290.js")]
+    public Task _15_2_3_6_4_290_js()
+        => ExecutionTestFromFile("15.2.3.6-4-290");
+
+    [Fact(DisplayName = "15.2.3.6-4-290-1.js")]
+    public Task _15_2_3_6_4_290_1_js()
+        => ExecutionTestFromFile("15.2.3.6-4-290-1");
+
+    [Fact(DisplayName = "15.2.3.6-4-314.js")]
+    public Task _15_2_3_6_4_314_js()
+        => ExecutionTestFromFile("15.2.3.6-4-314");
+
+    [Fact(DisplayName = "15.2.3.6-4-314-1.js")]
+    public Task _15_2_3_6_4_314_1_js()
+        => ExecutionTestFromFile("15.2.3.6-4-314-1");
 }
