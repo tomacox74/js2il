@@ -383,15 +383,19 @@
         "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transfer/FailingBatchExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transferToFixedLength/FailingBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transfer/ImmutableBufferExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transferToFixedLength/FailingBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transferToFixedLength/ImmutableBufferExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-larger.js",
           "test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-same.js",
           "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-smaller.js",
-          "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-zero.js"
+          "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-zero.js",
+          "test/built-ins/ArrayBuffer/prototype/transfer/this-is-immutable-arraybuffer.js",
+          "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/this-is-immutable-arraybuffer.js"
         ],
-        "notes": "Both transfer methods coerce optional lengths, allocate and zero-fill the destination, preserve source bytes up to the destination length, and detach the source. transfer preserves resizability and maxByteLength, while transferToFixedLength always returns a fixed-length buffer. Immutable ArrayBuffer rejection remains unavailable because immutable buffers are not yet implemented."
+        "notes": "Both transfer methods coerce optional lengths, allocate and zero-fill the destination, preserve source bytes up to the destination length, and detach the source. transfer preserves resizability and maxByteLength, while transferToFixedLength always returns a fixed-length buffer. Immutable buffers are rejected after coercing an explicit new length."
       },
       {
         "clause": "25.1.6.7",
@@ -404,7 +408,24 @@
         "test262Paths": [
           "test/built-ins/ArrayBuffer/prototype/slice/species-returns-immutable-arraybuffer.js"
         ],
-        "notes": "Native Test262 coverage includes the required immutable ArrayBuffer species-result rejection path for slice. Immutable ArrayBuffer instances themselves remain unsupported."
+        "notes": "Native Test262 coverage includes the required immutable ArrayBuffer species-result rejection path for slice. sliceToImmutable now creates a real immutable snapshot, so this rejection is no longer satisfied by a missing-method TypeError."
+      },
+      {
+        "clause": "25.1.6",
+        "feature": "Immutable ArrayBuffer snapshots",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transfer/ImmutableBufferExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/transferToFixedLength/ImmutableBufferExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/setFloat16/DataViewConformanceExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/ArrayBuffer/prototype/transfer/this-is-immutable-arraybuffer.js",
+          "test/built-ins/ArrayBuffer/prototype/transferToFixedLength/this-is-immutable-arraybuffer.js",
+          "test/built-ins/DataView/prototype/setFloat16/immutable-buffer.js"
+        ],
+        "notes": "transferToImmutable detaches its source and returns a fixed-length immutable buffer; sliceToImmutable creates an immutable copy without detaching the source. Immutable buffers reject transfer and DataView writes, while broader immutable-buffer integrations remain limited."
       }
     ]
   }
