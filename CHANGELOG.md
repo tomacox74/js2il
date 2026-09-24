@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): snapshot `Array.prototype.reduce` length and dynamically probe
+  each index, respecting holes, inherited elements, getters, deletions, and
+  length changes; port 10 previously failing native Test262 cases.
 - fix(runtime): treat `null` and `undefined` as already frozen or sealed in
   `Object.isFrozen` and `Object.isSealed`; port 10 pinned Test262 `Object` cases
   covering integrity checks, argument-object accessor descriptors, and
