@@ -7,8 +7,7 @@ internal static class ClassElementNames
 {
     public static bool IsConstructor(MethodDefinition method)
     {
-        return method.Key is Identifier id
-            && string.Equals(id.Name, "constructor", StringComparison.Ordinal);
+        return method.Kind == PropertyKind.Constructor;
     }
 
     public static bool TryGetPropertyName(Node? keyNode, bool computed, out string? name)
@@ -32,14 +31,14 @@ internal static class ClassElementNames
                 name = stringLiteral.Value;
                 return true;
             case NumericLiteral numericLiteral:
-                name = numericLiteral.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                name = JavaScriptRuntime.DotNet2JSConversions.ToString(numericLiteral.Value);
                 return true;
             case Literal literal when TryGetBigIntPropertyName(literal, out name):
                 return true;
             case TemplateLiteral templateLiteral when templateLiteral.Expressions.Count == 0 && templateLiteral.Quasis.Count == 1:
                 var quasi = templateLiteral.Quasis[0].Value;
                 name = quasi.Cooked ?? quasi.Raw;
-                return !string.IsNullOrWhiteSpace(name);
+                return name != null;
             default:
                 name = null;
                 return false;
@@ -80,7 +79,7 @@ internal static class ClassElementNames
             };
         }
 
-        var publicName = TryGetPropertyName(method.Key, method.Computed, out var resolvedName) && !string.IsNullOrWhiteSpace(resolvedName)
+        var publicName = TryGetPropertyName(method.Key, method.Computed, out var resolvedName) && resolvedName != null
             ? resolvedName!
             : "method";
         return method.Kind switch

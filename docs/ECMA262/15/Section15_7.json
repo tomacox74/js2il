@@ -5,7 +5,7 @@
   "title": "Class Definitions",
   "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
-  "intro": "JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. Computed class field names and literal/simple computed method names are supported; arbitrary runtime-computed class method names remain limited.",
+  "intro": "JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. String- and numeric-literal class accessor names, string-literal field names, computed class field names, and literal/simple computed method names are supported; arbitrary runtime-computed class method names remain limited.",
   "parent": {
     "clause": "15"
   },
@@ -113,6 +113,33 @@
   },
   "support": {
     "entries": [
+      {
+        "clause": "15.7.13",
+        "feature": "Literal class element names and callable computed property names",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/accessor-name-inst/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/accessor-name-static/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/accessor-name-inst/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/accessor-name-static/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/accessor-name-inst/literal-numeric-binary.js",
+          "test/language/expressions/class/accessor-name-static/literal-string-default.js",
+          "test/language/expressions/class/elements/regular-definitions-string-literal-names.js",
+          "test/language/statements/class/accessor-name-inst/literal-string-hex-escape.js",
+          "test/language/statements/class/accessor-name-static/literal-numeric-zero.js",
+          "test/language/statements/class/elements/regular-definitions-string-literal-names.js",
+          "test/language/expressions/class/cpn-class-expr-accessors-computed-property-name-from-function-expression.js",
+          "test/language/statements/class/cpn-class-decl-computed-property-name-from-arrow-function-expression.js"
+        ],
+        "notes": "The native Test262 harness verifies 100 additional pinned class-expression and class-declaration cases that previously failed: 68 literal-named instance/static accessors, 26 string-literal-named public fields, and six computed method/accessor names evaluated from function or arrow-function expressions. Other arbitrary runtime-computed method names remain limited."
+      },
       {
         "clause": "15.7.10",
         "feature": "Public field own-property descriptors around private methods",

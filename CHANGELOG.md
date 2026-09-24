@@ -11,6 +11,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   detached buffers, and coercion ordering. Correct ToIndex conversion for
   buffer-backed typed-array constructor offsets and explicit null lengths;
   verify 100 additional pinned Test262 typed-array cases.
+- fix(compiler): support literal-named class accessors and fields and
+  callable-expression computed class method and accessor names; port 100
+  previously failing Test262 class expression and declaration cases.
 
 ## v0.12.28 - 2026-09-24
 
