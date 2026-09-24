@@ -59,7 +59,13 @@ Linux `os-release` record is diagnostic, not identity. Runner image revisions an
 other volatile `os-release` fields do not change the provenance hash or block
 shard resume. A Node.js major, OS distribution/release, or selected .NET
 execution-runtime change is incompatible and requires a new current provenance.
-Old evidence stays historical. Source commit is recorded
+Old evidence stays historical. `init` requires a readable `Jroc.runtimeconfig.json`
+beside `Jroc.dll` with a valid `Microsoft.NETCore.App` framework/version; missing,
+malformed or unusable configurations fail before any provenance is stored rather
+than creating an `unknown` runtime identity. `scan` also rejects an unusable
+runtime config before running variants, while retaining the binary fingerprint
+check. Rebuild JROC and run `init` again if the compiler artifact changed.
+Source commit is recorded
 as a settings value, while actual binary hashes—not a claim that the worktree
 matches a build—establish compiler identity. Do not import old MVP `summary.json`
 files or the earlier 568-item list: they lack trustworthy fingerprints and may

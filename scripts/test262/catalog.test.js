@@ -217,7 +217,98 @@ c.initialize(db, args)
 assert c.current(db) != first
 assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (first,)).fetchone()[0] == 1
 assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (c.current(db),)).fetchone()[0] == 0
-assert db.execute("SELECT COUNT(*) FROM provenance").fetchone()[0] == 2
+second = c.current(db)
+release = {"ID": "debian", "VERSION_ID": "24.04", "IMAGE_REVISION": "new"}
+c.initialize(db, args)
+assert c.current(db) not in (first, second)
+assert db.execute("SELECT COUNT(*) FROM results WHERE provenance=?", (first,)).fetchone()[0] == 1
+assert db.execute("SELECT COUNT(*) FROM provenance").fetchone()[0] == 3
+`);
+
+pythonTest('init rejects missing or unusable JROC runtime configs without storing provenance', `
+from unittest.mock import patch
+source_root = root / "upstream"
+source_root.mkdir()
+jroc = root / "Jroc.dll"
+jroc.write_bytes(b"compiler")
+config = root / "Jroc.runtimeconfig.json"
+def fake_command(*args):
+    if args == ("node", "--version"):
+        return "v24.20.0"
+    if args == ("dotnet", "--list-runtimes"):
+        return "Microsoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
+    if args[:3] == ("git", "-C", str(source_root)) and args[3] == "status":
+        return ""
+    if args == ("git", "rev-parse", "HEAD"):
+        return "compiler-commit"
+    raise AssertionError(args)
+c.command = fake_command
+c.bridge = lambda request, timeout=None: []
+args = SimpleNamespace(root=str(source_root), expand=False, jroc=str(jroc), timeout=1, compile_timeout=1)
+cases = [
+    (None, "missing"),
+    ("{not json", "malformed"),
+    ("[]", "runtimeOptions"),
+    (json.dumps({"runtimeOptions": {"frameworks": [{"name": "Microsoft.AspNetCore.App", "version": "10.0.0"}]}}), "Microsoft.NETCore.App"),
+    (json.dumps({"runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App", "version": "not-a-version"}}}), "version"),
+]
+for content, message in cases:
+    if content is None:
+        config.unlink(missing_ok=True)
+    else:
+        config.write_text(content)
+    try:
+        c.initialize(db, args)
+    except ValueError as error:
+        assert "Jroc.runtimeconfig.json" in str(error) and message in str(error), str(error)
+    else:
+        raise AssertionError(f"Invalid runtime config accepted: {content!r}")
+    assert db.execute("SELECT COUNT(*) FROM provenance").fetchone()[0] == 0
+    assert db.execute("SELECT COUNT(*) FROM settings WHERE key='current'").fetchone()[0] == 0
+config.write_text("{}")
+original_read = Path.read_text
+def unreadable(self, *args, **kwargs):
+    if self == config:
+        raise PermissionError("access denied")
+    return original_read(self, *args, **kwargs)
+with patch.object(Path, "read_text", unreadable):
+    try:
+        c.initialize(db, args)
+    except ValueError as error:
+        assert "Jroc.runtimeconfig.json" in str(error) and "read" in str(error), str(error)
+    else:
+        raise AssertionError("Unreadable runtime config accepted")
+assert db.execute("SELECT COUNT(*) FROM provenance").fetchone()[0] == 0
+config.write_text(json.dumps({"runtimeOptions": {"frameworks": [
+    {"name": "Microsoft.AspNetCore.App", "version": "10.0.0"},
+    {"name": "Microsoft.NETCore.App", "version": "10.0.0"}
+]}}))
+c.initialize(db, args)
+assert db.execute("SELECT COUNT(*) FROM provenance").fetchone()[0] == 1
+assert json.loads(db.execute("SELECT document FROM provenance").fetchone()[0])["environment_identity"]["dotnet_runtime"] == {
+    "name": "Microsoft.NETCore.App", "requested": "10.0.0", "selected": "10.0.12"}
+scan_args = SimpleNamespace(db=str(root / "catalog.sqlite"), root=None, jroc=None,
+                            shard=0, shards=1, limit=0, seconds=30, filter="", retry=False)
+c.scan(db, scan_args)
+for content, message in cases:
+    if content is None:
+        config.unlink(missing_ok=True)
+    else:
+        config.write_text(content)
+    try:
+        c.scan(db, scan_args)
+    except ValueError as error:
+        assert "Jroc.runtimeconfig.json" in str(error) and message in str(error), str(error)
+    else:
+        raise AssertionError(f"Scan accepted invalid runtime config: {content!r}")
+config.write_text(json.dumps({"runtimeOptions": {"framework": {
+    "name": "Microsoft.NETCore.App", "version": "10.0.0"}}}))
+try:
+    c.scan(db, scan_args)
+except ValueError as error:
+    assert "Compiler/runtime fingerprint changed" in str(error), str(error)
+else:
+    raise AssertionError("Scan accepted changed runtime config")
 `);
 
 pythonTest('never combines variants across provenance; historical passes stay historical', `
@@ -387,14 +478,18 @@ fixture("current")
 (root / "test/built-ins/A").mkdir(parents=True)
 (root / "test/built-ins/A/name.js").write_text("source")
 (root / "Jroc.dll").write_text("binary")
+(root / "Jroc.runtimeconfig.json").write_text(json.dumps({
+    "runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App", "version": "10.0.0"}}
+}))
 db.execute("UPDATE fixtures SET sha256=?", (c.digest(b"source"),))
-info = {"compiler_entry": "Jroc.dll", "binaries": c.hash_files(root, ["*.dll"]), "harness": {}, "tooling": {},
+info = {"compiler_entry": "Jroc.dll", "binaries": c.hash_files(root, ["*.dll", "*.deps.json", "*.runtimeconfig.json"]), "harness": {}, "tooling": {},
         "environment": {}, "timeouts": {"runtime":1, "compile":1}}
 db.execute("UPDATE provenance SET document=?", (c.canonical(info),))
 for k,v in {"root":str(root), "jroc":str(root / "Jroc.dll")}.items():
     db.execute("INSERT INTO settings VALUES(?,?)", (k,v))
 db.commit()
 c.environment = lambda jroc=None: {}
+c.command = lambda *args: "Microsoft.NETCore.App 10.0.12 [/dotnet/shared/Microsoft.NETCore.App]"
 calls = []
 def fake(request, timeout):
     calls.append(request["variant"])
