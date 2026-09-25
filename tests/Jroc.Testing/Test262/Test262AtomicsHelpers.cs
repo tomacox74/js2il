@@ -46,7 +46,7 @@ internal static class Test262AtomicsHelpers
             IndexGenerator("fraction", _ => 0.5d),
             IndexGenerator("stringFraction", _ => "0.5"),
             IndexGenerator("negativeFraction", _ => -0.9d),
-            IndexGenerator("ordinaryObject", _ => new JsObject()),
+            IndexGenerator("ordinaryObject", _ => ObjectRuntime.CreateOrdinaryObject()),
             IndexGenerator("lastIndex", view => TypeUtilities.ToNumber(ObjectRuntime.GetItem(view!, "length")) - 1),
             IndexGenerator("valueOfZero", _ => CoercibleIndex("valueOf", 0d)),
             IndexGenerator("toStringZero", _ => CoercibleIndex("toString", "0"))

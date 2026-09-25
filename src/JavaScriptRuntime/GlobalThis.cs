@@ -558,7 +558,18 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_jsonValue, "rawJSON", _jsonRawJsonValue, 1d);
             DefineBuiltinFunctionProperty(_jsonValue, "isRawJSON", _jsonIsRawJsonValue, 1d);
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
+            DefineBuiltinFunctionProperty(_atomicsValue, "add", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.add, 3d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "and", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.and, 3d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "compareExchange", (Func<object?, object?, object?, object?, object>)JavaScriptRuntime.Atomics.compareExchange, 4d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "exchange", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.exchange, 3d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "isLockFree", (Func<object?, bool>)JavaScriptRuntime.Atomics.isLockFree, 1d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "load", (Func<object?, object?, object>)JavaScriptRuntime.Atomics.load, 2d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "or", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.or, 3d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "pause", (Func<object?, object?>)JavaScriptRuntime.Atomics.pause, 0d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "store", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.store, 3d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "sub", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.sub, 3d);
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "xor", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.xor, 3d);
             ConfigureBuiltinFunctionObject(_jsonStringifyValue);
             PropertyDescriptorStore.DefineOrUpdate(_jsonStringifyValue, "name", new JsPropertyDescriptor
             {
