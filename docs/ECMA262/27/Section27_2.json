@@ -419,11 +419,12 @@
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/allSettledKeyed/NextBatch100ExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/any/NextBatch100ExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/NextBatch100ExecutionTests.cs",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/race/CombinatorFailureExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/length.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/name.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/prop-desc.js"
                                                         ],
-                                        "notes":  "Promise.all, allSettled, any, allKeyed, and allSettledKeyed use the receiver constructor, create and validate promise capabilities, obtain the constructor's resolve method once, guard per-element closures against repeated calls, preserve input ordering, and apply iterator-close completion rules. Promise subclasses, including implicit derived constructors and rest-parameter constructors, construct through the Promise base constructor. Promise.any rejects with an AggregateError containing ordered rejection reasons. Cross-realm cases remain limited."
+                                        "notes":  "Promise.all, allSettled, any, race, allKeyed, and allSettledKeyed use the receiver constructor, create and validate promise capabilities, obtain the constructor's resolve method once, preserve input ordering where applicable, and apply iterator-close completion rules; per-element closures use an already-called guard where required. Promise.race remains pending for an empty iterable and now forwards each then call to the new promise capability, as verified by 42 previously failing native Test262 cases. Promise subclasses, including implicit derived constructors and rest-parameter constructors, construct through the Promise base constructor. Promise.any rejects with an AggregateError containing ordered rejection reasons. Cross-realm cases remain limited."
                                     }
                                 ]
                 },
