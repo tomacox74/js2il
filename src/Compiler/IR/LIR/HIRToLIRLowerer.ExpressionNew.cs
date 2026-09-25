@@ -11,6 +11,57 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
     {
+        if (!newExpr.IsRegExpLiteral
+            && newExpr.Callee is HIRVariableExpression
+            {
+                Name: { Kind: BindingKind.Global } global
+            }
+            && (_activeWithObjects.Count > 0
+                || _scope?.MayUseBoundWithObject == true))
+        {
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+        }
+
+        if (!newExpr.IsRegExpLiteral
+            && newExpr.Callee is HIRVariableExpression
+            {
+                Name: { Kind: BindingKind.Global } globalConstructor
+            }
+            && !CanUseOriginalGlobalBinding(globalConstructor)
+            && (BuiltInErrorTypes.IsBuiltInErrorTypeName(globalConstructor.Name)
+                || globalConstructor.Name is "Array" or "Object" or "Date" or "Boolean" or "Function"
+                || _runtimeIntrinsicCatalog.TryGetIntrinsicObject(globalConstructor.Name, out _)))
+        {
+            var original = EmitOriginalGlobalBindingCheck(globalConstructor.Name);
+            var fallbackLabel = CreateLabel();
+            var endLabel = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(original, fallbackLabel));
+            if (!TryLowerNewExpressionCore(newExpr, out var intrinsicResult))
+            {
+                resultTempVar = default;
+                return false;
+            }
+
+            resultTempVar = CreateTempVariable();
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(intrinsicResult), resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            _methodBodyIR.Instructions.Add(new LIRLabel(fallbackLabel));
+            if (!TryLowerDynamicNewExpression(newExpr, out var dynamicResult))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(dynamicResult, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            return true;
+        }
+
+        return TryLowerNewExpressionCore(newExpr, out resultTempVar);
+    }
+
+    private bool TryLowerNewExpressionCore(HIRNewExpression newExpr, out TempVariable resultTempVar)
+    {
         resultTempVar = default;
 
         if (newExpr.IsRegExpLiteral)

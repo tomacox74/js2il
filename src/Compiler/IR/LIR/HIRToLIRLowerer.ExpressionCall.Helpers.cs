@@ -25,10 +25,11 @@ public sealed partial class HIRToLIRLowerer
     private static bool HasSpreadArguments(IReadOnlyList<HIRExpression> arguments)
         => arguments.Any(a => a is HIRSpreadElement);
 
-    private static bool IsStableGlobalMathBinding(Symbol symbol)
+    private bool IsStableGlobalMathBinding(Symbol symbol)
         => symbol.Kind == BindingKind.Global
            && string.Equals(symbol.Name, "Math", StringComparison.Ordinal)
-           && !symbol.BindingInfo.HasWrite;
+           && !symbol.BindingInfo.HasWrite
+           && CanUseOriginalGlobalBinding(symbol);
 
     private bool TryLowerStableGlobalMemberCall(
         HIRCallExpression callExpr,
@@ -41,6 +42,7 @@ public sealed partial class HIRToLIRLowerer
             || callee.Object is not HIRVariableExpression globalVariable
             || globalVariable.Name.Kind != BindingKind.Global
             || globalVariable.Name.BindingInfo.HasWrite
+            || !CanUseOriginalGlobalBinding(globalVariable.Name)
             || !GlobalMemberIntrinsicRegistry.TryGet(
                 globalVariable.Name.Name,
                 callee.PropertyName,

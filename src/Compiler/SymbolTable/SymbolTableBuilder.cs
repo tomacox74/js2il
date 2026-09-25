@@ -121,6 +121,77 @@ namespace Jroc.SymbolTables
             };
         }
 
+        private static bool ThisMayBeGlobal(Scope scope)
+        {
+            for (var current = scope; current != null; current = current.Parent)
+            {
+                if (current.Kind == ScopeKind.Function
+                    && current.AstNode is not ArrowFunctionExpression)
+                {
+                    return current.Parent?.Kind != ScopeKind.Class;
+                }
+
+                if (current.Kind == ScopeKind.Class)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void BuildStrictIdentityOperand(Scope globalScope, Node operand, Scope currentScope)
+        {
+            switch (operand)
+            {
+                case ParenthesizedExpression parenthesized:
+                    BuildStrictIdentityOperand(globalScope, parenthesized.Expression, currentScope);
+                    break;
+                case ThisExpression:
+                    if (currentScope.Kind == ScopeKind.Global)
+                    {
+                        currentScope.UsesGlobalThisValue = true;
+                    }
+                    break;
+                case Identifier { Name: "globalThis" }:
+                    if (currentScope.Kind == ScopeKind.Global)
+                    {
+                        currentScope.UsesGlobalThisValue = true;
+                    }
+                    break;
+                case Identifier { Name: "global" }:
+                    break;
+                default:
+                    BuildScopeRecursive(globalScope, operand, currentScope);
+                    break;
+            }
+        }
+
+        private static bool TryGetDirectGlobalObjectProperty(Scope scope, Node? node, out string propertyName)
+        {
+            propertyName = "";
+            if (node is not MemberExpression member
+                || (member.Object is not Identifier { Name: "globalThis" or "global" }
+                    && (member.Object is not ThisExpression || !ThisMayBeGlobal(scope))))
+            {
+                return false;
+            }
+
+            if (!member.Computed && member.Property is Identifier identifier)
+            {
+                propertyName = identifier.Name;
+                return true;
+            }
+
+            if (member.Computed && member.Property is StringLiteral literal)
+            {
+                propertyName = literal.Value;
+                return true;
+            }
+
+            return false;
+        }
+
         private static readonly string[] StabilityTrackedGlobalObjects = ["Math", "console"];
 
         private static bool IsKnownGlobalThisObjectExpression(Node? node, string globalName)
@@ -1835,6 +1906,12 @@ namespace Jroc.SymbolTables
                 case ExpressionStatement exprStmt:
                     BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
                     break;
+                case BinaryExpression binaryExpr when binaryExpr.Operator is
+                    Acornima.Operator.StrictEquality or Acornima.Operator.StrictInequality:
+                    // Identity checks consume the object without exposing it or invoking coercion.
+                    BuildStrictIdentityOperand(globalScope, binaryExpr.Left, currentScope);
+                    BuildStrictIdentityOperand(globalScope, binaryExpr.Right, currentScope);
+                    break;
                 case AssignmentExpression assignExpr:
                     if (assignExpr.Left is Identifier assignId)
                     {
@@ -1843,6 +1920,10 @@ namespace Jroc.SymbolTables
                     else
                     {
                         MarkStabilityTrackedGlobalObjectMutation(currentScope, assignExpr.Left);
+                        if (TryGetDirectGlobalObjectProperty(currentScope, assignExpr.Left, out var assignedGlobal))
+                        {
+                            globalScope.WrittenGlobalObjectProperties.Add(assignedGlobal);
+                        }
                     }
                     MarkExposedStabilityTrackedGlobalObjects(currentScope, assignExpr.Right);
                     BuildScopeRecursive(globalScope, assignExpr.Right, currentScope);
@@ -1856,6 +1937,10 @@ namespace Jroc.SymbolTables
                     else
                     {
                         MarkStabilityTrackedGlobalObjectMutation(currentScope, updateExpr.Argument);
+                        if (TryGetDirectGlobalObjectProperty(currentScope, updateExpr.Argument, out var updatedGlobal))
+                        {
+                            globalScope.WrittenGlobalObjectProperties.Add(updatedGlobal);
+                        }
                     }
                     BuildScopeRecursive(globalScope, updateExpr.Argument, currentScope);
                     break;
@@ -1863,6 +1948,10 @@ namespace Jroc.SymbolTables
                     if (unaryExpr.Operator == Acornima.Operator.Delete)
                     {
                         MarkStabilityTrackedGlobalObjectMutation(currentScope, unaryExpr.Argument);
+                        if (TryGetDirectGlobalObjectProperty(currentScope, unaryExpr.Argument, out var deletedGlobal))
+                        {
+                            globalScope.WrittenGlobalObjectProperties.Add(deletedGlobal);
+                        }
                     }
                     BuildScopeRecursive(globalScope, unaryExpr.Argument, currentScope);
                     break;
@@ -2042,6 +2131,11 @@ namespace Jroc.SymbolTables
                         MarkNearestArgumentsOwnerScopeAsNeedingArguments(currentScope);
                     }
 
+                    if (string.Equals(id.Name, "globalThis", StringComparison.Ordinal)
+                        || string.Equals(id.Name, "global", StringComparison.Ordinal))
+                    {
+                        globalScope.MayMutateGlobalCallableBindings = true;
+                    }
                     if (currentScope.Kind == ScopeKind.Global
                         && string.Equals(id.Name, "globalThis", StringComparison.Ordinal))
                     {
@@ -2062,14 +2156,20 @@ namespace Jroc.SymbolTables
                     }
                     break;
                 case ThisExpression:
-                    if (currentScope.Kind == ScopeKind.Global)
                     {
-                        currentScope.UsesGlobalThisValue = true;
-                        foreach (var globalName in StabilityTrackedGlobalObjects)
+                        if (ThisMayBeGlobal(currentScope))
                         {
-                            MarkWritten(currentScope, globalName);
+                            globalScope.MayMutateGlobalCallableBindings = true;
                         }
-                        MarkWritten(currentScope, "Object");
+                        if (currentScope.Kind == ScopeKind.Global)
+                        {
+                            currentScope.UsesGlobalThisValue = true;
+                            foreach (var globalName in StabilityTrackedGlobalObjects)
+                            {
+                                MarkWritten(currentScope, globalName);
+                            }
+                            MarkWritten(currentScope, "Object");
+                        }
                     }
                     break;
                 case CallExpression callExpr:
@@ -2118,7 +2218,19 @@ namespace Jroc.SymbolTables
                     }
                     break;
                 case MemberExpression memberExpr:
-                    BuildScopeRecursive(globalScope, memberExpr.Object, currentScope);
+                    if (TryGetDirectGlobalObjectProperty(currentScope, memberExpr, out var globalProperty)
+                        && globalProperty is not ("globalThis" or "global"))
+                    {
+                        if (currentScope.Kind == ScopeKind.Global
+                            && memberExpr.Object is Identifier { Name: "globalThis" } or ThisExpression)
+                        {
+                            currentScope.UsesGlobalThisValue = true;
+                        }
+                    }
+                    else
+                    {
+                        BuildScopeRecursive(globalScope, memberExpr.Object, currentScope);
+                    }
                     if (memberExpr.Computed)
                     {
                         BuildScopeRecursive(globalScope, memberExpr.Property, currentScope);

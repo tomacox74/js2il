@@ -20,4 +20,5 @@ public sealed class HIRCallExpression : HIRExpression
     public ImmutableArray<HIRExpression> Arguments { get; init; }
     public HIRStableDirectCallableTarget? StableDirectCallableTarget { get; init; }
     public HIRStaticClassMethodTarget? StaticClassMethodTarget { get; init; }
+    public bool IsBigIntLiteral { get; init; }
 }

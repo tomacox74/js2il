@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2606 (0xa2e)
+		// Code size: 1825 (0x721)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakMap_Constructor_Prototype_Surface/Scope,
@@ -155,7 +155,7 @@
 			[6] object,
 			[7] object,
 			[8] object,
-			[9] object,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[10] object,
 			[11] object,
 			[12] bool,
@@ -182,777 +182,556 @@
 		IL_0047: ldstr "weakMapCtor"
 		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnsureGlobalVarBinding(string)
 		IL_0051: nop
-		IL_0052: ldstr "console"
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0061: stloc.s 9
-		IL_0063: ldstr "globalThis"
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_006d: volatile.
-		IL_006f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_0074: brfalse IL_0088
-
-		IL_0079: ldstr "WeakMap"
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0083: br IL_009c
-
-		IL_0088: ldstr "WeakMap"
-		IL_008d: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:24"
-		IL_0092: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_009c: stloc.s 10
-		IL_009e: ldstr "WeakMap"
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a8: stloc.s 11
-		IL_00aa: ldloc.s 10
-		IL_00ac: ldloc.s 11
-		IL_00ae: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00b3: stloc.s 12
-		IL_00b5: ldloc.s 12
-		IL_00b7: box [System.Runtime]System.Boolean
-		IL_00bc: stloc.s 13
-		IL_00be: volatile.
-		IL_00c0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00c5: brfalse IL_00dd
-
-		IL_00ca: ldloc.s 9
-		IL_00cc: ldstr "log"
-		IL_00d1: ldloc.s 13
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d8: br IL_00f5
-
-		IL_00dd: ldloc.s 9
-		IL_00df: ldstr "log"
-		IL_00e4: ldloc.s 13
-		IL_00e6: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:29"
-		IL_00eb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_00f5: pop
-		IL_00f6: ldstr "console"
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0105: stloc.s 9
-		IL_0107: ldstr "WeakMap"
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0111: volatile.
-		IL_0113: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_0118: brfalse IL_012c
-
-		IL_011d: ldstr "prototype"
-		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0127: br IL_0140
-
-		IL_012c: ldstr "prototype"
-		IL_0131: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:37"
-		IL_0136: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0140: stloc.s 11
-		IL_0142: volatile.
-		IL_0144: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0149: brfalse IL_015f
-
-		IL_014e: ldloc.s 11
-		IL_0150: ldstr "constructor"
-		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_015a: br IL_0175
-
-		IL_015f: ldloc.s 11
-		IL_0161: ldstr "constructor"
-		IL_0166: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:39"
-		IL_016b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0175: stloc.s 11
-		IL_0177: ldstr "WeakMap"
-		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0181: stloc.s 10
-		IL_0183: ldloc.s 11
-		IL_0185: ldloc.s 10
-		IL_0187: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_018c: stloc.s 12
-		IL_018e: ldloc.s 12
-		IL_0190: box [System.Runtime]System.Boolean
-		IL_0195: stloc.s 13
-		IL_0197: volatile.
-		IL_0199: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_019e: brfalse IL_01b6
-
-		IL_01a3: ldloc.s 9
-		IL_01a5: ldstr "log"
-		IL_01aa: ldloc.s 13
-		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01b1: br IL_01ce
-
-		IL_01b6: ldloc.s 9
-		IL_01b8: ldstr "log"
-		IL_01bd: ldloc.s 13
-		IL_01bf: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:44"
-		IL_01c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_01ce: pop
-		IL_01cf: ldstr "console"
-		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01de: stloc.s 9
-		IL_01e0: ldstr "WeakMap"
-		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01ea: stloc.s 10
-		IL_01ec: ldstr "Function"
-		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01f6: stloc.s 11
-		IL_01f8: ldloc.s 10
-		IL_01fa: ldloc.s 11
-		IL_01fc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_0201: stloc.s 12
-		IL_0203: ldloc.s 12
-		IL_0205: box [System.Runtime]System.Boolean
-		IL_020a: stloc.s 13
-		IL_020c: volatile.
-		IL_020e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_0213: brfalse IL_022b
-
-		IL_0218: ldloc.s 9
-		IL_021a: ldstr "log"
-		IL_021f: ldloc.s 13
-		IL_0221: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0226: br IL_0243
-
-		IL_022b: ldloc.s 9
-		IL_022d: ldstr "log"
-		IL_0232: ldloc.s 13
-		IL_0234: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:55"
-		IL_0239: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_0243: pop
-		IL_0244: ldstr "console"
-		IL_0249: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_024e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0253: stloc.s 9
-		IL_0255: ldstr "WeakMap"
-		IL_025a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_025f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_0264: stloc.s 11
-		IL_0266: ldstr "Function"
-		IL_026b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0270: volatile.
-		IL_0272: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0277: brfalse IL_028b
-
-		IL_027c: ldstr "prototype"
-		IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0286: br IL_029f
-
-		IL_028b: ldstr "prototype"
-		IL_0290: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:66"
-		IL_0295: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_029a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_029f: stloc.s 10
-		IL_02a1: ldloc.s 11
-		IL_02a3: ldloc.s 10
-		IL_02a5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_02aa: stloc.s 12
-		IL_02ac: ldloc.s 12
-		IL_02ae: box [System.Runtime]System.Boolean
-		IL_02b3: stloc.s 13
-		IL_02b5: volatile.
-		IL_02b7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_02bc: brfalse IL_02d4
-
-		IL_02c1: ldloc.s 9
-		IL_02c3: ldstr "log"
-		IL_02c8: ldloc.s 13
-		IL_02ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02cf: br IL_02ec
-
-		IL_02d4: ldloc.s 9
-		IL_02d6: ldstr "log"
-		IL_02db: ldloc.s 13
-		IL_02dd: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:69"
-		IL_02e2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_02e7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_02ec: pop
-		IL_02ed: ldstr "console"
-		IL_02f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02fc: stloc.s 9
-		IL_02fe: ldstr "WeakMap"
-		IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0308: volatile.
-		IL_030a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_030f: brfalse IL_0323
-
-		IL_0314: ldstr "prototype"
-		IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_031e: br IL_0337
-
-		IL_0323: ldstr "prototype"
-		IL_0328: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:77"
-		IL_032d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_0332: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0337: stloc.s 10
-		IL_0339: ldloc.s 10
-		IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_0340: stloc.s 10
-		IL_0342: ldstr "Object"
-		IL_0347: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_034c: volatile.
-		IL_034e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_0353: brfalse IL_0367
-
-		IL_0358: ldstr "prototype"
-		IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0362: br IL_037b
-
-		IL_0367: ldstr "prototype"
-		IL_036c: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:82"
-		IL_0371: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_0376: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_037b: stloc.s 11
-		IL_037d: ldloc.s 10
-		IL_037f: ldloc.s 11
-		IL_0381: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0386: stloc.s 12
-		IL_0388: ldloc.s 12
-		IL_038a: box [System.Runtime]System.Boolean
-		IL_038f: stloc.s 13
-		IL_0391: volatile.
-		IL_0393: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_0398: brfalse IL_03b0
-
-		IL_039d: ldloc.s 9
-		IL_039f: ldstr "log"
-		IL_03a4: ldloc.s 13
-		IL_03a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03ab: br IL_03c8
-
-		IL_03b0: ldloc.s 9
-		IL_03b2: ldstr "log"
-		IL_03b7: ldloc.s 13
-		IL_03b9: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:85"
-		IL_03be: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_03c3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_03c8: pop
-		IL_03c9: ldstr "WeakMap"
-		IL_03ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03d3: ldstr "prototype"
-		IL_03d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
-		IL_03dd: stloc.1
-		IL_03de: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
-		IL_03e3: stloc.s 9
-		IL_03e5: ldloc.s 9
-		IL_03e7: ldstr "descriptor"
-		IL_03ec: ldloc.1
-		IL_03ed: ldc.i4.0
-		IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
-		IL_03f3: pop
-		IL_03f4: ldstr "console"
-		IL_03f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0403: stloc.s 9
-		IL_0405: volatile.
-		IL_0407: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-		IL_040c: brfalse IL_0421
-
-		IL_0411: ldloc.1
-		IL_0412: ldstr "writable"
-		IL_0417: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_041c: br IL_0436
-
-		IL_0421: ldloc.1
-		IL_0422: ldstr "writable"
-		IL_0427: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:101"
-		IL_042c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-		IL_0431: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0436: stloc.s 11
-		IL_0438: volatile.
-		IL_043a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_043f: brfalse IL_0457
-
-		IL_0444: ldloc.s 9
-		IL_0446: ldstr "log"
-		IL_044b: ldloc.s 11
-		IL_044d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0452: br IL_046f
-
-		IL_0457: ldloc.s 9
-		IL_0459: ldstr "log"
-		IL_045e: ldloc.s 11
-		IL_0460: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:102"
-		IL_0465: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_046f: pop
-		IL_0470: ldstr "console"
-		IL_0475: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_047a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_047f: stloc.s 11
-		IL_0481: volatile.
-		IL_0483: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_0488: brfalse IL_049d
-
-		IL_048d: ldloc.1
-		IL_048e: ldstr "enumerable"
-		IL_0493: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0498: br IL_04b2
-
-		IL_049d: ldloc.1
-		IL_049e: ldstr "enumerable"
-		IL_04a3: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:108"
-		IL_04a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_04ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_04b2: stloc.s 9
-		IL_04b4: volatile.
-		IL_04b6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_04bb: brfalse IL_04d3
-
-		IL_04c0: ldloc.s 11
-		IL_04c2: ldstr "log"
-		IL_04c7: ldloc.s 9
-		IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04ce: br IL_04eb
-
-		IL_04d3: ldloc.s 11
-		IL_04d5: ldstr "log"
-		IL_04da: ldloc.s 9
-		IL_04dc: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:109"
-		IL_04e1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_04e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_04eb: pop
-		IL_04ec: ldstr "console"
-		IL_04f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04fb: stloc.s 9
-		IL_04fd: volatile.
-		IL_04ff: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_0504: brfalse IL_0519
-
-		IL_0509: ldloc.1
-		IL_050a: ldstr "configurable"
-		IL_050f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0514: br IL_052e
-
-		IL_0519: ldloc.1
-		IL_051a: ldstr "configurable"
-		IL_051f: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:115"
-		IL_0524: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_0529: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_052e: stloc.s 11
-		IL_0530: volatile.
-		IL_0532: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-		IL_0537: brfalse IL_054f
-
-		IL_053c: ldloc.s 9
-		IL_053e: ldstr "log"
-		IL_0543: ldloc.s 11
-		IL_0545: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_054a: br IL_0567
-
-		IL_054f: ldloc.s 9
-		IL_0551: ldstr "log"
-		IL_0556: ldloc.s 11
-		IL_0558: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:116"
-		IL_055d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-		IL_0562: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_0567: pop
-		IL_0568: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.WeakMap::.ctor()
-		IL_056d: stloc.2
-		IL_056e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
-		IL_0573: stloc.s 11
-		IL_0575: ldloc.s 11
-		IL_0577: ldstr "weakMap"
-		IL_057c: ldloc.2
-		IL_057d: ldc.i4.0
-		IL_057e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
-		IL_0583: pop
-		IL_0584: ldstr "console"
-		IL_0589: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_058e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0593: stloc.s 11
-		IL_0595: ldloc.2
-		IL_0596: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_059b: stloc.s 9
-		IL_059d: ldstr "WeakMap"
-		IL_05a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_05a7: volatile.
-		IL_05a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_05ae: brfalse IL_05c2
-
-		IL_05b3: ldstr "prototype"
-		IL_05b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_05bd: br IL_05d6
-
-		IL_05c2: ldstr "prototype"
-		IL_05c7: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:132"
-		IL_05cc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_05d1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_05d6: stloc.s 10
-		IL_05d8: ldloc.s 9
-		IL_05da: ldloc.s 10
-		IL_05dc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_05e1: stloc.s 12
-		IL_05e3: ldloc.s 12
-		IL_05e5: box [System.Runtime]System.Boolean
-		IL_05ea: stloc.s 13
-		IL_05ec: volatile.
-		IL_05ee: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_05f3: brfalse IL_060b
-
-		IL_05f8: ldloc.s 11
-		IL_05fa: ldstr "log"
-		IL_05ff: ldloc.s 13
-		IL_0601: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0606: br IL_0623
-
-		IL_060b: ldloc.s 11
-		IL_060d: ldstr "log"
-		IL_0612: ldloc.s 13
-		IL_0614: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:135"
-		IL_0619: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_061e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_0623: pop
-		IL_0624: ldstr "console"
-		IL_0629: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_062e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0633: stloc.s 11
-		IL_0635: ldloc.2
-		IL_0636: stloc.s 14
-		IL_0638: ldstr "WeakMap"
-		IL_063d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0642: stloc.s 10
-		IL_0644: ldloc.s 14
-		IL_0646: ldloc.s 10
-		IL_0648: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_064d: stloc.s 12
-		IL_064f: ldloc.s 12
-		IL_0651: box [System.Runtime]System.Boolean
-		IL_0656: stloc.s 13
-		IL_0658: volatile.
-		IL_065a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_065f: brfalse IL_0677
-
-		IL_0664: ldloc.s 11
-		IL_0666: ldstr "log"
-		IL_066b: ldloc.s 13
-		IL_066d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0672: br IL_068f
-
-		IL_0677: ldloc.s 11
-		IL_0679: ldstr "log"
-		IL_067e: ldloc.s 13
-		IL_0680: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:145"
-		IL_0685: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_068a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_068f: pop
-		IL_0690: ldstr "console"
-		IL_0695: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_069a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_069f: stloc.s 11
-		IL_06a1: volatile.
-		IL_06a3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_06a8: brfalse IL_06bd
-
-		IL_06ad: ldloc.2
-		IL_06ae: ldstr "constructor"
-		IL_06b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_06b8: br IL_06d2
-
-		IL_06bd: ldloc.2
-		IL_06be: ldstr "constructor"
-		IL_06c3: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:151"
-		IL_06c8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_06cd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_06d2: stloc.s 10
-		IL_06d4: ldstr "WeakMap"
-		IL_06d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_06de: stloc.s 9
-		IL_06e0: ldloc.s 10
-		IL_06e2: ldloc.s 9
-		IL_06e4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_06e9: stloc.s 12
-		IL_06eb: ldloc.s 12
-		IL_06ed: box [System.Runtime]System.Boolean
-		IL_06f2: stloc.s 13
-		IL_06f4: volatile.
-		IL_06f6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_06fb: brfalse IL_0713
-
-		IL_0700: ldloc.s 11
-		IL_0702: ldstr "log"
-		IL_0707: ldloc.s 13
-		IL_0709: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_070e: br IL_072b
-
-		IL_0713: ldloc.s 11
-		IL_0715: ldstr "log"
-		IL_071a: ldloc.s 13
-		IL_071c: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:156"
-		IL_0721: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_0726: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_072b: pop
-		IL_072c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0731: stloc.3
-		IL_0732: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
-		IL_0737: stloc.s 11
-		IL_0739: ldloc.s 11
-		IL_073b: ldstr "key"
-		IL_0740: ldloc.3
-		IL_0741: ldc.i4.0
-		IL_0742: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
-		IL_0747: pop
-		IL_0748: ldstr "WeakMap"
-		IL_074d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0752: volatile.
-		IL_0754: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_0759: brfalse IL_076d
-
-		IL_075e: ldstr "prototype"
-		IL_0763: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0768: br IL_0781
-
-		IL_076d: ldstr "prototype"
-		IL_0772: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:168"
-		IL_0777: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_077c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0781: stloc.s 11
-		IL_0783: volatile.
-		IL_0785: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_078a: brfalse IL_07a0
-
-		IL_078f: ldloc.s 11
-		IL_0791: ldstr "set"
-		IL_0796: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_079b: br IL_07b6
-
-		IL_07a0: ldloc.s 11
-		IL_07a2: ldstr "set"
-		IL_07a7: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:170"
-		IL_07ac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_07b1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_07b6: stloc.s 11
-		IL_07b8: ldloc.s 11
-		IL_07ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_07bf: ldstr "call"
-		IL_07c4: ldloc.2
-		IL_07c5: ldloc.3
-		IL_07c6: ldc.r8 7
-		IL_07cf: box [System.Runtime]System.Double
-		IL_07d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_07d9: pop
-		IL_07da: ldstr "console"
-		IL_07df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_07e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_07e9: stloc.s 11
-		IL_07eb: ldstr "WeakMap"
-		IL_07f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_07f5: volatile.
-		IL_07f7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-		IL_07fc: brfalse IL_0810
-
-		IL_0801: ldstr "prototype"
-		IL_0806: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_080b: br IL_0824
-
-		IL_0810: ldstr "prototype"
-		IL_0815: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:182"
-		IL_081a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-		IL_081f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0824: stloc.s 9
-		IL_0826: volatile.
-		IL_0828: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-		IL_082d: brfalse IL_0843
-
-		IL_0832: ldloc.s 9
-		IL_0834: ldstr "get"
-		IL_0839: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_083e: br IL_0859
-
-		IL_0843: ldloc.s 9
-		IL_0845: ldstr "get"
-		IL_084a: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:184"
-		IL_084f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-		IL_0854: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0859: stloc.s 9
-		IL_085b: ldloc.s 9
-		IL_085d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0862: ldstr "call"
-		IL_0867: ldloc.2
-		IL_0868: ldloc.3
-		IL_0869: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_086e: stloc.s 9
-		IL_0870: volatile.
-		IL_0872: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-		IL_0877: brfalse IL_088f
-
-		IL_087c: ldloc.s 11
-		IL_087e: ldstr "log"
-		IL_0883: ldloc.s 9
-		IL_0885: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_088a: br IL_08a7
-
-		IL_088f: ldloc.s 11
-		IL_0891: ldstr "log"
-		IL_0896: ldloc.s 9
-		IL_0898: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:187"
-		IL_089d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-		IL_08a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_08a7: pop
+		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0057: stloc.s 9
+		IL_0059: ldstr "globalThis"
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0063: volatile.
+		IL_0065: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_006a: brfalse IL_007e
+
+		IL_006f: ldstr "WeakMap"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0079: br IL_0092
+
+		IL_007e: ldstr "WeakMap"
+		IL_0083: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:22"
+		IL_0088: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0092: stloc.s 10
+		IL_0094: ldstr "WeakMap"
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009e: stloc.s 11
+		IL_00a0: ldloc.s 10
+		IL_00a2: ldloc.s 11
+		IL_00a4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00a9: stloc.s 12
+		IL_00ab: ldloc.s 12
+		IL_00ad: box [System.Runtime]System.Boolean
+		IL_00b2: stloc.s 13
+		IL_00b4: ldloc.s 9
+		IL_00b6: ldloc.s 13
+		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bd: pop
+		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c3: stloc.s 9
+		IL_00c5: ldstr "WeakMap"
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00cf: volatile.
+		IL_00d1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00d6: brfalse IL_00ea
+
+		IL_00db: ldstr "prototype"
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e5: br IL_00fe
+
+		IL_00ea: ldstr "prototype"
+		IL_00ef: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:33"
+		IL_00f4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00fe: stloc.s 11
+		IL_0100: volatile.
+		IL_0102: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0107: brfalse IL_011d
+
+		IL_010c: ldloc.s 11
+		IL_010e: ldstr "constructor"
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0118: br IL_0133
+
+		IL_011d: ldloc.s 11
+		IL_011f: ldstr "constructor"
+		IL_0124: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:35"
+		IL_0129: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0133: stloc.s 11
+		IL_0135: ldstr "WeakMap"
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_013f: stloc.s 10
+		IL_0141: ldloc.s 11
+		IL_0143: ldloc.s 10
+		IL_0145: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_014a: stloc.s 12
+		IL_014c: ldloc.s 12
+		IL_014e: box [System.Runtime]System.Boolean
+		IL_0153: stloc.s 13
+		IL_0155: ldloc.s 9
+		IL_0157: ldloc.s 13
+		IL_0159: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_015e: pop
+		IL_015f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0164: stloc.s 9
+		IL_0166: ldstr "WeakMap"
+		IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0170: stloc.s 10
+		IL_0172: ldstr "Function"
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_017c: stloc.s 11
+		IL_017e: ldloc.s 10
+		IL_0180: ldloc.s 11
+		IL_0182: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_0187: stloc.s 12
+		IL_0189: ldloc.s 12
+		IL_018b: box [System.Runtime]System.Boolean
+		IL_0190: stloc.s 13
+		IL_0192: ldloc.s 9
+		IL_0194: ldloc.s 13
+		IL_0196: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_019b: pop
+		IL_019c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01a1: stloc.s 9
+		IL_01a3: ldstr "WeakMap"
+		IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_01b2: stloc.s 11
+		IL_01b4: ldstr "Function"
+		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01be: volatile.
+		IL_01c0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01c5: brfalse IL_01d9
+
+		IL_01ca: ldstr "prototype"
+		IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01d4: br IL_01ed
+
+		IL_01d9: ldstr "prototype"
+		IL_01de: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:58"
+		IL_01e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01ed: stloc.s 10
+		IL_01ef: ldloc.s 11
+		IL_01f1: ldloc.s 10
+		IL_01f3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01f8: stloc.s 12
+		IL_01fa: ldloc.s 12
+		IL_01fc: box [System.Runtime]System.Boolean
+		IL_0201: stloc.s 13
+		IL_0203: ldloc.s 9
+		IL_0205: ldloc.s 13
+		IL_0207: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_020c: pop
+		IL_020d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0212: stloc.s 9
+		IL_0214: ldstr "WeakMap"
+		IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_021e: volatile.
+		IL_0220: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0225: brfalse IL_0239
+
+		IL_022a: ldstr "prototype"
+		IL_022f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0234: br IL_024d
+
+		IL_0239: ldstr "prototype"
+		IL_023e: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:67"
+		IL_0243: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0248: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_024d: stloc.s 10
+		IL_024f: ldloc.s 10
+		IL_0251: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_0256: stloc.s 10
+		IL_0258: ldstr "Object"
+		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0262: volatile.
+		IL_0264: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0269: brfalse IL_027d
+
+		IL_026e: ldstr "prototype"
+		IL_0273: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0278: br IL_0291
+
+		IL_027d: ldstr "prototype"
+		IL_0282: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:72"
+		IL_0287: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_028c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0291: stloc.s 11
+		IL_0293: ldloc.s 10
+		IL_0295: ldloc.s 11
+		IL_0297: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_029c: stloc.s 12
+		IL_029e: ldloc.s 12
+		IL_02a0: box [System.Runtime]System.Boolean
+		IL_02a5: stloc.s 13
+		IL_02a7: ldloc.s 9
+		IL_02a9: ldloc.s 13
+		IL_02ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02b0: pop
+		IL_02b1: ldstr "WeakMap"
+		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02bb: ldstr "prototype"
+		IL_02c0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
+		IL_02c5: stloc.1
+		IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
+		IL_02cb: stloc.s 11
+		IL_02cd: ldloc.s 11
+		IL_02cf: ldstr "descriptor"
+		IL_02d4: ldloc.1
+		IL_02d5: ldc.i4.0
+		IL_02d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
+		IL_02db: pop
+		IL_02dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02e1: stloc.s 9
+		IL_02e3: volatile.
+		IL_02e5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_02ea: brfalse IL_02ff
+
+		IL_02ef: ldloc.1
+		IL_02f0: ldstr "writable"
+		IL_02f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02fa: br IL_0314
+
+		IL_02ff: ldloc.1
+		IL_0300: ldstr "writable"
+		IL_0305: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:89"
+		IL_030a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_030f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0314: stloc.s 11
+		IL_0316: ldloc.s 9
+		IL_0318: ldloc.s 11
+		IL_031a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_031f: pop
+		IL_0320: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0325: stloc.s 9
+		IL_0327: volatile.
+		IL_0329: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_032e: brfalse IL_0343
+
+		IL_0333: ldloc.1
+		IL_0334: ldstr "enumerable"
+		IL_0339: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_033e: br IL_0358
+
+		IL_0343: ldloc.1
+		IL_0344: ldstr "enumerable"
+		IL_0349: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:94"
+		IL_034e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0353: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0358: stloc.s 11
+		IL_035a: ldloc.s 9
+		IL_035c: ldloc.s 11
+		IL_035e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0363: pop
+		IL_0364: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0369: stloc.s 9
+		IL_036b: volatile.
+		IL_036d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0372: brfalse IL_0387
+
+		IL_0377: ldloc.1
+		IL_0378: ldstr "configurable"
+		IL_037d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0382: br IL_039c
+
+		IL_0387: ldloc.1
+		IL_0388: ldstr "configurable"
+		IL_038d: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:99"
+		IL_0392: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0397: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_039c: stloc.s 11
+		IL_039e: ldloc.s 9
+		IL_03a0: ldloc.s 11
+		IL_03a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_03a7: pop
+		IL_03a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.WeakMap::.ctor()
+		IL_03ad: stloc.2
+		IL_03ae: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
+		IL_03b3: stloc.s 11
+		IL_03b5: ldloc.s 11
+		IL_03b7: ldstr "weakMap"
+		IL_03bc: ldloc.2
+		IL_03bd: ldc.i4.0
+		IL_03be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
+		IL_03c3: pop
+		IL_03c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03c9: stloc.s 9
+		IL_03cb: ldloc.2
+		IL_03cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_03d1: stloc.s 11
+		IL_03d3: ldstr "WeakMap"
+		IL_03d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03dd: volatile.
+		IL_03df: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_03e4: brfalse IL_03f8
+
+		IL_03e9: ldstr "prototype"
+		IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03f3: br IL_040c
+
+		IL_03f8: ldstr "prototype"
+		IL_03fd: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:114"
+		IL_0402: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_0407: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_040c: stloc.s 10
+		IL_040e: ldloc.s 11
+		IL_0410: ldloc.s 10
+		IL_0412: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0417: stloc.s 12
+		IL_0419: ldloc.s 12
+		IL_041b: box [System.Runtime]System.Boolean
+		IL_0420: stloc.s 13
+		IL_0422: ldloc.s 9
+		IL_0424: ldloc.s 13
+		IL_0426: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_042b: pop
+		IL_042c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0431: stloc.s 9
+		IL_0433: ldloc.2
+		IL_0434: stloc.s 14
+		IL_0436: ldstr "WeakMap"
+		IL_043b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0440: stloc.s 10
+		IL_0442: ldloc.s 14
+		IL_0444: ldloc.s 10
+		IL_0446: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_044b: stloc.s 12
+		IL_044d: ldloc.s 12
+		IL_044f: box [System.Runtime]System.Boolean
+		IL_0454: stloc.s 13
+		IL_0456: ldloc.s 9
+		IL_0458: ldloc.s 13
+		IL_045a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_045f: pop
+		IL_0460: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0465: stloc.s 9
+		IL_0467: volatile.
+		IL_0469: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_046e: brfalse IL_0483
+
+		IL_0473: ldloc.2
+		IL_0474: ldstr "constructor"
+		IL_0479: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_047e: br IL_0498
+
+		IL_0483: ldloc.2
+		IL_0484: ldstr "constructor"
+		IL_0489: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:129"
+		IL_048e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_0493: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0498: stloc.s 10
+		IL_049a: ldstr "WeakMap"
+		IL_049f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04a4: stloc.s 11
+		IL_04a6: ldloc.s 10
+		IL_04a8: ldloc.s 11
+		IL_04aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_04af: stloc.s 12
+		IL_04b1: ldloc.s 12
+		IL_04b3: box [System.Runtime]System.Boolean
+		IL_04b8: stloc.s 13
+		IL_04ba: ldloc.s 9
+		IL_04bc: ldloc.s 13
+		IL_04be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04c3: pop
+		IL_04c4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_04c9: stloc.3
+		IL_04ca: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
+		IL_04cf: stloc.s 11
+		IL_04d1: ldloc.s 11
+		IL_04d3: ldstr "key"
+		IL_04d8: ldloc.3
+		IL_04d9: ldc.i4.0
+		IL_04da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
+		IL_04df: pop
+		IL_04e0: ldstr "WeakMap"
+		IL_04e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04ea: volatile.
+		IL_04ec: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_04f1: brfalse IL_0505
+
+		IL_04f6: ldstr "prototype"
+		IL_04fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0500: br IL_0519
+
+		IL_0505: ldstr "prototype"
+		IL_050a: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:146"
+		IL_050f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_0514: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0519: stloc.s 11
+		IL_051b: volatile.
+		IL_051d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0522: brfalse IL_0538
+
+		IL_0527: ldloc.s 11
+		IL_0529: ldstr "set"
+		IL_052e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0533: br IL_054e
+
+		IL_0538: ldloc.s 11
+		IL_053a: ldstr "set"
+		IL_053f: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:148"
+		IL_0544: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0549: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_054e: stloc.s 11
+		IL_0550: ldloc.s 11
+		IL_0552: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0557: ldstr "call"
+		IL_055c: ldloc.2
+		IL_055d: ldloc.3
+		IL_055e: ldc.r8 7
+		IL_0567: box [System.Runtime]System.Double
+		IL_056c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0571: pop
+		IL_0572: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0577: stloc.s 9
+		IL_0579: ldstr "WeakMap"
+		IL_057e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0583: volatile.
+		IL_0585: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_058a: brfalse IL_059e
+
+		IL_058f: ldstr "prototype"
+		IL_0594: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0599: br IL_05b2
+
+		IL_059e: ldstr "prototype"
+		IL_05a3: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:158"
+		IL_05a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_05ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_05b2: stloc.s 11
+		IL_05b4: volatile.
+		IL_05b6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_05bb: brfalse IL_05d1
+
+		IL_05c0: ldloc.s 11
+		IL_05c2: ldstr "get"
+		IL_05c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_05cc: br IL_05e7
+
+		IL_05d1: ldloc.s 11
+		IL_05d3: ldstr "get"
+		IL_05d8: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:160"
+		IL_05dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_05e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_05e7: stloc.s 11
+		IL_05e9: ldloc.s 11
+		IL_05eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05f0: ldstr "call"
+		IL_05f5: ldloc.2
+		IL_05f6: ldloc.3
+		IL_05f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_05fc: stloc.s 11
+		IL_05fe: ldloc.s 9
+		IL_0600: ldloc.s 11
+		IL_0602: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0607: pop
 		.try
 		{
-			IL_08a8: nop
-			IL_08a9: ldstr "WeakMap"
-			IL_08ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_08b3: stloc.s 4
-			IL_08b5: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
-			IL_08ba: stloc.s 9
-			IL_08bc: ldloc.s 9
-			IL_08be: ldstr "weakMapCtor"
-			IL_08c3: ldloc.s 4
-			IL_08c5: ldc.i4.0
-			IL_08c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
-			IL_08cb: pop
-			IL_08cc: ldloc.s 4
-			IL_08ce: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_08d3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_08d8: pop
-			IL_08d9: ldstr "console"
-			IL_08de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_08e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_08e8: volatile.
-			IL_08ea: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_08ef: brfalse IL_0908
-
-			IL_08f4: ldstr "log"
-			IL_08f9: ldstr "no-throw"
-			IL_08fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0903: br IL_0921
-
-			IL_0908: ldstr "log"
-			IL_090d: ldstr "no-throw"
-			IL_0912: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:207"
-			IL_0917: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_091c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-			IL_0921: pop
-			IL_0922: leave IL_0a2a
+			IL_0608: nop
+			IL_0609: ldstr "WeakMap"
+			IL_060e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0613: stloc.s 4
+			IL_0615: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::GetGlobalThis()
+			IL_061a: stloc.s 11
+			IL_061c: ldloc.s 11
+			IL_061e: ldstr "weakMapCtor"
+			IL_0623: ldloc.s 4
+			IL_0625: ldc.i4.0
+			IL_0626: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetProperty(object, string, object, bool)
+			IL_062b: pop
+			IL_062c: ldloc.s 4
+			IL_062e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0633: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0638: pop
+			IL_0639: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_063e: stloc.s 9
+			IL_0640: ldloc.s 9
+			IL_0642: ldstr "no-throw"
+			IL_0647: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_064c: pop
+			IL_064d: leave IL_071d
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0927: stloc.s 5
-			IL_0929: ldloc.s 5
-			IL_092b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0930: dup
-			IL_0931: brtrue IL_0947
+			IL_0652: stloc.s 5
+			IL_0654: ldloc.s 5
+			IL_0656: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_065b: dup
+			IL_065c: brtrue IL_0672
 
-			IL_0936: pop
-			IL_0937: ldloc.s 5
-			IL_0939: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_093e: dup
-			IL_093f: brtrue IL_0953
+			IL_0661: pop
+			IL_0662: ldloc.s 5
+			IL_0664: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0669: dup
+			IL_066a: brtrue IL_067e
 
-			IL_0944: pop
-			IL_0945: rethrow
+			IL_066f: pop
+			IL_0670: rethrow
 
-			IL_0947: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_094c: stloc.s 6
-			IL_094e: br IL_0955
+			IL_0672: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0677: stloc.s 6
+			IL_0679: br IL_0680
 
-			IL_0953: stloc.s 6
+			IL_067e: stloc.s 6
 
-			IL_0955: ldloc.s 6
-			IL_0957: stloc.s 7
-			IL_0959: ldstr "console"
-			IL_095e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0963: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0968: stloc.s 9
-			IL_096a: volatile.
-			IL_096c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-			IL_0971: brfalse IL_0987
+			IL_0680: ldloc.s 6
+			IL_0682: stloc.s 7
+			IL_0684: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0689: stloc.s 9
+			IL_068b: volatile.
+			IL_068d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_0692: brfalse IL_06a8
 
-			IL_0976: ldloc.s 7
-			IL_0978: ldstr "name"
-			IL_097d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0982: br IL_099d
+			IL_0697: ldloc.s 7
+			IL_0699: ldstr "name"
+			IL_069e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_06a3: br IL_06be
 
-			IL_0987: ldloc.s 7
-			IL_0989: ldstr "name"
-			IL_098e: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:220"
-			IL_0993: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-			IL_0998: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_06a8: ldloc.s 7
+			IL_06aa: ldstr "name"
+			IL_06af: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:192"
+			IL_06b4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_06b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_099d: stloc.s 11
-			IL_099f: ldloc.s 11
-			IL_09a1: ldstr ": "
-			IL_09a6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_09ab: stloc.s 15
-			IL_09ad: volatile.
-			IL_09af: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-			IL_09b4: brfalse IL_09ca
+			IL_06be: stloc.s 11
+			IL_06c0: ldloc.s 11
+			IL_06c2: ldstr ": "
+			IL_06c7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_06cc: stloc.s 15
+			IL_06ce: volatile.
+			IL_06d0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_06d5: brfalse IL_06eb
 
-			IL_09b9: ldloc.s 7
-			IL_09bb: ldstr "message"
-			IL_09c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_09c5: br IL_09e0
+			IL_06da: ldloc.s 7
+			IL_06dc: ldstr "message"
+			IL_06e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_06e6: br IL_0701
 
-			IL_09ca: ldloc.s 7
-			IL_09cc: ldstr "message"
-			IL_09d1: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:224"
-			IL_09d6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-			IL_09db: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_06eb: ldloc.s 7
+			IL_06ed: ldstr "message"
+			IL_06f2: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:196"
+			IL_06f7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_06fc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_09e0: stloc.s 11
-			IL_09e2: ldloc.s 15
-			IL_09e4: ldloc.s 11
-			IL_09e6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_09eb: stloc.s 15
-			IL_09ed: volatile.
-			IL_09ef: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
-			IL_09f4: brfalse IL_0a0c
-
-			IL_09f9: ldloc.s 9
-			IL_09fb: ldstr "log"
-			IL_0a00: ldloc.s 15
-			IL_0a02: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0a07: br IL_0a24
-
-			IL_0a0c: ldloc.s 9
-			IL_0a0e: ldstr "log"
-			IL_0a13: ldloc.s 15
-			IL_0a15: ldstr "WeakMap_Constructor_Prototype_Surface:Modules.WeakMap_Constructor_Prototype_Surface:__js_module_init__:226"
-			IL_0a1a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
-			IL_0a1f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-			IL_0a24: pop
-			IL_0a25: leave IL_0a2a
+			IL_0701: stloc.s 11
+			IL_0703: ldloc.s 15
+			IL_0705: ldloc.s 11
+			IL_0707: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_070c: stloc.s 15
+			IL_070e: ldloc.s 9
+			IL_0710: ldloc.s 15
+			IL_0712: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0717: pop
+			IL_0718: leave IL_071d
 		} // end handler
 
-		IL_0a2a: ldnull
-		IL_0a2b: stloc.s 8
-		IL_0a2d: ret
+		IL_071d: ldnull
+		IL_071e: stloc.s 8
+		IL_0720: ret
 	} // end of method WeakMap_Constructor_Prototype_Surface::__js_module_init__
 
 } // end of class Modules.WeakMap_Constructor_Prototype_Surface
@@ -999,20 +778,6 @@
 	.field assembly static int32 __jroc_dynamicLookup_15
 	.field assembly static int32 __jroc_dynamicLookup_16
 	.field assembly static int32 __jroc_dynamicLookup_17
-	.field assembly static int32 __jroc_dynamicLookup_18
-	.field assembly static int32 __jroc_dynamicLookup_19
-	.field assembly static int32 __jroc_dynamicLookup_20
-	.field assembly static int32 __jroc_dynamicLookup_21
-	.field assembly static int32 __jroc_dynamicLookup_22
-	.field assembly static int32 __jroc_dynamicLookup_23
-	.field assembly static int32 __jroc_dynamicLookup_24
-	.field assembly static int32 __jroc_dynamicLookup_25
-	.field assembly static int32 __jroc_dynamicLookup_26
-	.field assembly static int32 __jroc_dynamicLookup_27
-	.field assembly static int32 __jroc_dynamicLookup_28
-	.field assembly static int32 __jroc_dynamicLookup_29
-	.field assembly static int32 __jroc_dynamicLookup_30
-	.field assembly static int32 __jroc_dynamicLookup_31
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

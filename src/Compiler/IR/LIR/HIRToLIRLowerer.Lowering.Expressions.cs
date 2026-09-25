@@ -53,8 +53,9 @@ public sealed partial class HIRToLIRLowerer
 
         if (expression is HIRCallExpression
             {
-                Callee: HIRVariableExpression { Name.Kind: BindingKind.Global, Name.Name: "Number" }
-            } numberCall)
+                Callee: HIRVariableExpression { Name: { Name: "Number" } numberSymbol }
+            } numberCall
+            && CanUseOriginalGlobalBinding(numberSymbol))
         {
             if (!TryEvaluateCallArguments(numberCall.Arguments, 1, out var args))
             {
@@ -71,8 +72,9 @@ public sealed partial class HIRToLIRLowerer
 
         if (expression is HIRCallExpression
             {
-                Callee: HIRVariableExpression { Name.Name: "String" }
-            } stringCall)
+                Callee: HIRVariableExpression { Name: { Name: "String" } stringSymbol }
+            } stringCall
+            && CanUseOriginalGlobalBinding(stringSymbol))
         {
             if (!TryEvaluateCallArguments(stringCall.Arguments, 1, out var args))
             {
@@ -89,8 +91,9 @@ public sealed partial class HIRToLIRLowerer
 
         if (expression is HIRCallExpression
             {
-                Callee: HIRVariableExpression { Name.Name: "Symbol" }
-            } symbolCall)
+                Callee: HIRVariableExpression { Name: { Name: "Symbol" } symbolSymbol }
+            } symbolCall
+            && CanUseOriginalGlobalBinding(symbolSymbol))
         {
             if (!TryEvaluateCallArguments(symbolCall.Arguments, 1, out var args))
             {

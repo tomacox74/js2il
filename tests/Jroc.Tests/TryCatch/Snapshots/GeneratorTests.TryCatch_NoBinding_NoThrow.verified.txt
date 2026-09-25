@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 177 (0xb1)
+		// Code size: 347 (0x15b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NoBinding_NoThrow/Scope,
@@ -152,8 +152,7 @@
 			[3] class [System.Runtime]System.Exception,
 			[4] object,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[7] object
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.TryCatch_NoBinding_NoThrow/Scope::.ctor()
@@ -161,72 +160,112 @@
 		IL_0006: nop
 		IL_0007: ldc.r8 7
 		IL_0010: stloc.1
-		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0016: stloc.s 6
-		IL_0018: ldloc.s 6
-		IL_001a: ldstr "before try"
-		IL_001f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0024: pop
+		IL_0011: ldstr "console"
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0020: volatile.
+		IL_0022: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0027: brfalse IL_0040
+
+		IL_002c: ldstr "log"
+		IL_0031: ldstr "before try"
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_003b: br IL_0059
+
+		IL_0040: ldstr "log"
+		IL_0045: ldstr "before try"
+		IL_004a: ldstr "TryCatch_NoBinding_NoThrow:Modules.TryCatch_NoBinding_NoThrow:__js_module_init__:11"
+		IL_004f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0059: pop
 		.try
 		{
-			IL_0025: nop
-			IL_0026: ldloc.1
-			IL_0027: ldc.r8 4
-			IL_0030: add
-			IL_0031: stloc.2
-			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0037: stloc.s 6
-			IL_0039: ldloc.2
-			IL_003a: box [System.Runtime]System.Double
-			IL_003f: stloc.s 7
-			IL_0041: ldloc.s 6
-			IL_0043: ldstr "Inside catch.  Calculated value is"
-			IL_0048: ldloc.s 7
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004f: pop
-			IL_0050: leave IL_0099
+			IL_005a: nop
+			IL_005b: ldloc.1
+			IL_005c: ldc.r8 4
+			IL_0065: add
+			IL_0066: stloc.2
+			IL_0067: ldstr "console"
+			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0076: ldloc.2
+			IL_0077: box [System.Runtime]System.Double
+			IL_007c: stloc.s 6
+			IL_007e: ldstr "log"
+			IL_0083: ldstr "Inside catch.  Calculated value is"
+			IL_0088: ldloc.s 6
+			IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_008f: pop
+			IL_0090: leave IL_010e
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0055: stloc.3
-			IL_0056: ldloc.3
-			IL_0057: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_005c: dup
-			IL_005d: brtrue IL_0072
+			IL_0095: stloc.3
+			IL_0096: ldloc.3
+			IL_0097: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_009c: dup
+			IL_009d: brtrue IL_00b2
 
-			IL_0062: pop
-			IL_0063: ldloc.3
-			IL_0064: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0069: dup
-			IL_006a: brtrue IL_007e
+			IL_00a2: pop
+			IL_00a3: ldloc.3
+			IL_00a4: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00a9: dup
+			IL_00aa: brtrue IL_00be
 
-			IL_006f: pop
-			IL_0070: rethrow
+			IL_00af: pop
+			IL_00b0: rethrow
 
-			IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0077: stloc.s 4
-			IL_0079: br IL_0080
+			IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00b7: stloc.s 4
+			IL_00b9: br IL_00c0
 
-			IL_007e: stloc.s 4
+			IL_00be: stloc.s 4
 
-			IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0085: stloc.s 6
-			IL_0087: ldloc.s 6
-			IL_0089: ldstr "inside catch.. we should not be here"
-			IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0093: pop
-			IL_0094: leave IL_0099
+			IL_00c0: ldstr "console"
+			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00cf: volatile.
+			IL_00d1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_00d6: brfalse IL_00ef
+
+			IL_00db: ldstr "log"
+			IL_00e0: ldstr "inside catch.. we should not be here"
+			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00ea: br IL_0108
+
+			IL_00ef: ldstr "log"
+			IL_00f4: ldstr "inside catch.. we should not be here"
+			IL_00f9: ldstr "TryCatch_NoBinding_NoThrow:Modules.TryCatch_NoBinding_NoThrow:__js_module_init__:36"
+			IL_00fe: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0108: pop
+			IL_0109: leave IL_010e
 		} // end handler
 
-		IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009e: stloc.s 6
-		IL_00a0: ldloc.s 6
-		IL_00a2: ldstr "try/catch finished."
-		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ac: pop
-		IL_00ad: ldnull
-		IL_00ae: stloc.s 5
-		IL_00b0: ret
+		IL_010e: ldstr "console"
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011d: volatile.
+		IL_011f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0124: brfalse IL_013d
+
+		IL_0129: ldstr "log"
+		IL_012e: ldstr "try/catch finished."
+		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0138: br IL_0156
+
+		IL_013d: ldstr "log"
+		IL_0142: ldstr "try/catch finished."
+		IL_0147: ldstr "TryCatch_NoBinding_NoThrow:Modules.TryCatch_NoBinding_NoThrow:__js_module_init__:46"
+		IL_014c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0156: pop
+		IL_0157: ldnull
+		IL_0158: stloc.s 5
+		IL_015a: ret
 	} // end of method TryCatch_NoBinding_NoThrow::__js_module_init__
 
 } // end of class Modules.TryCatch_NoBinding_NoThrow
@@ -251,4 +290,14 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_1
+	.field assembly static int32 __jroc_dynamicLookup_2
+	.field assembly static int32 __jroc_dynamicLookup_3
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

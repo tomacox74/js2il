@@ -20,6 +20,8 @@ public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
 
     public bool GenerateModuleExportContracts { get; init; } = true;
 
+    public bool AssumeUnmodifiedHostGlobals { get; init; }
+
     public JavaScriptRuntime.HostRuntimeIntrinsicDescriptors HostRuntimeIntrinsics { get; init; } =
         JavaScriptRuntime.HostRuntimeIntrinsicDescriptors.Empty;
 }

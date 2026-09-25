@@ -48,6 +48,10 @@ public class JrocArgs
     [ArgShortcut("--pdb")]
     public bool EmitPdb { get; set; }
 
+    [ArgDescription("Assume the host leaves built-in global bindings unchanged during execution (enables guard-free calls when source analysis permits)")]
+    [ArgShortcut("--assume-unmodified-host-globals")]
+    public bool AssumeUnmodifiedHostGlobals { get; set; }
+
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
@@ -98,7 +102,8 @@ class Program
                 Verbose = parsed.Verbose,
                 DiagnosticFilePath = diagnosticFilePath,
                 AnalyzeUnused = parsed.AnalyzeUnused,
-                EmitPdb = parsed.EmitPdb
+                EmitPdb = parsed.EmitPdb,
+                AssumeUnmodifiedHostGlobals = parsed.AssumeUnmodifiedHostGlobals
             });
             var logger = servicesProvider.GetRequiredService<ICompilerOutput>();
 

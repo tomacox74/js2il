@@ -84,6 +84,25 @@ namespace Jroc.Services
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
             var moduleList = modules._modules.Values.ToList();
             var compileOptions = _serviceProvider.GetRequiredService<CompilerOptions>();
+            var potentiallyModifiedGlobals = moduleList
+                .SelectMany(module => module.SymbolTable!.Root.Bindings.Values)
+                .Where(binding => binding.Kind != BindingKind.Global || binding.HasWrite)
+                .Select(binding => binding.Name)
+                .Concat(moduleList.SelectMany(module => module.SymbolTable!.Root.WrittenGlobalObjectProperties))
+                .Concat(compileOptions.HostRuntimeIntrinsics.GlobalBindings
+                    .Where(binding => binding.OverwritePolicy
+                        == JavaScriptRuntime.RuntimeGlobalOverwritePolicy.ReplaceExisting)
+                    .Select(binding => binding.Name))
+                .ToHashSet(StringComparer.Ordinal);
+            var mayExposeGlobalObject = moduleList.Any(
+                module => module.SymbolTable!.Root.MayMutateGlobalCallableBindings);
+            foreach (var module in moduleList)
+            {
+                module.SymbolTable!.Root.AssumeOriginalGlobalBindings =
+                    compileOptions.AssumeUnmodifiedHostGlobals && !mayExposeGlobalObject;
+                module.SymbolTable.Root.PotentiallyModifiedGlobalBindings =
+                    potentiallyModifiedGlobals;
+            }
             var exportShapes = PublicExportShapeAnalyzer.Analyze(modules);
             var generatedContractMetadata = compileOptions.GenerateModuleExportContracts
                 && exportShapes.Values.Any(shape => shape.HasExports)

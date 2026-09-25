@@ -43,6 +43,13 @@ public class CompilerOptions
     public bool GenerateModuleExportContracts { get; set; } = true;
 
     /// <summary>
+    /// Allows guard-free intrinsic global calls when the compiled sources do not expose or
+    /// reassign those bindings. The host must start with the original global bindings and
+    /// must not change them (including during callbacks) for the lifetime of each invocation.
+    /// </summary>
+    public bool AssumeUnmodifiedHostGlobals { get; set; }
+
+    /// <summary>
     /// Host-provided runtime intrinsics that should be visible during compilation.
     /// </summary>
     public JavaScriptRuntime.HostRuntimeIntrinsicDescriptors HostRuntimeIntrinsics { get; set; } =

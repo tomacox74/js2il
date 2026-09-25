@@ -150,6 +150,11 @@ namespace JavaScriptRuntime
             // Static; the receiver is ignored (issue #1895).
             DefineBuiltinFunction(
                 constructorValue,
+                "fromBase64",
+                (BuiltinFunction1)ConstructorFromBase64,
+                1);
+            DefineBuiltinFunction(
+                constructorValue,
                 "fromHex",
                 (BuiltinFunction1)ConstructorFromHex,
                 1);
@@ -292,6 +297,9 @@ namespace JavaScriptRuntime
 
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Uint8Array(buffer, byteOffset, length);
+
+        private static object? ConstructorFromBase64(object? thisArgument, object? source)
+            => fromBase64(source);
 
         private static object? ConstructorFromHex(object? thisArgument, object? source)
             => fromHex(source);
