@@ -327,7 +327,30 @@
           "test/built-ins/Atomics/waitAsync/descriptor.js",
           "test/built-ins/Atomics/notify/descriptor.js"
         ],
-        "notes": "75 previously failing pinned tests verify notification counts, validation and coercion ordering, BigInt64 waits, and waitAsync immediate results. Agent-dependent Test262 cases are not yet covered."
+        "notes": "75 pinned tests verify notification counts, validation and coercion ordering, BigInt64 waits, and waitAsync immediate results. Additional native agent tests cover cross-agent notification and asynchronous waits; the complete ECMA-262 memory model remains unverified."
+      },
+      {
+        "clause": "25.4",
+        "feature": "Worker-based Atomics.wait, waitAsync, and notify",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-atomics-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/notify/AtomicsAgent100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/notify/bigint/AtomicsAgent100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/AtomicsAgent100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/bigint/AtomicsAgent100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/waitAsync/AtomicsAgent100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/waitAsync/bigint/AtomicsAgent100ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Atomics/notify/count-defaults-to-infinity-missing.js",
+          "test/built-ins/Atomics/notify/bigint/notify-all-on-loc.js",
+          "test/built-ins/Atomics/wait/false-for-timeout-agent.js",
+          "test/built-ins/Atomics/wait/bigint/false-for-timeout-agent.js",
+          "test/built-ins/Atomics/waitAsync/false-for-timeout-agent.js",
+          "test/built-ins/Atomics/waitAsync/bigint/false-for-timeout-agent.js"
+        ],
+        "notes": "100 previously failing pinned tests exercise synchronized shared-buffer access, waiter ordering, notifications, and worker reports through the native Test262 agent host. This is not a claim of complete cross-agent memory-model conformance."
       },
       {
         "clause": "25.4.17",

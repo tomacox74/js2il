@@ -66,7 +66,8 @@ public static class Test262SharedAssertHarness
         Func<JavaScriptRuntime.HostRuntimeIntrinsicDescriptors, InMemoryTestExecutionResult> execute)
     {
         var completion = new Test262AsyncCompletion(metadata.Async);
-        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes, completion);
+        using var agents = new Test262AgentHelpers();
+        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes, completion, agents);
         var expectsRuntimeException = allowUnhandledException
             && string.Equals(metadata.NegativePhase, "runtime", StringComparison.OrdinalIgnoreCase);
         var result = execute(hostRuntimeIntrinsics);

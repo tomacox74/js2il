@@ -34,15 +34,18 @@ shared successful assembly: they retain separate in-memory compilation and
 their own diagnostic assertions. Skipped facts and support files are not
 compiled as independent entries. An unexpected failure building a runnable
 folder fails its test cases rather than retrying them as individual assemblies.
+Worker-based Atomics tests use a native `$262.agent` host implementation with
+independent compiled agent scripts, shared buffer backing stores, reports, and
+bounded worker cleanup.
 
 ## Overall ECMA-262 Areas
 
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,723 | 12 | 6,777 | 23,512 | **71.13%** |
+| Built-in objects and APIs | 16,823 | 12 | 6,677 | 23,512 | **71.55%** |
 | Language syntax and semantics | 15,915 | 46 | 7,686 | 23,647 | **67.30%** |
-| **Total** | 32,638 | 58 | 15,549 | 48,245 | **67.65%** |
+| **Total** | 32,738 | 58 | 15,449 | 48,245 | **67.86%** |
 
 ## Language Areas
 
@@ -200,7 +203,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `AsyncGeneratorFunction` | 9 | 0 | 14 | 23 | **39.13%** |
 | `AsyncGeneratorPrototype` | 2 | 0 | 46 | 48 | **4.17%** |
 | `AsyncIteratorPrototype` | 3 | 0 | 10 | 13 | **23.08%** |
-| `Atomics` | 246 | 0 | 136 | 382 | **64.40%** |
+| `Atomics` | 346 | 0 | 36 | 382 | **90.58%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
 | `Boolean` | 49 | 0 | 2 | 51 | **96.08%** |
 | `DataView` | 550 | 0 | 11 | 561 | **98.04%** |

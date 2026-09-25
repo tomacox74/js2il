@@ -627,7 +627,11 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
         RuntimeAtomicsWaitResult result;
         try
         {
-            var signaled = waiter.Signal.Wait(timeoutMilliseconds, agent.ShutdownToken);
+            // Timer waits may fire fractionally before the requested elapsed milliseconds.
+            var roundedTimeout = timeoutMilliseconds >= 0 && timeoutMilliseconds < int.MaxValue
+                ? timeoutMilliseconds + 1
+                : timeoutMilliseconds;
+            var signaled = waiter.Signal.Wait(roundedTimeout, agent.ShutdownToken);
             result = signaled && !waiter.IsCancelled
                 ? RuntimeAtomicsWaitResult.Notified
                 : RuntimeAtomicsWaitResult.TimedOut;
@@ -692,7 +696,9 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
                     locationWaiters.Add(waiter);
                     if (timeoutMilliseconds > 0)
                     {
-                        _ = Task.Delay(timeoutMilliseconds, waiter.TimeoutToken).ContinueWith(
+                        // Match synchronous waits: do not report a timeout before its full duration.
+                        _ = Task.Delay(timeoutMilliseconds + (timeoutMilliseconds < int.MaxValue ? 1 : 0),
+                            waiter.TimeoutToken).ContinueWith(
                             task =>
                             {
                                 if (!task.IsCanceled)

@@ -10,7 +10,8 @@ public static class Test262HostRuntimeIntrinsics
 
     internal static HostRuntimeIntrinsicDescriptors Create(
         IEnumerable<string>? harnessFiles,
-        Test262AsyncCompletion completion)
+        Test262AsyncCompletion completion,
+        Test262AgentHelpers? agents = null)
     {
         var included = harnessFiles?.ToHashSet(StringComparer.Ordinal)
             ?? [];
@@ -25,7 +26,7 @@ public static class Test262HostRuntimeIntrinsics
                 (Action<object?>)completion.Done,
                 "$DONE",
                 1))
-            .AddGlobalFactory("$262", Create262Object)
+            .AddGlobalFactory("$262", () => Create262Object(agents, included.Contains("atomicsHelper.js")))
             .AddGlobalFactory("compareArray", () => CreateFunction(
                 (Func<object?, object?, bool>)CompareArray,
                 "compareArray",
@@ -226,7 +227,7 @@ public static class Test262HostRuntimeIntrinsics
         return constructor;
     }
 
-    private static object Create262Object()
+    private static object Create262Object(Test262AgentHelpers? agents, bool atomicsHelper)
     {
         var result = new JsObject();
         ObjectRuntime.SetItem(result, "createRealm", CreateFunction(
@@ -239,6 +240,7 @@ public static class Test262HostRuntimeIntrinsics
             1));
         ObjectRuntime.SetItem(result, "evalScript", Unsupported262("$262.evalScript"));
         ObjectRuntime.SetItem(result, "gc", Unsupported262("$262.gc"));
+        ObjectRuntime.SetItem(result, "agent", (agents ?? new Test262AgentHelpers()).CreateAgentObject(atomicsHelper));
         return result;
     }
 
