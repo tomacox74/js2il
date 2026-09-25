@@ -103,9 +103,8 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        // For generator functions, parameter initialization must run only when the generator is first started
-        // (i.e., on the first .next()), not when the generator object is created and not on each resumption.
-        // We'll emit this as a one-time guarded block later (see EmitGeneratorParameterInitializationOnce).
+        // The generator factory invokes the step method in parameter-initialization-only
+        // mode at call time. Bind parameters once, without running the generator body.
         if (_isGenerator)
         {
             return;
