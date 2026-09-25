@@ -1803,6 +1803,10 @@ partial class HIRMethodBuilder
             return true;
         }
 
+        var skipPublicStaticMethodBrand = classBody.Body.OfType<PropertyDefinition>()
+            .Any(field => field.Static && field.Key is PrivateIdentifier)
+            && !classBody.Body.OfType<MethodDefinition>()
+                .Any(method => method.Static && method.Key is PrivateIdentifier);
         var registryClassName = GetRegistryClassName(classScope);
         var classTypeExpr = new HIRUserClassTypeExpression(registryClassName);
         var prototypeTypeExpr = new HIRPropertyAccessExpression(classTypeExpr, "prototype");
@@ -1937,7 +1941,8 @@ partial class HIRMethodBuilder
                             isPrivate,
                             methodDefinition.Kind == PropertyKind.Set,
                             methodFunction.Generator,
-                            methodFunction.Async);
+                            methodFunction.Async,
+                            skipPublicStaticMethodBrand);
 
                         statements.Add(new HIRExpressionStatement(definitionExpression));
                         break;
@@ -1988,7 +1993,8 @@ partial class HIRMethodBuilder
                             classTypeExpr,
                             prototypeTypeExpr,
                             classScope,
-                            definition);
+                            definition,
+                            skipPublicStaticMethodBrand);
                         break;
                     }
 
@@ -2336,7 +2342,8 @@ partial class HIRMethodBuilder
         HIRExpression classTypeExpr,
         HIRExpression prototypeTypeExpr,
         Scope classScope,
-        HIRClassMethodDataPropertyDefinition definition)
+        HIRClassMethodDataPropertyDefinition definition,
+        bool skipPublicStaticMethodBrand)
     {
         if (statements.Count > 0
             && statements[^1] is HIRExpressionStatement { Expression: HIRDefineClassMethodDataPropertiesExpression existing }
@@ -2351,7 +2358,8 @@ partial class HIRMethodBuilder
                 classTypeExpr,
                 prototypeTypeExpr,
                 classScope,
-                new List<HIRClassMethodDataPropertyDefinition> { definition })));
+                new List<HIRClassMethodDataPropertyDefinition> { definition },
+                skipPublicStaticMethodBrand)));
     }
 
     private static CallableId CreateClassMethodCallableId(
