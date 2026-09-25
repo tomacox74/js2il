@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView;
 
-public class DataViewConstructorExecutionTests : DiskExecutionTestsBase
+public class DataViewConstructorExecutionTests : InMemoryExecutionTestsBase
 {
     public DataViewConstructorExecutionTests() : base("built_ins.DataView") { }
 

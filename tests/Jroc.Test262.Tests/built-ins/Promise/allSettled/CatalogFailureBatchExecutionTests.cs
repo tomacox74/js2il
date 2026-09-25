@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Promise.allSettled;
 
-public class CatalogFailureBatchExecutionTests : DiskExecutionTestsBase
+public class CatalogFailureBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public CatalogFailureBatchExecutionTests() : base("built_ins.Promise.allSettled") { }
 

@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Number;
 
-public class PortNext200ExecutionTests : DiskExecutionTestsBase
+public class PortNext200ExecutionTests : InMemoryExecutionTestsBase
 {
     public PortNext200ExecutionTests() : base("built_ins.Number") { }
 

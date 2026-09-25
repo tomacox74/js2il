@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView.prototype.getInt32;
 
-public class IntrinsicSurfaceExecutionTests : DiskExecutionTestsBase
+public class IntrinsicSurfaceExecutionTests : InMemoryExecutionTestsBase
 {
     public IntrinsicSurfaceExecutionTests() : base("built_ins.DataView.prototype.getInt32") { }
 

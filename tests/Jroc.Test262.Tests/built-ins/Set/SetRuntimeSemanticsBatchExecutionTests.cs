@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Set;
 
-public class SetRuntimeSemanticsBatchExecutionTests : DiskExecutionTestsBase
+public class SetRuntimeSemanticsBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public SetRuntimeSemanticsBatchExecutionTests() : base("built_ins.Set") { }
 

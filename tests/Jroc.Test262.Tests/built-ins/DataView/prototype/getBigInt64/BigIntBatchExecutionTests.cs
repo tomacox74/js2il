@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView.prototype.getBigInt64;
 
-public class BigIntBatchExecutionTests : DiskExecutionTestsBase
+public class BigIntBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public BigIntBatchExecutionTests() : base("built_ins.DataView.prototype.getBigInt64") { }
 

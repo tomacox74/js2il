@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Math.f16round;
 
-public class MathConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class MathConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public MathConformanceBatchExecutionTests() : base("built_ins.Math.f16round") { }
 

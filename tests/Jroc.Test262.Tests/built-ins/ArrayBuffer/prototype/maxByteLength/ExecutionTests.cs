@@ -1,6 +1,6 @@
 using Jroc.Test262.Tests.built_ins;
 namespace Jroc.Test262.Tests.built_ins.ArrayBuffer.prototype.maxByteLength;
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.ArrayBuffer.prototype.maxByteLength") { }
     [Fact(DisplayName = "invoked-as-accessor.js")] public Task invoked_as_accessor() => ExecutionTestFromFile("invoked-as-accessor");

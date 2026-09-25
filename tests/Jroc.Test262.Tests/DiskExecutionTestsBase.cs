@@ -3,11 +3,12 @@ using Jroc;
 using Jroc.IR;
 using Jroc.Tests;
 
-namespace Jroc.Test262.Tests.language;
+namespace Jroc.Test262.Tests;
 
 public abstract class DiskExecutionTestsBase
 {
     private readonly string _testCategory;
+
     protected DiskExecutionTestsBase(string testCategory)
     {
         _testCategory = testCategory;
@@ -17,13 +18,21 @@ public abstract class DiskExecutionTestsBase
         string testName,
         bool allowUnhandledException = false,
         [CallerFilePath] string sourceFilePath = "")
+        => ExecutionTestFromFile(testName, sourceFilePath, allowUnhandledException: allowUnhandledException);
+
+    protected Task ExecutionTestFromFile(
+        string testName,
+        [CallerFilePath] string sourceFilePath = "",
+        int timeoutMs = 30000,
+        bool allowUnhandledException = false)
     {
         var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
             enableIRMetrics: true,
-            allowUnhandledException: allowUnhandledException);
+            allowUnhandledException: allowUnhandledException,
+            timeoutMs: timeoutMs);
 
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;
@@ -90,5 +99,4 @@ public abstract class DiskExecutionTestsBase
 
         return (File.ReadAllText(scriptPath), scriptPath);
     }
-
 }

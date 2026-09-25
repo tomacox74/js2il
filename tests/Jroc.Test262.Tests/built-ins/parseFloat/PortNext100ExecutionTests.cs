@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.parseFloat;
 
-public class PortNext100ExecutionTests : DiskExecutionTestsBase
+public class PortNext100ExecutionTests : InMemoryExecutionTestsBase
 {
     public PortNext100ExecutionTests() : base("built_ins.parseFloat") { }
 

@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArray.prototype.reverse.BigInt;
 
-public class TypedArraySecondFollowUpConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class TypedArraySecondFollowUpConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public TypedArraySecondFollowUpConformanceBatchExecutionTests() : base("built_ins.TypedArray.prototype.reverse.BigInt") { }
 

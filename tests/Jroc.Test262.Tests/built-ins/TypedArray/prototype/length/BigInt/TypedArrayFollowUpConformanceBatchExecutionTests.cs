@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArray.prototype.length.BigInt;
 
-public class TypedArrayFollowUpConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class TypedArrayFollowUpConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public TypedArrayFollowUpConformanceBatchExecutionTests() : base("built_ins.TypedArray.prototype.length.BigInt") { }
 

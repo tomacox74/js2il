@@ -109,6 +109,11 @@ workflow; do not wait for a complete catalog before porting a known-good batch.
 ## Native Harness Overview
 
 All test262 harness support lives under `tests/Jroc.Testing/Test262`.
+Disk-backed test classes in `language` and `intl402` inherit the shared
+`tests/Jroc.Test262.Tests/DiskExecutionTestsBase.cs`. Built-ins inherit
+`InMemoryExecutionTestsBase`, a collection-marked wrapper over the same base.
+Execution and compilation-failure fixtures resolve relative to the calling
+test source file, including nested fixture paths.
 
 | File | Responsibility |
 | --- | --- |

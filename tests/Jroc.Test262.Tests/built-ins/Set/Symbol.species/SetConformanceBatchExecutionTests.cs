@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Set.Symbol.species;
 
-public class SetConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class SetConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public SetConformanceBatchExecutionTests() : base("built_ins.Set.Symbol.species") { }
 

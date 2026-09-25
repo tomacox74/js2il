@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.ArrayBuffer.prototype.slice;
 
-public class SpeciesBatchExecutionTests : DiskExecutionTestsBase
+public class SpeciesBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public SpeciesBatchExecutionTests() : base("built_ins.ArrayBuffer.prototype.slice") { }
 

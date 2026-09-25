@@ -6,7 +6,7 @@ namespace Jroc.Test262.Tests.built_ins.isFinite;
 
 
 
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 
 {
 

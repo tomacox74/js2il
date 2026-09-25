@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArray.prototype.map;
 
-public class IntrinsicSurfaceExecutionTests : DiskExecutionTestsBase
+public class IntrinsicSurfaceExecutionTests : InMemoryExecutionTestsBase
 {
     public IntrinsicSurfaceExecutionTests() : base("built_ins.TypedArray.prototype.map") { }
 

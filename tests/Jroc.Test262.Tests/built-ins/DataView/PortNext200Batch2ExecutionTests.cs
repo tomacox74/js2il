@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView;
 
-public class PortNext200Batch2ExecutionTests : DiskExecutionTestsBase
+public class PortNext200Batch2ExecutionTests : InMemoryExecutionTestsBase
 {
     public PortNext200Batch2ExecutionTests() : base("built_ins.DataView") { }
 

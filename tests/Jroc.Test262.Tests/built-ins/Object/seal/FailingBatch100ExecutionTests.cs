@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Object.seal;
 
-public class FailingBatch100ExecutionTests : DiskExecutionTestsBase
+public class FailingBatch100ExecutionTests : InMemoryExecutionTestsBase
 {
     public FailingBatch100ExecutionTests() : base("built_ins.Object.seal") { }
 

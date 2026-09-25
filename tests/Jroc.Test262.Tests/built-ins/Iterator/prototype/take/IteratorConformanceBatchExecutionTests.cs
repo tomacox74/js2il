@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Iterator.prototype.take;
 
-public class IteratorConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class IteratorConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public IteratorConformanceBatchExecutionTests() : base("built_ins.Iterator.prototype.take") { }
 
