@@ -40,9 +40,9 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,623 | 12 | 6,877 | 23,512 | **70.70%** |
+| Built-in objects and APIs | 16,723 | 12 | 6,777 | 23,512 | **71.13%** |
 | Language syntax and semantics | 15,915 | 46 | 7,686 | 23,647 | **67.30%** |
-| **Total** | 32,538 | 58 | 15,649 | 48,245 | **67.44%** |
+| **Total** | 32,638 | 58 | 15,549 | 48,245 | **67.65%** |
 
 ## Language Areas
 
@@ -200,7 +200,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `AsyncGeneratorFunction` | 9 | 0 | 14 | 23 | **39.13%** |
 | `AsyncGeneratorPrototype` | 2 | 0 | 46 | 48 | **4.17%** |
 | `AsyncIteratorPrototype` | 3 | 0 | 10 | 13 | **23.08%** |
-| `Atomics` | 171 | 0 | 211 | 382 | **44.76%** |
+| `Atomics` | 246 | 0 | 136 | 382 | **64.40%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
 | `Boolean` | 49 | 0 | 2 | 51 | **96.08%** |
 | `DataView` | 550 | 0 | 11 | 561 | **98.04%** |
@@ -239,7 +239,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
-| `SharedArrayBuffer` | 69 | 0 | 35 | 104 | **66.35%** |
+| `SharedArrayBuffer` | 94 | 0 | 10 | 104 | **90.38%** |
 | `String` | 1,194 | 1 | 28 | 1,223 | **97.63%** |
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |

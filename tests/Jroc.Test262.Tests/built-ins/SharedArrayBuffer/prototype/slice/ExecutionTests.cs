@@ -30,4 +30,12 @@ public sealed class ExecutionTests : ExecutionTestsBase
     public Task name()
         => ExecutionTest("name");
 
+    [Fact(DisplayName = "species-constructor-is-not-object.js")]
+    public Task ported_species_constructor_is_not_object() => ExecutionTest("species-constructor-is-not-object");
+
+    [Fact(DisplayName = "species-is-not-constructor.js")]
+    public Task ported_species_is_not_constructor() => ExecutionTest("species-is-not-constructor");
+
+    [Fact(DisplayName = "species-is-not-object.js")]
+    public Task ported_species_is_not_object() => ExecutionTest("species-is-not-object");
 }

@@ -4,7 +4,7 @@
 
 [Back to Section6](Section6.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T18:30:38Z
+> Last generated (UTC): 2026-09-25T18:52:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -112,7 +112,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Data Blocks | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>[`DataView_SetGet_UintAndEndian.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js)<br>[`Int32Array_Construct_ArrayBuffer_ViewProperties.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js)<br>[`SharedArrayBuffer_Int32Array_AtomicsWait.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js) |  | JROC implements fixed-length ArrayBuffer-backed byte storage, DataView/typed-array reads and writes, and a minimal SharedArrayBuffer-backed path sufficient for the covered Atomics.wait scenario. Resizable/detached/growable/shared-memory edge cases remain incomplete, so the clause stays supported with limitations. |
+| Data Blocks | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js)<br>[`DataView_SetGet_UintAndEndian.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js)<br>[`Int32Array_Construct_ArrayBuffer_ViewProperties.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js)<br>[`SharedArrayBuffer_Int32Array_AtomicsWait.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js) |  | JROC implements ArrayBuffer-backed byte storage, DataView/typed-array reads and writes, and growable SharedArrayBuffer storage with supported Atomics wait/notify operations. Some resizable/detached and cross-agent memory-model edge cases remain incomplete. |
 
 ### 6.2.9.1 ([tc39.es](https://tc39.es/ecma262/#sec-createbytedatablock))
 
@@ -124,7 +124,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| CreateSharedByteDataBlock | Supported with Limitations | [`SharedArrayBuffer_Int32Array_AtomicsWait.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js) |  | JROC exposes a minimal SharedArrayBuffer-backed byte store that is sufficient for constructing a shared Int32Array and exercising the covered Atomics.wait path. Full shared-memory, growable-buffer, and spec host-hook semantics remain limited. |
+| CreateSharedByteDataBlock | Supported with Limitations | [`SharedArrayBuffer_Int32Array_AtomicsWait.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js) |  | JROC exposes growable SharedArrayBuffer-backed byte storage for typed-array views and Atomics waits. Full cross-agent memory ordering and host-hook semantics remain unverified. |
 
 ### 6.2.9.3 ([tc39.es](https://tc39.es/ecma262/#sec-copydatablockbytes))
 

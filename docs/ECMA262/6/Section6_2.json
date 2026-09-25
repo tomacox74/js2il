@@ -321,7 +321,7 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js"
         ],
-        "notes": "JROC implements fixed-length ArrayBuffer-backed byte storage, DataView/typed-array reads and writes, and a minimal SharedArrayBuffer-backed path sufficient for the covered Atomics.wait scenario. Resizable/detached/growable/shared-memory edge cases remain incomplete, so the clause stays supported with limitations."
+        "notes": "JROC implements ArrayBuffer-backed byte storage, DataView/typed-array reads and writes, and growable SharedArrayBuffer storage with supported Atomics wait/notify operations. Some resizable/detached and cross-agent memory-model edge cases remain incomplete."
       },
       {
         "clause": "6.2.9.1",
@@ -342,7 +342,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js"
         ],
-        "notes": "JROC exposes a minimal SharedArrayBuffer-backed byte store that is sufficient for constructing a shared Int32Array and exercising the covered Atomics.wait path. Full shared-memory, growable-buffer, and spec host-hook semantics remain limited."
+        "notes": "JROC exposes growable SharedArrayBuffer-backed byte storage for typed-array views and Atomics waits. Full cross-agent memory ordering and host-hook semantics remain unverified."
       },
       {
         "clause": "6.2.9.3",

@@ -10,15 +10,11 @@ internal class RuntimeArrayBufferStorage
     }
 
     /// <summary>
-    /// Reads use a plain field read because this sits on the typed-array element access
-    /// hot path. Resizable ArrayBuffer storage is agent-confined, while shared storage
-    /// keeps the same byte array until agent-cluster teardown. The release write remains
-    /// volatile for teardown publication; ordinary readers do not rely on it for
-    /// synchronization.
+    /// Growable shared storage publishes replacement arrays to other agents.
     /// </summary>
     internal byte[] Bytes
     {
-        get => _bytes;
+        get => Volatile.Read(ref _bytes);
         set => Volatile.Write(ref _bytes, value);
     }
 }
@@ -30,16 +26,23 @@ internal sealed class RuntimeSharedArrayBufferBackingStore : RuntimeArrayBufferS
     internal RuntimeSharedArrayBufferBackingStore(
         long id,
         RuntimeAgentClusterSharedServices? owner,
-        byte[] bytes)
+        byte[] bytes,
+        int? maxByteLength = null)
         : base(bytes)
     {
         Id = id;
         Owner = owner;
+        MaxByteLength = maxByteLength ?? bytes.Length;
+        IsGrowable = maxByteLength.HasValue;
     }
 
     internal long Id { get; }
 
     internal RuntimeAgentClusterSharedServices? Owner { get; }
+
+    internal int MaxByteLength { get; }
+
+    internal bool IsGrowable { get; }
 
     internal bool IsReleased => Volatile.Read(ref _released) != 0;
 

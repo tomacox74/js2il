@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(runtime): coordinate synchronous and asynchronous Atomics waits with
+  notifications, support BigInt64 waits, and add growable SharedArrayBuffers
+  with species-aware slicing; port 100 previously failing pinned Test262 cases.
 - fix(compiler): observe mutable global callable and constructor bindings,
   including replacements installed by a host, without disabling intrinsic
   fast paths. Add an explicit AOT host contract for guard-free global calls

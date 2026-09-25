@@ -212,7 +212,7 @@ namespace JavaScriptRuntime
             }
 
             var length = endIndex - startIndex;
-            var constructor = ResolveSpeciesConstructor();
+            var constructor = ResolveSpeciesConstructor(GlobalThis.ArrayBufferIntrinsicConstructor);
             var result = CallableOperations.Construct1(constructor, constructor, (double)length);
             if (result is not ArrayBuffer resultBuffer || result is SharedArrayBuffer)
             {
@@ -391,9 +391,8 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private object ResolveSpeciesConstructor()
+        protected object ResolveSpeciesConstructor(object defaultConstructor)
         {
-            var defaultConstructor = GlobalThis.ArrayBufferIntrinsicConstructor;
             var constructor = ObjectRuntime.GetItem(this, "constructor");
             if (constructor is null)
             {
@@ -440,13 +439,13 @@ namespace JavaScriptRuntime
                 return 0;
             }
 
-            if (double.IsInfinity(number) || number < 0)
+            if (double.IsInfinity(number))
             {
                 throw new RangeError("Invalid ArrayBuffer length");
             }
 
             var truncated = System.Math.Truncate(number);
-            if (truncated > int.MaxValue)
+            if (truncated < 0 || truncated > int.MaxValue)
             {
                 throw new RangeError("Invalid ArrayBuffer length");
             }
@@ -454,7 +453,7 @@ namespace JavaScriptRuntime
             return (int)truncated;
         }
 
-        private static bool TryGetMaxByteLength(object? options, out int maxByteLength)
+        protected static bool TryGetMaxByteLength(object? options, out int maxByteLength)
         {
             maxByteLength = 0;
             if (options is null || options is JsNull || TypeUtilities.IsPrimitive(options))

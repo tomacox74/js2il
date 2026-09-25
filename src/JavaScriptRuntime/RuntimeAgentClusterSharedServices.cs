@@ -471,13 +471,14 @@ internal sealed class RuntimeSharedMemoryService : IDisposable
 
     internal RuntimeSharedArrayBufferBackingStore Create(
         RuntimeAgent agent,
-        int byteLength)
+        int byteLength,
+        int? maxByteLength = null)
         => _owner.Cluster.WhileAgentsActive(
             agent,
             second: null,
-            () => CreateCore(byteLength));
+            () => CreateCore(byteLength, maxByteLength));
 
-    private RuntimeSharedArrayBufferBackingStore CreateCore(int byteLength)
+    private RuntimeSharedArrayBufferBackingStore CreateCore(int byteLength, int? maxByteLength)
     {
         lock (_gate)
         {
@@ -488,7 +489,8 @@ internal sealed class RuntimeSharedMemoryService : IDisposable
             var store = new RuntimeSharedArrayBufferBackingStore(
                 ++_nextId,
                 _owner,
-                bytes);
+                bytes,
+                maxByteLength);
             _stores.Add(new WeakReference<RuntimeSharedArrayBufferBackingStore>(store));
             if (_stores.Count % 64 == 0)
             {
@@ -576,7 +578,7 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
         RuntimeAgent agent,
         RuntimeSharedArrayBufferBackingStore store,
         int byteOffset,
-        int expectedValue,
+        object expectedValue,
         int timeoutMilliseconds)
     {
         Validate(agent, store);
@@ -591,7 +593,17 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
                 lock (_gate)
                 {
                     ThrowIfDisposed();
-                    if (ReadInt32(store, byteOffset) != expectedValue)
+                    bool matches;
+                    lock (store)
+                    {
+                        matches = expectedValue switch
+                        {
+                            int intValue => ReadInt32(store, byteOffset) == intValue,
+                            System.Numerics.BigInteger bigValue => ReadBigInt64(store, byteOffset) == bigValue,
+                            _ => throw new ArgumentException("Invalid atomic wait value", nameof(expectedValue))
+                        };
+                    }
+                    if (!matches)
                     {
                         return RuntimeAtomicsWaitResult.NotEqual;
                     }
@@ -632,6 +644,86 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
         return result;
     }
 
+    internal RuntimeAtomicsWaitResult? WaitAsync(
+        RuntimeAgent agent,
+        RuntimeSharedArrayBufferBackingStore store,
+        int byteOffset,
+        object expectedValue,
+        int timeoutMilliseconds,
+        Action createPromise,
+        Action<string?> complete)
+    {
+        Validate(agent, store);
+        var location = new WaitLocation(store.Id, byteOffset);
+        return _cluster.WhileAgentsActive(
+            agent,
+            second: null,
+            () =>
+            {
+                lock (_gate)
+                {
+                    ThrowIfDisposed();
+                    bool equal;
+                    lock (store)
+                    {
+                        equal = expectedValue switch
+                        {
+                            int intValue => ReadInt32(store, byteOffset) == intValue,
+                            System.Numerics.BigInteger bigValue => ReadBigInt64(store, byteOffset) == bigValue,
+                            _ => throw new ArgumentException("Invalid atomic wait value", nameof(expectedValue))
+                        };
+                    }
+                    if (!equal)
+                    {
+                        return RuntimeAtomicsWaitResult.NotEqual;
+                    }
+                    if (timeoutMilliseconds == 0)
+                    {
+                        return RuntimeAtomicsWaitResult.TimedOut;
+                    }
+
+                    createPromise();
+                    var waiter = new Waiter(agent, complete);
+                    if (!_waiters.TryGetValue(location, out var locationWaiters))
+                    {
+                        locationWaiters = [];
+                        _waiters.Add(location, locationWaiters);
+                    }
+                    locationWaiters.Add(waiter);
+                    if (timeoutMilliseconds > 0)
+                    {
+                        _ = Task.Delay(timeoutMilliseconds, waiter.TimeoutToken).ContinueWith(
+                            task =>
+                            {
+                                if (!task.IsCanceled)
+                                {
+                                    CompleteTimedOut(location, waiter);
+                                }
+                            },
+                            CancellationToken.None,
+                            TaskContinuationOptions.ExecuteSynchronously,
+                            TaskScheduler.Default);
+                    }
+                    return (RuntimeAtomicsWaitResult?)null;
+                }
+            });
+    }
+
+    private void CompleteTimedOut(WaitLocation location, Waiter waiter)
+    {
+        lock (_gate)
+        {
+            if (_waiters.TryGetValue(location, out var waiters) && waiters.Remove(waiter))
+            {
+                if (waiters.Count == 0)
+                {
+                    _waiters.Remove(location);
+                }
+                waiter.Complete("timed-out");
+            }
+        }
+    }
+
     internal int Notify(
         RuntimeSharedArrayBufferBackingStore store,
         int byteOffset,
@@ -661,7 +753,7 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
 
             foreach (var waiter in selected)
             {
-                waiter.Signal.Set();
+                waiter.Complete("ok");
             }
 
             return selected.Length;
@@ -777,6 +869,21 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
             : System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(span);
     }
 
+    private static System.Numerics.BigInteger ReadBigInt64(
+        RuntimeSharedArrayBufferBackingStore store, int byteOffset)
+    {
+        var bytes = store.Bytes;
+        if (byteOffset < 0 || byteOffset > bytes.Length - sizeof(long))
+        {
+            throw new ArgumentOutOfRangeException(nameof(byteOffset));
+        }
+        var span = bytes.AsSpan(byteOffset, sizeof(long));
+        var value = BitConverter.IsLittleEndian
+            ? System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(span)
+            : System.Buffers.Binary.BinaryPrimitives.ReadInt64BigEndian(span);
+        return new System.Numerics.BigInteger(value);
+    }
+
     private void ThrowIfDisposed()
     {
         if (_disposed)
@@ -789,12 +896,23 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
 
     private sealed class Waiter : IDisposable
     {
+        private readonly Action<string?>? _complete;
+        private readonly CancellationTokenSource? _timeoutCancellation;
+
         internal Waiter(RuntimeAgent agent)
         {
             Agent = agent;
         }
 
+        internal Waiter(RuntimeAgent agent, Action<string?> complete)
+        {
+            Agent = agent;
+            _complete = complete;
+            _timeoutCancellation = new CancellationTokenSource();
+        }
+
         internal RuntimeAgent Agent { get; }
+        internal CancellationToken TimeoutToken => _timeoutCancellation!.Token;
 
         internal ManualResetEventSlim Signal { get; } = new(false);
 
@@ -805,10 +923,36 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
         internal void Cancel()
         {
             Volatile.Write(ref _cancelled, 1);
-            Signal.Set();
+            _timeoutCancellation?.Cancel();
+            if (_complete == null)
+            {
+                Signal.Set();
+            }
+            else
+            {
+                _complete(null);
+                Dispose();
+            }
+        }
+
+        internal void Complete(string result)
+        {
+            _timeoutCancellation?.Cancel();
+            if (_complete == null)
+            {
+                Signal.Set();
+            }
+            else
+            {
+                _complete(result);
+                Dispose();
+            }
         }
 
         public void Dispose()
-            => Signal.Dispose();
+        {
+            _timeoutCancellation?.Dispose();
+            Signal.Dispose();
+        }
     }
 }

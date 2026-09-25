@@ -29,4 +29,7 @@ public sealed class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "this-is-not-object.js")]
     public Task this_is_not_object() => ExecutionTest("this-is-not-object");
+
+    [Fact(DisplayName = "return-maxbytelength-growable.js")]
+    public Task ported_return_maxbytelength_growable() => ExecutionTest("return-maxbytelength-growable");
 }
