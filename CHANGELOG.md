@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): observe mutable global callable and constructor bindings,
+  including replacements installed by a host, without disabling intrinsic
+  fast paths. Add an explicit AOT host contract for guard-free global calls
+  when source and host bindings are stable.
 - perf(test262): compile and load one in-memory assembly per runnable
   JavaScript fixture folder during each xUnit run, retaining independent
   test cases and separate compilation for expected failures.

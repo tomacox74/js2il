@@ -35,11 +35,23 @@ Common request options:
 | `EmitPdb` | Include Portable PDB bytes with original source locations. |
 | `Verbose` / `DiagnosticFilePath` | Enable verbose compiler diagnostics or capture diagnostics to a file. |
 | `AnalyzeUnused` | Enable unused analysis diagnostics. |
+| `AssumeUnmodifiedHostGlobals` | Opt into branch-free built-in global calls when source analysis proves their bindings unchanged and the host guarantees pristine bindings for every invocation. Defaults to `false`. |
 
 When `SourceText` is present, it overlays the entry file at `EntryFilePath`;
 other dependencies are resolved from the supplied file system or the default
 file system. In-memory output does not mean all source dependencies are
 automatically available in memory.
+
+Global function and constructor calls normally check the realm's current
+binding before taking an intrinsic fast path. `AssumeUnmodifiedHostGlobals`
+removes that per-call check only for names not written or exposed by any
+compiled entry or dependency. The opt-in is a host contract: the host must
+start each invocation with the original built-ins, must not replace them or
+expose the global object for mutation in callbacks, and must keep the same
+guarantee for later exported calls. Do not enable it for modules that can
+acquire the global object indirectly through an unanalyzed host value.
+Known source mutations and explicit host-global replacements still take the
+checked path. The option also applies to multi-entry compilation.
 
 ## Compile and evaluate
 

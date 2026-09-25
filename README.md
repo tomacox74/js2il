@@ -92,6 +92,7 @@ jroc --moduleid <ModuleId> [<OutputPath>] [options]
 | `--diagnostic-file <path>` | Write compiler diagnostics to a text file. |
 | `--analyzeunused` | Report unused functions, properties, and variables. |
 | `--pdb` | Emit Portable PDB debug symbols. |
+| `--assume-unmodified-host-globals` | Opt into guard-free calls to provably unchanged built-ins when the host guarantees pristine global bindings throughout execution. |
 | `--version` | Print the installed JROC version. |
 | `-h`, `-?`, `--help` | Show command-line help. |
 
@@ -101,6 +102,14 @@ For example:
 jroc app.js --output out --pdb
 dotnet out/app.dll
 ```
+
+By default, compiled global calls check that a built-in still has its original
+binding and call a replacement dynamically if it does not. The
+`--assume-unmodified-host-globals` option removes per-call checks only where
+source analysis finds no possible global-object exposure or rebinding across
+the compiled modules. Use it only if the host also guarantees the original
+bindings at startup and does not replace or expose them for mutation during
+callbacks or later invocations; it does not make JavaScript globals immutable.
 
 To include multiple independent input files in one assembly, keep the default
 entry first and supply each other file with `-a` or `--additional-input`. The second
