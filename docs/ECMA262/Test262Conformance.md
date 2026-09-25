@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,470 | 12 | 7,030 | 23,512 | **70.05%** |
+| Built-in objects and APIs | 16,570 | 12 | 6,930 | 23,512 | **70.47%** |
 | Language syntax and semantics | 15,658 | 46 | 7,943 | 23,647 | **66.22%** |
-| **Total** | 32,128 | 58 | 16,059 | 48,245 | **66.59%** |
+| **Total** | 32,228 | 58 | 15,959 | 48,245 | **66.80%** |
 
 ## Language Areas
 
@@ -201,7 +201,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
 | `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
-| `Iterator` | 403 | 0 | 107 | 510 | **79.02%** |
+| `Iterator` | 503 | 0 | 7 | 510 | **98.63%** |
 | `JSON` | 162 | 0 | 3 | 165 | **98.18%** |
 | `Map` | 197 | 0 | 7 | 204 | **96.57%** |
 | `MapIteratorPrototype` | 6 | 0 | 5 | 11 | **54.55%** |
