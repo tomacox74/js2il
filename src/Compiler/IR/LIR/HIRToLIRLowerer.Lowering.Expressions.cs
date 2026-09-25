@@ -403,6 +403,20 @@ public sealed partial class HIRToLIRLowerer
             case HIRObjectExpression objectExpr:
                 return TryLowerObjectExpression(objectExpr, out resultTempVar);
 
+            case HIRRefreshClassConstructorDescriptorsExpression refreshClass:
+                if (!TryLowerExpression(refreshClass.Constructor, out var constructorToRefresh))
+                {
+                    return false;
+                }
+
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.RefreshClassConstructorDescriptors),
+                    [EnsureObject(constructorToRefresh)],
+                    resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+
             case HIRPropertyAccessExpression propAccessExpr:
                 if (!TryLowerPropertyAccessExpression(propAccessExpr, out resultTempVar))
                 {

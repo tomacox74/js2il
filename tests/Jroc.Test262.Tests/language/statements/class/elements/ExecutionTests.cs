@@ -6,6 +6,156 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.class_.elements") { }
 
+    [Fact(DisplayName = "after-same-line-gen-rs-static-privatename-identifier.js")]
+    public Task ported_after_same_line_gen_rs_static_privatename_identifier() => ExecutionTest("after-same-line-gen-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "after-same-line-gen-rs-static-privatename-identifier-alt.js")]
+    public Task ported_after_same_line_gen_rs_static_privatename_identifier_alt() => ExecutionTest("after-same-line-gen-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "after-same-line-gen-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_after_same_line_gen_rs_static_privatename_identifier_initializer() => ExecutionTest("after-same-line-gen-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "after-same-line-gen-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_after_same_line_gen_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("after-same-line-gen-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "after-same-line-method-rs-static-privatename-identifier.js")]
+    public Task ported_after_same_line_method_rs_static_privatename_identifier() => ExecutionTest("after-same-line-method-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "after-same-line-method-rs-static-privatename-identifier-alt.js")]
+    public Task ported_after_same_line_method_rs_static_privatename_identifier_alt() => ExecutionTest("after-same-line-method-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "after-same-line-method-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_after_same_line_method_rs_static_privatename_identifier_initializer() => ExecutionTest("after-same-line-method-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "after-same-line-method-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_after_same_line_method_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("after-same-line-method-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "after-same-line-static-async-gen-rs-static-privatename-identifier.js")]
+    public Task ported_after_same_line_static_async_gen_rs_static_privatename_identifier() => ExecutionTest("after-same-line-static-async-gen-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "after-same-line-static-async-gen-rs-static-privatename-identifier-alt.js")]
+    public Task ported_after_same_line_static_async_gen_rs_static_privatename_identifier_alt() => ExecutionTest("after-same-line-static-async-gen-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "after-same-line-static-async-gen-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_after_same_line_static_async_gen_rs_static_privatename_identifier_initializer() => ExecutionTest("after-same-line-static-async-gen-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "after-same-line-static-async-gen-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_after_same_line_static_async_gen_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("after-same-line-static-async-gen-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "after-same-line-static-async-method-rs-static-privatename-identifier.js")]
+    public Task ported_after_same_line_static_async_method_rs_static_privatename_identifier() => ExecutionTest("after-same-line-static-async-method-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "after-same-line-static-async-method-rs-static-privatename-identifier-alt.js")]
+    public Task ported_after_same_line_static_async_method_rs_static_privatename_identifier_alt() => ExecutionTest("after-same-line-static-async-method-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "after-same-line-static-async-method-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_after_same_line_static_async_method_rs_static_privatename_identifier_initializer() => ExecutionTest("after-same-line-static-async-method-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "after-same-line-static-async-method-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_after_same_line_static_async_method_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("after-same-line-static-async-method-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "after-same-line-static-gen-rs-static-privatename-identifier.js")]
+    public Task ported_after_same_line_static_gen_rs_static_privatename_identifier() => ExecutionTest("after-same-line-static-gen-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "after-same-line-static-gen-rs-static-privatename-identifier-alt.js")]
+    public Task ported_after_same_line_static_gen_rs_static_privatename_identifier_alt() => ExecutionTest("after-same-line-static-gen-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "after-same-line-static-gen-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_after_same_line_static_gen_rs_static_privatename_identifier_initializer() => ExecutionTest("after-same-line-static-gen-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "after-same-line-static-gen-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_after_same_line_static_gen_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("after-same-line-static-gen-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "after-same-line-static-method-rs-static-privatename-identifier.js")]
+    public Task ported_after_same_line_static_method_rs_static_privatename_identifier() => ExecutionTest("after-same-line-static-method-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "after-same-line-static-method-rs-static-privatename-identifier-alt.js")]
+    public Task ported_after_same_line_static_method_rs_static_privatename_identifier_alt() => ExecutionTest("after-same-line-static-method-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "after-same-line-static-method-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_after_same_line_static_method_rs_static_privatename_identifier_initializer() => ExecutionTest("after-same-line-static-method-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "after-same-line-static-method-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_after_same_line_static_method_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("after-same-line-static-method-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "multiple-definitions-rs-static-privatename-identifier.js")]
+    public Task ported_multiple_definitions_rs_static_privatename_identifier() => ExecutionTest("multiple-definitions-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "multiple-definitions-rs-static-privatename-identifier-alt.js")]
+    public Task ported_multiple_definitions_rs_static_privatename_identifier_alt() => ExecutionTest("multiple-definitions-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "multiple-definitions-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_multiple_definitions_rs_static_privatename_identifier_initializer() => ExecutionTest("multiple-definitions-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "multiple-definitions-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_multiple_definitions_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("multiple-definitions-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "multiple-stacked-definitions-rs-static-privatename-identifier.js")]
+    public Task ported_multiple_stacked_definitions_rs_static_privatename_identifier() => ExecutionTest("multiple-stacked-definitions-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "multiple-stacked-definitions-rs-static-privatename-identifier-alt.js")]
+    public Task ported_multiple_stacked_definitions_rs_static_privatename_identifier_alt() => ExecutionTest("multiple-stacked-definitions-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "multiple-stacked-definitions-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_multiple_stacked_definitions_rs_static_privatename_identifier_initializer() => ExecutionTest("multiple-stacked-definitions-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "multiple-stacked-definitions-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_multiple_stacked_definitions_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("multiple-stacked-definitions-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "new-no-sc-line-method-rs-static-privatename-identifier.js")]
+    public Task ported_new_no_sc_line_method_rs_static_privatename_identifier() => ExecutionTest("new-no-sc-line-method-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "new-no-sc-line-method-rs-static-privatename-identifier-alt.js")]
+    public Task ported_new_no_sc_line_method_rs_static_privatename_identifier_alt() => ExecutionTest("new-no-sc-line-method-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "new-no-sc-line-method-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_new_no_sc_line_method_rs_static_privatename_identifier_initializer() => ExecutionTest("new-no-sc-line-method-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "new-no-sc-line-method-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_new_no_sc_line_method_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("new-no-sc-line-method-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "new-sc-line-gen-rs-static-privatename-identifier.js")]
+    public Task ported_new_sc_line_gen_rs_static_privatename_identifier() => ExecutionTest("new-sc-line-gen-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "new-sc-line-gen-rs-static-privatename-identifier-alt.js")]
+    public Task ported_new_sc_line_gen_rs_static_privatename_identifier_alt() => ExecutionTest("new-sc-line-gen-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "new-sc-line-gen-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_new_sc_line_gen_rs_static_privatename_identifier_initializer() => ExecutionTest("new-sc-line-gen-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "new-sc-line-gen-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_new_sc_line_gen_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("new-sc-line-gen-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "new-sc-line-method-rs-static-privatename-identifier.js")]
+    public Task ported_new_sc_line_method_rs_static_privatename_identifier() => ExecutionTest("new-sc-line-method-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "new-sc-line-method-rs-static-privatename-identifier-alt.js")]
+    public Task ported_new_sc_line_method_rs_static_privatename_identifier_alt() => ExecutionTest("new-sc-line-method-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "new-sc-line-method-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_new_sc_line_method_rs_static_privatename_identifier_initializer() => ExecutionTest("new-sc-line-method-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "new-sc-line-method-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_new_sc_line_method_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("new-sc-line-method-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "regular-definitions-rs-static-privatename-identifier.js")]
+    public Task ported_regular_definitions_rs_static_privatename_identifier() => ExecutionTest("regular-definitions-rs-static-privatename-identifier");
+
+    [Fact(DisplayName = "regular-definitions-rs-static-privatename-identifier-alt.js")]
+    public Task ported_regular_definitions_rs_static_privatename_identifier_alt() => ExecutionTest("regular-definitions-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "regular-definitions-rs-static-privatename-identifier-initializer.js")]
+    public Task ported_regular_definitions_rs_static_privatename_identifier_initializer() => ExecutionTest("regular-definitions-rs-static-privatename-identifier-initializer");
+
+    [Fact(DisplayName = "regular-definitions-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_regular_definitions_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("regular-definitions-rs-static-privatename-identifier-initializer-alt");
+
+    [Fact(DisplayName = "same-line-async-gen-rs-static-privatename-identifier-alt.js")]
+    public Task ported_same_line_async_gen_rs_static_privatename_identifier_alt() => ExecutionTest("same-line-async-gen-rs-static-privatename-identifier-alt");
+
+    [Fact(DisplayName = "same-line-async-gen-rs-static-privatename-identifier-initializer-alt.js")]
+    public Task ported_same_line_async_gen_rs_static_privatename_identifier_initializer_alt() => ExecutionTest("same-line-async-gen-rs-static-privatename-identifier-initializer-alt");
+
     [Fact(DisplayName = "abrupt-completition-on-field-initializer")]
     public Task abrupt_completition_on_field_initializer()
         => ExecutionTest("abrupt-completition-on-field-initializer");

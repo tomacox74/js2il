@@ -143,7 +143,9 @@ public sealed partial class HIRToLIRLowerer
                 expression.CallableId,
                 scopesTemp,
                 targetTemp,
-                ownerTemp,
+                expression.IsStatic && !expression.IsPrivate
+                    && HasStaticPrivateFields(expression.ClassScope)
+                    && !HasStaticPrivateMethods(expression.ClassScope) ? null : ownerTemp,
                 expression.FunctionName);
 
             resultTempVar = CreateTempVariable();
@@ -275,7 +277,9 @@ public sealed partial class HIRToLIRLowerer
                     methodDefinition.CallableId,
                     methodScopesTemp,
                     targetTemp,
-                    ownerTemp,
+                    methodDefinition.IsStatic && !methodDefinition.IsPrivate
+                        && HasStaticPrivateFields(expression.ClassScope)
+                        && !HasStaticPrivateMethods(expression.ClassScope) ? null : ownerTemp,
                     methodDefinition.FunctionName);
 
                 resultTempVar = CreateTempVariable();
@@ -331,7 +335,7 @@ public sealed partial class HIRToLIRLowerer
         CallableId callableId,
         TempVariable scopes,
         TempVariable homeObject,
-        TempVariable privateBrand,
+        TempVariable? privateBrand,
         string functionName)
     {
         var result = CreateTempVariable();
@@ -353,6 +357,25 @@ public sealed partial class HIRToLIRLowerer
         Scope classScope,
         CallableId callableId)
         => classScope.Children.FirstOrDefault(scope => scope.Callable == callableId);
+
+    private static bool HasStaticPrivateMethods(Scope classScope)
+    {
+        var body = GetClassBody(classScope);
+        return body?.Body.OfType<Acornima.Ast.MethodDefinition>()
+            .Any(method => method.Static && method.Key is Acornima.Ast.PrivateIdentifier) == true;
+    }
+
+    private static bool HasStaticPrivateFields(Scope classScope)
+        => GetClassBody(classScope)?.Body.OfType<Acornima.Ast.PropertyDefinition>()
+            .Any(field => field.Static && field.Key is Acornima.Ast.PrivateIdentifier) == true;
+
+    private static Acornima.Ast.ClassBody? GetClassBody(Scope classScope)
+        => classScope.AstNode switch
+        {
+            Acornima.Ast.ClassExpression expression => expression.Body,
+            Acornima.Ast.ClassDeclaration declaration => declaration.Body,
+            _ => null
+        };
 
     private bool TryLowerClassInitializationOwner(
         HIRExpression owner,

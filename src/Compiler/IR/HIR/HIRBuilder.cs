@@ -2698,6 +2698,14 @@ partial class HIRMethodBuilder
                         var classSymbol = new Symbol(cdClassBinding);
                         staticInitStatements.Insert(bindingInsertionIndex, new HIRExpressionStatement(
                             new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
+
+                        if (classDecl.Body.Body.OfType<PropertyDefinition>()
+                            .Any(field => field.Static && field.Key is PrivateIdentifier))
+                        {
+                            staticInitStatements.Add(new HIRExpressionStatement(
+                                new HIRRefreshClassConstructorDescriptorsExpression(
+                                    new HIRVariableExpression(classSymbol))));
+                        }
                     }
 
                     hirStatement = new HIRBlock(staticInitStatements);
@@ -4283,7 +4291,7 @@ partial class HIRMethodBuilder
                             }
                         }
 
-                        if (memberTarget.Object is ThisExpression)
+                        if (memberTarget.Object is ThisExpression && _staticThisRegistryClassName == null)
                         {
                             hirExpr = new HIRPrivateFieldAssignmentExpression
                             {
@@ -4338,7 +4346,9 @@ partial class HIRMethodBuilder
                 HIRExpression? objectExpr;
 
                 // Private instance member access: this.#name
-                if (!memberExpr.Computed && memberExpr.Object is ThisExpression && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
+                if (!memberExpr.Computed && memberExpr.Object is ThisExpression
+                    && _staticThisRegistryClassName == null
+                    && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
                 {
                     if (!TryGetEnclosingClassScope(_currentScope, out var classScope))
                     {

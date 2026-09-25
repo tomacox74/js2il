@@ -665,7 +665,8 @@ public record LIRStoreUserClassInstanceField(
 public record LIRStoreUserClassStaticField(
     string RegistryClassName,
     string FieldName,
-    TempVariable Value) : LIRInstruction;
+    TempVariable Value,
+    bool IsPrivateField = false) : LIRInstruction;
 
 /// <summary>
 /// Loads an instance field from a user-defined JavaScript class instance (the implicit 'this').

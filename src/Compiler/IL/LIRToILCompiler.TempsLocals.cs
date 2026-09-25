@@ -1806,6 +1806,23 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - ClassRegistry service missing");
                     }
 
+                    if (loadInstanceField.IsPrivateField
+                        && classRegistry.TryGetStaticPrivateField(
+                            loadInstanceField.RegistryClassName,
+                            loadInstanceField.FieldName,
+                            out var staticPrivateField))
+                    {
+                        if (!classRegistry.TryGet(loadInstanceField.RegistryClassName, out var ownerType))
+                        {
+                            throw new InvalidOperationException($"Missing class '{loadInstanceField.RegistryClassName}' for static private field load");
+                        }
+                        EmitLoadCurrentThis(ilEncoder, methodDescriptor);
+                        EmitStaticPrivateReceiverBrandCheck(ownerType, loadInstanceField.FieldName, ilEncoder);
+                        ilEncoder.OpCode(ILOpCode.Ldsfld);
+                        ilEncoder.Token(staticPrivateField);
+                        break;
+                    }
+
                     FieldDefinitionHandle fieldHandle;
                     if (loadInstanceField.IsPrivateField)
                     {
@@ -1883,11 +1900,27 @@ internal sealed partial class LIRToILCompiler
             case LIRLoadPrivateReceiverField loadPrivateReceiverField:
                 {
                     var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
-                    if (classRegistry == null
-                        || !classRegistry.TryGet(
+                    if (classRegistry == null || !classRegistry.TryGet(
                             loadPrivateReceiverField.RegistryClassName,
-                            out var privateOwnerType)
-                        || !classRegistry.TryGetPrivateField(
+                            out var privateOwnerType))
+                    {
+                        throw new InvalidOperationException(
+                            $"Cannot emit private field load for '{loadPrivateReceiverField.RegistryClassName}.#{loadPrivateReceiverField.FieldName}'.");
+                    }
+
+                    if (classRegistry.TryGetStaticPrivateField(
+                        loadPrivateReceiverField.RegistryClassName,
+                        loadPrivateReceiverField.FieldName,
+                        out var staticPrivateField))
+                    {
+                        EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
+                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, loadPrivateReceiverField.FieldName, ilEncoder);
+                        ilEncoder.OpCode(ILOpCode.Ldsfld);
+                        ilEncoder.Token(staticPrivateField);
+                        break;
+                    }
+
+                    if (!classRegistry.TryGetPrivateField(
                             loadPrivateReceiverField.RegistryClassName,
                             loadPrivateReceiverField.FieldName,
                             out var privateField))

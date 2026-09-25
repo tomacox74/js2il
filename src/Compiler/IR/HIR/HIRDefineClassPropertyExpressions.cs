@@ -20,6 +20,14 @@ public sealed class HIRDefineClassDataPropertyExpression : HIRExpression
     public bool IsField { get; init; }
 }
 
+public sealed class HIRRefreshClassConstructorDescriptorsExpression : HIRExpression
+{
+    public HIRRefreshClassConstructorDescriptorsExpression(HIRExpression constructor)
+        => Constructor = constructor;
+
+    public HIRExpression Constructor { get; }
+}
+
 public sealed class HIRDefineClassAccessorPropertyExpression : HIRExpression
 {
     public HIRDefineClassAccessorPropertyExpression(HIRExpression target, HIRExpression key, HIRExpression? getter, HIRExpression? setter)
