@@ -76,6 +76,41 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.OpCode(ILOpCode.Stelem_ref);
     }
 
+    private void EmitGeneratorParameterInitializationAtCall(
+        InstructionEncoder ilEncoder,
+        string scopeName,
+        bool continuationOnStack)
+    {
+        ilEncoder.LoadLocal(0);
+        ilEncoder.LoadConstantI4(1);
+        EmitStoreFieldByName(ilEncoder, scopeName, "_parameterInitializationOnly");
+
+        if (continuationOnStack)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+        }
+        else
+        {
+            ilEncoder.LoadLocal(0);
+            EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
+        }
+
+        var resumeContinuationRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.CompiledContinuation),
+            nameof(JavaScriptRuntime.CompiledContinuation.Resume),
+            Type.EmptyTypes);
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(resumeContinuationRef);
+        ilEncoder.OpCode(ILOpCode.Pop);
+
+        ilEncoder.LoadLocal(0);
+        ilEncoder.LoadConstantI4(0);
+        EmitStoreFieldByName(ilEncoder, scopeName, "_parameterInitializationOnly");
+        ilEncoder.LoadLocal(0);
+        ilEncoder.LoadConstantI4(0);
+        EmitStoreFieldByName(ilEncoder, scopeName, "_started");
+    }
+
     private void EmitCurrentArgumentsOrFallback(
         InstructionEncoder ilEncoder,
         MethodDescriptor methodDescriptor,
@@ -356,30 +391,7 @@ internal sealed partial class LIRToILCompiler
 
                         EmitStoreFieldByName(ilEncoder, scopeName, "_moveNext");
 
-                        // Async generator parameter binding happens when the generator function is called.
-                        // Run the step method in parameter-initialization-only mode so destructuring/default
-                        // parameter errors are thrown synchronously without executing the generator body.
-                        ilEncoder.LoadLocal(0);
-                        ilEncoder.LoadConstantI4(1);
-                        EmitStoreFieldByName(ilEncoder, scopeName, "_parameterInitializationOnly");
-
-                        ilEncoder.LoadLocal(0);
-                        EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
-                        var resumeContinuationRef =
-                            _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.CompiledContinuation),
-                                nameof(JavaScriptRuntime.CompiledContinuation.Resume),
-                                Type.EmptyTypes);
-                        ilEncoder.OpCode(ILOpCode.Callvirt);
-                        ilEncoder.Token(resumeContinuationRef);
-                        ilEncoder.OpCode(ILOpCode.Pop);
-
-                        ilEncoder.LoadLocal(0);
-                        ilEncoder.LoadConstantI4(0);
-                        EmitStoreFieldByName(ilEncoder, scopeName, "_parameterInitializationOnly");
-                        ilEncoder.LoadLocal(0);
-                        ilEncoder.LoadConstantI4(0);
-                        EmitStoreFieldByName(ilEncoder, scopeName, "_started");
+                        EmitGeneratorParameterInitializationAtCall(ilEncoder, scopeName, continuationOnStack: false);
 
                         // Return new AsyncGeneratorObject(scopes)
                         ilEncoder.LoadArgument(scopesArgIndex);
@@ -402,6 +414,9 @@ internal sealed partial class LIRToILCompiler
                         var restoreLocalsLabel = ilEncoder.DefineLabel();
                         var skipRestoreLabel = ilEncoder.DefineLabel();
                         ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_parametersInitialized");
+                        ilEncoder.Branch(ILOpCode.Brtrue, restoreLocalsLabel);
+                        ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Bgt, restoreLocalsLabel);
@@ -412,7 +427,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
 
                         ilEncoder.MarkLabel(restoreLocalsLabel);
-                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                         ilEncoder.MarkLabel(skipRestoreLabel);
 
                         if (asyncInfoForAsyncGen != null && asyncInfoForAsyncGen.HasAwaits)
@@ -602,7 +617,7 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
-                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                         ilEncoder.MarkLabel(skipRestoreLabel);
 
                         // Now emit the state switch to dispatch to resume points
@@ -714,6 +729,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(createContinuationRef);
 
+                        EmitGeneratorParameterInitializationAtCall(ilEncoder, scopeName, continuationOnStack: true);
+
                         var genObjCtor = _memberRefRegistry.GetOrAddConstructor(
                             typeof(JavaScriptRuntime.GeneratorObject),
                             parameterTypes: new[] { typeof(JavaScriptRuntime.CompiledContinuation) });
@@ -728,11 +745,16 @@ internal sealed partial class LIRToILCompiler
                         EmitEnsureResumableLocalsArray(ilEncoder, allocation);
 
                         var skipGeneratorLocalsRestoreLabel = ilEncoder.DefineLabel();
+                        var restoreGeneratorLocalsLabel = ilEncoder.DefineLabel();
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_parametersInitialized");
+                        ilEncoder.Branch(ILOpCode.Brtrue, restoreGeneratorLocalsLabel);
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_genState");
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Ble, skipGeneratorLocalsRestoreLabel);
-                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        ilEncoder.MarkLabel(restoreGeneratorLocalsLabel);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                         ilEncoder.MarkLabel(skipGeneratorLocalsRestoreLabel);
                     }
                     else

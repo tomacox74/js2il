@@ -30,7 +30,7 @@ internal sealed partial class LIRToILCompiler
     {
         int variableCount = MethodBody.VariableNames.Count;
         int tempCount = allocation.SlotStorages.Count;
-        int persistedLocalCount = variableCount + tempCount;
+        int persistedLocalCount = variableCount + tempCount + GetResumableParameterCount();
         if (persistedLocalCount == 0)
         {
             return;
@@ -55,11 +55,20 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.MarkLabel(hasLocalsLabel);
     }
 
-    private void EmitSpillVariableSlotsToResumableLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
+    private int GetResumableParameterCount()
+        => MethodBody.IsGenerator
+            ? MethodBody.CallableId?.JsParamCount ?? MethodBody.SelfJsParameterCount
+            : 0;
+
+    private void EmitSpillVariableSlotsToResumableLocalsArray(
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
     {
         int variableCount = MethodBody.VariableNames.Count;
         int tempCount = allocation.SlotStorages.Count;
-        if (variableCount == 0 && tempCount == 0)
+        int parameterCount = GetResumableParameterCount();
+        if (variableCount == 0 && tempCount == 0 && parameterCount == 0)
         {
             return;
         }
@@ -109,14 +118,26 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Stelem_ref);
         }
 
+        for (int i = 0; i < parameterCount; i++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(variableCount + tempCount + i);
+            ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        }
+
         ilEncoder.OpCode(ILOpCode.Pop); // pop locals array
     }
 
-    private void EmitRestoreVariableSlotsFromResumableLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
+    private void EmitRestoreVariableSlotsFromResumableLocalsArray(
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
     {
         int variableCount = MethodBody.VariableNames.Count;
         int tempCount = allocation.SlotStorages.Count;
-        if (variableCount == 0 && tempCount == 0)
+        int parameterCount = GetResumableParameterCount();
+        if (variableCount == 0 && tempCount == 0 && parameterCount == 0)
         {
             return;
         }
@@ -192,6 +213,14 @@ internal sealed partial class LIRToILCompiler
             }
 
             ilEncoder.StoreLocal(tempLocalOffset + i);
+        }
+
+        for (int i = 0; i < parameterCount; i++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(variableCount + tempCount + i);
+            ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+            ilEncoder.StoreArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
         }
 
         ilEncoder.OpCode(ILOpCode.Pop); // pop locals array

@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): bind synchronous generator parameters when the generator
+  function is called, preserving initialized locals until the first resume;
+  port 100 previously failing pinned Test262 generator-destructuring cases.
 - perf(test262): compile and load one in-memory assembly per runnable
   JavaScript fixture folder during each xUnit run, retaining independent
   test cases and separate compilation for expected failures.

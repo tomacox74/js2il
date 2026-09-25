@@ -18,6 +18,10 @@ internal sealed partial class LIRToILCompiler
         switch (instruction)
         {
             case LIRReturnUndefinedImmediate:
+                if (MethodBody.IsGenerator)
+                {
+                    EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
+                }
                 if (!methodDescriptor.ReturnsVoid)
                 {
                     ilEncoder.OpCode(ILOpCode.Ldnull);

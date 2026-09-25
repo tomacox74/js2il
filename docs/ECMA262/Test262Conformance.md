@@ -41,8 +41,8 @@ folder fails its test cases rather than retrying them as individual assemblies.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 16,570 | 12 | 6,930 | 23,512 | **70.47%** |
-| Language syntax and semantics | 15,658 | 46 | 7,943 | 23,647 | **66.22%** |
-| **Total** | 32,228 | 58 | 15,959 | 48,245 | **66.80%** |
+| Language syntax and semantics | 15,758 | 46 | 7,843 | 23,647 | **66.64%** |
+| **Total** | 32,328 | 58 | 15,859 | 48,245 | **67.01%** |
 
 ## Language Areas
 
@@ -108,7 +108,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
 | `function` | 246 | 3 | 15 | 264 | **93.18%** |
-| `generators` | 212 | 0 | 78 | 290 | **73.10%** |
+| `generators` | 262 | 0 | 28 | 290 | **90.34%** |
 | `greater-than-or-equal` | 42 | 0 | 1 | 43 | **97.67%** |
 | `greater-than` | 48 | 0 | 1 | 49 | **97.96%** |
 | `grouping` | 6 | 0 | 3 | 9 | **66.67%** |
@@ -172,7 +172,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `for-of` | 744 | 7 | 0 | 751 | **99.07%** |
 | `for` | 368 | 0 | 17 | 385 | **95.58%** |
 | `function` | 402 | 14 | 35 | 451 | **89.14%** |
-| `generators` | 197 | 0 | 69 | 266 | **74.06%** |
+| `generators` | 247 | 0 | 19 | 266 | **92.86%** |
 | `if` | 59 | 0 | 10 | 69 | **85.51%** |
 | `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
 | `let` | 140 | 0 | 5 | 145 | **96.55%** |
