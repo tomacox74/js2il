@@ -18,12 +18,13 @@ public abstract class FileSystemExecutionTestsBase
     protected Task ExecutionTest(string testName, bool allowUnhandledException = false, [CallerFilePath] string sourceFilePath = "")
     {
         string projectRoot = FindProjectRoot(sourceFilePath);
-        var result = Test262SharedAssertHarness.CompileAndExecute(
-            testName,
-            _testCategory,
-            name => GetJavaScriptAndSourcePath(projectRoot, name),
-            enableIRMetrics: true,
-            allowUnhandledException: allowUnhandledException);
+        var (script, sourcePath) = GetJavaScriptAndSourcePath(projectRoot, testName);
+        var folder = (Test262FolderAssemblyCache.Active
+            ?? throw new InvalidOperationException("The test262 folder assembly cache is not active.")).Get(sourcePath);
+        var (_, moduleId) = folder.GetEntry(sourcePath);
+        var result = Test262SharedAssertHarness.ExecuteCompiledEntry(
+            testName, script, sourcePath, folder.Loaded, folder.Artifact, moduleId,
+            allowUnhandledException);
 
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;
