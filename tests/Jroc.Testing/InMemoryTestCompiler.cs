@@ -117,6 +117,7 @@ public static class InMemoryTestCompiler
                     FileSystem = fileSystem,
                     RootModuleIdOverride = rootModuleIdOverride,
                     EmitPdb = true,
+                    AssumeUnmodifiedHostGlobals = true,
                     HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty
                 });
         }

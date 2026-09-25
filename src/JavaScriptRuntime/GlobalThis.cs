@@ -23,6 +23,7 @@ namespace JavaScriptRuntime
         private readonly object _seedGate = new();
         private volatile bool _seeded;
         private int _seedingThreadId;
+        private Dictionary<string, object?>? _originalGlobalBindings;
 
         /// <summary>
         /// Cached bootstrap delegate: <see cref="Bootstrap"/> runs on every
@@ -870,6 +871,17 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object GetGlobalThis() => globalThis;
 
+        public static bool IsOriginalGlobalBinding(string name)
+        {
+            var global = GetOrCreateGlobalObject();
+            return global._originalGlobalBindings is { } originals
+                && originals.TryGetValue(name, out var original)
+                && global.GetOwnPropertyDescriptor(name, out var descriptor)
+                    == PropertyDescriptorLookup.Found
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && ReferenceEquals(descriptor.Value, original);
+        }
+
         internal static bool HasDefaultNumberIsSafeInteger()
             => RuntimeIntrinsics.Current.ReadNumberStaticMutationEpoch() == 0;
 
@@ -1072,6 +1084,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Array), Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
 
+            dict.TryAdd(nameof(GlobalThis.Buffer), Buffer);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Buffer), dict[nameof(GlobalThis.Buffer)]);
+
             dict.TryAdd(nameof(GlobalThis.Date), Date);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Date), dict[nameof(GlobalThis.Date)]);
 
@@ -1253,6 +1268,7 @@ namespace JavaScriptRuntime
             dict.TryAdd("encodeURIComponent", _encodeURIComponentValue);
             DefineNonEnumerableDataProperty("encodeURIComponent", dict["encodeURIComponent"]);
 
+            _originalGlobalBindings = new Dictionary<string, object?>(dict, StringComparer.Ordinal);
             ApplyHostGlobalBindings(dict);
         }
 
@@ -1433,6 +1449,8 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        public static Type Buffer => typeof(JavaScriptRuntime.Node.Buffer);
 
         internal static bool IsArrayConstructorValue(object? value)
             => ReferenceEquals(value, _arrayConstructorValue)

@@ -1959,7 +1959,8 @@ public sealed class LIRStackSchedulerTests
         {
             OutputDirectory = root,
             EmitPdb = emitPdb,
-            LIRStackSchedulerMode = mode
+            LIRStackSchedulerMode = mode,
+            AssumeUnmodifiedHostGlobals = true
         };
 
         var logger = new TestLogger();

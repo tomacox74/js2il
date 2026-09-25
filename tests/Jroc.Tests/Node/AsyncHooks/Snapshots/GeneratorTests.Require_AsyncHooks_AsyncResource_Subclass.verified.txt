@@ -243,61 +243,65 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 134 (0x86)
+			// Code size: 162 (0xa2)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[0] object,
 				[1] object,
 				[2] bool,
 				[3] object
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.0
-			IL_0006: ldarg.0
-			IL_0007: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
-			IL_000c: ldstr "Cannot access 'handler' before initialization"
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0016: stloc.1
-			IL_0017: ldarg.2
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0022: ldloc.1
-			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0028: stloc.2
-			IL_0029: ldloc.2
-			IL_002a: box [System.Runtime]System.Boolean
-			IL_002f: stloc.3
-			IL_0030: ldloc.0
-			IL_0031: ldstr "derived receiver:"
-			IL_0036: ldloc.3
-			IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_003c: pop
-			IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0042: stloc.0
-			IL_0043: ldloc.0
-			IL_0044: ldstr "error:"
-			IL_0049: ldarg.3
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004f: pop
-			IL_0050: volatile.
-			IL_0052: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-			IL_0057: brfalse IL_006d
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_000f: stloc.0
+			IL_0010: ldarg.0
+			IL_0011: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
+			IL_0016: ldstr "Cannot access 'handler' before initialization"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0020: stloc.1
+			IL_0021: ldarg.2
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_002c: ldloc.1
+			IL_002d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0032: stloc.2
+			IL_0033: ldloc.2
+			IL_0034: box [System.Runtime]System.Boolean
+			IL_0039: stloc.3
+			IL_003a: ldloc.0
+			IL_003b: ldstr "log"
+			IL_0040: ldstr "derived receiver:"
+			IL_0045: ldloc.3
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_004b: pop
+			IL_004c: ldstr "console"
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_005b: ldstr "log"
+			IL_0060: ldstr "error:"
+			IL_0065: ldarg.3
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_006b: pop
+			IL_006c: volatile.
+			IL_006e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_0073: brfalse IL_0089
 
-			IL_005c: ldarg.s data
-			IL_005e: ldstr "statusCode"
-			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0068: br IL_0083
+			IL_0078: ldarg.s data
+			IL_007a: ldstr "statusCode"
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0084: br IL_009f
 
-			IL_006d: ldarg.s data
-			IL_006f: ldstr "statusCode"
-			IL_0074: ldstr "Require_AsyncHooks_AsyncResource_Subclass:<TwoPhaseDummy_M4>:__js_call__:16"
-			IL_0079: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0089: ldarg.s data
+			IL_008b: ldstr "statusCode"
+			IL_0090: ldstr "Require_AsyncHooks_AsyncResource_Subclass:<TwoPhaseDummy_M4>:__js_call__:20"
+			IL_0095: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0083: stloc.1
-			IL_0084: ldloc.1
-			IL_0085: ret
+			IL_009f: stloc.0
+			IL_00a0: ldloc.0
+			IL_00a1: ret
 		} // end of method FunctionExpression_handler::__js_call__
 
 	} // end of class FunctionExpression_handler
@@ -677,7 +681,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 690 (0x2b2)
+		// Code size: 733 (0x2dd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope,
@@ -689,7 +693,7 @@
 			[6] class Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler/Scope_ctor/FunctionObject,
 			[7] object[],
 			[8] class Modules.Require_AsyncHooks_AsyncResource_Subclass/FunctionExpression_handler/FunctionObject,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[9] object,
 			[10] bool,
 			[11] object,
 			[12] object,
@@ -856,88 +860,97 @@
 		IL_01af: ldloc.0
 		IL_01b0: ldloc.3
 		IL_01b1: stfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
-		IL_01b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01bb: stloc.s 9
-		IL_01bd: ldloc.0
-		IL_01be: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
-		IL_01c3: ldstr "Cannot access 'handler' before initialization"
-		IL_01c8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_01cd: stloc.3
-		IL_01ce: ldloc.3
-		IL_01cf: ldloc.1
-		IL_01d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_01d5: stloc.s 10
-		IL_01d7: ldloc.s 10
-		IL_01d9: box [System.Runtime]System.Boolean
-		IL_01de: stloc.s 11
-		IL_01e0: ldloc.s 9
-		IL_01e2: ldstr "derived:"
-		IL_01e7: ldloc.s 11
-		IL_01e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01ee: pop
-		IL_01ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01f4: stloc.s 9
-		IL_01f6: ldloc.0
-		IL_01f7: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
-		IL_01fc: ldstr "Cannot access 'handler' before initialization"
-		IL_0201: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0206: stloc.3
-		IL_0207: ldloc.0
-		IL_0208: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::AsyncResource
-		IL_020d: stloc.s 12
-		IL_020f: ldloc.3
-		IL_0210: ldloc.s 12
-		IL_0212: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_0217: stloc.s 10
-		IL_0219: ldloc.s 10
-		IL_021b: box [System.Runtime]System.Boolean
-		IL_0220: stloc.s 11
-		IL_0222: ldloc.s 9
-		IL_0224: ldstr "base:"
-		IL_0229: ldloc.s 11
-		IL_022b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0230: pop
-		IL_0231: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0236: stloc.s 9
-		IL_0238: ldloc.0
-		IL_0239: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
-		IL_023e: ldstr "Cannot access 'handler' before initialization"
-		IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0248: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_024d: stloc.s 12
-		IL_024f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0254: dup
-		IL_0255: ldstr "statusCode"
-		IL_025a: ldc.r8 200
-		IL_0263: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0268: stloc.s 13
-		IL_026a: ldloc.s 12
-		IL_026c: isinst Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
-		IL_0271: dup
-		IL_0272: brfalse IL_028b
+		IL_01b6: ldstr "console"
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01c5: stloc.3
+		IL_01c6: ldloc.0
+		IL_01c7: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
+		IL_01cc: ldstr "Cannot access 'handler' before initialization"
+		IL_01d1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_01d6: stloc.s 9
+		IL_01d8: ldloc.s 9
+		IL_01da: ldloc.1
+		IL_01db: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_01e0: stloc.s 10
+		IL_01e2: ldloc.s 10
+		IL_01e4: box [System.Runtime]System.Boolean
+		IL_01e9: stloc.s 11
+		IL_01eb: ldloc.3
+		IL_01ec: ldstr "log"
+		IL_01f1: ldstr "derived:"
+		IL_01f6: ldloc.s 11
+		IL_01f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01fd: pop
+		IL_01fe: ldstr "console"
+		IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_020d: stloc.3
+		IL_020e: ldloc.0
+		IL_020f: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
+		IL_0214: ldstr "Cannot access 'handler' before initialization"
+		IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_021e: stloc.s 9
+		IL_0220: ldloc.0
+		IL_0221: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::AsyncResource
+		IL_0226: stloc.s 12
+		IL_0228: ldloc.s 9
+		IL_022a: ldloc.s 12
+		IL_022c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_0231: stloc.s 10
+		IL_0233: ldloc.s 10
+		IL_0235: box [System.Runtime]System.Boolean
+		IL_023a: stloc.s 11
+		IL_023c: ldloc.3
+		IL_023d: ldstr "log"
+		IL_0242: ldstr "base:"
+		IL_0247: ldloc.s 11
+		IL_0249: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_024e: pop
+		IL_024f: ldstr "console"
+		IL_0254: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_025e: stloc.3
+		IL_025f: ldloc.0
+		IL_0260: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::'handler'
+		IL_0265: ldstr "Cannot access 'handler' before initialization"
+		IL_026a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0274: stloc.s 12
+		IL_0276: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_027b: dup
+		IL_027c: ldstr "statusCode"
+		IL_0281: ldc.r8 200
+		IL_028a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_028f: stloc.s 13
+		IL_0291: ldloc.s 12
+		IL_0293: isinst Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
+		IL_0298: dup
+		IL_0299: brfalse IL_02b2
 
-		IL_0277: ldc.i4.0
-		IL_0278: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_027d: ldloc.s 13
-		IL_027f: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
-		IL_0284: stloc.s 12
-		IL_0286: br IL_02a2
+		IL_029e: ldc.i4.0
+		IL_029f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_02a4: ldloc.s 13
+		IL_02a6: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
+		IL_02ab: stloc.s 12
+		IL_02ad: br IL_02c9
 
-		IL_028b: pop
-		IL_028c: ldloc.s 12
-		IL_028e: ldstr "deliver"
-		IL_0293: ldc.i4.0
-		IL_0294: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0299: ldloc.s 13
-		IL_029b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02a0: stloc.s 12
+		IL_02b2: pop
+		IL_02b3: ldloc.s 12
+		IL_02b5: ldstr "deliver"
+		IL_02ba: ldc.i4.0
+		IL_02bb: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_02c0: ldloc.s 13
+		IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02c7: stloc.s 12
 
-		IL_02a2: ldloc.s 9
-		IL_02a4: ldstr "status:"
-		IL_02a9: ldloc.s 12
-		IL_02ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02b0: pop
-		IL_02b1: ret
+		IL_02c9: ldloc.3
+		IL_02ca: ldstr "log"
+		IL_02cf: ldstr "status:"
+		IL_02d4: ldloc.s 12
+		IL_02d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02db: pop
+		IL_02dc: ret
 	} // end of method Require_AsyncHooks_AsyncResource_Subclass::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_AsyncResource_Subclass

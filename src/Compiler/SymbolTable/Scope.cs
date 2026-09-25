@@ -282,6 +282,15 @@ public class Scope
     /// </summary>
     public bool UsesGlobalThisValue { get; set; }
 
+    internal bool MayMutateGlobalCallableBindings { get; set; }
+
+    internal HashSet<string> WrittenGlobalObjectProperties { get; } = new(StringComparer.Ordinal);
+
+    internal bool AssumeOriginalGlobalBindings { get; set; }
+
+    internal IReadOnlySet<string> PotentiallyModifiedGlobalBindings { get; set; } =
+        new HashSet<string>(StringComparer.Ordinal);
+
     /// <summary>
     /// Indicates whether this is an async function scope.
     /// Set during symbol table construction for function scopes.

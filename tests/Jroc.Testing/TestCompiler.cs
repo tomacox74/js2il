@@ -59,7 +59,8 @@ public static class TestCompiler
                 new JrocInMemoryCompileRequest(entryPath)
                 {
                     FileSystem = fileSystem,
-                    EmitPdb = true
+                    EmitPdb = true,
+                    AssumeUnmodifiedHostGlobals = true
                 },
                 testLogger);
 

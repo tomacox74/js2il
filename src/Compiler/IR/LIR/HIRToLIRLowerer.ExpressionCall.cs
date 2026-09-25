@@ -15,6 +15,147 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerCallExpression(HIRCallExpression callExpr, out TempVariable resultTempVar)
     {
+        if (callExpr.Callee is not HIRVariableExpression
+            {
+                Name: { Kind: BindingKind.Global } global
+            } callee
+            || IsSafeInjectedCommonJsRequireBinding(global.BindingInfo))
+        {
+            return TryLowerCallExpressionCore(callExpr, out resultTempVar);
+        }
+
+        if (_activeWithObjects.Count > 0 || _scope?.MayUseBoundWithObject == true)
+        {
+            return TryLowerDynamicGlobalCall(callExpr, callee, out resultTempVar);
+        }
+
+        var name = global.Name;
+        var hasIntrinsicCall = _runtimeIntrinsicCatalog.TryGetIntrinsicObject(name, out var intrinsic)
+            && intrinsic?.CallKind != JavaScriptRuntime.IntrinsicCallKind.None;
+        var hasGlobalFunction = typeof(JavaScriptRuntime.GlobalThis).GetMethod(
+            name,
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static) != null;
+        if (callExpr.Arguments.Any(argument => argument is HIRSpreadElement)
+            || (!hasIntrinsicCall && !hasGlobalFunction
+                && name is not ("String" or "Number" or "Boolean" or "Symbol" or "BigInt" or "Function")))
+        {
+            return TryLowerDynamicGlobalCall(callExpr, callee, out resultTempVar);
+        }
+
+        if (CanUseOriginalGlobalBinding(global))
+        {
+            return TryLowerCallExpressionCore(callExpr, out resultTempVar);
+        }
+
+        var original = EmitOriginalGlobalBindingCheck(name);
+        var fallbackLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(original, fallbackLabel));
+        if (!TryLowerCallExpressionCore(callExpr, out var intrinsicResult))
+        {
+            resultTempVar = default;
+            return false;
+        }
+
+        resultTempVar = CreateTempVariable();
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(intrinsicResult), resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+        _methodBodyIR.Instructions.Add(new LIRLabel(fallbackLabel));
+        if (!TryLowerDynamicGlobalCall(callExpr, callee, out var dynamicResult))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(dynamicResult, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        return true;
+    }
+
+    private TempVariable EmitOriginalGlobalBindingCheck(string name)
+    {
+        var nameTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(name, nameTemp));
+        DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var original = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.GlobalThis),
+            nameof(JavaScriptRuntime.GlobalThis.IsOriginalGlobalBinding),
+            new[] { nameTemp },
+            original));
+        DefineTempStorage(original, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return original;
+    }
+
+    private bool CanUseOriginalGlobalBinding(Symbol symbol)
+    {
+        if (symbol.Kind != BindingKind.Global
+            || _activeWithObjects.Count > 0
+            || _scope?.MayUseBoundWithObject == true)
+        {
+            return false;
+        }
+
+        var root = _scope;
+        while (root?.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        return root?.AssumeOriginalGlobalBindings == true
+            && !root.PotentiallyModifiedGlobalBindings.Contains(symbol.Name);
+    }
+
+    private bool TryLowerDynamicGlobalCall(
+        HIRCallExpression callExpr,
+        HIRVariableExpression callee,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+        if (!TryLowerExpression(callee, out var function))
+        {
+            return false;
+        }
+
+        var scopes = CreateTempVariable();
+        if (!TryBuildCurrentScopesArray(scopes))
+        {
+            return false;
+        }
+        DefineTempStorage(scopes, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        resultTempVar = CreateTempVariable();
+        if (callExpr.Arguments.Length <= JavaScriptRuntime.JsCallArguments.InlineCapacity
+            && !HasSpreadArguments(callExpr.Arguments))
+        {
+            var args = new List<TempVariable>(callExpr.Arguments.Length);
+            foreach (var argument in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(argument, out var lowered))
+                {
+                    return false;
+                }
+                args.Add(EnsureObject(lowered));
+            }
+            _methodBodyIR.Instructions.Add(
+                CreateFixedArityFunctionValueCall(EnsureObject(function), scopes, args, resultTempVar));
+        }
+        else
+        {
+            if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArray))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(
+                new LIRCallFunctionValue(EnsureObject(function), scopes, argsArray, resultTempVar));
+        }
+
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryLowerCallExpressionCore(HIRCallExpression callExpr, out TempVariable resultTempVar)
+    {
         resultTempVar = CreateTempVariable();
 
         bool hasSpreadArgs = callExpr.Arguments.Any(a => a is HIRSpreadElement);
@@ -1133,8 +1274,7 @@ public sealed partial class HIRToLIRLowerer
         {
             var intrinsicName = calleeGlobalVar.Name.Name;
             var methodName = calleePropAccess.PropertyName;
-            var canUseIntrinsicStatic = !string.Equals(intrinsicName, "Math", StringComparison.Ordinal)
-                || IsStableGlobalMathBinding(calleeGlobalVar.Name);
+            var canUseIntrinsicStatic = CanUseOriginalGlobalBinding(calleeGlobalVar.Name);
 
             // Try to resolve the intrinsic type via IntrinsicObjectRegistry
             var intrinsicType = _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
