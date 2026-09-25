@@ -115,6 +115,25 @@
     "entries": [
       {
         "clause": "15.7.13",
+        "feature": "Nested class private names, static field descriptors, and private setters",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/private-accessor-name/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/private-accessor-name/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/elements/private-getter-shadowed-by-field-on-nested-class.js",
+          "test/language/statements/class/elements/after-same-line-method-private-method-getter-usage.js",
+          "test/language/expressions/class/elements/private-accessor-name/static-private-name-common.js",
+          "test/language/expressions/class/elements/static-field-declaration.js"
+        ],
+        "notes": "Nested class callables are discovered before compilation. Private accessors do not create public properties; static private setters use the declaring class brand, while public static fields expose own data descriptors. Remaining nested private-member and static-field edge cases are not claimed."
+      },
+      {
+        "clause": "15.7.13",
         "feature": "Static private field initialization and access in class methods",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",

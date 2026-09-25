@@ -487,7 +487,7 @@ public sealed partial class HIRToLIRLowerer
                 resultTempVar = privateStoreValue;
                 return true;
 
-            case HIRPrivateLogicalAssignmentExpression privateLogicalAssignment:
+            case HIRPrivateReadModifyWriteExpression privateLogicalAssignment:
                 if (!TryLowerExpression(
                         privateLogicalAssignment.Receiver,
                         out var privateReceiver))
@@ -660,6 +660,10 @@ public sealed partial class HIRToLIRLowerer
                 var privateCurrentBoxed = EnsureObject(privateCurrentValue);
                 var privateShortCircuitLabel = CreateLabel();
                 var privateEndLabel = CreateLabel();
+                var privateLogicalOperator = privateLogicalAssignment.Operator is
+                    Acornima.Operator.LogicalAndAssignment
+                    or Acornima.Operator.LogicalOrAssignment
+                    or Acornima.Operator.NullishCoalescingAssignment;
                 resultTempVar = CreateTempVariable();
 
                 switch (privateLogicalAssignment.Operator)
@@ -690,7 +694,7 @@ public sealed partial class HIRToLIRLowerer
                     }
 
                     default:
-                        return false;
+                        break;
                 }
 
                 if (!TryLowerExpression(
@@ -700,6 +704,18 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
                 privateAssignedValue = EnsureObject(privateAssignedValue);
+                if (!privateLogicalOperator)
+                {
+                    if (!TryLowerCompoundOperation(
+                            privateLogicalAssignment.Operator,
+                            privateCurrentBoxed,
+                            privateAssignedValue,
+                            out privateAssignedValue))
+                    {
+                        return false;
+                    }
+                    privateAssignedValue = EnsureObject(privateAssignedValue);
+                }
 
                 if (privateLogicalAssignment.SetterMethodName
                     is { } setterMethodName)
@@ -777,15 +793,18 @@ public sealed partial class HIRToLIRLowerer
                     new LIRCopyTemp(
                         privateAssignedValue,
                         resultTempVar));
-                _methodBodyIR.Instructions.Add(
-                    new LIRBranch(privateEndLabel));
+                if (privateLogicalOperator)
+                {
+                    _methodBodyIR.Instructions.Add(
+                        new LIRBranch(privateEndLabel));
 
-                _methodBodyIR.Instructions.Add(new LIRLabel(privateShortCircuitLabel));
-                ClearNumericRefinementsAtLabel();
-                _methodBodyIR.Instructions.Add(
-                    new LIRCopyTemp(privateCurrentBoxed, resultTempVar));
-                _methodBodyIR.Instructions.Add(new LIRLabel(privateEndLabel));
-                ClearNumericRefinementsAtLabel();
+                    _methodBodyIR.Instructions.Add(new LIRLabel(privateShortCircuitLabel));
+                    ClearNumericRefinementsAtLabel();
+                    _methodBodyIR.Instructions.Add(
+                        new LIRCopyTemp(privateCurrentBoxed, resultTempVar));
+                    _methodBodyIR.Instructions.Add(new LIRLabel(privateEndLabel));
+                    ClearNumericRefinementsAtLabel();
+                }
                 DefineTempStorage(
                     resultTempVar,
                     new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -808,30 +827,29 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case HIRPrivateAccessorAssignmentExpression privateAccessorAssignExpr:
-                if (_classRegistry == null
-                    || !TryGetEnclosingClassRegistryName(out var privateAccessorClass)
-                    || privateAccessorClass == null
-                    || !_classRegistry.TryGetMethod(privateAccessorClass, privateAccessorAssignExpr.SetterMethodName, out var setterHandle, out _, out _, out _, out var hasSetterScopesParam, out _, out var setterMaxParamCount))
+                if (!TryLowerExpression(privateAccessorAssignExpr.Receiver, out var privateAccessorReceiver)
+                    || !TryLowerExpression(privateAccessorAssignExpr.Value, out var privateAccessorValueTemp))
                 {
                     return false;
                 }
 
-                if (!TryLowerExpression(privateAccessorAssignExpr.Value, out var privateAccessorValueTemp))
-                {
-                    return false;
-                }
-
+                var privateAccessorOwner = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(
+                    privateAccessorAssignExpr.RegistryClassName, privateAccessorOwner));
+                DefineTempStorage(privateAccessorOwner, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                var privateAccessorSetterName = CreateStringConstant(privateAccessorAssignExpr.SetterMethodName);
+                var privateAccessorArguments = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRBuildArray(
+                    [EnsureObject(privateAccessorValueTemp)], privateAccessorArguments));
+                DefineTempStorage(privateAccessorArguments, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
                 var privateSetterResultTemp = CreateTempVariable();
                 DefineTempStorage(privateSetterResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                _methodBodyIR.Instructions.Add(new LIRCallUserClassInstanceMethod(
-                    privateAccessorClass,
-                    privateAccessorAssignExpr.SetterMethodName,
-                    setterHandle,
-                    hasSetterScopesParam,
-                    RequiresPrivateBrandCheck: false,
-                    setterMaxParamCount,
-                    new[] { EnsureObject(privateAccessorValueTemp) },
-                    privateSetterResultTemp));
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
+                    [EnsureObject(privateAccessorReceiver), privateAccessorOwner,
+                        privateAccessorSetterName, privateAccessorArguments],
+                    privateSetterResultTemp,
+                    [typeof(object), typeof(Type), typeof(string), typeof(object[])]));
 
                 resultTempVar = privateAccessorValueTemp;
                 return true;

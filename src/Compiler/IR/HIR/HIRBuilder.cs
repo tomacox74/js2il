@@ -1917,6 +1917,7 @@ partial class HIRMethodBuilder
                     case MethodDefinition methodDefinition
                         when !ClassElementNames.IsConstructor(methodDefinition)
                             && methodDefinition.Kind is PropertyKind.Get or PropertyKind.Set
+                            && methodDefinition.Key is not PrivateIdentifier
                             && ClassElementNames.TryGetPropertyName(methodDefinition.Key, methodDefinition.Computed, out var accessorName)
                             && accessorName != null:
                     {
@@ -4256,11 +4257,9 @@ partial class HIRMethodBuilder
                             out var privateMethodName,
                             out var hasAccessor);
 
-                        if (assignExpr.Operator is Acornima.Operator.LogicalAndAssignment
-                            or Acornima.Operator.LogicalOrAssignment
-                            or Acornima.Operator.NullishCoalescingAssignment)
+                        if (assignExpr.Operator != Acornima.Operator.Assignment)
                         {
-                            hirExpr = new HIRPrivateLogicalAssignmentExpression
+                            hirExpr = new HIRPrivateReadModifyWriteExpression
                             {
                                 Operator = assignExpr.Operator,
                                 Receiver = memberObjectExpr!,
@@ -4286,6 +4285,8 @@ partial class HIRMethodBuilder
                             {
                                 hirExpr = new HIRPrivateAccessorAssignmentExpression
                                 {
+                                    Receiver = memberObjectExpr!,
+                                    RegistryClassName = GetRegistryClassName(privateClassScope),
                                     SetterMethodName = setterMethodName,
                                     Value = assignValueExpr!
                                 };

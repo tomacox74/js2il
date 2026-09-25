@@ -3525,6 +3525,7 @@ namespace JavaScriptRuntime
 
             if (target is JsObject defaultDataObject
                 && target is not JsClassConstructorObject
+                && !TryGetCompiledStaticClassField(target, name, out _)
                 && !defaultDataObject.HasNonDataDescriptors)
             {
                 return defaultDataObject.HasOwnPropertyValue(name);
@@ -3536,6 +3537,11 @@ namespace JavaScriptRuntime
             }
 
             if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
+            {
+                return true;
+            }
+
+            if (TryGetCompiledStaticClassField(target, name, out _))
             {
                 return true;
             }
@@ -3586,6 +3592,23 @@ namespace JavaScriptRuntime
             {
                 return false;
             }
+        }
+
+        private static bool TryGetCompiledStaticClassField(object target, string name, out FieldInfo field)
+        {
+            var ownerType = target switch
+            {
+                Type type => type,
+                JsClassConstructorObject constructor => constructor.Type,
+                JsFunctionObject { IsConstructor: true } constructor => constructor.GetType().DeclaringType,
+                _ => null
+            };
+            field = ownerType?.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                .Where(candidate => string.Equals(candidate.Name, name, StringComparison.Ordinal))
+                .MaxBy(candidate => candidate.MetadataToken)!;
+            return field != null
+                && ownerType!.Assembly.IsDefined(typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false)
+                && field.IsDefined(typeof(Jroc.Runtime.JsCompiledClassFieldAttribute), inherit: false);
         }
 
         private static bool HasClrMember(Type type, string name, BindingFlags bindingFlags)
@@ -3969,6 +3992,26 @@ namespace JavaScriptRuntime
                 && target is not JavaScriptRuntime.Node.Buffer
                 && target is not JsClassConstructorObject)
             {
+                if (target is JsFunctionObject
+                    && TryGetCompiledStaticClassField(target, propName, out var staticField))
+                {
+                    if (jsObject.GetOwnPropertyDescriptor(propName, out descriptor)
+                        == PropertyDescriptorLookup.Found)
+                    {
+                        return true;
+                    }
+
+                    descriptor = new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Configurable = true,
+                        Enumerable = true,
+                        Writable = !staticField.IsInitOnly,
+                        Value = staticField.GetValue(null)
+                    };
+                    return true;
+                }
+
                 return jsObject.GetOwnPropertyDescriptor(propName, out descriptor)
                     == PropertyDescriptorLookup.Found;
             }
@@ -4208,9 +4251,12 @@ namespace JavaScriptRuntime
                 }
             }
 
-            var clrField = target is Type clrStaticType
+            var compiledStaticType = target is JsClassConstructorObject compiledConstructor
+                ? compiledConstructor.Type
+                : target as Type;
+            var clrField = compiledStaticType != null
                 ? FindClrField(
-                    clrStaticType,
+                    compiledStaticType,
                     propName,
                     BindingFlags.Static | BindingFlags.Public)
                 : FindClrField(
@@ -4222,7 +4268,7 @@ namespace JavaScriptRuntime
                 && clrField.DeclaringType?.Assembly.IsDefined(
                     typeof(Jroc.Runtime.JsCompiledModuleAttribute),
                     inherit: false) == true
-                && (target is not Type staticOwner || clrField.DeclaringType == staticOwner))
+                && (compiledStaticType == null || clrField.DeclaringType == compiledStaticType))
             {
                 descriptor = new JsPropertyDescriptor
                 {
@@ -4230,7 +4276,7 @@ namespace JavaScriptRuntime
                     Configurable = true,
                     Enumerable = true,
                     Writable = !clrField.IsInitOnly,
-                    Value = clrField.GetValue(target is Type ? null : target)
+                    Value = clrField.GetValue(compiledStaticType != null ? null : target)
                 };
                 return true;
             }
@@ -4456,7 +4502,20 @@ namespace JavaScriptRuntime
                 && target is not JavaScriptRuntime.Node.Buffer
                 && target is not JsClassConstructorObject)
             {
-                return jsObject.TryGetBoxedValue(propName, receiverForAccessors, out value);
+                if (jsObject.TryGetBoxedValue(propName, receiverForAccessors, out value))
+                {
+                    return true;
+                }
+
+                if (!PropertyDescriptorStore.IsDeleted(target, propName)
+                    && TryGetCompiledStaticClassField(target, propName, out var staticField))
+                {
+                    value = staticField.GetValue(null);
+                    return true;
+                }
+
+                value = null;
+                return false;
             }
 
             // Perf (#1418): single-probe lookup answering deleted/descriptor/none at once.
@@ -6059,6 +6118,12 @@ namespace JavaScriptRuntime
                 return jsObjectValue;
             }
 
+            if (!PropertyDescriptorStore.IsDeleted(obj, name)
+                && TryGetCompiledStaticClassField(obj, name, out var classField))
+            {
+                return classField.GetValue(null);
+            }
+
             if (obj is JsClassConstructorObject classConstructor
                 && TryGetOwnPropertyValue(
                     classConstructor,
@@ -6773,6 +6838,14 @@ namespace JavaScriptRuntime
                 }
 
                 throw new TypeError($"Cannot add property '{name}', object is not extensible");
+            }
+
+            if (hasOwn
+                && !PropertyDescriptorStore.TryGetOwn(obj, name, out _)
+                && TryGetCompiledStaticClassField(obj, name, out var staticField))
+            {
+                staticField.SetValue(null, value);
+                return value;
             }
 
             if (hasOwn
