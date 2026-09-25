@@ -345,7 +345,12 @@ namespace Jroc.Services
                 CollectPublishedModuleIds(modules),
                 modules.rootModule.ModuleId,
                 modules.rootModule.AliasModuleIds,
-                facadeNames);
+                facadeNames) with
+            {
+                EntryModules = modules.EntryModules
+                    .Select(module => new JrocCompiledEntryModule(module.Path, module.ModuleId))
+                    .ToArray()
+            };
         }
 
         private void EmitDebuggableAttributeIfEnabled()

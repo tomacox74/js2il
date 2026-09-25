@@ -117,9 +117,58 @@ Console.WriteLine(artifact.PdbBytes?.Length ?? 0);
 ```
 
 The artifact contains `AssemblyName`, `PeBytes`, optional `PdbBytes`,
-`ModuleIds`, `EntryModuleId`, and `EntryModuleAliases`. Use this form when the
+`ModuleIds`, `EntryModuleId`, `EntryModuleAliases`, and `EntryModules`. Use this form when the
 application needs to inspect or persist runtime-generated compilation output
 rather than execute it immediately. No output files are written implicitly.
+
+### Multiple independent entries
+
+Pass several `JrocInMemoryEntrySource` values to compile unrelated scripts in
+one call. Their paths identify the source for diagnostics and relative module
+resolution; they need not exist on disk when `SourceText` is provided.
+
+```csharp
+using Jroc;
+using Jroc.Runtime;
+
+var folder = Path.Combine(Path.GetTempPath(), "test-folder");
+var artifact = JrocInMemoryCompiler.Compile(
+    new JrocInMemoryMultiEntryCompileRequest(
+    [
+        new(Path.Combine(folder, "a.js"), "const value = 1; exports.value = value;"),
+        new(Path.Combine(folder, "b.js"), "const value = 2; exports.value = value;")
+    ])
+    {
+        AssemblyName = "TestFolder",
+        DefaultEntryFilePath = Path.Combine(folder, "a.js"),
+        EmitPdb = true
+    });
+
+using var loaded = JrocInMemoryAssemblyLoader.Load(artifact);
+foreach (var entry in artifact.EntryModules)
+{
+    using var exports = JsEngine.LoadDynamicModule(loaded.Assembly, entry.ModuleId);
+    Console.WriteLine(exports.Get("value"));
+}
+```
+
+`EntryModules` maps the supplied source paths to their canonical module IDs in
+input order. `ModuleIds` also contains dependencies and published aliases.
+Use an entry ID to load its exports or select its generated `Scripts` facade
+without running any other entry. Each module load creates its own runtime;
+generated `Run` facade calls likewise start a fresh runtime. `EntryModuleId`
+and the assembly's root `Run`/`Program.Main` identify the selected default
+(the first entry unless `DefaultEntryFilePath` is specified). Without an
+explicit `AssemblyName`, the default entry filename supplies the assembly
+name. Optional `RootModuleIdOverride` on each entry publishes an additional
+host-facing alias, without changing its canonical entry ID.
+
+The multi-entry request accepts the same PDB, diagnostics, unused-analysis,
+generated-contract, host-intrinsic, and shared `FileSystem` options as the
+single-entry request. Inline source text overlays each matching path; entries
+without text and dependencies are read through the shared file system.
+Duplicate or ambiguous entry identities and errors in any supplied entry
+fail the whole compilation rather than returning a partial artifact.
 
 ## Lifetime and errors
 
