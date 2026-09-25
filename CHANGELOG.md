@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(runtime): add Atomics integer typed-array read, write, and read-modify-write
+  operations, plus isLockFree and pause; port 100 previously failing pinned
+  Test262 cases across Number and BigInt typed arrays.
 - fix(compiler): access static private class fields through their static storage
   in class methods and initializers; port 100 previously failing pinned
   Test262 class-expression and class-declaration cases.
