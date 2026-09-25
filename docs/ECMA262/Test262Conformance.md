@@ -22,8 +22,8 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 16,370 | 12 | 7,130 | 23,512 | **69.62%** |
-| Language syntax and semantics | 15,558 | 46 | 8,043 | 23,647 | **65.79%** |
-| **Total** | 31,928 | 58 | 16,259 | 48,245 | **66.18%** |
+| Language syntax and semantics | 15,658 | 46 | 7,943 | 23,647 | **66.22%** |
+| **Total** | 32,028 | 58 | 16,159 | 48,245 | **66.39%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 7,181 | 10 | 3,847 | 11,038 | **65.06%** |
+| `expressions` | 7,231 | 10 | 3,797 | 11,038 | **65.51%** |
 | `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -54,7 +54,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,533 | 35 | 2,769 | 9,337 | **69.97%** |
+| `statements` | 6,583 | 35 | 2,719 | 9,337 | **70.50%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -76,7 +76,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
 | `call` | 73 | 1 | 18 | 92 | **79.35%** |
-| `class` | 2,352 | 0 | 1,707 | 4,059 | **57.95%** |
+| `class` | 2,402 | 0 | 1,657 | 4,059 | **59.18%** |
 | `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
@@ -141,7 +141,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 2,333 | 0 | 2,034 | 4,367 | **53.42%** |
+| `class` | 2,383 | 0 | 1,984 | 4,367 | **54.57%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |

@@ -464,9 +464,8 @@ namespace Jroc.Services.ILGenerators
                     var fSigHandle = _metadata.GetOrAddBlob(fSig);
                     if (pdef.Static)
                     {
-                        var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
-                        _classRegistry.RegisterStaticField(registryClassName, pname, fh);
-                        _classRegistry.RegisterStaticFieldClrType(registryClassName, pname, typeof(object));
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Assembly | FieldAttributes.Static, emittedName, fSigHandle);
+                        _classRegistry.RegisterStaticPrivateField(registryClassName, pname, fh);
                     }
                     else
                     {

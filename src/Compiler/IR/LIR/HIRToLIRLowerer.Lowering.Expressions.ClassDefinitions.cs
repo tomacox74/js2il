@@ -143,7 +143,8 @@ public sealed partial class HIRToLIRLowerer
                 expression.CallableId,
                 scopesTemp,
                 targetTemp,
-                ownerTemp,
+                expression.IsStatic && !expression.IsPrivate
+                    && expression.SkipPublicStaticMethodBrand ? null : ownerTemp,
                 expression.FunctionName);
 
             resultTempVar = CreateTempVariable();
@@ -275,7 +276,8 @@ public sealed partial class HIRToLIRLowerer
                     methodDefinition.CallableId,
                     methodScopesTemp,
                     targetTemp,
-                    ownerTemp,
+                    methodDefinition.IsStatic && !methodDefinition.IsPrivate
+                        && expression.SkipPublicStaticMethodBrand ? null : ownerTemp,
                     methodDefinition.FunctionName);
 
                 resultTempVar = CreateTempVariable();
@@ -331,7 +333,7 @@ public sealed partial class HIRToLIRLowerer
         CallableId callableId,
         TempVariable scopes,
         TempVariable homeObject,
-        TempVariable privateBrand,
+        TempVariable? privateBrand,
         string functionName)
     {
         var result = CreateTempVariable();

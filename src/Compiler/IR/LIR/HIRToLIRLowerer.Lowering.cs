@@ -52,7 +52,8 @@ public sealed partial class HIRToLIRLowerer
                     lirInstructions.Add(new LIRStoreUserClassStaticField(
                         storeStaticField.RegistryClassName,
                         storeStaticField.FieldName,
-                        valueTemp));
+                        valueTemp,
+                        storeStaticField.IsPrivateField));
                     return true;
                 }
 

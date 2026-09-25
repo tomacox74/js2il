@@ -15,6 +15,7 @@ namespace Jroc.Services
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classFields = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classPrivateFields = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classStaticFields = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classStaticPrivateFields = new(StringComparer.Ordinal);
 
         private readonly Dictionary<string, Dictionary<string, Type>> _classFieldClrTypes = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, Type>> _classPrivateFieldClrTypes = new(StringComparer.Ordinal);
@@ -226,6 +227,23 @@ namespace Jroc.Services
                 _classStaticFields[className] = fields;
             }
             fields[fieldName] = fieldHandle;
+        }
+
+        public void RegisterStaticPrivateField(string className, string fieldName, FieldDefinitionHandle fieldHandle)
+        {
+            if (!_classStaticPrivateFields.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, FieldDefinitionHandle>(StringComparer.Ordinal);
+                _classStaticPrivateFields[className] = fields;
+            }
+            fields[fieldName] = fieldHandle;
+        }
+
+        public bool TryGetStaticPrivateField(string className, string fieldName, out FieldDefinitionHandle fieldHandle)
+        {
+            fieldHandle = default;
+            return _classStaticPrivateFields.TryGetValue(className, out var fields)
+                && fields.TryGetValue(fieldName, out fieldHandle);
         }
 
         public void RegisterStaticFieldClrType(string className, string fieldName, Type fieldClrType)

@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): access static private class fields through their static storage
+  in class methods and initializers; port 100 previously failing pinned
+  Test262 class-expression and class-declaration cases.
 - fix(runtime): implement canonical numeric-index get, has, define, and set
   semantics for Number and BigInt typed arrays, including receiver-aware writes,
   detached buffers, and coercion ordering. Correct ToIndex conversion for

@@ -20,6 +20,14 @@ public sealed class HIRDefineClassDataPropertyExpression : HIRExpression
     public bool IsField { get; init; }
 }
 
+public sealed class HIRRefreshClassConstructorDescriptorsExpression : HIRExpression
+{
+    public HIRRefreshClassConstructorDescriptorsExpression(HIRExpression constructor)
+        => Constructor = constructor;
+
+    public HIRExpression Constructor { get; }
+}
+
 public sealed class HIRDefineClassAccessorPropertyExpression : HIRExpression
 {
     public HIRDefineClassAccessorPropertyExpression(HIRExpression target, HIRExpression key, HIRExpression? getter, HIRExpression? setter)
@@ -62,7 +70,8 @@ public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpressi
         bool isPrivate,
         bool isSetter,
         bool isGenerator,
-        bool isAsync)
+        bool isAsync,
+        bool skipPublicStaticMethodBrand)
     {
         Target = target;
         Owner = owner;
@@ -77,6 +86,7 @@ public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpressi
         IsSetter = isSetter;
         IsGenerator = isGenerator;
         IsAsync = isAsync;
+        SkipPublicStaticMethodBrand = skipPublicStaticMethodBrand;
     }
 
     public HIRExpression Target { get; }
@@ -92,6 +102,7 @@ public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpressi
     public bool IsSetter { get; }
     public bool IsGenerator { get; }
     public bool IsAsync { get; }
+    public bool SkipPublicStaticMethodBrand { get; }
 }
 
 public sealed class HIRDefineClassMethodDataPropertiesExpression : HIRExpression
@@ -100,16 +111,19 @@ public sealed class HIRDefineClassMethodDataPropertiesExpression : HIRExpression
         HIRExpression owner,
         HIRExpression prototype,
         Scope classScope,
-        List<HIRClassMethodDataPropertyDefinition> methodDefinitions)
+        List<HIRClassMethodDataPropertyDefinition> methodDefinitions,
+        bool skipPublicStaticMethodBrand)
     {
         Owner = owner;
         Prototype = prototype;
         ClassScope = classScope;
         MethodDefinitions = methodDefinitions;
+        SkipPublicStaticMethodBrand = skipPublicStaticMethodBrand;
     }
 
     public HIRExpression Owner { get; init; }
     public HIRExpression Prototype { get; init; }
     public Scope ClassScope { get; init; }
     public List<HIRClassMethodDataPropertyDefinition> MethodDefinitions { get; init; }
+    public bool SkipPublicStaticMethodBrand { get; }
 }

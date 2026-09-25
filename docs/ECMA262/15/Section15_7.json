@@ -115,6 +115,23 @@
     "entries": [
       {
         "clause": "15.7.13",
+        "feature": "Static private field initialization and access in class methods",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/elements/after-same-line-gen-rs-static-privatename-identifier.js",
+          "test/language/expressions/class/elements/after-same-line-gen-rs-static-privatename-identifier-initializer.js",
+          "test/language/statements/class/elements/after-same-line-gen-rs-static-privatename-identifier.js",
+          "test/language/statements/class/elements/after-same-line-gen-rs-static-privatename-identifier-initializer.js"
+        ],
+        "notes": "The native Test262 harness verifies 100 previously failing pinned class-expression and class-declaration cases covering static private field initialization and read/write access from class methods, including identifier names with Unicode escapes. Separate evaluations of the same class expression are not yet isolated by constructor brand because generated CLR static storage is shared."
+      },
+      {
+        "clause": "15.7.13",
         "feature": "Literal class element names and callable computed property names",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",

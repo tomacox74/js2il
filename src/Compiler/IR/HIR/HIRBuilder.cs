@@ -1803,6 +1803,10 @@ partial class HIRMethodBuilder
             return true;
         }
 
+        var skipPublicStaticMethodBrand = classBody.Body.OfType<PropertyDefinition>()
+            .Any(field => field.Static && field.Key is PrivateIdentifier)
+            && !classBody.Body.OfType<MethodDefinition>()
+                .Any(method => method.Static && method.Key is PrivateIdentifier);
         var registryClassName = GetRegistryClassName(classScope);
         var classTypeExpr = new HIRUserClassTypeExpression(registryClassName);
         var prototypeTypeExpr = new HIRPropertyAccessExpression(classTypeExpr, "prototype");
@@ -1937,7 +1941,8 @@ partial class HIRMethodBuilder
                             isPrivate,
                             methodDefinition.Kind == PropertyKind.Set,
                             methodFunction.Generator,
-                            methodFunction.Async);
+                            methodFunction.Async,
+                            skipPublicStaticMethodBrand);
 
                         statements.Add(new HIRExpressionStatement(definitionExpression));
                         break;
@@ -1988,7 +1993,8 @@ partial class HIRMethodBuilder
                             classTypeExpr,
                             prototypeTypeExpr,
                             classScope,
-                            definition);
+                            definition,
+                            skipPublicStaticMethodBrand);
                         break;
                     }
 
@@ -2336,7 +2342,8 @@ partial class HIRMethodBuilder
         HIRExpression classTypeExpr,
         HIRExpression prototypeTypeExpr,
         Scope classScope,
-        HIRClassMethodDataPropertyDefinition definition)
+        HIRClassMethodDataPropertyDefinition definition,
+        bool skipPublicStaticMethodBrand)
     {
         if (statements.Count > 0
             && statements[^1] is HIRExpressionStatement { Expression: HIRDefineClassMethodDataPropertiesExpression existing }
@@ -2351,7 +2358,8 @@ partial class HIRMethodBuilder
                 classTypeExpr,
                 prototypeTypeExpr,
                 classScope,
-                new List<HIRClassMethodDataPropertyDefinition> { definition })));
+                new List<HIRClassMethodDataPropertyDefinition> { definition },
+                skipPublicStaticMethodBrand)));
     }
 
     private static CallableId CreateClassMethodCallableId(
@@ -2698,6 +2706,14 @@ partial class HIRMethodBuilder
                         var classSymbol = new Symbol(cdClassBinding);
                         staticInitStatements.Insert(bindingInsertionIndex, new HIRExpressionStatement(
                             new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
+
+                        if (classDecl.Body.Body.OfType<PropertyDefinition>()
+                            .Any(field => field.Static && field.Key is PrivateIdentifier))
+                        {
+                            staticInitStatements.Add(new HIRExpressionStatement(
+                                new HIRRefreshClassConstructorDescriptorsExpression(
+                                    new HIRVariableExpression(classSymbol))));
+                        }
                     }
 
                     hirStatement = new HIRBlock(staticInitStatements);
@@ -4283,7 +4299,7 @@ partial class HIRMethodBuilder
                             }
                         }
 
-                        if (memberTarget.Object is ThisExpression)
+                        if (memberTarget.Object is ThisExpression && _staticThisRegistryClassName == null)
                         {
                             hirExpr = new HIRPrivateFieldAssignmentExpression
                             {
@@ -4338,7 +4354,9 @@ partial class HIRMethodBuilder
                 HIRExpression? objectExpr;
 
                 // Private instance member access: this.#name
-                if (!memberExpr.Computed && memberExpr.Object is ThisExpression && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
+                if (!memberExpr.Computed && memberExpr.Object is ThisExpression
+                    && _staticThisRegistryClassName == null
+                    && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
                 {
                     if (!TryGetEnclosingClassScope(_currentScope, out var classScope))
                     {
