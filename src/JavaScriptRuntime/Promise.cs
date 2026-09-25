@@ -772,6 +772,9 @@ public partial class Promise : JsObject, IJavaScriptPromise
     internal static object? AnyForConstructor(object? constructor, object? iterable)
         => PerformCombinator(CombinatorKind.Any, constructor, iterable);
 
+    internal static object? RaceForConstructor(object? constructor, object? iterable)
+        => PerformCombinator(CombinatorKind.Race, constructor, iterable);
+
     public static object? allKeyed(object? dictionary)
         => AllKeyedForConstructor(
             BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
@@ -934,11 +937,12 @@ public partial class Promise : JsObject, IJavaScriptPromise
         All,
         AllSettled,
         Any,
+        Race,
     }
 
     /// <summary>
     /// Shared, constructor-aware implementation of the Promise combinators
-    /// (Promise.all, Promise.allSettled, Promise.any). Implements
+    /// (Promise.all, Promise.allSettled, Promise.any, Promise.race). Implements
     /// NewPromiseCapability, GetPromiseResolve (evaluated once), per-element
     /// resolving functions with the "already called" guard, and the
     /// iterator/IteratorClose completion ordering required by ECMA-262.
@@ -989,7 +993,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
                     {
                         iteratorDone = true;
                         remaining.Value--;
-                        if (remaining.Value == 0)
+                        if (remaining.Value == 0 && kind != CombinatorKind.Race)
                         {
                             ResolveWhenComplete();
                         }
@@ -1007,22 +1011,27 @@ public partial class Promise : JsObject, IJavaScriptPromise
                     throw;
                 }
 
-                values.Add(null);
                 var elementIndex = index++;
-                remaining.Value++;
+                if (kind != CombinatorKind.Race)
+                {
+                    values.Add(null);
+                    remaining.Value++;
+                }
 
                 var nextPromise = CallableOperations.Call1(
                     promiseResolve,
                     constructor,
                     nextValue);
 
-                var (onFulfilledValue, onRejectedValue) = CreateElementHandlers(
-                    kind,
-                    elementIndex,
-                    values,
-                    remaining,
-                    capability,
-                    ResolveWhenComplete);
+                var (onFulfilledValue, onRejectedValue) = kind == CombinatorKind.Race
+                    ? (capability.Resolve, capability.Reject)
+                    : CreateElementHandlers(
+                        kind,
+                        elementIndex,
+                        values,
+                        remaining,
+                        capability,
+                        ResolveWhenComplete);
 
                 var then = ObjectRuntime.GetProperty(nextPromise!, "then");
                 CallableOperations.Call2(
@@ -1195,34 +1204,9 @@ public partial class Promise : JsObject, IJavaScriptPromise
     }
 
     public static object? race(object? iterable)
-    {
-        Promise? racePromise = null;
-
-        Promise InitializeState()
-        {
-            racePromise = new Promise();
-            return racePromise;
-        }
-
-        AddPromiseResult AddPromise(Promise p)
-        {
-            return new AddPromiseResult(
-                onFulfilled: (value) =>
-                {
-                    racePromise!.Settle(State.Fulfilled, value);
-                },
-                onRejected: (reason) =>
-                {
-                    racePromise!.Settle(State.Rejected, reason);
-                });
-        }
-
-        return Combine(
-            initializeState: InitializeState,
-            iterable: iterable,
-            addPromise: AddPromise,
-            finalizeState: () => { });
-    }
+        => RaceForConstructor(
+            BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Promise),
+            iterable);
 
     // Private methods
     private (object Resolve, object Reject) CreateResolvingFunctions()
