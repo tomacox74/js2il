@@ -1,106 +1,14 @@
-using System.Runtime.CompilerServices;
-using Jroc;
-using Jroc.IR;
-using Jroc.Tests;
-
 namespace Jroc.Test262.Tests.built_ins;
 
 [Collection(InMemoryExecutionTestsBase.CollectionName)]
-public abstract class InMemoryExecutionTestsBase
+public abstract class InMemoryExecutionTestsBase : global::Jroc.Test262.Tests.DiskExecutionTestsBase
 {
     internal const string CollectionName = "Built-ins in-memory execution";
 
-    private readonly string _testCategory;
     protected InMemoryExecutionTestsBase(string testCategory)
+        : base(testCategory)
     {
-        _testCategory = testCategory;
     }
-
-    protected Task ExecutionTest(string testName, [CallerFilePath] string sourceFilePath = "")
-        => ExecutionTestFromFile(testName, sourceFilePath);
-
-    protected Task ExecutionTestFromFile(
-        string testName,
-        [CallerFilePath] string sourceFilePath = "",
-        int timeoutMs = 30000)
-    {
-        var result = Test262SharedAssertHarness.CompileAndExecute(
-            testName,
-            _testCategory,
-            name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-            enableIRMetrics: true,
-            timeoutMs: timeoutMs);
-
-        Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
-        return Task.CompletedTask;
-    }
-
-    protected Task CompilationFailureTest(
-        string testName,
-        string? expectedFailureText = null,
-        [CallerFilePath] string sourceFilePath = "")
-    {
-        var (script, sourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
-        sourcePath ??= Path.Combine(
-            Path.GetTempPath(),
-            "Jroc.Test262.Tests",
-            "CompilationFailure",
-            testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
-        Exception? failure = null;
-
-        var previousMetricsEnabled = IRPipelineMetrics.Enabled;
-        IRPipelineMetrics.Enabled = true;
-        IRPipelineMetrics.Reset();
-        try
-        {
-            var fileSystem = new MockFileSystem();
-            fileSystem.AddFile(sourcePath, script, sourcePath);
-            JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(sourcePath)
-            {
-                SourceText = script,
-                FileSystem = fileSystem,
-                EmitPdb = true
-            });
-        }
-        catch (Exception ex)
-        {
-            failure = ex;
-        }
-        finally
-        {
-            IRPipelineMetrics.Enabled = previousMetricsEnabled;
-        }
-
-        if (failure == null)
-        {
-            throw new InvalidOperationException($"Expected compilation to fail for test {testName}.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(expectedFailureText)
-            && !failure.ToString().Contains(expectedFailureText, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException(
-                $"Compilation failed for test {testName}, but the failure did not contain '{expectedFailureText}'.\nActual failure:\n{failure}");
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
-    {
-        var relativePath = testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js";
-        var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath)
-            ?? throw new InvalidOperationException("Unable to determine test source directory.");
-        var scriptPath = Path.Combine(sourceDirectory, "JavaScript", relativePath);
-
-        if (!File.Exists(scriptPath))
-        {
-            throw new FileNotFoundException($"JavaScript fixture not found at '{scriptPath}'.", scriptPath);
-        }
-
-        return (File.ReadAllText(scriptPath), scriptPath);
-    }
-
 }
 
 [CollectionDefinition(InMemoryExecutionTestsBase.CollectionName)]
