@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): bind synchronous generator parameters when the generator
+  function is called, preserving initialized locals until the first resume;
+  port 100 previously failing pinned Test262 generator-destructuring cases.
 - feat(runtime): implement `Iterator.concat`, `Iterator.zip`, and
   `Iterator.zipKeyed` with iterable acquisition, padding, closing, and
   completion handling; port 100 previously failing pinned Test262 cases.
