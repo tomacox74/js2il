@@ -2,7 +2,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T06:21:47Z
+> Last generated (UTC): 2026-09-25T10:23:18Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -57,6 +57,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 27.2.1.7 ([tc39.es](https://tc39.es/ecma262/#sec-rejectpromise))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Promise rejection reasons and Promise.resolve receiver validation | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Promise/prototype/finally/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Promise/resolve/ExecutionTests.cs` | `test/built-ins/Promise/prototype/then/reject-pending-fulfilled.js`<br>`test/built-ins/Promise/prototype/finally/rejection-reason-override-with-throw.js`<br>`test/built-ins/Promise/resolve/ctx-non-object.js` | Rejection handlers observe the original JavaScript thrown value, and Promise.resolve rejects non-object constructor receivers before adopting a promise. |
 
 ### 27.2.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob))
 

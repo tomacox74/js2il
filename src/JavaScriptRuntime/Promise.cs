@@ -1345,7 +1345,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
             }
             catch (Exception ex)
             {
-                reaction.NextPromise!.Settle(State.Rejected, ex);
+                reaction.NextPromise!.Settle(State.Rejected, GetThrownJsValue(ex));
             }
 
             return;
@@ -1410,7 +1410,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
         // Intrinsic fast path: settle the internally-created next promise.
         if (handlerAbrupt)
         {
-            reaction.NextPromise!.Settle(State.Rejected, handlerError);
+            reaction.NextPromise!.Settle(State.Rejected, GetThrownJsValue(handlerError!));
             return;
         }
 

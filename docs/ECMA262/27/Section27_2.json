@@ -258,6 +258,23 @@
     "support":  {
                     "entries":  [
                                     {
+                                        "clause": "27.2.1.7",
+                                        "feature": "Promise rejection reasons and Promise.resolve receiver validation",
+                                        "status": "Supported with Limitations",
+                                        "specUrl": "https://tc39.es/ecma262/#sec-rejectpromise",
+                                        "testScripts": [
+                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/ExecutionTests.cs",
+                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/finally/ExecutionTests.cs",
+                                            "tests/Jroc.Test262.Tests/built-ins/Promise/resolve/ExecutionTests.cs"
+                                        ],
+                                        "test262Paths": [
+                                            "test/built-ins/Promise/prototype/then/reject-pending-fulfilled.js",
+                                            "test/built-ins/Promise/prototype/finally/rejection-reason-override-with-throw.js",
+                                            "test/built-ins/Promise/resolve/ctx-non-object.js"
+                                        ],
+                                        "notes": "Rejection handlers observe the original JavaScript thrown value, and Promise.resolve rejects non-object constructor receivers before adopting a promise."
+                                    },
+                                    {
                                         "clause": "27.2.2.2",
                                         "feature": "Thenable assimilation runs as a Promise job",
                                         "status": "Supported",

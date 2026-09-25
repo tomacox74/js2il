@@ -3,7 +3,9 @@ namespace JavaScriptRuntime;
 public partial class Promise
 {
     private static readonly BuiltinFunction1 _promiseResolveValue = static (thisArgument, value) =>
-        ResolveForConstructor(thisArgument, value);
+        thisArgument is null or JsNull
+            ? throw new TypeError("Promise.resolve requires a constructor receiver")
+            : ResolveForConstructor(thisArgument, value);
     private static readonly BuiltinFunction1 _promiseAllValue = static (thisArgument, iterable) =>
         AllForConstructor(thisArgument, iterable);
     private static readonly BuiltinFunction1 _promiseAllSettledValue = static (thisArgument, iterable) =>

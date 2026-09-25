@@ -1,6 +1,6 @@
 namespace Jroc.HIR;
 
-public sealed class HIRPrivateLogicalAssignmentExpression : HIRExpression
+public sealed class HIRPrivateReadModifyWriteExpression : HIRExpression
 {
     public required Acornima.Operator Operator { get; init; }
     public required HIRExpression Receiver { get; init; }

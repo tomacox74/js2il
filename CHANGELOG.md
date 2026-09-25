@@ -12,6 +12,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   when source and host bindings are stable. Keep BigInt literals independent
   of the mutable `BigInt` global, and expose supported Promise and Uint8Array
   static methods through dynamic member lookup.
+- fix(compiler/runtime): preserve compound operations on private fields and
+  accessors, discover nested class callables, keep private accessors off public
+  prototypes, initialize public static field descriptors, and invoke private
+  static setters with brand checks. Preserve Promise rejection reasons and
+  reject invalid `Promise.resolve` receivers; port 100 previously failing
+  pinned Test262 cases.
 - fix(runtime): allow public class methods on unbound or borrowed receivers and
   make Promise.race constructor-aware with proper capability, resolve, and
   iterator-close semantics; port 110 previously failing pinned Test262 cases.
