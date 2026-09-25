@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-25T18:52:39Z
+> Last generated (UTC): 2026-09-25T21:13:11Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -77,7 +77,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) |  | jroc supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
+| Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) |  | jroc supports calling Boolean(x) via primitive conversion lowering when the original binding is in use, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). Replaced global call and constructor bindings use dynamic invocation. This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
 
 ### 19.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview))
 
@@ -107,7 +107,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Global Number is available as a first-class value (e.g., x === Number, array.map(Number)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) |  | Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions. In jroc output, JavaScript Number values are represented as unboxed CLR double. Full Number constructor/prototype semantics are not implemented. |
+| Global Number is available as a first-class value (e.g., x === Number, array.map(Number)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) |  | Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions when the original binding is in use; replaced global call bindings use dynamic invocation. In jroc output, JavaScript Number values are represented as unboxed CLR double when the binding can be proven stable. Full Number constructor/prototype semantics are not implemented. |
 
 ### 19.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object))
 
@@ -131,7 +131,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Global String is available as a first-class value (e.g., x === String, array.map(String)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) |  | Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions. In jroc output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented. |
+| Global String is available as a first-class value (e.g., x === String, array.map(String)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) |  | Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions when the original binding is in use; replaced global call bindings use dynamic invocation. In jroc output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented. |
 
 ### 19.3.40 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakmap))
 

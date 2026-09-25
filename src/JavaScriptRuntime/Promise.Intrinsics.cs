@@ -20,6 +20,8 @@ public partial class Promise
         RaceForConstructor(thisArgument, iterable);
     private static readonly BuiltinFunction1 _promiseRejectValue = static (thisArgument, reason) =>
         RejectForConstructor(thisArgument, reason);
+    private static readonly BuiltinFunction0 _promiseWithResolversValue = static thisArgument =>
+        WithResolversForConstructor(thisArgument);
     private static readonly BuiltinFunctionVariadic _promiseTryValue = static (thisArgument, in arguments) =>
     {
         var callback = arguments.Count > 0 ? arguments.GetArgument(0) : null;
@@ -107,5 +109,6 @@ public partial class Promise
         GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "race", _promiseRaceValue, 1d);
         GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "reject", _promiseRejectValue, 1d);
         GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "try", _promiseTryValue, 1d);
+        GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "withResolvers", _promiseWithResolversValue, 0d);
     }
 }

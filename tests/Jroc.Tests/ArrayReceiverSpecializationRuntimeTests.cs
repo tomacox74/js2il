@@ -111,9 +111,9 @@ public sealed class ArrayReceiverSpecializationRuntimeTests
         WithRealm(
             () =>
             {
-                var shiftWarmup = CreateDenseArray(128);
+                var shiftWarmup = CreateDenseArray(10_000);
                 shiftWarmup.shift();
-                var unshiftWarmup = CreateDenseArray(128, 256);
+                var unshiftWarmup = CreateDenseArray(10_000, 20_000);
                 unshiftWarmup.unshift("first");
 
                 var shiftArray = CreateDenseArray(10_000);

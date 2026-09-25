@@ -309,7 +309,7 @@
         "testScripts": [
           "tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
         ],
-        "notes": "jroc supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics."
+        "notes": "jroc supports calling Boolean(x) via primitive conversion lowering when the original binding is in use, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). Replaced global call and constructor bindings use dynamic invocation. This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics."
       },
       {
         "clause": "19.3.31",
@@ -319,7 +319,7 @@
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js"
         ],
-        "notes": "Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions. In jroc output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented."
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions when the original binding is in use; replaced global call bindings use dynamic invocation. In jroc output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented."
       },
       {
         "clause": "19.3.22",
@@ -329,7 +329,7 @@
         "testScripts": [
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js"
         ],
-        "notes": "Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions. In jroc output, JavaScript Number values are represented as unboxed CLR double. Full Number constructor/prototype semantics are not implemented."
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions when the original binding is in use; replaced global call bindings use dynamic invocation. In jroc output, JavaScript Number values are represented as unboxed CLR double when the binding can be proven stable. Full Number constructor/prototype semantics are not implemented."
       },
       {
         "clause": "19.3.16",

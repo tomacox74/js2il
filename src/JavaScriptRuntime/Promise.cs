@@ -459,6 +459,16 @@ public partial class Promise : JsObject, IJavaScriptPromise
         return new PromiseWithResolvers(promise, resolve, reject);
     }
 
+    private static object WithResolversForConstructor(object? constructor)
+    {
+        var capability = NewPromiseCapability(constructor);
+        var result = ObjectRuntime.CreateOrdinaryObject();
+        ObjectRuntime.CreateDataProperty(result, "promise", capability.Promise);
+        ObjectRuntime.CreateDataProperty(result, "resolve", capability.Resolve);
+        ObjectRuntime.CreateDataProperty(result, "reject", capability.Reject);
+        return result;
+    }
+
     /// <summary>
     /// Synchronous helper for lowering JavaScript <c>await</c> when HasAwaits=false.
     /// 

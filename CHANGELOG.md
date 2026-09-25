@@ -9,6 +9,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - feat(runtime): coordinate synchronous and asynchronous Atomics waits with
   notifications, support BigInt64 waits, and add growable SharedArrayBuffers
   with species-aware slicing; port 100 previously failing pinned Test262 cases.
+- fix(compiler): observe mutable global callable and constructor bindings,
+  including replacements installed by a host, without disabling intrinsic
+  fast paths. Add an explicit AOT host contract for guard-free global calls
+  when source and host bindings are stable. Keep BigInt literals independent
+  of the mutable `BigInt` global, and expose supported Promise and Uint8Array
+  static methods through dynamic member lookup. Preserve direct calls when
+  the only use of the global object is a strict identity comparison.
 - fix(compiler/runtime): preserve compound operations on private fields and
   accessors, discover nested class callables, keep private accessors off public
   prototypes, initialize public static field descriptors, and invoke private

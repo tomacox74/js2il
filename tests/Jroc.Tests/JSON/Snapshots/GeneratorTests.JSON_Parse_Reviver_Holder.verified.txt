@@ -306,11 +306,11 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 411 (0x19b)
+			// Code size: 957 (0x3bd)
 			.maxstack 8
 			.locals init (
 				[0] bool,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object,
 				[2] object,
 				[3] object,
 				[4] object,
@@ -322,146 +322,302 @@
 			IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
-			IL_000d: brfalse IL_007c
+			IL_000d: brfalse IL_00f7
 
-			IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0017: stloc.1
-			IL_0018: ldarg.1
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-			IL_0028: stloc.2
-			IL_0029: ldstr "Object"
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0033: volatile.
-			IL_0035: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_003a: brfalse IL_004e
+			IL_0012: ldstr "console"
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0021: stloc.1
+			IL_0022: ldstr "Object"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0031: volatile.
+			IL_0033: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0038: brfalse IL_0057
 
-			IL_003f: ldstr "prototype"
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0049: br IL_0062
+			IL_003d: ldstr "getPrototypeOf"
+			IL_0042: ldarg.1
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0052: br IL_0076
 
-			IL_004e: ldstr "prototype"
-			IL_0053: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:12"
-			IL_0058: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0057: ldstr "getPrototypeOf"
+			IL_005c: ldarg.1
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0067: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:13"
+			IL_006c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_0062: stloc.3
-			IL_0063: ldloc.2
-			IL_0064: ldloc.3
-			IL_0065: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_006a: stloc.0
-			IL_006b: ldloc.0
-			IL_006c: box [System.Runtime]System.Boolean
-			IL_0071: stloc.s 4
-			IL_0073: ldloc.1
-			IL_0074: ldloc.s 4
-			IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_007b: pop
+			IL_0076: stloc.2
+			IL_0077: ldstr "Object"
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0081: volatile.
+			IL_0083: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_0088: brfalse IL_009c
 
-			IL_007c: ldarg.2
-			IL_007d: ldstr "0"
-			IL_0082: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0087: stloc.0
-			IL_0088: ldloc.0
-			IL_0089: brfalse IL_00b4
+			IL_008d: ldstr "prototype"
+			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0097: br IL_00b0
 
-			IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0093: stloc.1
-			IL_0094: ldarg.1
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_009f: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-			IL_00a4: box [System.Runtime]System.Boolean
-			IL_00a9: stloc.s 4
-			IL_00ab: ldloc.1
-			IL_00ac: ldloc.s 4
-			IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00b3: pop
+			IL_009c: ldstr "prototype"
+			IL_00a1: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:17"
+			IL_00a6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00b4: ldarg.2
-			IL_00b5: ldstr ""
-			IL_00ba: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00bf: stloc.0
-			IL_00c0: ldloc.0
-			IL_00c1: brfalse IL_0154
+			IL_00b0: stloc.3
+			IL_00b1: ldloc.2
+			IL_00b2: ldloc.3
+			IL_00b3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00b8: stloc.0
+			IL_00b9: ldloc.0
+			IL_00ba: box [System.Runtime]System.Boolean
+			IL_00bf: stloc.s 4
+			IL_00c1: volatile.
+			IL_00c3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00c8: brfalse IL_00df
 
-			IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00cb: stloc.1
-			IL_00cc: ldarg.1
-			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-			IL_00dc: stloc.3
-			IL_00dd: ldstr "Object"
-			IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00e7: volatile.
-			IL_00e9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_00ee: brfalse IL_0102
+			IL_00cd: ldloc.1
+			IL_00ce: ldstr "log"
+			IL_00d3: ldloc.s 4
+			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00da: br IL_00f6
 
-			IL_00f3: ldstr "prototype"
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00fd: br IL_0116
+			IL_00df: ldloc.1
+			IL_00e0: ldstr "log"
+			IL_00e5: ldloc.s 4
+			IL_00e7: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:20"
+			IL_00ec: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_0102: ldstr "prototype"
-			IL_0107: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:41"
-			IL_010c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00f6: pop
 
-			IL_0116: stloc.2
-			IL_0117: ldloc.3
-			IL_0118: ldloc.2
-			IL_0119: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_011e: stloc.0
-			IL_011f: ldloc.0
-			IL_0120: box [System.Runtime]System.Boolean
-			IL_0125: stloc.s 4
-			IL_0127: ldloc.1
-			IL_0128: ldloc.s 4
-			IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_012f: pop
-			IL_0130: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0135: stloc.1
-			IL_0136: ldarg.1
-			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
-			IL_014b: stloc.2
-			IL_014c: ldloc.1
-			IL_014d: ldloc.2
-			IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0153: pop
+			IL_00f7: ldarg.2
+			IL_00f8: ldstr "0"
+			IL_00fd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0102: stloc.0
+			IL_0103: ldloc.0
+			IL_0104: brfalse IL_01a2
 
-			IL_0154: ldarg.2
-			IL_0155: ldstr "remove"
-			IL_015a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_015f: stloc.0
-			IL_0160: ldloc.0
-			IL_0161: brfalse IL_0168
+			IL_0109: ldstr "console"
+			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0118: stloc.1
+			IL_0119: ldstr "Array"
+			IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0128: volatile.
+			IL_012a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_012f: brfalse IL_014e
 
-			IL_0166: ldnull
-			IL_0167: ret
+			IL_0134: ldstr "isArray"
+			IL_0139: ldarg.1
+			IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0149: br IL_016d
 
-			IL_0168: ldarg.3
-			IL_0169: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_016e: stloc.s 5
-			IL_0170: ldloc.s 5
-			IL_0172: ldstr "number"
-			IL_0177: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_017c: stloc.0
-			IL_017d: ldloc.0
-			IL_017e: brfalse IL_0199
+			IL_014e: ldstr "isArray"
+			IL_0153: ldarg.1
+			IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_015e: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:35"
+			IL_0163: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_0183: ldarg.3
-			IL_0184: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0189: ldc.r8 10
-			IL_0192: mul
-			IL_0193: box [System.Runtime]System.Double
-			IL_0198: ret
+			IL_016d: stloc.3
+			IL_016e: volatile.
+			IL_0170: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0175: brfalse IL_018b
 
-			IL_0199: ldarg.3
-			IL_019a: ret
+			IL_017a: ldloc.1
+			IL_017b: ldstr "log"
+			IL_0180: ldloc.3
+			IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0186: br IL_01a1
+
+			IL_018b: ldloc.1
+			IL_018c: ldstr "log"
+			IL_0191: ldloc.3
+			IL_0192: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:36"
+			IL_0197: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_01a1: pop
+
+			IL_01a2: ldarg.2
+			IL_01a3: ldstr ""
+			IL_01a8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_01ad: stloc.0
+			IL_01ae: ldloc.0
+			IL_01af: brfalse IL_0376
+
+			IL_01b4: ldstr "console"
+			IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01c3: stloc.3
+			IL_01c4: ldstr "Object"
+			IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01d3: volatile.
+			IL_01d5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_01da: brfalse IL_01f9
+
+			IL_01df: ldstr "getPrototypeOf"
+			IL_01e4: ldarg.1
+			IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_01ea: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_01ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_01f4: br IL_0218
+
+			IL_01f9: ldstr "getPrototypeOf"
+			IL_01fe: ldarg.1
+			IL_01ff: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0204: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0209: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:51"
+			IL_020e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0218: stloc.1
+			IL_0219: ldstr "Object"
+			IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0223: volatile.
+			IL_0225: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_022a: brfalse IL_023e
+
+			IL_022f: ldstr "prototype"
+			IL_0234: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0239: br IL_0252
+
+			IL_023e: ldstr "prototype"
+			IL_0243: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:55"
+			IL_0248: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0252: stloc.2
+			IL_0253: ldloc.1
+			IL_0254: ldloc.2
+			IL_0255: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_025a: stloc.0
+			IL_025b: ldloc.0
+			IL_025c: box [System.Runtime]System.Boolean
+			IL_0261: stloc.s 4
+			IL_0263: volatile.
+			IL_0265: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_026a: brfalse IL_0281
+
+			IL_026f: ldloc.3
+			IL_0270: ldstr "log"
+			IL_0275: ldloc.s 4
+			IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_027c: br IL_0298
+
+			IL_0281: ldloc.3
+			IL_0282: ldstr "log"
+			IL_0287: ldloc.s 4
+			IL_0289: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:58"
+			IL_028e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+			IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0298: pop
+			IL_0299: ldstr "console"
+			IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_02a8: stloc.3
+			IL_02a9: ldstr "JSON"
+			IL_02ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_02b8: stloc.2
+			IL_02b9: ldstr "Object"
+			IL_02be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_02c8: volatile.
+			IL_02ca: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_02cf: brfalse IL_02ee
+
+			IL_02d4: ldstr "keys"
+			IL_02d9: ldarg.1
+			IL_02da: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_02df: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_02e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_02e9: br IL_030d
+
+			IL_02ee: ldstr "keys"
+			IL_02f3: ldarg.1
+			IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_02fe: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:70"
+			IL_0303: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+			IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_030d: stloc.1
+			IL_030e: volatile.
+			IL_0310: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_0315: brfalse IL_032b
+
+			IL_031a: ldloc.2
+			IL_031b: ldstr "stringify"
+			IL_0320: ldloc.1
+			IL_0321: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0326: br IL_0341
+
+			IL_032b: ldloc.2
+			IL_032c: ldstr "stringify"
+			IL_0331: ldloc.1
+			IL_0332: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:71"
+			IL_0337: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_033c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0341: stloc.1
+			IL_0342: volatile.
+			IL_0344: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_0349: brfalse IL_035f
+
+			IL_034e: ldloc.3
+			IL_034f: ldstr "log"
+			IL_0354: ldloc.1
+			IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_035a: br IL_0375
+
+			IL_035f: ldloc.3
+			IL_0360: ldstr "log"
+			IL_0365: ldloc.1
+			IL_0366: ldstr "JSON_Parse_Reviver_Holder:<TwoPhaseDummy_M4>:__js_call__:72"
+			IL_036b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+			IL_0370: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+			IL_0375: pop
+
+			IL_0376: ldarg.2
+			IL_0377: ldstr "remove"
+			IL_037c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0381: stloc.0
+			IL_0382: ldloc.0
+			IL_0383: brfalse IL_038a
+
+			IL_0388: ldnull
+			IL_0389: ret
+
+			IL_038a: ldarg.3
+			IL_038b: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0390: stloc.s 5
+			IL_0392: ldloc.s 5
+			IL_0394: ldstr "number"
+			IL_0399: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_039e: stloc.0
+			IL_039f: ldloc.0
+			IL_03a0: brfalse IL_03bb
+
+			IL_03a5: ldarg.3
+			IL_03a6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_03ab: ldc.r8 10
+			IL_03b4: mul
+			IL_03b5: box [System.Runtime]System.Double
+			IL_03ba: ret
+
+			IL_03bb: ldarg.3
+			IL_03bc: ret
 		} // end of method FunctionExpression_result::__js_call__
 
 	} // end of class FunctionExpression_result
@@ -626,88 +782,193 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 188 (0xbc)
-		.maxstack 9
+		// Code size: 544 (0x220)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.JSON_Parse_Reviver_Holder/Scope,
 			[1] object,
-			[2] object[],
-			[3] class Modules.JSON_Parse_Reviver_Holder/FunctionExpression_result/FunctionObject,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object,
+			[3] object[],
+			[4] class Modules.JSON_Parse_Reviver_Holder/FunctionExpression_result/FunctionObject,
 			[5] object,
-			[6] class Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject
+			[6] class Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[8] object
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
 		IL_0005: newobj instance void Modules.JSON_Parse_Reviver_Holder/Scope::.ctor()
 		IL_000a: stloc.0
 		IL_000b: nop
-		IL_000c: ldc.i4.1
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: dup
-		IL_0013: ldc.i4.0
-		IL_0014: ldloc.0
-		IL_0015: stelem.ref
-		IL_0016: stloc.2
-		IL_0017: newobj instance void Modules.JSON_Parse_Reviver_Holder/FunctionExpression_result/FunctionObject::.ctor()
-		IL_001c: ldc.i4.2
-		IL_001d: conv.r8
-		IL_001e: ldstr ""
+		IL_000c: ldstr "JSON"
+		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_001b: stloc.2
+		IL_001c: ldc.i4.1
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
 		IL_0023: ldc.i4.0
-		IL_0024: ldc.i4.0
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.JSON_Parse_Reviver_Holder/FunctionExpression_result/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_002a: stloc.3
-		IL_002b: ldstr "{\"a\":1,\"nested\":{\"b\":2},\"remove\":3,\"arr\":[4,5]}"
-		IL_0030: ldloc.3
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object, object)
-		IL_0036: stloc.1
-		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003c: stloc.s 4
-		IL_003e: ldloc.1
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
-		IL_0044: stloc.s 5
-		IL_0046: ldloc.s 4
-		IL_0048: ldloc.s 5
-		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_004f: pop
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0055: stloc.s 4
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.0
-		IL_0060: stelem.ref
-		IL_0061: stloc.2
-		IL_0062: newobj instance void Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject::.ctor()
-		IL_0067: ldc.i4.2
-		IL_0068: conv.r8
-		IL_0069: ldstr ""
-		IL_006e: ldc.i4.0
-		IL_006f: ldc.i4.0
-		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0075: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject>(!!0)
-		IL_007a: stloc.s 6
-		IL_007c: ldstr "1"
-		IL_0081: ldloc.s 6
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object, object)
-		IL_0088: stloc.s 5
-		IL_008a: ldloc.s 4
-		IL_008c: ldloc.s 5
-		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0093: pop
-		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0099: stloc.s 4
-		IL_009b: ldstr "{\"x\":1}"
-		IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object, object)
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
-		IL_00af: stloc.s 5
-		IL_00b1: ldloc.s 4
+		IL_0024: ldloc.0
+		IL_0025: stelem.ref
+		IL_0026: stloc.3
+		IL_0027: newobj instance void Modules.JSON_Parse_Reviver_Holder/FunctionExpression_result/FunctionObject::.ctor()
+		IL_002c: ldc.i4.2
+		IL_002d: conv.r8
+		IL_002e: ldstr ""
+		IL_0033: ldc.i4.0
+		IL_0034: ldc.i4.0
+		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.JSON_Parse_Reviver_Holder/FunctionExpression_result/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_003a: stloc.s 4
+		IL_003c: ldloc.2
+		IL_003d: ldstr "parse"
+		IL_0042: ldstr "{\"a\":1,\"nested\":{\"b\":2},\"remove\":3,\"arr\":[4,5]}"
+		IL_0047: ldloc.s 4
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_004e: stloc.1
+		IL_004f: ldstr "console"
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005e: stloc.2
+		IL_005f: ldstr "JSON"
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006e: volatile.
+		IL_0070: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0075: brfalse IL_008a
+
+		IL_007a: ldstr "stringify"
+		IL_007f: ldloc.1
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0085: br IL_009f
+
+		IL_008a: ldstr "stringify"
+		IL_008f: ldloc.1
+		IL_0090: ldstr "JSON_Parse_Reviver_Holder:Modules.JSON_Parse_Reviver_Holder:__js_module_init__:19"
+		IL_0095: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_009f: stloc.s 5
+		IL_00a1: volatile.
+		IL_00a3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00a8: brfalse IL_00bf
+
+		IL_00ad: ldloc.2
+		IL_00ae: ldstr "log"
 		IL_00b3: ldloc.s 5
-		IL_00b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ba: pop
-		IL_00bb: ret
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ba: br IL_00d6
+
+		IL_00bf: ldloc.2
+		IL_00c0: ldstr "log"
+		IL_00c5: ldloc.s 5
+		IL_00c7: ldstr "JSON_Parse_Reviver_Holder:Modules.JSON_Parse_Reviver_Holder:__js_module_init__:20"
+		IL_00cc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_00d6: pop
+		IL_00d7: ldstr "console"
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e6: stloc.s 5
+		IL_00e8: ldstr "JSON"
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f7: stloc.2
+		IL_00f8: ldc.i4.1
+		IL_00f9: newarr [System.Runtime]System.Object
+		IL_00fe: dup
+		IL_00ff: ldc.i4.0
+		IL_0100: ldloc.0
+		IL_0101: stelem.ref
+		IL_0102: stloc.3
+		IL_0103: newobj instance void Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject::.ctor()
+		IL_0108: ldc.i4.2
+		IL_0109: conv.r8
+		IL_010a: ldstr ""
+		IL_010f: ldc.i4.0
+		IL_0110: ldc.i4.0
+		IL_0111: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0116: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.JSON_Parse_Reviver_Holder/ArrowFunction_L24C29/FunctionObject>(!!0)
+		IL_011b: stloc.s 6
+		IL_011d: ldloc.2
+		IL_011e: ldstr "parse"
+		IL_0123: ldstr "1"
+		IL_0128: ldloc.s 6
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_012f: stloc.2
+		IL_0130: volatile.
+		IL_0132: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0137: brfalse IL_014e
+
+		IL_013c: ldloc.s 5
+		IL_013e: ldstr "log"
+		IL_0143: ldloc.2
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0149: br IL_0165
+
+		IL_014e: ldloc.s 5
+		IL_0150: ldstr "log"
+		IL_0155: ldloc.2
+		IL_0156: ldstr "JSON_Parse_Reviver_Holder:Modules.JSON_Parse_Reviver_Holder:__js_module_init__:32"
+		IL_015b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_0165: pop
+		IL_0166: ldstr "console"
+		IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0175: stloc.2
+		IL_0176: ldstr "JSON"
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0185: stloc.s 5
+		IL_0187: ldstr "JSON"
+		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0196: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_019b: stloc.s 7
+		IL_019d: ldstr "parse"
+		IL_01a2: ldstr "{\"x\":1}"
+		IL_01a7: ldloc.s 7
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01ae: stloc.s 8
+		IL_01b0: volatile.
+		IL_01b2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_01b7: brfalse IL_01cf
+
+		IL_01bc: ldloc.s 5
+		IL_01be: ldstr "stringify"
+		IL_01c3: ldloc.s 8
+		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01ca: br IL_01e7
+
+		IL_01cf: ldloc.s 5
+		IL_01d1: ldstr "stringify"
+		IL_01d6: ldloc.s 8
+		IL_01d8: ldstr "JSON_Parse_Reviver_Holder:Modules.JSON_Parse_Reviver_Holder:__js_module_init__:46"
+		IL_01dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_01e7: stloc.s 8
+		IL_01e9: volatile.
+		IL_01eb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_01f0: brfalse IL_0207
+
+		IL_01f5: ldloc.2
+		IL_01f6: ldstr "log"
+		IL_01fb: ldloc.s 8
+		IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0202: br IL_021e
+
+		IL_0207: ldloc.2
+		IL_0208: ldstr "log"
+		IL_020d: ldloc.s 8
+		IL_020f: ldstr "JSON_Parse_Reviver_Holder:Modules.JSON_Parse_Reviver_Holder:__js_module_init__:47"
+		IL_0214: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+		IL_021e: pop
+		IL_021f: ret
 	} // end of method JSON_Parse_Reviver_Holder::__js_module_init__
 
 } // end of class Modules.JSON_Parse_Reviver_Holder
@@ -739,6 +1000,20 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_3
 	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+	.field assembly static int32 __jroc_dynamicLookup_10
+	.field assembly static int32 __jroc_dynamicLookup_11
+	.field assembly static int32 __jroc_dynamicLookup_12
+	.field assembly static int32 __jroc_dynamicLookup_13
+	.field assembly static int32 __jroc_dynamicLookup_14
+	.field assembly static int32 __jroc_dynamicLookup_15
+	.field assembly static int32 __jroc_dynamicLookup_16
+	.field assembly static int32 __jroc_dynamicLookup_17
+	.field assembly static int32 __jroc_dynamicLookup_18
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

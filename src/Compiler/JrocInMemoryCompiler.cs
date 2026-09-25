@@ -91,6 +91,7 @@ public static class JrocInMemoryCompiler
             DiagnosticFilePath = request.DiagnosticFilePath,
             AnalyzeUnused = request.AnalyzeUnused,
             GenerateModuleExportContracts = request.GenerateModuleExportContracts,
+            AssumeUnmodifiedHostGlobals = request.AssumeUnmodifiedHostGlobals,
             HostRuntimeIntrinsics = request.HostRuntimeIntrinsics
         }, compilerOutput);
     }
@@ -126,6 +127,7 @@ public static class JrocInMemoryCompiler
             DiagnosticFilePath = request.DiagnosticFilePath,
             AnalyzeUnused = request.AnalyzeUnused,
             GenerateModuleExportContracts = request.GenerateModuleExportContracts,
+            AssumeUnmodifiedHostGlobals = request.AssumeUnmodifiedHostGlobals,
             HostRuntimeIntrinsics = request.HostRuntimeIntrinsics
         };
 
