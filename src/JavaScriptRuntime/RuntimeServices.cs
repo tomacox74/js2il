@@ -70,9 +70,9 @@ public class RuntimeServices
         public object? Value = TemporalDeadZoneSentinel;
     }
 
-    private sealed class GeneratedClassMethodReceiverSlot(object receiver)
+    private sealed class GeneratedClassMethodReceiverSlot(object? receiver)
     {
-        public object Receiver { get; } = receiver;
+        public object? Receiver { get; } = receiver;
     }
 
     internal sealed class LazyClassMetadataSlot
@@ -1087,11 +1087,6 @@ public class RuntimeServices
         {
             if (receiver is null || receiver is JsNull || !ownerType.IsInstanceOfType(receiver))
             {
-                if (!IsPrototypeObjectForClass(receiver, ownerType))
-                {
-                    throw new TypeError("Class method receiver is incompatible with its declaring class");
-                }
-
                 instance = RuntimeHelpers.GetUninitializedObject(ownerType);
                 ownerType.GetField("_scopes", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                     ?.SetValue(instance, scopes);
@@ -1146,11 +1141,6 @@ public class RuntimeServices
             return replacement.Receiver;
         }
 
-        if (!IsPrototypeObjectForClass(receiver, ownerType))
-        {
-            throw new TypeError("Class method receiver is incompatible with its declaring class");
-        }
-
         var instance = RuntimeHelpers.GetUninitializedObject(ownerType);
         ownerType.GetField(
                 "_scopes",
@@ -1158,11 +1148,11 @@ public class RuntimeServices
             ?.SetValue(instance, scopes);
         _generatedClassMethodReceivers.Add(
             instance,
-            new GeneratedClassMethodReceiverSlot(receiver!));
+            new GeneratedClassMethodReceiverSlot(receiver));
         return instance;
     }
 
-    public static object ResolveGeneratedClassMethodThis(object instance)
+    public static object? ResolveGeneratedClassMethodThis(object instance)
         => _generatedClassMethodReceivers.TryGetValue(instance, out var slot)
             ? slot.Receiver
             : instance;

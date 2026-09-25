@@ -40,9 +40,9 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,570 | 12 | 6,930 | 23,512 | **70.47%** |
-| Language syntax and semantics | 15,658 | 46 | 7,943 | 23,647 | **66.22%** |
-| **Total** | 32,228 | 58 | 15,959 | 48,245 | **66.80%** |
+| Built-in objects and APIs | 16,612 | 12 | 6,888 | 23,512 | **70.65%** |
+| Language syntax and semantics | 15,826 | 46 | 7,775 | 23,647 | **66.93%** |
+| **Total** | 32,438 | 58 | 15,749 | 48,245 | **67.24%** |
 
 ## Language Areas
 
@@ -57,7 +57,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 7,231 | 10 | 3,797 | 11,038 | **65.51%** |
+| `expressions` | 7,265 | 10 | 3,763 | 11,038 | **65.82%** |
 | `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -73,7 +73,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,583 | 35 | 2,719 | 9,337 | **70.50%** |
+| `statements` | 6,617 | 35 | 2,685 | 9,337 | **70.87%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -95,7 +95,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
 | `call` | 73 | 1 | 18 | 92 | **79.35%** |
-| `class` | 2,402 | 0 | 1,657 | 4,059 | **59.18%** |
+| `class` | 2,436 | 0 | 1,623 | 4,059 | **60.01%** |
 | `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
 | `compound-assignment` | 355 | 0 | 99 | 454 | **78.19%** |
@@ -108,7 +108,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
 | `function` | 246 | 3 | 15 | 264 | **93.18%** |
-| `generators` | 212 | 0 | 78 | 290 | **73.10%** |
+| `generators` | 262 | 0 | 28 | 290 | **90.34%** |
 | `greater-than-or-equal` | 42 | 0 | 1 | 43 | **97.67%** |
 | `greater-than` | 48 | 0 | 1 | 49 | **97.96%** |
 | `grouping` | 6 | 0 | 3 | 9 | **66.67%** |
@@ -160,7 +160,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 2,383 | 0 | 1,984 | 4,367 | **54.57%** |
+| `class` | 2,417 | 0 | 1,950 | 4,367 | **55.35%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |
@@ -172,7 +172,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `for-of` | 744 | 7 | 0 | 751 | **99.07%** |
 | `for` | 368 | 0 | 17 | 385 | **95.58%** |
 | `function` | 402 | 14 | 35 | 451 | **89.14%** |
-| `generators` | 197 | 0 | 69 | 266 | **74.06%** |
+| `generators` | 247 | 0 | 19 | 266 | **92.86%** |
 | `if` | 59 | 0 | 10 | 69 | **85.51%** |
 | `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
 | `let` | 140 | 0 | 5 | 145 | **96.55%** |
@@ -231,7 +231,7 @@ folder fails its test cases rather than retrying them as individual assemblies.
 | `Object` | 3,338 | 0 | 73 | 3,411 | **97.86%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
-| `Promise` | 384 | 0 | 293 | 677 | **56.72%** |
+| `Promise` | 426 | 0 | 251 | 677 | **62.92%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
 | `RegExp` | 1,050 | 0 | 829 | 1,879 | **55.88%** |

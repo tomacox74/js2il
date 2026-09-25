@@ -175,6 +175,21 @@
         "notes": "Compiler-marked public instance fields now expose exact-name own data-property descriptors with their current values and writable, enumerable, configurable class-field attributes. Unrelated CLR fields are not exposed by this descriptor fallback. The native harness also verifies six related private-method and private-name sequencing fixtures in class expressions and declarations."
       },
       {
+        "clause": "15.7.14",
+        "feature": "Public class methods on unbound receivers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/dstr/AsyncGeneratorParameterErrorExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/dstr/AsyncGeneratorParameterErrorExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/dstr/async-gen-meth-ary-init-iter-get-err.js",
+          "test/language/statements/class/dstr/async-gen-meth-obj-ptrn-list-err.js"
+        ],
+        "notes": "Public class methods do not require a receiver of the declaring CLR type. The native harness verifies 68 previously failing class-expression and class-declaration async-generator cases in which an unbound public method must evaluate its destructured parameters and throw the original abrupt completion at call time. Private methods continue to enforce their brand."
+      },
+      {
         "clause": "15.7",
         "feature": "Class-expression conformance expansion",
         "status": "Supported with Limitations",
