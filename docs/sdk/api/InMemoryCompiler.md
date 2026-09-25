@@ -52,6 +52,11 @@ guarantee for later exported calls. Do not enable it for modules that can
 acquire the global object indirectly through an unanalyzed host value.
 Known source mutations and explicit host-global replacements still take the
 checked path. The option also applies to multi-entry compilation.
+Strict identity comparisons (`===` and `!==`) of `this` or `globalThis`
+do not by themselves expose the global object, so they preserve the
+branch-free path when the host contract and other source analysis allow it.
+Passing the object to a callback, storing an alias, or writing its
+properties still prevents that optimization.
 
 ## Compile and evaluate
 

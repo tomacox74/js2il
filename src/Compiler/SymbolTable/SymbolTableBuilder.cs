@@ -140,6 +140,33 @@ namespace Jroc.SymbolTables
             return true;
         }
 
+        private void BuildStrictIdentityOperand(Scope globalScope, Node operand, Scope currentScope)
+        {
+            switch (operand)
+            {
+                case ParenthesizedExpression parenthesized:
+                    BuildStrictIdentityOperand(globalScope, parenthesized.Expression, currentScope);
+                    break;
+                case ThisExpression:
+                    if (currentScope.Kind == ScopeKind.Global)
+                    {
+                        currentScope.UsesGlobalThisValue = true;
+                    }
+                    break;
+                case Identifier { Name: "globalThis" }:
+                    if (currentScope.Kind == ScopeKind.Global)
+                    {
+                        currentScope.UsesGlobalThisValue = true;
+                    }
+                    break;
+                case Identifier { Name: "global" }:
+                    break;
+                default:
+                    BuildScopeRecursive(globalScope, operand, currentScope);
+                    break;
+            }
+        }
+
         private static bool TryGetDirectGlobalObjectProperty(Scope scope, Node? node, out string propertyName)
         {
             propertyName = "";
@@ -1878,6 +1905,12 @@ namespace Jroc.SymbolTables
                     break;
                 case ExpressionStatement exprStmt:
                     BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
+                    break;
+                case BinaryExpression binaryExpr when binaryExpr.Operator is
+                    Acornima.Operator.StrictEquality or Acornima.Operator.StrictInequality:
+                    // Identity checks consume the object without exposing it or invoking coercion.
+                    BuildStrictIdentityOperand(globalScope, binaryExpr.Left, currentScope);
+                    BuildStrictIdentityOperand(globalScope, binaryExpr.Right, currentScope);
                     break;
                 case AssignmentExpression assignExpr:
                     if (assignExpr.Left is Identifier assignId)

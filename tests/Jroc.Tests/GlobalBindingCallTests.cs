@@ -219,6 +219,98 @@ public class GlobalBindingCallTests
         Assert.Contains("aliased", Execute(alias, "GlobalCallAliasedGlobal").Output);
     }
 
+    [Theory]
+    [InlineData("this === receiver")]
+    [InlineData("this !== receiver")]
+    [InlineData("(this) === receiver")]
+    public void OptInKeepsDirectConsoleCallsForReadOnlyThisIdentityChecks(string comparison)
+    {
+        var name = "ReadOnlyThisIdentity";
+        var artifact = Compile(
+            name,
+            $$"""
+              "use strict";
+              const receiver = { value: 7 };
+              function report() {
+                  console.log("receiver:", {{comparison}});
+                  return this.value;
+              }
+              console.log("result:", report.call(receiver));
+              """,
+            assumeUnmodifiedHostGlobals: true);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+
+        Assert.Contains("JavaScriptRuntime.Console::log(object, object)", il);
+        Assert.DoesNotContain("GetGlobalBindingValue(string)", il);
+        Assert.Contains("result: 7", Execute(artifact, name).Output);
+    }
+
+    [Fact]
+    public void OptInKeepsDirectConsoleCallsForReadOnlyGlobalThisIdentityChecks()
+    {
+        var name = "ReadOnlyGlobalThisIdentity";
+        var artifact = Compile(
+            name,
+            "console.log('same:', globalThis === globalThis);",
+            assumeUnmodifiedHostGlobals: true);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+
+        Assert.Contains("JavaScriptRuntime.Console::log(object, object)", il);
+        Assert.Contains("same: true", Execute(artifact, name).Output);
+    }
+
+    [Fact]
+    public void OptInStillGuardsWhenThisCanMutateTheGlobalObject()
+    {
+        var name = "MutableThisGlobal";
+        var artifact = Compile(
+            name,
+            """
+            function change() {
+                this.Number = function () { return "changed"; };
+            }
+            change();
+            console.log(Number(1));
+            """,
+            assumeUnmodifiedHostGlobals: true);
+
+        Assert.Contains(
+            "IsOriginalGlobalBinding",
+            AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName));
+        Assert.Contains("changed", Execute(artifact, name).Output);
+    }
+
+    [Fact]
+    public void OptInStillGuardsWhenThisEscapesThroughACall()
+    {
+        var name = "EscapingThisGlobal";
+        var artifact = Compile(
+            name,
+            """
+            function report() { console.log(this); }
+            report();
+            console.log(Number(1));
+            """,
+            assumeUnmodifiedHostGlobals: true);
+
+        Assert.Contains(
+            "IsOriginalGlobalBinding",
+            AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName));
+    }
+
+    [Fact]
+    public void DefaultStillUsesDynamicConsoleBindingForReadOnlyThisIdentityChecks()
+    {
+        var name = "DefaultReadOnlyThisIdentity";
+        var artifact = Compile(
+            name,
+            "function report() { console.log(this === null); } report();");
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+
+        Assert.DoesNotContain("JavaScriptRuntime.Console::log(", il);
+        Assert.Contains("GetGlobalBindingValue(string)", il);
+    }
+
     [Fact]
     public void OptInConsidersAllModulesAndHostOverrides()
     {
