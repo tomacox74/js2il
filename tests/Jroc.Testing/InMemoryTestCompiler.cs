@@ -169,6 +169,42 @@ public static class InMemoryTestCompiler
             outcome.UnhandledException);
     }
 
+    public static InMemoryTestExecutionResult ExecuteLoadedEntry(
+        JrocLoadedAssembly loadedAssembly,
+        JrocCompiledAssemblyArtifact artifact,
+        string moduleId,
+        string entryPath,
+        string testName,
+        bool allowUnhandledException = false,
+        Action<ServiceContainer>? addMocks = null,
+        HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
+        int timeoutMs = 30000)
+    {
+        ArgumentNullException.ThrowIfNull(loadedAssembly);
+        ArgumentNullException.ThrowIfNull(artifact);
+        ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
+        var facade = artifact.FacadeNames
+            ?? throw new InvalidOperationException("The compiled assembly has no module facades.");
+        var module = facade.Modules.Single(entry => entry.ModuleId == moduleId);
+        var type = loadedAssembly.Assembly.GetType(facade.RootTypeName, throwOnError: true)!
+            .GetNestedType("Scripts", BindingFlags.Public)
+            ?? throw new InvalidOperationException($"No scripts facade for '{moduleId}'.");
+        foreach (var segment in module.TypePath)
+        {
+            type = type.GetNestedType(segment, BindingFlags.Public)
+                ?? throw new InvalidOperationException($"No facade for '{moduleId}' at '{segment}'.");
+        }
+
+        var run = type.GetMethod("Run", BindingFlags.Public | BindingFlags.Static)
+            ?? throw new InvalidOperationException($"No Run method for '{moduleId}'.");
+        var entry = (Action<string[]>)Delegate.CreateDelegate(typeof(Action<string[]>), run);
+        var outcome = ExecuteLoadedAssembly(
+            loadedAssembly.Assembly, entryPath, testName, allowUnhandledException,
+            addMocks, hostRuntimeIntrinsics, timeoutMs, null, entry);
+        return new InMemoryTestExecutionResult(
+            outcome.Output, loadedAssembly.LoadContextWeakReference, outcome.UnhandledException);
+    }
+
     private static ExecutionOutcome ExecuteLoadedAssembly(
         Assembly assembly,
         string entryPath,
@@ -177,7 +213,8 @@ public static class InMemoryTestCompiler
         Action<ServiceContainer>? addMocks,
         HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics,
         int timeoutMs,
-        Action<IConsoleOutput>? postTestProcessingAction)
+        Action<IConsoleOutput>? postTestProcessingAction,
+        Action<string[]>? selectedEntry = null)
     {
         var output = new InMemoryConsoleOutput();
         var serviceProvider = RuntimeServices.BuildServiceProvider();
@@ -206,11 +243,14 @@ public static class InMemoryTestCompiler
                     Path.GetDirectoryName(entryPath) ?? string.Empty,
                     entryPath);
 
-                var entryPoint = assembly.EntryPoint
-                    ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
-                ((Action<string[]>)Delegate.CreateDelegate(
-                    typeof(Action<string[]>),
-                    entryPoint))(System.Array.Empty<string>());
+                var entry = selectedEntry;
+                if (entry is null)
+                {
+                    var entryPoint = assembly.EntryPoint
+                        ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
+                    entry = (Action<string[]>)Delegate.CreateDelegate(typeof(Action<string[]>), entryPoint);
+                }
+                entry(System.Array.Empty<string>());
             }
             catch (Exception ex)
             {

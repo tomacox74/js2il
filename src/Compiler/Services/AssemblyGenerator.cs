@@ -224,7 +224,7 @@ namespace Jroc.Services
                 var coordinator = _serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
 
                 // Count callables for this module (deterministic; used for global MethodDef row assignment).
-                var callableCount = new CallableDiscovery(symbolTable).DiscoverAll().Count;
+                var callableCount = new CallableDiscovery(symbolTable).DiscoverAll().Distinct().Count();
 
                 // Phase 1 (per module): allocate future MethodDef row ids for all callables.
                 // IMPORTANT: do this before declaring any owner TypeDefs so we can keep TypeDef.MethodList monotonic.

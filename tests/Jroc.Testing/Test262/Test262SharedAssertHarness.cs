@@ -4,6 +4,7 @@ using JsNull = JavaScriptRuntime.JsNull;
 using JsThrownValueException = JavaScriptRuntime.JsThrownValueException;
 using ObjectRuntime = JavaScriptRuntime.ObjectRuntime;
 using System.Text.RegularExpressions;
+using Jroc;
 
 namespace Jroc.Tests;
 
@@ -21,26 +22,54 @@ public static class Test262SharedAssertHarness
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
         var preparedEntryScript = PrepareEntryScript(entryScript, metadata);
+        return ExecuteWithFixtureRuntime(
+            testName, metadata, allowUnhandledException, (hostRuntimeIntrinsics) =>
+                InMemoryTestCompiler.CompileAndExecute(
+                    testName,
+                    testCategory,
+                    name => ResolveJavaScriptAndSourcePath(
+                        name, testName, preparedEntryScript, entrySourcePath, getJavaScriptAndSourcePath),
+                    enableIRMetrics: enableIRMetrics,
+                    allowUnhandledException: allowUnhandledException,
+                    addMocks: addMocks,
+                    hostRuntimeIntrinsics: hostRuntimeIntrinsics,
+                    timeoutMs: timeoutMs));
+    }
+
+    public static InMemoryTestExecutionResult ExecuteCompiledEntry(
+        string testName,
+        string entryScript,
+        string entrySourcePath,
+        JrocLoadedAssembly loadedAssembly,
+        JrocCompiledAssemblyArtifact artifact,
+        string moduleId,
+        bool allowUnhandledException = false,
+        int timeoutMs = 30000)
+    {
+        var metadata = ParseFrontmatter(entryScript);
+        return ExecuteWithFixtureRuntime(
+            testName, metadata, allowUnhandledException, hostRuntimeIntrinsics =>
+                InMemoryTestCompiler.ExecuteLoadedEntry(
+                    loadedAssembly, artifact, moduleId, entrySourcePath, testName,
+                    allowUnhandledException: allowUnhandledException,
+                    hostRuntimeIntrinsics: hostRuntimeIntrinsics,
+                    timeoutMs: timeoutMs));
+    }
+
+    public static IReadOnlyList<string> GetHarnessIncludes(string entryScript)
+        => ParseFrontmatter(entryScript).Includes;
+
+    private static InMemoryTestExecutionResult ExecuteWithFixtureRuntime(
+        string testName,
+        FrontmatterMetadata metadata,
+        bool allowUnhandledException,
+        Func<JavaScriptRuntime.HostRuntimeIntrinsicDescriptors, InMemoryTestExecutionResult> execute)
+    {
         var completion = new Test262AsyncCompletion(metadata.Async);
         var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes, completion);
-
         var expectsRuntimeException = allowUnhandledException
             && string.Equals(metadata.NegativePhase, "runtime", StringComparison.OrdinalIgnoreCase);
-        var result = InMemoryTestCompiler.CompileAndExecute(
-            testName,
-            testCategory,
-            name => ResolveJavaScriptAndSourcePath(
-                name,
-                testName,
-                preparedEntryScript,
-                entrySourcePath,
-                getJavaScriptAndSourcePath),
-            enableIRMetrics: enableIRMetrics,
-            allowUnhandledException: allowUnhandledException,
-            addMocks: addMocks,
-            hostRuntimeIntrinsics: hostRuntimeIntrinsics,
-            timeoutMs: timeoutMs);
-
+        var result = execute(hostRuntimeIntrinsics);
         var asyncFailure = completion.GetFailure(testName, result.UnhandledException is not null);
         if (asyncFailure is not null)
         {

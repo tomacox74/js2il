@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(test262): compile and load one in-memory assembly per runnable
+  JavaScript fixture folder during each xUnit run, retaining independent
+  test cases and separate compilation for expected failures.
 - feat(compiler): compile multiple independent JavaScript entry sources into
   one assembly via a public in-memory API or repeatable CLI inputs, preserving
   separate entry facades, a selected default entry, and per-entry source paths.
