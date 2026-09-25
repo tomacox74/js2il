@@ -9,6 +9,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - perf(test262): compile and load one in-memory assembly per runnable
   JavaScript fixture folder during each xUnit run, retaining independent
   test cases and separate compilation for expected failures.
+- feat(runtime): implement `Iterator.concat`, `Iterator.zip`, and
+  `Iterator.zipKeyed` with iterable acquisition, padding, closing, and
+  completion handling; port 100 previously failing pinned Test262 cases.
 - feat(runtime): add Atomics integer typed-array read, write, and read-modify-write
   operations, plus isLockFree and pause; port 100 previously failing pinned
   Test262 cases across Number and BigInt typed arrays.

@@ -102,7 +102,7 @@
     {
       "clause": "27.1.3.2.1",
       "title": "Iterator.concat ( ... items )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iterator.concat"
     },
     {
@@ -313,6 +313,23 @@
   "support": {
     "entries": [
       {
+        "clause": "27.1.3.2",
+        "feature": "Iterator sequencing and joint iteration",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iterator.concat",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/concat/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/zip/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Iterator/zipKeyed/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Iterator/concat/return-is-forwarded.js",
+          "test/built-ins/Iterator/zip/basic-longest.js",
+          "test/built-ins/Iterator/zipKeyed/basic-shortest.js"
+        ],
+        "notes": "100 pinned Test262 cases that failed before implementation now verify Iterator.concat and the joint-iteration Iterator.zip and Iterator.zipKeyed methods, including options, padding, iterator acquisition, abrupt completion, metadata, and iterator closing. Cross-realm and a few remaining iterator edge cases are not covered."
+      },
+      {
         "clause": "27.1",
         "feature": "Iterator helper conformance coverage",
         "status": "Supported with Limitations",
@@ -344,7 +361,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/flatMap/FailingBatch100ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Iterator/prototype/forEach/FailingBatch100ExecutionTests.cs"
         ],
-        "notes": "308 additional pinned Test262 cases verify Iterator.from plus lazy drop, take, filter, map, flatMap, and terminal every, find, forEach, reduce, some, and toArray helpers. The verified cases include single next-method acquisition, iterator-result validation and access order, callback validation order, IteratorClose completion precedence, lazy return forwarding, helper reentrancy, subclassing, disposal, metadata, and supported error paths. Iterator.concat, Iterator.zip, Iterator.zipKeyed, cross-realm behavior, and remaining iterator helper edge cases remain limited."
+        "notes": "308 earlier pinned Test262 cases verify Iterator.from plus lazy drop, take, filter, map, flatMap, and terminal every, find, forEach, reduce, some, and toArray helpers. The verified cases include single next-method acquisition, iterator-result validation and access order, callback validation order, IteratorClose completion precedence, lazy return forwarding, helper reentrancy, subclassing, disposal, metadata, and supported error paths. Sequencing and joint iteration are recorded separately; cross-realm behavior and remaining iterator helper edge cases remain limited."
       },
       {
         "clause": "27.1.1",
@@ -394,7 +411,7 @@
           "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
           "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
         ],
-        "notes": "JROC now exposes global `Iterator` and `Iterator.prototype` surfaces, including `Iterator.from(...)`, helper chaining, terminal helpers, and iterable array-iterator objects. `Iterator.concat` and full abstract-constructor semantics are still not implemented."
+        "notes": "JROC exposes global `Iterator` and `Iterator.prototype` surfaces, including `Iterator.from(...)`, `Iterator.concat(...)`, `Iterator.zip(...)`, `Iterator.zipKeyed(...)`, helper chaining, terminal helpers, and iterable array-iterator objects. Full abstract-constructor and cross-realm semantics are still limited."
       },
       {
         "clause": "27.1.4",

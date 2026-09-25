@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JavaScriptRuntime;
 
-public static class Iterator
+public static partial class Iterator
 {
     /// <summary>Realm-owned <c>%IteratorPrototype%</c> (issue #1824).</summary>
     internal static object Prototype
@@ -65,12 +65,15 @@ public static class Iterator
         Function.InitializeFunctionInstance(iteratorConstructorValue, 0d, "Iterator");
         Function.MarkConstructible(iteratorConstructorValue);
         DefineDataProperty(iteratorConstructorValue, "prototype", iteratorPrototype);
+        DefineFunctionProperty(iteratorConstructorValue, "concat", (BuiltinFunctionVariadic)ConstructorConcat, 0d);
         DefineFunctionProperty(
             iteratorConstructorValue,
             "from",
             (BuiltinFunction1)ConstructorFrom,
             1d,
             requiresInvocationContext: true);
+        DefineFunctionProperty(iteratorConstructorValue, "zip", (BuiltinFunction2)ConstructorZip, 1d);
+        DefineFunctionProperty(iteratorConstructorValue, "zipKeyed", (BuiltinFunction2)ConstructorZipKeyed, 1d);
 
         DefineImmutablePrototypeAccessor(iteratorPrototype, "constructor", iteratorConstructorValue);
         DefineFunctionProperty(iteratorPrototype, "drop", (BuiltinFunctionVariadic)PrototypeDrop, 1d);
@@ -292,22 +295,22 @@ public static class Iterator
 
     private static object? HelperPrototypeNext(object? thisArgument)
     {
-        if (thisArgument is not IteratorHelperBase helper)
+        if (thisArgument is not IteratorHelperBase && thisArgument is not ZipIteratorHelper)
         {
             throw new TypeError("Iterator helper next called on incompatible receiver");
         }
 
-        return helper.Next();
+        return ((IJavaScriptIterator)thisArgument).Next();
     }
 
     private static object? HelperPrototypeReturn(object? thisArgument)
     {
-        if (thisArgument is not IteratorHelperBase helper)
+        if (thisArgument is not IteratorHelperBase && thisArgument is not ZipIteratorHelper)
         {
             throw new TypeError("Iterator helper return called on incompatible receiver");
         }
 
-        helper.Return();
+        ((IJavaScriptIterator)thisArgument).Return();
         return IteratorResult.Create(null, done: true);
     }
 
@@ -785,6 +788,17 @@ public static class Iterator
             }
 
             return new IteratorStep(ObjectRuntime.GetProperty(result!, "value"), false);
+        }
+
+        public bool StepIsDone()
+        {
+            var result = NextRaw();
+            if (!Proxy.IsObjectLikeValue(result))
+            {
+                throw new TypeError("Iterator next method must return an object");
+            }
+
+            return TypeUtilities.ToBoolean(ObjectRuntime.GetProperty(result!, "done"));
         }
 
         public object? ReturnForWrapper()

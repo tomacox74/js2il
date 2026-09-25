@@ -23,7 +23,7 @@ internal static class Test262PropertyHelpers
             .AddGlobalFactory("verifyPrimordialCallableProperty", () => Function(VerifyCallableProperty, "verifyCallableProperty", 4));
     }
 
-    private static object? VerifyProperty(object[] _, object?[]? args)
+    internal static object? VerifyProperty(object[] _, object?[]? args)
     {
         args ??= [];
         if (args.Length < 3)
