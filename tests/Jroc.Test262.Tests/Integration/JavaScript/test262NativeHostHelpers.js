@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js, dateConstants.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js, dateConstants.js, iteratorZipUtils.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -197,3 +197,76 @@ assert.sameValue(date_2099_end, 4102444799999);
 assert.sameValue(date_2100_start, 4102444800000);
 assert.sameValue(start_of_time, -8.64e15);
 assert.sameValue(end_of_time, 8.64e15);
+
+var iteratorHelperPrototype = getWellKnownIntrinsicObject('%IteratorHelperPrototype%');
+assert.sameValue(Object.getPrototypeOf(iteratorHelperPrototype), Iterator.prototype);
+assert.sameValue(getWellKnownIntrinsicObject('%IteratorHelperPrototype%'), iteratorHelperPrototype);
+assert.sameValue(typeof iteratorHelperPrototype.next, 'function');
+assert.sameValue(typeof iteratorHelperPrototype.return, 'function');
+
+var combinationCount = 0;
+var firstCombination = true;
+forEachSequenceCombination(function(inputs, label, min, max) {
+    if (firstCombination) {
+        assert.compareArray(inputs, []);
+        assert.sameValue(label, 'inputs = []');
+        assert.sameValue(min, 0);
+        assert.sameValue(max, 0);
+        firstCombination = false;
+    }
+    if (combinationCount === 5) {
+        assert.compareArray(inputs[0], ['a', 'b', 'c', 'd']);
+        assert.sameValue(label, 'inputs = [["a","b","c","d"]]');
+        assert.sameValue(min, 4);
+        assert.sameValue(max, 4);
+    }
+    if (combinationCount === 155) {
+        assert.compareArray(inputs[2], ['i', 'j', 'k', 'l']);
+        assert.sameValue(min, 4);
+        assert.sameValue(max, 4);
+    }
+    combinationCount++;
+});
+assert.sameValue(combinationCount, 156);
+var keyedCount = 0;
+forEachSequenceCombinationKeyed(function(inputs, label, min, max) {
+    if (keyedCount === 6) {
+        assert.compareArray(Object.keys(inputs), ['prop_0', 'prop_1']);
+        assert.compareArray(inputs.prop_0, []);
+        assert.compareArray(inputs.prop_1, []);
+        assert.sameValue(label, 'inputs = {"prop_0":[],"prop_1":[]}');
+        assert.sameValue(min, 0);
+        assert.sameValue(max, 0);
+    }
+    keyedCount++;
+});
+assert.sameValue(keyedCount, 156);
+assertIteratorResult({value: 2, done: false}, 2, false, 'iterator result');
+assertIsPackedArray([1, 2], 'packed array');
+assert.throws(assert.AssertionError, function() {
+    assertIteratorResult({done: false, value: 2}, 2, false, 'wrong key order');
+});
+assert.throws(Test262Error, function() {
+    assertIsPackedArray([, 2], 'array with hole');
+});
+var zippedStep = 0;
+assertZipped({
+    next: function() {
+        var step = zippedStep++;
+        return {value: [step, 'x'], done: false};
+    }
+}, [[0, 1], ['x', 'x']], 2, 'zip');
+var keyedStep = 0;
+assertZippedKeyed({
+    next: function() {
+        var value = Object.create(null);
+        value.prop_0 = keyedStep++;
+        value.prop_1 = 'x';
+        return {value: value, done: false};
+    }
+}, {prop_0: [0, 1], prop_1: ['x', 'x']}, 2, 'zip keyed');
+assert.throws(assert.AssertionError, function() {
+    assertZippedKeyed({
+        next: function() { return {value: {prop_0: 0}, done: false}; }
+    }, {prop_0: [0]}, 1, 'ordinary prototype');
+});

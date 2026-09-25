@@ -137,6 +137,11 @@ public static class Test262HostRuntimeIntrinsics
             Test262TemporalHelpers.Register(builder);
         }
 
+        if (included.Contains("iteratorZipUtils.js"))
+        {
+            Test262IteratorZipHelpers.Register(builder);
+        }
+
         return builder.Build();
     }
 
@@ -342,6 +347,7 @@ public static class Test262HostRuntimeIntrinsics
             "%GeneratorFunction%" => EnsureRealmIntrinsic(
                 GeneratorObject.GeneratorFunctionPrototypeObject,
                 GetStaticFieldValue(typeof(GeneratorObject), "_generatorFunctionConstructor")),
+            "%IteratorHelperPrototype%" => Iterator.HelperPrototype,
             var unsupported => throw CreateTest262Error($"Unsupported intrinsic {unsupported}")
         };
     }
