@@ -20,7 +20,7 @@ internal sealed partial class LIRToILCompiler
             case LIRReturnUndefinedImmediate:
                 if (MethodBody.IsGenerator)
                 {
-                    EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation);
+                    EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                 }
                 if (!methodDescriptor.ReturnsVoid)
                 {

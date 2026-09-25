@@ -427,7 +427,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
 
                         ilEncoder.MarkLabel(restoreLocalsLabel);
-                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                         ilEncoder.MarkLabel(skipRestoreLabel);
 
                         if (asyncInfoForAsyncGen != null && asyncInfoForAsyncGen.HasAwaits)
@@ -617,7 +617,7 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
-                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                         ilEncoder.MarkLabel(skipRestoreLabel);
 
                         // Now emit the state switch to dispatch to resume points
@@ -754,7 +754,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Ble, skipGeneratorLocalsRestoreLabel);
                         ilEncoder.MarkLabel(restoreGeneratorLocalsLabel);
-                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation, methodDescriptor);
                         ilEncoder.MarkLabel(skipGeneratorLocalsRestoreLabel);
                     }
                     else
