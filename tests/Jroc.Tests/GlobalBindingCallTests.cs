@@ -146,6 +146,22 @@ public class GlobalBindingCallTests
         Assert.Contains("changed", result.Output);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void BigIntLiteralsIgnoreReplacedGlobalCallable(bool assumeUnmodifiedHostGlobals)
+    {
+        const string source = """
+            globalThis.BigInt = function () { return 9; };
+            console.log(2n + 3n, BigInt(1));
+            """;
+
+        var result = Execute(
+            Compile("BigIntLiteralAndReplacedGlobal", source, assumeUnmodifiedHostGlobals),
+            "BigIntLiteralAndReplacedGlobal");
+        Assert.Contains("5 9", result.Output);
+    }
+
     [Fact]
     public void WithObjectCallShadowsGlobalIntrinsic()
     {

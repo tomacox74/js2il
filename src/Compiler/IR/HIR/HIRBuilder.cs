@@ -5023,7 +5023,10 @@ partial class HIRMethodBuilder
         var bigIntSymbol = _currentScope.FindSymbol("BigInt");
         hirExpr = new HIRCallExpression(
             new HIRVariableExpression(bigIntSymbol),
-            new[] { new HIRLiteralExpression(JavascriptType.String, canonical) });
+            new[] { new HIRLiteralExpression(JavascriptType.String, canonical) })
+        {
+            IsBigIntLiteral = true
+        };
         return true;
     }
 

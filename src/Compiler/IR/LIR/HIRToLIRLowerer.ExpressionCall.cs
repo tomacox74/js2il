@@ -15,6 +15,23 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerCallExpression(HIRCallExpression callExpr, out TempVariable resultTempVar)
     {
+        if (callExpr.IsBigIntLiteral)
+        {
+            resultTempVar = default;
+            if (callExpr.Arguments.Length != 1
+                || !TryLowerExpression(callExpr.Arguments[0], out var literal))
+            {
+                return false;
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                "BigInt", nameof(JavaScriptRuntime.BigInt.Call), [literal], resultTempVar));
+            DefineTempStorage(resultTempVar,
+                new ValueStorage(ValueStorageKind.BoxedValue, typeof(System.Numerics.BigInteger)));
+            return true;
+        }
+
         if (callExpr.Callee is not HIRVariableExpression
             {
                 Name: { Kind: BindingKind.Global } global
