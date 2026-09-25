@@ -6,6 +6,81 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.class_.elements") { }
 
+    [Fact(DisplayName = "static-as-valid-static-field-assigned.js")]
+    public Task ported_static_as_valid_static_field_assigned() => ExecutionTest("static-as-valid-static-field-assigned");
+
+    [Fact(DisplayName = "static-as-valid-static-field.js")]
+    public Task ported_static_as_valid_static_field() => ExecutionTest("static-as-valid-static-field");
+
+    [Fact(DisplayName = "static-field-anonymous-function-length.js")]
+    public Task ported_static_field_anonymous_function_length() => ExecutionTest("static-field-anonymous-function-length");
+
+    [Fact(DisplayName = "static-field-declaration.js")]
+    public Task ported_static_field_declaration() => ExecutionTest("static-field-declaration");
+
+    [Fact(DisplayName = "private-static-field-shadowed-by-field-on-nested-class.js")]
+    public Task ported_private_static_field_shadowed_by_field_on_nested_class() => ExecutionTest("private-static-field-shadowed-by-field-on-nested-class");
+
+    [Fact(DisplayName = "private-static-field-shadowed-by-setter-on-nested-class.js")]
+    public Task ported_private_static_field_shadowed_by_setter_on_nested_class() => ExecutionTest("private-static-field-shadowed-by-setter-on-nested-class");
+
+    [Fact(DisplayName = "private-static-method-shadowed-by-field-on-nested-class.js")]
+    public Task ported_private_static_method_shadowed_by_field_on_nested_class() => ExecutionTest("private-static-method-shadowed-by-field-on-nested-class");
+
+    [Fact(DisplayName = "private-static-method-shadowed-by-setter-on-nested-class.js")]
+    public Task ported_private_static_method_shadowed_by_setter_on_nested_class() => ExecutionTest("private-static-method-shadowed-by-setter-on-nested-class");
+
+    [Fact(DisplayName = "static-private-setter-access-on-inner-function.js")]
+    public Task ported_static_private_setter_access_on_inner_function() => ExecutionTest("static-private-setter-access-on-inner-function");
+
+    [Fact(DisplayName = "static-private-setter.js")]
+    public Task ported_static_private_setter() => ExecutionTest("static-private-setter");
+
+    [Fact(DisplayName = "private-setter-access-on-inner-function.js")]
+    public Task ported_private_setter_access_on_inner_function() => ExecutionTest("private-setter-access-on-inner-function");
+
+    [Fact(DisplayName = "private-setter-shadowed-by-setter-on-nested-class.js")]
+    public Task ported_private_setter_shadowed_by_setter_on_nested_class() => ExecutionTest("private-setter-shadowed-by-setter-on-nested-class");
+
+    [Fact(DisplayName = "after-same-line-gen-private-method-getter-usage.js")]
+    public Task ported_after_same_line_gen_private_method_getter_usage() => ExecutionTest("after-same-line-gen-private-method-getter-usage");
+
+    [Fact(DisplayName = "after-same-line-method-private-method-getter-usage.js")]
+    public Task ported_after_same_line_method_private_method_getter_usage() => ExecutionTest("after-same-line-method-private-method-getter-usage");
+
+    [Fact(DisplayName = "after-same-line-static-async-gen-private-method-getter-usage.js")]
+    public Task ported_after_same_line_static_async_gen_private_method_getter_usage() => ExecutionTest("after-same-line-static-async-gen-private-method-getter-usage");
+
+    [Fact(DisplayName = "after-same-line-static-async-method-private-method-getter-usage.js")]
+    public Task ported_after_same_line_static_async_method_private_method_getter_usage() => ExecutionTest("after-same-line-static-async-method-private-method-getter-usage");
+
+    [Fact(DisplayName = "after-same-line-static-gen-private-method-getter-usage.js")]
+    public Task ported_after_same_line_static_gen_private_method_getter_usage() => ExecutionTest("after-same-line-static-gen-private-method-getter-usage");
+
+    [Fact(DisplayName = "after-same-line-static-method-private-method-getter-usage.js")]
+    public Task ported_after_same_line_static_method_private_method_getter_usage() => ExecutionTest("after-same-line-static-method-private-method-getter-usage");
+
+    [Fact(DisplayName = "multiple-definitions-private-method-getter-usage.js")]
+    public Task ported_multiple_definitions_private_method_getter_usage() => ExecutionTest("multiple-definitions-private-method-getter-usage");
+
+    [Fact(DisplayName = "private-getter-shadowed-by-field-on-nested-class.js")]
+    public Task ported_private_getter_shadowed_by_field_on_nested_class() => ExecutionTest("private-getter-shadowed-by-field-on-nested-class");
+
+    [Fact(DisplayName = "private-setter-shadowed-by-field-on-nested-class.js")]
+    public Task ported_private_setter_shadowed_by_field_on_nested_class() => ExecutionTest("private-setter-shadowed-by-field-on-nested-class");
+
+    [Fact(DisplayName = "private-method-shadowed-on-nested-class.js")]
+    public Task ported_private_method_shadowed_on_nested_class() => ExecutionTest("private-method-shadowed-on-nested-class");
+
+    [Fact(DisplayName = "private-method-shadowed-by-field-on-nested-class.js")]
+    public Task ported_private_method_shadowed_by_field_on_nested_class() => ExecutionTest("private-method-shadowed-by-field-on-nested-class");
+
+    [Fact(DisplayName = "private-setter-shadowed-by-method-on-nested-class.js")]
+    public Task ported_private_setter_shadowed_by_method_on_nested_class() => ExecutionTest("private-setter-shadowed-by-method-on-nested-class");
+
+    [Fact(DisplayName = "private-setter-shadowed-by-getter-on-nested-class.js")]
+    public Task ported_private_setter_shadowed_by_getter_on_nested_class() => ExecutionTest("private-setter-shadowed-by-getter-on-nested-class");
+
     [Fact(DisplayName = "after-same-line-gen-rs-static-privatename-identifier.js")]
     public Task ported_after_same_line_gen_rs_static_privatename_identifier() => ExecutionTest("after-same-line-gen-rs-static-privatename-identifier");
 

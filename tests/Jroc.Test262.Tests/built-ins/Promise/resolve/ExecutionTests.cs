@@ -33,4 +33,12 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "resolve-non-thenable.js")]
     public Task resolve_non_thenable()
         => ExecutionTestFromFile("resolve-non-thenable");
+
+    [Fact(DisplayName = "context-non-object-with-promise.js")]
+    public Task context_non_object_with_promise()
+        => ExecutionTestFromFile("context-non-object-with-promise");
+
+    [Fact(DisplayName = "ctx-non-object.js")]
+    public Task ctx_non_object()
+        => ExecutionTestFromFile("ctx-non-object");
 }

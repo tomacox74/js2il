@@ -79,6 +79,20 @@
   "support": {
     "entries": [
       {
+        "clause": "13.15.2",
+        "feature": "Compound assignments to private fields and accessors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/compound-assignment/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/compound-assignment/left-hand-side-private-reference-data-property-add.js",
+          "test/language/expressions/compound-assignment/left-hand-side-private-reference-accessor-property-div.js"
+        ],
+        "notes": "Private compound assignments read the initial private value, evaluate the right-hand side once, apply the operator, and write the result through the private field or setter. Object environment records created by with statements still have separate reference-preservation limitations."
+      },
+      {
         "clause": "13.15.1",
         "feature": "Computed property/index assignment (obj[index] = value; arr[i] = value)",
         "status": "Supported",

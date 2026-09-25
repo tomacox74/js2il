@@ -1309,17 +1309,20 @@ public class RuntimeServices
         string methodName,
         object?[] args)
     {
-        var instance = ValidateDirectClassPrivateMethodReceiver(
-            receiver,
-            ownerType);
         var method = ownerType.GetMethod(
             methodName,
             BindingFlags.Instance
+                | BindingFlags.Static
                 | BindingFlags.Public
                 | BindingFlags.NonPublic)
             ?? throw new TypeError(
                 $"Private method '{methodName}' was not found");
-        var scopes = ownerType.GetField(
+        var validatedReceiver = ValidateClassPrivateMethodReceiver(
+            receiver, ownerType, method.IsStatic);
+        var instance = method.IsStatic ? null : validatedReceiver;
+        var scopes = method.IsStatic
+            ? (validatedReceiver as JsClassConstructorObject)?.Scopes ?? EmptyScopes
+            : ownerType.GetField(
                 "_scopes",
                 BindingFlags.Instance
                     | BindingFlags.Public

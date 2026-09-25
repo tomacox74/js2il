@@ -499,6 +499,18 @@ public sealed class CallableDiscovery
 
         foreach (var child in classScope.Children)
         {
+            if (child.Kind == ScopeKind.Class)
+            {
+                DiscoverClass(child, classScopeName);
+                continue;
+            }
+
+            if (child.Kind == ScopeKind.Block)
+            {
+                DiscoverFromScope(child, $"{classScopeName}/{child.Name}");
+                continue;
+            }
+
             if (child.Kind == ScopeKind.Function
                 && child.AstNode is FunctionExpression or ArrowFunctionExpression)
             {

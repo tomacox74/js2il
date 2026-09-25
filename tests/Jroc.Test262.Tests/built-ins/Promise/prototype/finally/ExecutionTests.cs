@@ -37,4 +37,12 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "invokes-then-with-non-function")]
     public Task invokes_then_with_non_function()
         => ExecutionTestFromFile("invokes-then-with-non-function");
+
+    [Fact(DisplayName = "rejected-observable-then-calls.js")]
+    public Task rejected_observable_then_calls()
+        => ExecutionTestFromFile("rejected-observable-then-calls");
+
+    [Fact(DisplayName = "rejection-reason-override-with-throw.js")]
+    public Task rejection_reason_override_with_throw()
+        => ExecutionTestFromFile("rejection-reason-override-with-throw");
 }
