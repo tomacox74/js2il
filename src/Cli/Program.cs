@@ -19,7 +19,7 @@ public class JrocArgs
 
     [ArgDescription("Add a JavaScript input file to the assembly (repeat for each additional file)")]
     [ArgShortcut("--additional-input")]
-    [ArgShortcut("e")]
+    [ArgShortcut("a")]
     public string? AdditionalInput { get; set; }
 
     [ArgDescription("Set the generated assembly identity and artifact basename")]
@@ -41,7 +41,7 @@ public class JrocArgs
     public string? DiagnosticFile { get; set; }
 
     [ArgDescription("Analyze and report unused properties and methods")]
-    [ArgShortcut("a")]
+    [ArgShortcut("--analyzeunused")]
     public bool AnalyzeUnused { get; set; }
 
     [ArgDescription("Emit Portable PDB debug symbols (.pdb) alongside the generated assembly")]
@@ -69,7 +69,7 @@ class Program
 
             if (parsed.AdditionalInput is not null)
             {
-                throw new ArgException("Use -e <file> or --additional-input <file> for each additional entry.");
+                throw new ArgException("Use -a <file> or --additional-input <file> for each additional entry.");
             }
 
             // Version handling (PowerArgs default alias is -Version from property name)
@@ -204,7 +204,7 @@ class Program
             var arg = args[index];
             if (arg.Equals("--additional-input", StringComparison.OrdinalIgnoreCase) ||
                 arg.Equals("-AdditionalInput", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("-e", StringComparison.OrdinalIgnoreCase))
+                arg.Equals("-a", StringComparison.OrdinalIgnoreCase))
             {
                 if (index + 1 >= args.Length || args[index + 1].StartsWith('-') || string.IsNullOrWhiteSpace(args[index + 1]))
                 {
@@ -214,13 +214,13 @@ class Program
                 additionalInputs.Add(args[++index]);
             }
             else if (arg.StartsWith("--additional-input=", StringComparison.OrdinalIgnoreCase) ||
-                     arg.StartsWith("-e=", StringComparison.OrdinalIgnoreCase) ||
+                     arg.StartsWith("-a=", StringComparison.OrdinalIgnoreCase) ||
                      arg.StartsWith("/AdditionalInput:", StringComparison.OrdinalIgnoreCase))
             {
                 var prefixLength = arg[0] == '/'
                     ? "/AdditionalInput:".Length
-                    : arg.StartsWith("-e=", StringComparison.OrdinalIgnoreCase)
-                        ? "-e=".Length
+                    : arg.StartsWith("-a=", StringComparison.OrdinalIgnoreCase)
+                        ? "-a=".Length
                         : "--additional-input=".Length;
                 var path = arg[prefixLength..];
                 if (string.IsNullOrWhiteSpace(path))
@@ -248,12 +248,12 @@ class Program
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
         logger.WriteLineError("--moduleid             Compile an npm/CommonJS module id instead of a file path");
-        logger.WriteLineError("-e, --additional-input <file> Add another input (repeatable; incompatible with --moduleid)");
+        logger.WriteLineError("-a, --additional-input <file> Add another input (repeatable; incompatible with --moduleid)");
         logger.WriteLineError("--assemblyname <name>   Set the assembly identity and artifact basename");
         logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
         logger.WriteLineError("-v, --verbose          Enable diagnostics output to console");
         logger.WriteLineError("--diagnostic-file <path> Write diagnostics output to a text file");
-        logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");
+        logger.WriteLineError("--analyzeunused        Analyze and report unused properties and methods");
         logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
         logger.WriteLineError("--version              Show version information and exit");
         logger.WriteLineError("-h, -?, --help         Show help and exit");

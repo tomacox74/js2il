@@ -261,7 +261,7 @@ namespace Jroc.Tests
             try
             {
                 var (code, _, stderr) = RunOutOfProc(
-                    entry, "-e", extra, outDir, "-e", third);
+                    entry, "-a", extra, outDir, "-a", third);
 
                 Assert.Equal(0, code);
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
@@ -345,7 +345,7 @@ namespace Jroc.Tests
             try
             {
                 var (code, _, stderr) = RunOutOfProc(
-                    entry, "-e=" + extra, "-o", outDir, "--assemblyname", "Combined.Entries");
+                    entry, "-a=" + extra, "-o", outDir, "--assemblyname", "Combined.Entries");
 
                 Assert.Equal(0, code);
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
@@ -408,7 +408,7 @@ namespace Jroc.Tests
 
         [Theory]
         [InlineData("--additional-input")]
-        [InlineData("-e")]
+        [InlineData("-a")]
         public void Convert_AdditionalInput_WithoutPath_ShowsError(string option)
         {
             var (code, _, stderr) = RunOutOfProc(option);
@@ -419,13 +419,37 @@ namespace Jroc.Tests
 
         [Theory]
         [InlineData("--additional-input")]
-        [InlineData("-e")]
+        [InlineData("-a")]
         public void Convert_AdditionalInput_WithModuleId_ShowsConflict(string option)
         {
             var (code, _, stderr) = RunOutOfProc("--moduleid", "any-module", option, "extra.js");
 
             Assert.NotEqual(0, code);
             Assert.Contains("--additional-input cannot be used with --moduleid", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void Convert_AnalyzeUnused_RequiresFullOption()
+        {
+            var testRoot = Path.Combine(Directory.GetCurrentDirectory(), "jroc_cli_analyze_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var entry = Path.Combine(testRoot, "entry.js");
+            var outDir = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "function unused() {}");
+
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc(entry, "-o", outDir, "--analyzeunused");
+
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                Assert.Contains("Analyzing unused code for module:", stdout, StringComparison.Ordinal);
+                Assert.True(File.Exists(Path.Combine(outDir, "entry.dll")));
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
         }
 
         [Fact]
