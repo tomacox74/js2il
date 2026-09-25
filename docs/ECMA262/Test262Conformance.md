@@ -16,6 +16,25 @@ This report provides detailed Test262 conformance evidence for the current devel
 
 Counts are unique, standalone Test262 files. Strict and non-strict execution variants are not counted separately.
 
+## Native test runner
+
+Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
+During execution, the runner discovers registered (non-skipped) fixture calls in the
+C# files beside each `JavaScript/` folder and compiles those entries into one
+in-memory assembly for that folder. Nested fixtures under the same `JavaScript/`
+directory share it; a nested test directory with its own `JavaScript/` directory
+has a separate assembly. Logical entry names avoid CLR identifier collisions,
+while the original fixture paths remain the source paths for debugging.
+The assembly is loaded once per folder and unloaded when the xUnit execution
+run ends; each case executes only its own entry with fresh runtime services,
+test262 helpers, async completion, and output capture.
+
+Expected parse/compilation-failure facts are deliberately **not** part of the
+shared successful assembly: they retain separate in-memory compilation and
+their own diagnostic assertions. Skipped facts and support files are not
+compiled as independent entries. An unexpected failure building a runnable
+folder fails its test cases rather than retrying them as individual assemblies.
+
 ## Overall ECMA-262 Areas
 
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |

@@ -26,13 +26,13 @@ public abstract class DiskExecutionTestsBase
         int timeoutMs = 30000,
         bool allowUnhandledException = false)
     {
-        var result = Test262SharedAssertHarness.CompileAndExecute(
-            testName,
-            _testCategory,
-            name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-            enableIRMetrics: true,
-            allowUnhandledException: allowUnhandledException,
-            timeoutMs: timeoutMs);
+        var (script, sourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
+        var folder = (Test262FolderAssemblyCache.Active
+            ?? throw new InvalidOperationException("The test262 folder assembly cache is not active.")).Get(sourcePath);
+        var (_, moduleId) = folder.GetEntry(sourcePath);
+        var result = Test262SharedAssertHarness.ExecuteCompiledEntry(
+            testName, script, sourcePath, folder.Loaded, folder.Artifact, moduleId,
+            allowUnhandledException, timeoutMs);
 
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;
