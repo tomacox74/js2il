@@ -193,5 +193,8 @@ public sealed class Modules
 {
     public required ModuleDefinition rootModule;
 
-    public Dictionary<string, ModuleDefinition> _modules = new ();
+    public List<ModuleDefinition> EntryModules { get; } = [];
+
+    public Dictionary<string, ModuleDefinition> _modules = new (
+        OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
 }

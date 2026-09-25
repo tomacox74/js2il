@@ -9,6 +9,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - feat(runtime): add Atomics integer typed-array read, write, and read-modify-write
   operations, plus isLockFree and pause; port 100 previously failing pinned
   Test262 cases across Number and BigInt typed arrays.
+- feat(compiler): compile multiple independent JavaScript entry sources into
+  one assembly via a public in-memory API or repeatable CLI inputs, preserving
+  separate entry facades, a selected default entry, and per-entry source paths.
 - fix(compiler): access static private class fields through their static storage
   in class methods and initializers; port 100 previously failing pinned
   Test262 class-expression and class-declaration cases.

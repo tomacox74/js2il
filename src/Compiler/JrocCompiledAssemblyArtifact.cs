@@ -1,5 +1,8 @@
 namespace Jroc;
 
+/// <summary>One explicitly supplied entry in a compiled assembly.</summary>
+public sealed record JrocCompiledEntryModule(string SourcePath, string ModuleId);
+
 public sealed record JrocCompiledAssemblyArtifact(
     string AssemblyName,
     byte[] PeBytes,
@@ -9,6 +12,9 @@ public sealed record JrocCompiledAssemblyArtifact(
     IReadOnlyList<string>? EntryModuleAliases = null,
     JrocFacadeNamePlan? FacadeNames = null)
 {
+    /// <summary>Supplied entries in input order, excluding modules loaded only as dependencies.</summary>
+    public IReadOnlyList<JrocCompiledEntryModule> EntryModules { get; init; } = [];
+
     /// <summary>
     /// Writes this artifact and its runtime dependencies to <paramref name="outputDirectory"/>.
     /// </summary>
