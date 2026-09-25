@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): allow public class methods on unbound or borrowed receivers and
+  make Promise.race constructor-aware with proper capability, resolve, and
+  iterator-close semantics; port 110 previously failing pinned Test262 cases.
 - fix(compiler): bind synchronous generator parameters when the generator
   function is called, preserving initialized locals until the first resume;
   port 100 previously failing pinned Test262 generator-destructuring cases.
