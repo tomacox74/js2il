@@ -9,7 +9,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - fix(compiler): observe mutable global callable and constructor bindings,
   including replacements installed by a host, without disabling intrinsic
   fast paths. Add an explicit AOT host contract for guard-free global calls
-  when source and host bindings are stable.
+  when source and host bindings are stable. Keep BigInt literals independent
+  of the mutable `BigInt` global, and expose supported Promise and Uint8Array
+  static methods through dynamic member lookup.
 - fix(runtime): allow public class methods on unbound or borrowed receivers and
   make Promise.race constructor-aware with proper capability, resolve, and
   iterator-close semantics; port 110 previously failing pinned Test262 cases.
