@@ -416,8 +416,25 @@ namespace JavaScriptRuntime
             static (_, args) => args != null && args.Length > 1
                 ? new ArrayBuffer(args[0], args[1])
                 : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
-        private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
-            static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly JsFuncNoScopes2 _sharedArrayBufferConstructorValue =
+            static (newTarget, length, options) =>
+            {
+                if (newTarget is null)
+                {
+                    throw new TypeError("Constructor SharedArrayBuffer requires 'new'");
+                }
+
+                return new SharedArrayBuffer(length, options);
+            };
+        private static readonly BuiltinFunction1 _sharedArrayBufferPrototypeGrowValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.SharedArrayBuffer buffer)
+            {
+                throw new TypeError("SharedArrayBuffer.prototype.grow called on incompatible receiver");
+            }
+
+            return buffer.grow(newLength);
+        };
         private static readonly BuiltinFunction2 _sharedArrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
         {
             if (thisArgument is not JavaScriptRuntime.SharedArrayBuffer buffer)
@@ -564,11 +581,13 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_atomicsValue, "exchange", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.exchange, 3d);
             DefineBuiltinFunctionProperty(_atomicsValue, "isLockFree", (Func<object?, bool>)JavaScriptRuntime.Atomics.isLockFree, 1d);
             DefineBuiltinFunctionProperty(_atomicsValue, "load", (Func<object?, object?, object>)JavaScriptRuntime.Atomics.load, 2d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "notify", (Func<object?, object?, object?, double>)JavaScriptRuntime.Atomics.notify, 3d);
             DefineBuiltinFunctionProperty(_atomicsValue, "or", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.or, 3d);
             DefineBuiltinFunctionProperty(_atomicsValue, "pause", (Func<object?, object?>)JavaScriptRuntime.Atomics.pause, 0d);
             DefineBuiltinFunctionProperty(_atomicsValue, "store", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.store, 3d);
             DefineBuiltinFunctionProperty(_atomicsValue, "sub", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.sub, 3d);
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
+            DefineBuiltinFunctionProperty(_atomicsValue, "waitAsync", (Func<object?, object?, object?, object?, object>)JavaScriptRuntime.Atomics.waitAsync, 4d);
             DefineBuiltinFunctionProperty(_atomicsValue, "xor", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.xor, 3d);
             ConfigureBuiltinFunctionObject(_jsonStringifyValue);
             PropertyDescriptorStore.DefineOrUpdate(_jsonStringifyValue, "name", new JsPropertyDescriptor
@@ -1413,6 +1432,14 @@ namespace JavaScriptRuntime
         public static Func<object[], object?, Delegate> Function => _functionConstructorValue;
 
         public static Delegate SharedArrayBuffer => _sharedArrayBufferConstructorValue;
+        internal static object SharedArrayBufferIntrinsicConstructor
+        {
+            get
+            {
+                _ = globalThis;
+                return BuiltinDelegateFunctionAdapter.FromDelegate(_sharedArrayBufferConstructorValue);
+            }
+        }
         public static Delegate ArrayBuffer => _arrayBufferConstructorValue;
         internal static object ArrayBufferIntrinsicConstructor
         {
@@ -2052,7 +2079,12 @@ namespace JavaScriptRuntime
             });
             DefineSharedArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
             DefineSharedArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
-            DefineSharedArrayBufferAccessor("growable", static _ => false);
+            DefineSharedArrayBufferAccessor("growable", static buffer => buffer.growable);
+            DefineBuiltinFunctionProperty(
+                JavaScriptRuntime.SharedArrayBuffer.SharedPrototype,
+                "grow",
+                _sharedArrayBufferPrototypeGrowValue,
+                1d);
             DefineBuiltinFunctionProperty(
                 JavaScriptRuntime.SharedArrayBuffer.SharedPrototype,
                 "slice",

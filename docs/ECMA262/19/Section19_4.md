@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-01T18:38:01Z
+> Last generated (UTC): 2026-09-25T18:55:07Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,7 +14,7 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 19.4.1 | Atomics | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-atomics) |
+| 19.4.1 | Atomics | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-atomics) |
 | 19.4.2 | JSON | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-json) |
 | 19.4.3 | Math | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-math) |
 | 19.4.4 | Reflect | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect) |
@@ -22,6 +22,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 19.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-atomics))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Atomics global object | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Atomics/notify/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Atomics/waitAsync/ExecutionTests.cs` | `test/built-ins/Atomics/notify/descriptor.js`<br>`test/built-ins/Atomics/waitAsync/descriptor.js` | Exposes integer typed-array atomic operations and waiter coordination. Full cross-agent memory-model conformance is not yet verified. |
 
 ### 19.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-json))
 

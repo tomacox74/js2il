@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(runtime): coordinate synchronous and asynchronous Atomics waits with
+  notifications, support BigInt64 waits, and add growable SharedArrayBuffers
+  with species-aware slicing; port 100 previously failing pinned Test262 cases.
 - fix(compiler/runtime): preserve compound operations on private fields and
   accessors, discover nested class callables, keep private accessors off public
   prototypes, initialize public static field descriptors, and invoke private

@@ -12,7 +12,7 @@
     {
       "clause": "19.4.1",
       "title": "Atomics",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-atomics"
     },
     {
@@ -36,6 +36,21 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "19.4.1",
+        "feature": "Atomics global object",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-atomics",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/notify/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/waitAsync/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Atomics/notify/descriptor.js",
+          "test/built-ins/Atomics/waitAsync/descriptor.js"
+        ],
+        "notes": "Exposes integer typed-array atomic operations and waiter coordination. Full cross-agent memory-model conformance is not yet verified."
+      },
       {
         "clause": "19.4.2",
         "feature": "JSON intrinsic object is available (JSON.parse, JSON.stringify)",

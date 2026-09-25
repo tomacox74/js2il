@@ -45,4 +45,25 @@ public sealed class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "newtarget-prototype-is-not-object.js")]
     public Task newtarget_prototype_is_not_object()
         => ExecutionTest("newtarget-prototype-is-not-object");
+
+    [Fact(DisplayName = "options-maxbytelength-allocation-limit.js")]
+    public Task ported_options_maxbytelength_allocation_limit() => ExecutionTest("options-maxbytelength-allocation-limit");
+
+    [Fact(DisplayName = "options-maxbytelength-compared-before-object-creation.js")]
+    public Task ported_options_maxbytelength_compared_before_object_creation() => ExecutionTest("options-maxbytelength-compared-before-object-creation");
+
+    [Fact(DisplayName = "options-maxbytelength-diminuitive.js")]
+    public Task ported_options_maxbytelength_diminuitive() => ExecutionTest("options-maxbytelength-diminuitive");
+
+    [Fact(DisplayName = "options-maxbytelength-excessive.js")]
+    public Task ported_options_maxbytelength_excessive() => ExecutionTest("options-maxbytelength-excessive");
+
+    [Fact(DisplayName = "options-maxbytelength-negative.js")]
+    public Task ported_options_maxbytelength_negative() => ExecutionTest("options-maxbytelength-negative");
+
+    [Fact(DisplayName = "options-maxbytelength-object.js")]
+    public Task ported_options_maxbytelength_object() => ExecutionTest("options-maxbytelength-object");
+
+    [Fact(DisplayName = "options-maxbytelength-poisoned.js")]
+    public Task ported_options_maxbytelength_poisoned() => ExecutionTest("options-maxbytelength-poisoned");
 }

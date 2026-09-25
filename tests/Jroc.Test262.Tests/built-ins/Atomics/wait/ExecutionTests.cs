@@ -38,4 +38,6 @@ public sealed class ExecutionTests : ExecutionTestsBase
     public Task symbol_for_timeout_throws()
         => ExecutionTest("symbol-for-timeout-throws");
 
+    [Fact(DisplayName = "retrieve-length-before-index-coercion.js")]
+    public Task ported_retrieve_length_before_index_coercion() => ExecutionTest("retrieve-length-before-index-coercion");
 }

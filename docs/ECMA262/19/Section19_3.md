@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:09:21Z
+> Last generated (UTC): 2026-09-25T18:52:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -125,7 +125,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| SharedArrayBuffer first-class global constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/maxByteLength/ExecutionTests.cs` | `test/built-ins/SharedArrayBuffer/length.js`<br>`test/built-ins/SharedArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/SharedArrayBuffer/prototype/prop-desc.js`<br>`test/built-ins/SharedArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.SharedArrayBuffer as a constructible function with standard constructor/prototype metadata and fixed-length prototype accessors. Storage is not shared between agents; growable buffers, grow(), and cross-realm construction remain limited. |
+| SharedArrayBuffer first-class global constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/maxByteLength/ExecutionTests.cs` | `test/built-ins/SharedArrayBuffer/length.js`<br>`test/built-ins/SharedArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/SharedArrayBuffer/prototype/prop-desc.js`<br>`test/built-ins/SharedArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.SharedArrayBuffer as a constructible function with standard constructor/prototype metadata, growable buffers, and live prototype accessors. Cross-realm construction and full cross-agent memory-model behavior remain limited. |
 
 ### 19.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string))
 
