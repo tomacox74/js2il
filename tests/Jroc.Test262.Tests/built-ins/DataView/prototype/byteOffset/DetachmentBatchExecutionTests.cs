@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView.prototype.byteOffset;
 
-public class DetachmentBatchExecutionTests : DiskExecutionTestsBase
+public class DetachmentBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public DetachmentBatchExecutionTests() : base("built_ins.DataView.prototype.byteOffset") { }
 

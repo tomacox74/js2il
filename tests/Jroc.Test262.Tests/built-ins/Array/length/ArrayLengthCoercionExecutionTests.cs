@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Array.length;
 
-public class ArrayLengthCoercionExecutionTests : DiskExecutionTestsBase
+public class ArrayLengthCoercionExecutionTests : InMemoryExecutionTestsBase
 {
     public ArrayLengthCoercionExecutionTests() : base("built_ins.Array.length") { }
 

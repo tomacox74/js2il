@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView.prototype.getInt32;
 
-public class DataViewConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class DataViewConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public DataViewConformanceBatchExecutionTests() : base("built_ins.DataView.prototype.getInt32") { }
 

@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Function.length;
 
-public class FunctionConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class FunctionConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public FunctionConformanceBatchExecutionTests() : base("built_ins.Function.length") { }
 

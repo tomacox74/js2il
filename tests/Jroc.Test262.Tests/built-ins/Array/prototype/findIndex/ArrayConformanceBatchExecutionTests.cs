@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Array.prototype.findIndex;
 
-public class ArrayConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class ArrayConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public ArrayConformanceBatchExecutionTests() : base("built_ins.Array.prototype.findIndex") { }
 

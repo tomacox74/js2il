@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArrayConstructors.prototype.Symbol_toStringTag;
 
-public class IndexedMemoryConformance6BatchExecutionTests : DiskExecutionTestsBase
+public class IndexedMemoryConformance6BatchExecutionTests : InMemoryExecutionTestsBase
 {
     public IndexedMemoryConformance6BatchExecutionTests() : base("built_ins.TypedArrayConstructors.prototype.Symbol.toStringTag") { }
 

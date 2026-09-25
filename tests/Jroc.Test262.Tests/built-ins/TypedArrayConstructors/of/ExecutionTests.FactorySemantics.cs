@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArrayConstructors.of;
 
-public class FactorySemanticsExecutionTests : DiskExecutionTestsBase
+public class FactorySemanticsExecutionTests : InMemoryExecutionTestsBase
 {
     public FactorySemanticsExecutionTests() : base("built_ins.TypedArrayConstructors.of") { }
 

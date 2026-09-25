@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArrayConstructors.Uint32Array;
 
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.TypedArrayConstructors.Uint32Array") { }
 

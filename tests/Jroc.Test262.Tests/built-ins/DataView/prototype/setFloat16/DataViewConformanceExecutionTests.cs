@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.DataView.prototype.setFloat16;
 
-public class DataViewConformanceExecutionTests : DiskExecutionTestsBase
+public class DataViewConformanceExecutionTests : InMemoryExecutionTestsBase
 {
     public DataViewConformanceExecutionTests() : base("built_ins.DataView.prototype.setFloat16") { }
 

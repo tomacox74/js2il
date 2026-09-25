@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArrayConstructors.Float64Array.prototype;
 
-public class TypedArrayConstructorsConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class TypedArrayConstructorsConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public TypedArrayConstructorsConformanceBatchExecutionTests() : base("built_ins.TypedArrayConstructors.Float64Array.prototype") { }
 

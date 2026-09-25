@@ -1,6 +1,6 @@
 using Jroc.Test262.Tests.built_ins;
 namespace Jroc.Test262.Tests.built_ins.ArrayBuffer.prototype;
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.ArrayBuffer.prototype") { }
     [Fact(DisplayName = "constructor.js")] public Task constructor() => ExecutionTestFromFile("constructor");

@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.ArrayBuffer.prototype.transfer;
 
-public class FailingBatchExecutionTests : DiskExecutionTestsBase
+public class FailingBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public FailingBatchExecutionTests() : base("built_ins.ArrayBuffer.prototype.transfer") { }
 

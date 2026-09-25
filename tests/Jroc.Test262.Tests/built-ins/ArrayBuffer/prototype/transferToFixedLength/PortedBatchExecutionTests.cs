@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.ArrayBuffer.prototype.transferToFixedLength;
 
-public class PortedBatchExecutionTests : DiskExecutionTestsBase
+public class PortedBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public PortedBatchExecutionTests() : base("built_ins.ArrayBuffer.prototype.transferToFixedLength") { }
 

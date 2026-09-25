@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.WeakSet.prototype.delete;
 
-public class PortAdditionalExecutionTests : DiskExecutionTestsBase
+public class PortAdditionalExecutionTests : InMemoryExecutionTestsBase
 {
     public PortAdditionalExecutionTests() : base("built_ins.WeakSet.prototype.delete") { }
 

@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.TypedArray.prototype.byteOffset.BigInt;
 
-public class TypedArrayConformanceBatchExecutionTests : DiskExecutionTestsBase
+public class TypedArrayConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public TypedArrayConformanceBatchExecutionTests() : base("built_ins.TypedArray.prototype.byteOffset.BigInt") { }
 

@@ -6,7 +6,7 @@ namespace Jroc.Test262.Tests.built_ins.String.prototype.indexOf;
 
 
 
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 
 {
 
