@@ -42,6 +42,20 @@ together in the output directory. Running the generated program requires the
 .NET 10 runtime. If no output directory is specified, JROC writes next to the
 input file.
 
+To compile additional JavaScript files into the same assembly, use the
+repeatable `--additional-input` option:
+
+```shell
+jroc hello.js out --additional-input helpers.js --additional-input widgets.js
+dotnet out/hello.dll
+```
+
+The first file (`hello.js`) remains the default entry and supplies the
+assembly name (`hello.dll`) unless you pass `--assemblyname <name>`.
+The optional second positional argument is still the output directory; extra
+inputs must use `--additional-input`. This option cannot be combined with
+`--moduleid`.
+
 ## Diagnostics and debugging
 
 ```shell

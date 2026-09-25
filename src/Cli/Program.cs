@@ -17,6 +17,10 @@ public class JrocArgs
     [ArgShortcut("--moduleid")]
     public string? ModuleId { get; set; }
 
+    [ArgDescription("Add a JavaScript input file to the assembly (repeat for each additional file)")]
+    [ArgShortcut("--additional-input")]
+    public string? AdditionalInput { get; set; }
+
     [ArgDescription("Set the generated assembly identity and artifact basename")]
     [ArgShortcut("--assemblyname")]
     public string? AssemblyName { get; set; }
@@ -54,11 +58,17 @@ class Program
     {
         try
         {
-            var parsed = Args.Parse<JrocArgs>(args);
+            var remainingArgs = ExtractAdditionalInputs(args, out var additionalInputs);
+            var parsed = Args.Parse<JrocArgs>(remainingArgs);
             if (parsed == null)
             {
                 // HelpHook likely handled output; treat as successful exit
                 return;
+            }
+
+            if (parsed.AdditionalInput is not null)
+            {
+                throw new ArgException("Use --additional-input <file> for each additional entry.");
             }
 
             // Version handling (PowerArgs default alias is -Version from property name)
@@ -102,6 +112,14 @@ class Program
                 return;
             }
 
+            if (hasModuleId && additionalInputs.Count > 0)
+            {
+                logger.WriteLineError("Error: --additional-input cannot be used with --moduleid.");
+                PrintUsage(logger);
+                Environment.ExitCode = 1;
+                return;
+            }
+
             if (!hasInputFile && !hasModuleId)
             {
                 logger.WriteLineError("Error: Provide <InputFile> or --moduleid.");
@@ -138,8 +156,28 @@ class Program
                 return;
             }
 
+            foreach (var additionalInput in additionalInputs)
+            {
+                if (!File.Exists(additionalInput))
+                {
+                    logger.WriteLineError($"Error: Additional input file '{additionalInput}' does not exist.");
+                    Environment.ExitCode = 1;
+                    return;
+                }
+            }
+
             var compiler = servicesProvider.GetRequiredService<Compiler>();
-            var success = compiler.Compile(entryPath, rootModuleIdOverride: hasModuleId ? parsed.ModuleId : null);
+            bool success;
+            if (additionalInputs.Count == 0)
+            {
+                success = compiler.Compile(entryPath, rootModuleIdOverride: hasModuleId ? parsed.ModuleId : null);
+            }
+            else
+            {
+                var entries = new List<JrocCompileEntry> { new(entryPath) };
+                entries.AddRange(additionalInputs.Select(path => new JrocCompileEntry(path)));
+                success = compiler.Compile(entries);
+            }
             Environment.ExitCode = success ? 0 : 1;
         }
         catch (ArgException ex)
@@ -154,6 +192,45 @@ class Program
         }
     }
 
+    private static string[] ExtractAdditionalInputs(string[] args, out List<string> additionalInputs)
+    {
+        var remaining = new List<string>(args.Length);
+        additionalInputs = new List<string>();
+
+        // PowerArgs rejects repeated option keys and consumes trailing positional values for list properties.
+        for (var index = 0; index < args.Length; index++)
+        {
+            var arg = args[index];
+            if (arg.Equals("--additional-input", StringComparison.OrdinalIgnoreCase) ||
+                arg.Equals("-AdditionalInput", StringComparison.OrdinalIgnoreCase))
+            {
+                if (index + 1 >= args.Length || args[index + 1].StartsWith('-') || string.IsNullOrWhiteSpace(args[index + 1]))
+                {
+                    throw new ArgException("--additional-input requires a file path.");
+                }
+
+                additionalInputs.Add(args[++index]);
+            }
+            else if (arg.StartsWith("--additional-input=", StringComparison.OrdinalIgnoreCase) ||
+                     arg.StartsWith("/AdditionalInput:", StringComparison.OrdinalIgnoreCase))
+            {
+                var path = arg[(arg[0] == '/' ? "/AdditionalInput:".Length : "--additional-input=".Length)..];
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    throw new ArgException("--additional-input requires a file path.");
+                }
+
+                additionalInputs.Add(path);
+            }
+            else
+            {
+                remaining.Add(arg);
+            }
+        }
+
+        return remaining.ToArray();
+    }
+
     // Print usage information using the logger (outputs to stderr for error scenarios)
     private static void PrintUsage(ICompilerOutput logger)
     {
@@ -163,6 +240,7 @@ class Program
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
         logger.WriteLineError("--moduleid             Compile an npm/CommonJS module id instead of a file path");
+        logger.WriteLineError("--additional-input <file> Add another input to the assembly (repeatable; incompatible with --moduleid)");
         logger.WriteLineError("--assemblyname <name>   Set the assembly identity and artifact basename");
         logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
         logger.WriteLineError("-v, --verbose          Enable diagnostics output to console");

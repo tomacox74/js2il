@@ -18,6 +18,12 @@ DeepAssembly.Scripts.api.css.Run("--mode", "test");
 
 The root `Run` method executes the manifest entry module. Types nested below
 `Scripts` represent the published module path with the file extension removed.
+When an assembly is built with multiple independent entries, the selected
+default entry is the only one launched by `Program.Main` or the root `Run`.
+Every supplied entry has its own `Scripts.<module>.Run` facade, which can be
+invoked without running the other entries. Independent `Run` calls each create
+a fresh runtime; the artifact's `EntryModules` lists entry paths and IDs
+separately from dependencies.
 A module can also contain nested module types, so `api.js` and `api/css.js`
 produce one `Scripts.api` type with both `Run` and nested `css`.
 Compilation reports a facade-name collision when identifier normalization,

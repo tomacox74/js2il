@@ -20,6 +20,9 @@ namespace Jroc;
 /// </remarks>
 public class ModuleLoader
 {
+    private static readonly StringComparer PathComparer =
+        OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+
     private readonly JavaScriptParser _parser = new JavaScriptParser();
     private readonly JavaScriptAstValidator _validator;
     private readonly IFileSystem _fileSystem;
@@ -64,43 +67,117 @@ public class ModuleLoader
     }
 
     public Modules? LoadModules(string modulePath, string? rootModuleIdOverride = null)
+        => LoadModules([new JrocCompileEntry(modulePath, rootModuleIdOverride)]);
+
+    public Modules? LoadModules(
+        IReadOnlyList<JrocCompileEntry> entries,
+        string? defaultEntryFilePath = null)
     {
-        var rootModulePath = Path.GetFullPath(modulePath);
+        if (entries is null || entries.Count == 0)
+        {
+            _ux.WriteLineError("Error: Provide at least one entry file.");
+            return null;
+        }
+
+        var entryPaths = new List<string>(entries.Count);
+        var entryOverrides = new Dictionary<string, string?>(PathComparer);
+        var originalPaths = new Dictionary<string, string>(PathComparer);
+        foreach (var entry in entries)
+        {
+            if (entry is null || string.IsNullOrWhiteSpace(entry.EntryFilePath))
+            {
+                _ux.WriteLineError("Error: Entry file paths must not be empty.");
+                return null;
+            }
+
+            var path = Path.GetFullPath(entry.EntryFilePath);
+            if (!entryOverrides.TryAdd(path, entry.RootModuleIdOverride))
+            {
+                _ux.WriteLineError(
+                    $"Error: Entry path '{entry.EntryFilePath}' duplicates entry '{originalPaths[path]}' (resolved as '{path}').");
+                return null;
+            }
+
+            originalPaths.Add(path, entry.EntryFilePath);
+            if (entries.Count > 1
+                && entry.RootModuleIdOverride is not null
+                && TryNormalizeBareAlias(entry.RootModuleIdOverride) is null)
+            {
+                _ux.WriteLineError(
+                    $"Error: Module id override '{entry.RootModuleIdOverride}' for entry '{entry.EntryFilePath}' must be a bare module id.");
+                return null;
+            }
+
+            entryPaths.Add(path);
+        }
+
+        var defaultPath = defaultEntryFilePath is null
+            ? entryPaths[0]
+            : Path.GetFullPath(defaultEntryFilePath);
+        if (!entryOverrides.ContainsKey(defaultPath))
+        {
+            _ux.WriteLineError($"Error: Default entry '{defaultEntryFilePath}' is not one of the supplied entry paths.");
+            return null;
+        }
+
+        var rootModulePath = defaultPath;
+        if (entryPaths.Count > 1)
+        {
+            // Keep single-entry IDs unchanged, but give independent roots a shared path base.
+            var commonDirectory = Path.GetDirectoryName(entryPaths[0])!;
+            foreach (var entryPath in entryPaths.Skip(1))
+            {
+                while (true)
+                {
+                    var relativePath = Path.GetRelativePath(commonDirectory, entryPath);
+                    if (!Path.IsPathRooted(relativePath)
+                        && relativePath != ".."
+                        && !relativePath.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+                    {
+                        break;
+                    }
+
+                    var parent = Directory.GetParent(commonDirectory)?.FullName;
+                    if (parent is null)
+                    {
+                        _ux.WriteLineError($"Error: Entry paths '{entryPaths[0]}' and '{entryPath}' must be on the same filesystem root.");
+                        return null;
+                    }
+
+                    commonDirectory = parent;
+                }
+            }
+
+            rootModulePath = Path.Combine(commonDirectory, Path.GetFileName(defaultPath));
+        }
 
         var diagnostics = new ModuleLoadDiagnostics(rootModulePath);
-        var moduleCache = new Dictionary<string, ModuleDefinition>();
+        var moduleCache = new Dictionary<string, ModuleDefinition>(PathComparer);
         var hadAnyErrors = false;
-        ModuleDefinition? rootModule = null;
 
         void LoadRecursive(string currentPath, string? requestedAliasModuleId = null)
         {
-            if (moduleCache.ContainsKey(currentPath))
+            if (moduleCache.TryGetValue(currentPath, out var cached))
             {
-                if (!string.IsNullOrWhiteSpace(requestedAliasModuleId)
-                    && moduleCache.TryGetValue(currentPath, out var cached))
+                if (!string.IsNullOrWhiteSpace(requestedAliasModuleId))
                 {
                     AddAliasIfMissing(cached, requestedAliasModuleId);
                 }
                 return;
             }
 
-            var isRoot = string.Equals(currentPath, rootModulePath, StringComparison.OrdinalIgnoreCase);
+            entryOverrides.TryGetValue(currentPath, out var entryOverride);
             var loadOk = TryLoadAndParseModule(
                 currentPath,
                 rootModulePath,
                 diagnostics,
-                isRoot ? rootModuleIdOverride : null,
+                entryOverride,
                 requestedAliasModuleId,
                 out var module);
             if (module is null)
             {
                 hadAnyErrors = true;
                 return;
-            }
-
-            if (string.Equals(currentPath, rootModulePath, StringComparison.OrdinalIgnoreCase))
-            {
-                rootModule = module;
             }
 
             // Preserve insertion order (and therefore emitted module order) matching the old loader.
@@ -119,33 +196,49 @@ public class ModuleLoader
             }
         }
 
-        LoadRecursive(rootModulePath, requestedAliasModuleId: TryNormalizeBareAlias(rootModuleIdOverride));
+        foreach (var entryPath in entryPaths)
+        {
+            LoadRecursive(entryPath, requestedAliasModuleId: TryNormalizeBareAlias(entryOverrides[entryPath]));
+        }
 
         diagnostics.Flush(_ux);
 
-        if (rootModule is null)
+        if (!moduleCache.TryGetValue(defaultPath, out var rootModule))
         {
             return null;
         }
 
-        // Ensure the root module can be loaded by a stable host-facing id when compilation
-        // starts from an explicit module id (CLI --moduleid).
-        // (This is intentionally redundant with the recursive load request aliasing.)
-        var rootOverrideAlias = TryNormalizeBareAlias(rootModuleIdOverride);
-        if (!string.IsNullOrWhiteSpace(rootOverrideAlias))
+        foreach (var entryPath in entryPaths)
         {
-            AddAliasIfMissing(rootModule, rootOverrideAlias);
+            if (!moduleCache.TryGetValue(entryPath, out var entryModule))
+            {
+                hadAnyErrors = true;
+                continue;
+            }
+
+            var rootOverrideAlias = TryNormalizeBareAlias(entryOverrides[entryPath]);
+            if (string.IsNullOrWhiteSpace(rootOverrideAlias))
+            {
+                continue;
+            }
+
+            AddAliasIfMissing(entryModule, rootOverrideAlias);
 
             // If the override is a bare package id (e.g. "@scope/pkg"), ensure that exact package id
             // is also published as an alias to the resolved entry module.
-            if (TryGetPackageIdentity(rootModule.Path, out var rootPackageName, out _)
+            if (TryGetPackageIdentity(entryModule.Path, out var rootPackageName, out _)
                 && !string.Equals(rootOverrideAlias, rootPackageName, StringComparison.OrdinalIgnoreCase))
             {
-                AddAliasIfMissing(rootModule, rootPackageName);
+                AddAliasIfMissing(entryModule, rootPackageName);
             }
         }
 
         if (hadAnyErrors)
+        {
+            return null;
+        }
+
+        if (entryPaths.Count > 1 && !ValidateUniqueModuleIdentities(moduleCache.Values))
         {
             return null;
         }
@@ -156,7 +249,42 @@ public class ModuleLoader
             modules._modules[kvp.Key] = kvp.Value;
         }
 
+        foreach (var entryPath in entryPaths)
+        {
+            modules.EntryModules.Add(moduleCache[entryPath]);
+        }
+
         return modules;
+    }
+
+    private bool ValidateUniqueModuleIdentities(IEnumerable<ModuleDefinition> modules)
+    {
+        var ids = new Dictionary<string, ModuleDefinition>(StringComparer.OrdinalIgnoreCase);
+        var types = new Dictionary<string, ModuleDefinition>(StringComparer.OrdinalIgnoreCase);
+        foreach (var module in modules)
+        {
+            foreach (var id in new[] { module.ModuleId }.Concat(module.AliasModuleIds))
+            {
+                if (ids.TryGetValue(id, out var other) && !ReferenceEquals(other, module))
+                {
+                    _ux.WriteLineError($"Error: Module id '{id}' is ambiguous between '{other.Path}' and '{module.Path}'.");
+                    return false;
+                }
+
+                ids[id] = module;
+            }
+
+            var typeName = $"{module.ClrNamespace}.{module.ClrTypeName}";
+            if (types.TryGetValue(typeName, out var conflicting) && !ReferenceEquals(conflicting, module))
+            {
+                _ux.WriteLineError($"Error: Generated module type '{typeName}' collides for '{conflicting.Path}' and '{module.Path}'.");
+                return false;
+            }
+
+            types[typeName] = module;
+        }
+
+        return true;
     }
 
     public bool LinkModules(Modules modules, ICompilerOutput? logger = null)

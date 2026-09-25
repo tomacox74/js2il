@@ -39,15 +39,21 @@ public class Compiler
     }   
 
     public bool Compile(string inputFile, string? rootModuleIdOverride = null)
+        => Compile([new JrocCompileEntry(inputFile, rootModuleIdOverride)]);
+
+    /// <summary>Compiles independent entry files into one assembly. The first entry is the default unless specified.</summary>
+    public bool Compile(IReadOnlyList<JrocCompileEntry> entries, string? defaultEntryFilePath = null)
     {
-        var artifact = CompileToArtifact(inputFile, rootModuleIdOverride);
+        var artifact = CompileToArtifact(entries, defaultEntryFilePath);
         if (artifact is null)
         {
             return false;
         }
 
         // Resolve and validate output directory; create if missing
-        if (!EnsureOutputPathExists(inputFile, this.outputDirectory, out var outputPath))
+        var selectedEntryPath = artifact.EntryModules.First(entry =>
+            string.Equals(entry.ModuleId, artifact.EntryModuleId, StringComparison.Ordinal)).SourcePath;
+        if (!EnsureOutputPathExists(selectedEntryPath, this.outputDirectory, out var outputPath))
         {
             return false;
         }
@@ -61,11 +67,23 @@ public class Compiler
     }
 
     internal JrocCompiledAssemblyArtifact? CompileToArtifact(string inputFile, string? rootModuleIdOverride = null)
+        => CompileToArtifact([new JrocCompileEntry(inputFile, rootModuleIdOverride)]);
+
+    internal JrocCompiledAssemblyArtifact? CompileToArtifact(
+        IReadOnlyList<JrocCompileEntry> entries,
+        string? defaultEntryFilePath = null)
     {
+        if (entries is null || entries.Count == 0)
+        {
+            _ux.WriteLineError("Error: Provide at least one entry file.");
+            return null;
+        }
+
+        var defaultEntry = defaultEntryFilePath ?? entries[0].EntryFilePath;
         string assemblyName;
         try
         {
-            assemblyName = JrocAssemblyIdentity.Resolve(inputFile, this.configuredAssemblyName);
+            assemblyName = JrocAssemblyIdentity.Resolve(defaultEntry, this.configuredAssemblyName);
         }
         catch (ArgumentException ex)
         {
@@ -80,7 +98,7 @@ public class Compiler
             IR.IRPipelineMetrics.Reset();
         }
 
-        var modules = this._moduleLoader.LoadModules(inputFile, rootModuleIdOverride);
+        var modules = this._moduleLoader.LoadModules(entries, defaultEntryFilePath);
         if (modules == null)
         {
             return null;

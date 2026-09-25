@@ -81,6 +81,43 @@ public static class JrocInMemoryCompiler
         ArgumentNullException.ThrowIfNull(request);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.EntryFilePath);
 
+        return Compile(new JrocInMemoryMultiEntryCompileRequest(
+            [new JrocInMemoryEntrySource(request.EntryFilePath, request.SourceText, request.RootModuleIdOverride)])
+        {
+            AssemblyName = request.AssemblyName,
+            FileSystem = request.FileSystem,
+            EmitPdb = request.EmitPdb,
+            Verbose = request.Verbose,
+            DiagnosticFilePath = request.DiagnosticFilePath,
+            AnalyzeUnused = request.AnalyzeUnused,
+            GenerateModuleExportContracts = request.GenerateModuleExportContracts,
+            HostRuntimeIntrinsics = request.HostRuntimeIntrinsics
+        }, compilerOutput);
+    }
+
+    /// <summary>
+    /// Compiles independent entry sources into one loadable artifact without writing the assembly or PDB to disk.
+    /// The first entry is the default unless <see cref="JrocInMemoryMultiEntryCompileRequest.DefaultEntryFilePath"/> is set.
+    /// </summary>
+    public static JrocCompiledAssemblyArtifact Compile(
+        JrocInMemoryMultiEntryCompileRequest request,
+        ICompilerOutput? compilerOutput = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(request.Entries);
+        if (request.Entries.Count == 0)
+        {
+            throw new ArgumentException("At least one entry source is required.", nameof(request));
+        }
+
+        for (var index = 0; index < request.Entries.Count; index++)
+        {
+            if (request.Entries[index] is null || string.IsNullOrWhiteSpace(request.Entries[index].EntryFilePath))
+            {
+                throw new ArgumentException($"Entry source at index {index} must have a nonempty file path.", nameof(request));
+            }
+        }
+
         var options = new CompilerOptions
         {
             AssemblyName = request.AssemblyName,
@@ -100,7 +137,9 @@ public static class JrocInMemoryCompiler
             compilerOutput: capturingOutput);
 
         var compiler = services.GetRequiredService<Compiler>();
-        var artifact = compiler.CompileToArtifact(request.EntryFilePath, request.RootModuleIdOverride);
+        var artifact = compiler.CompileToArtifact(
+            request.Entries.Select(entry => new JrocCompileEntry(entry.EntryFilePath, entry.RootModuleIdOverride)).ToArray(),
+            request.DefaultEntryFilePath);
         if (artifact is not null)
         {
             return artifact;
@@ -109,17 +148,16 @@ public static class JrocInMemoryCompiler
         throw new InvalidOperationException(BuildCompilationFailureMessage(capturingOutput));
     }
 
-    private static IFileSystem CreateEffectiveFileSystem(JrocInMemoryCompileRequest request)
+    private static IFileSystem CreateEffectiveFileSystem(JrocInMemoryMultiEntryCompileRequest request)
     {
-        if (request.SourceText is null)
+        if (!request.Entries.Any(entry => entry.SourceText is not null))
         {
             return request.FileSystem ?? new FileSystem();
         }
 
         return new OverlayFileSystem(
             request.FileSystem ?? new FileSystem(),
-            request.EntryFilePath,
-            request.SourceText);
+            request.Entries);
     }
 
     private static string BuildCompilationFailureMessage(CapturingCompilerOutput compilerOutput)
@@ -269,31 +307,55 @@ public static class JrocInMemoryCompiler
         }
     }
 
-    private sealed class OverlayFileSystem(IFileSystem inner, string overlayPath, string overlayContent) : IFileSystem
+    private sealed class OverlayFileSystem : IFileSystem, ISourceFilePathResolver
     {
-        private readonly string _overlayPath = NormalizePath(overlayPath);
-        private readonly byte[] _overlayBytes = Encoding.UTF8.GetBytes(overlayContent);
+        private readonly IFileSystem _inner;
+        private readonly Dictionary<string, string> _overlays = new(
+            OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+
+        public OverlayFileSystem(IFileSystem inner, IReadOnlyList<JrocInMemoryEntrySource> entries)
+        {
+            _inner = inner;
+            foreach (var entry in entries.Where(entry => entry.SourceText is not null))
+            {
+                var path = NormalizePath(entry.EntryFilePath);
+                if (!_overlays.TryAdd(path, entry.SourceText!))
+                {
+                    throw new ArgumentException($"Entry source '{entry.EntryFilePath}' duplicates an inline source at '{path}'.");
+                }
+            }
+        }
 
         public string ReadAllText(string path)
         {
-            return IsOverlayPath(path)
-                ? overlayContent
-                : inner.ReadAllText(path);
+            return _overlays.TryGetValue(NormalizePath(path), out var text)
+                ? text
+                : _inner.ReadAllText(path);
         }
 
         public byte[] ReadAllBytes(string path)
         {
-            return IsOverlayPath(path)
-                ? _overlayBytes
-                : inner.ReadAllBytes(path);
+            return _overlays.TryGetValue(NormalizePath(path), out var text)
+                ? Encoding.UTF8.GetBytes(text)
+                : _inner.ReadAllBytes(path);
         }
 
         public bool FileExists(string path)
         {
-            return IsOverlayPath(path) || inner.FileExists(path);
+            return _overlays.ContainsKey(NormalizePath(path)) || _inner.FileExists(path);
         }
 
-        private bool IsOverlayPath(string path) => string.Equals(_overlayPath, NormalizePath(path), StringComparison.OrdinalIgnoreCase);
+        public bool TryGetSourceFilePath(string logicalPath, out string sourceFilePath)
+        {
+            if (!_overlays.ContainsKey(NormalizePath(logicalPath))
+                && _inner is ISourceFilePathResolver resolver)
+            {
+                return resolver.TryGetSourceFilePath(logicalPath, out sourceFilePath);
+            }
+
+            sourceFilePath = string.Empty;
+            return false;
+        }
 
         private static string NormalizePath(string path)
         {

@@ -246,6 +246,185 @@ namespace Jroc.Tests
         }
 
         [Fact]
+        public async System.Threading.Tasks.Task Convert_AdditionalInputs_UsesFirstEntryAsDefaultAndPositionalOutput()
+        {
+            var testRoot = Path.Combine(Directory.GetCurrentDirectory(), "jroc_cli_entries_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var entry = Path.Combine(testRoot, "entry.js");
+            var extra = Path.Combine(testRoot, "extra.js");
+            var third = Path.Combine(testRoot, "third.js");
+            var outDir = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "console.log('default entry');");
+            File.WriteAllText(extra, "console.log('extra entry');");
+            File.WriteAllText(third, "console.log('third entry');");
+
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(
+                    entry, "--additional-input", extra, outDir, "--additional-input", third);
+
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                var assemblyPath = Path.Combine(outDir, "entry.dll");
+                Assert.True(File.Exists(assemblyPath), $"Missing output: {assemblyPath}");
+                Assert.False(File.Exists(Path.Combine(outDir, "extra.dll")));
+                Assert.True(File.Exists(Path.Combine(outDir, "entry.runtimeconfig.json")));
+
+                Assert.Equal("entry", AssemblyName.GetAssemblyName(assemblyPath).Name);
+
+                using var process = Process.Start(new ProcessStartInfo("dotnet")
+                {
+                    ArgumentList = { assemblyPath },
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false
+                })!;
+                var stdoutTask = process.StandardOutput.ReadToEndAsync();
+                var stderrTask = process.StandardError.ReadToEndAsync();
+                using var timeout = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(30));
+                try
+                {
+                    await process.WaitForExitAsync(timeout.Token);
+                }
+                catch (OperationCanceledException) when (timeout.IsCancellationRequested)
+                {
+                    if (!process.HasExited)
+                    {
+                        process.Kill(entireProcessTree: true);
+                        await process.WaitForExitAsync();
+                    }
+                    throw new TimeoutException("Compiled CLI assembly timed out.");
+                }
+
+                Assert.Equal(0, process.ExitCode);
+                Assert.Equal("default entry", (await stdoutTask).Trim());
+                Assert.True(string.IsNullOrWhiteSpace(await stderrTask));
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Convert_InvalidAdditionalInput_FailsCompilation()
+        {
+            var testRoot = Path.Combine(Directory.GetCurrentDirectory(), "jroc_cli_invalid_entry_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var entry = Path.Combine(testRoot, "entry.js");
+            var extra = Path.Combine(testRoot, "invalid.js");
+            var outDir = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "console.log('default entry');");
+            File.WriteAllText(extra, "function (");
+
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(entry, outDir, "--additional-input", extra);
+
+                Assert.NotEqual(0, code);
+                Assert.Contains(extra, stderr, StringComparison.Ordinal);
+                Assert.False(File.Exists(Path.Combine(outDir, "entry.dll")));
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Convert_AdditionalInput_WithAssemblyName_OverridesDefaultArtifactName()
+        {
+            var testRoot = Path.Combine(Directory.GetCurrentDirectory(), "jroc_cli_named_entries_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var entry = Path.Combine(testRoot, "entry.js");
+            var extra = Path.Combine(testRoot, "extra.js");
+            var outDir = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "console.log('default entry');");
+            File.WriteAllText(extra, "console.log('extra entry');");
+
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(
+                    entry, "--additional-input", extra, "-o", outDir, "--assemblyname", "Combined.Entries");
+
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                var assemblyPath = Path.Combine(outDir, "Combined.Entries.dll");
+                Assert.True(File.Exists(assemblyPath), $"Missing output: {assemblyPath}");
+                Assert.True(File.Exists(Path.Combine(outDir, "Combined.Entries.runtimeconfig.json")));
+                Assert.Equal("Combined.Entries", AssemblyName.GetAssemblyName(assemblyPath).Name);
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Convert_MissingAdditionalInput_IdentifiesTheFileAndDoesNotCompile()
+        {
+            var testRoot = Path.Combine(Directory.GetCurrentDirectory(), "jroc_cli_missing_entry_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var entry = Path.Combine(testRoot, "entry.js");
+            var missing = Path.Combine(testRoot, "missing.js");
+            var outDir = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "console.log('default entry');");
+
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(entry, outDir, "--additional-input", missing);
+
+                Assert.NotEqual(0, code);
+                Assert.Contains($"Additional input file '{missing}' does not exist", stderr, StringComparison.Ordinal);
+                Assert.False(File.Exists(Path.Combine(outDir, "entry.dll")));
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Convert_MissingDefaultEntry_WithAdditionalInput_IdentifiesTheFile()
+        {
+            var testRoot = Path.Combine(Directory.GetCurrentDirectory(), "jroc_cli_missing_default_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var missing = Path.Combine(testRoot, "missing.js");
+            var extra = Path.Combine(testRoot, "extra.js");
+            File.WriteAllText(extra, "console.log('extra entry');");
+
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(missing, "--additional-input", extra);
+
+                Assert.NotEqual(0, code);
+                Assert.Contains($"Input file '{missing}' does not exist", stderr, StringComparison.Ordinal);
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Convert_AdditionalInput_WithoutPath_ShowsError()
+        {
+            var (code, _, stderr) = RunOutOfProc("--additional-input");
+
+            Assert.NotEqual(0, code);
+            Assert.Contains("--additional-input requires a file path", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void Convert_AdditionalInput_WithModuleId_ShowsConflict()
+        {
+            var (code, _, stderr) = RunOutOfProc("--moduleid", "any-module", "--additional-input", "extra.js");
+
+            Assert.NotEqual(0, code);
+            Assert.Contains("--additional-input cannot be used with --moduleid", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
         public void Convert_WithDiagnosticFile_WritesDiagnosticsToFile()
         {
             var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_test_" + Guid.NewGuid().ToString("n"));
