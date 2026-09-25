@@ -261,7 +261,7 @@ namespace Jroc.Tests
             try
             {
                 var (code, _, stderr) = RunOutOfProc(
-                    entry, "--additional-input", extra, outDir, "--additional-input", third);
+                    entry, "-e", extra, outDir, "-e", third);
 
                 Assert.Equal(0, code);
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
@@ -345,7 +345,7 @@ namespace Jroc.Tests
             try
             {
                 var (code, _, stderr) = RunOutOfProc(
-                    entry, "--additional-input", extra, "-o", outDir, "--assemblyname", "Combined.Entries");
+                    entry, "-e=" + extra, "-o", outDir, "--assemblyname", "Combined.Entries");
 
                 Assert.Equal(0, code);
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
@@ -406,19 +406,23 @@ namespace Jroc.Tests
             }
         }
 
-        [Fact]
-        public void Convert_AdditionalInput_WithoutPath_ShowsError()
+        [Theory]
+        [InlineData("--additional-input")]
+        [InlineData("-e")]
+        public void Convert_AdditionalInput_WithoutPath_ShowsError(string option)
         {
-            var (code, _, stderr) = RunOutOfProc("--additional-input");
+            var (code, _, stderr) = RunOutOfProc(option);
 
             Assert.NotEqual(0, code);
             Assert.Contains("--additional-input requires a file path", stderr, StringComparison.Ordinal);
         }
 
-        [Fact]
-        public void Convert_AdditionalInput_WithModuleId_ShowsConflict()
+        [Theory]
+        [InlineData("--additional-input")]
+        [InlineData("-e")]
+        public void Convert_AdditionalInput_WithModuleId_ShowsConflict(string option)
         {
-            var (code, _, stderr) = RunOutOfProc("--moduleid", "any-module", "--additional-input", "extra.js");
+            var (code, _, stderr) = RunOutOfProc("--moduleid", "any-module", option, "extra.js");
 
             Assert.NotEqual(0, code);
             Assert.Contains("--additional-input cannot be used with --moduleid", stderr, StringComparison.Ordinal);

@@ -19,6 +19,7 @@ public class JrocArgs
 
     [ArgDescription("Add a JavaScript input file to the assembly (repeat for each additional file)")]
     [ArgShortcut("--additional-input")]
+    [ArgShortcut("e")]
     public string? AdditionalInput { get; set; }
 
     [ArgDescription("Set the generated assembly identity and artifact basename")]
@@ -68,7 +69,7 @@ class Program
 
             if (parsed.AdditionalInput is not null)
             {
-                throw new ArgException("Use --additional-input <file> for each additional entry.");
+                throw new ArgException("Use -e <file> or --additional-input <file> for each additional entry.");
             }
 
             // Version handling (PowerArgs default alias is -Version from property name)
@@ -202,7 +203,8 @@ class Program
         {
             var arg = args[index];
             if (arg.Equals("--additional-input", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("-AdditionalInput", StringComparison.OrdinalIgnoreCase))
+                arg.Equals("-AdditionalInput", StringComparison.OrdinalIgnoreCase) ||
+                arg.Equals("-e", StringComparison.OrdinalIgnoreCase))
             {
                 if (index + 1 >= args.Length || args[index + 1].StartsWith('-') || string.IsNullOrWhiteSpace(args[index + 1]))
                 {
@@ -212,9 +214,15 @@ class Program
                 additionalInputs.Add(args[++index]);
             }
             else if (arg.StartsWith("--additional-input=", StringComparison.OrdinalIgnoreCase) ||
+                     arg.StartsWith("-e=", StringComparison.OrdinalIgnoreCase) ||
                      arg.StartsWith("/AdditionalInput:", StringComparison.OrdinalIgnoreCase))
             {
-                var path = arg[(arg[0] == '/' ? "/AdditionalInput:".Length : "--additional-input=".Length)..];
+                var prefixLength = arg[0] == '/'
+                    ? "/AdditionalInput:".Length
+                    : arg.StartsWith("-e=", StringComparison.OrdinalIgnoreCase)
+                        ? "-e=".Length
+                        : "--additional-input=".Length;
+                var path = arg[prefixLength..];
                 if (string.IsNullOrWhiteSpace(path))
                 {
                     throw new ArgException("--additional-input requires a file path.");
@@ -240,7 +248,7 @@ class Program
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
         logger.WriteLineError("--moduleid             Compile an npm/CommonJS module id instead of a file path");
-        logger.WriteLineError("--additional-input <file> Add another input to the assembly (repeatable; incompatible with --moduleid)");
+        logger.WriteLineError("-e, --additional-input <file> Add another input (repeatable; incompatible with --moduleid)");
         logger.WriteLineError("--assemblyname <name>   Set the assembly identity and artifact basename");
         logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
         logger.WriteLineError("-v, --verbose          Enable diagnostics output to console");

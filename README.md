@@ -77,14 +77,14 @@ the input file.
 
 ```text
 jroc <InputFile> [<OutputPath>] [options]
-jroc <InputFile> [<OutputPath>] --additional-input <file> [--additional-input <file> ...] [options]
+jroc <InputFile> [<OutputPath>] -e <file> [-e <file> ...] [options]
 jroc --moduleid <ModuleId> [<OutputPath>] [options]
 ```
 
 | Option | Description |
 |---|---|
 | `-i`, `--input <file>` | Compile a JavaScript file. The positional form is also supported. |
-| `--additional-input <file>` | Add another JavaScript input to the same assembly; repeat for more files. Cannot be used with `--moduleid`. |
+| `-e`, `--additional-input <file>` | Add another JavaScript input to the same assembly; repeat for more files. Cannot be used with `--moduleid`. |
 | `--moduleid <id>` | Compile an npm/CommonJS module ID, such as `turndown` or `@scope/pkg`. |
 | `-o`, `--output <directory>` | Select the output directory. |
 | `--assemblyname <name>` | Set the generated assembly identity and artifact basename. |
@@ -103,11 +103,11 @@ dotnet out/app.dll
 ```
 
 To include multiple independent input files in one assembly, keep the default
-entry first and supply each other file with `--additional-input`. The second
+entry first and supply each other file with `-e` or `--additional-input`. The second
 positional argument remains the output directory:
 
 ```shell
-jroc app.js out --additional-input utilities.js --additional-input features.js
+jroc app.js out -e utilities.js -e features.js
 dotnet out/app.dll
 ```
 
