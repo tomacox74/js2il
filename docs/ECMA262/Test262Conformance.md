@@ -21,9 +21,9 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,370 | 12 | 7,130 | 23,512 | **69.62%** |
+| Built-in objects and APIs | 16,470 | 12 | 7,030 | 23,512 | **70.05%** |
 | Language syntax and semantics | 15,658 | 46 | 7,943 | 23,647 | **66.22%** |
-| **Total** | 32,028 | 58 | 16,159 | 48,245 | **66.39%** |
+| **Total** | 32,128 | 58 | 16,059 | 48,245 | **66.59%** |
 
 ## Language Areas
 
@@ -181,7 +181,7 @@ Counts are unique, standalone Test262 files. Strict and non-strict execution var
 | `AsyncGeneratorFunction` | 9 | 0 | 14 | 23 | **39.13%** |
 | `AsyncGeneratorPrototype` | 2 | 0 | 46 | 48 | **4.17%** |
 | `AsyncIteratorPrototype` | 3 | 0 | 10 | 13 | **23.08%** |
-| `Atomics` | 71 | 0 | 311 | 382 | **18.59%** |
+| `Atomics` | 171 | 0 | 211 | 382 | **44.76%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
 | `Boolean` | 49 | 0 | 2 | 51 | **96.08%** |
 | `DataView` | 550 | 0 | 11 | 561 | **98.04%** |
