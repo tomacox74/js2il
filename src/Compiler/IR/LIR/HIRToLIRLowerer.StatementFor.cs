@@ -85,6 +85,12 @@ public sealed partial class HIRToLIRLowerer
             {
                 fastPathEndLabel = vectorEndLabel;
             }
+            if (!useTempPerIterationScope && perIterationBindings.Count == 0
+                && forStmt.Int32ArrayLocalVectorOrPattern is { } localPattern
+                && TryEmitInt32ArrayLocalVectorOrFastPath(forStmt, localPattern, out var localEndLabel))
+            {
+                fastPathEndLabel = localEndLabel;
+            }
 
             // Loop start label
             lirInstructions.Add(new LIRLabel(loopStartLabel));

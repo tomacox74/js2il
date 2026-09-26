@@ -48,6 +48,8 @@ public sealed class HIRForStatement : HIRStatement
     public HIRBitsetCountPattern? BitsetCountPattern { get; init; }
 
     public HIRInt32ArrayVectorOrPattern? Int32ArrayVectorOrPattern { get; init; }
+
+    public HIRInt32ArrayLocalVectorOrPattern? Int32ArrayLocalVectorOrPattern { get; init; }
 }
 
 public sealed record HIRBitsetCountPattern(
@@ -55,3 +57,5 @@ public sealed record HIRBitsetCountPattern(
 
 public sealed record HIRInt32ArrayVectorOrPattern(
     string ArrayField, string EndField, double Mask);
+
+public sealed record HIRInt32ArrayLocalVectorOrPattern(double Mask);

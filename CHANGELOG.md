@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): vectorize canonical local-const Int32Array OR loops with
+  literal or immutable numeric bounds, preserving the scalar loop for
+  dynamic properties, side-effecting bodies, and unsupported storage.
 - perf(compiler/runtime): add guarded portable `Vector128<int>` OR-range
   infrastructure for contiguous `Int32Array` loops, with scalar edges,
   fallback, and disabled-intrinsics benchmark coverage.

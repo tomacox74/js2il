@@ -109,6 +109,17 @@ Notes:
   typed-array loops and ordinary arrays retain their scalar lowering. Run
   `--int32array-vector-or` in the benchmark project for the scalar/vector
   comparison, including a forced no-vector control.
+- A local `const` binding proven to hold an `Int32Array` can use the same
+  vector range for `for (let i = start; i < end; i++) a[i] |= constant`
+  when `end` is a numeric literal or a stable numeric `const`. The loop
+  index cannot be captured, the body contains only that element write,
+  and the mask must be an exact signed 32-bit integer literal. Bounds,
+  backing-store type, and hardware acceleration remain runtime guarded.
+  A mutable bound, array-like/proxy receiver, callback, or repeated
+  `a.length` access keeps the original scalar loop: `a.length` may be
+  shadowed by an observable getter, so it is not hoisted by this matcher.
+  Run `--int32array-compiled-vector-or` to compare actual compiled JS
+  output against a scalar-syntax control under intrinsics-on/off jobs.
 
 ---
 
