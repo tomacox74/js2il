@@ -47,6 +47,11 @@ else
         var summary = BenchmarkRunner.Run<ArrayInternalOperationsBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--int32array-backing")
+    {
+        var summary = BenchmarkRunner.Run<Int32ArrayBackingBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--prototype-storage")
     {
         var summary = BenchmarkRunner.Run<PrototypeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -181,6 +186,7 @@ Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-ob
 Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline descriptor storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --descriptor-lookup # Run active-realm descriptor lookup microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
+Console.WriteLine("  dotnet run -c Release -- --int32array-backing # Compare Int32Array indexed and backing-storage access");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");
 Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-object and legacy invocation ABIs");

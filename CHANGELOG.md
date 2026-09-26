@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): use a guarded contiguous `int` view for indexed Int32Array
+  reads and writes on fixed backing storage, retaining the byte-oriented path
+  for detached, resizable, and growable buffers.
 - test262: support the native `$262.agent` host and `atomicsHelper.js` for
   worker-based shared-memory tests; port 100 previously failing pinned Atomics
   wait, waitAsync, and notify cases.
