@@ -6,7 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(runtime): use a guarded contiguous `int` view for indexed Int32Array
+  reads and writes on fixed backing storage, retaining the byte-oriented path
+  for detached, resizable, and growable buffers.
 
 ## v0.12.29 - 2026-09-26
 
