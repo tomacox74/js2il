@@ -249,6 +249,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRTypeof),
         typeof(LIRUnsignedRightShift),
         typeof(LIRUnwrapCatchException),
+        typeof(LIRVectorInt32Range),
         typeof(LIRYield)
     };
 
@@ -623,6 +624,7 @@ internal static partial class LIRInstructionInfo
                 or LIRCallFunctionBaseConstructor
                 or LIRCallDeclaredCallable
                 or LIRCallRuntimeServicesStatic
+                or LIRVectorInt32Range
                 => CallEffects,
 
             LIRConcatStrings
