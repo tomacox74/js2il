@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.28](https://github.com/tomacox74/js2il/releases/tag/v0.12.28).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.29](https://github.com/tomacox74/js2il/releases/tag/v0.12.29).
 
 ## How to Read This Report
 
@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,823 | 12 | 6,677 | 23,512 | **71.55%** |
+| Built-in objects and APIs | 16,923 | 12 | 6,577 | 23,512 | **71.98%** |
 | Language syntax and semantics | 15,915 | 46 | 7,686 | 23,647 | **67.30%** |
-| **Total** | 32,738 | 58 | 15,449 | 48,245 | **67.86%** |
+| **Total** | 32,838 | 58 | 15,349 | 48,245 | **68.07%** |
 
 ## Language Areas
 
@@ -237,7 +237,7 @@ bounded worker cleanup.
 | `Promise` | 437 | 0 | 240 | 677 | **64.55%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,050 | 0 | 829 | 1,879 | **55.88%** |
+| `RegExp` | 1,150 | 0 | 729 | 1,879 | **61.20%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |

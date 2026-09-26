@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): implement observable RegExp.prototype symbol operations for
+  match, matchAll, replace, search, and split, including overridden exec,
+  lastIndex and flag access, generic receivers, species construction, and
+  method metadata; verify 100 previously failing pinned Test262 cases.
 - perf(compiler/runtime): recognize compatible Int32Array-backed bitset count
   loops and count clear bits in whole words with `BitOperations.PopCount`,
   preserving the scalar loop for dynamic bounds and backing storage.

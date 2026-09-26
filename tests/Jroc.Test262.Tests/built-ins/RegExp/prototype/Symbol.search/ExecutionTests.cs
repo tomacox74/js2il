@@ -46,4 +46,42 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task y_fail_return()
         => ExecutionTestFromFile("y-fail-return");
 
+    [Fact(DisplayName = "coerce-string-err.js")]
+    public Task ported_coerce_string_err() => ExecutionTestFromFile("coerce-string-err");
+
+    [Fact(DisplayName = "cstm-exec-return-index.js")]
+    public Task ported_cstm_exec_return_index() => ExecutionTestFromFile("cstm-exec-return-index");
+
+    [Fact(DisplayName = "get-lastindex-err.js")]
+    public Task ported_get_lastindex_err() => ExecutionTestFromFile("get-lastindex-err");
+
+    [Fact(DisplayName = "lastindex-no-restore.js")]
+    public Task ported_lastindex_no_restore() => ExecutionTestFromFile("lastindex-no-restore");
+
+    [Fact(DisplayName = "match-err.js")]
+    public Task ported_match_err() => ExecutionTestFromFile("match-err");
+
+    [Fact(DisplayName = "name.js")]
+    public Task ported_name() => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "set-lastindex-init-err.js")]
+    public Task ported_set_lastindex_init_err() => ExecutionTestFromFile("set-lastindex-init-err");
+
+    [Fact(DisplayName = "set-lastindex-init-samevalue.js")]
+    public Task ported_set_lastindex_init_samevalue() => ExecutionTestFromFile("set-lastindex-init-samevalue");
+
+    [Fact(DisplayName = "set-lastindex-init.js")]
+    public Task ported_set_lastindex_init() => ExecutionTestFromFile("set-lastindex-init");
+
+    [Fact(DisplayName = "set-lastindex-restore-err.js")]
+    public Task ported_set_lastindex_restore_err() => ExecutionTestFromFile("set-lastindex-restore-err");
+
+    [Fact(DisplayName = "set-lastindex-restore-samevalue.js")]
+    public Task ported_set_lastindex_restore_samevalue() => ExecutionTestFromFile("set-lastindex-restore-samevalue");
+
+    [Fact(DisplayName = "set-lastindex-restore.js")]
+    public Task ported_set_lastindex_restore() => ExecutionTestFromFile("set-lastindex-restore");
+
+    [Fact(DisplayName = "success-get-index-err.js")]
+    public Task ported_success_get_index_err() => ExecutionTestFromFile("success-get-index-err");
 }
