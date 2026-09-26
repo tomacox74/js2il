@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 500 additional pinned class-expression cases covering class
+  elements and parameter destructuring.
 - perf(compiler): vectorize canonical local-const Int32Array OR loops with
   literal or immutable numeric bounds, preserving the scalar loop for
   dynamic properties, side-effecting bodies, and unsupported storage.
