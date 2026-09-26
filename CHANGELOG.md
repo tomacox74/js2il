@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): recognize compatible Int32Array-backed bitset count
+  loops and count clear bits in whole words with `BitOperations.PopCount`,
+  preserving the scalar loop for dynamic bounds and backing storage.
 - perf(compiler/runtime): recognize canonical Int32Array-backed first-zero-bit
   loops and search fixed, non-shared words with trailing-zero count; retain the
   original per-bit loop for dynamic indices and detachable/resizable buffers.

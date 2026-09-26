@@ -113,4 +113,80 @@ public sealed class Int32ArrayContiguousTests
         buffer.Detach();
         Assert.Equal(-1d, Int32Array.FindFirstZeroBitOrNegative(words, 0));
     }
+
+    [Fact]
+    public void CountZeroBitsHandlesPartialAndCrossWordRanges()
+    {
+        var words = new Int32Array(3d);
+        Assert.Equal(0d, Int32Array.CountZeroBitsOrNegative(words, 1, 1));
+        Assert.Equal(31d, Int32Array.CountZeroBitsOrNegative(words, 1, 32));
+        Assert.Equal(63d, Int32Array.CountZeroBitsOrNegative(words, 1, 64));
+
+        words[0] = -1;
+        words[1] = -1;
+        words[2] = unchecked((int)0x7fffffff);
+        Assert.Equal(0d, Int32Array.CountZeroBitsOrNegative(words, 1, 95));
+        Assert.Equal(1d, Int32Array.CountZeroBitsOrNegative(words, 1, 96));
+        Assert.Equal(6d, Int32Array.CountZeroBitsOrNegative(words, 1, 101));
+
+        words[0] = 0b1011;
+        words[1] = 0;
+        Assert.Equal(6d, Int32Array.CountZeroBitsOrNegative(words, 1, 9));
+        Assert.Equal(6d, Int32Array.CountZeroBitsOrNegative(words, 1, 9.0));
+        Assert.Equal(2d, Int32Array.CountZeroBitsOrNegative(words, 31, 33));
+        Assert.Equal(1d, Int32Array.CountZeroBitsOrNegative(words, 96, 97));
+        Assert.Equal(5d, Int32Array.CountZeroBitsOrNegative(words, 96, 101));
+    }
+
+    [Fact]
+    public void CountZeroBitsFallsBackForUnsafeInputsAndBacking()
+    {
+        var buffer = new ArrayBuffer(8d);
+        var words = new Int32Array(buffer);
+        foreach (var (start, end) in new[]
+        {
+            (-1d, 10d), (0.5, 10d), (0d, 1.5), (double.NaN, 10d),
+            (0d, double.PositiveInfinity), (0d, 4294967297d),
+            (BitConverter.Int64BitsToDouble(long.MinValue), 1d)
+        })
+        {
+            Assert.Equal(-1d, Int32Array.CountZeroBitsOrNegative(words, start, end));
+        }
+
+        Assert.Equal(-1d, Int32Array.CountZeroBitsOrNegative(
+            new Int32Array(new ArrayBuffer(8d, new { maxByteLength = 16d })), 0, 1));
+        Assert.Equal(-1d, Int32Array.CountZeroBitsOrNegative(
+            new Int32Array(new SharedArrayBuffer(8d)), 0, 1));
+        buffer.Detach();
+        Assert.Equal(-1d, Int32Array.CountZeroBitsOrNegative(words, 0, 1));
+    }
+
+    [Theory]
+    [InlineData(10)]
+    [InlineData(100)]
+    [InlineData(1_000)]
+    [InlineData(10_000)]
+    [InlineData(100_000)]
+    [InlineData(1_000_000)]
+    [InlineData(10_000_000)]
+    [InlineData(100_000_000)]
+    public void CountZeroBitsCoversEveryPrimeValidationSize(int sieveSize)
+    {
+        var bitLength = sieveSize / 2;
+        var words = new Int32Array(1d + ((bitLength + 1) >> 5));
+        Assert.Equal(bitLength - 1d, Int32Array.CountZeroBitsOrNegative(words, 1, bitLength));
+    }
+
+    [Fact]
+    public void CountZeroBitsDoesNotTreatArbitraryClrFieldsAsCompiledBitsets()
+    {
+        var owner = new UncompiledBitset();
+        Assert.Equal(-1d, RuntimeServices.CountZeroBitsInCompiledBitsetOrNegative(
+            owner, nameof(UncompiledBitset.wordArray), 1, 33));
+    }
+
+    private sealed class UncompiledBitset
+    {
+        public Int32Array wordArray = new(2d);
+    }
 }
