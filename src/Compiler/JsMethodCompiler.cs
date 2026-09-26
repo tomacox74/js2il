@@ -1114,6 +1114,8 @@ internal sealed class JsMethodCompiler
         lirMethod!.ModuleId = scope.ModuleId;
         PopulateIntrinsicGuardEffectSummaries(lirMethod!, scope);
 
+        LIRVectorNormalization.Normalize(lirMethod!);
+
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
         var callableReader = _serviceProvider.GetService<ICallableDeclarationReader>();

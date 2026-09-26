@@ -2831,7 +2831,8 @@ partial class HIRMethodBuilder
                     _currentScope = previousForScope;
                     hirStatement = new HIRForStatement(forInitStmt, forTestExpr, updateExpr, bodyStmt!)
                     {
-                        BitsetCountPattern = TryRecognizeBitsetCount(forStmt)
+                        BitsetCountPattern = TryRecognizeBitsetCount(forStmt),
+                        Int32ArrayVectorOrPattern = TryRecognizeInt32ArrayVectorOr(forStmt)
                     };
                     return true;
                 }

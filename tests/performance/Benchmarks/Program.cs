@@ -62,6 +62,11 @@ else
         var summary = BenchmarkRunner.Run<Int32ArrayPopCountBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--int32array-vector-or")
+    {
+        var summary = BenchmarkRunner.Run<Int32ArrayVectorOrBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--prototype-storage")
     {
         var summary = BenchmarkRunner.Run<PrototypeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -204,6 +209,7 @@ Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array 
 Console.WriteLine("  dotnet run -c Release -- --int32array-backing # Compare Int32Array indexed and backing-storage access");
 Console.WriteLine("  dotnet run -c Release -- --int32array-first-zero-bit # Compare bit-by-bit and whole-word searches");
 Console.WriteLine("  dotnet run -c Release -- --int32array-popcount # Compare per-bit and PopCount bitset counts");
+Console.WriteLine("  dotnet run -c Release -- --int32array-vector-or # Compare scalar and portable SIMD Int32Array OR ranges");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");
 Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-object and legacy invocation ABIs");

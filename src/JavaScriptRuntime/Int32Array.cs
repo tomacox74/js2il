@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 namespace JavaScriptRuntime
 {
@@ -238,6 +239,55 @@ namespace JavaScriptRuntime
             }
 
             return clearBits;
+        }
+
+        internal static bool TryOrRange(Int32Array? words, double start, double end, double mask)
+            => TryOrRange(words, start, end, mask, allowVector: true);
+
+        internal static bool TryOrRange(
+            Int32Array? words, double start, double end, double mask, bool allowVector)
+        {
+            if (words is null || words.GetType() != typeof(Int32Array)
+                || words.BufferObject is SharedArrayBuffer
+                || start < 0 || start != System.Math.Truncate(start)
+                || end < start || end != System.Math.Truncate(end)
+                || (start == 0 && double.IsNegative(start))
+                || (end == 0 && double.IsNegative(end))
+                || mask < int.MinValue || mask > int.MaxValue
+                || mask != System.Math.Truncate(mask)
+                || !words.TryGetContiguousElements(out var elements)
+                || end > elements.Length)
+            {
+                return false;
+            }
+
+            var first = (int)start;
+            var last = (int)end;
+            var intMask = (int)mask;
+            if (allowVector && Vector128.IsHardwareAccelerated && last - first >= Vector128<int>.Count)
+            {
+                // Align the element index within the backing buffer before vectorizing.
+                var offset = words.ByteOffsetBytes / ElementSize;
+                while (first < last && ((offset + first) & (Vector128<int>.Count - 1)) != 0)
+                {
+                    elements[first++] |= intMask;
+                }
+
+                var maskVector = Vector128.Create(intMask);
+                ref var initialElement = ref MemoryMarshal.GetReference(elements);
+                for (; last - first >= Vector128<int>.Count; first += Vector128<int>.Count)
+                {
+                    var value = Vector128.LoadUnsafe(ref initialElement, (nuint)first);
+                    Vector128.BitwiseOr(value, maskVector).StoreUnsafe(ref initialElement, (nuint)first);
+                }
+            }
+
+            for (; first < last; first++)
+            {
+                elements[first] |= intMask;
+            }
+
+            return true;
         }
 
         private bool HasContiguousBacking => _hasFixedContiguousBacking && !BufferObject.IsDetached;

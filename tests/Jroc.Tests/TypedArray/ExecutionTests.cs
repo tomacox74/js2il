@@ -142,6 +142,9 @@ namespace Jroc.Tests.TypedArray
         public Task Int32Array_PopCount() { var testName = nameof(Int32Array_PopCount); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Int32Array_VectorOrRange() { var testName = nameof(Int32Array_VectorOrRange); return ExecutionTest(testName); }
+
+        [Fact]
         public Task SharedArrayBuffer_Int32Array_AtomicsWait() { var testName = nameof(SharedArrayBuffer_Int32Array_AtomicsWait); return ExecutionTest(testName); }
     }
 }
