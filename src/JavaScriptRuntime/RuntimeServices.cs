@@ -38,6 +38,26 @@ public class RuntimeServices
     public static double FindFirstZeroBitOrNegative(Int32Array? words, double index)
         => Int32Array.FindFirstZeroBitOrNegative(words, index);
 
+    public static double CountZeroBitsInCompiledBitsetOrNegative<T>(
+        T receiver, string fieldName, double start, double end)
+    {
+        var ownerType = typeof(T);
+        if (receiver is null || receiver.GetType() != ownerType
+            || !ownerType.Assembly.IsDefined(typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false))
+        {
+            return -1;
+        }
+
+        var field = ownerType.GetField(
+            fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+        if (field is null || field.FieldType != typeof(Int32Array))
+        {
+            return -1;
+        }
+
+        return Int32Array.CountZeroBitsOrNegative((Int32Array?)field.GetValue(receiver), start, end);
+    }
+
     internal sealed record InvocationFrame(
         object? CurrentThis = null,
         object? CurrentLexicalSuperReceiver = null,

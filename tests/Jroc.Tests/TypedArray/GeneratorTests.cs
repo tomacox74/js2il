@@ -130,6 +130,9 @@ namespace Jroc.Tests.TypedArray
         public Task Int32Array_FirstZeroBitSearch() { var testName = nameof(Int32Array_FirstZeroBitSearch); return GenerateTest(testName); }
 
         [Fact]
+        public Task Int32Array_PopCount() { var testName = nameof(Int32Array_PopCount); return GenerateTest(testName); }
+
+        [Fact]
         public Task SharedArrayBuffer_Int32Array_AtomicsWait() { var testName = nameof(SharedArrayBuffer_Int32Array_AtomicsWait); return GenerateTest(testName); }
     }
 }

@@ -57,6 +57,11 @@ else
         var summary = BenchmarkRunner.Run<Int32ArrayFirstZeroBitBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--int32array-popcount")
+    {
+        var summary = BenchmarkRunner.Run<Int32ArrayPopCountBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--prototype-storage")
     {
         var summary = BenchmarkRunner.Run<PrototypeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -150,6 +155,11 @@ else
             switcher = BenchmarkSwitcher.FromTypes([typeof(PrimeExecuteBenchmark)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
+        else if (programArgs.Length > 0 && programArgs[0] == "--prime-validation")
+        {
+            switcher = BenchmarkSwitcher.FromTypes([typeof(PrimeValidationBenchmark)]);
+            benchmarkArgs = programArgs.Skip(1).ToArray();
+        }
         else
         {
             // Run cross-runtime comparison by default
@@ -193,6 +203,7 @@ Console.WriteLine("  dotnet run -c Release --descriptor-lookup # Run active-real
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release -- --int32array-backing # Compare Int32Array indexed and backing-storage access");
 Console.WriteLine("  dotnet run -c Release -- --int32array-first-zero-bit # Compare bit-by-bit and whole-word searches");
+Console.WriteLine("  dotnet run -c Release -- --int32array-popcount # Compare per-bit and PopCount bitset counts");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");
 Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-object and legacy invocation ABIs");
@@ -206,6 +217,7 @@ Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution 
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release -- --kracken --comprehensive # Include disabled Kraken scenarios and runtimes");
 Console.WriteLine("  dotnet run -c Release -- --prime-execute # Run the one-pass Prime sieve execution benchmark");
+Console.WriteLine("  dotnet run -c Release -- --prime-validation # Compare validation with a scalar-count control");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
