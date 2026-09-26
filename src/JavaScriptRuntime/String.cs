@@ -2661,6 +2661,29 @@ namespace JavaScriptRuntime
                 return result;
             }
 
+            if ((species is null or JsNull)
+                && receiver is JavaScriptRuntime.RegExp original
+                && original.CanUseBuiltinExecFastPath()
+                && splitter is JavaScriptRuntime.RegExp builtinSplitter
+                && builtinSplitter.CanUseBuiltinExecFastPath())
+            {
+                if (builtinSplitter.IsEmptySplitPattern)
+                {
+                    return SplitWithEmptyRegExp(input, fullUnicode, maxCount);
+                }
+
+                if (original.SimpleLiteralPattern is string literal
+                    && flags == original.flags
+                    && newFlags == builtinSplitter.flags
+                    && builtinSplitter.source == literal
+                    && flags.IndexOf('i') < 0
+                    && flags.IndexOf('u') < 0
+                    && flags.IndexOf('v') < 0)
+                {
+                    return SplitWithLiteralSeparator(input, literal, maxCount);
+                }
+            }
+
             if (input.Length == 0)
             {
                 ObjectRuntime.SetItem(splitter, "lastIndex", 0d, true);
@@ -2711,6 +2734,32 @@ namespace JavaScriptRuntime
 
             result.Add(input.Substring(p, input.Length - p));
             return result;
+        }
+
+        private static JavaScriptRuntime.Array SplitWithEmptyRegExp(string input, bool unicode, int maxCount)
+        {
+            if (input.Length == 0)
+            {
+                return new JavaScriptRuntime.Array();
+            }
+
+            var items = new object?[global::System.Math.Min(input.Length, maxCount)];
+            var count = 0;
+            for (var index = 0; index < input.Length && count < items.Length;)
+            {
+                var nextIndex = AdvanceSplitIndex(input, index, unicode);
+                items[count++] = input.Substring(index, nextIndex - index);
+                index = nextIndex;
+            }
+
+            if (count == items.Length)
+            {
+                return new JavaScriptRuntime.Array(items);
+            }
+
+            var trimmed = new object?[count];
+            global::System.Array.Copy(items, trimmed, count);
+            return new JavaScriptRuntime.Array(trimmed);
         }
 
         private static int AdvanceSplitIndex(string input, int index, bool unicode)

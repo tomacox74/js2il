@@ -763,6 +763,16 @@ namespace JavaScriptRuntime
 
         internal bool CanUseEnumerateMatchesFastPath => !_sticky && !_unicode;
 
+        internal bool CanUseBuiltinExecFastPath()
+        {
+            return !HasOwnPropertyValue("exec")
+                && PropertyDescriptorStore.TryGetOwn(Prototype, "exec", out var descriptor)
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && CallableOperations.HasSameBuiltinDelegateMethod(
+                    descriptor.Value,
+                    BuiltinDelegateFunctionAdapter.FromDelegate((BuiltinFunction1)PrototypeExec));
+        }
+
         public static bool IsRegExp(object? value)
         {
             if (value is null or JsNull or string or Symbol || value.GetType().IsValueType)
