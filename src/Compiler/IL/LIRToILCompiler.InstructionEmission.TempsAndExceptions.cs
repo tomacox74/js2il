@@ -39,7 +39,18 @@ internal sealed partial class LIRToILCompiler
                 }
                 else
                 {
-                    EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                    if (destinationStorage.Kind == ValueStorageKind.UnboxedValue
+                        && destinationStorage.ClrType == typeof(double)
+                        && GetMaterializedTempStorage(copyTemp.Source, allocation) is
+                            { Kind: ValueStorageKind.UnboxedValue, ClrType: var sourceType }
+                        && sourceType == typeof(int))
+                    {
+                        EmitLoadTempAsDouble(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                    }
                 }
                 EmitStoreTemp(copyTemp.Destination, ilEncoder, allocation);
                 return true;
