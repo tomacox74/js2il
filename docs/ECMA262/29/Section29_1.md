@@ -4,7 +4,7 @@
 
 [Back to Section29](Section29.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-25T18:52:40Z
+> Last generated (UTC): 2026-09-25T21:34:59Z
 
 JROC implements SharedArrayBuffer and several Atomics operations, but full multi-agent shared-memory execution and ECMA-262 memory-model conformance remain unverified.
 
@@ -20,5 +20,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Shared-memory memory-model semantics | Not Yet Supported |  |  | Growable SharedArrayBuffer, integer typed-array atomic operations, and Atomics.wait/waitAsync/notify are available. Full multi-agent memory-model conformance, including cross-agent ordering guarantees, is not yet verified. |
+| Shared-memory memory-model semantics | Not Yet Supported |  |  | Growable SharedArrayBuffer, integer typed-array atomic operations, and Atomics.wait/waitAsync/notify are available. Native Test262 agents verify selected cross-agent notification and waiter behaviors, but full multi-agent memory-model conformance, including all ordering guarantees, is not yet verified. |
 

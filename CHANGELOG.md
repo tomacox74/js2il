@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: support the native `$262.agent` host and `atomicsHelper.js` for
+  worker-based shared-memory tests; port 100 previously failing pinned Atomics
+  wait, waitAsync, and notify cases.
 - feat(runtime): coordinate synchronous and asynchronous Atomics waits with
   notifications, support BigInt64 waits, and add growable SharedArrayBuffers
   with species-aware slicing; port 100 previously failing pinned Test262 cases.
