@@ -46,7 +46,13 @@ public class DromaeoExecutionBenchmarks : ExecutionBenchmarksBase
         File.WriteAllText(tempScriptFile, scenario.Content);
 
         var outputPath = Path.Combine(_tempDir, scenario.ScriptName);
-        var options = new CompilerOptions { OutputDirectory = outputPath };
+        var options = new CompilerOptions
+        {
+            OutputDirectory = outputPath,
+#if !JROC_PREVIOUS
+            AssumeUnmodifiedHostGlobals = true
+#endif
+        };
         var serviceProvider = CompilerServices.BuildServiceProvider(options);
         var compiler = serviceProvider.GetRequiredService<Compiler>();
         if (!compiler.Compile(tempScriptFile, scenario.ScriptName))

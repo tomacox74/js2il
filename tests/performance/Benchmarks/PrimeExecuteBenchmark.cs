@@ -49,7 +49,10 @@ public class PrimeExecuteBenchmark : ExecutionBenchmarksBase
     {
         var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(ScenarioName + ".js")
         {
-            SourceText = LoadPrimeScript()
+            SourceText = LoadPrimeScript(),
+#if !JROC_PREVIOUS
+            AssumeUnmodifiedHostGlobals = true
+#endif
         });
 
         _jrocAssembly = JrocInMemoryAssemblyLoader.Load(artifact);

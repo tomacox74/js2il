@@ -111,7 +111,8 @@ public class CallableArchitectureBenchmarks : IDisposable
                     "BenchmarkDotNet.Artifacts",
                     "jroc-callable-architecture-baseline.js")))
         {
-            SourceText = Source
+            SourceText = Source,
+            AssumeUnmodifiedHostGlobals = true
         };
 
         var artifact = JrocInMemoryCompiler.Compile(request);
