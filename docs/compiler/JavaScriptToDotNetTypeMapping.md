@@ -89,6 +89,16 @@ Notes:
   scans the initial partial word and subsequent words with trailing-zero
   count. Non-integer/negative indices, detached or resizable buffers, and
   shared storage retain the original per-bit loop.
+- A compatible class bitset-count loop with a numeric `let total = 1`, a
+  `let index = 1` loop, and a proven `Int32Array` bit test can count clear bits
+  over complete and partial words with `PopCount`. The initial `1` remains
+  the separate count for prime 2 in sieve-style callers. Unsupported index
+  bounds, detached/resizable or shared buffers, and unrecognized receivers
+  take the original per-bit loop. The matcher checks the bit-test body and
+  generated class fields; it does not depend on a source filename or class
+  name. The benchmark's `--prime-validation` selector compares the
+  validation-only module load with an otherwise identical scalar-count
+  control (`total += 1` in place of `total++`).
 
 ---
 

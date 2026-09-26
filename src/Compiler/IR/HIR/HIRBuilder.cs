@@ -2829,7 +2829,10 @@ partial class HIRMethodBuilder
 
                     // Restore the previous scope
                     _currentScope = previousForScope;
-                    hirStatement = new HIRForStatement(forInitStmt, forTestExpr, updateExpr, bodyStmt!);
+                    hirStatement = new HIRForStatement(forInitStmt, forTestExpr, updateExpr, bodyStmt!)
+                    {
+                        BitsetCountPattern = TryRecognizeBitsetCount(forStmt)
+                    };
                     return true;
                 }
 

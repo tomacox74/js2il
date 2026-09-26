@@ -207,6 +207,39 @@ namespace JavaScriptRuntime
             }
         }
 
+        internal static double CountZeroBitsOrNegative(Int32Array? words, double start, double end)
+        {
+            if (words is null || words.GetType() != typeof(Int32Array)
+                || words.BufferObject is SharedArrayBuffer
+                || start < 0 || start > uint.MaxValue || start != System.Math.Truncate(start)
+                || end < 0 || end > (double)uint.MaxValue + 1 || end != System.Math.Truncate(end)
+                || (start == 0 && double.IsNegative(start))
+                || !words.TryGetContiguousElements(out var elements))
+            {
+                return -1;
+            }
+
+            var from = (long)start;
+            var to = (long)end;
+            if (from >= to)
+            {
+                return 0;
+            }
+
+            var lastInBounds = System.Math.Min(to, (long)elements.Length * 32);
+            long clearBits = to - System.Math.Max(from, lastInBounds);
+            for (var word = (int)(from >> 5); (long)word * 32 < lastInBounds; word++)
+            {
+                var firstBit = word == (from >> 5) ? (int)from & 31 : 0;
+                var lastBit = (int)System.Math.Min(lastInBounds - (long)word * 32, 32);
+                var mask = (uint.MaxValue << firstBit)
+                    & (uint.MaxValue >> (32 - lastBit));
+                clearBits += BitOperations.PopCount(~(uint)elements[word] & mask);
+            }
+
+            return clearBits;
+        }
+
         private bool HasContiguousBacking => _hasFixedContiguousBacking && !BufferObject.IsDetached;
 
         private bool HasFixedContiguousBacking()

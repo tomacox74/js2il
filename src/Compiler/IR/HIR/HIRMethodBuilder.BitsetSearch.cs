@@ -44,9 +44,15 @@ partial class HIRMethodBuilder
             return null;
         }
 
+        return TryGetBitsetWordFieldName(classBody, classScope, methodName.Name);
+    }
+
+    private static string? TryGetBitsetWordFieldName(
+        ClassBody classBody, Scope classScope, string methodName)
+    {
         var matches = classBody.Body.OfType<MethodDefinition>()
             .Where(method => !method.Static && !method.Computed
-                && method.Key is Identifier name && name.Name == methodName.Name)
+                && method.Key is Identifier name && name.Name == methodName)
             .ToArray();
         if (matches.Length != 1
             || matches[0].Value.Params.Count != 1
