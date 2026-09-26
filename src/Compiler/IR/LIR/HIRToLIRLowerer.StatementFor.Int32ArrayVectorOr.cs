@@ -32,8 +32,16 @@ public sealed partial class HIRToLIRLowerer
             throw new InvalidOperationException("A recognized vector range could not be lowered.");
         }
 
+        endLabel = EmitInt32ArrayVectorOrRange(array, start, end, pattern.Mask);
+        return true;
+    }
+
+    private int EmitInt32ArrayVectorOrRange(
+        TempVariable array, TempVariable start, TempVariable end, double maskValue,
+        int? existingFallbackLabel = null)
+    {
         var mask = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstNumber(pattern.Mask, mask));
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(maskValue, mask));
         DefineTempStorage(mask, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
         var applied = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRVectorInt32Range(
@@ -43,12 +51,12 @@ public sealed partial class HIRToLIRLowerer
             applied));
         DefineTempStorage(applied, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
-        var fallbackLabel = CreateLabel();
-        endLabel = CreateLabel();
+        var fallbackLabel = existingFallbackLabel ?? CreateLabel();
+        var endLabel = CreateLabel();
         _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(applied, fallbackLabel));
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
         _methodBodyIR.Instructions.Add(new LIRLabel(fallbackLabel));
         ClearNumericRefinementsAtLabel();
-        return true;
+        return endLabel;
     }
 }

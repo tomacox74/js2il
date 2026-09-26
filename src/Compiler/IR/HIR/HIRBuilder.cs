@@ -2832,7 +2832,8 @@ partial class HIRMethodBuilder
                     hirStatement = new HIRForStatement(forInitStmt, forTestExpr, updateExpr, bodyStmt!)
                     {
                         BitsetCountPattern = TryRecognizeBitsetCount(forStmt),
-                        Int32ArrayVectorOrPattern = TryRecognizeInt32ArrayVectorOr(forStmt)
+                        Int32ArrayVectorOrPattern = TryRecognizeInt32ArrayVectorOr(forStmt),
+                        Int32ArrayLocalVectorOrPattern = TryRecognizeInt32ArrayLocalVectorOr(forStmt)
                     };
                     return true;
                 }
