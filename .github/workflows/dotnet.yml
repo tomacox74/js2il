@@ -22,9 +22,21 @@ jobs:
           - name: unit
             project: tests/Jroc.Tests/Jroc.Tests.csproj
             filter: "Category!=ReleaseOnly&FullyQualifiedName!~JrocSdkPackageTests"
-          - name: test262
+          - name: test262-language-expressions
             project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
-            filter: "Category!=ReleaseOnly"
+            shard: language-expressions
+          - name: test262-language-statements
+            project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
+            shard: language-statements
+          - name: test262-builtins-array-object
+            project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
+            shard: builtins-array-object
+          - name: test262-builtins-typed-regexp-string
+            project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
+            shard: builtins-typed-regexp-string
+          - name: test262-other
+            project: tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj
+            shard: other
           - name: sdk-packaging-metadata
             project: tests/Jroc.Tests/Jroc.Tests.csproj
             filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=metadata"
@@ -73,8 +85,17 @@ jobs:
         done
         sort -o /tmp/sharded-sdk-package-tests.txt /tmp/sharded-sdk-package-tests.txt
         diff -u /tmp/all-sdk-package-tests.txt /tmp/sharded-sdk-package-tests.txt
+    - name: Verify test262 shard coverage
+      if: matrix.shard == 'other'
+      run: bash scripts/ci/test262-shards.sh --verify
     - name: Test
+      if: matrix.shard == ''
       run: dotnet test ${{ matrix.project }} --no-build --verbosity minimal --filter "${{ matrix.filter }}"
+    - name: Test test262 shard
+      if: matrix.shard != ''
+      run: |
+        filter="$(bash scripts/ci/test262-shards.sh "${{ matrix.shard }}")"
+        dotnet test ${{ matrix.project }} --no-build --verbosity minimal --filter "$filter"
     - name: Upload received snapshots
       if: failure()
       uses: actions/upload-artifact@v7
