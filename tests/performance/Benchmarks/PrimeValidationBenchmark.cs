@@ -66,7 +66,8 @@ public class PrimeValidationBenchmark
     {
         var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entry)
         {
-            SourceText = source
+            SourceText = source,
+            AssumeUnmodifiedHostGlobals = true
         });
         return (JrocInMemoryAssemblyLoader.Load(artifact), artifact.ModuleIds.Single());
     }

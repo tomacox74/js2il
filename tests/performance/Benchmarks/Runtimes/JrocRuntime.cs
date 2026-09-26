@@ -20,7 +20,10 @@ public class JrocRuntime : IJavaScriptRuntime
         var entryPath = Path.Combine(Path.GetTempPath(), scriptName);
         var request = new JrocInMemoryCompileRequest(entryPath)
         {
-            SourceText = scriptContent
+            SourceText = scriptContent,
+#if !JROC_PREVIOUS
+            AssumeUnmodifiedHostGlobals = true
+#endif
         };
 
         JrocCompiledAssemblyArtifact artifact;

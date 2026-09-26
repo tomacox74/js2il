@@ -55,7 +55,8 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
         var request = new JrocInMemoryCompileRequest(
             Path.Combine(Path.GetTempPath(), "jroc-hosted-object-operations.js"))
         {
-            SourceText = "\"use strict\"; module.exports = { target: { value: 42 } };"
+            SourceText = "\"use strict\"; module.exports = { target: { value: 42 } };",
+            AssumeUnmodifiedHostGlobals = true
         };
         _hostedModule = JrocInMemoryCompiler.CompileAndLoadModule(request);
         dynamic exports = _hostedModule.Exports;

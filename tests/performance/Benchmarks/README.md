@@ -127,6 +127,14 @@ Additional discovered scenarios include the broader Dromaeo-derived object/strin
 
 ## Running Benchmarks
 
+JROC benchmark compilations use `AssumeUnmodifiedHostGlobals = true`. The benchmark
+host does not replace built-in globals during a measured invocation. The compiler
+still rejects direct intrinsic calls when its source analysis detects a possible
+write or global-object exposure. `JrocPrevious` builds against earlier packages
+that do not expose this option and retain their original compilation behavior.
+Results from runs before this setting changed should be compared with that
+configuration difference in mind.
+
 ### Prerequisites
 
 - .NET 10.0 SDK or later

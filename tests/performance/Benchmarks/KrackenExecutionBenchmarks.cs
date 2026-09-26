@@ -79,7 +79,10 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
 
         var request = new JrocInMemoryCompileRequest("kracken.js")
         {
-            SourceText = finalScriptContent
+            SourceText = finalScriptContent,
+#if !JROC_PREVIOUS
+            AssumeUnmodifiedHostGlobals = true
+#endif
         };
         var artifact = JrocInMemoryCompiler.Compile(request);
         var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
