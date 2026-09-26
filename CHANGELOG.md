@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.29 - 2026-09-26
+
 - test262: support the native `$262.agent` host and `atomicsHelper.js` for
   worker-based shared-memory tests; port 100 previously failing pinned Atomics
   wait, waitAsync, and notify cases.
