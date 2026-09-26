@@ -105,6 +105,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_NumericIntrinsics()
+        {
+            return GenerateTest(nameof(String_NumericIntrinsics));
+        }
+
+        [Fact]
         public Task String_Split_Basic()
         {
             var testName = nameof(String_Split_Basic);

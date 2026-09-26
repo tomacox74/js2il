@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): pass proven numeric arguments unboxed to guarded
+  String `charAt`, `charCodeAt`, `slice`, `substr`, and `substring` intrinsics;
+  retain object coercion and prototype-override fallbacks.
 - perf(benchmark): prototype scalar and Vector128 repeating-mask blocks for
   Prime's large-step marking path; keep production Prime code unchanged
   pending repeatable crossover and end-to-end Prime measurements.

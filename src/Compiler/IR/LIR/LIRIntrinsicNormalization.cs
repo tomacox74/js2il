@@ -622,10 +622,14 @@ internal static class LIRIntrinsicNormalization
         TempVariable result,
         IReadOnlyDictionary<int, Type> knownSpecializedReceiverClrTypes)
     {
+        var intrinsicArguments = methodName is "charAt" or "charCodeAt"
+            or "slice" or "substr" or "substring"
+            ? arguments.Select(argument => FindUnboxedNumericSource(methodBody, instructionIndex, argument)).ToArray()
+            : arguments.ToArray();
         if (!TryResolveSafeStringIntrinsicMethod(
                 methodBody,
                 methodName,
-                arguments,
+                intrinsicArguments,
                 out var intrinsicMethod))
         {
             return false;
@@ -651,13 +655,30 @@ internal static class LIRIntrinsicNormalization
                     .ToArray(),
                 intrinsicMethod.ReturnType,
                 receiverIsProvenString,
-                arguments,
+                intrinsicArguments,
                 result);
         ApplyGuardedStringResultStorage(
             methodBody,
             result,
             LIRGuardedStringFallbackResultConversion.None);
         return true;
+    }
+
+    private static TempVariable FindUnboxedNumericSource(
+        MethodBodyIR methodBody, int callIndex, TempVariable argument)
+    {
+        for (var i = callIndex - 1; i >= 0; i--)
+        {
+            if (methodBody.Instructions[i] is LIRConvertToObject conversion
+                && conversion.Result == argument
+                && conversion.SourceType == typeof(double)
+                && IsUnboxedDouble(methodBody, conversion.Source))
+            {
+                return conversion.Source;
+            }
+        }
+
+        return argument;
     }
 
     private static bool TryClassifyGuardedStringReceiver(
