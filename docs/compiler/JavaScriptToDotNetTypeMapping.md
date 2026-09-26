@@ -83,6 +83,12 @@ Notes:
   observable Number boundaries (such as indexed access or boxing), the value
   is converted back to `double`. Arithmetic loop variables with unproven
   integer ranges remain `double`.
+- A canonical `while (this.bitTest(index)) { index++ }` search can use a
+  whole-word first-zero-bit helper when the class's bit-test body reads an
+  inferred `Int32Array` field using `index >>> 5` and `index & 31`. The helper
+  scans the initial partial word and subsequent words with trailing-zero
+  count. Non-integer/negative indices, detached or resizable buffers, and
+  shared storage retain the original per-bit loop.
 
 ---
 

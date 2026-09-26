@@ -3135,7 +3135,10 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
-                    hirStatement = new HIRWhileStatement(whileTestExpr!, bodyStmt!);
+                    hirStatement = new HIRWhileStatement(whileTestExpr!, bodyStmt!)
+                    {
+                        BitsetSearchFieldName = TryRecognizeBitsetSearch(whileStmt)
+                    };
                     return true;
                 }
 

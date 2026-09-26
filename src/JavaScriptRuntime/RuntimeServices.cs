@@ -35,6 +35,9 @@ public class RuntimeServices
     public static double NumberCall(object? value)
         => Number.FromNumberConstructorArgument(value);
 
+    public static double FindFirstZeroBitOrNegative(Int32Array? words, double index)
+        => Int32Array.FindFirstZeroBitOrNegative(words, index);
+
     internal sealed record InvocationFrame(
         object? CurrentThis = null,
         object? CurrentLexicalSuperReceiver = null,

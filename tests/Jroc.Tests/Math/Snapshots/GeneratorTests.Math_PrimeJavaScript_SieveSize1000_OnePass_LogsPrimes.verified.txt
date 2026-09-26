@@ -1763,34 +1763,49 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 42 (0x2a)
+			// Code size: 83 (0x53)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] bool
 			)
 
-			// loop start
-				IL_0000: ldarg.0
-				IL_0001: ldarg.1
-				IL_0002: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray::testBitTrue(float64)
-				IL_0007: stloc.0
-				IL_0008: ldloc.0
-				IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(float64)
-				IL_000e: stloc.1
-				IL_000f: ldloc.1
-				IL_0010: brfalse IL_0027
+			IL_0000: ldarg.0
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray::wordArray
+			IL_0006: ldarg.1
+			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::FindFirstZeroBitOrNegative(class [JavaScriptRuntime]JavaScriptRuntime.Int32Array, float64)
+			IL_000c: stloc.0
+			IL_000d: ldloc.0
+			IL_000e: ldc.r8 0.0
+			IL_0017: clt
+			IL_0019: ldc.i4.0
+			IL_001a: ceq
+			IL_001c: brfalse IL_0029
 
-				IL_0015: ldarg.1
-				IL_0016: ldc.r8 1
-				IL_001f: add
-				IL_0020: starg.s index
-				IL_0022: br IL_0000
+			IL_0021: ldloc.0
+			IL_0022: starg.s index
+			IL_0024: br IL_0050
+			// loop start (head: IL_0029)
+				IL_0029: ldarg.0
+				IL_002a: ldarg.1
+				IL_002b: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray::testBitTrue(float64)
+				IL_0030: stloc.0
+				IL_0031: ldloc.0
+				IL_0032: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(float64)
+				IL_0037: stloc.1
+				IL_0038: ldloc.1
+				IL_0039: brfalse IL_0050
+
+				IL_003e: ldarg.1
+				IL_003f: ldc.r8 1
+				IL_0048: add
+				IL_0049: starg.s index
+				IL_004b: br IL_0029
 			// end loop
 
-			IL_0027: nop
-			IL_0028: ldarg.1
-			IL_0029: ret
+			IL_0050: nop
+			IL_0051: ldarg.1
+			IL_0052: ret
 		} // end of method BitArray::searchBitFalse
 
 	} // end of class BitArray

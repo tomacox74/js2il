@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler/runtime): recognize canonical Int32Array-backed first-zero-bit
+  loops and search fixed, non-shared words with trailing-zero count; retain the
+  original per-bit loop for dynamic indices and detachable/resizable buffers.
 - perf(compiler): retain proven signed bitwise values and Int32Array reads in
   native `int32` locals, using numeric conversions only at JavaScript-number
   boundaries; preserve full-width unsigned shifts and dynamic loop arithmetic.
