@@ -171,6 +171,11 @@ else
             switcher = BenchmarkSwitcher.FromTypes([typeof(PrimeValidationBenchmark)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
+        else if (programArgs.Length > 0 && programArgs[0] == "--prime-mask-blocks")
+        {
+            switcher = BenchmarkSwitcher.FromTypes([typeof(PrimeRepeatingMaskBenchmarks)]);
+            benchmarkArgs = programArgs.Skip(1).ToArray();
+        }
         else
         {
             // Run cross-runtime comparison by default
@@ -231,6 +236,7 @@ Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscilla
 Console.WriteLine("  dotnet run -c Release -- --kracken --comprehensive # Include disabled Kraken scenarios and runtimes");
 Console.WriteLine("  dotnet run -c Release -- --prime-execute # Run the one-pass Prime sieve execution benchmark");
 Console.WriteLine("  dotnet run -c Release -- --prime-validation # Compare validation with a scalar-count control");
+Console.WriteLine("  dotnet run -c Release -- --prime-mask-blocks # Compare original Prime marking and repeating-mask prototypes");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
