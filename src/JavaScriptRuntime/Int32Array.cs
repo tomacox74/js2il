@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -170,6 +171,40 @@ namespace JavaScriptRuntime
             elements = MemoryMarshal.Cast<byte, int>(
                 BufferObject.RawBytes.AsSpan(ByteOffsetBytes, LengthElements * ElementSize));
             return true;
+        }
+
+        internal static double FindFirstZeroBitOrNegative(Int32Array? words, double index)
+        {
+            if (words is null || words.GetType() != typeof(Int32Array)
+                || words.BufferObject is SharedArrayBuffer
+                || index < 0 || index > uint.MaxValue || index != System.Math.Truncate(index)
+                || (index == 0 && double.IsNegative(index))
+                || !words.TryGetContiguousElements(out var elements))
+            {
+                return -1;
+            }
+
+            var end = (double)elements.Length * 32;
+            if (end > uint.MaxValue || index >= end)
+            {
+                return end <= uint.MaxValue && index >= end ? index : -1;
+            }
+
+            var word = (int)((uint)index >> 5);
+            var available = ~(uint)elements[word] & (uint.MaxValue << ((int)index & 31));
+            while (true)
+            {
+                if (available != 0)
+                {
+                    return (double)word * 32 + BitOperations.TrailingZeroCount(available);
+                }
+
+                if (++word == elements.Length)
+                {
+                    return end;
+                }
+                available = ~(uint)elements[word];
+            }
         }
 
         private bool HasContiguousBacking => _hasFixedContiguousBacking && !BufferObject.IsDetached;

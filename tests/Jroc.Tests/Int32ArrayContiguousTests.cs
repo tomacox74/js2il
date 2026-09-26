@@ -72,4 +72,45 @@ public sealed class Int32ArrayContiguousTests
         sharedView[0] = 12;
         Assert.Equal(12d, sharedView[0]);
     }
+
+    [Fact]
+    public void FindFirstZeroBitChecksEveryStartingOffsetAndWordBoundary()
+    {
+        var words = new Int32Array(3d);
+        words[0] = -1;
+        words[1] = -1;
+        words[2] = unchecked((int)0x7fffffff);
+
+        for (var start = 0; start < 32; start++)
+        {
+            Assert.Equal(95d, Int32Array.FindFirstZeroBitOrNegative(words, start));
+        }
+
+        words[0] = unchecked((int)0x7fffffff);
+        Assert.Equal(31d, Int32Array.FindFirstZeroBitOrNegative(words, 0));
+        Assert.Equal(95d, Int32Array.FindFirstZeroBitOrNegative(words, 32));
+        words[1] = 0b1011;
+        Assert.Equal(34d, Int32Array.FindFirstZeroBitOrNegative(words, 33));
+        Assert.Equal(36d, Int32Array.FindFirstZeroBitOrNegative(words, 35));
+        Assert.Equal(95d, Int32Array.FindFirstZeroBitOrNegative(words, 64));
+        Assert.Equal(96d, Int32Array.FindFirstZeroBitOrNegative(words, 96));
+    }
+
+    [Fact]
+    public void FindFirstZeroBitRejectsUnstableStorageAndNonIntegerIndices()
+    {
+        var buffer = new ArrayBuffer(8d);
+        var words = new Int32Array(buffer);
+        foreach (var index in new[] { -1d, BitConverter.Int64BitsToDouble(long.MinValue), 0.5, double.NaN, double.PositiveInfinity, 4294967296d })
+        {
+            Assert.Equal(-1d, Int32Array.FindFirstZeroBitOrNegative(words, index));
+        }
+
+        Assert.Equal(-1d, Int32Array.FindFirstZeroBitOrNegative(
+            new Int32Array(new ArrayBuffer(8d, new { maxByteLength = 16d })), 0));
+        Assert.Equal(-1d, Int32Array.FindFirstZeroBitOrNegative(
+            new Int32Array(new SharedArrayBuffer(8d)), 0));
+        buffer.Detach();
+        Assert.Equal(-1d, Int32Array.FindFirstZeroBitOrNegative(words, 0));
+    }
 }
