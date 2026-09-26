@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify another 500 pinned class-expression cases covering class
+  methods and related semantics.
 - test262: verify 500 additional pinned class-expression cases covering class
   elements and parameter destructuring.
 - perf(compiler): vectorize canonical local-const Int32Array OR loops with
