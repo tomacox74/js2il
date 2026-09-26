@@ -1163,6 +1163,7 @@ internal sealed class JsMethodCompiler
             lirMethod!,
             receiverDiagnostics);
         LIRIntrinsicGuardHoisting.Normalize(lirMethod!);
+        LIRInt32LocalPromotion.Optimize(lirMethod!);
         if (receiverDiagnostics != null)
         {
             var scopeName = scope.GetQualifiedName();

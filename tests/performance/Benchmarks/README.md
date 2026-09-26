@@ -44,6 +44,21 @@ Benchmarks/
 
 ## Benchmark Scenarios
 
+### Int32Array backing-storage microbenchmark
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --int32array-backing
+```
+
+`Int32ArrayBackingBenchmarks` compares a byte-span/BinaryPrimitives read-modify-write
+loop with a guarded contiguous `int` span over the same fixed buffer, and
+separately measures the indexed getter/setter used by compiled JavaScript.
+All loops process 1,024 elements; allocation and buffer construction are
+outside the timed region. The span is not retained across JavaScript calls,
+transfer, or resizing. For end-to-end behavior, run `--prime-execute
+--filter '*Jroc_ExecuteOnly*'` against the one-pass Prime scenario as well.
+
 ### String-object regression investigation
 
 See [Dromaeo string-object performance](../../../docs/compiler/DromaeoObjectStringPerformance.md)

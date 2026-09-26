@@ -76,6 +76,29 @@ Notes:
 
 - Some runtime helpers (e.g., `JavaScriptRuntime.TypeUtilities.ToNumber(...)`, `ToBoolean(...)`, `Typeof(...)`) implement coercion and `typeof` based on these representations.
 - JROC may opportunistically store some variables/fields as `double`/`bool`/`string` when type inference marks them stable, but semantically values still flow as JavaScript values.
+- Signed bitwise results and `Int32Array` element values may use `int32` IL
+  locals when every assignment and consumer is compatible. Unsigned shifts
+  qualify only when a constant shift count proves the result fits in signed
+  `int32`; otherwise they retain the full JavaScript Number range. At
+  observable Number boundaries (such as indexed access or boxing), the value
+  is converted back to `double`. Arithmetic loop variables with unproven
+  integer ranges remain `double`.
+- A canonical `while (this.bitTest(index)) { index++ }` search can use a
+  whole-word first-zero-bit helper when the class's bit-test body reads an
+  inferred `Int32Array` field using `index >>> 5` and `index & 31`. The helper
+  scans the initial partial word and subsequent words with trailing-zero
+  count. Non-integer/negative indices, detached or resizable buffers, and
+  shared storage retain the original per-bit loop.
+- A compatible class bitset-count loop with a numeric `let total = 1`, a
+  `let index = 1` loop, and a proven `Int32Array` bit test can count clear bits
+  over complete and partial words with `PopCount`. The initial `1` remains
+  the separate count for prime 2 in sieve-style callers. Unsupported index
+  bounds, detached/resizable or shared buffers, and unrecognized receivers
+  take the original per-bit loop. The matcher checks the bit-test body and
+  generated class fields; it does not depend on a source filename or class
+  name. The benchmark's `--prime-validation` selector compares the
+  validation-only module load with an otherwise identical scalar-count
+  control (`total += 1` in place of `total++`).
 
 ---
 

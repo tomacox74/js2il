@@ -598,6 +598,12 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
+        if (materializedStorage.Kind == ValueStorageKind.UnboxedValue && materializedStorage.ClrType == typeof(int))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Conv_r8);
+            return;
+        }
         // Peephole: avoid boxing a known double just to immediately coerce it back to double.
         // This happens when lowering inserts ConvertToObject around numeric call arguments.
         if (TryFindDefInstruction(value) is LIRConvertToObject convertToObject
@@ -819,6 +825,10 @@ internal sealed partial class LIRToILCompiler
         if (string.Equals(intrinsicName, nameof(JavaScriptRuntime.AsyncGeneratorDelegation), StringComparison.Ordinal))
         {
             return typeof(JavaScriptRuntime.AsyncGeneratorDelegation);
+        }
+        if (string.Equals(intrinsicName, nameof(JavaScriptRuntime.RuntimeServices), StringComparison.Ordinal))
+        {
+            return typeof(JavaScriptRuntime.RuntimeServices);
         }
 
         return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null

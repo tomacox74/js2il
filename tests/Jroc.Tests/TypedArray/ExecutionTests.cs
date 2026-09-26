@@ -133,6 +133,15 @@ namespace Jroc.Tests.TypedArray
         public Task Int32Array_GetItemAsNumber_NumericContext() { var testName = nameof(Int32Array_GetItemAsNumber_NumericContext); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Int32Array_BitwiseInt32Locals_Coercion() { var testName = nameof(Int32Array_BitwiseInt32Locals_Coercion); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_FirstZeroBitSearch() { var testName = nameof(Int32Array_FirstZeroBitSearch); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_PopCount() { var testName = nameof(Int32Array_PopCount); return ExecutionTest(testName); }
+
+        [Fact]
         public Task SharedArrayBuffer_Int32Array_AtomicsWait() { var testName = nameof(SharedArrayBuffer_Int32Array_AtomicsWait); return ExecutionTest(testName); }
     }
 }

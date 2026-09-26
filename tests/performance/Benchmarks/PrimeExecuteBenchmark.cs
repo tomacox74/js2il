@@ -116,7 +116,7 @@ public class PrimeExecuteBenchmark : ExecutionBenchmarksBase
         runtime.MainRealm.Execute(_okojoPrimeScript);
     }
 
-    private static string LoadPrimeScript()
+    internal static string LoadPrimeScript()
     {
         var path = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,

@@ -10,6 +10,18 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   match, matchAll, replace, search, and split, including overridden exec,
   lastIndex and flag access, generic receivers, species construction, and
   method metadata; verify 100 previously failing pinned Test262 cases.
+- perf(compiler/runtime): recognize compatible Int32Array-backed bitset count
+  loops and count clear bits in whole words with `BitOperations.PopCount`,
+  preserving the scalar loop for dynamic bounds and backing storage.
+- perf(compiler/runtime): recognize canonical Int32Array-backed first-zero-bit
+  loops and search fixed, non-shared words with trailing-zero count; retain the
+  original per-bit loop for dynamic indices and detachable/resizable buffers.
+- perf(compiler): retain proven signed bitwise values and Int32Array reads in
+  native `int32` locals, using numeric conversions only at JavaScript-number
+  boundaries; preserve full-width unsigned shifts and dynamic loop arithmetic.
+- perf(runtime): use a guarded contiguous `int` view for indexed Int32Array
+  reads and writes on fixed backing storage, retaining the byte-oriented path
+  for detached, resizable, and growable buffers.
 
 ## v0.12.29 - 2026-09-26
 

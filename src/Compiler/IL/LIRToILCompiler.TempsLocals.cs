@@ -37,6 +37,12 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
+        if (clrType == typeof(int))
+        {
+            typeEncoder.Int32();
+            return;
+        }
+
         if (clrType == typeof(bool))
         {
             typeEncoder.Boolean();
@@ -79,6 +85,12 @@ internal sealed partial class LIRToILCompiler
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {
             typeEncoder.Double();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(int))
+        {
+            typeEncoder.Int32();
             return;
         }
 
@@ -914,7 +926,11 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArrayGetter);
 
-                    // Leave as double on stack; caller will box if it needs object.
+                    if (GetTempStorage(getI32.Result).ClrType == typeof(int))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Conv_i4);
+                    }
+
                     break;
                 }
             case LIRCallIntrinsic callIntrinsic:
@@ -2922,6 +2938,10 @@ internal sealed partial class LIRToILCompiler
         var storage = GetMaterializedTempStorage(temp, allocation);
         if (storage.Kind == ValueStorageKind.UnboxedValue)
         {
+            if (storage.ClrType == typeof(int))
+            {
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+            }
             ilEncoder.OpCode(ILOpCode.Box);
             if (storage.ClrType == typeof(double))
             {
@@ -2951,9 +2971,14 @@ internal sealed partial class LIRToILCompiler
     {
         var storage = GetMaterializedTempStorage(temp, allocation);
 
-        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        if (storage.Kind == ValueStorageKind.UnboxedValue
+            && (storage.ClrType == typeof(double) || storage.ClrType == typeof(int)))
         {
             EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+            if (storage.ClrType == typeof(int))
+            {
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+            }
             return;
         }
 

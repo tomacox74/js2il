@@ -26,4 +26,6 @@ public sealed class HIRWhileStatement : HIRStatement
     /// Optional label name (e.g. label: while (...) { ... }).
     /// </summary>
     public string? Label { get; }
+
+    public string? BitsetSearchFieldName { get; init; }
 }

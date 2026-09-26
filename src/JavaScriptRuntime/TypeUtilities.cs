@@ -109,6 +109,7 @@ namespace JavaScriptRuntime
         public static int ToInt32(object? value)
             => ToInt32(ToNumber(value));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt32(double number)
         {
             if (number >= int.MinValue && number <= int.MaxValue)
@@ -116,6 +117,12 @@ namespace JavaScriptRuntime
                 return (int)number;
             }
 
+            return ToInt32Slow(number);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static int ToInt32Slow(double number)
+        {
             // Step 2: If number is NaN, +0, -0, +∞, or -∞, return +0.
             if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
             {

@@ -72,6 +72,14 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
+            int? fastPathEndLabel = null;
+            if (!useTempPerIterationScope && perIterationBindings.Count == 0
+                && forStmt.BitsetCountPattern is { } countPattern
+                && TryEmitBitsetCountFastPath(forStmt, countPattern, out var countEndLabel))
+            {
+                fastPathEndLabel = countEndLabel;
+            }
+
             // Loop start label
             lirInstructions.Add(new LIRLabel(loopStartLabel));
             ClearNumericRefinementsAtLabel();
@@ -132,6 +140,11 @@ public sealed partial class HIRToLIRLowerer
             // Loop end label
             lirInstructions.Add(new LIRLabel(loopEndLabel));
             ClearNumericRefinementsAtLabel();
+            if (fastPathEndLabel is { } endLabel)
+            {
+                lirInstructions.Add(new LIRLabel(endLabel));
+                ClearNumericRefinementsAtLabel();
+            }
 
             return true;
         }

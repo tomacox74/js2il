@@ -37,6 +37,7 @@ namespace JavaScriptRuntime
         internal bool IsBackedByResizableBuffer => _buffer.IsResizable;
         protected ArrayBuffer BufferObject => _buffer;
         protected int ByteOffsetBytes => _byteOffset;
+        protected int FixedLengthElements => _fastLength;
         protected int LengthElements => GetCurrentLengthOrZero();
 
         public double BYTES_PER_ELEMENT => BytesPerElement;

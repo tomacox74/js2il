@@ -1,6 +1,8 @@
 using System;
 using System.Buffers.Binary;
+using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace JavaScriptRuntime
 {
@@ -8,15 +10,18 @@ namespace JavaScriptRuntime
     public class Int32Array : TypedArrayBase
     {
         private const int ElementSize = 4;
+        private readonly bool _hasFixedContiguousBacking;
 
         public Int32Array()
         {
             InitializeEmpty();
+            _hasFixedContiguousBacking = HasFixedContiguousBacking();
         }
 
         public Int32Array(object? arg)
         {
             InitializeFromArgument(arg);
+            _hasFixedContiguousBacking = HasFixedContiguousBacking();
         }
 
         public Int32Array(object? arg, object? byteOffset)
@@ -24,10 +29,12 @@ namespace JavaScriptRuntime
             if (arg is ArrayBuffer arrayBuffer)
             {
                 InitializeFromBuffer(arrayBuffer, byteOffset, null);
+                _hasFixedContiguousBacking = HasFixedContiguousBacking();
                 return;
             }
 
             InitializeFromArgument(arg);
+            _hasFixedContiguousBacking = HasFixedContiguousBacking();
         }
 
         public Int32Array(object? arg, object? byteOffset, object? length)
@@ -35,15 +42,18 @@ namespace JavaScriptRuntime
             if (arg is ArrayBuffer arrayBuffer)
             {
                 InitializeFromBuffer(arrayBuffer, byteOffset, length);
+                _hasFixedContiguousBacking = HasFixedContiguousBacking();
                 return;
             }
 
             InitializeFromArgument(arg);
+            _hasFixedContiguousBacking = HasFixedContiguousBacking();
         }
 
         private Int32Array(ArrayBuffer buffer, int byteOffset, int length)
         {
             InitializeFromExisting(buffer, byteOffset, length);
+            _hasFixedContiguousBacking = HasFixedContiguousBacking();
         }
 
         public static Int32Array from(object? source)
@@ -75,8 +85,35 @@ namespace JavaScriptRuntime
 
         public new double this[double index]
         {
-            get => base[index];
-            set => base[index] = value;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                var candidate = (int)index;
+                if (candidate == index
+                    && (uint)candidate < (uint)FixedLengthElements
+                    && HasContiguousBacking)
+                {
+                    return MemoryMarshal.Cast<byte, int>(BufferObject.RawBytes)[
+                        (ByteOffsetBytes / ElementSize) + candidate];
+                }
+
+                return base[index];
+            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                var candidate = (int)index;
+                if (candidate == index
+                    && (uint)candidate < (uint)FixedLengthElements
+                    && HasContiguousBacking)
+                {
+                    var elements = MemoryMarshal.Cast<byte, int>(BufferObject.RawBytes.AsSpan());
+                    elements[(ByteOffsetBytes / ElementSize) + candidate] = ToInt32(value);
+                    return;
+                }
+
+                base[index] = value;
+            }
         }
 
         public Int32Array slice()
@@ -99,6 +136,11 @@ namespace JavaScriptRuntime
 
         protected override double ReadElementValue(int index)
         {
+            if (TryGetContiguousElements(out var elements))
+            {
+                return elements[index];
+            }
+
             var offset = ByteOffsetBytes + (index * ElementSize);
             return ReadInt32(BufferObject.RawBytes, offset);
         }
@@ -106,9 +148,104 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void WriteElementValue(int index, double value)
         {
+            if (TryGetContiguousElements(out var elements))
+            {
+                elements[index] = ToInt32(value);
+                return;
+            }
+
             var offset = ByteOffsetBytes + (index * ElementSize);
             WriteInt32(BufferObject.RawBytes, offset, ToInt32(value));
         }
+
+        // The returned span is only valid until the next operation that can change the buffer.
+        // Callers must not retain it across JavaScript execution or a buffer transfer.
+        internal bool TryGetContiguousElements(out Span<int> elements)
+        {
+            if (!HasContiguousBacking)
+            {
+                elements = default;
+                return false;
+            }
+
+            elements = MemoryMarshal.Cast<byte, int>(
+                BufferObject.RawBytes.AsSpan(ByteOffsetBytes, LengthElements * ElementSize));
+            return true;
+        }
+
+        internal static double FindFirstZeroBitOrNegative(Int32Array? words, double index)
+        {
+            if (words is null || words.GetType() != typeof(Int32Array)
+                || words.BufferObject is SharedArrayBuffer
+                || index < 0 || index > uint.MaxValue || index != System.Math.Truncate(index)
+                || (index == 0 && double.IsNegative(index))
+                || !words.TryGetContiguousElements(out var elements))
+            {
+                return -1;
+            }
+
+            var end = (double)elements.Length * 32;
+            if (end > uint.MaxValue || index >= end)
+            {
+                return end <= uint.MaxValue && index >= end ? index : -1;
+            }
+
+            var word = (int)((uint)index >> 5);
+            var available = ~(uint)elements[word] & (uint.MaxValue << ((int)index & 31));
+            while (true)
+            {
+                if (available != 0)
+                {
+                    return (double)word * 32 + BitOperations.TrailingZeroCount(available);
+                }
+
+                if (++word == elements.Length)
+                {
+                    return end;
+                }
+                available = ~(uint)elements[word];
+            }
+        }
+
+        internal static double CountZeroBitsOrNegative(Int32Array? words, double start, double end)
+        {
+            if (words is null || words.GetType() != typeof(Int32Array)
+                || words.BufferObject is SharedArrayBuffer
+                || start < 0 || start > uint.MaxValue || start != System.Math.Truncate(start)
+                || end < 0 || end > (double)uint.MaxValue + 1 || end != System.Math.Truncate(end)
+                || (start == 0 && double.IsNegative(start))
+                || !words.TryGetContiguousElements(out var elements))
+            {
+                return -1;
+            }
+
+            var from = (long)start;
+            var to = (long)end;
+            if (from >= to)
+            {
+                return 0;
+            }
+
+            var lastInBounds = System.Math.Min(to, (long)elements.Length * 32);
+            long clearBits = to - System.Math.Max(from, lastInBounds);
+            for (var word = (int)(from >> 5); (long)word * 32 < lastInBounds; word++)
+            {
+                var firstBit = word == (from >> 5) ? (int)from & 31 : 0;
+                var lastBit = (int)System.Math.Min(lastInBounds - (long)word * 32, 32);
+                var mask = (uint.MaxValue << firstBit)
+                    & (uint.MaxValue >> (32 - lastBit));
+                clearBits += BitOperations.PopCount(~(uint)elements[word] & mask);
+            }
+
+            return clearBits;
+        }
+
+        private bool HasContiguousBacking => _hasFixedContiguousBacking && !BufferObject.IsDetached;
+
+        private bool HasFixedContiguousBacking()
+            => !BufferObject.IsResizable
+                && BufferObject is not SharedArrayBuffer { growable: true }
+                && (ByteOffsetBytes % ElementSize) == 0;
 
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Int32Array(buffer, byteOffset, length);
