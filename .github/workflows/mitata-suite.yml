@@ -191,6 +191,34 @@ jobs:
         run: |
           node tests/performance/ingestPerfToSupabase.js --source mitata --input tests/performance/mitata/results.json
 
+      - name: Run string-width benchmarks (release)
+        if: github.event_name == 'release'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd tests/performance/mitata
+          node scripts/run-release-suite.mjs \
+            --bench string-width \
+            --runtime node \
+            --runtime jroc \
+            --runtime clearscript \
+            --runtime jint \
+            --runtime okojo \
+            --output results-string-width.json
+          if [ ! -f "results-string-width.json" ]; then
+            echo "Mitata runner produced no string-width results; failing workflow."
+            exit 1
+          fi
+
+      - name: Ingest string-width results to Supabase
+        if: always() && github.event_name == 'release'
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js --source mitata --input tests/performance/mitata/results-string-width.json
+
       - name: Upload Mitata artifacts
         if: always()
         uses: actions/upload-artifact@v7
@@ -198,5 +226,6 @@ jobs:
           name: mitata-results
           path: |
             tests/performance/mitata/results.json
+            tests/performance/mitata/results-string-width.json
             tests/performance/mitata/.jroc/**/*
           retention-days: 90
