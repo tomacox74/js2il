@@ -8,6 +8,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 - test262: verify 500 additional pinned class-expression cases covering class
   elements and parameter destructuring.
+- perf(compiler): vectorize canonical local-const Int32Array OR loops with
+  literal or immutable numeric bounds, preserving the scalar loop for
+  dynamic properties, side-effecting bodies, and unsupported storage.
+- perf(compiler/runtime): add guarded portable `Vector128<int>` OR-range
+  infrastructure for contiguous `Int32Array` loops, with scalar edges,
+  fallback, and disabled-intrinsics benchmark coverage.
 - fix(runtime): implement observable RegExp.prototype symbol operations for
   match, matchAll, replace, search, and split, including overridden exec,
   lastIndex and flag access, generic receivers, species construction, and

@@ -24,10 +24,15 @@ Set `JROC` to use a specific jroc executable or `Jroc.dll`; otherwise the script
 
 ## Managed runtime comparisons
 
-The default release suite compares Node, JROC, ClearScript, Jint, YantraJS, and Okojo
-using `runtime-baseline`, a dependency-free benchmark. Managed runtimes execute an
-import-free bundle of the same benchmark body, generated with esbuild so their hosts do
-not need Node.js module APIs. `string-width` remains available for Node and JROC.
+The published-release workflow runs both `runtime-baseline` and `string-width`
+on the same runner. `runtime-baseline` compares Node, JROC, ClearScript, Jint,
+YantraJS, and Okojo; `string-width` compares Node, JROC, ClearScript, Jint,
+and Okojo (YantraJS is excluded because it currently crashes on this benchmark).
+Each suite has its own results file, artifact, and Supabase ingestion step.
+Manual dispatch still runs the selected benchmark only.
+
+Managed runtimes execute an import-free bundle of the same benchmark body,
+generated with esbuild so their hosts do not need Node.js module APIs.
 
 ```powershell
 npm run bench:release

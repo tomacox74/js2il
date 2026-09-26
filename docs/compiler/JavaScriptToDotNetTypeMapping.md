@@ -99,6 +99,27 @@ Notes:
   name. The benchmark's `--prime-validation` selector compares the
   validation-only module load with an otherwise identical scalar-count
   control (`total += 1` in place of `total++`).
+- A class method's contiguous `Int32Array` loop of the form
+  `for (let i = start; i < this.end; i++) this.words[i] |= constant` can
+  lower to an explicit LIR vector range (load, bitwise OR, store). Normalization
+  calls the portable `Vector128<int>` runtime primitive on fixed, non-shared,
+  non-detached storage with safe in-bounds integer indices. It handles unaligned
+  starts and short trailing ranges with scalar operations and uses the original
+  JavaScript loop when the receiver or backing storage is ineligible. Other
+  typed-array loops and ordinary arrays retain their scalar lowering. Run
+  `--int32array-vector-or` in the benchmark project for the scalar/vector
+  comparison, including a forced no-vector control.
+- A local `const` binding proven to hold an `Int32Array` can use the same
+  vector range for `for (let i = start; i < end; i++) a[i] |= constant`
+  when `end` is a numeric literal or a stable numeric `const`. The loop
+  index cannot be captured, the body contains only that element write,
+  and the mask must be an exact signed 32-bit integer literal. Bounds,
+  backing-store type, and hardware acceleration remain runtime guarded.
+  A mutable bound, array-like/proxy receiver, callback, or repeated
+  `a.length` access keeps the original scalar loop: `a.length` may be
+  shadowed by an observable getter, so it is not hoisted by this matcher.
+  Run `--int32array-compiled-vector-or` to compare actual compiled JS
+  output against a scalar-syntax control under intrinsics-on/off jobs.
 
 ---
 
