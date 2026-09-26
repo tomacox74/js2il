@@ -74,4 +74,54 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task u_lastindex_adv_thru_match()
         => ExecutionTestFromFile("u-lastindex-adv-thru-match");
 
+    [Fact(DisplayName = "coerce-flags-err.js")]
+    public Task ported_coerce_flags_err() => ExecutionTestFromFile("coerce-flags-err");
+
+    [Fact(DisplayName = "coerce-flags.js")]
+    public Task ported_coerce_flags() => ExecutionTestFromFile("coerce-flags");
+
+    [Fact(DisplayName = "coerce-string-err.js")]
+    public Task ported_coerce_string_err() => ExecutionTestFromFile("coerce-string-err");
+
+    [Fact(DisplayName = "get-flags-err.js")]
+    public Task ported_get_flags_err() => ExecutionTestFromFile("get-flags-err");
+
+    [Fact(DisplayName = "last-index-exceeds-str-size.js")]
+    public Task ported_last_index_exceeds_str_size() => ExecutionTestFromFile("last-index-exceeds-str-size");
+
+    [Fact(DisplayName = "limit-0-bail.js")]
+    public Task ported_limit_0_bail() => ExecutionTestFromFile("limit-0-bail");
+
+    [Fact(DisplayName = "name.js")]
+    public Task ported_name() => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "species-ctor-ctor-get-err.js")]
+    public Task ported_species_ctor_ctor_get_err() => ExecutionTestFromFile("species-ctor-ctor-get-err");
+
+    [Fact(DisplayName = "species-ctor-ctor-non-obj.js")]
+    public Task ported_species_ctor_ctor_non_obj() => ExecutionTestFromFile("species-ctor-ctor-non-obj");
+
+    [Fact(DisplayName = "species-ctor-err.js")]
+    public Task ported_species_ctor_err() => ExecutionTestFromFile("species-ctor-err");
+
+    [Fact(DisplayName = "species-ctor-species-get-err.js")]
+    public Task ported_species_ctor_species_get_err() => ExecutionTestFromFile("species-ctor-species-get-err");
+
+    [Fact(DisplayName = "species-ctor-species-non-ctor.js")]
+    public Task ported_species_ctor_species_non_ctor() => ExecutionTestFromFile("species-ctor-species-non-ctor");
+
+    [Fact(DisplayName = "species-ctor-y.js")]
+    public Task ported_species_ctor_y() => ExecutionTestFromFile("species-ctor-y");
+
+    [Fact(DisplayName = "species-ctor.js")]
+    public Task ported_species_ctor() => ExecutionTestFromFile("species-ctor");
+
+    [Fact(DisplayName = "str-coerce-lastindex-err.js")]
+    public Task ported_str_coerce_lastindex_err() => ExecutionTestFromFile("str-coerce-lastindex-err");
+
+    [Fact(DisplayName = "str-coerce-lastindex.js")]
+    public Task ported_str_coerce_lastindex() => ExecutionTestFromFile("str-coerce-lastindex");
+
+    [Fact(DisplayName = "str-empty-match-err.js")]
+    public Task ported_str_empty_match_err() => ExecutionTestFromFile("str-empty-match-err");
 }

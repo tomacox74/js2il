@@ -773,9 +773,10 @@
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Match_Global.js",
           "tests/Jroc.Tests/String/JavaScript/String_Match_NonGlobal.js",
-          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.match/ExecutionTests.cs"
         ],
-        "notes": "Implemented by exposing a symbol-keyed matcher on RegExp instances and by routing String.prototype.match through well-known symbol dispatch. Custom objects with Symbol.match overrides are honored. The runtime still models only a subset of RegExp exotic behavior."
+        "notes": "RegExp.prototype Symbol.match and String.prototype.match delegation now honor overridden exec, observable global and unicode flag access, lastIndex updates, borrowed object receivers, and empty-match advancement. Twenty additional pinned native Test262 cases verify these behaviors. Full Unicode pattern support and other RegExp exotic or cross-realm semantics remain limited."
       },
       {
         "clause": "22.2.6.9",
@@ -798,7 +799,7 @@
           "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-get-throws.js",
           "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-not-callable.js"
         ],
-        "notes": "Creates lazy RegExp String Iterators, honors species construction and cached lastIndex, and uses dynamic exec dispatch. Full RegExp exotic and Unicode behavior remains incomplete."
+        "notes": "Creates lazy RegExp String Iterators with cached lastIndex and species construction. Five additional pinned native Test262 cases verify borrowed receivers, abrupt completion, species errors, and the built-in method's name descriptor. Full RegExp exotic, cross-realm, and Unicode behavior remains limited."
       },
       {
         "clause": "22.2.6.10",
@@ -817,9 +818,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.replace%",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js",
-          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.replace/ExecutionTests.cs"
         ],
-        "notes": "Implemented by exposing a symbol-keyed replacer on RegExp instances and by routing String.prototype.replace through well-known symbol dispatch. Custom Symbol.replace overrides are honored. Replacement pattern semantics remain a pragmatic subset and do not yet cover every ECMAScript replacement token edge case."
+        "notes": "RegExp.prototype Symbol.replace and String.prototype.replace delegation now honor overridden exec, observable flags and lastIndex, replacement callbacks, match-result coercion, and replacement-string substitutions. Forty-five additional pinned native Test262 cases verify these behaviors. Broader Unicode and uncommon replacement-token behavior remain limited."
       },
       {
         "clause": "22.2.6.12",
@@ -828,9 +830,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.search%",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Search_Basic.js",
-          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.search/ExecutionTests.cs"
         ],
-        "notes": "Implemented by exposing a symbol-keyed searcher on RegExp instances and by routing String.prototype.search through well-known symbol dispatch. The built-in path preserves the caller's lastIndex after searching. Custom Symbol.search overrides are honored."
+        "notes": "RegExp.prototype Symbol.search and String.prototype.search delegation support borrowed object receivers, overridden exec, observable lastIndex reads and restoration, and abrupt completion. Thirteen additional pinned native Test262 cases verify these behaviors. Full RegExp exotic and cross-realm semantics remain limited."
       },
       {
         "clause": "22.2.6.13",
@@ -849,9 +852,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.split%",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Split_Regex_Basic.js",
-          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.split/ExecutionTests.cs"
         ],
-        "notes": "Implemented by exposing a symbol-keyed splitter on RegExp instances and by routing String.prototype.split through well-known symbol dispatch. Custom Symbol.split overrides are honored. Built-in regex splitting currently uses a pragmatic subset and does not yet model every capture-insertion corner case."
+        "notes": "RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited."
       },
       {
         "clause": "22.2.6.15",

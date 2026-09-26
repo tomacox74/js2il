@@ -2393,106 +2393,190 @@ namespace JavaScriptRuntime
         }
 
         internal static string ReplaceWithRegExp(string input, JavaScriptRuntime.RegExp regExp, object? replacement)
+            => ReplaceWithRegExp(input, (object)regExp, replacement);
+
+        internal static string ReplaceWithRegExp(string input, object receiver, object? replacement)
         {
-            var savedLastIndex = regExp.lastIndex;
-            try
+            if (TypeUtilities.IsPrimitive(receiver))
             {
-                if (TryReplaceWithLiteralPattern(input, regExp, replacement, out var literalReplaceResult))
+                throw new TypeError("RegExp.prototype[@@replace] called on incompatible receiver");
+            }
+
+            var functional = CallableOperations.IsCallable(replacement);
+            var replacementText = functional ? null : DotNet2JSConversions.ToStringRejectingSymbols(replacement);
+            var flags = DotNet2JSConversions.ToStringRejectingSymbols(ObjectRuntime.GetItem(receiver, "flags"));
+            var global = flags.IndexOf('g') >= 0;
+            var unicode = flags.IndexOf('u') >= 0 || flags.IndexOf('v') >= 0;
+            if (global)
+            {
+                ObjectRuntime.SetItem(receiver, "lastIndex", 0d, true);
+            }
+
+            var results = new List<object>();
+            while (true)
+            {
+                var result = ExecuteRegExp(receiver, input);
+                if (result is null or JsNull)
                 {
-                    return literalReplaceResult;
+                    break;
                 }
 
-                if (CallableOperations.IsCallable(replacement))
+                results.Add(result);
+                if (!global)
                 {
-                    var evaluator = new MatchEvaluator(m => InvokeRegExpReplaceCallback(replacement!, m, input));
-                    if (regExp.Global)
+                    break;
+                }
+
+                var matched = DotNet2JSConversions.ToStringRejectingSymbols(ObjectRuntime.GetItem(result, 0d));
+                if (matched.Length == 0)
+                {
+                    var index = ToRegExpLength(ObjectRuntime.GetItem(receiver, "lastIndex"));
+                    ObjectRuntime.SetItem(receiver, "lastIndex", AdvanceRegExpIndex(input, index, unicode), true);
+                }
+            }
+
+            var nextSourcePosition = 0;
+            var output = new StringBuilder();
+            foreach (var result in results)
+            {
+                var length = ToRegExpLength(ObjectRuntime.GetItem(result, "length"));
+                var captures = new object?[(int)global::System.Math.Min(global::System.Math.Max(0, length - 1), int.MaxValue)];
+                var matched = DotNet2JSConversions.ToStringRejectingSymbols(ObjectRuntime.GetItem(result, 0d));
+                var positionValue = ToIntegerOrInfinity(ObjectRuntime.GetItem(result, "index"), 0d);
+                var position = (int)global::System.Math.Min(global::System.Math.Max(positionValue, 0d), input.Length);
+                for (var i = 0; i < captures.Length; i++)
+                {
+                    var capture = ObjectRuntime.GetItem(result, (double)(i + 1));
+                    captures[i] = capture is null ? null : DotNet2JSConversions.ToStringRejectingSymbols(capture);
+                }
+
+                var groups = ObjectRuntime.GetItem(result, "groups");
+                string substituted;
+                if (functional)
+                {
+                    var arguments = new object?[captures.Length + (groups is null ? 3 : 4)];
+                    arguments[0] = matched;
+                    global::System.Array.Copy(captures, 0, arguments, 1, captures.Length);
+                    arguments[captures.Length + 1] = (double)position;
+                    arguments[captures.Length + 2] = input;
+                    if (groups is not null)
                     {
-                        return regExp.Regex.Replace(input, evaluator);
+                        arguments[^1] = groups;
                     }
 
-                    return regExp.Regex.Replace(input, evaluator, 1, 0);
+                    substituted = DotNet2JSConversions.ToStringRejectingSymbols(
+                        CallableOperations.Call(replacement, null, arguments));
                 }
-
-                var replacementText = ToSearchString(replacement);
-                if (replacementText.IndexOf('$') < 0)
+                else
                 {
-                    return regExp.Global
-                        ? regExp.Regex.Replace(input, replacementText)
-                        : regExp.Regex.Replace(input, replacementText, 1);
+                    if (groups is JsNull)
+                    {
+                        throw new TypeError("Cannot convert null to object");
+                    }
+
+                    substituted = GetRegExpSubstitution(replacementText!, matched, input, position, captures, groups);
                 }
 
-                var substitutionEvaluator = new MatchEvaluator(m => GetSubstitution(replacementText, m.Value, input, m.Index, m));
-                if (regExp.Global)
+                if (position < nextSourcePosition)
                 {
-                    return regExp.Regex.Replace(input, substitutionEvaluator);
+                    continue;
                 }
 
-                return regExp.Regex.Replace(input, substitutionEvaluator, 1, 0);
+                output.Append(input, nextSourcePosition, position - nextSourcePosition);
+                output.Append(substituted);
+                nextSourcePosition = global::System.Math.Min(position + matched.Length, input.Length);
             }
-            finally
-            {
-                regExp.lastIndex = savedLastIndex;
-            }
+
+            output.Append(input, nextSourcePosition, input.Length - nextSourcePosition);
+            return output.ToString();
         }
 
-        private static bool TryReplaceWithLiteralPattern(string input, JavaScriptRuntime.RegExp regExp, object? replacement, out string result)
+        private static object? ExecuteRegExp(object receiver, string input)
+            => JavaScriptRuntime.RegExp.RegExpExec(receiver, input);
+
+        private static double ToRegExpLength(object? value)
         {
-            result = string.Empty;
-            if (regExp.SimpleLiteralPattern is not string literalPattern)
+            var number = TypeUtilities.ToNumber(value);
+            return double.IsNaN(number) || number <= 0 ? 0d
+                : global::System.Math.Min(global::System.Math.Floor(number), 9007199254740991d);
+        }
+
+        private static double AdvanceRegExpIndex(string input, double index, bool unicode)
+        {
+            if (!unicode || index + 1 >= input.Length)
             {
-                return false;
+                return index + 1;
             }
 
-            if (CallableOperations.IsCallable(replacement))
-            {
-                result = ReplaceLiteralWithCallback(
-                    input,
-                    literalPattern,
-                    regExp.Global,
-                    (match, index) => InvokeStringReplaceCallback(replacement!, match, (double)index, input));
-                return true;
-            }
+            var i = (int)index;
+            return char.IsHighSurrogate(input[i]) && char.IsLowSurrogate(input[i + 1])
+                ? index + 2 : index + 1;
+        }
 
-            var replacementText = ToSearchString(replacement);
-            if (replacementText.IndexOf('$') < 0)
+        private static string GetRegExpSubstitution(
+            string replacement, string matched, string input, int position, object?[] captures, object? groups)
+        {
+            var output = new StringBuilder();
+            for (var i = 0; i < replacement.Length; i++)
             {
-                if (regExp.Global)
+                if (replacement[i] != '$' || i + 1 == replacement.Length)
                 {
-                    result = input.Replace(literalPattern, replacementText, StringComparison.Ordinal);
-                    return true;
+                    output.Append(replacement[i]);
+                    continue;
                 }
 
-                var firstLiteralMatchIndex = input.IndexOf(literalPattern, StringComparison.Ordinal);
-                if (firstLiteralMatchIndex < 0)
+                switch (replacement[i + 1])
                 {
-                    result = input;
-                    return true;
+                    case '$': output.Append('$'); i++; break;
+                    case '&': output.Append(matched); i++; break;
+                    case '`': output.Append(input, 0, position); i++; break;
+                    case '\'':
+                        var suffixPosition = global::System.Math.Min(position + matched.Length, input.Length);
+                        output.Append(input, suffixPosition, input.Length - suffixPosition);
+                        i++;
+                        break;
+                    case '<' when groups is not null:
+                        var end = replacement.IndexOf('>', i + 2);
+                        if (end < 0)
+                        {
+                            output.Append("$<");
+                            i++;
+                            break;
+                        }
+                        var named = ObjectRuntime.GetItem(groups, replacement.Substring(i + 2, end - i - 2));
+                        if (named is not null)
+                        {
+                            output.Append(DotNet2JSConversions.ToStringRejectingSymbols(named));
+                        }
+                        i = end;
+                        break;
+                    default:
+                        var digit = replacement[i + 1] - '0';
+                        if (digit is >= 0 and <= 9)
+                        {
+                            var captureIndex = digit;
+                            var consumed = 1;
+                            if (i + 2 < replacement.Length && replacement[i + 2] is >= '0' and <= '9')
+                            {
+                                var twoDigitIndex = captureIndex * 10 + replacement[i + 2] - '0';
+                                if (twoDigitIndex is > 0 && twoDigitIndex <= captures.Length)
+                                {
+                                    captureIndex = twoDigitIndex;
+                                    consumed = 2;
+                                }
+                            }
+                            if (captureIndex is > 0 && captureIndex <= captures.Length)
+                            {
+                                output.Append(captures[captureIndex - 1]);
+                                i += consumed;
+                                break;
+                            }
+                        }
+                        output.Append('$');
+                        break;
                 }
-
-                result = input.Substring(0, firstLiteralMatchIndex)
-                    + replacementText
-                    + input.Substring(firstLiteralMatchIndex + literalPattern.Length);
-                return true;
             }
-
-            if (regExp.Global)
-            {
-                result = ReplaceLiteralWithCallback(input, literalPattern, true,
-                    (match, index) => GetSubstitution(replacementText, match, input, index, null));
-                return true;
-            }
-
-            var firstMatchIndex = input.IndexOf(literalPattern, StringComparison.Ordinal);
-            if (firstMatchIndex < 0)
-            {
-                result = input;
-                return true;
-            }
-
-            result = input.Substring(0, firstMatchIndex)
-                + GetSubstitution(replacementText, literalPattern, input, firstMatchIndex, null)
-                + input.Substring(firstMatchIndex + literalPattern.Length);
-            return true;
+            return output.ToString();
         }
 
         private static string ReplaceLiteralWithCallback(string input, string literalPattern, bool global, Func<string, int, string> replacementFactory)
@@ -2530,124 +2614,103 @@ namespace JavaScriptRuntime
         }
 
         internal static JavaScriptRuntime.Array SplitWithRegExp(string input, JavaScriptRuntime.RegExp regExp, object? limit)
+            => SplitWithRegExp(input, (object)regExp, limit);
+
+        internal static JavaScriptRuntime.Array SplitWithRegExp(string input, object receiver, object? limit)
         {
-            var savedLastIndex = regExp.lastIndex;
-            try
+            if (TypeUtilities.IsPrimitive(receiver))
             {
-                if (regExp.IsEmptySplitPattern)
+                throw new TypeError("RegExp.prototype[@@split] called on incompatible receiver");
+            }
+
+            var constructor = ObjectRuntime.GetItem(receiver, "constructor");
+            object? species = null;
+            if (constructor is not null)
+            {
+                if (TypeUtilities.IsPrimitive(constructor))
                 {
-                    return SplitWithEmptyRegExp(input, regExp.unicode, ToSplitLimit(limit));
+                    throw new TypeError("RegExp constructor is not an object");
                 }
 
-                if (regExp.SimpleLiteralPattern is string literalPattern)
-                {
-                    return SplitWithLiteralSeparator(input, literalPattern, ToSplitLimit(limit));
-                }
-
-                return SplitWithRegexGeneral(input, regExp, ToSplitLimit(limit));
+                species = ObjectRuntime.GetItem(constructor, Symbol.species);
             }
-            finally
+
+            var flags = DotNet2JSConversions.ToStringRejectingSymbols(ObjectRuntime.GetItem(receiver, "flags"));
+            var newFlags = flags.IndexOf('y') >= 0 ? flags : flags + "y";
+            if (species is null)
             {
-                regExp.lastIndex = savedLastIndex;
+                // The intrinsic RegExp constructor observes @@match on its pattern.
+                JavaScriptRuntime.RegExp.IsRegExp(receiver);
             }
-        }
 
-        /// <summary>
-        /// General-purpose RegExp.prototype[@@split] algorithm (ECMA-262 22.2.6.13). Probes the
-        /// pattern for an exact-position ("sticky") match at each candidate index, independent of
-        /// the RegExp instance's own lastIndex/global/sticky state — matching .NET's
-        /// <see cref="global::System.Text.RegularExpressions.Regex.Split(string)"/> does not
-        /// implement JS zero-width-match/anchor semantics correctly, so this walks the string
-        /// itself rather than delegating to it.
-        /// </summary>
-        private static JavaScriptRuntime.Array SplitWithRegexGeneral(string input, JavaScriptRuntime.RegExp regExp, int maxCount)
-        {
+            var splitter = species is null or JsNull
+                ? CallableOperations.Construct(
+                    BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.RegExp),
+                    new object?[] { receiver, newFlags })
+                : CallableOperations.Construct(species, new object?[] { receiver, newFlags });
+            if (splitter is null || TypeUtilities.IsPrimitive(splitter))
+            {
+                throw new TypeError("RegExp species constructor must return an object");
+            }
+
+            var fullUnicode = flags.IndexOf('u') >= 0 || flags.IndexOf('v') >= 0;
+            var maxCount = ToSplitLimit(limit);
             var result = new JavaScriptRuntime.Array();
-            int size = input.Length;
-
             if (maxCount == 0)
             {
                 return result;
             }
 
-            if (size == 0)
+            if (input.Length == 0)
             {
-                if (!regExp.TryExactMatchAt(input, 0, out _))
+                ObjectRuntime.SetItem(splitter, "lastIndex", 0d, true);
+                if (ExecuteRegExp(splitter, input) is null or JsNull)
                 {
                     result.Add(input);
                 }
-
                 return result;
             }
 
-            int p = 0;
-            int q = p;
-            while (q < size)
+            var p = 0;
+            var q = 0;
+            while (q < input.Length)
             {
-                if (!regExp.TryExactMatchAt(input, q, out var match))
+                ObjectRuntime.SetItem(splitter, "lastIndex", (double)q, true);
+                var match = ExecuteRegExp(splitter, input);
+                if (match is null or JsNull)
                 {
-                    q = AdvanceSplitIndex(input, q, regExp.unicode);
+                    q = (int)AdvanceRegExpIndex(input, q, fullUnicode);
                     continue;
                 }
 
-                int e = global::System.Math.Min(size, q + match.Length);
-                if (e == p)
+                var end = (int)global::System.Math.Min(ToRegExpLength(ObjectRuntime.GetItem(splitter, "lastIndex")), input.Length);
+                if (end == p)
                 {
-                    q = AdvanceSplitIndex(input, q, regExp.unicode);
+                    q = (int)AdvanceRegExpIndex(input, q, fullUnicode);
                     continue;
                 }
 
                 result.Add(input.Substring(p, q - p));
-                if (result.Count == maxCount)
+                if (result.Count >= maxCount)
                 {
                     return result;
                 }
 
-                for (int i = 1; i < match.Groups.Count; i++)
+                p = end;
+                var length = ToRegExpLength(ObjectRuntime.GetItem(match, "length"));
+                for (double i = 1; i < length && result.Count < maxCount; i++)
                 {
-                    var group = match.Groups[i];
-                    result.Add(group.Success ? group.Value : null);
-                    if (result.Count == maxCount)
-                    {
-                        return result;
-                    }
+                    result.Add(ObjectRuntime.GetItem(match, i));
                 }
-
-                p = e;
+                if (result.Count >= maxCount)
+                {
+                    return result;
+                }
                 q = p;
             }
 
-            result.Add(input.Substring(p, size - p));
+            result.Add(input.Substring(p, input.Length - p));
             return result;
-        }
-
-        private static JavaScriptRuntime.Array SplitWithEmptyRegExp(string input, bool unicode, int maxCount)
-        {
-            var estimatedCount = global::System.Math.Min(input.Length, maxCount);
-            if (input.Length == 0 || maxCount == 0)
-            {
-                return new JavaScriptRuntime.Array();
-            }
-
-            var items = new object?[estimatedCount];
-            int count = 0;
-            for (int index = 0; index < input.Length && count < estimatedCount;)
-            {
-                int nextIndex = AdvanceSplitIndex(input, index, unicode);
-                items[count++] = nextIndex == index + 1
-                    ? CharToStringFast(input[index])
-                    : input.Substring(index, nextIndex - index);
-                index = nextIndex;
-            }
-
-            if (count == items.Length)
-            {
-                return new JavaScriptRuntime.Array(items);
-            }
-
-            var trimmed = new object?[count];
-            global::System.Array.Copy(items, trimmed, count);
-            return new JavaScriptRuntime.Array(trimmed);
         }
 
         private static int AdvanceSplitIndex(string input, int index, bool unicode)

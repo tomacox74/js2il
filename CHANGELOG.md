@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- fix(runtime): implement observable RegExp.prototype symbol operations for
+  match, matchAll, replace, search, and split, including overridden exec,
+  lastIndex and flag access, generic receivers, species construction, and
+  method metadata; verify 100 previously failing pinned Test262 cases.
 
 ## v0.12.29 - 2026-09-26
 

@@ -138,4 +138,63 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task y_set_lastindex()
         => ExecutionTestFromFile("y-set-lastindex");
 
+    [Fact(DisplayName = "builtin-success-g-set-lastindex-err.js")]
+    public Task ported_builtin_success_g_set_lastindex_err() => ExecutionTestFromFile("builtin-success-g-set-lastindex-err");
+
+    [Fact(DisplayName = "builtin-success-g-set-lastindex.js")]
+    public Task ported_builtin_success_g_set_lastindex() => ExecutionTestFromFile("builtin-success-g-set-lastindex");
+
+    [Fact(DisplayName = "coerce-global.js")]
+    public Task ported_coerce_global() => ExecutionTestFromFile("coerce-global");
+
+    [Fact(DisplayName = "exec-err.js")]
+    public Task ported_exec_err() => ExecutionTestFromFile("exec-err");
+
+    [Fact(DisplayName = "exec-invocation.js")]
+    public Task ported_exec_invocation() => ExecutionTestFromFile("exec-invocation");
+
+    [Fact(DisplayName = "exec-return-type-invalid.js")]
+    public Task ported_exec_return_type_invalid() => ExecutionTestFromFile("exec-return-type-invalid");
+
+    [Fact(DisplayName = "exec-return-type-valid.js")]
+    public Task ported_exec_return_type_valid() => ExecutionTestFromFile("exec-return-type-valid");
+
+    [Fact(DisplayName = "flags-tostring-error.js")]
+    public Task ported_flags_tostring_error() => ExecutionTestFromFile("flags-tostring-error");
+
+    [Fact(DisplayName = "g-coerce-result-err.js")]
+    public Task ported_g_coerce_result_err() => ExecutionTestFromFile("g-coerce-result-err");
+
+    [Fact(DisplayName = "g-get-exec-err.js")]
+    public Task ported_g_get_exec_err() => ExecutionTestFromFile("g-get-exec-err");
+
+    [Fact(DisplayName = "g-get-result-err.js")]
+    public Task ported_g_get_result_err() => ExecutionTestFromFile("g-get-result-err");
+
+    [Fact(DisplayName = "g-match-empty-coerce-lastindex-err.js")]
+    public Task ported_g_match_empty_coerce_lastindex_err() => ExecutionTestFromFile("g-match-empty-coerce-lastindex-err");
+
+    [Fact(DisplayName = "g-match-empty-set-lastindex-err.js")]
+    public Task ported_g_match_empty_set_lastindex_err() => ExecutionTestFromFile("g-match-empty-set-lastindex-err");
+
+    [Fact(DisplayName = "get-exec-err.js")]
+    public Task ported_get_exec_err() => ExecutionTestFromFile("get-exec-err");
+
+    [Fact(DisplayName = "get-flags-err.js")]
+    public Task ported_get_flags_err() => ExecutionTestFromFile("get-flags-err");
+
+    [Fact(DisplayName = "get-global-err.js")]
+    public Task ported_get_global_err() => ExecutionTestFromFile("get-global-err");
+
+    [Fact(DisplayName = "get-unicode-error.js")]
+    public Task ported_get_unicode_error() => ExecutionTestFromFile("get-unicode-error");
+
+    [Fact(DisplayName = "name.js")]
+    public Task ported_name() => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "this-val-non-regexp.js")]
+    public Task ported_this_val_non_regexp() => ExecutionTestFromFile("this-val-non-regexp");
+
+    [Fact(DisplayName = "u-advance-after-empty.js")]
+    public Task ported_u_advance_after_empty() => ExecutionTestFromFile("u-advance-after-empty");
 }

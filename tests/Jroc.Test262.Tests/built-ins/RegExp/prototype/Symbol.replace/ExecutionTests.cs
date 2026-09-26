@@ -102,4 +102,138 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task this_val_non_obj()
         => ExecutionTestFromFile("this-val-non-obj");
 
+    [Fact(DisplayName = "coerce-lastindex-err.js")]
+    public Task ported_coerce_lastindex_err() => ExecutionTestFromFile("coerce-lastindex-err");
+
+    [Fact(DisplayName = "coerce-lastindex.js")]
+    public Task ported_coerce_lastindex() => ExecutionTestFromFile("coerce-lastindex");
+
+    [Fact(DisplayName = "coerce-unicode.js")]
+    public Task ported_coerce_unicode() => ExecutionTestFromFile("coerce-unicode");
+
+    [Fact(DisplayName = "exec-err.js")]
+    public Task ported_exec_err() => ExecutionTestFromFile("exec-err");
+
+    [Fact(DisplayName = "exec-invocation.js")]
+    public Task ported_exec_invocation() => ExecutionTestFromFile("exec-invocation");
+
+    [Fact(DisplayName = "flags-tostring-error.js")]
+    public Task ported_flags_tostring_error() => ExecutionTestFromFile("flags-tostring-error");
+
+    [Fact(DisplayName = "fn-invoke-args-empty-result.js")]
+    public Task ported_fn_invoke_args_empty_result() => ExecutionTestFromFile("fn-invoke-args-empty-result");
+
+    [Fact(DisplayName = "g-init-lastindex-err.js")]
+    public Task ported_g_init_lastindex_err() => ExecutionTestFromFile("g-init-lastindex-err");
+
+    [Fact(DisplayName = "g-pos-decrement.js")]
+    public Task ported_g_pos_decrement() => ExecutionTestFromFile("g-pos-decrement");
+
+    [Fact(DisplayName = "g-pos-increment.js")]
+    public Task ported_g_pos_increment() => ExecutionTestFromFile("g-pos-increment");
+
+    [Fact(DisplayName = "get-exec-err.js")]
+    public Task ported_get_exec_err() => ExecutionTestFromFile("get-exec-err");
+
+    [Fact(DisplayName = "get-flags-err.js")]
+    public Task ported_get_flags_err() => ExecutionTestFromFile("get-flags-err");
+
+    [Fact(DisplayName = "get-global-err.js")]
+    public Task ported_get_global_err() => ExecutionTestFromFile("get-global-err");
+
+    [Fact(DisplayName = "get-unicode-error.js")]
+    public Task ported_get_unicode_error() => ExecutionTestFromFile("get-unicode-error");
+
+    [Fact(DisplayName = "name.js")]
+    public Task ported_name() => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "named-groups-fn.js")]
+    public Task ported_named_groups_fn() => ExecutionTestFromFile("named-groups-fn");
+
+    [Fact(DisplayName = "named-groups.js")]
+    public Task ported_named_groups() => ExecutionTestFromFile("named-groups");
+
+    [Fact(DisplayName = "poisoned-stdlib.js")]
+    public Task ported_poisoned_stdlib() => ExecutionTestFromFile("poisoned-stdlib");
+
+    [Fact(DisplayName = "result-coerce-capture-err.js")]
+    public Task ported_result_coerce_capture_err() => ExecutionTestFromFile("result-coerce-capture-err");
+
+    [Fact(DisplayName = "result-coerce-capture.js")]
+    public Task ported_result_coerce_capture() => ExecutionTestFromFile("result-coerce-capture");
+
+    [Fact(DisplayName = "result-coerce-groups-err.js")]
+    public Task ported_result_coerce_groups_err() => ExecutionTestFromFile("result-coerce-groups-err");
+
+    [Fact(DisplayName = "result-coerce-groups-prop-err.js")]
+    public Task ported_result_coerce_groups_prop_err() => ExecutionTestFromFile("result-coerce-groups-prop-err");
+
+    [Fact(DisplayName = "result-coerce-groups-prop.js")]
+    public Task ported_result_coerce_groups_prop() => ExecutionTestFromFile("result-coerce-groups-prop");
+
+    [Fact(DisplayName = "result-coerce-groups.js")]
+    public Task ported_result_coerce_groups() => ExecutionTestFromFile("result-coerce-groups");
+
+    [Fact(DisplayName = "result-coerce-index-err.js")]
+    public Task ported_result_coerce_index_err() => ExecutionTestFromFile("result-coerce-index-err");
+
+    [Fact(DisplayName = "result-coerce-index-undefined.js")]
+    public Task ported_result_coerce_index_undefined() => ExecutionTestFromFile("result-coerce-index-undefined");
+
+    [Fact(DisplayName = "result-coerce-index.js")]
+    public Task ported_result_coerce_index() => ExecutionTestFromFile("result-coerce-index");
+
+    [Fact(DisplayName = "result-coerce-length-err.js")]
+    public Task ported_result_coerce_length_err() => ExecutionTestFromFile("result-coerce-length-err");
+
+    [Fact(DisplayName = "result-coerce-length.js")]
+    public Task ported_result_coerce_length() => ExecutionTestFromFile("result-coerce-length");
+
+    [Fact(DisplayName = "result-coerce-matched-err.js")]
+    public Task ported_result_coerce_matched_err() => ExecutionTestFromFile("result-coerce-matched-err");
+
+    [Fact(DisplayName = "result-coerce-matched-global.js")]
+    public Task ported_result_coerce_matched_global() => ExecutionTestFromFile("result-coerce-matched-global");
+
+    [Fact(DisplayName = "result-coerce-matched.js")]
+    public Task ported_result_coerce_matched() => ExecutionTestFromFile("result-coerce-matched");
+
+    [Fact(DisplayName = "result-get-capture-err.js")]
+    public Task ported_result_get_capture_err() => ExecutionTestFromFile("result-get-capture-err");
+
+    [Fact(DisplayName = "result-get-groups-err.js")]
+    public Task ported_result_get_groups_err() => ExecutionTestFromFile("result-get-groups-err");
+
+    [Fact(DisplayName = "result-get-groups-prop-err.js")]
+    public Task ported_result_get_groups_prop_err() => ExecutionTestFromFile("result-get-groups-prop-err");
+
+    [Fact(DisplayName = "result-get-index-err.js")]
+    public Task ported_result_get_index_err() => ExecutionTestFromFile("result-get-index-err");
+
+    [Fact(DisplayName = "result-get-length-err.js")]
+    public Task ported_result_get_length_err() => ExecutionTestFromFile("result-get-length-err");
+
+    [Fact(DisplayName = "result-get-matched-err.js")]
+    public Task ported_result_get_matched_err() => ExecutionTestFromFile("result-get-matched-err");
+
+    [Fact(DisplayName = "u-advance-after-empty.js")]
+    public Task ported_u_advance_after_empty() => ExecutionTestFromFile("u-advance-after-empty");
+
+    [Fact(DisplayName = "y-fail-global-return.js")]
+    public Task ported_y_fail_global_return() => ExecutionTestFromFile("y-fail-global-return");
+
+    [Fact(DisplayName = "y-fail-lastindex-no-write.js")]
+    public Task ported_y_fail_lastindex_no_write() => ExecutionTestFromFile("y-fail-lastindex-no-write");
+
+    [Fact(DisplayName = "y-fail-lastindex.js")]
+    public Task ported_y_fail_lastindex() => ExecutionTestFromFile("y-fail-lastindex");
+
+    [Fact(DisplayName = "y-fail-return.js")]
+    public Task ported_y_fail_return() => ExecutionTestFromFile("y-fail-return");
+
+    [Fact(DisplayName = "y-init-lastindex.js")]
+    public Task ported_y_init_lastindex() => ExecutionTestFromFile("y-init-lastindex");
+
+    [Fact(DisplayName = "y-set-lastindex.js")]
+    public Task ported_y_set_lastindex() => ExecutionTestFromFile("y-set-lastindex");
 }
