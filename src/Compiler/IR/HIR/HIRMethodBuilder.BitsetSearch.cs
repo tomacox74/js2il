@@ -7,6 +7,16 @@ partial class HIRMethodBuilder
 {
     private string? TryRecognizeBitsetSearch(WhileStatement loop)
     {
+        var callable = _currentScope;
+        while (callable.Kind != ScopeKind.Function && callable.Parent != null)
+        {
+            callable = callable.Parent;
+        }
+        if (callable.Parent?.Kind != ScopeKind.Class)
+        {
+            return null;
+        }
+
         if (loop.Test is not CallExpression
             {
                 Callee: MemberExpression
