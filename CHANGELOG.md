@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(benchmark): prototype scalar and Vector128 repeating-mask blocks for
+  Prime's large-step marking path; keep production Prime code unchanged
+  pending repeatable crossover and end-to-end Prime measurements.
 - perf(compiler): vectorize canonical local-const Int32Array OR loops with
   literal or immutable numeric bounds, preserving the scalar loop for
   dynamic properties, side-effecting bodies, and unsupported storage.
