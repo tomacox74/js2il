@@ -99,6 +99,16 @@ Notes:
   name. The benchmark's `--prime-validation` selector compares the
   validation-only module load with an otherwise identical scalar-count
   control (`total += 1` in place of `total++`).
+- A class method's contiguous `Int32Array` loop of the form
+  `for (let i = start; i < this.end; i++) this.words[i] |= constant` can
+  lower to an explicit LIR vector range (load, bitwise OR, store). Normalization
+  calls the portable `Vector128<int>` runtime primitive on fixed, non-shared,
+  non-detached storage with safe in-bounds integer indices. It handles unaligned
+  starts and short trailing ranges with scalar operations and uses the original
+  JavaScript loop when the receiver or backing storage is ineligible. Other
+  typed-array loops and ordinary arrays retain their scalar lowering. Run
+  `--int32array-vector-or` in the benchmark project for the scalar/vector
+  comparison, including a forced no-vector control.
 
 ---
 

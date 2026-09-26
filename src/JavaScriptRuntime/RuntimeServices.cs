@@ -38,6 +38,9 @@ public class RuntimeServices
     public static double FindFirstZeroBitOrNegative(Int32Array? words, double index)
         => Int32Array.FindFirstZeroBitOrNegative(words, index);
 
+    public static bool TryVectorOrRange(Int32Array? words, double start, double end, double mask)
+        => Int32Array.TryOrRange(words, start, end, mask);
+
     public static double CountZeroBitsInCompiledBitsetOrNegative<T>(
         T receiver, string fieldName, double start, double end)
     {

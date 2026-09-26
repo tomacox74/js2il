@@ -354,6 +354,12 @@ internal static partial class LIRInstructionInfo
                 visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
             case LIRCallIntrinsicStatic value:
                 VisitList(value.Arguments, ref visitor); break;
+            case LIRVectorInt32Range value:
+                visitor.Visit(value.Load.Array);
+                visitor.Visit(value.Load.Start);
+                visitor.Visit(value.Load.End);
+                visitor.Visit(value.Operation.Mask);
+                break;
             case LIRCallIntrinsicStaticVoid value:
                 VisitList(value.Arguments, ref visitor); break;
             case LIRCallIntrinsicStaticWithArgsArray value:
@@ -786,6 +792,9 @@ internal static partial class LIRInstructionInfo
                 return true;
             case LIRCallIntrinsicStatic callStatic:
                 defined = callStatic.Result;
+                return true;
+            case LIRVectorInt32Range vectorRange:
+                defined = vectorRange.Applied;
                 return true;
             
             case LIRCallRuntimeServicesStatic callRuntimeServices:
