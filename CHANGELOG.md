@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 500 additional pinned class-expression cases covering class
+  elements and parameter destructuring.
 - fix(runtime): implement observable RegExp.prototype symbol operations for
   match, matchAll, replace, search, and split, including overridden exec,
   lastIndex and flag access, generic receivers, species construction, and
