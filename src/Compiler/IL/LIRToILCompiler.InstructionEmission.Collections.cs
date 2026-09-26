@@ -431,9 +431,15 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArrayGetter);
 
+                    if (GetTempStorage(getI32.Result).ClrType == typeof(int))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Conv_i4);
+                    }
+
                     // Store result (box only if the temp expects object)
                     var resultStorage = GetTempStorage(getI32.Result);
-                    if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
+                    if (resultStorage.Kind != ValueStorageKind.UnboxedValue
+                        || (resultStorage.ClrType != typeof(double) && resultStorage.ClrType != typeof(int)))
                     {
                         ilEncoder.OpCode(ILOpCode.Box);
                         ilEncoder.Token(_bclReferences.DoubleType);

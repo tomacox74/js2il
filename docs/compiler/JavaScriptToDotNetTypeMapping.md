@@ -76,6 +76,13 @@ Notes:
 
 - Some runtime helpers (e.g., `JavaScriptRuntime.TypeUtilities.ToNumber(...)`, `ToBoolean(...)`, `Typeof(...)`) implement coercion and `typeof` based on these representations.
 - JROC may opportunistically store some variables/fields as `double`/`bool`/`string` when type inference marks them stable, but semantically values still flow as JavaScript values.
+- Signed bitwise results and `Int32Array` element values may use `int32` IL
+  locals when every assignment and consumer is compatible. Unsigned shifts
+  qualify only when a constant shift count proves the result fits in signed
+  `int32`; otherwise they retain the full JavaScript Number range. At
+  observable Number boundaries (such as indexed access or boxing), the value
+  is converted back to `double`. Arithmetic loop variables with unproven
+  integer ranges remain `double`.
 
 ---
 

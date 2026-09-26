@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): retain proven signed bitwise values and Int32Array reads in
+  native `int32` locals, using numeric conversions only at JavaScript-number
+  boundaries; preserve full-width unsigned shifts and dynamic loop arithmetic.
 - perf(runtime): use a guarded contiguous `int` view for indexed Int32Array
   reads and writes on fixed backing storage, retaining the byte-oriented path
   for detached, resizable, and growable buffers.
