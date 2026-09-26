@@ -25,4 +25,19 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "this-tostring-flags.js")]
     public Task this_tostring_flags()
         => ExecutionTestFromFile("this-tostring-flags");
+
+    [Fact(DisplayName = "isregexp-called-once.js")]
+    public Task ported_isregexp_called_once() => ExecutionTestFromFile("isregexp-called-once");
+
+    [Fact(DisplayName = "isregexp-this-throws.js")]
+    public Task ported_isregexp_this_throws() => ExecutionTestFromFile("isregexp-this-throws");
+
+    [Fact(DisplayName = "name.js")]
+    public Task ported_name() => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "regexpcreate-this-throws.js")]
+    public Task ported_regexpcreate_this_throws() => ExecutionTestFromFile("regexpcreate-this-throws");
+
+    [Fact(DisplayName = "species-constructor-is-not-object-throws.js")]
+    public Task ported_species_constructor_is_not_object_throws() => ExecutionTestFromFile("species-constructor-is-not-object-throws");
 }
