@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify another 500 pinned class-expression cases covering class
+  methods and related semantics.
 - perf(compiler/runtime): pass proven numeric arguments unboxed to guarded
   String `charAt`, `charCodeAt`, `slice`, `substr`, and `substring` intrinsics;
   retain object coercion and prototype-override fallbacks.

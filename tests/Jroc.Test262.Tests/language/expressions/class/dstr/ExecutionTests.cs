@@ -2,7 +2,7 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.language.expressions.class_.dstr;
 
-public class ExecutionTests : ExecutionTestsBase
+public partial class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.class_.dstr") { }
 
