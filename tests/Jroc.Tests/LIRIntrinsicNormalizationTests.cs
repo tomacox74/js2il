@@ -93,6 +93,82 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.Equal(typeof(object), body.TempStorages[result.Index].ClrType);
     }
 
+    [Theory]
+    [InlineData("charAt", 1)]
+    [InlineData("charCodeAt", 1)]
+    [InlineData("slice", 1)]
+    [InlineData("slice", 2)]
+    [InlineData("substr", 1)]
+    [InlineData("substr", 2)]
+    [InlineData("substring", 1)]
+    [InlineData("substring", 2)]
+    public void Normalize_PreservesUnboxedNumericArgumentsForStringIntrinsics(
+        string methodName, int argumentCount)
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var firstNumber = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var firstObject = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRConstNumber(1d, firstNumber));
+        body.Instructions.Add(new LIRConvertToObject(firstNumber, typeof(double), firstObject));
+
+        TempVariable secondNumber = default;
+        TempVariable secondObject = default;
+        if (argumentCount == 2)
+        {
+            secondNumber = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            secondObject = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            body.Instructions.Add(new LIRConstNumber(2d, secondNumber));
+            body.Instructions.Add(new LIRConvertToObject(secondNumber, typeof(double), secondObject));
+        }
+
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(argumentCount == 1
+            ? new LIRCallMember1(receiver, methodName, firstObject, result)
+            : new LIRCallMember2(receiver, methodName, firstObject, secondObject, result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(body.Instructions[^1]);
+        Assert.Equal(Enumerable.Repeat(typeof(double), argumentCount).Prepend(typeof(string)),
+            guarded.IntrinsicParameterTypes);
+        Assert.Equal(argumentCount == 1 ? new[] { firstNumber } : new[] { firstNumber, secondNumber },
+            guarded.Arguments);
+    }
+
+    [Theory]
+    [InlineData("slice", true)]
+    [InlineData("slice", false)]
+    [InlineData("substr", true)]
+    [InlineData("substr", false)]
+    [InlineData("substring", true)]
+    [InlineData("substring", false)]
+    public void Normalize_KeepsNumericArgumentUnboxedWithObservableOtherArgument(
+        string methodName, bool numericFirst)
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var number = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var boxed = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var other = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRConstNumber(1d, number));
+        body.Instructions.Add(new LIRConvertToObject(number, typeof(double), boxed));
+        body.Instructions.Add(numericFirst
+            ? new LIRCallMember2(receiver, methodName, boxed, other, result)
+            : new LIRCallMember2(receiver, methodName, other, boxed, result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        var guarded = Assert.IsType<LIRCallGuardedStringIntrinsic>(body.Instructions[^1]);
+        Assert.Equal(numericFirst
+            ? new[] { typeof(string), typeof(double), typeof(object) }
+            : new[] { typeof(string), typeof(object), typeof(double) },
+            guarded.IntrinsicParameterTypes);
+        Assert.Equal(numericFirst ? new[] { number, other } : new[] { other, number },
+            guarded.Arguments);
+    }
+
     [Fact]
     public void Normalize_Rewrites_UncertainStringMemberCall_WithReceiverTypeTest()
     {

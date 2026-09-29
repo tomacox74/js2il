@@ -830,19 +830,29 @@ namespace JavaScriptRuntime
 
         public static string Substring(string input, object? start, object? end)
         {
-            input ??= string.Empty;
+            return SubstringCore(input,
+                start is null ? 0d : TypeUtilities.ToNumber(start),
+                end is null ? null : TypeUtilities.ToNumber(end));
+        }
 
+        public static string Substring(string input, double start) => SubstringCore(input, start, null);
+
+        public static string Substring(string input, double start, double end)
+            => SubstringCore(input, start, end);
+
+        public static string Substring(string input, double start, object? end)
+            => SubstringCore(input, start, end is null ? null : TypeUtilities.ToNumber(end));
+
+        public static string Substring(string input, object? start, double end)
+            => SubstringCore(input, start is null ? 0d : TypeUtilities.ToNumber(start), end);
+
+        private static string SubstringCore(string input, double start, double? end)
+        {
+            input ??= string.Empty;
             int len = input.Length;
 
-            static int ToClampedIndex(object? value, int length, int defaultValue)
+            static int ToClampedIndex(double d, int length)
             {
-                if (value == null)
-                {
-                    return defaultValue;
-                }
-
-                double d = JavaScriptRuntime.TypeUtilities.ToNumber(value);
-
                 if (double.IsNaN(d)) d = 0d;
                 if (double.IsNegativeInfinity(d)) d = 0d;
                 if (double.IsPositiveInfinity(d)) d = length;
@@ -854,8 +864,8 @@ namespace JavaScriptRuntime
                 return (int)d;
             }
 
-            int startIndex = ToClampedIndex(start, len, defaultValue: 0);
-            int endIndex = ToClampedIndex(end, len, defaultValue: len);
+            int startIndex = ToClampedIndex(start, len);
+            int endIndex = end is null ? len : ToClampedIndex(end.Value, len);
 
             if (startIndex > endIndex)
             {
@@ -885,12 +895,31 @@ namespace JavaScriptRuntime
 
         public static string Substr(string input, object? start, object? length)
         {
+            return SubstrCore(input, ToSubstrNumber(start),
+                length is null ? null : ToSubstrNumber(length));
+        }
+
+        public static string Substr(string input, double start) => SubstrCore(input, start, null);
+
+        public static string Substr(string input, double start, double length)
+            => SubstrCore(input, start, length);
+
+        public static string Substr(string input, double start, object? length)
+            => SubstrCore(input, start, length is null ? null : ToSubstrNumber(length));
+
+        public static string Substr(string input, object? start, double length)
+            => SubstrCore(input, ToSubstrNumber(start), length);
+
+        private static double ToSubstrNumber(object? value)
+        {
+            try { return TypeUtilities.ToNumber(value); }
+            catch { return double.NaN; }
+        }
+
+        private static string SubstrCore(string input, double startNum, double? lengthNum)
+        {
             input ??= string.Empty;
             int len = input.Length;
-
-            double startNum;
-            try { startNum = TypeUtilities.ToNumber(start); }
-            catch { startNum = double.NaN; }
             if (double.IsNaN(startNum) || double.IsNegativeInfinity(startNum)) startNum = 0;
             if (double.IsPositiveInfinity(startNum)) startNum = len;
             startNum = global::System.Math.Truncate(startNum);
@@ -906,19 +935,17 @@ namespace JavaScriptRuntime
             int maxCount = len - startIndex;
 
             int count;
-            if (length is null)
+            if (lengthNum is null)
             {
                 count = maxCount;
             }
             else
             {
-                double lengthNum;
-                try { lengthNum = TypeUtilities.ToNumber(length); }
-                catch { lengthNum = double.NaN; }
-                if (double.IsNaN(lengthNum) || double.IsNegativeInfinity(lengthNum) || lengthNum < 0) lengthNum = 0;
-                if (double.IsPositiveInfinity(lengthNum)) lengthNum = maxCount;
-                lengthNum = global::System.Math.Truncate(lengthNum);
-                count = (int)lengthNum;
+                var value = lengthNum.Value;
+                if (double.IsNaN(value) || double.IsNegativeInfinity(value) || value < 0) value = 0;
+                if (double.IsPositiveInfinity(value)) value = maxCount;
+                value = global::System.Math.Truncate(value);
+                count = (int)value;
             }
 
             if (count <= 0 || startIndex >= len)
@@ -940,14 +967,29 @@ namespace JavaScriptRuntime
 
         public static string Slice(string input, object? start, object? end)
         {
+            return SliceCore(input,
+                start is null ? 0d : TypeUtilities.ToNumber(start),
+                end is null ? null : TypeUtilities.ToNumber(end));
+        }
+
+        public static string Slice(string input, double start) => SliceCore(input, start, null);
+
+        public static string Slice(string input, double start, double end)
+            => SliceCore(input, start, end);
+
+        public static string Slice(string input, double start, object? end)
+            => SliceCore(input, start, end is null ? null : TypeUtilities.ToNumber(end));
+
+        public static string Slice(string input, object? start, double end)
+            => SliceCore(input, start is null ? 0d : TypeUtilities.ToNumber(start), end);
+
+        private static string SliceCore(string input, double start, double? end)
+        {
             input ??= string.Empty;
             int len = input.Length;
 
-            static int ToSliceIndex(object? value, int length, int defaultValue)
+            static int ToSliceIndex(double d, int length)
             {
-                if (value is null) return defaultValue;
-
-                double d = TypeUtilities.ToNumber(value);
                 if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
                 if (double.IsPositiveInfinity(d)) d = length;
                 d = global::System.Math.Truncate(d);
@@ -959,8 +1001,8 @@ namespace JavaScriptRuntime
                 return i;
             }
 
-            int startIndex = ToSliceIndex(start, len, defaultValue: 0);
-            int endIndex = ToSliceIndex(end, len, defaultValue: len);
+            int startIndex = ToSliceIndex(start, len);
+            int endIndex = end is null ? len : ToSliceIndex(end.Value, len);
             if (endIndex < startIndex) return string.Empty;
             return SubstringFast(input, startIndex, endIndex - startIndex);
         }
@@ -1249,9 +1291,13 @@ namespace JavaScriptRuntime
         /// </summary>
         public static string CharAt(string input, object? index)
         {
-            input ??= string.Empty;
+            return CharAt(input, index == null ? 0d : ToNumberForStringIndex(index));
+        }
 
-            var idx = index == null ? 0d : ToNumberForStringIndex(index);
+        public static string CharAt(string input, double index)
+        {
+            input ??= string.Empty;
+            var idx = index;
 
             if (double.IsNaN(idx))
             {

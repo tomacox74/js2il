@@ -100,6 +100,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_NumericIntrinsics()
+        {
+            return ExecutionTest(nameof(String_NumericIntrinsics));
+        }
+
+        [Fact]
         public Task String_Split_Basic()
         {
             return ExecutionTest(nameof(String_Split_Basic));

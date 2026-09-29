@@ -2537,15 +2537,14 @@
 				74 61 54 6f 6b 65 6e 1f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 555 (0x22b)
+			// Code size: 535 (0x217)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] object,
 				[3] bool,
-				[4] object,
-				[5] object
+				[4] object
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -2561,7 +2560,7 @@
 				IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_001a: stloc.3
 				IL_001b: ldloc.3
-				IL_001c: brfalse IL_0229
+				IL_001c: brfalse IL_0215
 
 				IL_0021: ldarg.0
 				IL_0022: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
@@ -2569,7 +2568,7 @@
 				IL_002c: stloc.2
 				IL_002d: ldc.i4.0
 				IL_002e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_0033: brfalse IL_0070
+				IL_0033: brfalse IL_006b
 
 				IL_0038: ldloc.2
 				IL_0039: isinst [System.Runtime]System.String
@@ -2581,177 +2580,172 @@
 				IL_0046: ldstr "charAt"
 				IL_004b: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
 				IL_0050: dup
-				IL_0051: brfalse IL_006f
+				IL_0051: brfalse IL_006a
 
 				IL_0056: ldc.r8 0.0
-				IL_005f: box [System.Runtime]System.Double
-				IL_0064: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, object)
-				IL_0069: stloc.2
-				IL_006a: br IL_008a
+				IL_005f: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, float64)
+				IL_0064: stloc.2
+				IL_0065: br IL_0085
 
-				IL_006f: pop
+				IL_006a: pop
 
-				IL_0070: ldloc.2
-				IL_0071: ldstr "charAt"
-				IL_0076: ldc.r8 0.0
-				IL_007f: box [System.Runtime]System.Double
-				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0089: stloc.2
+				IL_006b: ldloc.2
+				IL_006c: ldstr "charAt"
+				IL_0071: ldc.r8 0.0
+				IL_007a: box [System.Runtime]System.Double
+				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0084: stloc.2
 
-				IL_008a: ldarg.0
-				IL_008b: ldloc.2
-				IL_008c: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0091: ldarg.0
-				IL_0092: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_009c: stloc.2
-				IL_009d: ldarg.0
-				IL_009e: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_00a3: volatile.
-				IL_00a5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
-				IL_00aa: brfalse IL_00be
+				IL_0085: ldarg.0
+				IL_0086: ldloc.2
+				IL_0087: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_008c: ldarg.0
+				IL_008d: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0097: stloc.2
+				IL_0098: ldarg.0
+				IL_0099: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_009e: volatile.
+				IL_00a0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
+				IL_00a5: brfalse IL_00b9
 
-				IL_00af: ldstr "length"
-				IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00b9: br IL_00d2
+				IL_00aa: ldstr "length"
+				IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00b4: br IL_00cd
 
-				IL_00be: ldstr "length"
-				IL_00c3: ldstr "Compile_Performance_Dromaeo_Object_String:<TwoPhaseDummy_M17>:__js_call__:20"
-				IL_00c8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
-				IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_00b9: ldstr "length"
+				IL_00be: ldstr "Compile_Performance_Dromaeo_Object_String:<TwoPhaseDummy_M17>:__js_call__:19"
+				IL_00c3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_37
+				IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_00d2: stloc.s 4
-				IL_00d4: ldloc.s 4
-				IL_00d6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_00db: ldc.r8 1
-				IL_00e4: sub
-				IL_00e5: stloc.1
-				IL_00e6: ldloc.1
-				IL_00e7: box [System.Runtime]System.Double
-				IL_00ec: stloc.s 5
-				IL_00ee: ldc.i4.0
-				IL_00ef: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_00f4: stloc.3
-				IL_00f5: ldloc.3
-				IL_00f6: brfalse IL_0127
+				IL_00cd: stloc.s 4
+				IL_00cf: ldloc.s 4
+				IL_00d1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00d6: ldc.r8 1
+				IL_00df: sub
+				IL_00e0: stloc.1
+				IL_00e1: ldc.i4.0
+				IL_00e2: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_00e7: stloc.3
+				IL_00e8: ldloc.3
+				IL_00e9: brfalse IL_0119
 
+				IL_00ee: ldloc.2
+				IL_00ef: isinst [System.Runtime]System.String
+				IL_00f4: dup
+				IL_00f5: brtrue IL_010c
+
+				IL_00fa: pop
 				IL_00fb: ldloc.2
-				IL_00fc: isinst [System.Runtime]System.String
-				IL_0101: dup
-				IL_0102: brtrue IL_0119
+				IL_00fc: ldstr "charAt"
+				IL_0101: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0106: dup
+				IL_0107: brfalse IL_0118
 
-				IL_0107: pop
-				IL_0108: ldloc.2
-				IL_0109: ldstr "charAt"
-				IL_010e: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0113: dup
-				IL_0114: brfalse IL_0126
+				IL_010c: ldloc.1
+				IL_010d: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, float64)
+				IL_0112: stloc.2
+				IL_0113: br IL_012d
 
-				IL_0119: ldloc.s 5
-				IL_011b: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, object)
-				IL_0120: stloc.2
-				IL_0121: br IL_0137
+				IL_0118: pop
 
-				IL_0126: pop
+				IL_0119: ldc.i4.0
+				IL_011a: stloc.3
+				IL_011b: ldloc.2
+				IL_011c: ldstr "charAt"
+				IL_0121: ldloc.1
+				IL_0122: box [System.Runtime]System.Double
+				IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_012c: stloc.2
 
-				IL_0127: ldc.i4.0
-				IL_0128: stloc.3
-				IL_0129: ldloc.2
-				IL_012a: ldstr "charAt"
-				IL_012f: ldloc.s 5
-				IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0136: stloc.2
+				IL_012d: ldarg.0
+				IL_012e: ldloc.2
+				IL_012f: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0134: ldarg.0
+				IL_0135: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_013f: stloc.2
+				IL_0140: ldloc.3
+				IL_0141: brfalse IL_0179
 
-				IL_0137: ldarg.0
-				IL_0138: ldloc.2
-				IL_0139: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_013e: ldarg.0
-				IL_013f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0149: stloc.2
-				IL_014a: ldloc.3
-				IL_014b: brfalse IL_0188
+				IL_0146: ldloc.2
+				IL_0147: isinst [System.Runtime]System.String
+				IL_014c: dup
+				IL_014d: brtrue IL_0164
 
-				IL_0150: ldloc.2
-				IL_0151: isinst [System.Runtime]System.String
-				IL_0156: dup
-				IL_0157: brtrue IL_016e
+				IL_0152: pop
+				IL_0153: ldloc.2
+				IL_0154: ldstr "charAt"
+				IL_0159: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_015e: dup
+				IL_015f: brfalse IL_0178
 
-				IL_015c: pop
-				IL_015d: ldloc.2
-				IL_015e: ldstr "charAt"
-				IL_0163: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0168: dup
-				IL_0169: brfalse IL_0187
+				IL_0164: ldc.r8 15000
+				IL_016d: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, float64)
+				IL_0172: stloc.2
+				IL_0173: br IL_0195
 
-				IL_016e: ldc.r8 15000
-				IL_0177: box [System.Runtime]System.Double
-				IL_017c: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, object)
-				IL_0181: stloc.2
-				IL_0182: br IL_01a4
+				IL_0178: pop
 
-				IL_0187: pop
+				IL_0179: ldc.i4.0
+				IL_017a: stloc.3
+				IL_017b: ldloc.2
+				IL_017c: ldstr "charAt"
+				IL_0181: ldc.r8 15000
+				IL_018a: box [System.Runtime]System.Double
+				IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0194: stloc.2
 
-				IL_0188: ldc.i4.0
-				IL_0189: stloc.3
-				IL_018a: ldloc.2
-				IL_018b: ldstr "charAt"
-				IL_0190: ldc.r8 15000
-				IL_0199: box [System.Runtime]System.Double
-				IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_01a3: stloc.2
+				IL_0195: ldarg.0
+				IL_0196: ldloc.2
+				IL_0197: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_019c: ldarg.0
+				IL_019d: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_01a7: stloc.2
+				IL_01a8: ldloc.3
+				IL_01a9: brfalse IL_01e1
 
-				IL_01a4: ldarg.0
-				IL_01a5: ldloc.2
-				IL_01a6: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_01ab: ldarg.0
-				IL_01ac: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_01b6: stloc.2
-				IL_01b7: ldloc.3
-				IL_01b8: brfalse IL_01f5
+				IL_01ae: ldloc.2
+				IL_01af: isinst [System.Runtime]System.String
+				IL_01b4: dup
+				IL_01b5: brtrue IL_01cc
 
-				IL_01bd: ldloc.2
-				IL_01be: isinst [System.Runtime]System.String
-				IL_01c3: dup
-				IL_01c4: brtrue IL_01db
+				IL_01ba: pop
+				IL_01bb: ldloc.2
+				IL_01bc: ldstr "charAt"
+				IL_01c1: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_01c6: dup
+				IL_01c7: brfalse IL_01e0
 
-				IL_01c9: pop
-				IL_01ca: ldloc.2
-				IL_01cb: ldstr "charAt"
-				IL_01d0: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_01d5: dup
-				IL_01d6: brfalse IL_01f4
+				IL_01cc: ldc.r8 12000
+				IL_01d5: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, float64)
+				IL_01da: stloc.2
+				IL_01db: br IL_01fd
 
-				IL_01db: ldc.r8 12000
-				IL_01e4: box [System.Runtime]System.Double
-				IL_01e9: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, object)
-				IL_01ee: stloc.2
-				IL_01ef: br IL_0211
+				IL_01e0: pop
 
-				IL_01f4: pop
+				IL_01e1: ldc.i4.0
+				IL_01e2: stloc.3
+				IL_01e3: ldloc.2
+				IL_01e4: ldstr "charAt"
+				IL_01e9: ldc.r8 12000
+				IL_01f2: box [System.Runtime]System.Double
+				IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_01fc: stloc.2
 
-				IL_01f5: ldc.i4.0
-				IL_01f6: stloc.3
-				IL_01f7: ldloc.2
-				IL_01f8: ldstr "charAt"
-				IL_01fd: ldc.r8 12000
-				IL_0206: box [System.Runtime]System.Double
-				IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0210: stloc.2
-
-				IL_0211: ldarg.0
-				IL_0212: ldloc.2
-				IL_0213: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0218: ldloc.0
-				IL_0219: ldc.r8 1
-				IL_0222: add
-				IL_0223: stloc.0
-				IL_0224: br IL_000a
+				IL_01fd: ldarg.0
+				IL_01fe: ldloc.2
+				IL_01ff: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0204: ldloc.0
+				IL_0205: ldc.r8 1
+				IL_020e: add
+				IL_020f: stloc.0
+				IL_0210: br IL_000a
 			// end loop
 
-			IL_0229: ldnull
-			IL_022a: ret
+			IL_0215: ldnull
+			IL_0216: ret
 		} // end of method FunctionExpression_L82C15::__js_call__
 
 	} // end of class FunctionExpression_L82C15
@@ -3183,15 +3177,14 @@
 				74 61 54 6f 6b 65 6e 1f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 689 (0x2b1)
+			// Code size: 664 (0x298)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] object,
 				[3] bool,
-				[4] object,
-				[5] object
+				[4] object
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -3207,7 +3200,7 @@
 				IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_001a: stloc.3
 				IL_001b: ldloc.3
-				IL_001c: brfalse IL_02af
+				IL_001c: brfalse IL_0296
 
 				IL_0021: ldarg.0
 				IL_0022: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
@@ -3215,7 +3208,7 @@
 				IL_002c: stloc.2
 				IL_002d: ldc.i4.0
 				IL_002e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_0033: brfalse IL_0075
+				IL_0033: brfalse IL_0070
 
 				IL_0038: ldloc.2
 				IL_0039: isinst [System.Runtime]System.String
@@ -3227,221 +3220,215 @@
 				IL_0046: ldstr "charCodeAt"
 				IL_004b: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
 				IL_0050: dup
-				IL_0051: brfalse IL_0074
+				IL_0051: brfalse IL_006f
 
 				IL_0056: ldc.r8 0.0
-				IL_005f: box [System.Runtime]System.Double
-				IL_0064: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-				IL_0069: box [System.Runtime]System.Double
-				IL_006e: stloc.2
-				IL_006f: br IL_008f
+				IL_005f: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+				IL_0064: box [System.Runtime]System.Double
+				IL_0069: stloc.2
+				IL_006a: br IL_008a
 
-				IL_0074: pop
+				IL_006f: pop
 
-				IL_0075: ldloc.2
-				IL_0076: ldstr "charCodeAt"
-				IL_007b: ldc.r8 0.0
-				IL_0084: box [System.Runtime]System.Double
-				IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_008e: stloc.2
+				IL_0070: ldloc.2
+				IL_0071: ldstr "charCodeAt"
+				IL_0076: ldc.r8 0.0
+				IL_007f: box [System.Runtime]System.Double
+				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0089: stloc.2
 
-				IL_008f: ldarg.0
-				IL_0090: ldloc.2
-				IL_0091: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0096: ldarg.0
-				IL_0097: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00a1: stloc.2
-				IL_00a2: ldarg.0
-				IL_00a3: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_00a8: volatile.
-				IL_00aa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
-				IL_00af: brfalse IL_00c3
+				IL_008a: ldarg.0
+				IL_008b: ldloc.2
+				IL_008c: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0091: ldarg.0
+				IL_0092: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_009c: stloc.2
+				IL_009d: ldarg.0
+				IL_009e: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_00a3: volatile.
+				IL_00a5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
+				IL_00aa: brfalse IL_00be
 
-				IL_00b4: ldstr "length"
-				IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00be: br IL_00d7
+				IL_00af: ldstr "length"
+				IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00b9: br IL_00d2
 
-				IL_00c3: ldstr "length"
-				IL_00c8: ldstr "Compile_Performance_Dromaeo_Object_String:<TwoPhaseDummy_M19>:__js_call__:20"
-				IL_00cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
-				IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_00be: ldstr "length"
+				IL_00c3: ldstr "Compile_Performance_Dromaeo_Object_String:<TwoPhaseDummy_M19>:__js_call__:19"
+				IL_00c8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_39
+				IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_00d7: stloc.s 4
-				IL_00d9: ldloc.s 4
-				IL_00db: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_00e0: ldc.r8 1
-				IL_00e9: sub
-				IL_00ea: stloc.1
-				IL_00eb: ldloc.1
-				IL_00ec: box [System.Runtime]System.Double
-				IL_00f1: stloc.s 5
-				IL_00f3: ldc.i4.0
-				IL_00f4: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_00f9: stloc.3
-				IL_00fa: ldloc.3
-				IL_00fb: brfalse IL_0131
+				IL_00d2: stloc.s 4
+				IL_00d4: ldloc.s 4
+				IL_00d6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00db: ldc.r8 1
+				IL_00e4: sub
+				IL_00e5: stloc.1
+				IL_00e6: ldc.i4.0
+				IL_00e7: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_00ec: stloc.3
+				IL_00ed: ldloc.3
+				IL_00ee: brfalse IL_0123
 
+				IL_00f3: ldloc.2
+				IL_00f4: isinst [System.Runtime]System.String
+				IL_00f9: dup
+				IL_00fa: brtrue IL_0111
+
+				IL_00ff: pop
 				IL_0100: ldloc.2
-				IL_0101: isinst [System.Runtime]System.String
-				IL_0106: dup
-				IL_0107: brtrue IL_011e
+				IL_0101: ldstr "charCodeAt"
+				IL_0106: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_010b: dup
+				IL_010c: brfalse IL_0122
 
-				IL_010c: pop
-				IL_010d: ldloc.2
-				IL_010e: ldstr "charCodeAt"
-				IL_0113: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0118: dup
-				IL_0119: brfalse IL_0130
+				IL_0111: ldloc.1
+				IL_0112: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+				IL_0117: box [System.Runtime]System.Double
+				IL_011c: stloc.2
+				IL_011d: br IL_0137
 
-				IL_011e: ldloc.s 5
-				IL_0120: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-				IL_0125: box [System.Runtime]System.Double
-				IL_012a: stloc.2
-				IL_012b: br IL_0141
+				IL_0122: pop
 
-				IL_0130: pop
+				IL_0123: ldc.i4.0
+				IL_0124: stloc.3
+				IL_0125: ldloc.2
+				IL_0126: ldstr "charCodeAt"
+				IL_012b: ldloc.1
+				IL_012c: box [System.Runtime]System.Double
+				IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0136: stloc.2
 
-				IL_0131: ldc.i4.0
-				IL_0132: stloc.3
-				IL_0133: ldloc.2
-				IL_0134: ldstr "charCodeAt"
-				IL_0139: ldloc.s 5
-				IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0140: stloc.2
+				IL_0137: ldarg.0
+				IL_0138: ldloc.2
+				IL_0139: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_013e: ldarg.0
+				IL_013f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0149: stloc.2
+				IL_014a: ldloc.3
+				IL_014b: brfalse IL_0188
 
-				IL_0141: ldarg.0
-				IL_0142: ldloc.2
-				IL_0143: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0148: ldarg.0
-				IL_0149: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0153: stloc.2
-				IL_0154: ldloc.3
-				IL_0155: brfalse IL_0197
+				IL_0150: ldloc.2
+				IL_0151: isinst [System.Runtime]System.String
+				IL_0156: dup
+				IL_0157: brtrue IL_016e
 
-				IL_015a: ldloc.2
-				IL_015b: isinst [System.Runtime]System.String
-				IL_0160: dup
-				IL_0161: brtrue IL_0178
+				IL_015c: pop
+				IL_015d: ldloc.2
+				IL_015e: ldstr "charCodeAt"
+				IL_0163: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0168: dup
+				IL_0169: brfalse IL_0187
 
-				IL_0166: pop
-				IL_0167: ldloc.2
-				IL_0168: ldstr "charCodeAt"
-				IL_016d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0172: dup
-				IL_0173: brfalse IL_0196
+				IL_016e: ldc.r8 15000
+				IL_0177: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+				IL_017c: box [System.Runtime]System.Double
+				IL_0181: stloc.2
+				IL_0182: br IL_01a4
 
-				IL_0178: ldc.r8 15000
-				IL_0181: box [System.Runtime]System.Double
-				IL_0186: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-				IL_018b: box [System.Runtime]System.Double
-				IL_0190: stloc.2
-				IL_0191: br IL_01b3
+				IL_0187: pop
 
-				IL_0196: pop
+				IL_0188: ldc.i4.0
+				IL_0189: stloc.3
+				IL_018a: ldloc.2
+				IL_018b: ldstr "charCodeAt"
+				IL_0190: ldc.r8 15000
+				IL_0199: box [System.Runtime]System.Double
+				IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_01a3: stloc.2
 
-				IL_0197: ldc.i4.0
-				IL_0198: stloc.3
-				IL_0199: ldloc.2
-				IL_019a: ldstr "charCodeAt"
-				IL_019f: ldc.r8 15000
-				IL_01a8: box [System.Runtime]System.Double
-				IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_01b2: stloc.2
+				IL_01a4: ldarg.0
+				IL_01a5: ldloc.2
+				IL_01a6: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_01ab: ldarg.0
+				IL_01ac: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_01b6: stloc.2
+				IL_01b7: ldloc.3
+				IL_01b8: brfalse IL_01f5
 
-				IL_01b3: ldarg.0
-				IL_01b4: ldloc.2
-				IL_01b5: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_01ba: ldarg.0
-				IL_01bb: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_01c5: stloc.2
-				IL_01c6: ldloc.3
-				IL_01c7: brfalse IL_0209
+				IL_01bd: ldloc.2
+				IL_01be: isinst [System.Runtime]System.String
+				IL_01c3: dup
+				IL_01c4: brtrue IL_01db
 
-				IL_01cc: ldloc.2
-				IL_01cd: isinst [System.Runtime]System.String
-				IL_01d2: dup
-				IL_01d3: brtrue IL_01ea
+				IL_01c9: pop
+				IL_01ca: ldloc.2
+				IL_01cb: ldstr "charCodeAt"
+				IL_01d0: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_01d5: dup
+				IL_01d6: brfalse IL_01f4
 
-				IL_01d8: pop
-				IL_01d9: ldloc.2
-				IL_01da: ldstr "charCodeAt"
-				IL_01df: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_01e4: dup
-				IL_01e5: brfalse IL_0208
+				IL_01db: ldc.r8 10000
+				IL_01e4: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+				IL_01e9: box [System.Runtime]System.Double
+				IL_01ee: stloc.2
+				IL_01ef: br IL_0211
 
-				IL_01ea: ldc.r8 10000
-				IL_01f3: box [System.Runtime]System.Double
-				IL_01f8: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-				IL_01fd: box [System.Runtime]System.Double
-				IL_0202: stloc.2
-				IL_0203: br IL_0225
+				IL_01f4: pop
 
-				IL_0208: pop
+				IL_01f5: ldc.i4.0
+				IL_01f6: stloc.3
+				IL_01f7: ldloc.2
+				IL_01f8: ldstr "charCodeAt"
+				IL_01fd: ldc.r8 10000
+				IL_0206: box [System.Runtime]System.Double
+				IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0210: stloc.2
 
-				IL_0209: ldc.i4.0
-				IL_020a: stloc.3
-				IL_020b: ldloc.2
-				IL_020c: ldstr "charCodeAt"
-				IL_0211: ldc.r8 10000
-				IL_021a: box [System.Runtime]System.Double
-				IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0224: stloc.2
+				IL_0211: ldarg.0
+				IL_0212: ldloc.2
+				IL_0213: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0218: ldarg.0
+				IL_0219: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0223: stloc.2
+				IL_0224: ldloc.3
+				IL_0225: brfalse IL_0262
 
-				IL_0225: ldarg.0
-				IL_0226: ldloc.2
-				IL_0227: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_022c: ldarg.0
-				IL_022d: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0237: stloc.2
-				IL_0238: ldloc.3
-				IL_0239: brfalse IL_027b
+				IL_022a: ldloc.2
+				IL_022b: isinst [System.Runtime]System.String
+				IL_0230: dup
+				IL_0231: brtrue IL_0248
 
-				IL_023e: ldloc.2
-				IL_023f: isinst [System.Runtime]System.String
-				IL_0244: dup
-				IL_0245: brtrue IL_025c
+				IL_0236: pop
+				IL_0237: ldloc.2
+				IL_0238: ldstr "charCodeAt"
+				IL_023d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0242: dup
+				IL_0243: brfalse IL_0261
 
-				IL_024a: pop
-				IL_024b: ldloc.2
-				IL_024c: ldstr "charCodeAt"
-				IL_0251: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0256: dup
-				IL_0257: brfalse IL_027a
+				IL_0248: ldc.r8 5000
+				IL_0251: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+				IL_0256: box [System.Runtime]System.Double
+				IL_025b: stloc.2
+				IL_025c: br IL_027e
 
-				IL_025c: ldc.r8 5000
-				IL_0265: box [System.Runtime]System.Double
-				IL_026a: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-				IL_026f: box [System.Runtime]System.Double
-				IL_0274: stloc.2
-				IL_0275: br IL_0297
+				IL_0261: pop
 
-				IL_027a: pop
+				IL_0262: ldc.i4.0
+				IL_0263: stloc.3
+				IL_0264: ldloc.2
+				IL_0265: ldstr "charCodeAt"
+				IL_026a: ldc.r8 5000
+				IL_0273: box [System.Runtime]System.Double
+				IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_027d: stloc.2
 
-				IL_027b: ldc.i4.0
-				IL_027c: stloc.3
-				IL_027d: ldloc.2
-				IL_027e: ldstr "charCodeAt"
-				IL_0283: ldc.r8 5000
-				IL_028c: box [System.Runtime]System.Double
-				IL_0291: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0296: stloc.2
-
-				IL_0297: ldarg.0
-				IL_0298: ldloc.2
-				IL_0299: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_029e: ldloc.0
-				IL_029f: ldc.r8 1
-				IL_02a8: add
-				IL_02a9: stloc.0
-				IL_02aa: br IL_000a
+				IL_027e: ldarg.0
+				IL_027f: ldloc.2
+				IL_0280: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0285: ldloc.0
+				IL_0286: ldc.r8 1
+				IL_028f: add
+				IL_0290: stloc.0
+				IL_0291: br IL_000a
 			// end loop
 
-			IL_02af: ldnull
-			IL_02b0: ret
+			IL_0296: ldnull
+			IL_0297: ret
 		} // end of method FunctionExpression_L101C19::__js_call__
 
 	} // end of class FunctionExpression_L101C19
@@ -4307,15 +4294,14 @@
 				74 61 54 6f 6b 65 6e 1f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 805 (0x325)
+			// Code size: 761 (0x2f9)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] object,
 				[3] bool,
-				[4] object,
-				[5] object
+				[4] float64
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -4331,7 +4317,7 @@
 				IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_001a: stloc.3
 				IL_001b: ldloc.3
-				IL_001c: brfalse IL_0323
+				IL_001c: brfalse IL_02f7
 
 				IL_0021: ldarg.0
 				IL_0022: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
@@ -4341,7 +4327,7 @@
 				IL_002e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
 				IL_0033: stloc.3
 				IL_0034: ldloc.3
-				IL_0035: brfalse IL_0072
+				IL_0035: brfalse IL_006d
 
 				IL_003a: ldloc.2
 				IL_003b: isinst [System.Runtime]System.String
@@ -4353,264 +4339,250 @@
 				IL_0048: ldstr "slice"
 				IL_004d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
 				IL_0052: dup
-				IL_0053: brfalse IL_0071
+				IL_0053: brfalse IL_006c
 
 				IL_0058: ldc.r8 0.0
-				IL_0061: box [System.Runtime]System.Double
-				IL_0066: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object)
-				IL_006b: stloc.2
-				IL_006c: br IL_008e
+				IL_0061: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, float64)
+				IL_0066: stloc.2
+				IL_0067: br IL_0089
 
-				IL_0071: pop
+				IL_006c: pop
 
-				IL_0072: ldc.i4.0
-				IL_0073: stloc.3
-				IL_0074: ldloc.2
-				IL_0075: ldstr "slice"
-				IL_007a: ldc.r8 0.0
-				IL_0083: box [System.Runtime]System.Double
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_008d: stloc.2
+				IL_006d: ldc.i4.0
+				IL_006e: stloc.3
+				IL_006f: ldloc.2
+				IL_0070: ldstr "slice"
+				IL_0075: ldc.r8 0.0
+				IL_007e: box [System.Runtime]System.Double
+				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0088: stloc.2
 
-				IL_008e: ldarg.0
-				IL_008f: ldloc.2
-				IL_0090: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0095: ldarg.0
-				IL_0096: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00a0: stloc.2
-				IL_00a1: ldloc.3
-				IL_00a2: brfalse IL_00ed
+				IL_0089: ldarg.0
+				IL_008a: ldloc.2
+				IL_008b: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0090: ldarg.0
+				IL_0091: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_009b: stloc.2
+				IL_009c: ldloc.3
+				IL_009d: brfalse IL_00de
 
-				IL_00a7: ldloc.2
-				IL_00a8: isinst [System.Runtime]System.String
-				IL_00ad: dup
-				IL_00ae: brtrue IL_00c5
+				IL_00a2: ldloc.2
+				IL_00a3: isinst [System.Runtime]System.String
+				IL_00a8: dup
+				IL_00a9: brtrue IL_00c0
 
-				IL_00b3: pop
-				IL_00b4: ldloc.2
-				IL_00b5: ldstr "slice"
-				IL_00ba: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_00bf: dup
-				IL_00c0: brfalse IL_00ec
+				IL_00ae: pop
+				IL_00af: ldloc.2
+				IL_00b0: ldstr "slice"
+				IL_00b5: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_00ba: dup
+				IL_00bb: brfalse IL_00dd
 
-				IL_00c5: ldc.r8 0.0
-				IL_00ce: box [System.Runtime]System.Double
-				IL_00d3: ldc.r8 5
-				IL_00dc: box [System.Runtime]System.Double
-				IL_00e1: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object, object)
-				IL_00e6: stloc.2
-				IL_00e7: br IL_0117
+				IL_00c0: ldc.r8 0.0
+				IL_00c9: ldc.r8 5
+				IL_00d2: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, float64, float64)
+				IL_00d7: stloc.2
+				IL_00d8: br IL_0108
 
-				IL_00ec: pop
+				IL_00dd: pop
 
-				IL_00ed: ldc.i4.0
-				IL_00ee: stloc.3
-				IL_00ef: ldloc.2
-				IL_00f0: ldstr "slice"
-				IL_00f5: ldc.r8 0.0
-				IL_00fe: box [System.Runtime]System.Double
-				IL_0103: ldc.r8 5
-				IL_010c: box [System.Runtime]System.Double
-				IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0116: stloc.2
+				IL_00de: ldc.i4.0
+				IL_00df: stloc.3
+				IL_00e0: ldloc.2
+				IL_00e1: ldstr "slice"
+				IL_00e6: ldc.r8 0.0
+				IL_00ef: box [System.Runtime]System.Double
+				IL_00f4: ldc.r8 5
+				IL_00fd: box [System.Runtime]System.Double
+				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0107: stloc.2
 
-				IL_0117: ldarg.0
-				IL_0118: ldloc.2
-				IL_0119: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_011e: ldarg.0
-				IL_011f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0129: stloc.2
-				IL_012a: ldc.r8 1
-				IL_0133: neg
-				IL_0134: stloc.1
-				IL_0135: ldloc.1
-				IL_0136: box [System.Runtime]System.Double
-				IL_013b: stloc.s 4
-				IL_013d: ldloc.3
-				IL_013e: brfalse IL_016f
+				IL_0108: ldarg.0
+				IL_0109: ldloc.2
+				IL_010a: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_010f: ldarg.0
+				IL_0110: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_011a: stloc.2
+				IL_011b: ldc.r8 1
+				IL_0124: neg
+				IL_0125: stloc.1
+				IL_0126: ldloc.3
+				IL_0127: brfalse IL_0157
 
-				IL_0143: ldloc.2
-				IL_0144: isinst [System.Runtime]System.String
-				IL_0149: dup
-				IL_014a: brtrue IL_0161
+				IL_012c: ldloc.2
+				IL_012d: isinst [System.Runtime]System.String
+				IL_0132: dup
+				IL_0133: brtrue IL_014a
 
-				IL_014f: pop
-				IL_0150: ldloc.2
-				IL_0151: ldstr "slice"
-				IL_0156: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_015b: dup
-				IL_015c: brfalse IL_016e
+				IL_0138: pop
+				IL_0139: ldloc.2
+				IL_013a: ldstr "slice"
+				IL_013f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0144: dup
+				IL_0145: brfalse IL_0156
 
-				IL_0161: ldloc.s 4
-				IL_0163: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object)
-				IL_0168: stloc.2
-				IL_0169: br IL_017f
+				IL_014a: ldloc.1
+				IL_014b: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, float64)
+				IL_0150: stloc.2
+				IL_0151: br IL_016b
 
-				IL_016e: pop
+				IL_0156: pop
 
-				IL_016f: ldc.i4.0
-				IL_0170: stloc.3
-				IL_0171: ldloc.2
-				IL_0172: ldstr "slice"
-				IL_0177: ldloc.s 4
-				IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_017e: stloc.2
+				IL_0157: ldc.i4.0
+				IL_0158: stloc.3
+				IL_0159: ldloc.2
+				IL_015a: ldstr "slice"
+				IL_015f: ldloc.1
+				IL_0160: box [System.Runtime]System.Double
+				IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_016a: stloc.2
 
-				IL_017f: ldarg.0
-				IL_0180: ldloc.2
-				IL_0181: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0186: ldarg.0
-				IL_0187: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0191: stloc.2
-				IL_0192: ldc.r8 6
-				IL_019b: neg
-				IL_019c: stloc.1
-				IL_019d: ldloc.1
-				IL_019e: box [System.Runtime]System.Double
-				IL_01a3: stloc.s 4
-				IL_01a5: ldc.r8 1
-				IL_01ae: neg
-				IL_01af: stloc.1
-				IL_01b0: ldloc.1
-				IL_01b1: box [System.Runtime]System.Double
-				IL_01b6: stloc.s 5
-				IL_01b8: ldloc.3
-				IL_01b9: brfalse IL_01ec
+				IL_016b: ldarg.0
+				IL_016c: ldloc.2
+				IL_016d: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0172: ldarg.0
+				IL_0173: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_017d: stloc.2
+				IL_017e: ldc.r8 6
+				IL_0187: neg
+				IL_0188: stloc.1
+				IL_0189: ldc.r8 1
+				IL_0192: neg
+				IL_0193: stloc.s 4
+				IL_0195: ldloc.3
+				IL_0196: brfalse IL_01c8
 
-				IL_01be: ldloc.2
-				IL_01bf: isinst [System.Runtime]System.String
-				IL_01c4: dup
-				IL_01c5: brtrue IL_01dc
+				IL_019b: ldloc.2
+				IL_019c: isinst [System.Runtime]System.String
+				IL_01a1: dup
+				IL_01a2: brtrue IL_01b9
 
-				IL_01ca: pop
-				IL_01cb: ldloc.2
-				IL_01cc: ldstr "slice"
-				IL_01d1: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_01d6: dup
-				IL_01d7: brfalse IL_01eb
+				IL_01a7: pop
+				IL_01a8: ldloc.2
+				IL_01a9: ldstr "slice"
+				IL_01ae: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_01b3: dup
+				IL_01b4: brfalse IL_01c7
 
-				IL_01dc: ldloc.s 4
-				IL_01de: ldloc.s 5
-				IL_01e0: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object, object)
-				IL_01e5: stloc.2
-				IL_01e6: br IL_01fe
+				IL_01b9: ldloc.1
+				IL_01ba: ldloc.s 4
+				IL_01bc: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, float64, float64)
+				IL_01c1: stloc.2
+				IL_01c2: br IL_01e3
 
-				IL_01eb: pop
+				IL_01c7: pop
 
-				IL_01ec: ldc.i4.0
-				IL_01ed: stloc.3
-				IL_01ee: ldloc.2
-				IL_01ef: ldstr "slice"
-				IL_01f4: ldloc.s 4
-				IL_01f6: ldloc.s 5
-				IL_01f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_01fd: stloc.2
+				IL_01c8: ldc.i4.0
+				IL_01c9: stloc.3
+				IL_01ca: ldloc.2
+				IL_01cb: ldstr "slice"
+				IL_01d0: ldloc.1
+				IL_01d1: box [System.Runtime]System.Double
+				IL_01d6: ldloc.s 4
+				IL_01d8: box [System.Runtime]System.Double
+				IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_01e2: stloc.2
 
-				IL_01fe: ldarg.0
-				IL_01ff: ldloc.2
-				IL_0200: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0205: ldarg.0
-				IL_0206: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0210: stloc.2
-				IL_0211: ldloc.3
-				IL_0212: brfalse IL_025d
+				IL_01e3: ldarg.0
+				IL_01e4: ldloc.2
+				IL_01e5: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_01ea: ldarg.0
+				IL_01eb: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_01f5: stloc.2
+				IL_01f6: ldloc.3
+				IL_01f7: brfalse IL_0238
 
-				IL_0217: ldloc.2
-				IL_0218: isinst [System.Runtime]System.String
-				IL_021d: dup
-				IL_021e: brtrue IL_0235
+				IL_01fc: ldloc.2
+				IL_01fd: isinst [System.Runtime]System.String
+				IL_0202: dup
+				IL_0203: brtrue IL_021a
 
-				IL_0223: pop
-				IL_0224: ldloc.2
-				IL_0225: ldstr "slice"
-				IL_022a: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_022f: dup
-				IL_0230: brfalse IL_025c
+				IL_0208: pop
+				IL_0209: ldloc.2
+				IL_020a: ldstr "slice"
+				IL_020f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0214: dup
+				IL_0215: brfalse IL_0237
 
-				IL_0235: ldc.r8 15000
-				IL_023e: box [System.Runtime]System.Double
-				IL_0243: ldc.r8 15005
-				IL_024c: box [System.Runtime]System.Double
-				IL_0251: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object, object)
-				IL_0256: stloc.2
-				IL_0257: br IL_0287
+				IL_021a: ldc.r8 15000
+				IL_0223: ldc.r8 15005
+				IL_022c: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, float64, float64)
+				IL_0231: stloc.2
+				IL_0232: br IL_0262
 
-				IL_025c: pop
+				IL_0237: pop
 
-				IL_025d: ldc.i4.0
-				IL_025e: stloc.3
-				IL_025f: ldloc.2
-				IL_0260: ldstr "slice"
-				IL_0265: ldc.r8 15000
-				IL_026e: box [System.Runtime]System.Double
-				IL_0273: ldc.r8 15005
-				IL_027c: box [System.Runtime]System.Double
-				IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0286: stloc.2
+				IL_0238: ldc.i4.0
+				IL_0239: stloc.3
+				IL_023a: ldloc.2
+				IL_023b: ldstr "slice"
+				IL_0240: ldc.r8 15000
+				IL_0249: box [System.Runtime]System.Double
+				IL_024e: ldc.r8 15005
+				IL_0257: box [System.Runtime]System.Double
+				IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0261: stloc.2
 
-				IL_0287: ldarg.0
-				IL_0288: ldloc.2
-				IL_0289: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_028e: ldarg.0
-				IL_028f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0294: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0299: stloc.2
-				IL_029a: ldc.r8 1
-				IL_02a3: neg
-				IL_02a4: stloc.1
-				IL_02a5: ldloc.1
-				IL_02a6: box [System.Runtime]System.Double
-				IL_02ab: stloc.s 5
-				IL_02ad: ldloc.3
-				IL_02ae: brfalse IL_02ed
+				IL_0262: ldarg.0
+				IL_0263: ldloc.2
+				IL_0264: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0269: ldarg.0
+				IL_026a: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0274: stloc.2
+				IL_0275: ldc.r8 1
+				IL_027e: neg
+				IL_027f: stloc.s 4
+				IL_0281: ldloc.3
+				IL_0282: brfalse IL_02bc
 
-				IL_02b3: ldloc.2
-				IL_02b4: isinst [System.Runtime]System.String
-				IL_02b9: dup
-				IL_02ba: brtrue IL_02d1
+				IL_0287: ldloc.2
+				IL_0288: isinst [System.Runtime]System.String
+				IL_028d: dup
+				IL_028e: brtrue IL_02a5
 
-				IL_02bf: pop
-				IL_02c0: ldloc.2
-				IL_02c1: ldstr "slice"
-				IL_02c6: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_02cb: dup
-				IL_02cc: brfalse IL_02ec
+				IL_0293: pop
+				IL_0294: ldloc.2
+				IL_0295: ldstr "slice"
+				IL_029a: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_029f: dup
+				IL_02a0: brfalse IL_02bb
 
-				IL_02d1: ldc.r8 12000
-				IL_02da: box [System.Runtime]System.Double
-				IL_02df: ldloc.s 5
-				IL_02e1: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, object, object)
-				IL_02e6: stloc.2
-				IL_02e7: br IL_030b
+				IL_02a5: ldc.r8 12000
+				IL_02ae: ldloc.s 4
+				IL_02b0: call string [JavaScriptRuntime]JavaScriptRuntime.String::Slice(string, float64, float64)
+				IL_02b5: stloc.2
+				IL_02b6: br IL_02df
 
-				IL_02ec: pop
+				IL_02bb: pop
 
-				IL_02ed: ldc.i4.0
-				IL_02ee: stloc.3
-				IL_02ef: ldloc.2
-				IL_02f0: ldstr "slice"
-				IL_02f5: ldc.r8 12000
-				IL_02fe: box [System.Runtime]System.Double
-				IL_0303: ldloc.s 5
-				IL_0305: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_030a: stloc.2
+				IL_02bc: ldc.i4.0
+				IL_02bd: stloc.3
+				IL_02be: ldloc.2
+				IL_02bf: ldstr "slice"
+				IL_02c4: ldc.r8 12000
+				IL_02cd: box [System.Runtime]System.Double
+				IL_02d2: ldloc.s 4
+				IL_02d4: box [System.Runtime]System.Double
+				IL_02d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_02de: stloc.2
 
-				IL_030b: ldarg.0
-				IL_030c: ldloc.2
-				IL_030d: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0312: ldloc.0
-				IL_0313: ldc.r8 1
-				IL_031c: add
-				IL_031d: stloc.0
-				IL_031e: br IL_000a
+				IL_02df: ldarg.0
+				IL_02e0: ldloc.2
+				IL_02e1: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_02e6: ldloc.0
+				IL_02e7: ldc.r8 1
+				IL_02f0: add
+				IL_02f1: stloc.0
+				IL_02f2: br IL_000a
 			// end loop
 
-			IL_0323: ldnull
-			IL_0324: ret
+			IL_02f7: ldnull
+			IL_02f8: ret
 		} // end of method FunctionExpression_L133C14::__js_call__
 
 	} // end of class FunctionExpression_L133C14
@@ -4774,14 +4746,13 @@
 				74 61 54 6f 6b 65 6e 1f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 815 (0x32f)
+			// Code size: 765 (0x2fd)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] object,
-				[3] bool,
-				[4] object
+				[3] bool
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -4797,7 +4768,7 @@
 				IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_001a: stloc.3
 				IL_001b: ldloc.3
-				IL_001c: brfalse IL_032d
+				IL_001c: brfalse IL_02fb
 
 				IL_0021: ldarg.0
 				IL_0022: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
@@ -4807,7 +4778,7 @@
 				IL_002e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
 				IL_0033: stloc.3
 				IL_0034: ldloc.3
-				IL_0035: brfalse IL_0072
+				IL_0035: brfalse IL_006d
 
 				IL_003a: ldloc.2
 				IL_003b: isinst [System.Runtime]System.String
@@ -4819,256 +4790,244 @@
 				IL_0048: ldstr "substr"
 				IL_004d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
 				IL_0052: dup
-				IL_0053: brfalse IL_0071
+				IL_0053: brfalse IL_006c
 
 				IL_0058: ldc.r8 0.0
-				IL_0061: box [System.Runtime]System.Double
-				IL_0066: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object)
-				IL_006b: stloc.2
-				IL_006c: br IL_008e
+				IL_0061: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, float64)
+				IL_0066: stloc.2
+				IL_0067: br IL_0089
 
-				IL_0071: pop
+				IL_006c: pop
 
-				IL_0072: ldc.i4.0
-				IL_0073: stloc.3
-				IL_0074: ldloc.2
-				IL_0075: ldstr "substr"
-				IL_007a: ldc.r8 0.0
-				IL_0083: box [System.Runtime]System.Double
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_008d: stloc.2
+				IL_006d: ldc.i4.0
+				IL_006e: stloc.3
+				IL_006f: ldloc.2
+				IL_0070: ldstr "substr"
+				IL_0075: ldc.r8 0.0
+				IL_007e: box [System.Runtime]System.Double
+				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0088: stloc.2
 
-				IL_008e: ldarg.0
-				IL_008f: ldloc.2
-				IL_0090: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0095: ldarg.0
-				IL_0096: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00a0: stloc.2
-				IL_00a1: ldloc.3
-				IL_00a2: brfalse IL_00ed
+				IL_0089: ldarg.0
+				IL_008a: ldloc.2
+				IL_008b: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0090: ldarg.0
+				IL_0091: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_009b: stloc.2
+				IL_009c: ldloc.3
+				IL_009d: brfalse IL_00de
 
-				IL_00a7: ldloc.2
-				IL_00a8: isinst [System.Runtime]System.String
-				IL_00ad: dup
-				IL_00ae: brtrue IL_00c5
+				IL_00a2: ldloc.2
+				IL_00a3: isinst [System.Runtime]System.String
+				IL_00a8: dup
+				IL_00a9: brtrue IL_00c0
 
-				IL_00b3: pop
-				IL_00b4: ldloc.2
-				IL_00b5: ldstr "substr"
-				IL_00ba: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_00bf: dup
-				IL_00c0: brfalse IL_00ec
+				IL_00ae: pop
+				IL_00af: ldloc.2
+				IL_00b0: ldstr "substr"
+				IL_00b5: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_00ba: dup
+				IL_00bb: brfalse IL_00dd
 
-				IL_00c5: ldc.r8 0.0
-				IL_00ce: box [System.Runtime]System.Double
-				IL_00d3: ldc.r8 5
-				IL_00dc: box [System.Runtime]System.Double
-				IL_00e1: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object, object)
-				IL_00e6: stloc.2
-				IL_00e7: br IL_0117
+				IL_00c0: ldc.r8 0.0
+				IL_00c9: ldc.r8 5
+				IL_00d2: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, float64, float64)
+				IL_00d7: stloc.2
+				IL_00d8: br IL_0108
 
-				IL_00ec: pop
+				IL_00dd: pop
 
-				IL_00ed: ldc.i4.0
-				IL_00ee: stloc.3
-				IL_00ef: ldloc.2
-				IL_00f0: ldstr "substr"
-				IL_00f5: ldc.r8 0.0
-				IL_00fe: box [System.Runtime]System.Double
-				IL_0103: ldc.r8 5
-				IL_010c: box [System.Runtime]System.Double
-				IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0116: stloc.2
+				IL_00de: ldc.i4.0
+				IL_00df: stloc.3
+				IL_00e0: ldloc.2
+				IL_00e1: ldstr "substr"
+				IL_00e6: ldc.r8 0.0
+				IL_00ef: box [System.Runtime]System.Double
+				IL_00f4: ldc.r8 5
+				IL_00fd: box [System.Runtime]System.Double
+				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0107: stloc.2
 
-				IL_0117: ldarg.0
-				IL_0118: ldloc.2
-				IL_0119: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_011e: ldarg.0
-				IL_011f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0129: stloc.2
-				IL_012a: ldc.r8 1
-				IL_0133: neg
-				IL_0134: stloc.1
-				IL_0135: ldloc.1
-				IL_0136: box [System.Runtime]System.Double
-				IL_013b: stloc.s 4
-				IL_013d: ldloc.3
-				IL_013e: brfalse IL_016f
+				IL_0108: ldarg.0
+				IL_0109: ldloc.2
+				IL_010a: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_010f: ldarg.0
+				IL_0110: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_011a: stloc.2
+				IL_011b: ldc.r8 1
+				IL_0124: neg
+				IL_0125: stloc.1
+				IL_0126: ldloc.3
+				IL_0127: brfalse IL_0157
 
-				IL_0143: ldloc.2
-				IL_0144: isinst [System.Runtime]System.String
-				IL_0149: dup
-				IL_014a: brtrue IL_0161
+				IL_012c: ldloc.2
+				IL_012d: isinst [System.Runtime]System.String
+				IL_0132: dup
+				IL_0133: brtrue IL_014a
 
-				IL_014f: pop
-				IL_0150: ldloc.2
-				IL_0151: ldstr "substr"
-				IL_0156: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_015b: dup
-				IL_015c: brfalse IL_016e
+				IL_0138: pop
+				IL_0139: ldloc.2
+				IL_013a: ldstr "substr"
+				IL_013f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0144: dup
+				IL_0145: brfalse IL_0156
 
-				IL_0161: ldloc.s 4
-				IL_0163: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object)
-				IL_0168: stloc.2
-				IL_0169: br IL_017f
+				IL_014a: ldloc.1
+				IL_014b: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, float64)
+				IL_0150: stloc.2
+				IL_0151: br IL_016b
 
-				IL_016e: pop
+				IL_0156: pop
 
-				IL_016f: ldc.i4.0
-				IL_0170: stloc.3
-				IL_0171: ldloc.2
-				IL_0172: ldstr "substr"
-				IL_0177: ldloc.s 4
-				IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_017e: stloc.2
+				IL_0157: ldc.i4.0
+				IL_0158: stloc.3
+				IL_0159: ldloc.2
+				IL_015a: ldstr "substr"
+				IL_015f: ldloc.1
+				IL_0160: box [System.Runtime]System.Double
+				IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_016a: stloc.2
 
-				IL_017f: ldarg.0
-				IL_0180: ldloc.2
-				IL_0181: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0186: ldarg.0
-				IL_0187: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0191: stloc.2
-				IL_0192: ldc.r8 6
-				IL_019b: neg
-				IL_019c: stloc.1
-				IL_019d: ldloc.1
-				IL_019e: box [System.Runtime]System.Double
-				IL_01a3: stloc.s 4
-				IL_01a5: ldloc.3
-				IL_01a6: brfalse IL_01e5
+				IL_016b: ldarg.0
+				IL_016c: ldloc.2
+				IL_016d: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0172: ldarg.0
+				IL_0173: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_017d: stloc.2
+				IL_017e: ldc.r8 6
+				IL_0187: neg
+				IL_0188: stloc.1
+				IL_0189: ldloc.3
+				IL_018a: brfalse IL_01c3
 
-				IL_01ab: ldloc.2
-				IL_01ac: isinst [System.Runtime]System.String
-				IL_01b1: dup
-				IL_01b2: brtrue IL_01c9
+				IL_018f: ldloc.2
+				IL_0190: isinst [System.Runtime]System.String
+				IL_0195: dup
+				IL_0196: brtrue IL_01ad
 
-				IL_01b7: pop
-				IL_01b8: ldloc.2
-				IL_01b9: ldstr "substr"
-				IL_01be: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_01c3: dup
-				IL_01c4: brfalse IL_01e4
+				IL_019b: pop
+				IL_019c: ldloc.2
+				IL_019d: ldstr "substr"
+				IL_01a2: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_01a7: dup
+				IL_01a8: brfalse IL_01c2
 
-				IL_01c9: ldloc.s 4
-				IL_01cb: ldc.r8 1
-				IL_01d4: box [System.Runtime]System.Double
-				IL_01d9: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object, object)
-				IL_01de: stloc.2
-				IL_01df: br IL_0203
+				IL_01ad: ldloc.1
+				IL_01ae: ldc.r8 1
+				IL_01b7: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, float64, float64)
+				IL_01bc: stloc.2
+				IL_01bd: br IL_01e5
 
-				IL_01e4: pop
+				IL_01c2: pop
 
-				IL_01e5: ldc.i4.0
-				IL_01e6: stloc.3
-				IL_01e7: ldloc.2
-				IL_01e8: ldstr "substr"
-				IL_01ed: ldloc.s 4
-				IL_01ef: ldc.r8 1
-				IL_01f8: box [System.Runtime]System.Double
-				IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0202: stloc.2
+				IL_01c3: ldc.i4.0
+				IL_01c4: stloc.3
+				IL_01c5: ldloc.2
+				IL_01c6: ldstr "substr"
+				IL_01cb: ldloc.1
+				IL_01cc: box [System.Runtime]System.Double
+				IL_01d1: ldc.r8 1
+				IL_01da: box [System.Runtime]System.Double
+				IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_01e4: stloc.2
 
-				IL_0203: ldarg.0
-				IL_0204: ldloc.2
-				IL_0205: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_020a: ldarg.0
-				IL_020b: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0215: stloc.2
-				IL_0216: ldloc.3
-				IL_0217: brfalse IL_0262
+				IL_01e5: ldarg.0
+				IL_01e6: ldloc.2
+				IL_01e7: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_01ec: ldarg.0
+				IL_01ed: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_01f7: stloc.2
+				IL_01f8: ldloc.3
+				IL_01f9: brfalse IL_023a
 
-				IL_021c: ldloc.2
-				IL_021d: isinst [System.Runtime]System.String
-				IL_0222: dup
-				IL_0223: brtrue IL_023a
+				IL_01fe: ldloc.2
+				IL_01ff: isinst [System.Runtime]System.String
+				IL_0204: dup
+				IL_0205: brtrue IL_021c
 
-				IL_0228: pop
-				IL_0229: ldloc.2
-				IL_022a: ldstr "substr"
-				IL_022f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0234: dup
-				IL_0235: brfalse IL_0261
+				IL_020a: pop
+				IL_020b: ldloc.2
+				IL_020c: ldstr "substr"
+				IL_0211: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0216: dup
+				IL_0217: brfalse IL_0239
 
-				IL_023a: ldc.r8 15000
-				IL_0243: box [System.Runtime]System.Double
-				IL_0248: ldc.r8 5
-				IL_0251: box [System.Runtime]System.Double
-				IL_0256: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object, object)
-				IL_025b: stloc.2
-				IL_025c: br IL_028c
+				IL_021c: ldc.r8 15000
+				IL_0225: ldc.r8 5
+				IL_022e: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, float64, float64)
+				IL_0233: stloc.2
+				IL_0234: br IL_0264
 
-				IL_0261: pop
+				IL_0239: pop
 
-				IL_0262: ldc.i4.0
-				IL_0263: stloc.3
-				IL_0264: ldloc.2
-				IL_0265: ldstr "substr"
-				IL_026a: ldc.r8 15000
-				IL_0273: box [System.Runtime]System.Double
-				IL_0278: ldc.r8 5
-				IL_0281: box [System.Runtime]System.Double
-				IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_028b: stloc.2
+				IL_023a: ldc.i4.0
+				IL_023b: stloc.3
+				IL_023c: ldloc.2
+				IL_023d: ldstr "substr"
+				IL_0242: ldc.r8 15000
+				IL_024b: box [System.Runtime]System.Double
+				IL_0250: ldc.r8 5
+				IL_0259: box [System.Runtime]System.Double
+				IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0263: stloc.2
 
-				IL_028c: ldarg.0
-				IL_028d: ldloc.2
-				IL_028e: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0293: ldarg.0
-				IL_0294: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0299: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_029e: stloc.2
-				IL_029f: ldloc.3
-				IL_02a0: brfalse IL_02eb
+				IL_0264: ldarg.0
+				IL_0265: ldloc.2
+				IL_0266: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_026b: ldarg.0
+				IL_026c: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0271: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0276: stloc.2
+				IL_0277: ldloc.3
+				IL_0278: brfalse IL_02b9
 
-				IL_02a5: ldloc.2
-				IL_02a6: isinst [System.Runtime]System.String
-				IL_02ab: dup
-				IL_02ac: brtrue IL_02c3
+				IL_027d: ldloc.2
+				IL_027e: isinst [System.Runtime]System.String
+				IL_0283: dup
+				IL_0284: brtrue IL_029b
 
-				IL_02b1: pop
-				IL_02b2: ldloc.2
-				IL_02b3: ldstr "substr"
-				IL_02b8: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_02bd: dup
-				IL_02be: brfalse IL_02ea
+				IL_0289: pop
+				IL_028a: ldloc.2
+				IL_028b: ldstr "substr"
+				IL_0290: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0295: dup
+				IL_0296: brfalse IL_02b8
 
-				IL_02c3: ldc.r8 12000
-				IL_02cc: box [System.Runtime]System.Double
-				IL_02d1: ldc.r8 5
-				IL_02da: box [System.Runtime]System.Double
-				IL_02df: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, object, object)
-				IL_02e4: stloc.2
-				IL_02e5: br IL_0315
+				IL_029b: ldc.r8 12000
+				IL_02a4: ldc.r8 5
+				IL_02ad: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substr(string, float64, float64)
+				IL_02b2: stloc.2
+				IL_02b3: br IL_02e3
 
-				IL_02ea: pop
+				IL_02b8: pop
 
-				IL_02eb: ldc.i4.0
-				IL_02ec: stloc.3
-				IL_02ed: ldloc.2
-				IL_02ee: ldstr "substr"
-				IL_02f3: ldc.r8 12000
-				IL_02fc: box [System.Runtime]System.Double
-				IL_0301: ldc.r8 5
-				IL_030a: box [System.Runtime]System.Double
-				IL_030f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0314: stloc.2
+				IL_02b9: ldc.i4.0
+				IL_02ba: stloc.3
+				IL_02bb: ldloc.2
+				IL_02bc: ldstr "substr"
+				IL_02c1: ldc.r8 12000
+				IL_02ca: box [System.Runtime]System.Double
+				IL_02cf: ldc.r8 5
+				IL_02d8: box [System.Runtime]System.Double
+				IL_02dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_02e2: stloc.2
 
-				IL_0315: ldarg.0
-				IL_0316: ldloc.2
-				IL_0317: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_031c: ldloc.0
-				IL_031d: ldc.r8 1
-				IL_0326: add
-				IL_0327: stloc.0
-				IL_0328: br IL_000a
+				IL_02e3: ldarg.0
+				IL_02e4: ldloc.2
+				IL_02e5: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_02ea: ldloc.0
+				IL_02eb: ldc.r8 1
+				IL_02f4: add
+				IL_02f5: stloc.0
+				IL_02f6: br IL_000a
 			// end loop
 
-			IL_032d: ldnull
-			IL_032e: ret
+			IL_02fb: ldnull
+			IL_02fc: ret
 		} // end of method FunctionExpression_L146C15::__js_call__
 
 	} // end of class FunctionExpression_L146C15
@@ -5232,15 +5191,14 @@
 				74 61 54 6f 6b 65 6e 1f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 805 (0x325)
+			// Code size: 761 (0x2f9)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] object,
 				[3] bool,
-				[4] object,
-				[5] object
+				[4] float64
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -5256,7 +5214,7 @@
 				IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 				IL_001a: stloc.3
 				IL_001b: ldloc.3
-				IL_001c: brfalse IL_0323
+				IL_001c: brfalse IL_02f7
 
 				IL_0021: ldarg.0
 				IL_0022: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
@@ -5266,7 +5224,7 @@
 				IL_002e: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
 				IL_0033: stloc.3
 				IL_0034: ldloc.3
-				IL_0035: brfalse IL_0072
+				IL_0035: brfalse IL_006d
 
 				IL_003a: ldloc.2
 				IL_003b: isinst [System.Runtime]System.String
@@ -5278,264 +5236,250 @@
 				IL_0048: ldstr "substring"
 				IL_004d: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
 				IL_0052: dup
-				IL_0053: brfalse IL_0071
+				IL_0053: brfalse IL_006c
 
 				IL_0058: ldc.r8 0.0
-				IL_0061: box [System.Runtime]System.Double
-				IL_0066: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object)
-				IL_006b: stloc.2
-				IL_006c: br IL_008e
+				IL_0061: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64)
+				IL_0066: stloc.2
+				IL_0067: br IL_0089
 
-				IL_0071: pop
+				IL_006c: pop
 
-				IL_0072: ldc.i4.0
-				IL_0073: stloc.3
-				IL_0074: ldloc.2
-				IL_0075: ldstr "substring"
-				IL_007a: ldc.r8 0.0
-				IL_0083: box [System.Runtime]System.Double
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_008d: stloc.2
+				IL_006d: ldc.i4.0
+				IL_006e: stloc.3
+				IL_006f: ldloc.2
+				IL_0070: ldstr "substring"
+				IL_0075: ldc.r8 0.0
+				IL_007e: box [System.Runtime]System.Double
+				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0088: stloc.2
 
-				IL_008e: ldarg.0
-				IL_008f: ldloc.2
-				IL_0090: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0095: ldarg.0
-				IL_0096: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00a0: stloc.2
-				IL_00a1: ldloc.3
-				IL_00a2: brfalse IL_00ed
+				IL_0089: ldarg.0
+				IL_008a: ldloc.2
+				IL_008b: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0090: ldarg.0
+				IL_0091: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_009b: stloc.2
+				IL_009c: ldloc.3
+				IL_009d: brfalse IL_00de
 
-				IL_00a7: ldloc.2
-				IL_00a8: isinst [System.Runtime]System.String
-				IL_00ad: dup
-				IL_00ae: brtrue IL_00c5
+				IL_00a2: ldloc.2
+				IL_00a3: isinst [System.Runtime]System.String
+				IL_00a8: dup
+				IL_00a9: brtrue IL_00c0
 
-				IL_00b3: pop
-				IL_00b4: ldloc.2
-				IL_00b5: ldstr "substring"
-				IL_00ba: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_00bf: dup
-				IL_00c0: brfalse IL_00ec
+				IL_00ae: pop
+				IL_00af: ldloc.2
+				IL_00b0: ldstr "substring"
+				IL_00b5: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_00ba: dup
+				IL_00bb: brfalse IL_00dd
 
-				IL_00c5: ldc.r8 0.0
-				IL_00ce: box [System.Runtime]System.Double
-				IL_00d3: ldc.r8 5
-				IL_00dc: box [System.Runtime]System.Double
-				IL_00e1: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object, object)
-				IL_00e6: stloc.2
-				IL_00e7: br IL_0117
+				IL_00c0: ldc.r8 0.0
+				IL_00c9: ldc.r8 5
+				IL_00d2: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64, float64)
+				IL_00d7: stloc.2
+				IL_00d8: br IL_0108
 
-				IL_00ec: pop
+				IL_00dd: pop
 
-				IL_00ed: ldc.i4.0
-				IL_00ee: stloc.3
-				IL_00ef: ldloc.2
-				IL_00f0: ldstr "substring"
-				IL_00f5: ldc.r8 0.0
-				IL_00fe: box [System.Runtime]System.Double
-				IL_0103: ldc.r8 5
-				IL_010c: box [System.Runtime]System.Double
-				IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0116: stloc.2
+				IL_00de: ldc.i4.0
+				IL_00df: stloc.3
+				IL_00e0: ldloc.2
+				IL_00e1: ldstr "substring"
+				IL_00e6: ldc.r8 0.0
+				IL_00ef: box [System.Runtime]System.Double
+				IL_00f4: ldc.r8 5
+				IL_00fd: box [System.Runtime]System.Double
+				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0107: stloc.2
 
-				IL_0117: ldarg.0
-				IL_0118: ldloc.2
-				IL_0119: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_011e: ldarg.0
-				IL_011f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0129: stloc.2
-				IL_012a: ldc.r8 1
-				IL_0133: neg
-				IL_0134: stloc.1
-				IL_0135: ldloc.1
-				IL_0136: box [System.Runtime]System.Double
-				IL_013b: stloc.s 4
-				IL_013d: ldloc.3
-				IL_013e: brfalse IL_016f
+				IL_0108: ldarg.0
+				IL_0109: ldloc.2
+				IL_010a: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_010f: ldarg.0
+				IL_0110: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_011a: stloc.2
+				IL_011b: ldc.r8 1
+				IL_0124: neg
+				IL_0125: stloc.1
+				IL_0126: ldloc.3
+				IL_0127: brfalse IL_0157
 
-				IL_0143: ldloc.2
-				IL_0144: isinst [System.Runtime]System.String
-				IL_0149: dup
-				IL_014a: brtrue IL_0161
+				IL_012c: ldloc.2
+				IL_012d: isinst [System.Runtime]System.String
+				IL_0132: dup
+				IL_0133: brtrue IL_014a
 
-				IL_014f: pop
-				IL_0150: ldloc.2
-				IL_0151: ldstr "substring"
-				IL_0156: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_015b: dup
-				IL_015c: brfalse IL_016e
+				IL_0138: pop
+				IL_0139: ldloc.2
+				IL_013a: ldstr "substring"
+				IL_013f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0144: dup
+				IL_0145: brfalse IL_0156
 
-				IL_0161: ldloc.s 4
-				IL_0163: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object)
-				IL_0168: stloc.2
-				IL_0169: br IL_017f
+				IL_014a: ldloc.1
+				IL_014b: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64)
+				IL_0150: stloc.2
+				IL_0151: br IL_016b
 
-				IL_016e: pop
+				IL_0156: pop
 
-				IL_016f: ldc.i4.0
-				IL_0170: stloc.3
-				IL_0171: ldloc.2
-				IL_0172: ldstr "substring"
-				IL_0177: ldloc.s 4
-				IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_017e: stloc.2
+				IL_0157: ldc.i4.0
+				IL_0158: stloc.3
+				IL_0159: ldloc.2
+				IL_015a: ldstr "substring"
+				IL_015f: ldloc.1
+				IL_0160: box [System.Runtime]System.Double
+				IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_016a: stloc.2
 
-				IL_017f: ldarg.0
-				IL_0180: ldloc.2
-				IL_0181: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0186: ldarg.0
-				IL_0187: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0191: stloc.2
-				IL_0192: ldc.r8 6
-				IL_019b: neg
-				IL_019c: stloc.1
-				IL_019d: ldloc.1
-				IL_019e: box [System.Runtime]System.Double
-				IL_01a3: stloc.s 4
-				IL_01a5: ldc.r8 1
-				IL_01ae: neg
-				IL_01af: stloc.1
-				IL_01b0: ldloc.1
-				IL_01b1: box [System.Runtime]System.Double
-				IL_01b6: stloc.s 5
-				IL_01b8: ldloc.3
-				IL_01b9: brfalse IL_01ec
+				IL_016b: ldarg.0
+				IL_016c: ldloc.2
+				IL_016d: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0172: ldarg.0
+				IL_0173: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_017d: stloc.2
+				IL_017e: ldc.r8 6
+				IL_0187: neg
+				IL_0188: stloc.1
+				IL_0189: ldc.r8 1
+				IL_0192: neg
+				IL_0193: stloc.s 4
+				IL_0195: ldloc.3
+				IL_0196: brfalse IL_01c8
 
-				IL_01be: ldloc.2
-				IL_01bf: isinst [System.Runtime]System.String
-				IL_01c4: dup
-				IL_01c5: brtrue IL_01dc
+				IL_019b: ldloc.2
+				IL_019c: isinst [System.Runtime]System.String
+				IL_01a1: dup
+				IL_01a2: brtrue IL_01b9
 
-				IL_01ca: pop
-				IL_01cb: ldloc.2
-				IL_01cc: ldstr "substring"
-				IL_01d1: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_01d6: dup
-				IL_01d7: brfalse IL_01eb
+				IL_01a7: pop
+				IL_01a8: ldloc.2
+				IL_01a9: ldstr "substring"
+				IL_01ae: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_01b3: dup
+				IL_01b4: brfalse IL_01c7
 
-				IL_01dc: ldloc.s 4
-				IL_01de: ldloc.s 5
-				IL_01e0: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object, object)
-				IL_01e5: stloc.2
-				IL_01e6: br IL_01fe
+				IL_01b9: ldloc.1
+				IL_01ba: ldloc.s 4
+				IL_01bc: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64, float64)
+				IL_01c1: stloc.2
+				IL_01c2: br IL_01e3
 
-				IL_01eb: pop
+				IL_01c7: pop
 
-				IL_01ec: ldc.i4.0
-				IL_01ed: stloc.3
-				IL_01ee: ldloc.2
-				IL_01ef: ldstr "substring"
-				IL_01f4: ldloc.s 4
-				IL_01f6: ldloc.s 5
-				IL_01f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_01fd: stloc.2
+				IL_01c8: ldc.i4.0
+				IL_01c9: stloc.3
+				IL_01ca: ldloc.2
+				IL_01cb: ldstr "substring"
+				IL_01d0: ldloc.1
+				IL_01d1: box [System.Runtime]System.Double
+				IL_01d6: ldloc.s 4
+				IL_01d8: box [System.Runtime]System.Double
+				IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_01e2: stloc.2
 
-				IL_01fe: ldarg.0
-				IL_01ff: ldloc.2
-				IL_0200: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0205: ldarg.0
-				IL_0206: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0210: stloc.2
-				IL_0211: ldloc.3
-				IL_0212: brfalse IL_025d
+				IL_01e3: ldarg.0
+				IL_01e4: ldloc.2
+				IL_01e5: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_01ea: ldarg.0
+				IL_01eb: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_01f5: stloc.2
+				IL_01f6: ldloc.3
+				IL_01f7: brfalse IL_0238
 
-				IL_0217: ldloc.2
-				IL_0218: isinst [System.Runtime]System.String
-				IL_021d: dup
-				IL_021e: brtrue IL_0235
+				IL_01fc: ldloc.2
+				IL_01fd: isinst [System.Runtime]System.String
+				IL_0202: dup
+				IL_0203: brtrue IL_021a
 
-				IL_0223: pop
-				IL_0224: ldloc.2
-				IL_0225: ldstr "substring"
-				IL_022a: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_022f: dup
-				IL_0230: brfalse IL_025c
+				IL_0208: pop
+				IL_0209: ldloc.2
+				IL_020a: ldstr "substring"
+				IL_020f: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0214: dup
+				IL_0215: brfalse IL_0237
 
-				IL_0235: ldc.r8 15000
-				IL_023e: box [System.Runtime]System.Double
-				IL_0243: ldc.r8 15005
-				IL_024c: box [System.Runtime]System.Double
-				IL_0251: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object, object)
-				IL_0256: stloc.2
-				IL_0257: br IL_0287
+				IL_021a: ldc.r8 15000
+				IL_0223: ldc.r8 15005
+				IL_022c: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64, float64)
+				IL_0231: stloc.2
+				IL_0232: br IL_0262
 
-				IL_025c: pop
+				IL_0237: pop
 
-				IL_025d: ldc.i4.0
-				IL_025e: stloc.3
-				IL_025f: ldloc.2
-				IL_0260: ldstr "substring"
-				IL_0265: ldc.r8 15000
-				IL_026e: box [System.Runtime]System.Double
-				IL_0273: ldc.r8 15005
-				IL_027c: box [System.Runtime]System.Double
-				IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0286: stloc.2
+				IL_0238: ldc.i4.0
+				IL_0239: stloc.3
+				IL_023a: ldloc.2
+				IL_023b: ldstr "substring"
+				IL_0240: ldc.r8 15000
+				IL_0249: box [System.Runtime]System.Double
+				IL_024e: ldc.r8 15005
+				IL_0257: box [System.Runtime]System.Double
+				IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0261: stloc.2
 
-				IL_0287: ldarg.0
-				IL_0288: ldloc.2
-				IL_0289: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_028e: ldarg.0
-				IL_028f: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
-				IL_0294: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0299: stloc.2
-				IL_029a: ldc.r8 1
-				IL_02a3: neg
-				IL_02a4: stloc.1
-				IL_02a5: ldloc.1
-				IL_02a6: box [System.Runtime]System.Double
-				IL_02ab: stloc.s 5
-				IL_02ad: ldloc.3
-				IL_02ae: brfalse IL_02ed
+				IL_0262: ldarg.0
+				IL_0263: ldloc.2
+				IL_0264: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_0269: ldarg.0
+				IL_026a: ldfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::str
+				IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0274: stloc.2
+				IL_0275: ldc.r8 1
+				IL_027e: neg
+				IL_027f: stloc.s 4
+				IL_0281: ldloc.3
+				IL_0282: brfalse IL_02bc
 
-				IL_02b3: ldloc.2
-				IL_02b4: isinst [System.Runtime]System.String
-				IL_02b9: dup
-				IL_02ba: brtrue IL_02d1
+				IL_0287: ldloc.2
+				IL_0288: isinst [System.Runtime]System.String
+				IL_028d: dup
+				IL_028e: brtrue IL_02a5
 
-				IL_02bf: pop
-				IL_02c0: ldloc.2
-				IL_02c1: ldstr "substring"
-				IL_02c6: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_02cb: dup
-				IL_02cc: brfalse IL_02ec
+				IL_0293: pop
+				IL_0294: ldloc.2
+				IL_0295: ldstr "substring"
+				IL_029a: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_029f: dup
+				IL_02a0: brfalse IL_02bb
 
-				IL_02d1: ldc.r8 12000
-				IL_02da: box [System.Runtime]System.Double
-				IL_02df: ldloc.s 5
-				IL_02e1: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object, object)
-				IL_02e6: stloc.2
-				IL_02e7: br IL_030b
+				IL_02a5: ldc.r8 12000
+				IL_02ae: ldloc.s 4
+				IL_02b0: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64, float64)
+				IL_02b5: stloc.2
+				IL_02b6: br IL_02df
 
-				IL_02ec: pop
+				IL_02bb: pop
 
-				IL_02ed: ldc.i4.0
-				IL_02ee: stloc.3
-				IL_02ef: ldloc.2
-				IL_02f0: ldstr "substring"
-				IL_02f5: ldc.r8 12000
-				IL_02fe: box [System.Runtime]System.Double
-				IL_0303: ldloc.s 5
-				IL_0305: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_030a: stloc.2
+				IL_02bc: ldc.i4.0
+				IL_02bd: stloc.3
+				IL_02be: ldloc.2
+				IL_02bf: ldstr "substring"
+				IL_02c4: ldc.r8 12000
+				IL_02cd: box [System.Runtime]System.Double
+				IL_02d2: ldloc.s 4
+				IL_02d4: box [System.Runtime]System.Double
+				IL_02d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_02de: stloc.2
 
-				IL_030b: ldarg.0
-				IL_030c: ldloc.2
-				IL_030d: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
-				IL_0312: ldloc.0
-				IL_0313: ldc.r8 1
-				IL_031c: add
-				IL_031d: stloc.0
-				IL_031e: br IL_000a
+				IL_02df: ldarg.0
+				IL_02e0: ldloc.2
+				IL_02e1: stfld object Modules.Compile_Performance_Dromaeo_Object_String/Scope::'ret'
+				IL_02e6: ldloc.0
+				IL_02e7: ldc.r8 1
+				IL_02f0: add
+				IL_02f1: stloc.0
+				IL_02f2: br IL_000a
 			// end loop
 
-			IL_0323: ldnull
-			IL_0324: ret
+			IL_02f7: ldnull
+			IL_02f8: ret
 		} // end of method FunctionExpression_L159C18::__js_call__
 
 	} // end of class FunctionExpression_L159C18

@@ -143,7 +143,7 @@ Raw local reports are in ignored `artifacts/string-baseline`,
 | Cache casing results | Not needed to regain the lead; adds retention/ownership concerns and locale-sensitive cache keys. |
 | Restore the old Array join implementation | Rejected: reintroduces incorrect undefined separators, nullish values, and mutation semantics. Keep the generic algorithm with guarded reads. |
 | Expand concatenation-builder optimization to `new String()` | Implemented as the dynamic concat accumulator described above; the first append keeps full `+` coercion semantics and all reads materialize. |
-| Typed numeric overloads for `charAt`/`charCodeAt`/`slice`/`substr`/`substring` | Remaining opportunity: literal arguments are boxed per call (about 135K `box double` allocations per operation) and re-coerced through `ToNumber`. Compiler-side work with broad snapshot churn; not included here. |
+| Typed numeric overloads for `charAt`/`charCodeAt`/`slice`/`substr`/`substring` | Implemented subsequently in #2119; see the separate measurements below. The earlier regression investigation did not include this change. |
 | Improve split sizing or substring caching | Existing presizing, one-character reuse, and bounded substring caching already apply. Further changes need allocation/profile evidence; full-scenario allocations did not materially improve here. |
 | Remove prototype guards or hoist mutable global reads | Rejected without invalidation/side-effect proof. `String.prototype` overrides and callback mutations remain observable. |
 | Optimize realm/module initialization or dynamic dispatch globally | Broader opportunity, but not the identified casing regression. Measure separately and avoid weakening isolation. |
@@ -158,3 +158,42 @@ lengths, invariant/English/Turkish/Azerbaijani cultures, non-ASCII characters
 after long ASCII prefixes, Unicode 16.0 supplementary mappings, and unpaired
 surrogates. Array tests cover mutation to indexed getters/inherited values
 during element coercion and dense reads on arrays with named metadata.
+
+## Follow-up: typed numeric String intrinsics (#2119)
+
+The generic call lowerer boxes arguments before member lookup. For the five
+guarded String intrinsics above, LIR normalization now recognizes arguments
+produced by `ConvertToObject` from an unboxed `double` and carries their
+numeric source through the guarded call instead. Numeric and mixed
+numeric/object runtime overloads share the same index and coercion logic as
+their object counterparts. The fast path avoids argument boxing and
+`ToNumber`; the fallback still boxes the number for overridden prototype
+methods and generic dispatch. Object inputs, including observable `valueOf`,
+Symbols, and BigInts, retain the object overload. The generated
+`dromaeo-object-string` IL now calls all five intrinsics with `float64`
+arguments in their numeric fast paths (27 call sites); it retains boxed
+arguments on the fallback branches.
+
+Two local BenchmarkDotNet runs of the **unmodified**
+`dromaeo-object-string` scenario on the same Intel Xeon 6975P-C host,
+.NET 10.0.12, measured JROC's execute-only method (which includes
+`JsEngine.LoadModule`, not just steady-state intrinsic calls):
+
+| Source | Mean (ms) | StdDev (ms) | N | Allocated bytes/op |
+|---|---:|---:|---:|---:|
+| `master` before #2119 | 19.606 | 0.410 | 21 | 22,446,258 |
+| Numeric intrinsic fast paths | 18.145 | 0.288 | 17 | 17,767,847 |
+| Final-code JROC confirmation | 18.239 | 0.189 | 15 | 17,774,481 |
+
+That is 7.5% less elapsed time and 4,678,411 fewer allocated bytes per
+operation in the first pair of local runs; the final-code JROC-only
+confirmation measured 7.0% less time and 4,671,777 fewer allocated bytes
+against the same baseline. The scenario uses `Math.random`, so timing
+and allocation vary between invocations. These results do not isolate
+individual String methods or predict performance on other hosts.
+Raw reports: `/tmp/jroc-2119-before/results/` and
+`/tmp/jroc-2119-after/results/`, and
+`/tmp/jroc-2119-after-final/results/` (local, not committed). Focused execution
+and generator coverage tests numeric edge cases, mixed numeric/object
+arguments and their coercion, and the existing prototype override cases;
+137 affected Test262 String fixtures also pass.
