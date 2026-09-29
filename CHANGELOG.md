@@ -8,6 +8,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 - test262: verify another 500 pinned class-expression cases covering class
   methods and related semantics.
+- perf(compiler/runtime): pass proven numeric arguments unboxed to guarded
+  String `charAt`, `charCodeAt`, `slice`, `substr`, and `substring` intrinsics;
+  retain object coercion and prototype-override fallbacks.
+- perf(benchmark): prototype scalar and Vector128 repeating-mask blocks for
+  Prime's large-step marking path; keep production Prime code unchanged
+  pending repeatable crossover and end-to-end Prime measurements.
 - test262: verify 500 additional pinned class-expression cases covering class
   elements and parameter destructuring.
 - perf(compiler): vectorize canonical local-const Int32Array OR loops with

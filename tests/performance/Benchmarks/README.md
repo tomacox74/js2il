@@ -59,6 +59,23 @@ outside the timed region. The span is not retained across JavaScript calls,
 transfer, or resizing. For end-to-end behavior, run `--prime-execute
 --filter '*Jroc_ExecuteOnly*'` against the one-pass Prime scenario as well.
 
+### Prime repeating-mask prototype
+
+Run the benchmark-only scalar block, portable Vector128 block, and original
+large-step marking kernels on the same 500,000-bit Prime range:
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --prime-mask-blocks --filter '*'
+```
+
+`Step` covers 17, 31, 61, 127, 251, and 509, with starts derived from the
+corresponding sieve factors. The original strided algorithm remains the
+production path; this benchmark does not compile a modified Prime script or
+change its generated IL. Each operation includes mask construction when
+applicable. `MaskConstruction` isolates the setup cost, and the intrinsics-off
+job exercises the scalar tail/fallback.
+
 ### String-object regression investigation
 
 See [Dromaeo string-object performance](../../../docs/compiler/DromaeoObjectStringPerformance.md)
