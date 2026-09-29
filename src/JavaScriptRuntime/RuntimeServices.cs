@@ -42,10 +42,19 @@ public class RuntimeServices
 
     private static void RegisterClassMethodHome(object? method, JsClassConstructorObject constructor)
     {
-        if (method is JsFunctionObject)
+        if (method is JsFunctionObject or Delegate)
         {
             _classMethodHomes.AddOrUpdate(method, new ClassMethodHomeSlot(constructor));
         }
+    }
+
+    public static object RegisterClassMethodHome(object method, object owner)
+    {
+        if (owner is JsClassConstructorObject constructor)
+        {
+            RegisterClassMethodHome(method, constructor);
+        }
+        return method;
     }
 
     private static void RegisterClassMethodDescriptorHomes(
@@ -625,6 +634,8 @@ public class RuntimeServices
         if (constructorValue is JsClassConstructorObject classConstructor)
         {
             classConstructor.IsDerivedClass = true;
+            classConstructor.PrivateBrandBaseConstructor =
+                validatedBase as JsClassConstructorObject;
             PrototypeChain.SetPrototype(classConstructor, validatedBase);
             LinkClassInstancePrototype(classConstructor, validatedBase);
             return classConstructor;
@@ -1953,7 +1964,15 @@ public class RuntimeServices
             var brand = _classInstancePrivateBrands.GetOrCreateValue(instance);
             lock (brand.Constructors)
             {
-                brand.Constructors.Add(constructor);
+                for (var owner = constructor;
+                    owner != null;
+                    owner = owner.PrivateBrandBaseConstructor)
+                {
+                    if (owner.Type.IsInstanceOfType(instance))
+                    {
+                        brand.Constructors.Add(owner);
+                    }
+                }
             }
             if (PrototypeChain.GetPrototypeOrNull(instance) == null)
             {

@@ -317,11 +317,6 @@ internal sealed partial class LIRToILCompiler
 
             case LIRLoadPrivateReceiverField loadPrivateReceiverField:
                 {
-                    if (!IsMaterialized(loadPrivateReceiverField.Result, allocation))
-                    {
-                        break;
-                    }
-
                     var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
                     if (classRegistry == null || !classRegistry.TryGet(
                             loadPrivateReceiverField.RegistryClassName,
@@ -337,6 +332,10 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
                         EmitStaticPrivateReceiverBrandCheck(privateOwnerType, ilEncoder, methodDescriptor);
+                        if (!IsMaterialized(loadPrivateReceiverField.Result, allocation))
+                        {
+                            break;
+                        }
                         ilEncoder.OpCode(ILOpCode.Ldsfld);
                         ilEncoder.Token(staticPrivateField);
                         EmitStoreTemp(loadPrivateReceiverField.Result, ilEncoder, allocation);
@@ -362,6 +361,11 @@ internal sealed partial class LIRToILCompiler
                         privateOwnerType,
                         ilEncoder,
                         methodDescriptor);
+                    if (!IsMaterialized(loadPrivateReceiverField.Result, allocation))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                        break;
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(privateField);
                     EmitBoxIfNeededForTypedUserClassFieldLoad(
