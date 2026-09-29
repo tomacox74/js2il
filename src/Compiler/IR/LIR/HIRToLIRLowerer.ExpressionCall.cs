@@ -963,6 +963,25 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (callExpr.Callee is HIRLoadPrivateReceiverFieldExpression
+            { Receiver: HIRThisExpression } privateThisCall)
+        {
+            if (!TryLowerExpression(privateThisCall, out var privateCallee)
+                || !TryLowerExpression(new HIRThisExpression(), out var privateReceiver)
+                || !TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var privateArguments))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.CallWithThis),
+                [EnsureObject(privateCallee), EnsureObject(privateReceiver), privateArguments],
+                resultTempVar,
+                [typeof(object), typeof(object), typeof(object[])]));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Case 1b: Indirect call where the callee is an expression value (e.g., IIFE:
         // (function() { ... })(), (() => 1)(), or getFn()()).
         // Exclude property-access calls here to avoid accidentally breaking method-call semantics

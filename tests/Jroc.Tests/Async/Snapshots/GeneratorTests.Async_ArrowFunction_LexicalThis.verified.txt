@@ -668,15 +668,17 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 14 (0xe)
+			// Code size: 20 (0x14)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: ldarg.1
-			IL_0008: stfld float64 Modules.Async_ArrowFunction_LexicalThis/Counter::x
-			IL_000d: ret
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.0
+			IL_000d: ldarg.1
+			IL_000e: stfld float64 Modules.Async_ArrowFunction_LexicalThis/Counter::x
+			IL_0013: ret
 		} // end of method Counter::.ctor
 
 		.method public hidebysig 

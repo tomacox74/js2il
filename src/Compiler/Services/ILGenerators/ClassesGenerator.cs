@@ -469,7 +469,7 @@ namespace Jroc.Services.ILGenerators
                     }
                     else
                     {
-                        var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Assembly, emittedName, fSigHandle);
                         _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
                         _classRegistry.RegisterPrivateFieldClrType(registryClassName, pname, clrType ?? typeof(object));
 

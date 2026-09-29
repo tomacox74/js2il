@@ -120,17 +120,23 @@
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
         "testScripts": [
           "tests/Jroc.Test262.Tests/language/expressions/class/elements/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/ExecutionTests.PrivateReceiver.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/private-methods/ExecutionTests.PrivateReceiver.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/ExecutionTests.PrivateReceiver.cs",
           "tests/Jroc.Test262.Tests/language/statements/class/elements/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/class/elements/private-accessor-name/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/statements/class/elements/private-accessor-name/ExecutionTests.cs"
         ],
         "test262Paths": [
           "test/language/expressions/class/elements/private-getter-shadowed-by-field-on-nested-class.js",
+          "test/language/expressions/class/elements/private-getter-on-nested-class.js",
+          "test/language/expressions/class/elements/private-methods/prod-private-method.js",
+          "test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-factory.js",
           "test/language/statements/class/elements/after-same-line-method-private-method-getter-usage.js",
           "test/language/expressions/class/elements/private-accessor-name/static-private-name-common.js",
           "test/language/expressions/class/elements/static-field-declaration.js"
         ],
-        "notes": "Nested class callables are discovered before compilation. Private accessors do not create public properties; static private setters use the declaring class brand, while public static fields expose own data descriptors. Remaining nested private-member and static-field edge cases are not claimed."
+        "notes": "Nested class callables are discovered before compilation. The native Test262 harness additionally verifies 28 pinned class-expression cases covering private receiver reads and writes from nested methods, constructors, and functions, including private accessor and method lookup. Private accessors do not create public properties; static private setters use the declaring class brand, while public static fields expose own data descriptors. Other private-member runtime and static-field edge cases remain limited."
       },
       {
         "clause": "15.7.13",

@@ -1140,7 +1140,49 @@ partial class HIRMethodBuilder
         var isNonConstructible = functionScope.IsMethodDefinition
             || functionScope.AstNode is MethodDefinition methodDefinition
                 && ReferenceEquals(methodDefinition.Value, funcExpr);
-        return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
+        return new HIRFunctionExpression(callableId, functionScope, isNonConstructible)
+        {
+            PrivateOwnerRegistryClassName = GetFunctionPrivateOwnerRegistryClassName(funcExpr)
+        };
+    }
+
+    private string? GetFunctionPrivateOwnerRegistryClassName(Node function)
+    {
+        foreach (var child in function.ChildNodes)
+        {
+            var owner = FindOwner(child);
+            if (owner != null)
+            {
+                return owner;
+            }
+        }
+
+        return null;
+
+        string? FindOwner(Node node)
+        {
+            if (node is PrivateIdentifier privateIdentifier
+                && TryGetPrivateMemberClassDefinition(privateIdentifier.Name, out var classScope, out _))
+            {
+                return GetRegistryClassName(classScope);
+            }
+
+            if (node is ClassDeclaration or ClassExpression)
+            {
+                return null;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                var owner = FindOwner(child);
+                if (owner != null)
+                {
+                    return owner;
+                }
+            }
+
+            return null;
+        }
     }
 
     private static void ApplyCallableMaterializationDecision(
@@ -1481,7 +1523,7 @@ partial class HIRMethodBuilder
         methodName = null;
         hasAccessor = false;
 
-        if (!TryGetEnclosingClassDefinition(out classScope, out var classBody))
+        if (!TryGetPrivateMemberClassDefinition(privateIdentifier.Name, out classScope, out var classBody))
         {
             return false;
         }
@@ -1511,6 +1553,44 @@ partial class HIRMethodBuilder
         }
 
         return getterMethodName != null || setterMethodName != null || methodName != null || hasAccessor;
+    }
+
+    private bool TryGetPrivateMemberClassDefinition(
+        string name,
+        [NotNullWhen(true)] out Scope? classScope,
+        [NotNullWhen(true)] out ClassBody? classBody)
+    {
+        for (var current = _currentScope; current != null; current = current.Parent)
+        {
+            if (current.Kind != ScopeKind.Class)
+            {
+                continue;
+            }
+
+            var body = current.AstNode switch
+            {
+                ClassDeclaration declaration => declaration.Body,
+                ClassExpression expression => expression.Body,
+                _ => null
+            };
+            if (body == null || !body.Body.Any(element => element switch
+                {
+                    PropertyDefinition field => field.Key is PrivateIdentifier key && key.Name == name,
+                    MethodDefinition method => method.Key is PrivateIdentifier key && key.Name == name,
+                    _ => false
+                }))
+            {
+                continue;
+            }
+
+            classScope = current;
+            classBody = body;
+            return true;
+        }
+
+        classScope = null;
+        classBody = null;
+        return false;
     }
 
     public void AddPrologueStatement([In, NotNull] HIRStatement statement)
@@ -1625,6 +1705,7 @@ partial class HIRMethodBuilder
             var symbol = _currentScope.FindSymbol(bindingName);
             var funcValue = new HIRFunctionExpression(callableId, functionScope)
             {
+                PrivateOwnerRegistryClassName = GetFunctionPrivateOwnerRegistryClassName(fd),
                 MaterializationDecision = symbol.BindingInfo.CallableMaterialization
                     ?? CallableMaterializationDecision.UnboundEvaluation
             };
@@ -3878,7 +3959,7 @@ partial class HIRMethodBuilder
             case BinaryExpression binaryExpr:
                 if (binaryExpr.Operator == Acornima.Operator.In
                     && binaryExpr.Left is PrivateIdentifier brandIdentifier
-                    && TryGetEnclosingClassDefinition(out var brandClassScope, out var brandClassBody)
+                    && TryGetPrivateMemberClassDefinition(brandIdentifier.Name, out var brandClassScope, out var brandClassBody)
                     && !brandClassBody.Body.Any(element => element switch
                     {
                         PropertyDefinition property =>
@@ -4252,7 +4333,7 @@ partial class HIRMethodBuilder
 
                     if (!memberTarget.Computed && memberTarget.Property is PrivateIdentifier privateMemberId)
                     {
-                        if (!TryGetEnclosingClassDefinition(out var privateClassScope, out _))
+                        if (!TryGetPrivateMemberClassDefinition(privateMemberId.Name, out var privateClassScope, out _))
                         {
                             return false;
                         }
@@ -4308,25 +4389,13 @@ partial class HIRMethodBuilder
                             }
                         }
 
-                        if (memberTarget.Object is ThisExpression && _staticThisRegistryClassName == null)
+                        hirExpr = new HIRStorePrivateReceiverFieldExpression
                         {
-                            hirExpr = new HIRPrivateFieldAssignmentExpression
-                            {
-                                RegistryClassName = GetRegistryClassName(privateClassScope),
-                                FieldName = privateMemberId.Name,
-                                Value = assignValueExpr!
-                            };
-                        }
-                        else
-                        {
-                            hirExpr = new HIRStorePrivateReceiverFieldExpression
-                            {
-                                RegistryClassName = GetRegistryClassName(privateClassScope),
-                                FieldName = privateMemberId.Name,
-                                Receiver = memberObjectExpr!,
-                                Value = assignValueExpr!
-                            };
-                        }
+                            RegistryClassName = GetRegistryClassName(privateClassScope),
+                            FieldName = privateMemberId.Name,
+                            Receiver = memberObjectExpr!,
+                            Value = assignValueExpr!
+                        };
                         return true;
                     }
 
@@ -4365,7 +4434,10 @@ partial class HIRMethodBuilder
                 // Private instance member access: this.#name
                 if (!memberExpr.Computed && memberExpr.Object is ThisExpression
                     && _staticThisRegistryClassName == null
-                    && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
+                    && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid
+                    && TryGetEnclosingClassScope(_currentScope, out var immediateClassScope)
+                    && TryGetPrivateMemberClassDefinition(ppid.Name, out var ownerClassScope, out _)
+                    && ReferenceEquals(immediateClassScope, ownerClassScope))
                 {
                     if (!TryGetEnclosingClassScope(_currentScope, out var classScope))
                     {
@@ -4374,32 +4446,23 @@ partial class HIRMethodBuilder
 
                     if (TryResolvePrivateAccessorOrMethod(ppid, out _, out var getterMethodName, out _, out var privateMethodName, out var hasAccessor))
                     {
-                        if (getterMethodName != null)
+                        hirExpr = new HIRLoadPrivateReceiverFieldExpression
                         {
-                            hirExpr = new HIRCallExpression(
-                                new HIRPropertyAccessExpression(new HIRThisExpression(), getterMethodName),
-                                Array.Empty<HIRExpression>());
-                            return true;
-                        }
-
-                        if (privateMethodName != null)
-                        {
-                            hirExpr = new HIRPropertyAccessExpression(new HIRThisExpression(), privateMethodName);
-                            return true;
-                        }
-
-                        if (hasAccessor)
-                        {
-                            hirExpr = new HIRLiteralExpression(JavascriptType.Undefined, null);
-                            return true;
-                        }
+                            RegistryClassName = GetRegistryClassName(classScope),
+                            FieldName = ppid.Name,
+                            Receiver = new HIRThisExpression(),
+                            GetterMethodName = getterMethodName,
+                            MethodName = privateMethodName,
+                            HasAccessor = hasAccessor
+                        };
+                        return true;
                     }
 
-                    hirExpr = new HIRLoadUserClassInstanceFieldExpression
+                    hirExpr = new HIRLoadPrivateReceiverFieldExpression
                     {
                         RegistryClassName = GetRegistryClassName(classScope),
                         FieldName = ppid.Name,
-                        IsPrivateField = true
+                        Receiver = new HIRThisExpression()
                     };
                     return true;
                 }
@@ -4411,16 +4474,21 @@ partial class HIRMethodBuilder
 
                 if (!memberExpr.Computed && memberExpr.Property is PrivateIdentifier privateReceiverField)
                 {
-                    if (!TryGetEnclosingClassScope(_currentScope, out var privateReceiverClassScope))
+                    if (!TryGetPrivateMemberClassDefinition(privateReceiverField.Name, out var privateReceiverClassScope, out _))
                     {
                         return false;
                     }
 
+                    TryResolvePrivateAccessorOrMethod(privateReceiverField, out _,
+                        out var getterMethodName, out _, out var privateMethodName, out var hasAccessor);
                     hirExpr = new HIRLoadPrivateReceiverFieldExpression
                     {
                         RegistryClassName = GetRegistryClassName(privateReceiverClassScope),
                         FieldName = privateReceiverField.Name,
-                        Receiver = objectExpr!
+                        Receiver = objectExpr!,
+                        GetterMethodName = getterMethodName,
+                        MethodName = privateMethodName,
+                        HasAccessor = hasAccessor
                     };
                     return true;
                 }
@@ -4811,7 +4879,10 @@ partial class HIRMethodBuilder
                             computedValueExpr = new HIRFunctionExpression(
                                 computedMethod.CallableId,
                                 computedMethod.FunctionScope,
-                                isNonConstructible: true);
+                                isNonConstructible: true)
+                            {
+                                PrivateOwnerRegistryClassName = computedMethod.PrivateOwnerRegistryClassName
+                            };
                         }
 
                         objectMembers.Add(new HIRObjectComputedProperty(
@@ -4842,7 +4913,10 @@ partial class HIRMethodBuilder
                         valueExpr = new HIRFunctionExpression(
                             method.CallableId,
                             method.FunctionScope,
-                            isNonConstructible: true);
+                            isNonConstructible: true)
+                        {
+                            PrivateOwnerRegistryClassName = method.PrivateOwnerRegistryClassName
+                        };
                     }
 
                     objectMembers.Add(new HIRObjectProperty(

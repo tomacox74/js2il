@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): support private receiver field loads and stores when private
+  members are accessed from nested class callables and constructors; verify
+  28 pinned class-expression cases.
 - test262: retain 43 pinned class-expression cases requiring unsupported
   `eval` as skipped tests, ready to enable when `eval` support lands.
 - test262: verify 370 additional pinned class-expression cases, primarily

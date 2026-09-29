@@ -67,6 +67,8 @@ oversized keys must remain collectible, as covered by `JSONShapeStorageTests`.
 | `RegExp.LiteralTemplates` | Process metadata | Weak-keyed immutable literal metadata; source strings are weak keys and templates hold no realm or JavaScript object state |
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
+| `RuntimeServices._classInstancePrivateBrands` | Process identity metadata | Instance objects are weak keys; their private class-evaluation brands live only with those instances |
+| `RuntimeServices._classMethodHomes` | Process identity metadata | Class method function objects are weak keys; their defining constructors live only with those functions |
 | `RuntimeServices._currentInvocation` | Async flow | Immutable residual invocation frame captured/restored by root frames |
 | `RuntimeServices._generatedClassMethodReceivers` | Process identity metadata | Generated CLR method receivers are weak keys; their JavaScript `this` values live only with those receivers |
 | `RuntimeServices._generatedClassReplacementReceivers` | Process identity metadata | JavaScript replacement receivers are weak keys; generated receiver instances, captured scopes, and collectible types live only with those JavaScript receivers |

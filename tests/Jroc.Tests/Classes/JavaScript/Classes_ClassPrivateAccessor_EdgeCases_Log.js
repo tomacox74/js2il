@@ -10,7 +10,12 @@ class AccessorEdges {
   }
 
   log() {
-    console.log(String(this.#writeOnly));
+    try {
+      console.log(String(this.#writeOnly));
+    } catch (error) {
+      console.log(error.name);
+      console.log(String(error.message).includes("without a getter"));
+    }
 
     try {
       this.#readOnly = 2;

@@ -180,15 +180,17 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 22 (0x16)
+			// Code size: 28 (0x1c)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: ldc.r8 42
-			IL_0010: stfld float64 Modules.Classes_Constructor_ImplicitlyReturnsThis/Simple::'value'
-			IL_0015: ret
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.0
+			IL_000d: ldc.r8 42
+			IL_0016: stfld float64 Modules.Classes_Constructor_ImplicitlyReturnsThis/Simple::'value'
+			IL_001b: ret
 		} // end of method Simple::.ctor
 
 	} // end of class Simple
@@ -304,7 +306,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 18 (0x12)
+			// Code size: 24 (0x18)
 			.maxstack 8
 			.locals init (
 				[0] float64
@@ -312,14 +314,16 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: ldarg.2
-			IL_0008: add
-			IL_0009: stloc.0
-			IL_000a: ldarg.0
-			IL_000b: ldloc.0
-			IL_000c: stfld float64 Modules.Classes_Constructor_ImplicitlyReturnsThis/WithParams::sum
-			IL_0011: ret
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.1
+			IL_000d: ldarg.2
+			IL_000e: add
+			IL_000f: stloc.0
+			IL_0010: ldarg.0
+			IL_0011: ldloc.0
+			IL_0012: stfld float64 Modules.Classes_Constructor_ImplicitlyReturnsThis/WithParams::sum
+			IL_0017: ret
 		} // end of method WithParams::.ctor
 
 	} // end of class WithParams

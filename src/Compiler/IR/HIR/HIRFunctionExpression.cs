@@ -15,6 +15,7 @@ public sealed class HIRFunctionExpression : HIRExpression
 	public CallableId CallableId { get; }
 	public Scope FunctionScope { get; }
 	public bool IsNonConstructible { get; }
+	public string? PrivateOwnerRegistryClassName { get; init; }
 	public CallableMaterializationDecision MaterializationDecision { get; set; }
 		= CallableMaterializationDecision.UnboundEvaluation;
 }

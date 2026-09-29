@@ -133,6 +133,7 @@ namespace Jroc.Tests.Classes
         [Fact] public Task Classes_ClassPrivateAccessor_EdgeCases_Log() { var testName = nameof(Classes_ClassPrivateAccessor_EdgeCases_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateMethodAndAccessor_Log() { var testName = nameof(Classes_ClassPrivateMethodAndAccessor_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_PrivateNames_NestedFunctionDistinctClassEvaluations() { var testName = nameof(Classes_PrivateNames_NestedFunctionDistinctClassEvaluations); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassProperty_DefaultAndLog() { var testName = nameof(Classes_ClassProperty_DefaultAndLog); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassStaticBlock_DeclarationOrder() { var testName = nameof(Classes_ClassStaticBlock_DeclarationOrder); return GenerateTest(testName); }

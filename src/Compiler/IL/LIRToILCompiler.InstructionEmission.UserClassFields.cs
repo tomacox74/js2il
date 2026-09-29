@@ -84,7 +84,7 @@ internal sealed partial class LIRToILCompiler
                         out var staticPrivateField))
                     {
                         EmitLoadTempAsObject(storePrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
-                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, storePrivateReceiverField.FieldName, ilEncoder);
+                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, ilEncoder, methodDescriptor);
                         EmitLoadTempAsObject(storePrivateReceiverField.Value, ilEncoder, allocation, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Stsfld);
                         ilEncoder.Token(staticPrivateField);
@@ -108,8 +108,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(storePrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
                     EmitPrivateReceiverBrandCheck(
                         privateOwnerType,
-                        storePrivateReceiverField.FieldName,
-                        ilEncoder);
+                        ilEncoder,
+                        methodDescriptor);
                     EmitLoadTempAsClrType(
                         storePrivateReceiverField.Value,
                         privateFieldType,
@@ -140,7 +140,7 @@ internal sealed partial class LIRToILCompiler
                             return false;
                         }
                         EmitLoadCurrentThis(ilEncoder, methodDescriptor);
-                        EmitStaticPrivateReceiverBrandCheck(ownerType, storeInstanceField.FieldName, ilEncoder);
+                        EmitStaticPrivateReceiverBrandCheck(ownerType, ilEncoder, methodDescriptor);
                         EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Stsfld);
                         ilEncoder.Token(staticPrivateField);
@@ -336,7 +336,7 @@ internal sealed partial class LIRToILCompiler
                         out var staticPrivateField))
                     {
                         EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
-                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, loadPrivateReceiverField.FieldName, ilEncoder);
+                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, ilEncoder, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Ldsfld);
                         ilEncoder.Token(staticPrivateField);
                         EmitStoreTemp(loadPrivateReceiverField.Result, ilEncoder, allocation);
@@ -360,8 +360,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
                     EmitPrivateReceiverBrandCheck(
                         privateOwnerType,
-                        loadPrivateReceiverField.FieldName,
-                        ilEncoder);
+                        ilEncoder,
+                        methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(privateField);
                     EmitBoxIfNeededForTypedUserClassFieldLoad(
@@ -425,7 +425,7 @@ internal sealed partial class LIRToILCompiler
                             return false;
                         }
                         EmitLoadCurrentThis(ilEncoder, methodDescriptor);
-                        EmitStaticPrivateReceiverBrandCheck(ownerType, loadInstanceField.FieldName, ilEncoder);
+                        EmitStaticPrivateReceiverBrandCheck(ownerType, ilEncoder, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Ldsfld);
                         ilEncoder.Token(staticPrivateField);
                         EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);
@@ -510,72 +510,59 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitPrivateReceiverBrandCheck(
         TypeDefinitionHandle ownerType,
-        string fieldName,
-        InstructionEncoder ilEncoder)
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor,
+        bool isStatic = false)
     {
         EmitResolveGeneratedClassStorageReceiver(ilEncoder);
-        var validReceiver = ilEncoder.DefineLabel();
-        ilEncoder.OpCode(ILOpCode.Dup);
-        ilEncoder.OpCode(ILOpCode.Isinst);
+        ilEncoder.OpCode(ILOpCode.Ldtoken);
         ilEncoder.Token(ownerType);
-        ilEncoder.Branch(ILOpCode.Brtrue, validReceiver);
-        ilEncoder.OpCode(ILOpCode.Pop);
-
-        var typeErrorConstructor = _memberRefRegistry.GetOrAddConstructor(
-            typeof(JavaScriptRuntime.TypeError),
-            parameterTypes: new[] { typeof(string) });
-        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(
-            $"Receiver must declare private member '#{fieldName}'"));
-        ilEncoder.OpCode(ILOpCode.Newobj);
-        ilEncoder.Token(typeErrorConstructor);
-        ilEncoder.OpCode(ILOpCode.Throw);
-
-        ilEncoder.MarkLabel(validReceiver);
-        ilEncoder.OpCode(ILOpCode.Castclass);
-        ilEncoder.Token(ownerType);
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(Type), nameof(Type.GetTypeFromHandle),
+            parameterTypes: new[] { typeof(RuntimeTypeHandle) }));
+        if (methodDescriptor.HasInvocationContextParameter)
+        {
+            ilEncoder.LoadArgument(GetIlArgIndexForInvocationContext(methodDescriptor));
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratedInvocationContext),
+                nameof(JavaScriptRuntime.GeneratedInvocationContext.GetCallee),
+                parameterTypes: new[] { typeof(JavaScriptRuntime.GeneratedInvocationContext) }));
+        }
+        else
+        {
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee),
+                parameterTypes: Type.EmptyTypes));
+        }
+        if (methodDescriptor.IsStatic)
+        {
+            EmitLoadCurrentThis(ilEncoder, methodDescriptor);
+        }
+        else
+        {
+            ilEncoder.LoadArgument(0);
+        }
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
+            parameterTypes: new[] { typeof(object), typeof(Type), typeof(object), typeof(object) }));
+        if (isStatic)
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(ownerType);
+        }
     }
 
     private void EmitStaticPrivateReceiverBrandCheck(
         TypeDefinitionHandle ownerType,
-        string fieldName,
-        InstructionEncoder ilEncoder)
-    {
-        var invalidReceiver = ilEncoder.DefineLabel();
-        var invalidBrand = ilEncoder.DefineLabel();
-        var validReceiver = ilEncoder.DefineLabel();
-        var compareOwnerType = ilEncoder.DefineLabel();
-
-        ilEncoder.OpCode(ILOpCode.Dup);
-        ilEncoder.OpCode(ILOpCode.Isinst);
-        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(Type)));
-        ilEncoder.Branch(ILOpCode.Brtrue, compareOwnerType);
-        ilEncoder.OpCode(ILOpCode.Isinst);
-        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsClassConstructorObject)));
-        ilEncoder.OpCode(ILOpCode.Dup);
-        ilEncoder.Branch(ILOpCode.Brfalse, invalidReceiver);
-
-        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.JsClassConstructorObject), "get_Type"));
-        ilEncoder.MarkLabel(compareOwnerType);
-        ilEncoder.OpCode(ILOpCode.Ldtoken);
-        ilEncoder.Token(ownerType);
-        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
-            typeof(Type), nameof(Type.GetTypeFromHandle), parameterTypes: new[] { typeof(RuntimeTypeHandle) }));
-        ilEncoder.OpCode(ILOpCode.Ceq);
-        ilEncoder.Branch(ILOpCode.Brtrue, validReceiver);
-        ilEncoder.Branch(ILOpCode.Br, invalidBrand);
-
-        ilEncoder.MarkLabel(invalidReceiver);
-        ilEncoder.OpCode(ILOpCode.Pop);
-        ilEncoder.MarkLabel(invalidBrand);
-        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(
-            $"Receiver must declare private member '#{fieldName}'"));
-        ilEncoder.OpCode(ILOpCode.Newobj);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddConstructor(
-            typeof(JavaScriptRuntime.TypeError), parameterTypes: new[] { typeof(string) }));
-        ilEncoder.OpCode(ILOpCode.Throw);
-        ilEncoder.MarkLabel(validReceiver);
-    }
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor)
+        => EmitPrivateReceiverBrandCheck(ownerType, ilEncoder, methodDescriptor, isStatic: true);
 
     private void EmitResolveGeneratedClassStorageReceiver(InstructionEncoder ilEncoder)
     {

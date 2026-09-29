@@ -279,7 +279,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 154 (0x9a)
+			// Code size: 160 (0xa0)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -288,57 +288,59 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: brfalse IL_0017
-
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
 			IL_000c: ldarg.1
-			IL_000d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0012: brfalse IL_0027
+			IL_000d: brfalse IL_001d
 
-			IL_0017: ldarg.1
-			IL_0018: ldstr ""
-			IL_001d: ldstr "x"
-			IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+			IL_0012: ldarg.1
+			IL_0013: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0018: brfalse IL_002d
 
-			IL_0027: volatile.
-			IL_0029: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
-			IL_002e: brfalse IL_0043
+			IL_001d: ldarg.1
+			IL_001e: ldstr ""
+			IL_0023: ldstr "x"
+			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0033: ldarg.1
-			IL_0034: ldstr "x"
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003e: br IL_0058
+			IL_002d: volatile.
+			IL_002f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+			IL_0034: brfalse IL_0049
 
-			IL_0043: ldarg.1
-			IL_0044: ldstr "x"
-			IL_0049: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M4>:.ctor:10"
-			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0039: ldarg.1
+			IL_003a: ldstr "x"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0044: br IL_005e
 
-			IL_0058: stloc.0
-			IL_0059: volatile.
-			IL_005b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
-			IL_0060: brfalse IL_0075
+			IL_0049: ldarg.1
+			IL_004a: ldstr "x"
+			IL_004f: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M4>:.ctor:10"
+			IL_0054: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0065: ldarg.1
-			IL_0066: ldstr "y"
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0070: br IL_008a
+			IL_005e: stloc.0
+			IL_005f: volatile.
+			IL_0061: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+			IL_0066: brfalse IL_007b
 
-			IL_0075: ldarg.1
-			IL_0076: ldstr "y"
-			IL_007b: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M4>:.ctor:12"
-			IL_0080: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
-			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_006b: ldarg.1
+			IL_006c: ldstr "y"
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0076: br IL_0090
 
-			IL_008a: stloc.1
-			IL_008b: ldarg.0
-			IL_008c: ldloc.0
-			IL_008d: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::x
-			IL_0092: ldarg.0
-			IL_0093: ldloc.1
-			IL_0094: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::y
-			IL_0099: ret
+			IL_007b: ldarg.1
+			IL_007c: ldstr "y"
+			IL_0081: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M4>:.ctor:12"
+			IL_0086: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_32
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_0090: stloc.1
+			IL_0091: ldarg.0
+			IL_0092: ldloc.0
+			IL_0093: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::x
+			IL_0098: ldarg.0
+			IL_0099: ldloc.1
+			IL_009a: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::y
+			IL_009f: ret
 		} // end of method Point::.ctor
 
 		.method public hidebysig 
@@ -596,7 +598,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 211 (0xd3)
+			// Code size: 217 (0xd9)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -606,76 +608,78 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: brfalse IL_0017
-
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
 			IL_000c: ldarg.1
-			IL_000d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0012: brfalse IL_0027
+			IL_000d: brfalse IL_001d
 
-			IL_0017: ldarg.1
-			IL_0018: ldstr ""
-			IL_001d: ldstr "name"
-			IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+			IL_0012: ldarg.1
+			IL_0013: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0018: brfalse IL_002d
 
-			IL_0027: volatile.
-			IL_0029: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_002e: brfalse IL_0043
+			IL_001d: ldarg.1
+			IL_001e: ldstr ""
+			IL_0023: ldstr "name"
+			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0033: ldarg.1
-			IL_0034: ldstr "name"
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003e: br IL_0058
+			IL_002d: volatile.
+			IL_002f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+			IL_0034: brfalse IL_0049
 
-			IL_0043: ldarg.1
-			IL_0044: ldstr "name"
-			IL_0049: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M6>:.ctor:10"
-			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0039: ldarg.1
+			IL_003a: ldstr "name"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0044: br IL_005e
 
-			IL_0058: stloc.0
-			IL_0059: volatile.
-			IL_005b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-			IL_0060: brfalse IL_0075
+			IL_0049: ldarg.1
+			IL_004a: ldstr "name"
+			IL_004f: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M6>:.ctor:10"
+			IL_0054: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0065: ldarg.1
-			IL_0066: ldstr "age"
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0070: br IL_008a
+			IL_005e: stloc.0
+			IL_005f: volatile.
+			IL_0061: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_0066: brfalse IL_007b
 
-			IL_0075: ldarg.1
-			IL_0076: ldstr "age"
-			IL_007b: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M6>:.ctor:12"
-			IL_0080: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_006b: ldarg.1
+			IL_006c: ldstr "age"
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0076: br IL_0090
 
-			IL_008a: stloc.1
-			IL_008b: volatile.
-			IL_008d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-			IL_0092: brfalse IL_00a7
+			IL_007b: ldarg.1
+			IL_007c: ldstr "age"
+			IL_0081: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M6>:.ctor:12"
+			IL_0086: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0097: ldarg.1
-			IL_0098: ldstr "city"
-			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a2: br IL_00bc
+			IL_0090: stloc.1
+			IL_0091: volatile.
+			IL_0093: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+			IL_0098: brfalse IL_00ad
 
-			IL_00a7: ldarg.1
-			IL_00a8: ldstr "city"
-			IL_00ad: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M6>:.ctor:14"
-			IL_00b2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_009d: ldarg.1
+			IL_009e: ldstr "city"
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00a8: br IL_00c2
 
-			IL_00bc: stloc.2
-			IL_00bd: ldarg.0
-			IL_00be: ldloc.0
-			IL_00bf: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::name
-			IL_00c4: ldarg.0
-			IL_00c5: ldloc.1
-			IL_00c6: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::age
-			IL_00cb: ldarg.0
-			IL_00cc: ldloc.2
-			IL_00cd: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::city
-			IL_00d2: ret
+			IL_00ad: ldarg.1
+			IL_00ae: ldstr "city"
+			IL_00b3: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M6>:.ctor:14"
+			IL_00b8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+			IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+			IL_00c2: stloc.2
+			IL_00c3: ldarg.0
+			IL_00c4: ldloc.0
+			IL_00c5: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::name
+			IL_00ca: ldarg.0
+			IL_00cb: ldloc.1
+			IL_00cc: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::age
+			IL_00d1: ldarg.0
+			IL_00d2: ldloc.2
+			IL_00d3: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::city
+			IL_00d8: ret
 		} // end of method Person::.ctor
 
 		.method public hidebysig 
@@ -953,7 +957,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 278 (0x116)
+			// Code size: 284 (0x11c)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -964,108 +968,110 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: brfalse IL_0017
-
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
 			IL_000c: ldarg.1
-			IL_000d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0012: brfalse IL_0027
+			IL_000d: brfalse IL_001d
 
-			IL_0017: ldarg.1
-			IL_0018: ldstr ""
-			IL_001d: ldstr "host"
-			IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+			IL_0012: ldarg.1
+			IL_0013: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0018: brfalse IL_002d
 
-			IL_0027: volatile.
-			IL_0029: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-			IL_002e: brfalse IL_0043
+			IL_001d: ldarg.1
+			IL_001e: ldstr ""
+			IL_0023: ldstr "host"
+			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0033: ldarg.1
-			IL_0034: ldstr "host"
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003e: br IL_0058
+			IL_002d: volatile.
+			IL_002f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_0034: brfalse IL_0049
 
-			IL_0043: ldarg.1
-			IL_0044: ldstr "host"
-			IL_0049: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M8>:.ctor:10"
-			IL_004e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0039: ldarg.1
+			IL_003a: ldstr "host"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0044: br IL_005e
 
-			IL_0058: stloc.3
-			IL_0059: ldloc.3
-			IL_005a: brtrue IL_006a
+			IL_0049: ldarg.1
+			IL_004a: ldstr "host"
+			IL_004f: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M8>:.ctor:10"
+			IL_0054: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_005f: ldstr "localhost"
-			IL_0064: stloc.0
-			IL_0065: br IL_006c
+			IL_005e: stloc.3
+			IL_005f: ldloc.3
+			IL_0060: brtrue IL_0070
 
-			IL_006a: ldloc.3
-			IL_006b: stloc.0
+			IL_0065: ldstr "localhost"
+			IL_006a: stloc.0
+			IL_006b: br IL_0072
 
-			IL_006c: volatile.
-			IL_006e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-			IL_0073: brfalse IL_0088
+			IL_0070: ldloc.3
+			IL_0071: stloc.0
 
-			IL_0078: ldarg.1
-			IL_0079: ldstr "port"
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0083: br IL_009d
+			IL_0072: volatile.
+			IL_0074: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_0079: brfalse IL_008e
 
-			IL_0088: ldarg.1
-			IL_0089: ldstr "port"
-			IL_008e: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M8>:.ctor:19"
-			IL_0093: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_007e: ldarg.1
+			IL_007f: ldstr "port"
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0089: br IL_00a3
 
-			IL_009d: stloc.3
-			IL_009e: ldloc.3
-			IL_009f: brtrue IL_00b8
+			IL_008e: ldarg.1
+			IL_008f: ldstr "port"
+			IL_0094: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M8>:.ctor:19"
+			IL_0099: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00a4: ldc.r8 8080
-			IL_00ad: box [System.Runtime]System.Double
-			IL_00b2: stloc.1
-			IL_00b3: br IL_00ba
+			IL_00a3: stloc.3
+			IL_00a4: ldloc.3
+			IL_00a5: brtrue IL_00be
 
-			IL_00b8: ldloc.3
-			IL_00b9: stloc.1
+			IL_00aa: ldc.r8 8080
+			IL_00b3: box [System.Runtime]System.Double
+			IL_00b8: stloc.1
+			IL_00b9: br IL_00c0
 
-			IL_00ba: volatile.
-			IL_00bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-			IL_00c1: brfalse IL_00d6
+			IL_00be: ldloc.3
+			IL_00bf: stloc.1
 
-			IL_00c6: ldarg.1
-			IL_00c7: ldstr "secure"
-			IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00d1: br IL_00eb
+			IL_00c0: volatile.
+			IL_00c2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+			IL_00c7: brfalse IL_00dc
 
-			IL_00d6: ldarg.1
-			IL_00d7: ldstr "secure"
-			IL_00dc: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M8>:.ctor:29"
-			IL_00e1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00cc: ldarg.1
+			IL_00cd: ldstr "secure"
+			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00d7: br IL_00f1
 
-			IL_00eb: stloc.3
-			IL_00ec: ldloc.3
-			IL_00ed: brtrue IL_00fe
+			IL_00dc: ldarg.1
+			IL_00dd: ldstr "secure"
+			IL_00e2: ldstr "Classes_ClassConstructor_ParameterDestructuring:<TwoPhaseDummy_M8>:.ctor:29"
+			IL_00e7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00f2: ldc.i4.0
-			IL_00f3: box [System.Runtime]System.Boolean
-			IL_00f8: stloc.2
-			IL_00f9: br IL_0100
+			IL_00f1: stloc.3
+			IL_00f2: ldloc.3
+			IL_00f3: brtrue IL_0104
 
-			IL_00fe: ldloc.3
-			IL_00ff: stloc.2
+			IL_00f8: ldc.i4.0
+			IL_00f9: box [System.Runtime]System.Boolean
+			IL_00fe: stloc.2
+			IL_00ff: br IL_0106
 
-			IL_0100: ldarg.0
-			IL_0101: ldloc.0
-			IL_0102: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::host
-			IL_0107: ldarg.0
-			IL_0108: ldloc.1
-			IL_0109: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::port
-			IL_010e: ldarg.0
-			IL_010f: ldloc.2
-			IL_0110: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::secure
-			IL_0115: ret
+			IL_0104: ldloc.3
+			IL_0105: stloc.2
+
+			IL_0106: ldarg.0
+			IL_0107: ldloc.0
+			IL_0108: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::host
+			IL_010d: ldarg.0
+			IL_010e: ldloc.1
+			IL_010f: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::port
+			IL_0114: ldarg.0
+			IL_0115: ldloc.2
+			IL_0116: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::secure
+			IL_011b: ret
 		} // end of method Config::.ctor
 
 		.method public hidebysig 

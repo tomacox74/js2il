@@ -203,7 +203,7 @@
 					IL_0000: ldarg.0
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 					IL_0006: ldarg.0
-					IL_0007: ldc.i4.1
+					IL_0007: ldc.i4.5
 					IL_0008: ldc.i4.0
 					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
 					IL_000e: ldarg.0
@@ -292,18 +292,22 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 21 (0x15)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17/FunctionObject::_transitionalScopes
-				IL_000d: ldarg.0
-				IL_000e: ldarg.2
-				IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17/FunctionObject::_privateBrand
-				IL_0014: ret
+				IL_0007: ldc.i4.4
+				IL_0008: ldc.i4.0
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ldarg.0
+				IL_000f: ldarg.1
+				IL_0010: stfld object[] Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17/FunctionObject::_transitionalScopes
+				IL_0015: ldarg.0
+				IL_0016: ldarg.2
+				IL_0017: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17/FunctionObject::_privateBrand
+				IL_001c: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -324,7 +328,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.0
+				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -339,12 +343,14 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 7 (0x7)
+			// Code size: 13 (0xd)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ret
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ret
 		} // end of method ClassExpression_L3C17::.ctor
 
 		.method public hidebysig 
@@ -368,25 +374,43 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[1] object
+				[1] class [System.Runtime]System.Type,
+				[2] object,
+				[3] object[]
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
-			IL_0006: ldarg.0
-			IL_0007: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17::__jroc_priv_get_value()
-			IL_000c: box [System.Runtime]System.Double
-			IL_0011: stloc.1
-			IL_0012: ldloc.0
-			IL_0013: ldloc.1
-			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0019: pop
-			IL_001a: ldnull
-			IL_001b: ret
+			IL_0006: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
+			IL_000b: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0010: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
+			IL_0015: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001a: stloc.1
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
+			IL_0020: stloc.2
+			IL_0021: ldc.i4.0
+			IL_0022: newarr [System.Runtime]System.Object
+			IL_0027: stloc.3
+			IL_0028: ldarg.0
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_002e: ldloc.1
+			IL_002f: ldstr "__jroc_priv_get_value"
+			IL_0034: ldloc.3
+			IL_0035: ldloc.2
+			IL_0036: ldarg.0
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallDirectClassPrivateMethod(object, class [System.Runtime]System.Type, string, object[], object, object)
+			IL_0041: stloc.2
+			IL_0042: ldloc.0
+			IL_0043: ldloc.2
+			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method ClassExpression_L3C17::log
 
 	} // end of class ClassExpression_L3C17
@@ -471,7 +495,7 @@
 		IL_0075: stloc.s 5
 		IL_0077: ldloc.s 4
 		IL_0079: ldstr "log"
-		IL_007e: ldloc.3
+		IL_007e: ldnull
 		IL_007f: newobj instance void Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17/Scope_log/FunctionObject::.ctor(class [System.Runtime]System.Object)
 		IL_0084: ldc.i4.0
 		IL_0085: conv.r8
