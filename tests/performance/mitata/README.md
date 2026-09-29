@@ -58,7 +58,7 @@ gh run list --workflow mitata-suite.yml --event workflow_dispatch --limit 5
 Pass the desired published JROC package version explicitly (with or without a leading
 `v`). The helper dispatches the workflow from `master` with `string-width`,
 Node, JROC, ClearScript, Jint, and Okojo. It sends `jroc_package_version` so the
-workflow installs that release rather than compiling the checkout. Use `--repo
-owner/name` when running outside this repository, or `--ref` to select another
-branch containing the workflow. Check the new run's benchmark and Supabase ingestion
-steps before relying on the dashboard.
+workflow installs that release rather than compiling the checkout. Use
+`--repo owner/name` when running outside this repository, or `--ref` to select
+another branch containing the workflow. Check the new run's benchmark and
+Supabase ingestion steps before relying on the dashboard.
