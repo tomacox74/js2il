@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 370 additional pinned class-expression cases, primarily
+  async methods and private class elements.
 - test262: verify another 500 pinned class-expression cases covering class
   methods and related semantics.
 - perf(compiler/runtime): pass proven numeric arguments unboxed to guarded
