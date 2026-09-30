@@ -134,7 +134,22 @@ public sealed record CallableSemantics
         }
 
         Visit(root, isRoot: true);
+        if (!requirements.UsesPrivateNames && ContainsNestedPrivateName(root))
+        {
+            requirements = requirements with { UsesPrivateNames = true };
+        }
         return requirements;
+
+        static bool ContainsNestedPrivateName(Node node)
+        {
+            if (node is ClassDeclaration or ClassExpression)
+            {
+                return false;
+            }
+
+            return node is PrivateIdentifier
+                || node.ChildNodes.Any(ContainsNestedPrivateName);
+        }
 
         void Visit(Node node, bool isRoot)
         {

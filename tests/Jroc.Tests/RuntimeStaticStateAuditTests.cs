@@ -103,6 +103,8 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.RuntimeIntrinsics._processDefaultGate", "process fallback synchronization"),
         new("JavaScriptRuntime.RuntimeServices.EmptyScopes", "immutable ABI array"),
         new("JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel", "immutable ABI sentinel"),
+        new("JavaScriptRuntime.RuntimeServices._classInstancePrivateBrands", "weak-keyed class-instance brand metadata"),
+        new("JavaScriptRuntime.RuntimeServices._classMethodHomes", "weak-keyed class-method home metadata"),
         new("JavaScriptRuntime.RuntimeServices._currentInvocation", "async-flow invocation frame"),
         new("JavaScriptRuntime.RuntimeServices._generatedClassMethodReceivers", "weak-keyed generated method receiver metadata"),
         new("JavaScriptRuntime.RuntimeServices._generatedClassReplacementReceivers", "weak-keyed replacement receiver metadata; generated receiver lives only with its JavaScript receiver"),

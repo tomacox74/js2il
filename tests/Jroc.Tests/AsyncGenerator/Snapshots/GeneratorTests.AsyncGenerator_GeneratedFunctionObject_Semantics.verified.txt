@@ -6725,15 +6725,17 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 14 (0xe)
+			// Code size: 20 (0x14)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: ldarg.1
-			IL_0008: stfld object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::base
-			IL_000d: ret
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.0
+			IL_000d: ldarg.1
+			IL_000e: stfld object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass::base
+			IL_0013: ret
 		} // end of method AsyncGeneratorClass::.ctor
 
 		.method public hidebysig 

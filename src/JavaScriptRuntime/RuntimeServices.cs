@@ -24,6 +24,52 @@ public class RuntimeServices
         _generatedClassMethodReceivers = new();
     private static readonly ConditionalWeakTable<object, GeneratedClassMethodReceiverSlot>
         _generatedClassReplacementReceivers = new();
+    private static readonly ConditionalWeakTable<object, ClassInstancePrivateBrandSlot>
+        _classInstancePrivateBrands = new();
+    private static readonly ConditionalWeakTable<object, ClassMethodHomeSlot>
+        _classMethodHomes = new();
+
+    private sealed class ClassInstancePrivateBrandSlot
+    {
+        public HashSet<JsClassConstructorObject> Constructors { get; } =
+            new(ReferenceEqualityComparer.Instance);
+    }
+
+    private sealed class ClassMethodHomeSlot(JsClassConstructorObject owner)
+    {
+        public JsClassConstructorObject Owner { get; } = owner;
+    }
+
+    private static void RegisterClassMethodHome(object? method, JsClassConstructorObject constructor)
+    {
+        if (method is JsFunctionObject or Delegate)
+        {
+            _classMethodHomes.AddOrUpdate(method, new ClassMethodHomeSlot(constructor));
+        }
+    }
+
+    public static object RegisterClassMethodHome(object method, object owner)
+    {
+        if (owner is JsClassConstructorObject constructor)
+        {
+            RegisterClassMethodHome(method, constructor);
+        }
+        return method;
+    }
+
+    private static void RegisterClassMethodDescriptorHomes(
+        object target, JsClassConstructorObject constructor)
+    {
+        foreach (var key in PropertyDescriptorStore.GetOwnKeys(target))
+        {
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var descriptor))
+            {
+                RegisterClassMethodHome(descriptor.Value, constructor);
+                RegisterClassMethodHome(descriptor.Get, constructor);
+                RegisterClassMethodHome(descriptor.Set, constructor);
+            }
+        }
+    }
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -499,6 +545,11 @@ public class RuntimeServices
             materialized,
             "prototype",
             out _);
+        RegisterClassMethodDescriptorHomes(materialized, materialized);
+        if (ObjectRuntime.GetProperty(materialized, "prototype") is { } prototype)
+        {
+            RegisterClassMethodDescriptorHomes(prototype, materialized);
+        }
         return materialized;
     }
 
@@ -572,6 +623,8 @@ public class RuntimeServices
                     CloneDescriptor(descriptor));
             }
         }
+        RegisterClassMethodDescriptorHomes(constructor, constructor);
+        RegisterClassMethodDescriptorHomes(targetPrototype, constructor);
         return constructorValue;
     }
 
@@ -581,6 +634,8 @@ public class RuntimeServices
         if (constructorValue is JsClassConstructorObject classConstructor)
         {
             classConstructor.IsDerivedClass = true;
+            classConstructor.PrivateBrandBaseConstructor =
+                validatedBase as JsClassConstructorObject;
             PrototypeChain.SetPrototype(classConstructor, validatedBase);
             LinkClassInstancePrototype(classConstructor, validatedBase);
             return classConstructor;
@@ -1301,9 +1356,15 @@ public class RuntimeServices
     }
 
     public static object ValidateClassPrivateMethodReceiver(object? receiver, Type ownerType, bool isStatic)
+        => ValidateClassPrivateMethodReceiver(receiver, ownerType, isStatic, GetCurrentCallee());
+
+    public static object ValidateClassPrivateMethodReceiver(object? receiver, Type ownerType, bool isStatic, object? callee)
+        => ValidateClassPrivateMethodReceiver(receiver, ownerType, isStatic, callee, null);
+
+    public static object ValidateClassPrivateMethodReceiver(object? receiver, Type ownerType, bool isStatic, object? callee, object? lexicalThis)
     {
         receiver = ResolveLexicalThis(receiver);
-        if (!HasClassPrivateMethodBrand(receiver, ownerType, isStatic))
+        if (!HasClassPrivateMethodBrand(receiver, ownerType, isStatic, callee, lexicalThis))
         {
             throw new TypeError("Receiver does not have the requested private method");
         }
@@ -1312,9 +1373,19 @@ public class RuntimeServices
     }
 
     public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType)
+        => ValidateDirectClassPrivateMethodReceiver(receiver, ownerType, GetCurrentCallee());
+
+    public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType, object? callee)
+        => ValidateDirectClassPrivateMethodReceiver(receiver, ownerType, callee, null);
+
+    public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType, object? callee, object? lexicalThis)
     {
         receiver = ResolveLexicalThis(receiver);
-        var hasBrand = receiver switch
+        var hasBrand = TryGetActiveClassPrivateBrand(ownerType, callee, lexicalThis, out var classConstructor)
+            ? receiver is JsClassConstructorObject staticReceiver
+                ? ReferenceEquals(staticReceiver, classConstructor)
+                : HasDirectClassPrivateBrand(receiver, ownerType, classConstructor)
+            : receiver switch
         {
             Type type => type == ownerType,
             JsClassConstructorObject classConstructorValue => classConstructorValue.Type == ownerType,
@@ -1334,6 +1405,23 @@ public class RuntimeServices
         Type ownerType,
         string methodName,
         object?[] args)
+        => CallDirectClassPrivateMethod(receiver, ownerType, methodName, args, GetCurrentCallee());
+
+    public static object? CallDirectClassPrivateMethod(
+        object? receiver,
+        Type ownerType,
+        string methodName,
+        object?[] args,
+        object? callee)
+        => CallDirectClassPrivateMethod(receiver, ownerType, methodName, args, callee, null);
+
+    public static object? CallDirectClassPrivateMethod(
+        object? receiver,
+        Type ownerType,
+        string methodName,
+        object?[] args,
+        object? callee,
+        object? lexicalThis)
     {
         var method = ownerType.GetMethod(
             methodName,
@@ -1344,7 +1432,7 @@ public class RuntimeServices
             ?? throw new TypeError(
                 $"Private method '{methodName}' was not found");
         var validatedReceiver = ValidateClassPrivateMethodReceiver(
-            receiver, ownerType, method.IsStatic);
+            receiver, ownerType, method.IsStatic, callee, lexicalThis);
         var instance = method.IsStatic ? null : validatedReceiver;
         var scopes = method.IsStatic
             ? (validatedReceiver as JsClassConstructorObject)?.Scopes ?? EmptyScopes
@@ -1359,6 +1447,7 @@ public class RuntimeServices
             method,
             scopes,
             args);
+        var previousThis = SetCurrentThis(validatedReceiver);
         try
         {
             return method.Invoke(instance, invokeArgs);
@@ -1371,16 +1460,47 @@ public class RuntimeServices
                 .Throw();
             throw;
         }
+        finally
+        {
+            SetCurrentThis(previousThis);
+        }
     }
 
     public static object? GetDirectClassPrivateMethodValue(
         object? receiver,
         Type ownerType,
         string propertyName)
+        => GetDirectClassPrivateMethodValue(receiver, ownerType, propertyName, GetCurrentCallee());
+
+    public static object? GetDirectClassPrivateMethodValue(
+        object? receiver,
+        Type ownerType,
+        string propertyName,
+        object? callee)
+        => GetDirectClassPrivateMethodValue(receiver, ownerType, propertyName, callee, null);
+
+    public static object? GetDirectClassPrivateMethodValue(
+        object? receiver,
+        Type ownerType,
+        string propertyName,
+        object? callee,
+        object? lexicalThis)
     {
         var instance = ValidateDirectClassPrivateMethodReceiver(
             receiver,
-            ownerType);
+            ownerType,
+            callee,
+            lexicalThis);
+        if (instance is not JsClassConstructorObject
+            && TryGetActiveClassPrivateBrand(
+                ownerType, callee, lexicalThis, out var classConstructor))
+        {
+            var prototype = ObjectRuntime.GetProperty(classConstructor, "prototype");
+            if (prototype != null && prototype is not JsNull)
+            {
+                return ObjectRuntime.GetItem(prototype, propertyName);
+            }
+        }
         return ObjectRuntime.GetItem(instance, propertyName);
     }
 
@@ -1420,10 +1540,23 @@ public class RuntimeServices
     }
 
     private static bool HasClassPrivateMethodBrand(object? receiver, Type ownerType, bool isStatic)
+        => HasClassPrivateMethodBrand(receiver, ownerType, isStatic, GetCurrentCallee());
+
+    private static bool HasClassPrivateMethodBrand(object? receiver, Type ownerType, bool isStatic, object? callee)
+        => HasClassPrivateMethodBrand(receiver, ownerType, isStatic, callee, null);
+
+    private static bool HasClassPrivateMethodBrand(object? receiver, Type ownerType, bool isStatic, object? callee, object? lexicalThis)
     {
         if (receiver is null || receiver is JsNull)
         {
             return false;
+        }
+
+        if (TryGetActiveClassPrivateBrand(ownerType, callee, lexicalThis, out var classConstructor))
+        {
+            return isStatic
+                ? ReferenceEquals(receiver, classConstructor)
+                : HasDirectClassPrivateBrand(receiver, ownerType, classConstructor);
         }
 
         if (isStatic)
@@ -1437,6 +1570,82 @@ public class RuntimeServices
         }
 
         return ownerType.IsInstanceOfType(receiver);
+    }
+
+    private static bool TryGetActiveClassPrivateBrand(
+        Type ownerType, object? callee, object? lexicalThis, out JsClassConstructorObject constructor)
+    {
+        var brandField = callee?.GetType().GetField(
+            "_privateBrand",
+            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        if (brandField?.GetValue(callee) is JsClassConstructorObject brand
+            && brand.Type == ownerType)
+        {
+            constructor = brand;
+            return true;
+        }
+
+        if (callee != null
+            && _classMethodHomes.TryGetValue(callee, out var methodHome)
+            && methodHome.Owner.Type == ownerType)
+        {
+            constructor = methodHome.Owner;
+            return true;
+        }
+
+        if (lexicalThis is JsClassConstructorObject staticOwner
+            && staticOwner.Type == ownerType)
+        {
+            constructor = staticOwner;
+            return true;
+        }
+
+        if (lexicalThis != null
+            && ownerType.IsInstanceOfType(lexicalThis)
+            && _classInstancePrivateBrands.TryGetValue(lexicalThis, out var instanceBrand))
+        {
+            lock (instanceBrand.Constructors)
+            {
+                foreach (var instanceOwner in instanceBrand.Constructors)
+                {
+                    if (instanceOwner.Type == ownerType)
+                    {
+                        constructor = instanceOwner;
+                        return true;
+                    }
+                }
+            }
+        }
+
+        constructor = null!;
+        return false;
+    }
+
+    public static object? CaptureClassPrivateBrand(Type ownerType, object? lexicalThis, object? callee)
+        => TryGetActiveClassPrivateBrand(ownerType, callee, lexicalThis, out var constructor)
+            ? constructor
+            : null;
+
+    private static bool HasDirectClassPrivateBrand(
+        object? receiver,
+        Type ownerType,
+        JsClassConstructorObject constructor)
+    {
+        if (receiver == null || !ownerType.IsInstanceOfType(receiver))
+        {
+            return false;
+        }
+
+        if (!_classInstancePrivateBrands.TryGetValue(receiver, out var instanceBrand))
+        {
+            // Direct newobj construction does not materialize a class-constructor brand.
+            return true;
+        }
+
+        lock (instanceBrand.Constructors)
+        {
+            return instanceBrand.Constructors.Contains(constructor);
+        }
     }
 
     private static object?[] BuildClassMethodInvokeArguments(MethodInfo method, object[] scopes, object?[]? args)
@@ -1745,6 +1954,36 @@ public class RuntimeServices
     public static object? GetCurrentNewTarget()
     {
         return _currentInvocation.Value?.CurrentNewTarget;
+    }
+
+    public static void InitializeConstructedClassPrototype(object instance)
+    {
+        if (GetCurrentNewTarget() is JsClassConstructorObject constructor
+            && constructor.Type.IsInstanceOfType(instance))
+        {
+            var brand = _classInstancePrivateBrands.GetOrCreateValue(instance);
+            lock (brand.Constructors)
+            {
+                for (var owner = constructor;
+                    owner != null;
+                    owner = owner.PrivateBrandBaseConstructor)
+                {
+                    if (owner.Type.IsInstanceOfType(instance))
+                    {
+                        brand.Constructors.Add(owner);
+                    }
+                }
+            }
+            if (PrototypeChain.GetPrototypeOrNull(instance) == null)
+            {
+                // Private methods must be readable during field initialization and the constructor body.
+                var prototype = ObjectRuntime.GetProperty(constructor, "prototype");
+                if (prototype is not null && prototype is not JsNull)
+                {
+                    PrototypeChain.SetPrototype(instance, prototype);
+                }
+            }
+        }
     }
 
     public static object? GetCurrentNewTargetOrReceiverType(object? receiver)

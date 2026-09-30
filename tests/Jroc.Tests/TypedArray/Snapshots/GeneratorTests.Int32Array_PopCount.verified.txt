@@ -274,7 +274,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -284,24 +284,26 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_000c: ldc.i4.5
-			IL_000d: shr.un
-			IL_000e: conv.r.un
-			IL_000f: stloc.0
-			IL_0010: ldc.r8 1
-			IL_0019: ldloc.0
-			IL_001a: add
-			IL_001b: stloc.0
-			IL_001c: ldloc.0
-			IL_001d: box [System.Runtime]System.Double
-			IL_0022: stloc.1
-			IL_0023: ldarg.0
-			IL_0024: ldloc.1
-			IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-			IL_002a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Int32Array_PopCount/BitArray::wordArray
-			IL_002f: ret
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.1
+			IL_000d: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_0012: ldc.i4.5
+			IL_0013: shr.un
+			IL_0014: conv.r.un
+			IL_0015: stloc.0
+			IL_0016: ldc.r8 1
+			IL_001f: ldloc.0
+			IL_0020: add
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: box [System.Runtime]System.Double
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+			IL_0030: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Int32Array_PopCount/BitArray::wordArray
+			IL_0035: ret
 		} // end of method BitArray::.ctor
 
 		.method public hidebysig 
@@ -639,7 +641,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 91 (0x5b)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -651,33 +653,35 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: stloc.0
-			IL_0008: ldarg.0
-			IL_0009: ldloc.0
-			IL_000a: stfld object[] Modules.Int32Array_PopCount/Counter::_scopes
-			IL_000f: ldarg.2
-			IL_0010: ldc.r8 1
-			IL_0019: box [System.Runtime]System.Double
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnsignedRightShift(object, object)
-			IL_0023: stloc.1
-			IL_0024: ldarg.0
-			IL_0025: ldloc.1
-			IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002b: stfld float64 Modules.Int32Array_PopCount/Counter::sieveSizeInBits
-			IL_0030: ldc.r8 1
-			IL_0039: ldarg.0
-			IL_003a: ldfld float64 Modules.Int32Array_PopCount/Counter::sieveSizeInBits
-			IL_003f: add
-			IL_0040: stloc.2
-			IL_0041: ldloc.2
-			IL_0042: box [System.Runtime]System.Double
-			IL_0047: stloc.3
-			IL_0048: ldarg.0
-			IL_0049: ldloc.2
-			IL_004a: newobj instance void Modules.Int32Array_PopCount/BitArray::.ctor(float64)
-			IL_004f: stfld class Modules.Int32Array_PopCount/BitArray Modules.Int32Array_PopCount/Counter::bitArray
-			IL_0054: ret
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.1
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldloc.0
+			IL_0010: stfld object[] Modules.Int32Array_PopCount/Counter::_scopes
+			IL_0015: ldarg.2
+			IL_0016: ldc.r8 1
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnsignedRightShift(object, object)
+			IL_0029: stloc.1
+			IL_002a: ldarg.0
+			IL_002b: ldloc.1
+			IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0031: stfld float64 Modules.Int32Array_PopCount/Counter::sieveSizeInBits
+			IL_0036: ldc.r8 1
+			IL_003f: ldarg.0
+			IL_0040: ldfld float64 Modules.Int32Array_PopCount/Counter::sieveSizeInBits
+			IL_0045: add
+			IL_0046: stloc.2
+			IL_0047: ldloc.2
+			IL_0048: box [System.Runtime]System.Double
+			IL_004d: stloc.3
+			IL_004e: ldarg.0
+			IL_004f: ldloc.2
+			IL_0050: newobj instance void Modules.Int32Array_PopCount/BitArray::.ctor(float64)
+			IL_0055: stfld class Modules.Int32Array_PopCount/BitArray Modules.Int32Array_PopCount/Counter::bitArray
+			IL_005a: ret
 		} // end of method Counter::.ctor
 
 		.method public hidebysig 

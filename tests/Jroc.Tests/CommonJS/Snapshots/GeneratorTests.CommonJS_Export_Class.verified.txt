@@ -730,12 +730,14 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 7 (0x7)
+			// Code size: 13 (0xd)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ret
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ret
 		} // end of method Calculator::.ctor
 
 		.method public hidebysig 

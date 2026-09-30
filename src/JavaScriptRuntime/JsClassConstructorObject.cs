@@ -22,6 +22,8 @@ public abstract class JsClassConstructorObject : JsFunctionObject
 
     internal bool IsDerivedClass { get; set; }
 
+    internal JsClassConstructorObject? PrivateBrandBaseConstructor { get; set; }
+
     internal void Initialize(
         Type type,
         object[] scopes,

@@ -94,6 +94,11 @@ internal sealed partial class LIRToILCompiler
         {
             ilEncoder.OpCode(ILOpCode.Ldarg_0);
             ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
+            ilEncoder.LoadArgument(0);
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.InitializeConstructedClassPrototype),
+                parameterTypes: new[] { typeof(object) }));
         }
 
         // Opt-in prototype chain support: enable runtime behavior only when the compiler detected

@@ -701,18 +701,20 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 21 (0x15)
+			// Code size: 27 (0x1b)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: ldarg.1
-			IL_0008: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::name
-			IL_000d: ldarg.0
-			IL_000e: ldarg.2
-			IL_000f: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::age
-			IL_0014: ret
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.0
+			IL_000d: ldarg.1
+			IL_000e: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::name
+			IL_0013: ldarg.0
+			IL_0014: ldarg.2
+			IL_0015: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::age
+			IL_001a: ret
 		} // end of method Person::.ctor
 
 		.method public hidebysig 

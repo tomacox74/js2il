@@ -118,7 +118,7 @@
 					IL_0000: ldarg.0
 					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 					IL_0006: ldarg.0
-					IL_0007: ldc.i4.1
+					IL_0007: ldc.i4.5
 					IL_0008: ldc.i4.0
 					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
 					IL_000e: ldarg.0
@@ -207,18 +207,22 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 21 (0x15)
+				// Code size: 29 (0x1d)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld object[] Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::_transitionalScopes
-				IL_000d: ldarg.0
-				IL_000e: ldarg.2
-				IL_000f: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::_privateBrand
-				IL_0014: ret
+				IL_0007: ldc.i4.4
+				IL_0008: ldc.i4.0
+				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+				IL_000e: ldarg.0
+				IL_000f: ldarg.1
+				IL_0010: stfld object[] Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::_transitionalScopes
+				IL_0015: ldarg.0
+				IL_0016: ldarg.2
+				IL_0017: stfld class [System.Runtime]System.Object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::_privateBrand
+				IL_001c: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -239,7 +243,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.0
+				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -247,7 +251,7 @@
 
 
 		// Fields
-		.field private string __jroc_priv_secret
+		.field assembly string __jroc_priv_secret
 		.field private object[] _scopes
 
 		// Methods
@@ -260,7 +264,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 27 (0x1b)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
 				[0] object[]
@@ -268,15 +272,17 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: stloc.0
-			IL_0008: ldarg.0
-			IL_0009: ldloc.0
-			IL_000a: stfld object[] Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::_scopes
-			IL_000f: ldarg.0
-			IL_0010: ldstr "TopSecret"
-			IL_0015: stfld string Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::__jroc_priv_secret
-			IL_001a: ret
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.1
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldloc.0
+			IL_0010: stfld object[] Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::_scopes
+			IL_0015: ldarg.0
+			IL_0016: ldstr "TopSecret"
+			IL_001b: stfld string Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::__jroc_priv_secret
+			IL_0020: ret
 		} // end of method Greeter::.ctor
 
 		.method public hidebysig 
@@ -286,21 +292,32 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 21 (0x15)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] string
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldarg.0
-			IL_0008: ldfld string Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::__jroc_priv_secret
-			IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0012: pop
-			IL_0013: ldnull
-			IL_0014: ret
+			IL_0006: ldarg.0
+			IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassStorageReceiver(object)
+			IL_0011: ldtoken Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+			IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
+			IL_0020: ldarg.0
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ValidateDirectClassPrivateMethodReceiver(object, class [System.Runtime]System.Type, object, object)
+			IL_0026: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+			IL_002b: ldfld string Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::__jroc_priv_secret
+			IL_0030: stloc.1
+			IL_0031: ldloc.0
+			IL_0032: ldloc.1
+			IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0038: pop
+			IL_0039: ldnull
+			IL_003a: ret
 		} // end of method Greeter::logSecret
 
 	} // end of class Greeter
@@ -336,7 +353,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 244 (0xf4)
+		// Code size: 258 (0x102)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Scope,
@@ -345,8 +362,10 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject,
-			[7] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+			[6] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject,
+			[7] object,
+			[8] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject,
+			[9] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Scope::.ctor()
@@ -375,66 +394,72 @@
 		IL_004d: stloc.s 4
 		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0054: stloc.s 5
-		IL_0056: ldloc.s 4
-		IL_0058: ldstr "logSecret"
-		IL_005d: ldloc.3
-		IL_005e: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject::.ctor(class [System.Runtime]System.Object)
-		IL_0063: ldc.i4.0
-		IL_0064: conv.r8
-		IL_0065: ldstr "logSecret"
-		IL_006a: ldc.i4.1
-		IL_006b: ldc.i4.0
-		IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0071: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject>(!!0)
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_007b: pop
-		IL_007c: ldc.i4.1
-		IL_007d: newarr [System.Runtime]System.Object
-		IL_0082: dup
-		IL_0083: ldc.i4.0
-		IL_0084: ldloc.0
-		IL_0085: stelem.ref
-		IL_0086: stloc.s 5
-		IL_0088: ldloc.s 5
-		IL_008a: ldnull
-		IL_008b: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::.ctor(object[], class [System.Runtime]System.Object)
-		IL_0090: ldloc.3
-		IL_0091: ldloc.s 5
-		IL_0093: ldc.i4.0
-		IL_0094: conv.r8
-		IL_0095: ldc.i4.0
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_009b: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject
-		IL_00a0: stloc.s 6
-		IL_00a2: ldloc.s 6
-		IL_00a4: stloc.1
-		IL_00a5: ldc.i4.1
-		IL_00a6: newarr [System.Runtime]System.Object
-		IL_00ab: dup
-		IL_00ac: ldc.i4.0
-		IL_00ad: ldloc.0
-		IL_00ae: stelem.ref
-		IL_00af: stloc.s 5
-		IL_00b1: ldloc.s 5
-		IL_00b3: ldc.i4.0
+		IL_0056: ldnull
+		IL_0057: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject::.ctor(class [System.Runtime]System.Object)
+		IL_005c: ldc.i4.0
+		IL_005d: conv.r8
+		IL_005e: ldstr "logSecret"
+		IL_0063: ldc.i4.1
+		IL_0064: ldc.i4.0
+		IL_0065: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/Scope_logSecret/FunctionObject>(!!0)
+		IL_006f: stloc.s 6
+		IL_0071: ldloc.s 6
+		IL_0073: ldloc.3
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::RegisterClassMethodHome(object, object)
+		IL_0079: stloc.s 7
+		IL_007b: ldloc.s 4
+		IL_007d: ldstr "logSecret"
+		IL_0082: ldloc.s 7
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0089: pop
+		IL_008a: ldc.i4.1
+		IL_008b: newarr [System.Runtime]System.Object
+		IL_0090: dup
+		IL_0091: ldc.i4.0
+		IL_0092: ldloc.0
+		IL_0093: stelem.ref
+		IL_0094: stloc.s 5
+		IL_0096: ldloc.s 5
+		IL_0098: ldnull
+		IL_0099: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject::.ctor(object[], class [System.Runtime]System.Object)
+		IL_009e: ldloc.3
+		IL_009f: ldloc.s 5
+		IL_00a1: ldc.i4.0
+		IL_00a2: conv.r8
+		IL_00a3: ldc.i4.0
+		IL_00a4: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00a9: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter/FunctionObject
+		IL_00ae: stloc.s 8
+		IL_00b0: ldloc.s 8
+		IL_00b2: stloc.1
+		IL_00b3: ldc.i4.1
 		IL_00b4: newarr [System.Runtime]System.Object
-		IL_00b9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00be: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::.ctor(object[])
-		IL_00c3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00c8: stloc.2
-		IL_00c9: ldloc.2
-		IL_00ca: ldtoken Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
-		IL_00cf: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00d4: ldstr "prototype"
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00de: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00e3: ldloc.2
-		IL_00e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter>(!!0)
-		IL_00e9: stloc.s 7
-		IL_00eb: ldloc.s 7
-		IL_00ed: callvirt instance object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::logSecret()
-		IL_00f2: pop
-		IL_00f3: ret
+		IL_00b9: dup
+		IL_00ba: ldc.i4.0
+		IL_00bb: ldloc.0
+		IL_00bc: stelem.ref
+		IL_00bd: stloc.s 5
+		IL_00bf: ldloc.s 5
+		IL_00c1: ldc.i4.0
+		IL_00c2: newarr [System.Runtime]System.Object
+		IL_00c7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00cc: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::.ctor(object[])
+		IL_00d1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00d6: stloc.2
+		IL_00d7: ldloc.2
+		IL_00d8: ldtoken Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+		IL_00dd: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00e2: ldstr "prototype"
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00ec: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00f1: ldloc.2
+		IL_00f2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter>(!!0)
+		IL_00f7: stloc.s 9
+		IL_00f9: ldloc.s 9
+		IL_00fb: callvirt instance object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::logSecret()
+		IL_0100: pop
+		IL_0101: ret
 	} // end of method Classes_ClassPrivateField_HelperMethod_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateField_HelperMethod_Log

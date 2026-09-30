@@ -1833,7 +1833,7 @@ internal sealed partial class LIRToILCompiler
                             throw new InvalidOperationException($"Missing class '{loadInstanceField.RegistryClassName}' for static private field load");
                         }
                         EmitLoadCurrentThis(ilEncoder, methodDescriptor);
-                        EmitStaticPrivateReceiverBrandCheck(ownerType, loadInstanceField.FieldName, ilEncoder);
+                        EmitStaticPrivateReceiverBrandCheck(ownerType, ilEncoder, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Ldsfld);
                         ilEncoder.Token(staticPrivateField);
                         break;
@@ -1930,7 +1930,7 @@ internal sealed partial class LIRToILCompiler
                         out var staticPrivateField))
                     {
                         EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
-                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, loadPrivateReceiverField.FieldName, ilEncoder);
+                        EmitStaticPrivateReceiverBrandCheck(privateOwnerType, ilEncoder, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Ldsfld);
                         ilEncoder.Token(staticPrivateField);
                         break;
@@ -1954,8 +1954,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
                     EmitPrivateReceiverBrandCheck(
                         privateOwnerType,
-                        loadPrivateReceiverField.FieldName,
-                        ilEncoder);
+                        ilEncoder,
+                        methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(privateField);
                     EmitBoxIfNeededForTypedUserClassFieldLoad(

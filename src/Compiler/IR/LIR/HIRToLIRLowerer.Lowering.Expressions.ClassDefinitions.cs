@@ -143,8 +143,8 @@ public sealed partial class HIRToLIRLowerer
                 expression.CallableId,
                 scopesTemp,
                 targetTemp,
-                expression.IsStatic && !expression.IsPrivate
-                    && expression.SkipPublicStaticMethodBrand ? null : ownerTemp,
+                ownerTemp,
+                expression.IsPrivate ? ownerTemp : null,
                 expression.FunctionName);
 
             resultTempVar = CreateTempVariable();
@@ -276,8 +276,8 @@ public sealed partial class HIRToLIRLowerer
                     methodDefinition.CallableId,
                     methodScopesTemp,
                     targetTemp,
-                    methodDefinition.IsStatic && !methodDefinition.IsPrivate
-                        && expression.SkipPublicStaticMethodBrand ? null : ownerTemp,
+                    ownerTemp,
+                    methodDefinition.IsPrivate ? ownerTemp : null,
                     methodDefinition.FunctionName);
 
                 resultTempVar = CreateTempVariable();
@@ -333,6 +333,7 @@ public sealed partial class HIRToLIRLowerer
         CallableId callableId,
         TempVariable scopes,
         TempVariable homeObject,
+        TempVariable owner,
         TempVariable? privateBrand,
         string functionName)
     {
@@ -348,7 +349,21 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(
             result,
             GetMaterializedCallableStorage(callableId));
-        return result;
+        if (!callableId.Semantics.UsesPrivateNames || privateBrand != null)
+        {
+            return result;
+        }
+
+        var registered = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.RegisterClassMethodHome),
+            [EnsureObject(result), EnsureObject(owner)],
+            registered,
+            [typeof(object), typeof(object)]));
+        DefineTempStorage(
+            registered,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return registered;
     }
 
     private static Scope? ResolveClassMethodScope(

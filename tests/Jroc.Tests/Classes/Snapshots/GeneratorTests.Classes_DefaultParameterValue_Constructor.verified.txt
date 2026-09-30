@@ -291,31 +291,33 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 56 (0x38)
+			// Code size: 62 (0x3e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: brtrue IL_0013
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.1
+			IL_000d: brtrue IL_0019
 
-			IL_000c: ldstr "Unknown"
-			IL_0011: starg.s name
+			IL_0012: ldstr "Unknown"
+			IL_0017: starg.s name
 
-			IL_0013: ldarg.2
-			IL_0014: brtrue IL_0029
+			IL_0019: ldarg.2
+			IL_001a: brtrue IL_002f
 
-			IL_0019: ldc.r8 0.0
-			IL_0022: box [System.Runtime]System.Double
-			IL_0027: starg.s age
+			IL_001f: ldc.r8 0.0
+			IL_0028: box [System.Runtime]System.Double
+			IL_002d: starg.s age
 
-			IL_0029: ldarg.0
-			IL_002a: ldarg.1
-			IL_002b: stfld object Modules.Classes_DefaultParameterValue_Constructor/Person::name
-			IL_0030: ldarg.0
-			IL_0031: ldarg.2
-			IL_0032: stfld object Modules.Classes_DefaultParameterValue_Constructor/Person::age
-			IL_0037: ret
+			IL_002f: ldarg.0
+			IL_0030: ldarg.1
+			IL_0031: stfld object Modules.Classes_DefaultParameterValue_Constructor/Person::name
+			IL_0036: ldarg.0
+			IL_0037: ldarg.2
+			IL_0038: stfld object Modules.Classes_DefaultParameterValue_Constructor/Person::age
+			IL_003d: ret
 		} // end of method Person::.ctor
 
 		.method public hidebysig 
@@ -579,35 +581,37 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 72 (0x48)
+			// Code size: 78 (0x4e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.2
-			IL_0007: brtrue IL_001c
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.2
+			IL_000d: brtrue IL_0022
 
-			IL_000c: ldc.r8 20
-			IL_0015: box [System.Runtime]System.Double
-			IL_001a: starg.s height
+			IL_0012: ldc.r8 20
+			IL_001b: box [System.Runtime]System.Double
+			IL_0020: starg.s height
 
-			IL_001c: ldarg.3
-			IL_001d: brtrue IL_0032
+			IL_0022: ldarg.3
+			IL_0023: brtrue IL_0038
 
-			IL_0022: ldc.r8 5
-			IL_002b: box [System.Runtime]System.Double
-			IL_0030: starg.s depth
+			IL_0028: ldc.r8 5
+			IL_0031: box [System.Runtime]System.Double
+			IL_0036: starg.s depth
 
-			IL_0032: ldarg.0
-			IL_0033: ldarg.1
-			IL_0034: stfld float64 Modules.Classes_DefaultParameterValue_Constructor/Box::width
-			IL_0039: ldarg.0
-			IL_003a: ldarg.2
-			IL_003b: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::height
-			IL_0040: ldarg.0
-			IL_0041: ldarg.3
-			IL_0042: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::depth
-			IL_0047: ret
+			IL_0038: ldarg.0
+			IL_0039: ldarg.1
+			IL_003a: stfld float64 Modules.Classes_DefaultParameterValue_Constructor/Box::width
+			IL_003f: ldarg.0
+			IL_0040: ldarg.2
+			IL_0041: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::height
+			IL_0046: ldarg.0
+			IL_0047: ldarg.3
+			IL_0048: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::depth
+			IL_004d: ret
 		} // end of method Box::.ctor
 
 		.method public hidebysig 
@@ -872,25 +876,27 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 35 (0x23)
+			// Code size: 41 (0x29)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.2
-			IL_0007: brtrue IL_0014
+			IL_0006: ldarg.0
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
+			IL_000c: ldarg.2
+			IL_000d: brtrue IL_001a
 
-			IL_000c: ldarg.1
-			IL_000d: box [System.Runtime]System.Double
-			IL_0012: starg.s height
+			IL_0012: ldarg.1
+			IL_0013: box [System.Runtime]System.Double
+			IL_0018: starg.s height
 
-			IL_0014: ldarg.0
-			IL_0015: ldarg.1
-			IL_0016: stfld float64 Modules.Classes_DefaultParameterValue_Constructor/Rectangle::width
-			IL_001b: ldarg.0
-			IL_001c: ldarg.2
-			IL_001d: stfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::height
-			IL_0022: ret
+			IL_001a: ldarg.0
+			IL_001b: ldarg.1
+			IL_001c: stfld float64 Modules.Classes_DefaultParameterValue_Constructor/Rectangle::width
+			IL_0021: ldarg.0
+			IL_0022: ldarg.2
+			IL_0023: stfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::height
+			IL_0028: ret
 		} // end of method Rectangle::.ctor
 
 		.method public hidebysig 
