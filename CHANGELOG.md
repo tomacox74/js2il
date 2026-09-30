@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.30 - 2026-09-30
+
 - fix(compiler): support private receiver field loads and stores when private
   members are accessed from nested class callables and constructors; verify
   28 pinned class-expression cases.
