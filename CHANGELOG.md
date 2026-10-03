@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262: add deterministic native-porting automation with versioned SQLite
+  evidence, bounded resumable screening, byte-faithful registration generation,
+  allowlisted patch validation, and a manually dispatched dry-run/publication
+  workflow.
 
 ## v0.12.30 - 2026-09-30
 

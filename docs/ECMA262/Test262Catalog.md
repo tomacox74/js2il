@@ -163,3 +163,39 @@ Merge rejects shards with different current provenance, is idempotent, and picks
 the latest timestamped result for overlapping explicit retries (a deterministic
 document tie-break handles identical timestamps). It does not union strict and
 non-strict evidence from different builds.
+
+## Native porting automation
+
+`scripts/test262/nativePorting.py` is the separate native-evidence and
+publication boundary for the merge-triggered porting design. MVP catalog rows
+are selection hints only; they are never copied into native acceptance.
+
+Create a bounded run and plan candidates from the current catalog:
+
+```sh
+python3 scripts/test262/nativePorting.py create-run \
+  --trigger-revision "$(git rev-parse HEAD)" \
+  --base-revision master --pin "$(git -C "$(npm run --silent test262:root)" rev-parse HEAD)"
+python3 scripts/test262/nativePorting.py plan --run-id <run> \
+  --catalog artifacts/test262/catalog.sqlite --area built-ins/Array
+```
+
+The trusted native screening host records every required variant with
+`record`. Outcomes are committed transactionally and include the fixture hash,
+upstream pin, compiler/runtime identity, harness/environment identity, phase,
+diagnostic and failure classification. `report` treats missing variants,
+timeouts and infrastructure errors as incomplete; only a complete pass for all
+required variants is accepted. The SQLite database and JSON report are safe to
+checkpoint and resume.
+
+`generate` copies accepted fixtures byte-for-byte and emits deterministic
+identifier-safe C# registrations. `validate-patch` allows only fixture,
+registration, coverage and changelog paths. `checkpoint` records the report
+digest and cursor before a workflow advances durable state. `publication-guard`
+refuses
+incomplete or failure-only batches and supports a dry-run. The manually
+dispatched `.github/workflows/test262-native-port.yml` keeps screening
+read-only; its publication job has separate contents/pull-request permissions
+and must never execute generated fixtures. Publication requires repository
+secrets `TEST262_PORTING_APP_ID` and `TEST262_PORTING_APP_PRIVATE_KEY` for a
+scoped GitHub App; without them a dry-run can still produce reports.

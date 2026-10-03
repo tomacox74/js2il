@@ -1,0 +1,219 @@
+name: Test262 native porting
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: Exact target revision to screen
+        required: false
+        default: master
+        type: string
+      area:
+        description: Supported Test262 folder or path filter
+        required: false
+        default: built-ins/Array
+        type: string
+      candidate_limit:
+        description: Candidate fixture limit
+        required: false
+        default: "20"
+        type: string
+      variant_limit:
+        description: Variant attempt limit
+        required: false
+        default: "40"
+        type: string
+      dry_run:
+        description: Never push or open a PR
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: test262-native-porting
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  screen:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    outputs:
+      run_id: ${{ steps.plan.outputs.run_id }}
+      report: ${{ steps.report.outputs.report }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.revision }}
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Validate limits
+        run: |
+          python3 - <<'PY'
+          import os
+          assert 1 <= int(os.environ["CANDIDATES"]) <= 20
+          assert 1 <= int(os.environ["VARIANTS"]) <= 40
+          PY
+        env:
+          CANDIDATES: ${{ inputs.candidate_limit }}
+          VARIANTS: ${{ inputs.variant_limit }}
+      - name: Build compiler once
+        run: dotnet build src/Cli/Jroc.csproj -c Release --nologo
+      - name: Bootstrap pinned corpus
+        run: npm run test262:bootstrap
+      - name: Restore catalog hints
+        run: |
+          mkdir -p artifacts/test262
+          python3 scripts/test262/catalog.py init --expand
+          python3 scripts/test262/catalog.py export --refresh-registrations
+      - name: Create durable native run
+        id: plan
+        run: |
+          TARGET="$(git rev-parse HEAD)"
+          UPSTREAM="$(npm run --silent test262:root)"
+          RUN_ID="native-${GITHUB_RUN_ID}"
+          python3 scripts/test262/nativePorting.py create-run \
+            --run-id "$RUN_ID" --trigger-revision "$TARGET" \
+            --base-revision "${{ github.event.before || 'unknown' }}" \
+            --pin "$(git -C "$UPSTREAM" rev-parse HEAD)" \
+            --candidate-limit "${{ inputs.candidate_limit }}" \
+            --accepted-limit "${{ inputs.candidate_limit }}" \
+            --variant-limit "${{ inputs.variant_limit }}" \
+            --time-limit 1200
+          python3 scripts/test262/nativePorting.py plan --run-id "$RUN_ID" \
+            --catalog artifacts/test262/catalog.sqlite --area "${{ inputs.area }}"
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+      - name: Screen candidates through the native harness
+        run: |
+          echo "Native screening is intentionally delegated to the checked-in harness."
+          echo "This job records only results returned by the trusted screening host."
+          if [ -f artifacts/test262/native-results.json ]; then
+            python3 - <<'PY'
+            import json, subprocess
+            results = json.load(open("artifacts/test262/native-results.json"))
+            for result in results:
+                command = [
+                    "python3", "scripts/test262/nativePorting.py", "record",
+                    "--run-id", "${{ steps.plan.outputs.run_id }}",
+                    "--path", result["path"], "--variant", result["variant"],
+                    "--pin", result["pin"],
+                    "--compiler-identity", result["compiler_identity"],
+                    "--harness-identity", result["harness_identity"],
+                    "--environment-identity", result["environment_identity"],
+                    "--phase", result.get("phase", "runtime"),
+                    "--diagnostic", result.get("diagnostic", ""),
+                    "--outcome", result["outcome"],
+                ]
+                if result.get("failure_class"):
+                    command += ["--failure-class", result["failure_class"]]
+                subprocess.run(command, check=True)
+            PY
+          else
+            echo "No native-results.json was supplied; recording a resumable empty attempt."
+          fi
+      - name: Export resumable report
+        id: report
+        if: always()
+        run: |
+          python3 scripts/test262/nativePorting.py report \
+            --run-id "${{ steps.plan.outputs.run_id }}" \
+            --output artifacts/test262/native-report.json
+          if jq -e '.complete_native_acceptance' artifacts/test262/native-report.json >/dev/null; then
+            UPSTREAM="$(npm run --silent test262:root)"
+            python3 scripts/test262/nativePorting.py generate \
+              --run-id "${{ steps.plan.outputs.run_id }}" \
+              --upstream "$UPSTREAM" --destination . \
+              --output artifacts/test262/native-generated.json
+            git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+            git diff --binary > artifacts/test262/native-patch.diff
+          fi
+          jq -r '
+            "## Test262 native porting batch\n\n" +
+            "- Batch: `" + .batch_id + "`\n" +
+            "- Trigger revision: `" + .trigger_revision + "`\n" +
+            "- Upstream pin: `" + .pin + "`\n" +
+            "- Candidates screened: " + (.counts.candidates|tostring) + "\n" +
+            "- Accepted: " + (.counts.accepted|tostring) + "\n" +
+            "- Deferred/incomplete: " + ((.counts.deferred + .counts.incomplete)|tostring) + "\n\n" +
+            "Native evidence and the machine-readable report are attached to the workflow run."
+          ' artifacts/test262/native-report.json > artifacts/test262/native-pr-body.md
+          echo "report=artifacts/test262/native-report.json" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test262-native-screening
+          path: artifacts/test262/native*
+          retention-days: 14
+
+  publish:
+    needs: screen
+    if: ${{ inputs.dry_run == false && needs.screen.result == 'success' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Create publication GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.TEST262_PORTING_APP_ID }}
+          private-key: ${{ secrets.TEST262_PORTING_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.revision }}
+          token: ${{ steps.app-token.outputs.token }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-native-screening
+          path: artifacts/test262
+      - name: Reject untrusted or incomplete publication
+        run: |
+          test -s artifacts/test262/native-report.json
+          test -s artifacts/test262/native-patch.diff
+          python3 - <<'PY'
+          import json
+          report=json.load(open("artifacts/test262/native-report.json"))
+          if not report.get("complete_native_acceptance"):
+              raise SystemExit("native acceptance is incomplete; report only")
+          PY
+      - name: Apply validated patch
+        run: |
+          git apply --check artifacts/test262/native-patch.diff
+          git apply artifacts/test262/native-patch.diff
+          python3 scripts/test262/nativePorting.py validate-patch \
+            --base-revision HEAD --output artifacts/test262/native-patch-validation.json
+      - name: Publish one deduplicated draft PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          BATCH_ID="$(jq -r .batch_id artifacts/test262/native-report.json)"
+          BRANCH="test262/native-porting-${BATCH_ID}"
+          if gh pr list --state open --search "test262: port validated native batch" \
+            --json number --jq 'length' | grep -q '[1-9]'; then
+            echo "An open native-porting publication already exists; refusing a duplicate."
+            exit 0
+          fi
+          git switch -c "$BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+          git commit -m "test262: port validated native batch ${BATCH_ID}"
+          git push --set-upstream origin "$BRANCH"
+          gh pr create --draft --base master --head "$BRANCH" \
+            --title "test262: port validated native batch ${BATCH_ID}" \
+            --body-file artifacts/test262/native-pr-body.md
