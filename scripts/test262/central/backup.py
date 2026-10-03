@@ -59,7 +59,14 @@ def restore(args):
         # Catalogue privileges from the archive reference only these dedicated roles.
         for role in ('test262_ingest','test262_coordinator','test262_reporter','anon','authenticated','service_role'):
             db.execute('DO $$ BEGIN IF NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname=\''+role+'\') THEN CREATE ROLE '+role+' NOLOGIN; END IF; END $$')
-    run(['pg_restore','--exit-on-error','--single-transaction','--no-owner',str(archive)],dict(os.environ,PGDATABASE=dsn))
+    # Credential fencing is part of the restore transaction: no committed window
+    # can expose restored enabled bindings/active authority, even if validation fails.
+    with tempfile.TemporaryDirectory(prefix='catalogue-restore-') as directory:
+        sql=Path(directory)/'restore.sql'
+        run(['pg_restore','--exit-on-error','--no-owner','--file',str(sql),str(archive)])
+        with sql.open('a') as stream:
+            stream.write("\nUPDATE test262.api_subjects SET enabled=false;\nUPDATE test262.schema_contract SET deployment_state='shadow',minimum_writer_epoch=minimum_writer_epoch+1;\n")
+        run(['psql','--no-psqlrc','--set','ON_ERROR_STOP=on','--single-transaction','--file',str(sql)],dict(os.environ,PGDATABASE=dsn))
     with psycopg.connect(dsn,autocommit=True) as db:
         for name,count in manifest['row_counts'].items():
             if not name.replace('_','').isalnum():
@@ -79,9 +86,8 @@ def restore(args):
         views=[r[0] for r in db.execute("SELECT table_name FROM information_schema.views WHERE table_schema='test262_reporting'")]
         for view in views:
             db.execute('SELECT * FROM test262_reporting."'+view+'" LIMIT 1').fetchall()
-        # Disable every restored credential binding and bump epoch before any access.
-        db.execute('UPDATE test262.api_subjects SET enabled=false')
-        db.execute("UPDATE test262.schema_contract SET deployment_state='shadow',minimum_writer_epoch=minimum_writer_epoch+1")
+        if db.execute('SELECT count(*) FROM test262.api_subjects WHERE enabled').fetchone()[0]:
+            raise ValueError('Restore credential fencing failed')
     print(json.dumps({'restore_verified':True,'view_count':len(views),'writer_bindings_disabled':True,'authority':'shadow'}))
 
 
