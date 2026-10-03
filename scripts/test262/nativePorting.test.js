@@ -214,7 +214,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     const upstream = path.join(cwd, 'upstream');
     const fixture = path.join(
       upstream,
-      'test/language/computed-property-names/basics/runtime-negative.js',
+      'test/language/computed-property-names/basics/string.js',
     );
     fs.mkdirSync(path.dirname(fixture), { recursive: true });
     const source = '/*---\nnegative:\n  phase: runtime\n  type: TypeError\n---*/\nthrow new TypeError();\n';
@@ -222,7 +222,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     const sha256 = crypto.createHash('sha256').update(fs.readFileSync(fixture)).digest('hex');
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/language/computed-property-names/basics/runtime-negative.js', sha256,
+      path: 'test/language/computed-property-names/basics/string.js', sha256,
       variants: ['strict'], results: { strict: 'matched' },
     }]);
     run([
@@ -230,7 +230,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
       '--area', 'language/computed-property-names/basics',
     ], cwd);
     record(cwd, runId, {
-      path: 'test/language/computed-property-names/basics/runtime-negative.js', sha256,
+      path: 'test/language/computed-property-names/basics/string.js', sha256,
       phase: 'runtime',
     });
     fs.mkdirSync(path.join(cwd, 'docs/ECMA262'), { recursive: true });
@@ -256,7 +256,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     ], cwd);
     const copied = path.join(
       cwd,
-      'tests/Jroc.Test262.Tests/language/computed-property-names/basics/JavaScript/runtime-negative.js',
+      'tests/Jroc.Test262.Tests/language/computed-property-names/basics/JavaScript/string.js',
     );
     assert.deepEqual(fs.readFileSync(copied), fs.readFileSync(fixture));
     const registration = fs.readFileSync(path.join(
@@ -264,6 +264,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
       'tests/Jroc.Test262.Tests/language/computed-property-names/basics/NativePortBatch_batch_1.cs',
     ), 'utf8');
     assert.match(registration, /allowUnhandledException: true/);
+    assert.match(registration, /public Task Test_string\(\)/);
     assert.match(
       fs.readFileSync(path.join(cwd, 'docs/ECMA262/Test262Conformance.md'), 'utf8'),
       /Language syntax and semantics \| 11 \| 1 \| 8 \| 20 \| \*\*55\.00%\*\*/,
