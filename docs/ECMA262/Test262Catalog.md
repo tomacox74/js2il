@@ -166,9 +166,13 @@ non-strict evidence from different builds.
 
 ## Native porting automation
 
-`scripts/test262/nativePorting.py` is the separate native-evidence and
+`scripts/test262/nativePorting.py` and
+`scripts/test262/NativeScreeningHost/` are the separate native-evidence and
 publication boundary for the merge-triggered porting design. MVP catalog rows
-are selection hints only; they are never copied into native acceptance.
+are selection hints only; they are never copied into native acceptance. The
+first release intentionally supports `test/built-ins/Array` and its subfolders;
+other areas are rejected at planning time until their metadata and dependency
+shapes are implemented.
 
 Create a bounded run and plan candidates from the current catalog:
 
@@ -180,22 +184,45 @@ python3 scripts/test262/nativePorting.py plan --run-id <run> \
   --catalog artifacts/test262/catalog.sqlite --area built-ins/Array
 ```
 
-The trusted native screening host records every required variant with
-`record`. Outcomes are committed transactionally and include the fixture hash,
-upstream pin, compiler/runtime identity, harness/environment identity, phase,
-diagnostic and failure classification. `report` treats missing variants,
-timeouts and infrastructure errors as incomplete; only a complete pass for all
-required variants is accepted. The SQLite database and JSON report are safe to
-checkpoint and resume.
+The trusted C# screening host reuses `Test262SharedAssertHarness`, runs each
+variant in a killable worker process, and records every completed attempt.
+Strict and non-strict variants remain distinct, and runtime-negative tests must
+match their declared error type. Module and compile-negative fixtures are
+reported as explicit harness gaps in this first release rather than accepted
+without exact phase/type evidence. Outcomes are committed transactionally and
+include the fixture hash, upstream pin, compiler/runtime identity,
+harness/environment identity, phase, diagnostic and failure classification.
+The variant and active-execution-time budgets resume from the SQLite
+checkpoint; idle time between workflow runs does not consume the time budget.
+`report` keeps pending, failed, unsupported and infrastructure outcomes
+separate and groups their representative paths and diagnostics.
 
 `generate` copies accepted fixtures byte-for-byte and emits deterministic
-identifier-safe C# registrations. `validate-patch` allows only fixture,
-registration, coverage and changelog paths. `checkpoint` records the report
-digest and cursor before a workflow advances durable state. `publication-guard`
-refuses
-incomplete or failure-only batches and supports a dry-run. The manually
-dispatched `.github/workflows/test262-native-port.yml` keeps screening
-read-only; its publication job has separate contents/pull-request permissions
-and must never execute generated fixtures. Publication requires repository
-secrets `TEST262_PORTING_APP_ID` and `TEST262_PORTING_APP_PRIVATE_KEY` for a
-scoped GitHub App; without them a dry-run can still produce reports.
+identifier-safe C# registrations, then updates the overall, built-in and Array
+coverage rows plus the changelog. `validate-patch` requires the changed path set
+and every generated file hash to exactly match the generation manifest.
+`checkpoint` records the report digest and cursor before durable state is
+uploaded. Empty and failure-only runs still publish their database and report.
+
+The manually dispatched `.github/workflows/test262-native-port.yml` restores
+only same-repository artifacts from the catalog workflow and its own prior
+branch runs. Screening has read-only permissions. Its separate publication job
+verifies the producing workflow/run, exact target revision, artifact and patch
+digests, and that `master` has not advanced; it never executes generated
+fixtures with write credentials. It permits one open
+`test262/native-porting-*` PR repository-wide, reuses an unchanged batch branch,
+and refuses to overwrite a changed branch or recreate a closed batch.
+
+Publication requires a repository-scoped GitHub App installed on this
+repository with **Contents: Read and write** and **Pull requests: Read and
+write** permissions. Store its application ID and private key as
+`TEST262_PORTING_APP_ID` and `TEST262_PORTING_APP_PRIVATE_KEY`. The App identity
+is used so the pushed branch triggers normal PR workflows. No secret is needed
+for the default dry-run, which can only upload reports and resumable state.
+
+The machine-readable report contains run/batch/base/pin provenance, candidate
+and attempt counts, accepted and budget-deferred paths, incomplete paths, and
+failure clusters with path, variant, phase and diagnostic. The generation and
+patch-validation documents add exact output paths, hashes and the binary patch
+digest; `native-manifest.json` binds those files to the originating workflow
+run and target revision.
