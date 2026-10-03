@@ -56,7 +56,7 @@ db.commit()
 function record(cwd, runId, values = {}) {
   return run([
     'record', '--run-id', runId,
-    '--path', values.path || 'test/built-ins/Array/a.js',
+    '--path', values.path || 'test/language/expressions/assignment/dstr/a.js',
     '--variant', values.variant || 'strict',
     '--fixture-sha256', values.sha256 || 'hash',
     '--pin', values.pin || 'pin',
@@ -77,31 +77,35 @@ test('planning uses only complete current-provenance unregistered passes', () =>
     ]);
     const catalog = createCatalog(cwd, [
       {
-        path: 'test/built-ins/Array/a.js', sha256: 'a',
+        path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'a',
         variants: ['strict', 'non-strict'],
         results: { strict: 'matched', 'non-strict': 'matched' },
       },
       {
-        path: 'test/built-ins/Array/incomplete.js', sha256: 'b',
+        path: 'test/language/expressions/assignment/dstr/incomplete.js', sha256: 'b',
         variants: ['strict', 'non-strict'], results: { strict: 'matched' },
       },
       {
-        path: 'test/built-ins/Array/failed.js', sha256: 'c',
+        path: 'test/language/expressions/assignment/dstr/failed.js', sha256: 'c',
         variants: ['strict'], results: { strict: 'unexpected' },
       },
       {
-        path: 'test/built-ins/Array/registered.js', sha256: 'd',
+        path: 'test/language/expressions/assignment/dstr/registered.js', sha256: 'd',
         variants: ['strict'], results: { strict: 'matched' }, registered: true,
       },
       {
-        path: 'test/built-ins/Object/other.js', sha256: 'e',
+        path: 'test/language/expressions/call/other.js', sha256: 'e',
         variants: ['strict'], results: { strict: 'matched' },
       },
     ]);
     const planned = run([
-      'plan', '--run-id', runId, '--catalog', catalog, '--area', 'built-ins/Array',
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
     ], cwd);
-    assert.deepEqual(planned.paths, ['test/built-ins/Array/a.js']);
+    assert.deepEqual(
+      planned.paths,
+      ['test/language/expressions/assignment/dstr/a.js'],
+    );
     assert.equal(planned.catalog_provenance, 'current');
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
@@ -113,11 +117,14 @@ test('acceptance requires every variant under one native provenance', () => {
   try {
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/built-ins/Array/a.js', sha256: 'hash',
+      path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'hash',
       variants: ['strict', 'non-strict'],
       results: { strict: 'matched', 'non-strict': 'matched' },
     }]);
-    run(['plan', '--run-id', runId, '--catalog', catalog, '--area', 'built-ins/Array'], cwd);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
+    ], cwd);
     record(cwd, runId, { variant: 'strict' });
     assert.equal(run(['report', '--run-id', runId], cwd).counts.incomplete, 1);
     record(cwd, runId, { variant: 'non-strict', compiler: 'other-compiler' });
@@ -126,7 +133,10 @@ test('acceptance requires every variant under one native provenance', () => {
     assert.equal(report.failure_clusters['infrastructure-error'][0].phase, 'provenance');
     record(cwd, runId, { variant: 'non-strict' });
     report = run(['report', '--run-id', runId], cwd);
-    assert.deepEqual(report.accepted, ['test/built-ins/Array/a.js']);
+    assert.deepEqual(
+      report.accepted,
+      ['test/language/expressions/assignment/dstr/a.js'],
+    );
     assert.equal(report.complete_native_acceptance, true);
     assert.equal(report.counts.attempts, 3);
   } finally {
@@ -139,16 +149,22 @@ test('failure-only batches remain reportable and cannot generate', () => {
   try {
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/built-ins/Array/a.js', sha256: 'hash',
+      path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'hash',
       variants: ['strict'], results: { strict: 'matched' },
     }]);
-    run(['plan', '--run-id', runId, '--catalog', catalog, '--area', 'built-ins/Array'], cwd);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
+    ], cwd);
     record(cwd, runId, {
       outcome: 'unsupported', failureClass: 'harness-gap', phase: 'metadata',
     });
     const report = run(['report', '--run-id', runId], cwd);
     assert.equal(report.complete_native_acceptance, false);
-    assert.equal(report.failure_clusters['harness-gap'][0].path, 'test/built-ins/Array/a.js');
+    assert.equal(
+      report.failure_clusters['harness-gap'][0].path,
+      'test/language/expressions/assignment/dstr/a.js',
+    );
     assert.throws(() => run([
       'generate', '--run-id', runId, '--upstream', cwd, '--destination', cwd,
     ], cwd), /freshly accepted fixture/);
@@ -161,27 +177,34 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
     const upstream = path.join(cwd, 'upstream');
-    const fixture = path.join(upstream, 'test/built-ins/Array/runtime-negative.js');
+    const fixture = path.join(
+      upstream,
+      'test/language/expressions/assignment/dstr/runtime-negative.js',
+    );
     fs.mkdirSync(path.dirname(fixture), { recursive: true });
     const source = '/*---\nnegative:\n  phase: runtime\n  type: TypeError\n---*/\nthrow new TypeError();\n';
     fs.writeFileSync(fixture, source);
     const sha256 = crypto.createHash('sha256').update(fs.readFileSync(fixture)).digest('hex');
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/built-ins/Array/runtime-negative.js', sha256,
+      path: 'test/language/expressions/assignment/dstr/runtime-negative.js', sha256,
       variants: ['strict'], results: { strict: 'matched' },
     }]);
-    run(['plan', '--run-id', runId, '--catalog', catalog, '--area', 'built-ins/Array'], cwd);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
+    ], cwd);
     record(cwd, runId, {
-      path: 'test/built-ins/Array/runtime-negative.js', sha256,
+      path: 'test/language/expressions/assignment/dstr/runtime-negative.js', sha256,
       phase: 'runtime',
     });
     fs.mkdirSync(path.join(cwd, 'docs/ECMA262'), { recursive: true });
     fs.mkdirSync(path.join(cwd, 'tests/Jroc.Test262.Tests'), { recursive: true });
     fs.writeFileSync(path.join(cwd, 'docs/ECMA262/Test262Conformance.md'), [
-      '| Built-in objects and APIs | 10 | 1 | 9 | 20 | **50.00%** |',
+      '| Language syntax and semantics | 10 | 1 | 9 | 20 | **50.00%** |',
       '| **Total** | 20 | 1 | 19 | 40 | **50.00%** |',
-      '| `Array` | 5 | 0 | 5 | 10 | **50.00%** |',
+      '| `expressions` | 5 | 0 | 5 | 10 | **50.00%** |',
+      '| `assignment` | 4 | 0 | 6 | 10 | **40.00%** |',
       '',
     ].join('\n'));
     fs.writeFileSync(path.join(cwd, 'docs/ECMA262/Index.md'), [
@@ -198,16 +221,18 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
       '--destination', cwd, '--output', output,
     ], cwd);
     const copied = path.join(
-      cwd, 'tests/Jroc.Test262.Tests/built-ins/Array/JavaScript/runtime-negative.js',
+      cwd,
+      'tests/Jroc.Test262.Tests/language/expressions/assignment/dstr/JavaScript/runtime-negative.js',
     );
     assert.deepEqual(fs.readFileSync(copied), fs.readFileSync(fixture));
     const registration = fs.readFileSync(path.join(
-      cwd, 'tests/Jroc.Test262.Tests/built-ins/Array/NativePortBatch_batch_1.cs',
+      cwd,
+      'tests/Jroc.Test262.Tests/language/expressions/assignment/dstr/NativePortBatch_batch_1.cs',
     ), 'utf8');
     assert.match(registration, /allowUnhandledException: true/);
     assert.match(
       fs.readFileSync(path.join(cwd, 'docs/ECMA262/Test262Conformance.md'), 'utf8'),
-      /Built-in objects and APIs \| 11 \| 1 \| 8 \| 20 \| \*\*55\.00%\*\*/,
+      /Language syntax and semantics \| 11 \| 1 \| 8 \| 20 \| \*\*55\.00%\*\*/,
     );
     assert.equal(generated.source_fidelity, true);
   } finally {
@@ -245,11 +270,13 @@ test('generation rejects identifier collisions before publication', () => {
   try {
     const upstream = path.join(cwd, 'upstream');
     const fixtures = ['a-b.js', 'a_b.js'].map((name) => {
-      const fixture = path.join(upstream, 'test/built-ins/Array', name);
+      const fixture = path.join(
+        upstream, 'test/language/expressions/assignment/dstr', name,
+      );
       fs.mkdirSync(path.dirname(fixture), { recursive: true });
       fs.writeFileSync(fixture, '/*---\n---*/\n');
       return {
-        path: `test/built-ins/Array/${name}`,
+        path: `test/language/expressions/assignment/dstr/${name}`,
         sha256: crypto.createHash('sha256').update(fs.readFileSync(fixture)).digest('hex'),
         variants: ['strict'],
         results: { strict: 'matched' },
@@ -257,7 +284,10 @@ test('generation rejects identifier collisions before publication', () => {
     });
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, fixtures);
-    run(['plan', '--run-id', runId, '--catalog', catalog, '--area', 'built-ins/Array'], cwd);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
+    ], cwd);
     for (const fixture of fixtures) {
       record(cwd, runId, { path: fixture.path, sha256: fixture.sha256 });
     }
@@ -278,12 +308,13 @@ test('unchanged harness capabilities do not retry known harness gaps', () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
     const catalog = createCatalog(cwd, [{
-      path: 'test/built-ins/Array/a.js', sha256: 'hash',
+      path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'hash',
       variants: ['strict'], results: { strict: 'matched' },
     }]);
     const first = createRun(cwd);
     run([
-      'plan', '--run-id', first, '--catalog', catalog, '--area', 'built-ins/Array',
+      'plan', '--run-id', first, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
       '--capability-identity', 'capability-1',
     ], cwd);
     record(cwd, first, {
@@ -294,7 +325,8 @@ test('unchanged harness capabilities do not retry known harness gaps', () => {
       '--trigger-revision', 'head-2', '--base-revision', 'head', '--pin', 'pin',
     ], cwd).run_id;
     run([
-      'plan', '--run-id', second, '--catalog', catalog, '--area', 'built-ins/Array',
+      'plan', '--run-id', second, '--catalog', catalog,
+      '--area', 'language/expressions/assignment/dstr',
       '--capability-identity', 'capability-1',
     ], cwd);
     const screenPlan = path.join(cwd, 'screen-plan.json');

@@ -170,9 +170,10 @@ non-strict evidence from different builds.
 `scripts/test262/NativeScreeningHost/` are the separate native-evidence and
 publication boundary for the merge-triggered porting design. MVP catalog rows
 are selection hints only; they are never copied into native acceptance. The
-first release intentionally supports `test/built-ins/Array` and its subfolders;
-other areas are rejected at planning time until their metadata and dependency
-shapes are implemented.
+first release intentionally supports
+`test/language/expressions/assignment/dstr` and its subfolders, an area with
+unregistered candidates in the pinned catalog; other areas are rejected at
+planning time until their metadata and dependency shapes are implemented.
 
 Create a bounded run and plan candidates from the current catalog:
 
@@ -181,7 +182,8 @@ python3 scripts/test262/nativePorting.py create-run \
   --trigger-revision "$(git rev-parse HEAD)" \
   --base-revision master --pin "$(git -C "$(npm run --silent test262:root)" rev-parse HEAD)"
 python3 scripts/test262/nativePorting.py plan --run-id <run> \
-  --catalog artifacts/test262/catalog.sqlite --area built-ins/Array
+  --catalog artifacts/test262/catalog.sqlite \
+  --area language/expressions/assignment/dstr
 ```
 
 The trusted C# screening host reuses `Test262SharedAssertHarness`, runs each

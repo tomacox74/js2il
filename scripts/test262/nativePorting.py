@@ -25,7 +25,7 @@ FAILURE_CLASSES = {
     "infrastructure-error",
     "unresolved",
 }
-SUPPORTED_AREA = "built-ins/Array"
+SUPPORTED_AREA = "language/expressions/assignment/dstr"
 
 
 def canonical(value: Any) -> str:
@@ -699,7 +699,12 @@ def update_table_row(text: str, label: str, increment: int) -> str:
 def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list[str]:
     conformance = root / "docs/ECMA262/Test262Conformance.md"
     text = conformance.read_text(encoding="utf-8")
-    for label in ("Built-in objects and APIs", "**Total**", "`Array`"):
+    for label in (
+        "Language syntax and semantics",
+        "**Total**",
+        "`expressions`",
+        "`assignment`",
+    ):
         text = update_table_row(text, label, accepted_count)
     conformance.write_text(text, encoding="utf-8")
 
@@ -735,7 +740,8 @@ def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list
     marker = f"native batch `{batch_id}`"
     if marker not in changelog_text:
         insertion = (
-            f"- test262: verify {accepted_count} additional pinned Array fixtures "
+            f"- test262: verify {accepted_count} additional pinned assignment "
+            f"destructuring fixtures "
             f"from native batch `{batch_id}`.\n"
         )
         changelog_text = changelog_text.replace(

@@ -9,9 +9,9 @@ on:
         default: master
         type: string
       area:
-        description: built-ins/Array or one of its subfolders
+        description: Assignment destructuring folder or one of its subfolders
         required: false
-        default: built-ins/Array
+        default: language/expressions/assignment/dstr
         type: string
       candidate_limit:
         description: Candidate fixture limit (maximum 500)
@@ -84,8 +84,9 @@ jobs:
           python3 - <<'PY'
           import os
           area = os.environ["AREA"].strip("/")
-          if area != "built-ins/Array" and not area.startswith("built-ins/Array/"):
-              raise SystemExit("The first release supports only built-ins/Array.")
+          supported = "language/expressions/assignment/dstr"
+          if area != supported and not area.startswith(supported + "/"):
+              raise SystemExit(f"The first release supports only {supported}.")
           candidates = int(os.environ["CANDIDATES"])
           accepted = int(os.environ["ACCEPTED"])
           assert 1 <= candidates <= 500
