@@ -49,7 +49,8 @@ fixtures=json.loads(${JSON.stringify(JSON.stringify(fixtures))})
 for fixture in fixtures:
     db.execute("INSERT INTO fixtures VALUES(?,?,?,?,?,?)",
       (fixture.get("provenance","current"),fixture["path"],fixture["sha256"],
-       json.dumps(fixture["variants"]),fixture.get("state","runnable"),"[]"))
+       json.dumps(fixture["variants"]),fixture.get("state","runnable"),
+       json.dumps(fixture.get("reasons",[]))))
     for variant, verdict in fixture.get("results",{}).items():
         db.execute("INSERT INTO results VALUES(?,?,?,?,?,?,?)",
           (fixture.get("provenance","current"),fixture["path"],variant,verdict,"kind","{}",1))
@@ -76,7 +77,141 @@ function record(cwd, runId, values = {}) {
   ], cwd);
 }
 
-test('planning uses complete single-provenance unregistered pass hints', () => {
+function queryState(cwd, query) {
+  return JSON.parse(execFileSync('python3', ['-c', `
+import json, sqlite3
+db=sqlite3.connect(${JSON.stringify(path.join(cwd, 'native.sqlite'))})
+row=db.execute(${JSON.stringify(query)}).fetchone()
+print(json.dumps(None if row is None else list(row)))
+`], { cwd, encoding: 'utf8' }));
+}
+
+test('validated range reconciliation skips generated-only merges and detects components', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-range-'));
+  try {
+    execFileSync('git', ['init', '-q'], { cwd });
+    execFileSync('git', ['config', 'user.email', 'test@example.com'], { cwd });
+    execFileSync('git', ['config', 'user.name', 'Test'], { cwd });
+    fs.mkdirSync(path.join(cwd, 'src/Compiler/IR'), { recursive: true });
+    fs.writeFileSync(path.join(cwd, 'src/Compiler/IR/Callable.cs'), 'one\n');
+    execFileSync('git', ['add', 'src/Compiler/IR/Callable.cs'], { cwd });
+    execFileSync('git', ['commit', '-qm', 'initial'], { cwd });
+    fs.writeFileSync(path.join(cwd, 'src/Compiler/IR/Callable.cs'), 'two\n');
+    execFileSync('git', ['commit', '-qam', 'callable change'], { cwd });
+    const target = execFileSync('git', ['rev-parse', 'HEAD'], { cwd, encoding: 'utf8' }).trim();
+    const range = run([
+      'resolve-range', '--repository', cwd, '--target', target,
+    ], cwd);
+    assert.equal(range.screen, true);
+    assert.ok(range.components.includes('callable-lowering'));
+    assert.equal(range.attribution, 'bounded-baseline-first-run');
+
+    fs.mkdirSync(path.join(cwd, 'tests/Jroc.Test262.Tests/x'), { recursive: true });
+    fs.writeFileSync(path.join(cwd, 'tests/Jroc.Test262.Tests/x/Test.cs'), 'generated\n');
+    execFileSync('git', ['add', 'tests/Jroc.Test262.Tests/x/Test.cs'], { cwd });
+    execFileSync('git', ['commit', '-qm', 'generated batch'], { cwd });
+    const generatedTarget = execFileSync(
+      'git', ['rev-parse', 'HEAD'], { cwd, encoding: 'utf8' }).trim();
+    execFileSync('python3', ['-c', `
+import sqlite3
+db=sqlite3.connect(${JSON.stringify(path.join(cwd, 'native.sqlite'))})
+db.execute("UPDATE automation_state SET last_reconciled_revision=?",(${JSON.stringify(target)},))
+db.commit()
+`], { cwd });
+    const generated = run([
+      'resolve-range', '--repository', cwd, '--target', generatedTarget,
+    ], cwd);
+    assert.equal(generated.generated_only, true);
+    assert.equal(generated.screen, false);
+
+    fs.mkdirSync(path.join(cwd, 'docs'), { recursive: true });
+    fs.writeFileSync(path.join(cwd, 'docs/async-promises.md'), 'documentation\n');
+    execFileSync('git', ['add', 'docs/async-promises.md'], { cwd });
+    execFileSync('git', ['commit', '-qm', 'docs only'], { cwd });
+    const docsTarget = execFileSync(
+      'git', ['rev-parse', 'HEAD'], { cwd, encoding: 'utf8' }).trim();
+    execFileSync('python3', ['-c', `
+import sqlite3
+db=sqlite3.connect(${JSON.stringify(path.join(cwd, 'native.sqlite'))})
+db.execute("UPDATE automation_state SET last_reconciled_revision=?",(${JSON.stringify(generatedTarget)},))
+db.commit()
+`], { cwd });
+    const docs = run([
+      'resolve-range', '--repository', cwd, '--target', docsTarget,
+    ], cwd);
+    assert.deepEqual(docs.components, []);
+    assert.equal(docs.screen, false);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('native intake admits supported MVP blockers and excludes policy blockers', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    const runId = createRun(cwd);
+    const catalog = createCatalog(cwd, [
+      {
+        path: 'test/language/computed-property-names/basics/async.js',
+        sha256: 'async', variants: ['strict', 'non-strict'], state: 'blocked',
+        reasons: [{ code: 'async-requirement' }],
+        results: {},
+      },
+      {
+        path: 'test/language/computed-property-names/basics/policy.js',
+        sha256: 'policy', variants: ['strict'], state: 'blocked',
+        reasons: [{ code: 'skipped-by-policy' }],
+        results: {},
+      },
+    ]);
+    const planned = run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/computed-property-names/basics',
+      '--components', 'native-capability',
+    ], cwd);
+    assert.deepEqual(planned.paths, [
+      'test/language/computed-property-names/basics/async.js',
+    ]);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('component-aware planning reserves twenty percent for rotating fallback', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    const runId = createRun(cwd, [
+      '--candidate-limit', '10', '--accepted-limit', '10',
+    ]);
+    const fixtures = [];
+    for (let index = 0; index < 8; index++) {
+      fixtures.push({
+        path: `test/built-ins/RegExp/retry-${index}.js`,
+        sha256: `retry-${index}`, variants: ['strict'],
+        results: { strict: 'unexpected' },
+      });
+    }
+    for (let index = 0; index < 4; index++) {
+      fixtures.push({
+        path: `test/built-ins/RegExp/fallback-${index}.js`,
+        sha256: `fallback-${index}`, variants: ['strict'],
+        results: { strict: 'matched' },
+      });
+    }
+    const catalog = createCatalog(cwd, fixtures);
+    const planned = run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'built-ins/RegExp', '--components', 'regex-runtime',
+    ], cwd);
+    assert.equal(planned.candidate_count, 10);
+    assert.equal(planned.paths.filter((value) => value.includes('/retry-')).length, 8);
+    assert.equal(planned.paths.filter((value) => value.includes('/fallback-')).length, 2);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('planning prioritizes failure hints and fills with complete pass hints', () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
     const runId = createRun(cwd, [
@@ -122,6 +257,7 @@ test('planning uses complete single-provenance unregistered pass hints', () => {
       planned.paths,
       [
         'test/language/computed-property-names/basics/a.js',
+        'test/language/computed-property-names/basics/failed.js',
         'test/language/computed-property-names/basics/historical.js',
       ],
     );
@@ -167,7 +303,57 @@ test('acceptance requires every variant under one native provenance', () => {
       'plan', '--run-id', runId, '--catalog', catalog,
       '--area', 'language/computed-property-names/basics',
     ], cwd);
-    record(cwd, runId, { variant: 'strict' });
+    record(cwd, runId, { variant: 'strict'     });
+
+    test('reconciliation cursor advances only after explicit post-upload finalization', () => {
+      const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+      try {
+        const rangePath = path.join(cwd, 'range.json');
+        fs.writeFileSync(rangePath, JSON.stringify({
+          target_revision: 'validated-head',
+          base_revision: 'prior-head',
+          attribution: 'validated-range',
+          changed_files: ['src/Compiler/IR/Callable.cs'],
+          components: ['callable-lowering'],
+        }));
+        const runId = createRun(cwd);
+        const catalog = createCatalog(cwd, [{
+          path: 'test/language/computed-property-names/basics/a.js', sha256: 'hash',
+          variants: ['strict'], results: { strict: 'unexpected' },
+        }]);
+        run([
+          'plan', '--run-id', runId, '--catalog', catalog,
+          '--area', 'language/computed-property-names/basics',
+          '--components', 'callable-lowering', '--range', rangePath,
+        ], cwd);
+        record(cwd, runId);
+        run([
+          'record-stage', '--run-id', runId, '--stage', 'screening', '--seconds', '2.5',
+        ], cwd);
+        assert.equal(
+          run(['report', '--run-id', runId], cwd).metrics.stage_seconds.screening,
+          2.5,
+        );
+        assert.deepEqual(
+          queryState(cwd,
+            'SELECT last_reconciled_revision,fallback_cursor FROM automation_state WHERE state_id=1'),
+          [null, 0],
+        );
+        assert.deepEqual(
+          queryState(cwd, 'SELECT COUNT(*) FROM pending_work WHERE status="pending"'),
+          [1],
+        );
+        run(['finalize-reconciliation', '--run-id', runId], cwd);
+        assert.deepEqual(
+          queryState(cwd,
+            'SELECT last_reconciled_revision FROM automation_state WHERE state_id=1'),
+          ['validated-head'],
+        );
+        assert.deepEqual(queryState(cwd, 'SELECT COUNT(*) FROM pending_work'), [0]);
+      } finally {
+        fs.rmSync(cwd, { recursive: true, force: true });
+      }
+    });
     assert.equal(run(['report', '--run-id', runId], cwd).counts.incomplete, 1);
     assert.throws(
       () => record(cwd, runId, { variant: 'non-strict', compiler: 'other-compiler' }),
@@ -275,6 +461,11 @@ test('failure-only batches remain reportable and cannot generate', () => {
       report.failure_clusters['harness-gap'][0].path,
       'test/language/computed-property-names/basics/a.js',
     );
+    run(['finalize-reconciliation', '--run-id', runId], cwd);
+    assert.deepEqual(
+      queryState(cwd, 'SELECT status FROM pending_work WHERE path LIKE "%/a.js"'),
+      ['deferred'],
+    );
     assert.throws(() => run([
       'generate', '--run-id', runId, '--upstream', cwd, '--destination', cwd,
     ], cwd), /freshly accepted fixture/);
@@ -345,6 +536,67 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
       /Language syntax and semantics \| 11 \| 1 \| 8 \| 20 \| \*\*55\.00%\*\*/,
     );
     assert.equal(generated.source_fidelity, true);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('generation preserves module sibling dependencies without registering support files', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    const upstream = path.join(cwd, 'upstream');
+    const folder = path.join(upstream, 'test/language/module-code');
+    fs.mkdirSync(folder, { recursive: true });
+    const source = '/*--- flags: [module] ---*/\nimport { value } from "./dependency_FIXTURE.js";\nassert.sameValue(value, 42);\n';
+    const dependency = 'export const value = 42;\n';
+    fs.writeFileSync(path.join(folder, 'entry.js'), source);
+    fs.writeFileSync(path.join(folder, 'dependency_FIXTURE.js'), dependency);
+    const sha256 = crypto.createHash('sha256').update(source).digest('hex');
+    const runId = createRun(cwd);
+    const catalog = createCatalog(cwd, [{
+      path: 'test/language/module-code/entry.js', sha256,
+      variants: ['module'], results: { module: 'unexpected' },
+    }]);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/module-code', '--components', 'native-capability',
+    ], cwd);
+    record(cwd, runId, {
+      path: 'test/language/module-code/entry.js', variant: 'module', sha256,
+    });
+    fs.mkdirSync(path.join(cwd, 'docs/ECMA262'), { recursive: true });
+    fs.mkdirSync(path.join(cwd, 'tests/Jroc.Test262.Tests'), { recursive: true });
+    fs.writeFileSync(path.join(cwd, 'docs/ECMA262/Test262Conformance.md'), [
+      '| Language syntax and semantics | 10 | 0 | 10 | 20 | **50.00%** |',
+      '| **Total** | 20 | 0 | 20 | 40 | **50.00%** |',
+      '| `module-code` | 0 | 0 | 10 | 10 | **0.00%** |',
+      '',
+    ].join('\n'));
+    fs.writeFileSync(path.join(cwd, 'docs/ECMA262/Index.md'), [
+      '| Verified passing | 20 | **50.00%** |',
+      '| Explicitly excluded due to known unsupported behavior | 0 | 0.00% |',
+      '| Not yet verified | 20 | 50.00% |',
+      '| **Total applicable ECMA-262 tests** | **40** | **100.00%** |',
+      '',
+    ].join('\n'));
+    fs.writeFileSync(path.join(cwd, 'CHANGELOG.md'), '## Unreleased\n\n');
+    const generated = run([
+      'generate', '--run-id', runId, '--upstream', upstream,
+      '--destination', cwd,
+    ], cwd);
+    const targetFolder = path.join(
+      cwd, 'tests/Jroc.Test262.Tests/language/module-code/JavaScript');
+    assert.equal(fs.readFileSync(path.join(targetFolder, 'entry.js'), 'utf8'), source);
+    assert.equal(
+      fs.readFileSync(path.join(targetFolder, 'dependency_FIXTURE.js'), 'utf8'),
+      dependency,
+    );
+    const registration = fs.readFileSync(path.join(
+      cwd, 'tests/Jroc.Test262.Tests/language/module-code/NativePortBatch_batch_1.cs',
+    ), 'utf8');
+    assert.match(registration, /DisplayName = "entry"/);
+    assert.doesNotMatch(registration, /dependency_FIXTURE/);
+    assert.ok(generated.copied.some((file) => file.endsWith('dependency_FIXTURE.js')));
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }

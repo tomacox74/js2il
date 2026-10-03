@@ -38,6 +38,19 @@ function resolveHost() {
 
 const host = resolveHost();
 
+test('screening host publishes its capability matrix', () => {
+  const capabilities = JSON.parse(execFileSync(
+    'dotnet', [host, '--capabilities'], { cwd: repository, encoding: 'utf8' },
+  ));
+  assert.equal(capabilities.flags.async, true);
+  assert.equal(capabilities.flags.raw, false);
+  assert.equal(capabilities.dependencies.sibling_files, true);
+  assert.equal(capabilities.isolation.agent_cleanup, true);
+  assert.ok(capabilities.includes.includes('atomicsHelper.js'));
+  assert.ok(capabilities.includes.includes('asyncHelpers.js'));
+  assert.equal(capabilities.flags.module, 'static-syntax-only');
+});
+
 function run(args, cwd) {
   return JSON.parse(execFileSync(
     'python3',
@@ -76,18 +89,63 @@ db.commit()
 function createUpstream(cwd) {
   const directory = path.join(cwd, 'test', area);
   fs.mkdirSync(directory, { recursive: true });
-  const sources = {
-    'aa-basic.js': '/*---\ndescription: compiles and runs silently\n---*/\nvar value = { ["a"]: 1 };\nif (value.a !== 1) { throw new Error("bad"); }\n',
-    'module-fixture.js': '/*---\nflags: [module]\n---*/\nexport var value = 1;\n',
-    'parse-negative.js':
-      '/*---\nnegative:\n  phase: parse\n  type: SyntaxError\n---*/\nvar = ;\n',
-  };
-  const fixtures = Object.entries(sources).map(([name, source]) => {
+  const sources = [
+    {
+      name: 'aa-basic.js',
+      source: '/*---\ndescription: compiles and runs silently\n---*/\nvar value = { ["a"]: 1 };\nif (value.a !== 1) { throw new Error("bad"); }\n',
+      variants: ['strict', 'non-strict'],
+    },
+    {
+      name: 'async-fixture.js',
+      source: '/*---\nflags:\n  - async\nincludes: [asyncHelpers.js]\n---*/\nPromise.resolve(42).then(function(value) { assert.sameValue(value, 42); $DONE(); }, $DONE);\n',
+      variants: ['strict', 'non-strict'],
+    },
+    {
+      name: 'agent-fixture.js',
+      source: `/*---
+flags: [async]
+includes:
+  - atomicsHelper.js
+---*/
+$262.agent.start("$262.agent.report('ready'); $262.agent.leaving();");
+$262.agent.getReportAsync().then(function(value) {
+  assert.sameValue(value, "ready");
+  $DONE();
+}, $DONE);
+`,
+      variants: ['strict', 'non-strict'],
+    },
+    {
+      name: 'module-fixture.js',
+      source: '/*---\nflags: [module]\n---*/\nimport { value } from \"./dependency_FIXTURE.js\";\nassert.sameValue(value, 42);\n',
+      variants: ['module'],
+    },
+    {
+      name: 'module-goal-only.js',
+      source: '/*---\nflags: [module]\n---*/\nassert.sameValue(this, undefined);\n',
+      variants: ['module'],
+    },
+    {
+      name: 'module-missing-dependency.js',
+      source: '/*---\nflags: [module]\n---*/\nimport "./missing_FIXTURE.js";\n',
+      variants: ['module'],
+    },
+    {
+      name: 'parse-negative.js',
+      source: '/*---\nnegative:\n  phase: parse\n  type: SyntaxError\n---*/\nvar = ;\n',
+      variants: ['strict', 'non-strict'],
+    },
+  ];
+  fs.writeFileSync(
+    path.join(directory, 'dependency_FIXTURE.js'),
+    'export const value = 42;\n',
+  );
+  const fixtures = sources.map(({ name, source, variants }) => {
     fs.writeFileSync(path.join(directory, name), source);
     return {
       path: `test/${area}/${name}`,
       sha256: crypto.createHash('sha256').update(source).digest('hex'),
-      variants: ['strict', 'non-strict'],
+      variants,
     };
   });
   // Absent from disk on purpose: the host must report a load failure rather
@@ -116,7 +174,7 @@ function prepare(cwd) {
   const planned = run([
     'screen-plan', '--run-id', runId, '--upstream', cwd, '--output', screenPlan,
   ], cwd);
-  assert.equal(planned.variant_count, 8);
+  assert.equal(planned.variant_count, 13);
   return { runId, screenPlan };
 }
 
@@ -153,7 +211,7 @@ test('screening host streams one importable JSON result per stdout line', async 
       child.on('close', resolve);
     });
     assert.equal(code, 0);
-    assert.equal(lines.length, 8);
+    assert.equal(lines.length, 13);
 
     for (const line of lines) {
       // The regression: indented serialization would split a record across
@@ -170,16 +228,80 @@ test('screening host streams one importable JSON result per stdout line', async 
     assert.deepEqual(outcomeFor('zz-absent-fixture.js'),
       ['infrastructure-error', 'infrastructure-error']);
     assert.deepEqual(outcomeFor('aa-basic.js'), ['pass', 'pass']);
-    assert.deepEqual(outcomeFor('module-fixture.js'), ['unsupported', 'unsupported']);
+    assert.deepEqual(outcomeFor('async-fixture.js'), ['pass', 'pass']);
+    assert.deepEqual(outcomeFor('agent-fixture.js'), ['pass', 'pass']);
+    assert.deepEqual(outcomeFor('module-fixture.js'), ['pass']);
+    assert.deepEqual(outcomeFor('module-goal-only.js'), ['unsupported']);
+    assert.deepEqual(outcomeFor('module-missing-dependency.js'), ['unsupported']);
     assert.deepEqual(outcomeFor('parse-negative.js'), ['unsupported', 'unsupported']);
 
     const report = run(['report', '--run-id', runId], cwd);
-    assert.equal(report.counts.attempts, 8);
+    assert.equal(report.counts.attempts, 13);
     // Only the fixture whose variants all passed under the active provenance is
     // accepted; the gaps and the load failure stay in failure clusters.
-    assert.deepEqual(report.accepted, [`test/${area}/aa-basic.js`]);
+    assert.deepEqual(report.accepted, [
+      `test/${area}/aa-basic.js`,
+      `test/${area}/agent-fixture.js`,
+      `test/${area}/async-fixture.js`,
+      `test/${area}/module-fixture.js`,
+    ]);
     assert.ok(report.failure_clusters['harness-gap'].length >= 2);
     assert.ok(report.failure_clusters['infrastructure-error'].length >= 2);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('worker isolation cleans up agent failures and timeouts', () => {
+  const cwd = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'native-host-')));
+  try {
+    const directory = path.join(cwd, 'test', area);
+    fs.mkdirSync(directory, { recursive: true });
+    const fixtures = [
+      {
+        name: 'agent-failure.js',
+        source: `/*--- includes: [atomicsHelper.js] ---*/
+$262.agent.start("throw new Error('worker failed');");
+$262.agent.getReport();
+`,
+      },
+      {
+        name: 'timeout.js',
+        source: '/*--- description: worker timeout ---*/\nwhile (true) {}\n',
+      },
+      {
+        name: 'success-after-failure.js',
+        source: '/*--- description: fresh worker after cleanup ---*/\nassert.sameValue(1, 1);\n',
+      },
+    ];
+    const candidates = fixtures.map(({ name, source }) => {
+      fs.writeFileSync(path.join(directory, name), source);
+      return {
+        path: `test/${area}/${name}`,
+        sha256: crypto.createHash('sha256').update(source).digest('hex'),
+        variants: ['non-strict'],
+      };
+    });
+    const plan = path.join(cwd, 'plan.json');
+    fs.writeFileSync(plan, JSON.stringify({
+      upstream_root: cwd,
+      timeout_ms: 2000,
+      variant_limit: 3,
+      time_limit_seconds: 30,
+      candidates,
+    }));
+    const results = execFileSync('dotnet', [host, '--plan', plan], {
+      cwd: repository, encoding: 'utf8',
+    }).trim().split('\n').map(JSON.parse);
+    assert.deepEqual(
+      results.map((result) => [path.basename(result.path), result.outcome]),
+      [
+        ['agent-failure.js', 'fail'],
+        ['timeout.js', 'infrastructure-error'],
+        ['success-after-failure.js', 'pass'],
+      ],
+    );
+    assert.equal(results[1].phase, 'timeout');
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }
@@ -219,7 +341,7 @@ test('results imported before an interruption survive and only resume pending wo
     const pending = run([
       'screen-plan', '--run-id', runId, '--upstream', cwd, '--output', resumed,
     ], cwd);
-    assert.equal(pending.variant_count, 6);
+    assert.equal(pending.variant_count, 11);
     const remaining = JSON.parse(fs.readFileSync(resumed)).candidates
       .flatMap((candidate) => candidate.variants.map(
         (variant) => `${candidate.path}#${variant}`));
