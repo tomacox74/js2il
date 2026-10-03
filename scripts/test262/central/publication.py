@@ -12,7 +12,38 @@ def gh(*args):
     return json.loads(subprocess.check_output(['gh',*args],text=True))
 
 
+def reconcile_publications(client,repository_name):
+    publications=client.snapshot()['tables']['publications']
+    for publication in publications:
+        if publication['state'] not in ('reserved','open','updating') or not publication['pr_number']:
+            continue
+        pr=gh('api',f'repos/{repository_name}/pulls/{publication["pr_number"]}')
+        patch=None
+        if pr.get('merged'):
+            patch={'state':'merged','closure_reason':'GitHub confirms merge'}
+        elif pr['state']=='closed':
+            patch={'state':'closed-deferred','closure_reason':'GitHub confirms closure without merge'}
+        elif publication['expected_head'] and pr['head']['sha']!=publication['expected_head']:
+            patch={'state':'ownership-lost','closure_reason':'GitHub PR head differs from reserved head'}
+        if patch:
+            client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],patch)
+            continue
+        head=pr['head']['sha']
+        checks=gh('api','--paginate','--slurp',f'repos/{repository_name}/commits/{head}/check-runs?per_page=100')
+        rows=[]
+        for page in checks:
+            for check in page['check_runs']:
+                if check['head_sha']!=head or check['status']!='completed':
+                    continue
+                conclusion=check['conclusion']
+                normalized='success' if conclusion=='success' else ('cancelled' if conclusion=='cancelled' else 'failure')
+                rows.append({'publication_id':publication['publication_id'],'check_identity':'check:'+check['app']['slug']+':'+check['name'],
+                             'external_run_key':str(check['id'])+':'+str(check['completed_at']),'head_revision':head,'conclusion':normalized})
+        client.put('publication_checks',rows)
+
+
 def publish(client,args):
+    reconcile_publications(client,args.repository_name)
     batch=json.loads(Path(args.batch_file).read_text());context=batch['context']
     revision=context['revision'];batch_id=batch['batch']
     if git('rev-parse','origin/master')!=revision or git('rev-parse','HEAD')!=revision:

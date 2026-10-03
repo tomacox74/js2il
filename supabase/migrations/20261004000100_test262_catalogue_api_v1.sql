@@ -245,6 +245,7 @@ BEGIN
  IF old IS NULL OR NOT test262.api_scope(t,old,s.repository_id) THEN RAISE EXCEPTION 'Missing scoped record'; END IF;
  IF old ? 'version' AND (old->>'version')::bigint<>expected_version THEN RAISE EXCEPTION 'CAS conflict' USING ERRCODE='40001'; END IF;
  IF NOT EXISTS(SELECT 1 FROM jsonb_each(patch) e WHERE old->e.key IS DISTINCT FROM e.value) THEN RETURN old; END IF;
+ IF t='reporting_targets' THEN patch=patch||jsonb_build_object('updated_at',clock_timestamp()); END IF;
  -- Sealing inventories verifies exact content and cannot infer a complete snapshot from count alone.
  IF t='corpora' AND patch->>'inventory_state'='sealed' THEN
   IF (old->>'inventory_digest')::bytea<>test262.inventory_hash((old->>'corpus_id')::uuid) THEN RAISE EXCEPTION 'Inventory digest mismatch'; END IF;
