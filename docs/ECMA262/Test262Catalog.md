@@ -1,3 +1,5 @@
+> Central storage implementation and deployment runbook: [Test262SupabaseCatalog.md](Test262SupabaseCatalog.md). Until explicit cutover, the artifact workflow below remains active.
+
 # Test262 artifact catalog
 
 The **Test262 artifact catalog** workflow stores a resumable SQLite database in

@@ -1,0 +1,240 @@
+{
+  "uid": "jroc-test262-catalogue",
+  "title": "JROC Test262 catalogue",
+  "description": "MVP discovery, native acceptance and source registrations are distinct. Fixtures are denominators; additional attempts include necessary verification and expired leases. No raw table or performance query.",
+  "schemaVersion": 39,
+  "version": 0,
+  "editable": true,
+  "timezone": "utc",
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "refresh": "5m",
+  "tags": [
+    "jroc",
+    "test262"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "catalogue_datasource",
+        "label": "Catalogue PostgreSQL (reporter login)",
+        "type": "datasource",
+        "query": "grafana-postgresql-datasource",
+        "current": {},
+        "options": []
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "table",
+      "title": "Current fixture denominator and status",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT evidence_kind,channel,provenance_id,status,count(*) AS fixtures,max(target_updated_at) AS target_updated_at,max(as_of) AS as_of FROM test262_reporting.v_current_fixture_status GROUP BY evidence_kind,channel,provenance_id,status ORDER BY evidence_kind,status",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 2,
+      "type": "table",
+      "title": "Native acceptance and freshness",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT batch_key,batch_state,target_revision,target_current,has_invalidated_evidence,has_conflicting_evidence,count(*) AS fixtures FROM test262_reporting.v_native_acceptance GROUP BY batch_key,batch_state,target_revision,target_current,has_invalidated_evidence,has_conflicting_evidence",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Queue and expired leases",
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT provenance_id,coherent_area,state,work_count,expired_lease_count,oldest_eligible_at,as_of FROM test262_reporting.v_queue_health ORDER BY oldest_eligible_at",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "Failure clusters by provenance",
+      "gridPos": {
+        "x": 12,
+        "y": 9,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT evidence_kind,provenance_id,failure_class,phase,observed_error_type,attempt_count,fixture_count,representative_path,last_received_at FROM test262_reporting.v_failure_clusters ORDER BY attempt_count DESC",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Ingestion lag",
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT display_name,enabled,last_commit_at,as_of-last_commit_at AS ingestion_lag,pending_requests FROM test262_reporting.v_ingestion_health",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 6,
+      "type": "table",
+      "title": "Pipeline stages",
+      "gridPos": {
+        "x": 12,
+        "y": 18,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT run_id,run_kind,provenance_id,stage,duration_ms,attempt_count,timeout_count FROM test262_reporting.v_pipeline_metrics ORDER BY started_at DESC LIMIT 1000",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Evidence repetition (includes necessary verification)",
+      "gridPos": {
+        "x": 0,
+        "y": 27,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT provenance_id,variant,sum(attempt_count) AS attempts,sum(attempt_count-1) AS additional_attempts,round(100.0*sum(attempt_count-1)/nullif(sum(attempt_count),0),2) AS additional_percent FROM test262_reporting.v_variant_status GROUP BY provenance_id,variant",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Storage growth",
+      "gridPos": {
+        "x": 12,
+        "y": 27,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${catalogue_datasource}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT schema_name,table_name,total_bytes,as_of FROM test262_reporting.v_storage_growth ORDER BY total_bytes DESC",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "showHeader": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+name: Test262 catalogue off-project backup
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '40 3 * * *'
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  backup:
+    if: ${{ vars.TEST262_BACKUP_S3_URI != '' }}
+    environment: test262-catalogue-backup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Install matching PostgreSQL 17 client
+        run: |
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+          echo '/usr/lib/postgresql/17/bin' >> "$GITHUB_PATH"
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.TEST262_BACKUP_AWS_ROLE }}
+          aws-region: ${{ vars.TEST262_BACKUP_AWS_REGION }}
+      - name: Backup catalogue only to independently retained encrypted objects
+        env:
+          TEST262_BACKUP_DATABASE_URL: ${{ secrets.TEST262_BACKUP_DATABASE_URL }}
+          DESTINATION: ${{ vars.TEST262_BACKUP_S3_URI }}
+          KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
+        run: |
+          python -m scripts.test262.central.backup backup --output /tmp/test262-backup \
+            --destination "$DESTINATION/$(date -u +%Y/%m/%d)/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --kms-key "$KMS_KEY"
+      - name: Remove local backup material
+        if: always()
+        run: rm -rf /tmp/test262-backup
