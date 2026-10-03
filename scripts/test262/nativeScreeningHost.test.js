@@ -38,6 +38,17 @@ function resolveHost() {
 
 const host = resolveHost();
 
+test('screening host publishes its capability matrix', () => {
+  const capabilities = JSON.parse(execFileSync(
+    'dotnet', [host, '--capabilities'], { cwd: repository, encoding: 'utf8' },
+  ));
+  assert.equal(capabilities.flags.async, true);
+  assert.equal(capabilities.flags.raw, false);
+  assert.equal(capabilities.dependencies.sibling_files, true);
+  assert.equal(capabilities.isolation.agent_cleanup, true);
+  assert.ok(capabilities.includes.includes('agent.js'));
+});
+
 function run(args, cwd) {
   return JSON.parse(execFileSync(
     'python3',

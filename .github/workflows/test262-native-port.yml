@@ -1,6 +1,11 @@
 name: Test262 native porting
 
 on:
+  workflow_run:
+    workflows: ["test262 MVP"]
+    types: [completed]
+  schedule:
+    - cron: "15 * * * *"
   workflow_dispatch:
     inputs:
       revision:
@@ -54,6 +59,7 @@ env:
 
 jobs:
   screen:
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
@@ -64,8 +70,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.revision }}
-          fetch-depth: 2
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.revision || 'master' }}
+          fetch-depth: 0
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
@@ -75,11 +81,11 @@ jobs:
 
       - name: Validate bounded inputs
         env:
-          AREA: ${{ inputs.area }}
-          CANDIDATES: ${{ inputs.candidate_limit }}
-          ACCEPTED: ${{ inputs.accepted_limit }}
-          VARIANTS: ${{ inputs.variant_limit }}
-          SECONDS: ${{ inputs.time_limit }}
+          AREA: ${{ inputs.area || 'language/computed-property-names/basics' }}
+          CANDIDATES: ${{ inputs.candidate_limit || '200' }}
+          ACCEPTED: ${{ inputs.accepted_limit || '100' }}
+          VARIANTS: ${{ inputs.variant_limit || '400' }}
+          SECONDS: ${{ inputs.time_limit || '1200' }}
         run: |
           python3 - <<'PY'
           import os
@@ -95,18 +101,32 @@ jobs:
           assert 1 <= int(os.environ["SECONDS"]) <= 1200
           PY
 
-      - name: Resolve stable run identity
+      - name: Resolve stable run identity and affected range
         id: identity
         env:
-          AREA: ${{ inputs.area }}
+          AREA: ${{ inputs.area || 'language/computed-property-names/basics' }}
         run: |
+          mkdir -p artifacts/test262
           TARGET="$(git rev-parse HEAD)"
           BASE="$(git rev-parse HEAD^ 2>/dev/null || printf '%s' "$TARGET")"
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            test "${{ github.event.workflow_run.conclusion }}" = "success"
+            BASE="$(git rev-parse "$TARGET^" 2>/dev/null || printf '%s' "$TARGET")"
+          fi
+          CHANGED="$(git diff --name-only "$BASE" "$TARGET" || true)"
+          if [ -n "$CHANGED" ] && ! printf '%s\n' "$CHANGED" | grep -Ev \
+            '^(docs/|CHANGELOG.md$|README.md$|.*\.md$)' >/dev/null; then
+            echo "screen=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "screen=true" >> "$GITHUB_OUTPUT"
+          fi
+          printf '%s\n' "$CHANGED" > artifacts/test262/changed-files.txt
           AREA_ID="$(printf '%s' "$AREA" | sha256sum | cut -c1-10)"
           RUN_ID="native-${TARGET:0:12}-${AREA_ID}"
           echo "target_revision=$TARGET" >> "$GITHUB_OUTPUT"
           echo "base_revision=$BASE" >> "$GITHUB_OUTPUT"
           echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "area=$AREA" >> "$GITHUB_OUTPUT"
           echo "artifact_name=test262-native-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
 
       - name: Restore trusted catalog and native checkpoint
@@ -177,6 +197,7 @@ jobs:
             unzip -p artifacts/test262/restore/catalog.zip catalog.sqlite \
               > artifacts/test262/catalog.sqlite
           fi
+
           for archive in artifacts/test262/restore/native-candidate-*.zip; do
             [ -f "$archive" ] || continue
             candidate="${archive%.zip}.sqlite"
@@ -192,9 +213,12 @@ jobs:
 
       - name: Build compiler and native screening host once
         run: |
+          mkdir -p artifacts/test262
           dotnet build src/Cli/Jroc.csproj -c Release --nologo
           dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj \
             -c Release --nologo
+          dotnet scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll \
+            --capabilities > artifacts/test262/native-capabilities.json
 
       - name: Validate automation tooling
         run: |
@@ -219,21 +243,21 @@ jobs:
           python3 scripts/test262/nativePorting.py create-run \
             --run-id "$RUN_ID" --batch-id "$RUN_ID" \
             --trigger-revision "$TARGET" --base-revision "$BASE" --pin "$PIN" \
-            --candidate-limit "${{ inputs.candidate_limit }}" \
-            --accepted-limit "${{ inputs.accepted_limit }}" \
-            --variant-limit "${{ inputs.variant_limit }}" \
-            --time-limit "${{ inputs.time_limit }}"
-          if [ -s artifacts/test262/catalog.sqlite ]; then
+            --candidate-limit "${{ inputs.candidate_limit || '200' }}" \
+            --accepted-limit "${{ inputs.accepted_limit || '100' }}" \
+            --variant-limit "${{ inputs.variant_limit || '400' }}" \
+            --time-limit "${{ inputs.time_limit || '1200' }}"
+          if [ "${{ steps.identity.outputs.screen }}" = "true" ] && [ -s artifacts/test262/catalog.sqlite ]; then
             python3 scripts/test262/catalog.py export --refresh-registrations
             CAPABILITY_ID="$(find tests/Jroc.Testing scripts/test262/NativeScreeningHost \
               -type f \( -name '*.cs' -o -name '*.csproj' \) -print0 | sort -z \
               | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)"
             python3 scripts/test262/nativePorting.py plan --run-id "$RUN_ID" \
-              --catalog artifacts/test262/catalog.sqlite --area "${{ inputs.area }}" \
+              --catalog artifacts/test262/catalog.sqlite --area "${{ inputs.area || 'language/computed-property-names/basics' }}" \
               --capability-identity "$CAPABILITY_ID" \
               --output artifacts/test262/native-plan.json
           else
-            printf '%s\n' '{"cold_start":true,"candidate_count":0,"paths":[]}' \
+            printf '%s\n' '{"cold_start":true,"candidate_count":0,"paths":[],"selection":"documentation-only or unsupported trigger"}' \
               > artifacts/test262/native-plan.json
           fi
 
@@ -377,7 +401,7 @@ jobs:
 
   publish:
     needs: screen
-    if: ${{ inputs.dry_run == false && needs.screen.result == 'success' && needs.screen.outputs.has_patch == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false && needs.screen.result == 'success' && needs.screen.outputs.has_patch == 'true' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write

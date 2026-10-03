@@ -76,7 +76,7 @@ function record(cwd, runId, values = {}) {
   ], cwd);
 }
 
-test('planning uses complete single-provenance unregistered pass hints', () => {
+test('planning prioritizes failure hints and fills with complete pass hints', () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
     const runId = createRun(cwd, [
@@ -122,6 +122,7 @@ test('planning uses complete single-provenance unregistered pass hints', () => {
       planned.paths,
       [
         'test/language/computed-property-names/basics/a.js',
+        'test/language/computed-property-names/basics/failed.js',
         'test/language/computed-property-names/basics/historical.js',
       ],
     );

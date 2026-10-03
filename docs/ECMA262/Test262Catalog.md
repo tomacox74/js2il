@@ -206,6 +206,38 @@ harness/environment identity, phase, diagnostic and failure classification.
 The active compiler, harness and environment identity is persisted before
 screening; resume, report, generation and publication accept only matching
 evidence.
+
+### Native capability matrix
+
+The screening host exposes a machine-readable capability report with
+`NativeScreeningHost --capabilities`, uploaded as
+`native-capabilities.json` by the workflow. The current native contract
+supports async completion, strict/no-strict variants, agent cleanup, the
+registered Test262 helper set (`agent.js`, `atomicsHelper.js`,
+`compareArray.js`, `dateConstants.js`, `detachArrayBuffer.js`,
+`propertyHelper.js`, `promiseHelper.js`, `resizableArrayBufferUtils.js`,
+`testAtomics.js`, `testTypedArray.js` and `tcoHelper.js`), sibling fixture
+files and harness files. Unsupported raw and module fixtures, unknown helper
+includes, and parse/early compile-negative fixtures remain explicit
+`harness-gap` outcomes; they are never accepted as passes. Worker isolation
+and timeouts apply to every variant, and agent state is disposed with the
+worker runtime.
+
+This matrix is an execution capability declaration, not an assertion that
+every fixture using a supported shape passes. Product failures remain
+`unresolved` and are reported separately from harness gaps.
+
+### Validated-master retry intake
+
+The native workflow listens for a successful `test262 MVP` validation on a
+master push and checks out the exact validated `head_sha`; an hourly recovery
+schedule uses master when a workflow-run event was missed or coalesced.
+Documentation-only changes produce an empty selection. Candidate planning
+prioritizes current and historical MVP failure hints with an 80/20 retry versus
+fallback allocation, preserves a likely-component selection reason, and fills
+unused retry capacity with coherent complete-pass hints. All selected evidence
+is still re-executed by the native host under the active compiler, harness and
+environment provenance before any generation or publication.
 The variant and active-execution-time budgets resume from the SQLite
 checkpoint; idle time between workflow runs does not consume the time budget.
 `report` keeps pending, failed, unsupported and infrastructure outcomes

@@ -26,6 +26,13 @@ FAILURE_CLASSES = {
     "unresolved",
 }
 SUPPORTED_AREA = "language/computed-property-names/basics"
+COMPONENT_FEATURE_MAP = (
+    ("callable-lowering", ("async", "generator", "arrow", "function", "class")),
+    ("private-member-lowering", ("private", "private-elements", "private-method")),
+    ("property-operations", ("property", "computed-property", "proxy", "reflect")),
+    ("iterator-promise-runtime", ("iterator", "promise", "async-iterator")),
+    ("regex-runtime", ("regexp", "regex")),
+)
 
 
 def canonical(value: Any) -> str:
@@ -253,6 +260,8 @@ def catalog_candidates(
         ).fetchall()
         native_root = Path(__file__).resolve().parents[2] / "tests/Jroc.Test262.Tests"
         candidates: list[dict[str, Any]] = []
+        retry_candidates: list[dict[str, Any]] = []
+        fallback_candidates: list[dict[str, Any]] = []
         for row in rows:
             variants = json.loads(row["variants"])
             current_evidence = {
@@ -264,6 +273,7 @@ def catalog_candidates(
                 )
             }
             evidence_kind = None
+            failure_kind = None
             if variants and all(
                 current_evidence.get(variant) == "matched" for variant in variants
             ):
@@ -293,26 +303,52 @@ def catalog_candidates(
                     ):
                         evidence_kind = "historical single-provenance MVP pass"
                         break
+            if evidence_kind is None:
+                observed = [
+                    current_evidence.get(variant)
+                    for variant in variants
+                    if current_evidence.get(variant) is not None
+                ]
+                if any(verdict != "matched" for verdict in observed):
+                    failure_kind = "current-provenance MVP failure hint"
+                else:
+                    historical_failures = catalog.execute(
+                        """SELECT 1 FROM results
+                           WHERE path=? AND provenance!=? AND verdict!='matched'
+                           LIMIT 1""",
+                        (row["path"], provenance),
+                    ).fetchone()
+                    if historical_failures:
+                        failure_kind = "historical MVP failure hint"
             filename = Path(row["path"]).name
             legacy_duplicate = any(
                 file_sha256(existing) == row["sha256"]
                 for existing in native_root.rglob(filename)
             )
-            if evidence_kind and not legacy_duplicate:
-                candidates.append(
-                    {
-                        "path": row["path"],
-                        "sha256": row["sha256"],
-                        "variants": variants,
-                        "reason": (
-                            f"{evidence_kind} used only as a selection hint; "
-                            "fresh native acceptance required"
-                        ),
-                    }
+            if not legacy_duplicate and (evidence_kind or failure_kind):
+                component = next(
+                    (
+                        name for name, terms in COMPONENT_FEATURE_MAP
+                        if any(term in row["path"].lower() for term in terms)
+                    ),
+                    "unmapped",
                 )
-            if len(candidates) >= limit:
-                break
-        return provenance, candidates
+                candidate = {
+                    "path": row["path"],
+                    "sha256": row["sha256"],
+                    "variants": variants,
+                    "evidence_kind": evidence_kind or failure_kind,
+                    "reason": (
+                        f"{evidence_kind or failure_kind}; likely component "
+                        f"{component}; fresh native acceptance required"
+                    ),
+                    "retry_priority": 0 if failure_kind else 1,
+                }
+                (retry_candidates if failure_kind else fallback_candidates).append(candidate)
+        retry_limit = min(limit, max(1, (limit * 80 + 99) // 100))
+        candidates = (retry_candidates[:retry_limit]
+                      + fallback_candidates[: max(0, limit - retry_limit)])
+        return provenance, candidates[:limit]
     finally:
         catalog.close()
 
@@ -360,16 +396,16 @@ def plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
                     candidate["path"],
                     candidate["sha256"],
                     canonical(candidate["variants"]),
-                    (
-                        candidate["reason"]
-                        if not capability_deferred
-                        else candidate["reason"]
-                        + "; unchanged native capability remains unsupported"
-                    ),
+                    candidate["reason"] if not capability_deferred else
+                    candidate["reason"] + "; unchanged native capability remains unsupported",
                     provenance,
                     args.capability_identity,
                     "capability-deferred" if capability_deferred else "pending",
                 ),
+            )
+            db.execute(
+                "UPDATE candidates SET evidence_kind=? WHERE run_id=? AND path=?",
+                (candidate["evidence_kind"], args.run_id, candidate["path"]),
             )
         db.execute(
             "UPDATE runs SET state='screening',updated_at=? WHERE run_id=?",

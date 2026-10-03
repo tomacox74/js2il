@@ -17,6 +17,25 @@ var options = new JsonSerializerOptions
 // time, so a record must never be serialized across multiple lines.
 var recordOptions = new JsonSerializerOptions(options) { WriteIndented = false };
 
+if (args.Length == 1 && args[0] == "--capabilities")
+{
+    Console.WriteLine(JsonSerializer.Serialize(new
+    {
+        schema_version = 1,
+        flags = new { async = true, onlyStrict = true, noStrict = true, raw = false, module = false },
+        includes = new[]
+        {
+            "agent.js", "atomicsHelper.js", "compareArray.js", "dateConstants.js",
+            "detachArrayBuffer.js", "propertyHelper.js", "promiseHelper.js",
+            "resizableArrayBufferUtils.js", "testAtomics.js", "testTypedArray.js",
+            "tcoHelper.js"
+        },
+        dependencies = new { sibling_files = true, harness_files = true },
+        isolation = new { worker_process = true, timeout = true, agent_cleanup = true }
+    }, recordOptions));
+    return 0;
+}
+
 if (args.Length == 2 && args[0] == "--worker")
 {
     try
@@ -182,6 +201,21 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
             $"Native compile-negative type verification for {metadata.NegativeType ?? "an unspecified error"} is not available.");
     }
 
+    if (metadata.Flags.Contains("raw", StringComparer.Ordinal))
+    {
+        return Result("unsupported", "harness-gap", "capability",
+            "Raw fixtures bypass the native harness injection contract.");
+    }
+
+    var unsupportedIncludes = metadata.Includes
+        .Where(include => !IsSupportedInclude(include))
+        .ToArray();
+    if (unsupportedIncludes.Length > 0)
+    {
+        return Result("unsupported", "harness-gap", "capability",
+            $"Native harness does not implement includes: {string.Join(", ", unsupportedIncludes)}");
+    }
+
     try
     {
         var variantSource = string.Equals(variant, "strict", StringComparison.Ordinal)
@@ -193,12 +227,14 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
         var result = Test262SharedAssertHarness.CompileAndExecute(
             Path.GetFileNameWithoutExtension(candidate.Path),
             "NativeScreening",
-            _ => (variantSource, sourcePath),
+            requestedName => ResolveFixture(
+                root, sourcePath, candidate.Path, requestedName, variantSource),
             allowUnhandledException: runtimeNegative,
             timeoutMs: timeoutMs);
         Test262SharedAssertHarness.AssertNoOutput(candidate.Path, result.Output);
         return Result("pass", null, runtimeNegative ? "runtime" : "execution", "");
     }
+
     catch (Exception exception)
     {
         var diagnostic = exception.ToString();
@@ -218,6 +254,54 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
             candidate.Path, variant, candidate.Sha256, outcome, failureClass,
             phase, diagnostic, started,
             DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000d);
+}
+
+static bool IsSupportedInclude(string include)
+{
+    return include is "agent.js" or "atomicsHelper.js" or "compareArray.js"
+        or "dateConstants.js" or "detachArrayBuffer.js" or "propertyHelper.js"
+        or "promiseHelper.js" or "resizableArrayBufferUtils.js"
+        or "testAtomics.js" or "testTypedArray.js" or "tcoHelper.js";
+}
+
+static (string Script, string? SourcePath) ResolveFixture(
+    string root,
+    string sourcePath,
+    string candidatePath,
+    string requestedName,
+    string preparedEntryScript)
+{
+    if (string.Equals(
+        requestedName,
+        Path.GetFileNameWithoutExtension(candidatePath),
+        StringComparison.Ordinal)
+        || string.Equals(requestedName, candidatePath, StringComparison.Ordinal))
+    {
+        return (preparedEntryScript, sourcePath);
+    }
+
+    var candidateDirectory = Path.GetDirectoryName(sourcePath)
+        ?? throw new InvalidOperationException("The candidate has no parent directory.");
+    var searchPaths = new[]
+    {
+        Path.Combine(candidateDirectory, requestedName),
+        Path.Combine(root, "harness", requestedName),
+        Path.Combine(root, "test", requestedName),
+    };
+    foreach (var path in searchPaths)
+    {
+        var fullPath = Path.GetFullPath(path);
+        if (!fullPath.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+            || !File.Exists(fullPath))
+        {
+            continue;
+        }
+
+        return (File.ReadAllText(fullPath), fullPath);
+    }
+
+    throw new FileNotFoundException(
+        $"Native screening dependency '{requestedName}' was not found for '{candidatePath}'.");
 }
 
 sealed record ScreeningPlan(
@@ -251,6 +335,7 @@ sealed record ScreeningResult(
 
 sealed record Metadata(
     IReadOnlyList<string> Flags,
+    IReadOnlyList<string> Includes,
     string? NegativePhase,
     string? NegativeType)
 {
@@ -259,12 +344,13 @@ sealed record Metadata(
         var match = Regex.Match(source, @"/\*---(?<body>.*?)---\*/", RegexOptions.Singleline);
         if (!match.Success)
         {
-            return new Metadata([], null, null);
+            return new Metadata([], [], null, null);
         }
 
         var body = match.Groups["body"].Value.ReplaceLineEndings("\n");
         return new Metadata(
             ParseArray(body, "flags"),
+            ParseArray(body, "includes"),
             ParseScalar(body, "phase"),
             ParseScalar(body, "type"));
     }
