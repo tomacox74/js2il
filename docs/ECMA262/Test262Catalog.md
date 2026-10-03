@@ -190,9 +190,13 @@ python3 scripts/test262/nativePorting.py plan --run-id <run> \
 
 The trusted C# screening host reuses `Test262SharedAssertHarness`, runs each
 variant in a killable worker process, and emits each completed attempt as a
-flushed result record. The workflow imports those records immediately, so
-parent cancellation preserves completed evidence and consumed budgets rather
-than waiting for the whole plan to finish.
+flushed result record. Results are newline-delimited JSON: the host writes
+exactly one compact record per stdout line, and the workflow imports each line
+independently, so parent cancellation preserves completed evidence and consumed
+budgets rather than waiting for the whole plan to finish. That producer/consumer
+contract is covered end to end by
+`scripts/test262/nativeScreeningHost.test.js`, which runs the built host and
+imports its real stdout.
 Strict and non-strict variants remain distinct, and runtime-negative tests must
 match their declared error type. Module and compile-negative fixtures are
 reported as explicit harness gaps in this first release rather than accepted

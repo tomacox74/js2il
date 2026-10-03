@@ -190,16 +190,17 @@ jobs:
             rm -f "$candidate"
           done
 
-      - name: Validate automation tooling
-        run: |
-          node --test scripts/test262/nativePorting.test.js
-          python3 -m py_compile scripts/test262/nativePorting.py
-
       - name: Build compiler and native screening host once
         run: |
           dotnet build src/Cli/Jroc.csproj -c Release --nologo
           dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj \
             -c Release --nologo
+
+      - name: Validate automation tooling
+        run: |
+          node --test scripts/test262/nativePorting.test.js
+          node --test scripts/test262/nativeScreeningHost.test.js
+          python3 -m py_compile scripts/test262/nativePorting.py
 
       - name: Bootstrap full pinned corpus
         run: |

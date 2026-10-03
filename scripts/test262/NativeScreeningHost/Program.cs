@@ -10,9 +10,12 @@ using Jroc.Tests;
 var options = new JsonSerializerOptions
 {
     PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-    WriteIndented = true,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 };
+
+// Streamed records are newline-delimited: consumers import one stdout line at a
+// time, so a record must never be serialized across multiple lines.
+var recordOptions = new JsonSerializerOptions(options) { WriteIndented = false };
 
 if (args.Length == 2 && args[0] == "--worker")
 {
@@ -23,7 +26,7 @@ if (args.Length == 2 && args[0] == "--worker")
             ?? throw new InvalidOperationException("The worker request is empty.");
         var result = Screen(
             request.Root, request.Candidate, request.Variant, request.TimeoutMs);
-        Console.WriteLine(JsonSerializer.Serialize(result, options));
+        Console.WriteLine(JsonSerializer.Serialize(result, recordOptions));
         return 0;
     }
     catch (Exception exception)
@@ -61,7 +64,8 @@ try
             }
 
             output.WriteLine(JsonSerializer.Serialize(
-                RunWorker(root, candidate, variant, plan.TimeoutMs, options), options));
+                RunWorker(root, candidate, variant, plan.TimeoutMs, options),
+                recordOptions));
             output.Flush();
             screened++;
         }
