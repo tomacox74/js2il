@@ -163,3 +163,91 @@ Merge rejects shards with different current provenance, is idempotent, and picks
 the latest timestamped result for overlapping explicit retries (a deterministic
 document tie-break handles identical timestamps). It does not union strict and
 non-strict evidence from different builds.
+
+## Native porting automation
+
+`scripts/test262/nativePorting.py` and
+`scripts/test262/NativeScreeningHost/` are the separate native-evidence and
+publication boundary for the merge-triggered porting design. MVP catalog rows
+are selection hints only; they are never copied into native acceptance. The
+first release intentionally supports
+`test/language/computed-property-names/basics` and its subfolders, an area with
+unregistered historical single-provenance candidates in the pinned catalog;
+other areas are rejected at planning time until their metadata and dependency
+shapes are implemented. Historical MVP outcomes remain selection hints only;
+every generated fixture still requires fresh native acceptance.
+
+Create a bounded run and plan candidates from the current catalog:
+
+```sh
+python3 scripts/test262/nativePorting.py create-run \
+  --trigger-revision "$(git rev-parse HEAD)" \
+  --base-revision master --pin "$(git -C "$(npm run --silent test262:root)" rev-parse HEAD)"
+python3 scripts/test262/nativePorting.py plan --run-id <run> \
+  --catalog artifacts/test262/catalog.sqlite \
+  --area language/computed-property-names/basics
+```
+
+The trusted C# screening host reuses `Test262SharedAssertHarness`, runs each
+variant in a killable worker process, and emits each completed attempt as a
+flushed result record. Results are newline-delimited JSON: the host writes
+exactly one compact record per stdout line, and the workflow imports each line
+independently, so parent cancellation preserves completed evidence and consumed
+budgets rather than waiting for the whole plan to finish. That producer/consumer
+contract is covered end to end by
+`scripts/test262/nativeScreeningHost.test.js`, which runs the built host and
+imports its real stdout.
+Strict and non-strict variants remain distinct, and runtime-negative tests must
+match their declared error type. Module and compile-negative fixtures are
+reported as explicit harness gaps in this first release rather than accepted
+without exact phase/type evidence. Outcomes are committed transactionally and
+include the fixture hash, upstream pin, compiler/runtime identity,
+harness/environment identity, phase, diagnostic and failure classification.
+The active compiler, harness and environment identity is persisted before
+screening; resume, report, generation and publication accept only matching
+evidence.
+The variant and active-execution-time budgets resume from the SQLite
+checkpoint; idle time between workflow runs does not consume the time budget.
+`report` keeps pending, failed, unsupported and infrastructure outcomes
+separate and groups their representative paths and diagnostics.
+
+`generate` copies accepted fixtures byte-for-byte and emits deterministic
+identifier-safe C# registrations, then updates the overall language and
+computed-property-name coverage rows plus the changelog. `validate-patch`
+requires the changed path set and every generated file hash to exactly match
+the generation manifest.
+`checkpoint` records the report digest and cursor before durable state is
+uploaded. Empty and failure-only runs still publish their database and report.
+
+The manually dispatched `.github/workflows/test262-native-port.yml` restores
+only same-repository artifacts from the catalog workflow and its own prior
+branch runs. It considers screening and publication checkpoints together in
+artifact creation order, including checkpoints preserved by failed screening
+runs, and restores the newest checkpoint whose SQLite integrity, schema version
+and table inventory validate. Screening has read-only permissions. Its separate publication job
+verifies the producing workflow/run, exact target revision, artifact and patch
+digests, and that `master` has not advanced; it never executes generated
+fixtures with write credentials. It permits one open
+`test262/native-porting-*` PR repository-wide, reuses an unchanged batch branch,
+and refuses to overwrite a changed branch or recreate a closed batch.
+
+Publication requires a repository-scoped GitHub App installed on this
+repository with **Contents: Read and write** and **Pull requests: Read and
+write** permissions. Store its application ID and private key as
+`TEST262_PORTING_APP_ID` and `TEST262_PORTING_APP_PRIVATE_KEY`. The App identity
+is used so the pushed branch triggers normal PR workflows. No secret is needed
+for the default dry-run, which can only upload reports and resumable state.
+
+This initial slice intentionally screens individual variants. Temporary-group
+screening and bounded compilation-failure bisection remain follow-up work, as
+does native intake of MVP failures without pass history. Actual GitHub App
+publication and normal PR-CI acceptance must be exercised after the workflow
+is available on the default branch; until then publication is staged and
+unverified.
+
+The machine-readable report contains run/batch/base/pin provenance, candidate
+and attempt counts, accepted and budget-deferred paths, incomplete paths, and
+failure clusters with path, variant, phase and diagnostic. The generation and
+patch-validation documents add exact output paths, hashes and the binary patch
+digest; `native-manifest.json` binds those files to the originating workflow
+run and target revision.

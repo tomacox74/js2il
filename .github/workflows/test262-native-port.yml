@@ -1,0 +1,502 @@
+name: Test262 native porting
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: Exact target revision to screen
+        required: false
+        default: master
+        type: string
+      area:
+        description: Computed property basics folder or one of its subfolders
+        required: false
+        default: language/computed-property-names/basics
+        type: string
+      candidate_limit:
+        description: Candidate fixture limit (maximum 500)
+        required: false
+        default: "200"
+        type: string
+      accepted_limit:
+        description: Accepted fixture limit (maximum candidate limit)
+        required: false
+        default: "100"
+        type: string
+      variant_limit:
+        description: Native variant attempt budget
+        required: false
+        default: "400"
+        type: string
+      time_limit:
+        description: Total native screening budget in seconds
+        required: false
+        default: "1200"
+        type: string
+      dry_run:
+        description: Never push or open a PR
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: test262-native-porting
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  screen:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      run_id: ${{ steps.identity.outputs.run_id }}
+      target_revision: ${{ steps.identity.outputs.target_revision }}
+      artifact_name: ${{ steps.identity.outputs.artifact_name }}
+      has_patch: ${{ steps.generate.outputs.has_patch }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.revision }}
+          fetch-depth: 2
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Validate bounded inputs
+        env:
+          AREA: ${{ inputs.area }}
+          CANDIDATES: ${{ inputs.candidate_limit }}
+          ACCEPTED: ${{ inputs.accepted_limit }}
+          VARIANTS: ${{ inputs.variant_limit }}
+          SECONDS: ${{ inputs.time_limit }}
+        run: |
+          python3 - <<'PY'
+          import os
+          area = os.environ["AREA"].strip("/")
+          supported = "language/computed-property-names/basics"
+          if area != supported and not area.startswith(supported + "/"):
+              raise SystemExit(f"The first release supports only {supported}.")
+          candidates = int(os.environ["CANDIDATES"])
+          accepted = int(os.environ["ACCEPTED"])
+          assert 1 <= candidates <= 500
+          assert 1 <= accepted <= candidates and accepted <= 100
+          assert 1 <= int(os.environ["VARIANTS"]) <= 2000
+          assert 1 <= int(os.environ["SECONDS"]) <= 1200
+          PY
+
+      - name: Resolve stable run identity
+        id: identity
+        env:
+          AREA: ${{ inputs.area }}
+        run: |
+          TARGET="$(git rev-parse HEAD)"
+          BASE="$(git rev-parse HEAD^ 2>/dev/null || printf '%s' "$TARGET")"
+          AREA_ID="$(printf '%s' "$AREA" | sha256sum | cut -c1-10)"
+          RUN_ID="native-${TARGET:0:12}-${AREA_ID}"
+          echo "target_revision=$TARGET" >> "$GITHUB_OUTPUT"
+          echo "base_revision=$BASE" >> "$GITHUB_OUTPUT"
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=test262-native-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore trusted catalog and native checkpoint
+        uses: actions/github-script@v8
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            fs.mkdirSync('artifacts/test262/restore', { recursive: true });
+            const { owner, repo } = context.repo;
+            async function findArtifacts(workflow, branch, names, requireSuccess) {
+              const request = {
+                owner, repo, workflow_id: workflow, branch,
+                status: 'completed', per_page: 100
+              };
+              const runs = await github.paginate(
+                github.rest.actions.listWorkflowRuns, request);
+              const candidates = [];
+              for (const run of runs) {
+                if (run.id === context.runId) continue;
+                if (requireSuccess && run.conclusion !== 'success') continue;
+                const artifacts = await github.paginate(
+                  github.rest.actions.listWorkflowRunArtifacts,
+                  { owner, repo, run_id: run.id, per_page: 100 });
+                for (const artifact of artifacts) {
+                  if (!artifact.expired && names.includes(artifact.name)) {
+                    candidates.push({ run, artifact });
+                  }
+                }
+              }
+              candidates.sort((a, b) =>
+                Date.parse(b.artifact.created_at) - Date.parse(a.artifact.created_at));
+              return candidates;
+            }
+            async function download(candidate, output) {
+              const response = await github.rest.actions.downloadArtifact({
+                owner, repo, artifact_id: candidate.artifact.id, archive_format: 'zip'
+              });
+              fs.writeFileSync(output, Buffer.from(response.data));
+            }
+            const catalogs = await findArtifacts(
+              'test262-catalog.yml', context.payload.repository.default_branch,
+              ['test262-catalog'], true);
+            const selected = catalogs[0];
+            if (selected) {
+              await download(selected, 'artifacts/test262/restore/catalog.zip');
+              core.info(`Restored trusted catalog from run ${selected.run.id}.`);
+            } else {
+              core.warning('No unexpired trusted catalog checkpoint was found; cold start.');
+            }
+            const native = await findArtifacts(
+              'test262-native-port.yml', process.env.TARGET_BRANCH,
+              ['test262-native-state', 'test262-native-publication-state'], false);
+            if (!native.length) {
+              core.warning('No unexpired trusted native checkpoint was found; cold start.');
+            }
+            for (let index = 0; index < native.length; index++) {
+              const candidate = native[index];
+              const output = `artifacts/test262/restore/native-candidate-${String(index).padStart(3, '0')}.zip`;
+              await download(candidate, output);
+              core.info(`Downloaded checkpoint candidate ${candidate.artifact.name} from run ${candidate.run.id}.`);
+            }
+
+      - name: Extract trusted checkpoints
+        run: |
+          if [ -f artifacts/test262/restore/catalog.zip ]; then
+            unzip -p artifacts/test262/restore/catalog.zip catalog.sqlite \
+              > artifacts/test262/catalog.sqlite
+          fi
+          for archive in artifacts/test262/restore/native-candidate-*.zip; do
+            [ -f "$archive" ] || continue
+            candidate="${archive%.zip}.sqlite"
+            if unzip -p "$archive" native.sqlite > "$candidate" \
+              && python3 scripts/test262/nativePorting.py --db "$candidate" \
+                validate-state >/dev/null; then
+              mv "$candidate" artifacts/test262/native.sqlite
+              echo "Restored newest compatible native checkpoint from $archive."
+              break
+            fi
+            rm -f "$candidate"
+          done
+
+      - name: Build compiler and native screening host once
+        run: |
+          dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj \
+            -c Release --nologo
+
+      - name: Validate automation tooling
+        run: |
+          node --test scripts/test262/nativePorting.test.js
+          node --test scripts/test262/nativeScreeningHost.test.js
+          python3 -m py_compile scripts/test262/nativePorting.py
+
+      - name: Bootstrap full pinned corpus
+        run: |
+          npm run test262:bootstrap
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+
+      - name: Create or resume durable native run
+        env:
+          RUN_ID: ${{ steps.identity.outputs.run_id }}
+          TARGET: ${{ steps.identity.outputs.target_revision }}
+          BASE: ${{ steps.identity.outputs.base_revision }}
+        run: |
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          PIN="$(git -C "$ROOT" rev-parse HEAD)"
+          python3 scripts/test262/nativePorting.py create-run \
+            --run-id "$RUN_ID" --batch-id "$RUN_ID" \
+            --trigger-revision "$TARGET" --base-revision "$BASE" --pin "$PIN" \
+            --candidate-limit "${{ inputs.candidate_limit }}" \
+            --accepted-limit "${{ inputs.accepted_limit }}" \
+            --variant-limit "${{ inputs.variant_limit }}" \
+            --time-limit "${{ inputs.time_limit }}"
+          if [ -s artifacts/test262/catalog.sqlite ]; then
+            python3 scripts/test262/catalog.py export --refresh-registrations
+            CAPABILITY_ID="$(find tests/Jroc.Testing scripts/test262/NativeScreeningHost \
+              -type f \( -name '*.cs' -o -name '*.csproj' \) -print0 | sort -z \
+              | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)"
+            python3 scripts/test262/nativePorting.py plan --run-id "$RUN_ID" \
+              --catalog artifacts/test262/catalog.sqlite --area "${{ inputs.area }}" \
+              --capability-identity "$CAPABILITY_ID" \
+              --output artifacts/test262/native-plan.json
+          else
+            printf '%s\n' '{"cold_start":true,"candidate_count":0,"paths":[]}' \
+              > artifacts/test262/native-plan.json
+          fi
+
+      - name: Screen pending variants through native harness APIs
+        env:
+          RUN_ID: ${{ steps.identity.outputs.run_id }}
+        run: |
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          PIN="$(git -C "$ROOT" rev-parse HEAD)"
+          COMPILER_ID="$(find src/Cli/bin/Release/net10.0 -maxdepth 1 -type f \
+            \( -name '*.dll' -o -name '*.json' \) -print0 | sort -z \
+            | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)"
+          HARNESS_ID="$(find tests/Jroc.Testing scripts/test262/NativeScreeningHost \
+            -type f \( -name '*.cs' -o -name '*.csproj' \) -print0 | sort -z \
+            | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)"
+          ENVIRONMENT_ID="$(printf '%s\n%s\n' "$(uname -sm)" "$(dotnet --version)" \
+            | sha256sum | cut -d' ' -f1)"
+          python3 scripts/test262/nativePorting.py set-provenance \
+            --run-id "$RUN_ID" --compiler-identity "$COMPILER_ID" \
+            --harness-identity "$HARNESS_ID" \
+            --environment-identity "$ENVIRONMENT_ID"
+          python3 scripts/test262/nativePorting.py screen-plan \
+            --run-id "$RUN_ID" --upstream "$ROOT" \
+            --output artifacts/test262/native-screen-plan.json
+          VARIANTS="$(jq '.variant_count // ([.candidates[].variants[]] | length)' \
+            artifacts/test262/native-screen-plan.json)"
+          if [ "$VARIANTS" -gt 0 ]; then
+            rm -f artifacts/test262/native-results.ndjson artifacts/test262/native-host.log \
+              artifacts/test262/native-result.json
+            mkfifo artifacts/test262/native-results.pipe
+            dotnet scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll \
+              --plan artifacts/test262/native-screen-plan.json \
+              > artifacts/test262/native-results.pipe \
+              2> artifacts/test262/native-host.log &
+            HOST_PID=$!
+            : > artifacts/test262/native-results.ndjson
+            while IFS= read -r result; do
+              printf '%s\n' "$result" >> artifacts/test262/native-results.ndjson
+              printf '[%s]\n' "$result" > artifacts/test262/native-result.json
+              python3 scripts/test262/nativePorting.py import-results \
+                --run-id "$RUN_ID" --results artifacts/test262/native-result.json \
+                --pin "$PIN" --compiler-identity "$COMPILER_ID" \
+                --harness-identity "$HARNESS_ID" \
+                --environment-identity "$ENVIRONMENT_ID"
+            done < artifacts/test262/native-results.pipe
+            wait "$HOST_PID"
+            rm -f artifacts/test262/native-results.pipe
+          else
+            : > artifacts/test262/native-results.ndjson
+          fi
+
+      - name: Generate and validate accepted patch
+        id: generate
+        env:
+          RUN_ID: ${{ steps.identity.outputs.run_id }}
+          TARGET: ${{ steps.identity.outputs.target_revision }}
+        run: |
+          python3 scripts/test262/nativePorting.py report --run-id "$RUN_ID" \
+            --output artifacts/test262/native-report.json
+          if jq -e '.complete_native_acceptance' artifacts/test262/native-report.json >/dev/null; then
+            ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+            python3 scripts/test262/nativePorting.py generate \
+              --run-id "$RUN_ID" --upstream "$ROOT" --destination . \
+              --output artifacts/test262/native-generated.json
+            CLASS="$(python3 - <<'PY'
+          import json, re
+          value=json.load(open("artifacts/test262/native-report.json"))["batch_id"]
+          value=re.sub(r"[^0-9A-Za-z]", "_", value).strip("_") or "Test"
+          print(value if value[0].isalpha() else "Test_" + value)
+          PY
+            )"
+            dotnet test tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj \
+              -c Release --nologo --filter "FullyQualifiedName~NativePortBatch_${CLASS}"
+            git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+            git diff --binary "$TARGET" -- > artifacts/test262/native-patch.diff
+            python3 scripts/test262/nativePorting.py validate-patch \
+              --base-revision "$TARGET" \
+              --generated artifacts/test262/native-generated.json \
+              --output artifacts/test262/native-patch-validation.json
+            echo "has_patch=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_patch=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkpoint report and create trusted manifest
+        if: always()
+        env:
+          RUN_ID: ${{ steps.identity.outputs.run_id }}
+          TARGET: ${{ steps.identity.outputs.target_revision }}
+        run: |
+          if [ ! -s artifacts/test262/native-report.json ]; then
+            python3 scripts/test262/nativePorting.py report --run-id "$RUN_ID" \
+              --output artifacts/test262/native-report.json
+          fi
+          python3 scripts/test262/nativePorting.py checkpoint --run-id "$RUN_ID" \
+            --artifact artifacts/test262/native-report.json
+          FILES=(artifacts/test262/native.sqlite artifacts/test262/native-report.json)
+          if [ -s artifacts/test262/native-patch.diff ]; then
+            FILES+=(artifacts/test262/native-patch.diff
+              artifacts/test262/native-patch-validation.json
+              artifacts/test262/native-generated.json)
+          fi
+          python3 scripts/test262/nativePorting.py manifest \
+            --workflow test262-native-port.yml --run-id "$GITHUB_RUN_ID" \
+            --target-revision "$TARGET" \
+            --output artifacts/test262/native-manifest.json "${FILES[@]}"
+          jq -r '
+            "<!-- test262-native-porting-batch:" + .batch_id + " -->\n" +
+            "## Native Test262 porting batch\n\n" +
+            "- Target: `" + .trigger_revision + "`\n" +
+            "- Upstream pin: `" + .pin + "`\n" +
+            "- Candidates: " + (.counts.candidates|tostring) + "\n" +
+            "- Accepted: " + (.counts.accepted|tostring) + "\n" +
+            "- Incomplete: " + (.counts.incomplete|tostring) + "\n" +
+            "- Failed/unsupported: " + (.counts.failed_or_unsupported|tostring) + "\n" +
+            "- Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n" +
+            "Native screening used the checked-in C# harness APIs. The focused generated xUnit batch passed; normal PR CI remains required."
+          ' artifacts/test262/native-report.json > artifacts/test262/native-pr-body.md
+
+      - name: Upload resumable native state
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-native-state
+          path: artifacts/test262/native.sqlite
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload validated batch or failure report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.identity.outputs.artifact_name }}
+          path: |
+            artifacts/test262/native-*.json
+            artifacts/test262/native-*.diff
+            artifacts/test262/native-pr-body.md
+            artifacts/test262/native.sqlite
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    needs: screen
+    if: ${{ inputs.dry_run == false && needs.screen.result == 'success' && needs.screen.outputs.has_patch == 'true' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Create scoped publication GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.TEST262_PORTING_APP_ID }}
+          private-key: ${{ secrets.TEST262_PORTING_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.screen.outputs.target_revision }}
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.screen.outputs.artifact_name }}
+          path: artifacts/test262
+
+      - name: Verify trusted run identity and artifact digests
+        run: |
+          git fetch origin master
+          test "$(git rev-parse origin/master)" = "${{ needs.screen.outputs.target_revision }}" \
+            || { echo "master advanced after native acceptance; defer until refreshed."; exit 1; }
+          python3 scripts/test262/nativePorting.py verify-manifest \
+            --manifest artifacts/test262/native-manifest.json \
+            --workflow test262-native-port.yml --run-id "${{ github.run_id }}" \
+            --target-revision "${{ needs.screen.outputs.target_revision }}"
+          PATCH_DIGEST="$(sha256sum artifacts/test262/native-patch.diff | cut -d' ' -f1)"
+          VALIDATED_DIGEST="$(jq -r .patch_digest artifacts/test262/native-patch-validation.json)"
+          test "$PATCH_DIGEST" = "$VALIDATED_DIGEST"
+
+      - name: Apply accepted patch without executing fixtures
+        env:
+          RUN_ID: ${{ needs.screen.outputs.run_id }}
+          TARGET: ${{ needs.screen.outputs.target_revision }}
+        run: |
+          git apply --check artifacts/test262/native-patch.diff
+          git apply artifacts/test262/native-patch.diff
+          PATCH_DIGEST="$(sha256sum artifacts/test262/native-patch.diff | cut -d' ' -f1)"
+          BRANCH="test262/native-porting-${RUN_ID}"
+          python3 scripts/test262/nativePorting.py publication-guard \
+            --run-id "$RUN_ID" --target-revision "$TARGET" \
+            --validation artifacts/test262/native-patch-validation.json \
+            --patch-digest "$PATCH_DIGEST" --branch "$BRANCH"
+
+      - name: Publish one deduplicated draft PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RUN_ID: ${{ needs.screen.outputs.run_id }}
+        run: |
+          BRANCH="test262/native-porting-${RUN_ID}"
+          SAME_PR="$(gh pr list --state all --head "$BRANCH" \
+            --json number,state,isDraft --jq '.[0] // empty')"
+          if [ -n "$SAME_PR" ] && [ "$(jq -r .state <<<"$SAME_PR")" = "CLOSED" ]; then
+            python3 scripts/test262/nativePorting.py publication-state \
+              --batch-id "$RUN_ID" --state closed-deferred \
+              --pr-number "$(jq -r .number <<<"$SAME_PR")" \
+              --closure-reason "The prior batch PR was closed without merge."
+            echo "The batch PR was closed without merge; leaving it deferred for explicit retry."
+            exit 0
+          fi
+          if [ -n "$SAME_PR" ] && [ "$(jq -r .state <<<"$SAME_PR")" = "MERGED" ]; then
+            python3 scripts/test262/nativePorting.py publication-state \
+              --batch-id "$RUN_ID" --state merged \
+              --pr-number "$(jq -r .number <<<"$SAME_PR")"
+            echo "The batch PR is already merged."
+            exit 0
+          fi
+          OTHER_OPEN="$(gh pr list --state open --limit 100 --json headRefName \
+            --jq '[.[] | select(.headRefName | startswith("test262/native-porting-"))] | length')"
+          if [ "$OTHER_OPEN" -gt 0 ] && [ -z "$SAME_PR" ]; then
+            python3 scripts/test262/nativePorting.py publication-state \
+              --batch-id "$RUN_ID" --state publication-blocked \
+              --closure-reason "Another native-porting PR is already open."
+            echo "Another native-porting PR is open; discovery state remains checkpointed."
+            exit 0
+          fi
+          git config user.name "jroc-test262-porting[bot]"
+          git config user.email "223556219+Copilot@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+          git commit -m "test262: port validated native batch ${RUN_ID}"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$BRANCH"
+            if ! git diff --quiet "origin/$BRANCH" HEAD; then
+              python3 scripts/test262/nativePorting.py publication-state \
+                --batch-id "$RUN_ID" --state ownership-lost \
+                --expected-head "$(git rev-parse "origin/$BRANCH")" \
+                --closure-reason "The remote bot branch differs from the validated batch."
+              echo "The existing bot branch differs from the validated batch; preserving human edits."
+              exit 1
+            fi
+            echo "The validated branch already exists unchanged."
+          else
+            git push --set-upstream origin "$BRANCH"
+          fi
+          if [ -z "$SAME_PR" ]; then
+            gh pr create --draft --base master --head "$BRANCH" \
+              --title "test262: port validated native batch ${RUN_ID}" \
+              --body-file artifacts/test262/native-pr-body.md
+          fi
+          PR_NUMBER="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number')"
+          python3 scripts/test262/nativePorting.py publication-state \
+            --batch-id "$RUN_ID" --state published \
+            --pr-number "$PR_NUMBER" --expected-head "$(git rev-parse HEAD)"
+
+      - name: Preserve publication reconciliation state
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-native-publication-state
+          path: artifacts/test262/native.sqlite
+          if-no-files-found: error
+          retention-days: 90
