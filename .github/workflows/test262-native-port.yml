@@ -14,9 +14,9 @@ on:
         default: master
         type: string
       area:
-        description: Computed property basics folder or one of its subfolders
+        description: auto, language/<area>, or built-ins/<area>
         required: false
-        default: language/computed-property-names/basics
+        default: auto
         type: string
       candidate_limit:
         description: Candidate fixture limit (maximum 500)
@@ -59,7 +59,7 @@ env:
 
 jobs:
   screen:
-    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master') }}
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' && github.event.workflow_run.event == 'push') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
@@ -68,9 +68,44 @@ jobs:
       artifact_name: ${{ steps.identity.outputs.artifact_name }}
       has_patch: ${{ steps.generate.outputs.has_patch }}
     steps:
+      - name: Resolve validated target
+        id: target
+        uses: actions/github-script@v8
+        env:
+          REVISION: ${{ inputs.revision || 'master' }}
+        with:
+          script: |
+            if (context.eventName === 'workflow_run') {
+              const run = context.payload.workflow_run;
+              if (run.conclusion !== 'success' || run.head_branch !== 'master'
+                  || run.event !== 'push') {
+                core.setFailed('Only successful test262 MVP master-push validation may wake screening.');
+                return;
+              }
+              core.setOutput('ref', run.head_sha);
+              return;
+            }
+            if (context.eventName === 'schedule') {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                ...context.repo,
+                workflow_id: 'test262-mvp.yml',
+                branch: context.payload.repository.default_branch,
+                event: 'push',
+                status: 'success',
+                per_page: 1
+              });
+              if (!data.workflow_runs.length) {
+                core.setFailed('No successful validated master push was found.');
+                return;
+              }
+              core.setOutput('ref', data.workflow_runs[0].head_sha);
+              return;
+            }
+            core.setOutput('ref', process.env.REVISION);
+
       - uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.revision || 'master' }}
+          ref: ${{ steps.target.outputs.ref }}
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
         with:
@@ -81,7 +116,7 @@ jobs:
 
       - name: Validate bounded inputs
         env:
-          AREA: ${{ inputs.area || 'language/computed-property-names/basics' }}
+          AREA: ${{ inputs.area || 'auto' }}
           CANDIDATES: ${{ inputs.candidate_limit || '200' }}
           ACCEPTED: ${{ inputs.accepted_limit || '100' }}
           VARIANTS: ${{ inputs.variant_limit || '400' }}
@@ -90,9 +125,8 @@ jobs:
           python3 - <<'PY'
           import os
           area = os.environ["AREA"].strip("/")
-          supported = "language/computed-property-names/basics"
-          if area != supported and not area.startswith(supported + "/"):
-              raise SystemExit(f"The first release supports only {supported}.")
+          if area != "auto" and not area.startswith(("language/", "built-ins/")):
+              raise SystemExit("Area must be auto, language/<area>, or built-ins/<area>.")
           candidates = int(os.environ["CANDIDATES"])
           accepted = int(os.environ["ACCEPTED"])
           assert 1 <= candidates <= 500
@@ -101,38 +135,10 @@ jobs:
           assert 1 <= int(os.environ["SECONDS"]) <= 1200
           PY
 
-      - name: Resolve stable run identity and affected range
-        id: identity
-        env:
-          AREA: ${{ inputs.area || 'language/computed-property-names/basics' }}
-        run: |
-          mkdir -p artifacts/test262
-          TARGET="$(git rev-parse HEAD)"
-          BASE="$(git rev-parse HEAD^ 2>/dev/null || printf '%s' "$TARGET")"
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            test "${{ github.event.workflow_run.conclusion }}" = "success"
-            BASE="$(git rev-parse "$TARGET^" 2>/dev/null || printf '%s' "$TARGET")"
-          fi
-          CHANGED="$(git diff --name-only "$BASE" "$TARGET" || true)"
-          if [ -n "$CHANGED" ] && ! printf '%s\n' "$CHANGED" | grep -Ev \
-            '^(docs/|CHANGELOG.md$|README.md$|.*\.md$)' >/dev/null; then
-            echo "screen=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "screen=true" >> "$GITHUB_OUTPUT"
-          fi
-          printf '%s\n' "$CHANGED" > artifacts/test262/changed-files.txt
-          AREA_ID="$(printf '%s' "$AREA" | sha256sum | cut -c1-10)"
-          RUN_ID="native-${TARGET:0:12}-${AREA_ID}"
-          echo "target_revision=$TARGET" >> "$GITHUB_OUTPUT"
-          echo "base_revision=$BASE" >> "$GITHUB_OUTPUT"
-          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
-          echo "area=$AREA" >> "$GITHUB_OUTPUT"
-          echo "artifact_name=test262-native-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
-
       - name: Restore trusted catalog and native checkpoint
         uses: actions/github-script@v8
         env:
-          TARGET_BRANCH: ${{ github.ref_name }}
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
         with:
           script: |
             const fs = require('node:fs');
@@ -158,8 +164,15 @@ jobs:
                   }
                 }
               }
+              const priority = {
+                'test262-native-reconciled-state': 3,
+                'test262-native-publication-state': 2,
+                'test262-native-state': 1
+              };
               candidates.sort((a, b) =>
-                Date.parse(b.artifact.created_at) - Date.parse(a.artifact.created_at));
+                Date.parse(b.artifact.created_at) - Date.parse(a.artifact.created_at)
+                || (priority[b.artifact.name] || 0) - (priority[a.artifact.name] || 0)
+                || b.artifact.id - a.artifact.id);
               return candidates;
             }
             async function download(candidate, output) {
@@ -180,7 +193,8 @@ jobs:
             }
             const native = await findArtifacts(
               'test262-native-port.yml', process.env.TARGET_BRANCH,
-              ['test262-native-state', 'test262-native-publication-state'], false);
+              ['test262-native-state', 'test262-native-reconciled-state',
+               'test262-native-publication-state'], false);
             if (!native.length) {
               core.warning('No unexpired trusted native checkpoint was found; cold start.');
             }
@@ -211,22 +225,57 @@ jobs:
             rm -f "$candidate"
           done
 
-      - name: Build compiler and native screening host once
+      - name: Resolve durable validated range and run identity
+        id: identity
+        env:
+          AREA: ${{ inputs.area || 'auto' }}
         run: |
           mkdir -p artifacts/test262
+          TARGET="$(git rev-parse HEAD)"
+          RESUME=()
+          if [ "${{ github.event_name }}" = "schedule" ] \
+            || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RESUME+=(--resume-pending)
+          fi
+          python3 scripts/test262/nativePorting.py resolve-range \
+            --repository . --target "$TARGET" "${RESUME[@]}" \
+            --output artifacts/test262/native-range.json
+          BASE="$(jq -r .base_revision artifacts/test262/native-range.json)"
+          SCREEN="$(jq -r .screen artifacts/test262/native-range.json)"
+          COMPONENTS="$(jq -r '.components | join(",")' artifacts/test262/native-range.json)"
+          jq -r '.changed_files[]' artifacts/test262/native-range.json \
+            > artifacts/test262/changed-files.txt
+          AREA_ID="$(printf '%s' "$AREA" | sha256sum | cut -c1-10)"
+          RUN_ID="native-${TARGET:0:12}-${AREA_ID}"
+          echo "target_revision=$TARGET" >> "$GITHUB_OUTPUT"
+          echo "base_revision=$BASE" >> "$GITHUB_OUTPUT"
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "area=$AREA" >> "$GITHUB_OUTPUT"
+          echo "screen=$SCREEN" >> "$GITHUB_OUTPUT"
+          echo "components=$COMPONENTS" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=test262-native-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+
+      - name: Build compiler and native screening host once
+        if: ${{ steps.identity.outputs.screen == 'true' }}
+        run: |
+          mkdir -p artifacts/test262
+          START="$(date +%s)"
           dotnet build src/Cli/Jroc.csproj -c Release --nologo
           dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj \
             -c Release --nologo
           dotnet scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll \
             --capabilities > artifacts/test262/native-capabilities.json
+          echo "$(( $(date +%s) - START ))" > artifacts/test262/build-seconds.txt
 
       - name: Validate automation tooling
+        if: ${{ steps.identity.outputs.screen == 'true' }}
         run: |
           node --test scripts/test262/nativePorting.test.js
           node --test scripts/test262/nativeScreeningHost.test.js
           python3 -m py_compile scripts/test262/nativePorting.py
 
       - name: Bootstrap full pinned corpus
+        if: ${{ steps.identity.outputs.screen == 'true' }}
         run: |
           npm run test262:bootstrap
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
@@ -238,8 +287,14 @@ jobs:
           TARGET: ${{ steps.identity.outputs.target_revision }}
           BASE: ${{ steps.identity.outputs.base_revision }}
         run: |
-          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
-          PIN="$(git -C "$ROOT" rev-parse HEAD)"
+          if [ "${{ steps.identity.outputs.screen }}" = "true" ]; then
+            ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+            PIN="$(git -C "$ROOT" rev-parse HEAD)"
+            BUILD_SECONDS="$(cat artifacts/test262/build-seconds.txt)"
+          else
+            PIN="$(jq -r .upstream.commit tests/test262/test262.pin.json)"
+            BUILD_SECONDS=0
+          fi
           python3 scripts/test262/nativePorting.py create-run \
             --run-id "$RUN_ID" --batch-id "$RUN_ID" \
             --trigger-revision "$TARGET" --base-revision "$BASE" --pin "$PIN" \
@@ -247,24 +302,37 @@ jobs:
             --accepted-limit "${{ inputs.accepted_limit || '100' }}" \
             --variant-limit "${{ inputs.variant_limit || '400' }}" \
             --time-limit "${{ inputs.time_limit || '1200' }}"
+          python3 scripts/test262/nativePorting.py record-stage --run-id "$RUN_ID" \
+            --stage build --seconds "$BUILD_SECONDS"
+          PLAN_START="$(date +%s)"
           if [ "${{ steps.identity.outputs.screen }}" = "true" ] && [ -s artifacts/test262/catalog.sqlite ]; then
             python3 scripts/test262/catalog.py export --refresh-registrations
             CAPABILITY_ID="$(find tests/Jroc.Testing scripts/test262/NativeScreeningHost \
               -type f \( -name '*.cs' -o -name '*.csproj' \) -print0 | sort -z \
               | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)"
             python3 scripts/test262/nativePorting.py plan --run-id "$RUN_ID" \
-              --catalog artifacts/test262/catalog.sqlite --area "${{ inputs.area || 'language/computed-property-names/basics' }}" \
+              --catalog artifacts/test262/catalog.sqlite \
+              --area "${{ inputs.area || 'auto' }}" \
+              --components "${{ steps.identity.outputs.components }}" \
+              --range artifacts/test262/native-range.json \
               --capability-identity "$CAPABILITY_ID" \
               --output artifacts/test262/native-plan.json
           else
-            printf '%s\n' '{"cold_start":true,"candidate_count":0,"paths":[],"selection":"documentation-only or unsupported trigger"}' \
-              > artifacts/test262/native-plan.json
+            python3 scripts/test262/nativePorting.py plan --run-id "$RUN_ID" \
+              --area "${{ inputs.area || 'auto' }}" \
+              --components "${{ steps.identity.outputs.components }}" \
+              --range artifacts/test262/native-range.json --skip-selection \
+              --output artifacts/test262/native-plan.json
           fi
+          python3 scripts/test262/nativePorting.py record-stage --run-id "$RUN_ID" \
+            --stage planning --seconds "$(( $(date +%s) - PLAN_START ))"
 
       - name: Screen pending variants through native harness APIs
+        if: ${{ steps.identity.outputs.screen == 'true' }}
         env:
           RUN_ID: ${{ steps.identity.outputs.run_id }}
         run: |
+          SCREEN_START="$(date +%s)"
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
           PIN="$(git -C "$ROOT" rev-parse HEAD)"
           COMPILER_ID="$(find src/Cli/bin/Release/net10.0 -maxdepth 1 -type f \
@@ -308,6 +376,8 @@ jobs:
           else
             : > artifacts/test262/native-results.ndjson
           fi
+          python3 scripts/test262/nativePorting.py record-stage --run-id "$RUN_ID" \
+            --stage screening --seconds "$(( $(date +%s) - SCREEN_START ))"
 
       - name: Generate and validate accepted patch
         id: generate
@@ -315,6 +385,7 @@ jobs:
           RUN_ID: ${{ steps.identity.outputs.run_id }}
           TARGET: ${{ steps.identity.outputs.target_revision }}
         run: |
+          GENERATE_START="$(date +%s)"
           python3 scripts/test262/nativePorting.py report --run-id "$RUN_ID" \
             --output artifacts/test262/native-report.json
           if jq -e '.complete_native_acceptance' artifacts/test262/native-report.json >/dev/null; then
@@ -341,6 +412,11 @@ jobs:
           else
             echo "has_patch=false" >> "$GITHUB_OUTPUT"
           fi
+          python3 scripts/test262/nativePorting.py record-stage --run-id "$RUN_ID" \
+            --stage generation-validation \
+            --seconds "$(( $(date +%s) - GENERATE_START ))"
+          python3 scripts/test262/nativePorting.py report --run-id "$RUN_ID" \
+            --output artifacts/test262/native-report.json
 
       - name: Checkpoint report and create trusted manifest
         if: always()
@@ -373,6 +449,9 @@ jobs:
             "- Accepted: " + (.counts.accepted|tostring) + "\n" +
             "- Incomplete: " + (.counts.incomplete|tostring) + "\n" +
             "- Failed/unsupported: " + (.counts.failed_or_unsupported|tostring) + "\n" +
+            "- Screening active seconds: " + (.metrics.screening_active_seconds|tostring) + "\n" +
+            "- Accepted per active hour: " + ((.metrics.accepted_per_active_hour // 0)|tostring) + "\n" +
+            "- Stage seconds: `" + (.metrics.stage_seconds|tojson) + "`\n" +
             "- Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n" +
             "Native screening used the checked-in C# harness APIs. The focused generated xUnit batch passed; normal PR CI remains required."
           ' artifacts/test262/native-report.json > artifacts/test262/native-pr-body.md
@@ -382,6 +461,19 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: test262-native-state
+          path: artifacts/test262/native.sqlite
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Advance reconciled cursor after checkpoint publication
+        run: |
+          python3 scripts/test262/nativePorting.py finalize-reconciliation \
+            --run-id "${{ steps.identity.outputs.run_id }}"
+
+      - name: Upload reconciled native state
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-native-reconciled-state
           path: artifacts/test262/native.sqlite
           if-no-files-found: error
           retention-days: 90

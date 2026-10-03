@@ -213,15 +213,18 @@ The screening host exposes a machine-readable capability report with
 `NativeScreeningHost --capabilities`, uploaded as
 `native-capabilities.json` by the workflow. The current native contract
 supports async completion, strict/no-strict variants, agent cleanup, the
-registered Test262 helper set (`agent.js`, `atomicsHelper.js`,
-`compareArray.js`, `dateConstants.js`, `detachArrayBuffer.js`,
-`propertyHelper.js`, `promiseHelper.js`, `resizableArrayBufferUtils.js`,
-`testAtomics.js`, `testTypedArray.js` and `tcoHelper.js`), sibling fixture
-files and harness files. Unsupported raw and module fixtures, unknown helper
-includes, and parse/early compile-negative fixtures remain explicit
+registered Test262 helper set reported by the capability document, ES module
+entries whose static import/export syntax establishes module goal (including
+relative sibling dependencies), sibling fixture files and harness
+files. MVP-blocked async, agent, CanBlock and module fixtures remain eligible
+for native selection when they have no other unsupported reason. Unsupported
+raw fixtures, module-flag entries without static module syntax, unknown helper
+includes, and parse/early/resolution-negative fixtures remain explicit
 `harness-gap` outcomes; they are never accepted as passes. Worker isolation
 and timeouts apply to every variant, and agent state is disposed with the
-worker runtime.
+worker runtime. Focused host integration tests verify successful async and
+agent completion, module dependency loading, agent failure propagation,
+process-tree timeout cleanup and a clean success after those failures.
 
 This matrix is an execution capability declaration, not an assertion that
 every fixture using a supported shape passes. Product failures remain
@@ -231,13 +234,29 @@ every fixture using a supported shape passes. Product failures remain
 
 The native workflow listens for a successful `test262 MVP` validation on a
 master push and checks out the exact validated `head_sha`; an hourly recovery
-schedule uses master when a workflow-run event was missed or coalesced.
-Documentation-only changes produce an empty selection. Candidate planning
-prioritizes current and historical MVP failure hints with an 80/20 retry versus
-fallback allocation, preserves a likely-component selection reason, and fills
-unused retry capacity with coherent complete-pass hints. All selected evidence
-is still re-executed by the native host under the active compiler, harness and
-environment provenance before any generation or publication.
+schedule resolves the newest successful master-push validation rather than
+assuming the current branch tip has passed. The SQLite state records the last
+durably reconciled validated revision. Each wake-up diffs its complete
+unprocessed ancestor range; first runs and missing/force-pushed ancestors use
+an explicit one-commit bounded baseline and report that attribution.
+Registration/coverage-only generated batch merges produce an empty selection.
+Scheduled and manual recovery can resume durable pending work without relying
+on Actions concurrency as a FIFO.
+
+Candidate planning maps changed compiler/runtime/harness paths to callable,
+private-member, property, iterator/Promise, regex and native-capability areas.
+It assigns 80% of the global candidate budget to relevant current or historical
+MVP failure hints and rotates the remaining 20% through fallback/discovery
+candidates, redistributing unused retry capacity. Selection remains within one
+coherent language or built-in area, preserves its reason, admits native-capable
+fixtures blocked by MVP policy, and uses historical passes only to fill spare
+capacity. Deferred candidates remain in `pending_work` after the merge cursor
+advances. All selected evidence is still re-executed by the native host under
+the active compiler, harness and environment provenance before generation.
+Reports include build, planning, screening and generation/validation stage
+durations plus accepted tests per active screening hour. These measurements are
+evidence for future concurrency decisions; this workflow still permits only one
+native-porting writer and does not create product-failure issues automatically.
 The variant and active-execution-time budgets resume from the SQLite
 checkpoint; idle time between workflow runs does not consume the time budget.
 `report` keeps pending, failed, unsupported and infrastructure outcomes
@@ -248,8 +267,12 @@ identifier-safe C# registrations, then updates the overall language and
 computed-property-name coverage rows plus the changelog. `validate-patch`
 requires the changed path set and every generated file hash to exactly match
 the generation manifest.
-`checkpoint` records the report digest and cursor before durable state is
-uploaded. Empty and failure-only runs still publish their database and report.
+`checkpoint` records the report digest and screening cursor before durable
+state is uploaded. The validated-master cursor advances only after that
+checkpoint artifact succeeds, then a second reconciled-state artifact publishes
+the advanced cursor. If either upload fails, the next run restores the older
+unreconciled state and cannot discard the range or pending work. Empty and
+failure-only runs still publish their database and report.
 
 The manually dispatched `.github/workflows/test262-native-port.yml` restores
 only same-repository artifacts from the catalog workflow and its own prior

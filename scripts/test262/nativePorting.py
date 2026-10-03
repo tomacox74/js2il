@@ -15,7 +15,8 @@ import sys
 import time
 from typing import Any
 
-SCHEMA_VERSION = "3"
+SCHEMA_VERSION = "4"
+COMPATIBLE_SCHEMA_VERSIONS = {"3", SCHEMA_VERSION}
 OUTCOMES = {"pass", "fail", "deferred", "unsupported", "infrastructure-error", "incomplete"}
 FAILURE_CLASSES = {
     "product-feature-gap",
@@ -25,13 +26,27 @@ FAILURE_CLASSES = {
     "infrastructure-error",
     "unresolved",
 }
-SUPPORTED_AREA = "language/computed-property-names/basics"
-COMPONENT_FEATURE_MAP = (
-    ("callable-lowering", ("async", "generator", "arrow", "function", "class")),
-    ("private-member-lowering", ("private", "private-elements", "private-method")),
-    ("property-operations", ("property", "computed-property", "proxy", "reflect")),
-    ("iterator-promise-runtime", ("iterator", "promise", "async-iterator")),
+DEFAULT_AREA = "auto"
+NATIVE_ELIGIBLE_BLOCKERS = {
+    "async-requirement",
+    "agent-requirement",
+    "can-block-requirement",
+    "module-flag",
+}
+COMPONENT_FEATURE_MAP = {
+    "callable-lowering": ("async", "generator", "arrow", "function", "class"),
+    "private-member-lowering": ("private", "private-elements", "private-method"),
+    "property-operations": ("property", "computed-property", "proxy", "reflect"),
+    "iterator-promise-runtime": ("iterator", "promise", "async-iterator"),
+    "regex-runtime": ("regexp", "regex"),
+    "native-capability": ("atomics", "async", "module-code", "import", "export"),
+}
+CHANGE_COMPONENT_MAP = (
+    ("private-member-lowering", ("private", "class", "brand")),
     ("regex-runtime", ("regexp", "regex")),
+    ("iterator-promise-runtime", ("iterator", "promise", "async")),
+    ("property-operations", ("objectruntime", "property", "proxy", "reflect")),
+    ("callable-lowering", ("compiler/ir", "callable", "function", "arrow", "class")),
 )
 
 
@@ -137,13 +152,54 @@ def connect(path: Path) -> sqlite3.Connection:
           environment_identity TEXT NOT NULL,
           updated_at REAL NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS automation_state (
+          state_id INTEGER PRIMARY KEY CHECK (state_id=1),
+          last_reconciled_revision TEXT,
+          fallback_cursor INTEGER NOT NULL DEFAULT 0,
+          updated_at REAL NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS reconciliations (
+          run_id TEXT PRIMARY KEY REFERENCES runs(run_id),
+          target_revision TEXT NOT NULL,
+          base_revision TEXT NOT NULL,
+          attribution TEXT NOT NULL,
+          changed_files TEXT NOT NULL,
+          components TEXT NOT NULL,
+          fallback_advance INTEGER NOT NULL DEFAULT 0,
+          state TEXT NOT NULL,
+          created_at REAL NOT NULL,
+          updated_at REAL NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS pending_work (
+          path TEXT PRIMARY KEY,
+          sha256 TEXT NOT NULL,
+          variants TEXT NOT NULL,
+          selection_reason TEXT NOT NULL,
+          evidence_kind TEXT NOT NULL,
+          catalog_provenance TEXT NOT NULL,
+          capability_identity TEXT NOT NULL,
+          status TEXT NOT NULL,
+          updated_at REAL NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS stage_metrics (
+          run_id TEXT NOT NULL REFERENCES runs(run_id),
+          stage TEXT NOT NULL,
+          seconds REAL NOT NULL,
+          PRIMARY KEY(run_id,stage)
+        );
         """
     )
     existing = db.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()
-    if existing and existing[0] != SCHEMA_VERSION:
+    if existing and existing[0] not in COMPATIBLE_SCHEMA_VERSIONS:
         raise ValueError(
             f"Incompatible native evidence schema {existing[0]}; "
             f"start a documented cold state for schema {SCHEMA_VERSION}")
+    db.execute(
+        """INSERT OR IGNORE INTO automation_state
+           (state_id,last_reconciled_revision,fallback_cursor,updated_at)
+           VALUES(1,NULL,0,?)""",
+        (time.time(),),
+    )
     db.execute(
         "INSERT OR REPLACE INTO meta(key,value) VALUES('schema_version',?)",
         (SCHEMA_VERSION,),
@@ -231,13 +287,147 @@ def open_catalog(path: Path) -> sqlite3.Connection:
     return catalog
 
 
+def classify_changed_components(paths: list[str]) -> list[str]:
+    components: set[str] = set()
+    for path in paths:
+        if not (
+            path.startswith(("src/", "tests/Jroc.Testing/", "scripts/test262/"))
+            or path.startswith(".github/workflows/test262-")
+            or path == "tests/test262/test262.pin.json"
+        ):
+            continue
+        lowered = path.lower()
+        before = len(components)
+        if path == "tests/test262/test262.pin.json" or path.startswith(
+            ("scripts/test262/", "tests/Jroc.Testing/", ".github/workflows/test262-")
+        ):
+            components.add("native-capability")
+        for component, terms in CHANGE_COMPONENT_MAP:
+            if any(term in lowered for term in terms):
+                components.add(component)
+        if path.startswith("src/Compiler/") and len(components) == before:
+            components.add("callable-lowering")
+        if path.startswith("src/JavaScriptRuntime/") and len(components) == before:
+            components.update(
+                {"property-operations", "iterator-promise-runtime", "regex-runtime"}
+            )
+    return sorted(components)
+
+
+def is_generated_only_change(paths: list[str]) -> bool:
+    if not paths:
+        return True
+    return all(
+        path == "CHANGELOG.md"
+        or path == "docs/ECMA262/Index.md"
+        or path == "docs/ECMA262/Test262Conformance.md"
+        or path.startswith("tests/Jroc.Test262.Tests/")
+        for path in paths
+    )
+
+
+def git_output(repository: Path, *args: str) -> str:
+    return subprocess.check_output(
+        ["git", "-C", str(repository), *args], text=True
+    ).strip()
+
+
+def resolve_range(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
+    repository = Path(args.repository).resolve()
+    target = git_output(repository, "rev-parse", f"{args.target}^{{commit}}")
+    state = db.execute(
+        "SELECT last_reconciled_revision FROM automation_state WHERE state_id=1"
+    ).fetchone()
+    prior = state["last_reconciled_revision"] if state else None
+    base = None
+    attribution = "validated-range"
+    if prior:
+        ancestor = subprocess.run(
+            ["git", "-C", str(repository), "merge-base", "--is-ancestor", prior, target],
+            check=False,
+        ).returncode == 0
+        if ancestor:
+            base = prior
+        else:
+            attribution = "bounded-baseline-missing-ancestor"
+    if base is None:
+        attribution = (
+            attribution
+            if prior
+            else "bounded-baseline-first-run"
+        )
+        try:
+            base = git_output(
+                repository, "rev-parse", f"{target}~{args.baseline_commits}"
+            )
+        except subprocess.CalledProcessError:
+            base = target
+    changed = (
+        git_output(repository, "diff", "--name-only", base, target).splitlines()
+        if base != target
+        else []
+    )
+    components = classify_changed_components(changed)
+    generated_only = is_generated_only_change(changed)
+    pending_count = db.execute(
+        "SELECT COUNT(*) FROM pending_work WHERE status='pending'"
+    ).fetchone()[0]
+    result = {
+        "target_revision": target,
+        "base_revision": base,
+        "last_reconciled_revision": prior,
+        "attribution": attribution,
+        "changed_files": changed,
+        "components": components,
+        "screen": (
+            (bool(components) and not generated_only)
+            or (args.resume_pending and pending_count > 0)
+        ),
+        "generated_only": generated_only,
+        "pending_count": pending_count,
+    }
+    if args.output:
+        write_json(Path(args.output), result)
+    return result
+
+
+def coherent_area(path: str) -> str:
+    parts = Path(path).parts
+    if len(parts) < 3 or parts[0] != "test":
+        return "unknown"
+    return "/".join(parts[1:3])
+
+
+def candidate_components(path: str) -> list[str]:
+    lowered = path.lower()
+    return sorted(
+        component
+        for component, terms in COMPONENT_FEATURE_MAP.items()
+        if any(term in lowered for term in terms)
+    ) or ["unmapped"]
+
+
+def native_eligible_state(row: sqlite3.Row) -> bool:
+    if row["state"] == "runnable":
+        return True
+    if row["state"] != "blocked":
+        return False
+    reasons = json.loads(row["reasons"])
+    codes = {reason.get("code") for reason in reasons}
+    return bool(codes) and codes.issubset(NATIVE_ELIGIBLE_BLOCKERS)
+
+
 def catalog_candidates(
-    catalog_path: Path, area: str, limit: int
+    catalog_path: Path,
+    area: str,
+    limit: int,
+    components: set[str],
+    fallback_cursor: int,
 ) -> tuple[str, list[dict[str, Any]]]:
     normalized = area.strip("/")
-    if normalized != SUPPORTED_AREA and not normalized.startswith(SUPPORTED_AREA + "/"):
+    if normalized != DEFAULT_AREA and not normalized.startswith(("language/", "built-ins/")):
         raise ValueError(
-            f"First-release native automation supports only {SUPPORTED_AREA} and its subfolders"
+            "Native automation area must be 'auto', language/<area>, or built-ins/<area>"
         )
     catalog = open_catalog(catalog_path)
     try:
@@ -247,23 +437,34 @@ def catalog_candidates(
         if not current:
             raise ValueError("Catalog checkpoint has no current provenance")
         provenance = current[0]
+        area_filter = "" if normalized == DEFAULT_AREA else "AND (path=? OR path LIKE ?)"
+        parameters: tuple[Any, ...] = (provenance,)
+        if normalized != DEFAULT_AREA:
+            parameters += (f"test/{normalized}", f"test/{normalized}/%")
         rows = catalog.execute(
-            """SELECT path,sha256,variants
+            f"""SELECT path,sha256,variants,state,reasons
                FROM fixtures
-               WHERE provenance=? AND state='runnable'
-                 AND (path=? OR path LIKE ?)
+               WHERE provenance=?
+                 {area_filter}
                  AND NOT EXISTS (
                    SELECT 1 FROM registrations r WHERE r.path=fixtures.path
                  )
                ORDER BY path""",
-            (provenance, f"test/{normalized}", f"test/{normalized}/%"),
+            parameters,
         ).fetchall()
         native_root = Path(__file__).resolve().parents[2] / "tests/Jroc.Test262.Tests"
+        legacy_hashes: dict[str, set[str]] = {}
+        for existing in native_root.rglob("*.js"):
+            legacy_hashes.setdefault(existing.name, set()).add(file_sha256(existing))
         candidates: list[dict[str, Any]] = []
         retry_candidates: list[dict[str, Any]] = []
         fallback_candidates: list[dict[str, Any]] = []
         for row in rows:
+            if not native_eligible_state(row):
+                continue
             variants = json.loads(row["variants"])
+            if not variants:
+                continue
             current_evidence = {
                 result["variant"]: result["verdict"]
                 for result in catalog.execute(
@@ -320,19 +521,13 @@ def catalog_candidates(
                     ).fetchone()
                     if historical_failures:
                         failure_kind = "historical MVP failure hint"
+            if evidence_kind is None and failure_kind is None and row["state"] == "blocked":
+                failure_kind = "MVP-blocked native-capability discovery hint"
             filename = Path(row["path"]).name
-            legacy_duplicate = any(
-                file_sha256(existing) == row["sha256"]
-                for existing in native_root.rglob(filename)
-            )
+            legacy_duplicate = row["sha256"] in legacy_hashes.get(filename, set())
             if not legacy_duplicate and (evidence_kind or failure_kind):
-                component = next(
-                    (
-                        name for name, terms in COMPONENT_FEATURE_MAP
-                        if any(term in row["path"].lower() for term in terms)
-                    ),
-                    "unmapped",
-                )
+                likely_components = candidate_components(row["path"])
+                relevant = bool(components.intersection(likely_components))
                 candidate = {
                     "path": row["path"],
                     "sha256": row["sha256"],
@@ -340,14 +535,46 @@ def catalog_candidates(
                     "evidence_kind": evidence_kind or failure_kind,
                     "reason": (
                         f"{evidence_kind or failure_kind}; likely component "
-                        f"{component}; fresh native acceptance required"
+                        f"{','.join(likely_components)}; fresh native acceptance required"
                     ),
-                    "retry_priority": 0 if failure_kind else 1,
+                    "retry_priority": 0 if failure_kind and relevant else (
+                        1 if failure_kind else 2
+                    ),
+                    "area": coherent_area(row["path"]),
                 }
-                (retry_candidates if failure_kind else fallback_candidates).append(candidate)
-        retry_limit = min(limit, max(1, (limit * 80 + 99) // 100))
-        candidates = (retry_candidates[:retry_limit]
-                      + fallback_candidates[: max(0, limit - retry_limit)])
+                (retry_candidates if failure_kind and relevant else fallback_candidates).append(
+                    candidate
+                )
+        if normalized == DEFAULT_AREA and (retry_candidates or fallback_candidates):
+            counts: dict[str, int] = {}
+            area_source = retry_candidates or fallback_candidates
+            for candidate in area_source:
+                counts[candidate["area"]] = counts.get(candidate["area"], 0) + 1
+            selected_area = sorted(counts, key=lambda key: (-counts[key], key))[0]
+            retry_candidates = [
+                candidate for candidate in retry_candidates
+                if candidate["area"] == selected_area
+            ]
+            fallback_candidates = [
+                candidate for candidate in fallback_candidates
+                if candidate["area"] == selected_area
+            ]
+        retry_limit = min(limit, (limit * 80) // 100)
+        selected_retry = retry_candidates[:retry_limit]
+        remaining = limit - len(selected_retry)
+        if fallback_candidates:
+            offset = fallback_cursor % len(fallback_candidates)
+            rotated = fallback_candidates[offset:] + fallback_candidates[:offset]
+        else:
+            rotated = []
+        selected_fallback = rotated[:remaining]
+        candidates = selected_retry + selected_fallback
+        if len(candidates) < limit:
+            candidates.extend(
+                retry_candidates[retry_limit:retry_limit + (limit - len(candidates))]
+            )
+        for candidate in candidates:
+            candidate["fallback_selected"] = candidate in selected_fallback
         return provenance, candidates[:limit]
     finally:
         catalog.close()
@@ -361,11 +588,67 @@ def plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
         "SELECT * FROM active_provenance WHERE run_id=?", (args.run_id,)
     ).fetchone()
     budgets = json.loads(run["budgets"])
-    provenance, candidates = catalog_candidates(
-        Path(args.catalog), args.area, budgets["candidate_limit"]
+    components = {
+        value for value in (args.components or "").split(",") if value
+    }
+    automation = db.execute(
+        "SELECT fallback_cursor FROM automation_state WHERE state_id=1"
+    ).fetchone()
+    fallback_cursor = automation["fallback_cursor"] if automation else 0
+    if args.skip_selection:
+        provenance, candidates = "none", []
+    else:
+        if not args.catalog:
+            raise ValueError("--catalog is required unless --skip-selection is used")
+        provenance, candidates = catalog_candidates(
+            Path(args.catalog),
+            args.area,
+            budgets["candidate_limit"],
+            components,
+            fallback_cursor,
+        )
+    pending = db.execute(
+        """SELECT * FROM pending_work
+           WHERE status='pending' ORDER BY updated_at,path"""
+    ).fetchall()
+    if args.skip_selection:
+        pending = []
+    elif pending:
+        if args.area == DEFAULT_AREA:
+            pending_area = coherent_area(pending[0]["path"])
+            pending = [
+                row for row in pending if coherent_area(row["path"]) == pending_area
+            ]
+        else:
+            prefix = f"test/{args.area.strip('/')}/"
+            pending = [row for row in pending if row["path"].startswith(prefix)]
+        pending = pending[: max(1, budgets["candidate_limit"] // 2)]
+    selected: list[dict[str, Any]] = [
+        {
+            "path": row["path"],
+            "sha256": row["sha256"],
+            "variants": json.loads(row["variants"]),
+            "reason": row["selection_reason"] + "; resumed durable pending work",
+            "evidence_kind": row["evidence_kind"],
+            "fallback_selected": False,
+        }
+        for row in pending
+    ]
+    if selected:
+        selected_area = coherent_area(selected[0]["path"])
+        candidates = [
+            candidate for candidate in candidates
+            if coherent_area(candidate["path"]) == selected_area
+        ]
+    selected_paths = {candidate["path"] for candidate in selected}
+    selected.extend(
+        candidate for candidate in candidates
+        if candidate["path"] not in selected_paths
     )
+    selected = selected[:budgets["candidate_limit"]]
+    now = time.time()
     with db:
-        for candidate in candidates:
+        for candidate in selected:
             prior = db.execute(
                 """SELECT a.outcome,a.failure_class
                    FROM attempts a
@@ -404,9 +687,59 @@ def plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
                 ),
             )
             db.execute(
+                """INSERT OR REPLACE INTO pending_work
+                   (path,sha256,variants,selection_reason,evidence_kind,
+                    catalog_provenance,capability_identity,status,updated_at)
+                   VALUES(?,?,?,?,?,?,?,? ,?)""",
+                (
+                    candidate["path"],
+                    candidate["sha256"],
+                    canonical(candidate["variants"]),
+                    candidate["reason"],
+                    candidate["evidence_kind"],
+                    provenance,
+                    args.capability_identity,
+                    "deferred" if capability_deferred else "pending",
+                    now,
+                ),
+            )
+            db.execute(
                 "UPDATE candidates SET evidence_kind=? WHERE run_id=? AND path=?",
                 (candidate["evidence_kind"], args.run_id, candidate["path"]),
             )
+        range_document = (
+            json.loads(Path(args.range).read_text(encoding="utf-8"))
+            if args.range
+            else {
+                "target_revision": run["trigger_revision"],
+                "base_revision": run["base_revision"],
+                "attribution": "manual",
+                "changed_files": [],
+                "components": sorted(components),
+            }
+        )
+        db.execute(
+            """INSERT OR REPLACE INTO reconciliations
+               (run_id,target_revision,base_revision,attribution,changed_files,
+                components,fallback_advance,state,created_at,updated_at)
+               VALUES(?,?,?,?,?,?,?,'planned',?,?)""",
+            (
+                args.run_id,
+                range_document["target_revision"],
+                range_document["base_revision"],
+                range_document["attribution"],
+                canonical(range_document["changed_files"]),
+                canonical(range_document["components"]),
+                len(
+                    [
+                        candidate for candidate in selected
+                        if candidate.get("fallback_selected", False)
+                    ]
+                ),
+                now,
+                now,
+            ),
+        )
         db.execute(
             "UPDATE runs SET state='screening',updated_at=? WHERE run_id=?",
             (time.time(), args.run_id),
@@ -418,8 +751,14 @@ def plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
         "run_id": args.run_id,
         "batch_id": run["batch_id"],
         "catalog_provenance": provenance,
+        "components": sorted(components),
         "candidate_count": len(all_candidates),
-        "new_candidate_count": len(candidates),
+        "new_candidate_count": len(
+            [candidate for candidate in selected if candidate["path"] not in selected_paths]
+        ),
+        "resumed_pending_count": len(
+            [candidate for candidate in selected if candidate["path"] in selected_paths]
+        ),
         "paths": [row["path"] for row in all_candidates],
         "cold_start": False,
     }
@@ -766,6 +1105,23 @@ def report(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
         },
         "complete_native_acceptance": bool(batch_accepted),
     }
+    stages = {
+        row["stage"]: row["seconds"]
+        for row in db.execute(
+            "SELECT stage,seconds FROM stage_metrics WHERE run_id=? ORDER BY stage",
+            (args.run_id,),
+        )
+    }
+    active_seconds = float(run["active_seconds"])
+    result["metrics"] = {
+        "stage_seconds": stages,
+        "screening_active_seconds": active_seconds,
+        "accepted_per_active_hour": (
+            len(batch_accepted) * 3600 / active_seconds
+            if active_seconds > 0
+            else None
+        ),
+    }
     budgets = json.loads(run["budgets"])
     result["budget_exceeded"] = (
         result["counts"]["attempts"] >= budgets["variant_limit"]
@@ -809,14 +1165,26 @@ def runtime_negative(source: str) -> bool:
     )
 
 
-def update_table_row(text: str, label: str, increment: int) -> str:
+def update_table_row(
+    text: str, label: str, increment: int, section: str | None = None
+) -> str:
+    start = 0
+    end = len(text)
+    if section:
+        heading = f"## {section}"
+        start = text.find(heading)
+        if start < 0:
+            raise ValueError(f"Coverage section not found: {section}")
+        next_heading = text.find("\n## ", start + len(heading))
+        end = next_heading if next_heading >= 0 else len(text)
+    segment = text[start:end]
     pattern = re.compile(
         rf"^\| {re.escape(label)} \| (?P<passed>[\d,]+) \| "
         rf"(?P<unsupported>[\d,]+) \| (?P<unverified>[\d,]+) \| "
         rf"(?P<total>[\d,]+) \| \*\*(?P<percent>[\d.]+)%\*\* \|$",
         re.M,
     )
-    match = pattern.search(text)
+    match = pattern.search(segment)
     if not match:
         raise ValueError(f"Coverage row not found: {label}")
     passed = int(match.group("passed").replace(",", "")) + increment
@@ -829,18 +1197,47 @@ def update_table_row(text: str, label: str, increment: int) -> str:
         f"| {label} | {passed:,} | {unsupported:,} | {unverified:,} | "
         f"{total:,} | **{passed / total * 100:.2f}%** |"
     )
-    return text[: match.start()] + replacement + text[match.end() :]
+    absolute_start = start + match.start()
+    absolute_end = start + match.end()
+    return text[:absolute_start] + replacement + text[absolute_end:]
 
 
-def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list[str]:
+def coverage_labels(paths: list[str]) -> dict[tuple[str | None, str], int]:
+    labels: dict[tuple[str | None, str], int] = {(None, "**Total**"): len(paths)}
+    for path in paths:
+        parts = Path(path).parts
+        if len(parts) < 3:
+            raise ValueError(f"Cannot classify coverage path: {path}")
+        if parts[1] == "language":
+            key = (None, "Language syntax and semantics")
+            labels[key] = (
+                labels.get(key, 0) + 1
+            )
+        elif parts[1] == "built-ins":
+            key = (None, "Built-in objects and APIs")
+            labels[key] = (
+                labels.get(key, 0) + 1
+            )
+        else:
+            raise ValueError(f"Unsupported coverage area: {path}")
+        feature = (None, f"`{parts[2]}`")
+        labels[feature] = labels.get(feature, 0) + 1
+        if len(parts) > 3 and parts[1] == "language":
+            section = {
+                "expressions": "Expression Features",
+                "statements": "Statement and Declaration Features",
+            }.get(parts[2])
+            if section:
+                subfeature = (section, f"`{parts[3]}`")
+                labels[subfeature] = labels.get(subfeature, 0) + 1
+    return labels
+
+
+def update_coverage_docs(root: Path, accepted: list[str], batch_id: str) -> list[str]:
     conformance = root / "docs/ECMA262/Test262Conformance.md"
     text = conformance.read_text(encoding="utf-8")
-    for label in (
-        "Language syntax and semantics",
-        "**Total**",
-        "`computed-property-names`",
-    ):
-        text = update_table_row(text, label, accepted_count)
+    for (section, label), increment in coverage_labels(accepted).items():
+        text = update_table_row(text, label, increment, section)
     conformance.write_text(text, encoding="utf-8")
 
     index = root / "docs/ECMA262/Index.md"
@@ -854,6 +1251,7 @@ def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list
     match = summary_pattern.search(index_text)
     if not match:
         raise ValueError("ECMA-262 index Test262 summary was not found")
+    accepted_count = len(accepted)
     passed = int(match.group("passed").replace(",", "")) + accepted_count
     excluded = int(match.group("excluded").replace(",", ""))
     unverified = int(match.group("unverified").replace(",", "")) - accepted_count
@@ -875,8 +1273,7 @@ def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list
     marker = f"native batch `{batch_id}`"
     if marker not in changelog_text:
         insertion = (
-            f"- test262: verify {accepted_count} additional pinned computed "
-            f"property-name fixtures "
+            f"- test262: verify {accepted_count} additional pinned fixtures "
             f"from native batch `{batch_id}`.\n"
         )
         changelog_text = changelog_text.replace(
@@ -888,6 +1285,37 @@ def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list
         "docs/ECMA262/Index.md",
         "docs/ECMA262/Test262Conformance.md",
     ]
+
+
+def fixture_dependencies(upstream: Path, relative: str) -> list[str]:
+    result: list[str] = []
+    pending = [relative]
+    seen = {relative}
+    pattern = re.compile(
+        r"""(?:
+            (?:import|export)\s+(?:[^'"]*?\s+from\s+)?|
+            import\s*\(
+        )['"](?P<specifier>\.[^'"]+)['"]""",
+        re.X,
+    )
+    while pending:
+        current = pending.pop()
+        source = upstream / current
+        text = source.read_text(encoding="utf-8-sig")
+        for match in pattern.finditer(text):
+            specifier = match.group("specifier")
+            dependency = (Path(current).parent / specifier).as_posix()
+            if not Path(dependency).suffix:
+                dependency += ".js"
+            resolved = upstream / dependency
+            if dependency in seen or not resolved.is_file():
+                continue
+            if not resolved.resolve().is_relative_to(upstream):
+                raise ValueError(f"Fixture dependency escapes pinned root: {specifier}")
+            seen.add(dependency)
+            result.append(dependency)
+            pending.append(dependency)
+    return sorted(result)
 
 
 def generate_batch(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
@@ -904,8 +1332,8 @@ def generate_batch(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
     grouped: dict[Path, list[tuple[str, bool]]] = {}
     method_names: dict[Path, set[str]] = {}
     for relative in summary["accepted"]:
-        if not relative.startswith(f"test/{SUPPORTED_AREA}/"):
-            raise ValueError(f"Accepted fixture is outside the supported area: {relative}")
+        if not relative.startswith(("test/language/", "test/built-ins/")):
+            raise ValueError(f"Accepted fixture is outside supported areas: {relative}")
         source = upstream / relative
         if not source.is_file():
             raise ValueError(f"Missing pinned fixture: {relative}")
@@ -922,6 +1350,15 @@ def generate_batch(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(source.read_bytes())
         copied.append(str(target.relative_to(root)))
+        for dependency in fixture_dependencies(upstream, relative):
+            dependency_path = Path(dependency).relative_to("test")
+            dependency_target = (
+                test_root / dependency_path.parent / "JavaScript" / dependency_path.name
+            )
+            if not dependency_target.exists():
+                dependency_target.parent.mkdir(parents=True, exist_ok=True)
+                dependency_target.write_bytes((upstream / dependency).read_bytes())
+                copied.append(str(dependency_target.relative_to(root)))
         method = safe_identifier(test_path.stem)
         names = method_names.setdefault(test_path.parent, set())
         if method in names:
@@ -966,7 +1403,7 @@ def generate_batch(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
         cs.write_text("\n".join(lines) + "\n", encoding="utf-8")
         copied.append(str(cs.relative_to(root)))
 
-    copied.extend(update_coverage_docs(root, len(summary["accepted"]), run["batch_id"]))
+    copied.extend(update_coverage_docs(root, summary["accepted"], run["batch_id"]))
     result = {
         "run_id": args.run_id,
         "batch_id": run["batch_id"],
@@ -1056,6 +1493,72 @@ def checkpoint(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, An
         "artifact_digest": artifact_digest,
         "complete": summary["complete_native_acceptance"],
     }
+
+
+def finalize_reconciliation(
+    db: sqlite3.Connection, args: argparse.Namespace
+) -> dict[str, Any]:
+    reconciliation = db.execute(
+        "SELECT * FROM reconciliations WHERE run_id=?", (args.run_id,)
+    ).fetchone()
+    if not reconciliation:
+        raise ValueError(f"Run has no planned reconciliation: {args.run_id}")
+    summary = report(db, argparse.Namespace(run_id=args.run_id, output=None))
+    now = time.time()
+    with db:
+        for path in summary["accepted"]:
+            db.execute("DELETE FROM pending_work WHERE path=?", (path,))
+        accepted = set(summary["accepted"])
+        for row in db.execute(
+            "SELECT path FROM candidates WHERE run_id=?", (args.run_id,)
+        ):
+            if row["path"] not in accepted:
+                db.execute(
+                    """UPDATE pending_work SET status='deferred',updated_at=?
+                       WHERE path=?""",
+                    (now, row["path"]),
+                )
+        db.execute(
+            """UPDATE automation_state
+               SET last_reconciled_revision=?,
+                   fallback_cursor=fallback_cursor+?,
+                   updated_at=?
+               WHERE state_id=1""",
+            (
+                reconciliation["target_revision"],
+                reconciliation["fallback_advance"],
+                now,
+            ),
+        )
+        db.execute(
+            """UPDATE reconciliations SET state='reconciled',updated_at=?
+               WHERE run_id=?""",
+            (now, args.run_id),
+        )
+    return {
+        "run_id": args.run_id,
+        "last_reconciled_revision": reconciliation["target_revision"],
+        "pending_count": db.execute(
+            "SELECT COUNT(*) FROM pending_work WHERE status='pending'"
+        ).fetchone()[0],
+        "fallback_advance": reconciliation["fallback_advance"],
+    }
+
+
+def record_stage(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
+    if args.seconds < 0:
+        raise ValueError("Stage duration cannot be negative")
+    if not db.execute(
+        "SELECT 1 FROM runs WHERE run_id=?", (args.run_id,)
+    ).fetchone():
+        raise ValueError(f"Unknown run: {args.run_id}")
+    with db:
+        db.execute(
+            """INSERT OR REPLACE INTO stage_metrics(run_id,stage,seconds)
+               VALUES(?,?,?)""",
+            (args.run_id, args.stage, args.seconds),
+        )
+    return {"run_id": args.run_id, "stage": args.stage, "seconds": args.seconds}
 
 
 def set_provenance(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
@@ -1219,10 +1722,19 @@ def validate_state(path: Path) -> dict[str, Any]:
         schema = db.execute(
             "SELECT value FROM meta WHERE key='schema_version'"
         ).fetchone()
-        if not schema or schema[0] != SCHEMA_VERSION:
+        if not schema or schema[0] not in COMPATIBLE_SCHEMA_VERSIONS:
             raise ValueError(
-                f"Native checkpoint schema is not {SCHEMA_VERSION}"
+                f"Native checkpoint schema is not compatible with {SCHEMA_VERSION}"
             )
+        if schema[0] == SCHEMA_VERSION:
+            version_four = {
+                "automation_state",
+                "reconciliations",
+                "pending_work",
+                "stage_metrics",
+            }
+            if not version_four.issubset(tables):
+                raise ValueError("Native checkpoint is missing schema 4 tables")
         return {
             "valid": True,
             "schema_version": schema[0],
@@ -1240,6 +1752,14 @@ def main() -> int:
     init.set_defaults(action=lambda args, db: {"schema_version": SCHEMA_VERSION})
     sub.add_parser("validate-state")
 
+    resolve = sub.add_parser("resolve-range")
+    resolve.add_argument("--repository", type=Path, default=Path("."))
+    resolve.add_argument("--target", required=True)
+    resolve.add_argument("--baseline-commits", type=int, default=1)
+    resolve.add_argument("--resume-pending", action="store_true")
+    resolve.add_argument("--output", type=Path)
+    resolve.set_defaults(action=lambda args, db: resolve_range(db, args))
+
     create = sub.add_parser("create-run")
     create.add_argument("--run-id")
     create.add_argument("--batch-id")
@@ -1254,8 +1774,11 @@ def main() -> int:
 
     plan_parser = sub.add_parser("plan")
     plan_parser.add_argument("--run-id", required=True)
-    plan_parser.add_argument("--catalog", type=Path, required=True)
-    plan_parser.add_argument("--area", default=SUPPORTED_AREA)
+    plan_parser.add_argument("--catalog", type=Path)
+    plan_parser.add_argument("--area", default=DEFAULT_AREA)
+    plan_parser.add_argument("--components", default="")
+    plan_parser.add_argument("--range", type=Path)
+    plan_parser.add_argument("--skip-selection", action="store_true")
     plan_parser.add_argument("--capability-identity", default="native-host-v1")
     plan_parser.add_argument("--output", type=Path)
     plan_parser.set_defaults(action=lambda args, db: plan(db, args))
@@ -1316,6 +1839,16 @@ def main() -> int:
     check.add_argument("--run-id", required=True)
     check.add_argument("--artifact", type=Path, required=True)
     check.set_defaults(action=lambda args, db: checkpoint(db, args))
+
+    finalize = sub.add_parser("finalize-reconciliation")
+    finalize.add_argument("--run-id", required=True)
+    finalize.set_defaults(action=lambda args, db: finalize_reconciliation(db, args))
+
+    stage = sub.add_parser("record-stage")
+    stage.add_argument("--run-id", required=True)
+    stage.add_argument("--stage", required=True)
+    stage.add_argument("--seconds", type=float, required=True)
+    stage.set_defaults(action=lambda args, db: record_stage(db, args))
 
     provenance = sub.add_parser("set-provenance")
     provenance.add_argument("--run-id", required=True)

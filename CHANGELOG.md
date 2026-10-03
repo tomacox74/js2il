@@ -13,9 +13,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   manifests. GitHub App draft-PR publication remains staged pending a
   default-branch acceptance run.
 - test262: prioritize current and historical MVP failure hints after validated
-  master changes, retain a rotating fallback slice, and expose the native
-  screening capability matrix for async, agent, helper-include and dependency
-  shapes without accepting unsupported fixtures.
+  master ranges with a durable post-upload reconciliation cursor, persistent
+  pending work, component-aware 80/20 rotating intake and generated-merge
+  recursion suppression; expose and verify native screening for async, agent,
+  supported helper, module dependency, failure-cleanup and timeout shapes.
 
 ## v0.12.30 - 2026-09-30
 
