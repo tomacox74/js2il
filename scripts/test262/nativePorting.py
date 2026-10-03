@@ -15,7 +15,7 @@ import sys
 import time
 from typing import Any
 
-SCHEMA_VERSION = "2"
+SCHEMA_VERSION = "3"
 OUTCOMES = {"pass", "fail", "deferred", "unsupported", "infrastructure-error", "incomplete"}
 FAILURE_CLASSES = {
     "product-feature-gap",
@@ -121,6 +121,13 @@ def connect(path: Path) -> sqlite3.Connection:
           expected_head TEXT,
           state TEXT NOT NULL,
           closure_reason TEXT,
+          updated_at REAL NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS active_provenance (
+          run_id TEXT PRIMARY KEY REFERENCES runs(run_id),
+          compiler_identity TEXT NOT NULL,
+          harness_identity TEXT NOT NULL,
+          environment_identity TEXT NOT NULL,
           updated_at REAL NOT NULL
         );
         """
@@ -314,6 +321,9 @@ def plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
     run = db.execute("SELECT * FROM runs WHERE run_id=?", (args.run_id,)).fetchone()
     if not run:
         raise ValueError(f"Unknown run: {args.run_id}")
+    active = db.execute(
+        "SELECT * FROM active_provenance WHERE run_id=?", (args.run_id,)
+    ).fetchone()
     budgets = json.loads(run["budgets"])
     provenance, candidates = catalog_candidates(
         Path(args.catalog), args.area, budgets["candidate_limit"]
@@ -393,6 +403,9 @@ def screening_plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
     remaining_attempts = max(0, budgets["variant_limit"] - attempted)
     elapsed = max(0, int(run["active_seconds"]))
     remaining_time = max(0, budgets["time_limit"] - elapsed)
+    active = db.execute(
+        "SELECT * FROM active_provenance WHERE run_id=?", (args.run_id,)
+    ).fetchone()
     latest = {
         (row["path"], row["variant"])
         for row in db.execute(
@@ -402,8 +415,19 @@ def screening_plan(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
                  SELECT path,variant,MAX(attempt_id) attempt_id
                  FROM attempts WHERE run_id=? GROUP BY path,variant
                ) latest ON latest.attempt_id=a.attempt_id
-               WHERE a.run_id=? AND a.outcome='pass'""",
-            (args.run_id, args.run_id),
+               WHERE a.run_id=? AND a.outcome='pass'
+                 AND ? IS NOT NULL
+                 AND a.compiler_identity=?
+                 AND a.harness_identity=?
+                 AND a.environment_identity=?""",
+            (
+                args.run_id,
+                args.run_id,
+                1 if active else None,
+                active["compiler_identity"] if active else "",
+                active["harness_identity"] if active else "",
+                active["environment_identity"] if active else "",
+            ),
         )
     }
     candidates = []
@@ -458,8 +482,21 @@ def record(db: sqlite3.Connection, args: argparse.Namespace) -> None:
     if args.fixture_sha256 != candidate["sha256"]:
         raise ValueError("Outcome fixture hash does not match the planned candidate")
     run = db.execute("SELECT * FROM runs WHERE run_id=?", (args.run_id,)).fetchone()
+    if not run:
+        raise ValueError(f"Unknown run: {args.run_id}")
     if args.pin != run["pin"]:
         raise ValueError("Outcome pin does not match the run")
+    active = db.execute(
+        "SELECT * FROM active_provenance WHERE run_id=?", (args.run_id,)
+    ).fetchone()
+    if active is None:
+        raise ValueError("Active native provenance has not been established")
+    if (
+        args.compiler_identity != active["compiler_identity"]
+        or args.harness_identity != active["harness_identity"]
+        or args.environment_identity != active["environment_identity"]
+    ):
+        raise ValueError("Outcome provenance does not match the active native build")
     budgets = json.loads(run["budgets"])
     attempts = db.execute(
         "SELECT COUNT(*) FROM attempts WHERE run_id=?", (args.run_id,)
@@ -574,6 +611,9 @@ def report(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
     run = db.execute("SELECT * FROM runs WHERE run_id=?", (args.run_id,)).fetchone()
     if not run:
         raise ValueError(f"Unknown run: {args.run_id}")
+    active = db.execute(
+        "SELECT * FROM active_provenance WHERE run_id=?", (args.run_id,)
+    ).fetchone()
     rows = latest_attempts(db, args.run_id)
     candidates = db.execute(
         """SELECT path,sha256,variants,status,selection_reason FROM candidates
@@ -618,9 +658,9 @@ def report(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
             (
                 candidate["sha256"],
                 run["pin"],
-                selected[0]["compiler_identity"],
-                selected[0]["harness_identity"],
-                selected[0]["environment_identity"],
+                active["compiler_identity"] if active else "",
+                active["harness_identity"] if active else "",
+                active["environment_identity"] if active else "",
             )
         }
         if valid_provenance and all(row["outcome"] == "pass" for row in selected):
@@ -656,6 +696,15 @@ def report(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
         "trigger_revision": run["trigger_revision"],
         "base_revision": run["base_revision"],
         "pin": run["pin"],
+        "active_provenance": (
+            {
+                "compiler_identity": active["compiler_identity"],
+                "harness_identity": active["harness_identity"],
+                "environment_identity": active["environment_identity"],
+            }
+            if active
+            else None
+        ),
         "counts": {
             "candidates": len(candidates),
             "attempts": db.execute(
@@ -973,6 +1022,37 @@ def checkpoint(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, An
     }
 
 
+def set_provenance(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str, Any]:
+    if not db.execute(
+        "SELECT 1 FROM runs WHERE run_id=?", (args.run_id,)
+    ).fetchone():
+        raise ValueError(f"Unknown run: {args.run_id}")
+    with db:
+        db.execute(
+            """INSERT INTO active_provenance
+               (run_id,compiler_identity,harness_identity,environment_identity,updated_at)
+               VALUES(?,?,?,?,?)
+               ON CONFLICT(run_id) DO UPDATE SET
+                 compiler_identity=excluded.compiler_identity,
+                 harness_identity=excluded.harness_identity,
+                 environment_identity=excluded.environment_identity,
+                 updated_at=excluded.updated_at""",
+            (
+                args.run_id,
+                args.compiler_identity,
+                args.harness_identity,
+                args.environment_identity,
+                time.time(),
+            ),
+        )
+    return {
+        "run_id": args.run_id,
+        "compiler_identity": args.compiler_identity,
+        "harness_identity": args.harness_identity,
+        "environment_identity": args.environment_identity,
+    }
+
+
 def manifest(args: argparse.Namespace) -> dict[str, Any]:
     files = [Path(path) for path in args.files]
     result = {
@@ -1158,6 +1238,13 @@ def main() -> int:
     check.add_argument("--run-id", required=True)
     check.add_argument("--artifact", type=Path, required=True)
     check.set_defaults(action=lambda args, db: checkpoint(db, args))
+
+    provenance = sub.add_parser("set-provenance")
+    provenance.add_argument("--run-id", required=True)
+    provenance.add_argument("--compiler-identity", required=True)
+    provenance.add_argument("--harness-identity", required=True)
+    provenance.add_argument("--environment-identity", required=True)
+    provenance.set_defaults(action=lambda args, db: set_provenance(db, args))
 
     make_manifest = sub.add_parser("manifest")
     make_manifest.add_argument("--workflow", required=True)

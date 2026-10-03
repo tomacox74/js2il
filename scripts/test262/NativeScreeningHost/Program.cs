@@ -45,22 +45,27 @@ try
         File.ReadAllText(args[1]), options)
         ?? throw new InvalidOperationException("The screening plan is empty.");
     var root = Path.GetFullPath(plan.UpstreamRoot);
-    var results = new List<ScreeningResult>();
     var started = DateTimeOffset.UtcNow;
+    var screened = 0;
+    using var output = Console.Out;
+    output.Flush();
 
     foreach (var candidate in plan.Candidates)
     {
         foreach (var variant in candidate.Variants)
         {
-            if (results.Count >= plan.VariantLimit
+            if (screened >= plan.VariantLimit
                 || DateTimeOffset.UtcNow - started >= TimeSpan.FromSeconds(plan.TimeLimitSeconds))
             {
                 break;
             }
 
-            results.Add(RunWorker(root, candidate, variant, plan.TimeoutMs, options));
+            output.WriteLine(JsonSerializer.Serialize(
+                RunWorker(root, candidate, variant, plan.TimeoutMs, options), options));
+            output.Flush();
+            screened++;
         }
-        if (results.Count >= plan.VariantLimit
+        if (screened >= plan.VariantLimit
             || DateTimeOffset.UtcNow - started >= TimeSpan.FromSeconds(plan.TimeLimitSeconds))
         {
             break;
@@ -131,7 +136,6 @@ try
         }
     }
 
-    Console.WriteLine(JsonSerializer.Serialize(results, options));
     return 0;
 }
 catch (Exception exception)

@@ -8,9 +8,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 - test262: add deterministic native-porting automation for the initial
   computed-property-name basics area, with killable native-harness workers,
-  versioned resumable SQLite evidence, byte-faithful registration and coverage
-  generation, exact patch manifests, and isolated GitHub App draft-PR
-  publication.
+  streamed and versioned resumable SQLite evidence, active-build provenance
+  checks, byte-faithful registration and coverage generation, and exact patch
+  manifests. GitHub App draft-PR publication remains staged pending a
+  default-branch acceptance run.
 
 ## v0.12.30 - 2026-09-30
 

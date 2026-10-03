@@ -19,11 +19,18 @@ function run(args, cwd) {
 }
 
 function createRun(cwd, overrides = []) {
-  return run([
+  const runId = run([
     'create-run', '--run-id', 'run-1', '--batch-id', 'batch-1',
     '--trigger-revision', 'head', '--base-revision', 'base', '--pin', 'pin',
     ...overrides,
   ], cwd).run_id;
+  run([
+    'set-provenance', '--run-id', runId,
+    '--compiler-identity', 'compiler',
+    '--harness-identity', 'harness',
+    '--environment-identity', 'environment',
+  ], cwd);
+  return runId;
 }
 
 function createCatalog(cwd, fixtures) {
@@ -162,10 +169,13 @@ test('acceptance requires every variant under one native provenance', () => {
     ], cwd);
     record(cwd, runId, { variant: 'strict' });
     assert.equal(run(['report', '--run-id', runId], cwd).counts.incomplete, 1);
-    record(cwd, runId, { variant: 'non-strict', compiler: 'other-compiler' });
+    assert.throws(
+      () => record(cwd, runId, { variant: 'non-strict', compiler: 'other-compiler' }),
+      /active native build/,
+    );
     let report = run(['report', '--run-id', runId], cwd);
     assert.deepEqual(report.accepted, []);
-    assert.equal(report.failure_clusters['infrastructure-error'][0].phase, 'provenance');
+    assert.equal(report.counts.incomplete, 1);
     record(cwd, runId, { variant: 'non-strict' });
     report = run(['report', '--run-id', runId], cwd);
     assert.deepEqual(
@@ -173,7 +183,29 @@ test('acceptance requires every variant under one native provenance', () => {
       ['test/language/computed-property-names/basics/a.js'],
     );
     assert.equal(report.complete_native_acceptance, true);
-    assert.equal(report.counts.attempts, 3);
+    assert.equal(report.counts.attempts, 2);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('stale active provenance cannot be accepted after a build identity change', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    const runId = createRun(cwd);
+    const catalog = createCatalog(cwd, [{
+      path: 'test/language/computed-property-names/basics/a.js', sha256: 'hash',
+      variants: ['strict'], results: { strict: 'matched' },
+    }]);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/computed-property-names/basics',
+    ], cwd);
+    assert.throws(
+      () => record(cwd, runId, { compiler: 'changed' }),
+      /active native build/,
+    );
+    assert.deepEqual(run(['report', '--run-id', runId], cwd).accepted, []);
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }

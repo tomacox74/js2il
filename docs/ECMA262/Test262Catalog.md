@@ -189,13 +189,19 @@ python3 scripts/test262/nativePorting.py plan --run-id <run> \
 ```
 
 The trusted C# screening host reuses `Test262SharedAssertHarness`, runs each
-variant in a killable worker process, and records every completed attempt.
+variant in a killable worker process, and emits each completed attempt as a
+flushed result record. The workflow imports those records immediately, so
+parent cancellation preserves completed evidence and consumed budgets rather
+than waiting for the whole plan to finish.
 Strict and non-strict variants remain distinct, and runtime-negative tests must
 match their declared error type. Module and compile-negative fixtures are
 reported as explicit harness gaps in this first release rather than accepted
 without exact phase/type evidence. Outcomes are committed transactionally and
 include the fixture hash, upstream pin, compiler/runtime identity,
 harness/environment identity, phase, diagnostic and failure classification.
+The active compiler, harness and environment identity is persisted before
+screening; resume, report, generation and publication accept only matching
+evidence.
 The variant and active-execution-time budgets resume from the SQLite
 checkpoint; idle time between workflow runs does not consume the time budget.
 `report` keeps pending, failed, unsupported and infrastructure outcomes
@@ -210,7 +216,8 @@ uploaded. Empty and failure-only runs still publish their database and report.
 
 The manually dispatched `.github/workflows/test262-native-port.yml` restores
 only same-repository artifacts from the catalog workflow and its own prior
-branch runs. Screening has read-only permissions. Its separate publication job
+branch runs, selecting the newest valid checkpoint across screening and
+publication artifact names. Screening has read-only permissions. Its separate publication job
 verifies the producing workflow/run, exact target revision, artifact and patch
 digests, and that `master` has not advanced; it never executes generated
 fixtures with write credentials. It permits one open
@@ -223,6 +230,13 @@ write** permissions. Store its application ID and private key as
 `TEST262_PORTING_APP_ID` and `TEST262_PORTING_APP_PRIVATE_KEY`. The App identity
 is used so the pushed branch triggers normal PR workflows. No secret is needed
 for the default dry-run, which can only upload reports and resumable state.
+
+This initial slice intentionally screens individual variants. Temporary-group
+screening and bounded compilation-failure bisection remain follow-up work, as
+does native intake of MVP failures without pass history. Actual GitHub App
+publication and normal PR-CI acceptance must be exercised after the workflow
+is available on the default branch; until then publication is staged and
+unverified.
 
 The machine-readable report contains run/batch/base/pin provenance, candidate
 and attempt counts, accepted and budget-deferred paths, incomplete paths, and
