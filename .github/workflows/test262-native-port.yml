@@ -9,9 +9,9 @@ on:
         default: master
         type: string
       area:
-        description: Assignment destructuring folder or one of its subfolders
+        description: Computed property basics folder or one of its subfolders
         required: false
-        default: language/expressions/assignment/dstr
+        default: language/computed-property-names/basics
         type: string
       candidate_limit:
         description: Candidate fixture limit (maximum 500)
@@ -84,7 +84,7 @@ jobs:
           python3 - <<'PY'
           import os
           area = os.environ["AREA"].strip("/")
-          supported = "language/expressions/assignment/dstr"
+          supported = "language/computed-property-names/basics"
           if area != supported and not area.startswith(supported + "/"):
               raise SystemExit(f"The first release supports only {supported}.")
           candidates = int(os.environ["CANDIDATES"])

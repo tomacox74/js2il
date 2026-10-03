@@ -56,7 +56,7 @@ db.commit()
 function record(cwd, runId, values = {}) {
   return run([
     'record', '--run-id', runId,
-    '--path', values.path || 'test/language/expressions/assignment/dstr/a.js',
+    '--path', values.path || 'test/language/computed-property-names/basics/a.js',
     '--variant', values.variant || 'strict',
     '--fixture-sha256', values.sha256 || 'hash',
     '--pin', values.pin || 'pin',
@@ -69,7 +69,7 @@ function record(cwd, runId, values = {}) {
   ], cwd);
 }
 
-test('planning uses only complete current-provenance unregistered passes', () => {
+test('planning uses complete single-provenance unregistered pass hints', () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
     const runId = createRun(cwd, [
@@ -77,21 +77,30 @@ test('planning uses only complete current-provenance unregistered passes', () =>
     ]);
     const catalog = createCatalog(cwd, [
       {
-        path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'a',
+        path: 'test/language/computed-property-names/basics/a.js', sha256: 'a',
         variants: ['strict', 'non-strict'],
         results: { strict: 'matched', 'non-strict': 'matched' },
       },
       {
-        path: 'test/language/expressions/assignment/dstr/incomplete.js', sha256: 'b',
+        path: 'test/language/computed-property-names/basics/incomplete.js', sha256: 'b',
         variants: ['strict', 'non-strict'], results: { strict: 'matched' },
       },
       {
-        path: 'test/language/expressions/assignment/dstr/failed.js', sha256: 'c',
+        path: 'test/language/computed-property-names/basics/failed.js', sha256: 'c',
         variants: ['strict'], results: { strict: 'unexpected' },
       },
       {
-        path: 'test/language/expressions/assignment/dstr/registered.js', sha256: 'd',
+        path: 'test/language/computed-property-names/basics/registered.js', sha256: 'd',
         variants: ['strict'], results: { strict: 'matched' }, registered: true,
+      },
+      {
+        path: 'test/language/computed-property-names/basics/historical.js', sha256: 'h',
+        variants: ['strict'],
+      },
+      {
+        provenance: 'old',
+        path: 'test/language/computed-property-names/basics/historical.js', sha256: 'h',
+        variants: ['strict'], results: { strict: 'matched' },
       },
       {
         path: 'test/language/expressions/call/other.js', sha256: 'e',
@@ -100,13 +109,39 @@ test('planning uses only complete current-provenance unregistered passes', () =>
     ]);
     const planned = run([
       'plan', '--run-id', runId, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
     ], cwd);
     assert.deepEqual(
       planned.paths,
-      ['test/language/expressions/assignment/dstr/a.js'],
+      [
+        'test/language/computed-property-names/basics/a.js',
+        'test/language/computed-property-names/basics/historical.js',
+      ],
     );
     assert.equal(planned.catalog_provenance, 'current');
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('planning excludes byte-identical legacy fixture locations', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    const legacy = path.resolve(
+      __dirname,
+      '../../tests/Jroc.Test262.Tests/language/expressions/assignment/destructuring/JavaScript/array-empty-val-array.js',
+    );
+    const sha256 = crypto.createHash('sha256').update(fs.readFileSync(legacy)).digest('hex');
+    const runId = createRun(cwd);
+    const catalog = createCatalog(cwd, [{
+      path: 'test/language/computed-property-names/basics/array-empty-val-array.js',
+      sha256, variants: ['strict'], results: { strict: 'matched' },
+    }]);
+    const planned = run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/computed-property-names/basics',
+    ], cwd);
+    assert.deepEqual(planned.paths, []);
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }
@@ -117,13 +152,13 @@ test('acceptance requires every variant under one native provenance', () => {
   try {
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'hash',
+      path: 'test/language/computed-property-names/basics/a.js', sha256: 'hash',
       variants: ['strict', 'non-strict'],
       results: { strict: 'matched', 'non-strict': 'matched' },
     }]);
     run([
       'plan', '--run-id', runId, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
     ], cwd);
     record(cwd, runId, { variant: 'strict' });
     assert.equal(run(['report', '--run-id', runId], cwd).counts.incomplete, 1);
@@ -135,7 +170,7 @@ test('acceptance requires every variant under one native provenance', () => {
     report = run(['report', '--run-id', runId], cwd);
     assert.deepEqual(
       report.accepted,
-      ['test/language/expressions/assignment/dstr/a.js'],
+      ['test/language/computed-property-names/basics/a.js'],
     );
     assert.equal(report.complete_native_acceptance, true);
     assert.equal(report.counts.attempts, 3);
@@ -149,12 +184,12 @@ test('failure-only batches remain reportable and cannot generate', () => {
   try {
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'hash',
+      path: 'test/language/computed-property-names/basics/a.js', sha256: 'hash',
       variants: ['strict'], results: { strict: 'matched' },
     }]);
     run([
       'plan', '--run-id', runId, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
     ], cwd);
     record(cwd, runId, {
       outcome: 'unsupported', failureClass: 'harness-gap', phase: 'metadata',
@@ -163,7 +198,7 @@ test('failure-only batches remain reportable and cannot generate', () => {
     assert.equal(report.complete_native_acceptance, false);
     assert.equal(
       report.failure_clusters['harness-gap'][0].path,
-      'test/language/expressions/assignment/dstr/a.js',
+      'test/language/computed-property-names/basics/a.js',
     );
     assert.throws(() => run([
       'generate', '--run-id', runId, '--upstream', cwd, '--destination', cwd,
@@ -179,7 +214,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     const upstream = path.join(cwd, 'upstream');
     const fixture = path.join(
       upstream,
-      'test/language/expressions/assignment/dstr/runtime-negative.js',
+      'test/language/computed-property-names/basics/runtime-negative.js',
     );
     fs.mkdirSync(path.dirname(fixture), { recursive: true });
     const source = '/*---\nnegative:\n  phase: runtime\n  type: TypeError\n---*/\nthrow new TypeError();\n';
@@ -187,15 +222,15 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     const sha256 = crypto.createHash('sha256').update(fs.readFileSync(fixture)).digest('hex');
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
-      path: 'test/language/expressions/assignment/dstr/runtime-negative.js', sha256,
+      path: 'test/language/computed-property-names/basics/runtime-negative.js', sha256,
       variants: ['strict'], results: { strict: 'matched' },
     }]);
     run([
       'plan', '--run-id', runId, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
     ], cwd);
     record(cwd, runId, {
-      path: 'test/language/expressions/assignment/dstr/runtime-negative.js', sha256,
+      path: 'test/language/computed-property-names/basics/runtime-negative.js', sha256,
       phase: 'runtime',
     });
     fs.mkdirSync(path.join(cwd, 'docs/ECMA262'), { recursive: true });
@@ -203,8 +238,7 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     fs.writeFileSync(path.join(cwd, 'docs/ECMA262/Test262Conformance.md'), [
       '| Language syntax and semantics | 10 | 1 | 9 | 20 | **50.00%** |',
       '| **Total** | 20 | 1 | 19 | 40 | **50.00%** |',
-      '| `expressions` | 5 | 0 | 5 | 10 | **50.00%** |',
-      '| `assignment` | 4 | 0 | 6 | 10 | **40.00%** |',
+      '| `computed-property-names` | 0 | 0 | 10 | 10 | **0.00%** |',
       '',
     ].join('\n'));
     fs.writeFileSync(path.join(cwd, 'docs/ECMA262/Index.md'), [
@@ -222,12 +256,12 @@ test('generation preserves bytes, runtime-negative registration, and coverage to
     ], cwd);
     const copied = path.join(
       cwd,
-      'tests/Jroc.Test262.Tests/language/expressions/assignment/dstr/JavaScript/runtime-negative.js',
+      'tests/Jroc.Test262.Tests/language/computed-property-names/basics/JavaScript/runtime-negative.js',
     );
     assert.deepEqual(fs.readFileSync(copied), fs.readFileSync(fixture));
     const registration = fs.readFileSync(path.join(
       cwd,
-      'tests/Jroc.Test262.Tests/language/expressions/assignment/dstr/NativePortBatch_batch_1.cs',
+      'tests/Jroc.Test262.Tests/language/computed-property-names/basics/NativePortBatch_batch_1.cs',
     ), 'utf8');
     assert.match(registration, /allowUnhandledException: true/);
     assert.match(
@@ -271,12 +305,12 @@ test('generation rejects identifier collisions before publication', () => {
     const upstream = path.join(cwd, 'upstream');
     const fixtures = ['a-b.js', 'a_b.js'].map((name) => {
       const fixture = path.join(
-        upstream, 'test/language/expressions/assignment/dstr', name,
+        upstream, 'test/language/computed-property-names/basics', name,
       );
       fs.mkdirSync(path.dirname(fixture), { recursive: true });
       fs.writeFileSync(fixture, '/*---\n---*/\n');
       return {
-        path: `test/language/expressions/assignment/dstr/${name}`,
+        path: `test/language/computed-property-names/basics/${name}`,
         sha256: crypto.createHash('sha256').update(fs.readFileSync(fixture)).digest('hex'),
         variants: ['strict'],
         results: { strict: 'matched' },
@@ -286,7 +320,7 @@ test('generation rejects identifier collisions before publication', () => {
     const catalog = createCatalog(cwd, fixtures);
     run([
       'plan', '--run-id', runId, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
     ], cwd);
     for (const fixture of fixtures) {
       record(cwd, runId, { path: fixture.path, sha256: fixture.sha256 });
@@ -308,13 +342,13 @@ test('unchanged harness capabilities do not retry known harness gaps', () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
     const catalog = createCatalog(cwd, [{
-      path: 'test/language/expressions/assignment/dstr/a.js', sha256: 'hash',
+      path: 'test/language/computed-property-names/basics/a.js', sha256: 'hash',
       variants: ['strict'], results: { strict: 'matched' },
     }]);
     const first = createRun(cwd);
     run([
       'plan', '--run-id', first, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
       '--capability-identity', 'capability-1',
     ], cwd);
     record(cwd, first, {
@@ -326,7 +360,7 @@ test('unchanged harness capabilities do not retry known harness gaps', () => {
     ], cwd).run_id;
     run([
       'plan', '--run-id', second, '--catalog', catalog,
-      '--area', 'language/expressions/assignment/dstr',
+      '--area', 'language/computed-property-names/basics',
       '--capability-identity', 'capability-1',
     ], cwd);
     const screenPlan = path.join(cwd, 'screen-plan.json');

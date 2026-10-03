@@ -25,7 +25,7 @@ FAILURE_CLASSES = {
     "infrastructure-error",
     "unresolved",
 }
-SUPPORTED_AREA = "language/expressions/assignment/dstr"
+SUPPORTED_AREA = "language/computed-property-names/basics"
 
 
 def canonical(value: Any) -> str:
@@ -244,10 +244,11 @@ def catalog_candidates(
                ORDER BY path""",
             (provenance, f"test/{normalized}", f"test/{normalized}/%"),
         ).fetchall()
+        native_root = Path(__file__).resolve().parents[2] / "tests/Jroc.Test262.Tests"
         candidates: list[dict[str, Any]] = []
         for row in rows:
             variants = json.loads(row["variants"])
-            evidence = {
+            current_evidence = {
                 result["variant"]: result["verdict"]
                 for result in catalog.execute(
                     """SELECT variant,verdict FROM results
@@ -255,14 +256,49 @@ def catalog_candidates(
                     (provenance, row["path"]),
                 )
             }
-            if variants and all(evidence.get(variant) == "matched" for variant in variants):
+            evidence_kind = None
+            if variants and all(
+                current_evidence.get(variant) == "matched" for variant in variants
+            ):
+                evidence_kind = "current-provenance MVP pass"
+            else:
+                historical = catalog.execute(
+                    """SELECT provenance,variants FROM fixtures
+                       WHERE provenance!=? AND path=? AND sha256=? AND state='runnable'
+                       ORDER BY provenance""",
+                    (provenance, row["path"], row["sha256"]),
+                ).fetchall()
+                for old in historical:
+                    old_variants = json.loads(old["variants"])
+                    if old_variants != variants:
+                        continue
+                    old_evidence = {
+                        result["variant"]: result["verdict"]
+                        for result in catalog.execute(
+                            """SELECT variant,verdict FROM results
+                               WHERE provenance=? AND path=?""",
+                            (old["provenance"], row["path"]),
+                        )
+                    }
+                    if variants and all(
+                        old_evidence.get(variant) == "matched"
+                        for variant in variants
+                    ):
+                        evidence_kind = "historical single-provenance MVP pass"
+                        break
+            filename = Path(row["path"]).name
+            legacy_duplicate = any(
+                file_sha256(existing) == row["sha256"]
+                for existing in native_root.rglob(filename)
+            )
+            if evidence_kind and not legacy_duplicate:
                 candidates.append(
                     {
                         "path": row["path"],
                         "sha256": row["sha256"],
                         "variants": variants,
                         "reason": (
-                            "current-provenance MVP pass used only as a selection hint; "
+                            f"{evidence_kind} used only as a selection hint; "
                             "fresh native acceptance required"
                         ),
                     }
@@ -702,8 +738,7 @@ def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list
     for label in (
         "Language syntax and semantics",
         "**Total**",
-        "`expressions`",
-        "`assignment`",
+        "`computed-property-names`",
     ):
         text = update_table_row(text, label, accepted_count)
     conformance.write_text(text, encoding="utf-8")
@@ -740,8 +775,8 @@ def update_coverage_docs(root: Path, accepted_count: int, batch_id: str) -> list
     marker = f"native batch `{batch_id}`"
     if marker not in changelog_text:
         insertion = (
-            f"- test262: verify {accepted_count} additional pinned assignment "
-            f"destructuring fixtures "
+            f"- test262: verify {accepted_count} additional pinned computed "
+            f"property-name fixtures "
             f"from native batch `{batch_id}`.\n"
         )
         changelog_text = changelog_text.replace(

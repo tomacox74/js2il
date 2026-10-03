@@ -7,7 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - test262: add deterministic native-porting automation for the initial
-  assignment-destructuring area, with killable native-harness workers,
+  computed-property-name basics area, with killable native-harness workers,
   versioned resumable SQLite evidence, byte-faithful registration and coverage
   generation, exact patch manifests, and isolated GitHub App draft-PR
   publication.
