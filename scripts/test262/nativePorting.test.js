@@ -211,6 +211,49 @@ test('stale active provenance cannot be accepted after a build identity change',
   }
 });
 
+test('incremental result import survives an interrupted screening batch', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    const runId = createRun(cwd);
+    const catalog = createCatalog(cwd, [{
+      path: 'test/language/computed-property-names/basics/a.js', sha256: 'hash',
+      variants: ['strict', 'non-strict'],
+      results: { strict: 'matched', 'non-strict': 'matched' },
+    }]);
+    run([
+      'plan', '--run-id', runId, '--catalog', catalog,
+      '--area', 'language/computed-property-names/basics',
+    ], cwd);
+    const result = path.join(cwd, 'result.json');
+    fs.writeFileSync(result, JSON.stringify([{
+      path: 'test/language/computed-property-names/basics/a.js',
+      variant: 'strict',
+      fixture_sha256: 'hash',
+      outcome: 'pass',
+      phase: 'execution',
+      diagnostic: '',
+      started_at: 10,
+      finished_at: 11,
+    }]));
+    run([
+      'import-results', '--run-id', runId, '--results', result, '--pin', 'pin',
+      '--compiler-identity', 'compiler', '--harness-identity', 'harness',
+      '--environment-identity', 'environment',
+    ], cwd);
+    const screenPlan = path.join(cwd, 'screen-plan.json');
+    run([
+      'screen-plan', '--run-id', runId, '--upstream', cwd, '--output', screenPlan,
+    ], cwd);
+    const pending = JSON.parse(fs.readFileSync(screenPlan));
+    assert.deepEqual(pending.candidates[0].variants, ['non-strict']);
+    const report = run(['report', '--run-id', runId], cwd);
+    assert.equal(report.counts.attempts, 1);
+    assert.equal(report.counts.incomplete, 1);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test('failure-only batches remain reportable and cannot generate', () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
   try {
@@ -327,6 +370,42 @@ test('manifest verification rejects changed publication artifacts', () => {
       'verify-manifest', '--manifest', manifest, '--workflow', 'test262-native-port.yml',
       '--run-id', '123', '--target-revision', 'head',
     ], cwd), /digest mismatch/);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test('checkpoint validation rejects corrupt and incompatible state', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'native-porting-'));
+  try {
+    createRun(cwd);
+    assert.equal(run(['validate-state'], cwd).valid, true);
+    const corrupt = path.join(cwd, 'corrupt.sqlite');
+    fs.writeFileSync(corrupt, 'not sqlite');
+    assert.throws(
+      () => JSON.parse(execFileSync(
+        'python3',
+        ['-B', script, '--db', corrupt, 'validate-state'],
+        { cwd, encoding: 'utf8' },
+      )),
+      /Command failed/,
+    );
+    const incompatible = path.join(cwd, 'incompatible.sqlite');
+    execFileSync('python3', ['-c', `
+import sqlite3
+db=sqlite3.connect(${JSON.stringify(incompatible)})
+db.execute("CREATE TABLE meta(key TEXT PRIMARY KEY,value TEXT NOT NULL)")
+db.execute("INSERT INTO meta VALUES('schema_version','2')")
+db.commit()
+`], { cwd });
+    assert.throws(
+      () => execFileSync(
+        'python3',
+        ['-B', script, '--db', incompatible, 'validate-state'],
+        { cwd, encoding: 'utf8' },
+      ),
+      /Command failed/,
+    );
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }

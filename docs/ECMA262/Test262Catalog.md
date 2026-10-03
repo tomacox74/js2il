@@ -208,16 +208,19 @@ checkpoint; idle time between workflow runs does not consume the time budget.
 separate and groups their representative paths and diagnostics.
 
 `generate` copies accepted fixtures byte-for-byte and emits deterministic
-identifier-safe C# registrations, then updates the overall, built-in and Array
-coverage rows plus the changelog. `validate-patch` requires the changed path set
-and every generated file hash to exactly match the generation manifest.
+identifier-safe C# registrations, then updates the overall language and
+computed-property-name coverage rows plus the changelog. `validate-patch`
+requires the changed path set and every generated file hash to exactly match
+the generation manifest.
 `checkpoint` records the report digest and cursor before durable state is
 uploaded. Empty and failure-only runs still publish their database and report.
 
 The manually dispatched `.github/workflows/test262-native-port.yml` restores
 only same-repository artifacts from the catalog workflow and its own prior
-branch runs, selecting the newest valid checkpoint across screening and
-publication artifact names. Screening has read-only permissions. Its separate publication job
+branch runs. It considers screening and publication checkpoints together in
+artifact creation order, including checkpoints preserved by failed screening
+runs, and restores the newest checkpoint whose SQLite integrity, schema version
+and table inventory validate. Screening has read-only permissions. Its separate publication job
 verifies the producing workflow/run, exact target revision, artifact and patch
 digests, and that `master` has not advanced; it never executes generated
 fixtures with write credentials. It permits one open

@@ -118,7 +118,7 @@ jobs:
             const fs = require('node:fs');
             fs.mkdirSync('artifacts/test262/restore', { recursive: true });
             const { owner, repo } = context.repo;
-            async function restoreLatest(workflow, branch, output, names) {
+            async function findArtifacts(workflow, branch, names, requireSuccess) {
               const request = {
                 owner, repo, workflow_id: workflow, branch,
                 status: 'completed', per_page: 100
@@ -128,7 +128,7 @@ jobs:
               const candidates = [];
               for (const run of runs) {
                 if (run.id === context.runId) continue;
-                if (run.conclusion !== 'success') continue;
+                if (requireSuccess && run.conclusion !== 'success') continue;
                 const artifacts = await github.paginate(
                   github.rest.actions.listWorkflowRunArtifacts,
                   { owner, repo, run_id: run.id, per_page: 100 });
@@ -140,23 +140,36 @@ jobs:
               }
               candidates.sort((a, b) =>
                 Date.parse(b.artifact.created_at) - Date.parse(a.artifact.created_at));
-              const selected = candidates[0];
-              if (!selected) {
-                core.warning(`No unexpired trusted checkpoint (${names.join(', ')}) was found; cold start.`);
-                return;
-              }
-              const download = await github.rest.actions.downloadArtifact({
-                owner, repo, artifact_id: selected.artifact.id, archive_format: 'zip'
-              });
-              fs.writeFileSync(output, Buffer.from(download.data));
-              core.info(`Restored newest trusted ${selected.artifact.name} from run ${selected.run.id}.`);
+              return candidates;
             }
-            await restoreLatest('test262-catalog.yml',
-              context.payload.repository.default_branch,
-              'artifacts/test262/restore/catalog.zip', ['test262-catalog']);
-            await restoreLatest('test262-native-port.yml',
-              process.env.TARGET_BRANCH, 'artifacts/test262/restore/native.zip',
-              ['test262-native-state', 'test262-native-publication-state']);
+            async function download(candidate, output) {
+              const response = await github.rest.actions.downloadArtifact({
+                owner, repo, artifact_id: candidate.artifact.id, archive_format: 'zip'
+              });
+              fs.writeFileSync(output, Buffer.from(response.data));
+            }
+            const catalogs = await findArtifacts(
+              'test262-catalog.yml', context.payload.repository.default_branch,
+              ['test262-catalog'], true);
+            const selected = catalogs[0];
+            if (selected) {
+              await download(selected, 'artifacts/test262/restore/catalog.zip');
+              core.info(`Restored trusted catalog from run ${selected.run.id}.`);
+            } else {
+              core.warning('No unexpired trusted catalog checkpoint was found; cold start.');
+            }
+            const native = await findArtifacts(
+              'test262-native-port.yml', process.env.TARGET_BRANCH,
+              ['test262-native-state', 'test262-native-publication-state'], false);
+            if (!native.length) {
+              core.warning('No unexpired trusted native checkpoint was found; cold start.');
+            }
+            for (let index = 0; index < native.length; index++) {
+              const candidate = native[index];
+              const output = `artifacts/test262/restore/native-candidate-${String(index).padStart(3, '0')}.zip`;
+              await download(candidate, output);
+              core.info(`Downloaded checkpoint candidate ${candidate.artifact.name} from run ${candidate.run.id}.`);
+            }
 
       - name: Extract trusted checkpoints
         run: |
@@ -164,10 +177,18 @@ jobs:
             unzip -p artifacts/test262/restore/catalog.zip catalog.sqlite \
               > artifacts/test262/catalog.sqlite
           fi
-          if [ -f artifacts/test262/restore/native.zip ]; then
-            unzip -p artifacts/test262/restore/native.zip native.sqlite \
-              > artifacts/test262/native.sqlite
-          fi
+          for archive in artifacts/test262/restore/native-candidate-*.zip; do
+            [ -f "$archive" ] || continue
+            candidate="${archive%.zip}.sqlite"
+            if unzip -p "$archive" native.sqlite > "$candidate" \
+              && python3 scripts/test262/nativePorting.py --db "$candidate" \
+                validate-state >/dev/null; then
+              mv "$candidate" artifacts/test262/native.sqlite
+              echo "Restored newest compatible native checkpoint from $archive."
+              break
+            fi
+            rm -f "$candidate"
+          done
 
       - name: Validate automation tooling
         run: |

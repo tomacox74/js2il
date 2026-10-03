@@ -1155,12 +1155,54 @@ def publication_state(db: sqlite3.Connection, args: argparse.Namespace) -> dict[
     }
 
 
+def validate_state(path: Path) -> dict[str, Any]:
+    if not path.is_file() or path.stat().st_size == 0:
+        raise ValueError(f"Native checkpoint is missing or empty: {path}")
+    db = sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True)
+    try:
+        integrity = db.execute("PRAGMA integrity_check").fetchone()
+        if not integrity or integrity[0] != "ok":
+            raise ValueError(f"Native checkpoint failed integrity validation: {path}")
+        tables = {
+            row[0]
+            for row in db.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        }
+        required = {
+            "meta",
+            "runs",
+            "candidates",
+            "attempts",
+            "checkpoints",
+            "publications",
+            "active_provenance",
+        }
+        if not required.issubset(tables):
+            raise ValueError("Native checkpoint has an incompatible table inventory")
+        schema = db.execute(
+            "SELECT value FROM meta WHERE key='schema_version'"
+        ).fetchone()
+        if not schema or schema[0] != SCHEMA_VERSION:
+            raise ValueError(
+                f"Native checkpoint schema is not {SCHEMA_VERSION}"
+            )
+        return {
+            "valid": True,
+            "schema_version": schema[0],
+            "runs": db.execute("SELECT COUNT(*) FROM runs").fetchone()[0],
+        }
+    finally:
+        db.close()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, default=Path("artifacts/test262/native.sqlite"))
     sub = parser.add_subparsers(dest="command", required=True)
     init = sub.add_parser("init")
     init.set_defaults(action=lambda args, db: {"schema_version": SCHEMA_VERSION})
+    sub.add_parser("validate-state")
 
     create = sub.add_parser("create-run")
     create.add_argument("--run-id")
@@ -1279,6 +1321,13 @@ def main() -> int:
     pub_state.set_defaults(action=lambda args, db: publication_state(db, args))
 
     args = parser.parse_args()
+    if args.command == "validate-state":
+        try:
+            print(json.dumps(validate_state(args.db), indent=2, sort_keys=True))
+            return 0
+        except (OSError, sqlite3.Error, ValueError) as error:
+            print(f"nativePorting: {error}", file=sys.stderr)
+            return 2
     db = connect(args.db)
     try:
         result = args.action(args, db)
