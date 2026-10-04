@@ -126,6 +126,87 @@ class PostgresTests(unittest.TestCase):
         self.assertEqual(summary['sha256'],footer['sha256'])
         self.assertEqual(sum(footer['counts'].values()),len(lines)-2)
 
+    def test_overlapping_mvp_snapshots_preserve_old_run_and_replay_outbox(self):
+        """Real restricted APIs: old initialization revision must not block older snapshots."""
+        import sqlite3, tempfile
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from scripts.test262.central.client import Client, Outbox, identity, sha
+        from scripts.test262.central.importer import import_snapshot, start_run
+        from psycopg.conninfo import make_conninfo
+        repository = str(uuid.uuid4())
+        self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github','import-replay','test/import-replay')",(repository,))
+        producer = str(uuid.uuid4())
+        role = 'catalogue_test_importer'
+        self.db.execute('CREATE ROLE catalogue_test_importer LOGIN INHERIT; GRANT test262_coordinator TO catalogue_test_importer')
+        self.db.execute("INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(%s,%s,'local','import test',%s)", (producer,repository,role))
+        self.db.execute("INSERT INTO test262.api_subjects VALUES(%s,%s,%s,'coordinator','legacy',true)",(role,repository,producer))
+        self.db.execute("UPDATE test262.schema_contract SET deployment_state='shadow'")
+        self.db.execute("ALTER ROLE catalogue_test_importer PASSWORD 'disposable-import-test'")
+        client = Client(make_conninfo(DSN,user=role,password='disposable-import-test'), 1)
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                args = SimpleNamespace(repository=repository, producer=producer, root=None, missing_artifacts=[])
+                for name, revision in (('latest', 'b'*40), ('older', 'c'*40)):
+                    with sqlite3.connect(root/(name+'.sqlite')) as db:
+                        db.executescript('''CREATE TABLE settings(key,value); CREATE TABLE provenance(id,document);
+                            CREATE TABLE fixtures(provenance,path,sha256,variants,state,reasons);
+                            CREATE TABLE results(provenance,path,variant,document,finished,verdict);''')
+                        db.executemany('INSERT INTO settings VALUES(?,?)',[('schema','1'),('compiler_commit',revision)])
+                        db.execute('INSERT INTO provenance VALUES(?,?)', ('shared',json.dumps({'upstream':{'cloneUrl':'disposable-import','commit':'a'*40}})))
+                        db.execute('INSERT INTO fixtures VALUES(?,?,?,?,?,?)',('shared','test/import-replay.js','d'*64,'["strict"]','runnable','[]'))
+                        db.execute('INSERT INTO results VALUES(?,?,?,?,?,?)',('shared','test/import-replay.js','strict','{}',1,'matched'))
+                args.source=str(root/'latest.sqlite');args.source_uri='test:latest';args.outbox=str(root/'latest-outbox.sqlite')
+                # Seed through the old implementation, reproducing the already-deployed run.
+                with patch('scripts.test262.central.importer.start_mvp_run',
+                           side_effect=lambda c,a,p,k,r: start_run(c,a,p,'legacy-mvp:'+k,'b'*40)):
+                    first = import_snapshot(client,args)
+                run_id = identity(repository,producer,'legacy-mvp:shared')
+                before_run = client.one('runs',run_id=run_id)
+                before_observations = client.rows('observations',run_id=run_id)
+                self.assertEqual(len(before_observations),1)
+                # Reproduce the former failure using the real API before testing the fix.
+                with self.assertRaises(psycopg.errors.RaiseException):
+                    start_run(client,args,before_run['provenance_id'],'legacy-mvp:shared','c'*40)
+                args.source=str(root/'older.sqlite');args.source_uri='test:older';args.outbox=str(root/'older-outbox.sqlite')
+                second = import_snapshot(client,args)
+                self.assertNotEqual(first['import_id'],second['import_id'])
+                self.assertEqual(first['observations'],second['observations'])
+                self.assertEqual(client.one('runs',run_id=run_id),before_run)
+                self.assertEqual(client.rows('observations',run_id=run_id),before_observations)
+                mapped = client.rows('import_records',import_id=second['import_id'])
+                self.assertEqual([r['entity_id'] for r in mapped],[before_observations[0]['observation_id']])
+                # Force a replay of the pre-fix exact stored observation payload/request.
+                original = Outbox(str(root/'latest-outbox.sqlite'),repository,producer,1)
+                payload,digest = original.db.execute('SELECT payload,digest FROM messages').fetchone()
+                self.assertEqual(sha(json.loads(payload)),digest)
+                original.db.execute('UPDATE messages SET receipt=NULL');original.db.commit()
+                original.flush(client)
+                self.assertEqual(original.db.execute('SELECT count(*) FROM messages WHERE receipt IS NULL').fetchone()[0],0)
+                original.db.close()
+                self.assertEqual(client.rows('observations',run_id=run_id),before_observations)
+                # Retry old source: completed checkpoint prevents duplicate execution/upload.
+                self.assertEqual(import_snapshot(client,args)['observations'],1)
+                checkpoints = client.rows('legacy_control_records',import_id=second['import_id'],source_table='mvp_import_checkpoint')
+                self.assertEqual(len(checkpoints),1)
+                settings = client.rows('legacy_control_records',import_id=second['import_id'],source_table='settings')
+                self.assertIn({'key':'compiler_commit','value':'c'*40},[r['document'] for r in settings])
+                # A newly discovered provenance uses its upstream pin, regardless of snapshot settings.
+                with sqlite3.connect(args.source) as db:
+                    db.execute("UPDATE provenance SET id='fresh'")
+                    db.execute("UPDATE fixtures SET provenance='fresh'")
+                    db.execute("UPDATE results SET provenance='fresh'")
+                args.source_uri='test:fresh';args.outbox=str(root/'fresh-outbox.sqlite')
+                third = import_snapshot(client,args)
+                new_run = client.one('runs',run_id=identity(repository,producer,'legacy-mvp:fresh'))
+                self.assertEqual(new_run['source_revision'],'a'*40)
+                self.assertEqual(third['observations'],1)
+                self.assertIn('not a compiler source revision',third['limitations']['mvp_run_revision'])
+        finally:
+            client.close()
+            self.db.execute("UPDATE test262.schema_contract SET deployment_state='active'")
+
 
 if __name__=='__main__':
     unittest.main()

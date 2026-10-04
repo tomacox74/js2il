@@ -232,6 +232,28 @@ An import conflict is an investigation, not permission to silently update eviden
 Legacy native passes must be freshly verified before batch acceptance. Never turn
 legacy SQLite publication/cursor fields directly into trusted active state.
 
+### Overlapping MVP snapshots and historical run revisions
+
+An MVP catalogue stores several provenances while `settings.compiler_commit` is replaced
+at each initialization. That snapshot-wide setting cannot attribute every older provenance
+to a compiler source commit. New MVP import runs therefore use the provenance's upstream
+pin as `source_revision`; it is explicitly an upstream revision, not a compiler revision.
+Original settings remain archived in `legacy_control_records`, and each completed import
+records this attribution limitation.
+
+Existing MVP import runs retain their exact run IDs and original immutable source revisions.
+The importer verifies repository, producer, provenance, legacy trust and import kind before
+replaying through the normal API. Observation IDs, request IDs and payloads remain stable,
+so overlapping snapshots and pre-fix outboxes can replay without rewriting old evidence.
+Mismatched scope/provenance still fails closed; native import attribution is unchanged.
+
+For the failure tracked in #2242, merge the importer fix to `master` first; no Supabase
+migration is needed. Then acknowledge failed run `37237023718` with Actions variable
+`TEST262_HISTORY_AUTO_RESUME_RUN_ID=37237023718`. The next scheduled run uses the updated
+master scripts. Rerunning the old run uses its old checkout and does not deploy this fix.
+Inspect the next recovery report and central parity before marking the blocked source
+verified. Acknowledging this failure does not authorize production workers or cutover.
+
 ## Workflow setup and authority transition
 
 Create environment `test262-catalogue` and configure:

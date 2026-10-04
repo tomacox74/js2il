@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 from scripts.test262.central.client import bytea, identity
 from scripts.test262.central.inventory import inventory_digest, register
-from scripts.test262.central.importer import import_mvp
+from scripts.test262.central.importer import import_mvp, start_mvp_run
 
 
 class ImportRetryTests(unittest.TestCase):
@@ -56,7 +56,7 @@ class ImportRetryTests(unittest.TestCase):
         with patch('scripts.test262.central.importer.normalize_fixture', return_value={}), \
              patch('scripts.test262.central.importer.register', return_value=('corpus', {'test/x.js': 'fixture'})), \
              patch('scripts.test262.central.importer.provenance', return_value='pid'), \
-             patch('scripts.test262.central.importer.start_run', return_value='run'), \
+             patch('scripts.test262.central.importer.start_mvp_run', return_value='run'), \
              patch('scripts.test262.central.importer.observation', side_effect=lambda *a: {'observation_id': a[4]['variant']}):
             return import_mvp(client, self.snapshot(), SimpleNamespace(repository='repo'), 'import', outbox)
 
@@ -86,3 +86,42 @@ class ImportRetryTests(unittest.TestCase):
         client.one.return_value = {'document': {'observations': 200}}
         with self.assertRaises(ValueError):
             self.run_mvp(client, outbox)
+
+    def existing_run(self):
+        key = 'legacy-mvp:p'
+        return {'run_id': identity('repo', 'producer', key), 'repository_id': 'repo',
+                'producer_id': 'producer', 'provenance_id': 'pid', 'external_run_key': key,
+                'source_revision': 'b'*40, 'run_kind': 'import', 'trust_class': 'legacy'}
+
+    def test_existing_mvp_run_keeps_exact_identity_and_original_revision(self):
+        client = MagicMock(); client.one.return_value = self.existing_run()
+        run = start_mvp_run(client, SimpleNamespace(repository='repo', producer='producer'),
+                            'pid', 'p', 'a'*40)
+        self.assertEqual(run, self.existing_run()['run_id'])
+        client.call.assert_called_once_with('start_run', {
+            'run_id': run, 'provenance_id': 'pid', 'external_run_key': 'legacy-mvp:p',
+            'source_revision': 'b'*40, 'run_kind': 'import'})
+
+    def test_new_mvp_run_uses_upstream_pin_and_same_legacy_key(self):
+        client = MagicMock(); client.one.return_value = None
+        run = start_mvp_run(client, SimpleNamespace(repository='repo', producer='producer'),
+                            'pid', 'p', 'a'*40)
+        self.assertEqual(run, self.existing_run()['run_id'])
+        self.assertEqual(client.call.call_args.args[1]['source_revision'], 'a'*40)
+
+    def test_existing_mvp_run_mismatch_is_rejected_before_write(self):
+        for field in ('run_id', 'repository_id', 'producer_id', 'provenance_id',
+                      'external_run_key', 'run_kind', 'trust_class'):
+            with self.subTest(field=field):
+                client = MagicMock(); client.one.return_value = dict(self.existing_run(), **{field: 'different'})
+                with self.assertRaises(ValueError):
+                    start_mvp_run(client, SimpleNamespace(repository='repo', producer='producer'),
+                                  'pid', 'p', 'a'*40)
+                client.call.assert_not_called()
+
+    def test_existing_mvp_run_replay_still_uses_server_validation(self):
+        client = MagicMock(); client.one.return_value = self.existing_run()
+        client.call.side_effect = RuntimeError('immutable identity rejected')
+        with self.assertRaises(RuntimeError):
+            start_mvp_run(client, SimpleNamespace(repository='repo', producer='producer'),
+                          'pid', 'p', 'a'*40)

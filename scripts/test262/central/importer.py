@@ -54,6 +54,13 @@ def import_snapshot(client, args):
                    'metadata_and_dependencies': 'legacy inventory unresolved; fresh inventory must verify closure',
                    'native_control_state': 'preserved in legacy_control_records; not promoted to active authority',
                    'mvp_history': 'overwritten attempts cannot be recovered', 'source_counts': counts}
+    if kind == 'mvp-v1':
+        limitations['mvp_run_revision'] = (
+            'Existing immutable run revisions are retained as originally imported. '
+            'New MVP import runs use the provenance upstream pin, not a compiler source revision. '
+            'Snapshot-wide settings.compiler_commit describes the latest catalogue initialization '
+            'and cannot establish compiler source attribution for every stored provenance; '
+            'original settings are preserved in legacy_control_records.')
     client.put('imports', [{'import_id': imported, 'repository_id': args.repository, 'source_sha256': bytea(digest),
                             'source_schema': kind, 'source_uri': 'sha256:'+digest,
                             'expected_counts': counts}])
@@ -94,6 +101,24 @@ def start_run(client, args, pid, key, revision, kind='import'):
     return run
 
 
+def start_mvp_run(client, args, pid, legacy_provenance, upstream_revision):
+    """Keep replay IDs stable without attributing old evidence to latest snapshot settings."""
+    key = 'legacy-mvp:' + legacy_provenance
+    run = identity(args.repository, args.producer, key)
+    existing = client.one('runs', run_id=run)
+    revision = upstream_revision
+    if existing:
+        expected = {'run_id': run, 'repository_id': args.repository, 'producer_id': args.producer,
+                    'provenance_id': pid, 'external_run_key': key, 'run_kind': 'import',
+                    'trust_class': 'legacy'}
+        if any(existing.get(name) != value for name, value in expected.items()):
+            raise ValueError('Existing MVP import run scope/provenance mismatch')
+        # Preserve old payloads/outboxes exactly: run_id is part of observation identity.
+        # The API still validates every immutable field on replay.
+        revision = existing['source_revision']
+    return start_run(client, args, pid, key, revision)
+
+
 def observation(args, run, pid, fixture, row, key):
     phase = row.get('phase', 'unknown')
     if phase not in ('load','parse','early','resolution','compile','runtime','execution','timeout','planning','unknown'):
@@ -109,7 +134,6 @@ def observation(args, run, pid, fixture, row, key):
 
 def import_mvp(client, db, args, imported, outbox):
     count = 0
-    settings = dict(db.execute('SELECT key,value FROM settings'))
     for item in db.execute('SELECT * FROM provenance ORDER BY id'):
         print('Processing MVP provenance:', item['id'], flush=True)
         checkpoint_key = sha(item['id'])
@@ -131,7 +155,7 @@ def import_mvp(client, db, args, imported, outbox):
             fixtures.append(normalize_fixture(row))
         corpus, ids = register(client, args.repository, doc['upstream'], fixtures, reuse_sealed=True)
         pid = provenance(client, args.repository, corpus, 'mvp-composite', {'legacy_provenance': item['id'], 'identity': doc, 'legacy_inventory': corpus})
-        run = start_run(client, args, pid, 'legacy-mvp:' + item['id'], settings.get('compiler_commit') or doc['upstream']['commit'])
+        run = start_mvp_run(client, args, pid, item['id'], doc['upstream']['commit'])
         eligibility = [{'repository_id': args.repository, 'provenance_id': pid, 'fixture_id': ids[f['path']],
                         'eligibility': 'runnable' if f['state']=='runnable' else 'unresolved', 'reason_codes': [],
                         'diagnostic': {'legacy_state': f['state'], 'reasons': json.loads(f['reasons'])}} for f in originals]
