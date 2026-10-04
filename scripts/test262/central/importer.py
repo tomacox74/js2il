@@ -111,6 +111,17 @@ def import_mvp(client, db, args, imported, outbox):
     count = 0
     settings = dict(db.execute('SELECT key,value FROM settings'))
     for item in db.execute('SELECT * FROM provenance ORDER BY id'):
+        print('Processing MVP provenance:', item['id'], flush=True)
+        checkpoint_key = sha(item['id'])
+        checkpoint = client.one('legacy_control_records', import_id=imported,
+                                source_table='mvp_import_checkpoint', source_key=checkpoint_key)
+        expected_observations = db.execute('SELECT count(*) FROM results WHERE provenance=?', (item['id'],)).fetchone()[0]
+        if checkpoint:
+            if checkpoint['document'] != {'observations': expected_observations}:
+                raise ValueError('MVP import checkpoint count mismatch')
+            count += expected_observations
+            print('Reusing completed provenance:', expected_observations, 'observations', flush=True)
+            continue
         doc = json.loads(item['document'])
         fixtures = []
         originals = list(db.execute('SELECT * FROM fixtures WHERE provenance=? ORDER BY path', (item['id'],)))
@@ -118,7 +129,7 @@ def import_mvp(client, db, args, imported, outbox):
             row = dict(f)
             row['variants'] = json.loads(row['variants'])
             fixtures.append(normalize_fixture(row))
-        corpus, ids = register(client, args.repository, doc['upstream'], fixtures)
+        corpus, ids = register(client, args.repository, doc['upstream'], fixtures, reuse_sealed=True)
         pid = provenance(client, args.repository, corpus, 'mvp-composite', {'legacy_provenance': item['id'], 'identity': doc, 'legacy_inventory': corpus})
         run = start_run(client, args, pid, 'legacy-mvp:' + item['id'], settings.get('compiler_commit') or doc['upstream']['commit'])
         eligibility = [{'repository_id': args.repository, 'provenance_id': pid, 'fixture_id': ids[f['path']],
@@ -126,6 +137,7 @@ def import_mvp(client, db, args, imported, outbox):
                         'diagnostic': {'legacy_state': f['state'], 'reasons': json.loads(f['reasons'])}} for f in originals]
         client.put('provenance_fixture_eligibility', eligibility)
         records = []
+        mappings = []
         for result in db.execute('SELECT * FROM results WHERE provenance=? ORDER BY path,variant', (item['id'],)):
             raw = dict(result)
             raw['document'] = json.loads(raw['document'])
@@ -133,13 +145,21 @@ def import_mvp(client, db, args, imported, outbox):
                        outcome='pass' if raw['verdict']=='matched' else 'fail', failure_class=None if raw['verdict']=='matched' else 'unresolved',
                        diagnostic=canonical(raw['document']))
             records.append(observation(args, run, pid, ids[raw['path']], row, [item['id'],raw['path'],raw['variant'],raw['finished'],raw['document']]))
-            client.put('import_records',[{'import_id':imported,'source_table':'results','source_key':canonical([item['id'],raw['path'],raw['variant']]),
-                                          'entity_kind':'observation','entity_id':records[-1]['observation_id']}])
+            mappings.append({'import_id':imported,'source_table':'results','source_key':canonical([item['id'],raw['path'],raw['variant']]),
+                             'entity_kind':'observation','entity_id':records[-1]['observation_id']})
             count += 1
             if len(records)==100:
-                outbox.enqueue(records, identity(imported, count)); records=[]
+                outbox.enqueue(records, identity(imported, count))
+                client.put('import_records', mappings)
+                records=[]; mappings=[]
         if records:
             outbox.enqueue(records, identity(imported, count))
+            client.put('import_records', mappings)
+        # ACK all observations before recording the immutable completion checkpoint.
+        outbox.flush(client)
+        client.put('legacy_control_records', [{'import_id': imported, 'source_table': 'mvp_import_checkpoint',
+                    'source_key': checkpoint_key, 'document': {'observations': expected_observations}}])
+        print('Completed provenance; total observations:', count, flush=True)
     return count
 
 

@@ -64,7 +64,7 @@ jobs:
     if: github.ref == 'refs/heads/master' && inputs.mode == 'import'
     runs-on: ubuntu-24.04
     environment: test262-catalogue-import
-    timeout-minutes: 180
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v5
         with:
@@ -92,6 +92,8 @@ jobs:
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
       - name: Verify importer binding and import selected immutable snapshots
         env:
+          PYTHONUNBUFFERED: '1'
+          TEST262_PROGRESS: '1'
           TEST262_DATABASE_URL: ${{ secrets.TEST262_IMPORTER_DATABASE_URL }}
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
           TEST262_PRODUCER_ID: ${{ vars.TEST262_IMPORTER_PRODUCER_ID }}

@@ -66,7 +66,7 @@ def inventory_digest(rows):
     return hash_bytes(''.join(canonical(row)+'\n' for row in sorted(rows, key=lambda x: x['path'])).encode())
 
 
-def register(client, repository, upstream, rows):
+def register(client, repository, upstream, rows, reuse_sealed=False):
     paths={row['path'] for row in rows}
     for row in rows:
         for dependency in row['dependencies']:
@@ -76,10 +76,21 @@ def register(client, repository, upstream, rows):
             row['dependency_manifest_digest']=sha(row['dependencies'])
     digest = inventory_digest(rows)
     corpus = identity(upstream['cloneUrl'], upstream['commit'], digest)
+    fixtures = {row['path']: identity(corpus, row['path']) for row in rows}
+    if reuse_sealed:
+        existing = client.one('corpora', corpus_id=corpus)
+        if existing and existing['inventory_state'] == 'sealed':
+            expected = {'upstream_url': upstream['cloneUrl'], 'revision': upstream['commit'],
+                        'revision_algorithm': 'sha1', 'inventory_digest': bytea(digest),
+                        'expected_fixture_count': len(rows)}
+            if any(existing.get(key) != value for key, value in expected.items()):
+                raise ValueError('Sealed inventory identity mismatch')
+            # Sealed inventory rows are immutable and the API read is repository scoped.
+            print('Reusing verified sealed inventory:', len(rows), 'fixtures', flush=True)
+            return corpus, fixtures
     client.put('corpora', [{'corpus_id': corpus, 'upstream_url': upstream['cloneUrl'], 'revision': upstream['commit'],
                            'revision_algorithm': 'sha1', 'inventory_digest': bytea(digest), 'expected_fixture_count': len(rows)}])
     client.put('repository_corpora', [{'repository_id': repository, 'corpus_id': corpus}])
-    fixtures = {row['path']: identity(corpus, row['path']) for row in rows}
     client.put('fixtures', [{'fixture_id': fixtures[r['path']], 'corpus_id': corpus, 'upstream_path': r['path'],
                             'content_sha256': bytea(r['sha256']), 'metadata': r['metadata'], 'metadata_state': r['metadata_state'],
                             'is_support_file': r['is_support_file'], 'feature_tags': r['feature_tags'],
