@@ -394,8 +394,23 @@ or observation ID while preserving the original receipt/evidence. A one-attempt 
 with two items must block excess claims both while reserved and after charging, leaving
 one untouched pending item and no reservations. The module checks the loopback pilot
 database/login before writes, and saves these results under `queue_drills` in the report.
-No clocks or lease rows are altered to simulate expiry. Actual process termination and
-native publication/restore acceptance remain separate drills.
+No clocks or lease rows are altered to simulate expiry. Native publication/restore
+acceptance remains separate.
+
+With `--process-kill` (enabled by the PR workflow), a spawned supervisor executes
+one additional real strict fixture under a separate marked provenance and budget.
+It pauses only after the production worker has durably saved its result/completion
+in the FULL-synchronous WAL outbox, before upload. The parent verifies one pending
+message/completion, zero server observations and one reserved attempt, then sends
+SIGKILL exclusively to its owned supervisor process. This boundary follows fixture
+container cleanup; it does not kill a running fixture container. Pending spool bytes
+are retained as `process-kill-pending.sqlite`. A fresh spawned supervisor resumes
+the same outbox with execution limit zero: one original result and completed item,
+generation one, one charged attempt, no reserved budget or pending uploads, and no
+new fixture execution. The final acknowledged outbox is also retained. Results live
+under `process_kill` in the report and do not change the ten-variant baseline counts.
+This checks supervisor death after persistence; it does not establish termination
+or cleanup of an in-flight fixture container, nor loss before durable persistence.
 
 Review the `pilot-report.json` and `test262-worker-pilot-<run>-<attempt>` artifact before
 recording the isolated-execution item in #2230. Evidence stays in the disposable run;
