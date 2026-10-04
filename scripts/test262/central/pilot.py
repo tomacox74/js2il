@@ -215,6 +215,12 @@ def run(args):
                     raise ValueError('Concurrent claim/recovery pilot invariant failed')
             else:
                 report['worker']=work_staged(client,workargs)
+            if args.process_kill:
+                from .pilot_process import run_process_drill
+                report['stage']='process-kill-drill'
+                report['process_kill']={}
+                run_process_drill(client,dsn,workargs,corpus,next(iter(ids.values())),revision,
+                                  document,output,report['process_kill'])
         report['stage']='verify-results'
         observations=[row for worker_args in workers for row in client.read('observations',{'run_id':worker_args.run})]
         workitems=list(client.read('work_items',{'provenance_id':pid}))
@@ -267,6 +273,7 @@ if __name__=='__main__':
     p.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll');p.add_argument('--image',default='test262-fixture:pilot')
     p.add_argument('--workers',type=int,choices=(1,2),default=1)
     p.add_argument('--queue-drills',action='store_true')
+    p.add_argument('--process-kill',action='store_true')
     try:
         run(p.parse_args())
     except Exception as error:
