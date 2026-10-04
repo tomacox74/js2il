@@ -1,5 +1,6 @@
 """Ten real fixture variants through the production worker on an empty local database."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 import json
 import os
@@ -7,6 +8,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import time
+import threading
 from types import SimpleNamespace
 import uuid
 
@@ -14,6 +16,75 @@ from .client import Client, Outbox, fixture_environment
 from .importer import provenance, start_run
 from .inventory import REPO, normalize_fixture, register
 from .worker import container_arguments, stage_runtime, work_staged
+
+
+class LostAcknowledgement(TimeoutError):
+    """Pilot-only transport fault after the server commits an ingestion request."""
+
+
+class PilotClient:
+    def __init__(self, client, barrier=None, lose_ack=False):
+        self.client = client
+        self.barrier = barrier
+        self.lose_ack = lose_ack
+        self.first_claim = True
+        self.first_lease = None
+
+    def __getattr__(self, name):
+        return getattr(self.client, name)
+
+    def call(self, operation, *args):
+        if operation == 'claim' and self.first_claim:
+            self.first_claim = False
+            if self.barrier:
+                self.barrier.wait(timeout=60)
+            result = self.client.call(operation, *args)
+            self.first_lease = result
+            return result
+        result = self.client.call(operation, *args)
+        if operation == 'ingest' and self.lose_ack:
+            self.lose_ack = False
+            raise LostAcknowledgement('Pilot simulated acknowledgement loss after commit')
+        return result
+
+
+def execute_pair(dsn, workers):
+    """Independent connections/outboxes; restart worker zero after a lost ingest ACK."""
+    barrier = threading.Barrier(2)
+
+    def execute(index, args):
+        connection = Client(dsn=dsn, epoch=1)
+        client = PilotClient(connection, barrier, lose_ack=index == 0)
+        result = {'run_id': args.run}
+        try:
+            try:
+                result['worker'] = work_staged(client, args)
+            except LostAcknowledgement:
+                observations = list(connection.read('observations', {'run_id': args.run}))
+                outbox = Outbox(args.outbox, args.repository, args.producer, 1)
+                pending = outbox.db.execute('SELECT count(*) FROM messages WHERE receipt IS NULL').fetchone()[0]
+                completions = outbox.db.execute('SELECT count(*) FROM completions WHERE receipt IS NULL').fetchone()[0]
+                outbox.db.close()
+                if len(observations) != 1 or pending != 1 or completions != 1:
+                    raise ValueError('Lost ACK must leave one committed observation and durable pending upload/completion')
+                result['recovery'] = {'committed_before_restart': 1, 'pending_upload_before_restart': pending,
+                                      'pending_completion_before_restart': completions,
+                                      'observation_id': observations[0]['observation_id']}
+                connection.close()
+                connection = Client(dsn=dsn, epoch=1)
+                # work_staged flushes the existing spool before claiming new work.
+                restart_args = SimpleNamespace(**vars(args))
+                restart_args.limit -= 1
+                result['worker'] = work_staged(connection, restart_args)
+                result['worker']['attempts'] += 1
+            result['first_work_item'] = client.first_lease['work_item_id']
+            return result
+        finally:
+            connection.close()
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures = [pool.submit(execute, i, args) for i, args in enumerate(workers)]
+        return [future.result() for future in futures]
 
 
 def disposable_settings(dsn):
@@ -74,7 +145,7 @@ def run(args):
     import catalog
     output = Path(args.output);output.mkdir(parents=True,exist_ok=True)
     report = {'complete':False,'scope':'disposable database only','production_cutover':False,
-              'kind':'mvp-composite','variant_limit':10}
+              'kind':'mvp-composite','variant_limit':10,'worker_count':args.workers}
     started=time.monotonic()
     client=None
     try:
@@ -111,7 +182,17 @@ def run(args):
                  kind='mvp-composite',image=args.image,run_key='isolated-pilot',cap_ms=120000,
                  runtime_timeout=30,compile_timeout=60,limit=10,seconds=600,outbox=str(output/'outbox.sqlite'))
         workargs.run=start_run(client,workargs,pid,'isolated-pilot',revision,'mvp')
+        workers=[workargs]
+        if args.workers == 2:
+            second=SimpleNamespace(**vars(workargs))
+            second.run_key='isolated-pilot-2'
+            second.run=start_run(client,second,pid,'isolated-pilot-2',revision,'mvp')
+            second.outbox=str(output/'outbox-2.sqlite')
+            workargs.limit=second.limit=5
+            workers.append(second)
         workargs.budget=str(uuid.uuid4())
+        for worker_args in workers:
+            worker_args.budget=workargs.budget
         client.put('budget_scopes',[{'budget_scope_id':workargs.budget,'repository_id':repo,'scope_kind':'run',
                     'external_key':'isolated-pilot','candidate_limit':10,'accepted_limit':10,'attempt_limit':10,'time_limit_ms':1200000}])
         client.put('provenance_fixture_eligibility',[{'repository_id':repo,'provenance_id':pid,'fixture_id':f,'eligibility':'runnable','reason_codes':[]} for f in ids.values()])
@@ -121,19 +202,35 @@ def run(args):
         client.put('budget_work_items',[{'repository_id':repo,'budget_scope_id':workargs.budget,'work_item_id':w['work_item_id']} for w in workrows])
         with tempfile.TemporaryDirectory(prefix='pilot-runtime-') as runtime:
             stage_runtime(workargs,runtime);Path(runtime).chmod(0o755);workargs.runtime=runtime
+            for worker_args in workers:
+                worker_args.runtime=runtime
             report['stage']='isolation-probe'
             report['isolation']=isolation_probe(workargs,Path(args.root).resolve())
             report['stage']='execute-worker'
-            report['worker']=work_staged(client,workargs)
+            if args.workers == 2:
+                report['workers']=execute_pair(dsn,workers)
+                if (len({w['first_work_item'] for w in report['workers']}) != 2 or
+                        any(w['worker']['attempts'] != 5 for w in report['workers']) or
+                        'recovery' not in report['workers'][0]):
+                    raise ValueError('Concurrent claim/recovery pilot invariant failed')
+            else:
+                report['worker']=work_staged(client,workargs)
         report['stage']='verify-results'
-        observations=list(client.read('observations',{'run_id':workargs.run}))
+        observations=[row for worker_args in workers for row in client.read('observations',{'run_id':worker_args.run})]
         workitems=list(client.read('work_items',{'provenance_id':pid}))
         budget=client.one('budget_scopes',budget_scope_id=workargs.budget)
         # Re-flush acknowledged ingestion/completion messages: no new evidence or budget charge.
-        outbox=Outbox(workargs.outbox,repo,producer,1);outbox.flush(client);outbox.flush(client)
-        pending=outbox.db.execute('SELECT count(*) FROM messages WHERE receipt IS NULL').fetchone()[0]+outbox.db.execute('SELECT count(*) FROM completions WHERE receipt IS NULL').fetchone()[0]
-        outbox.db.close()
-        replay_count=len(list(client.read('observations',{'run_id':workargs.run})))
+        pending=0
+        for worker_args in workers:
+            outbox=Outbox(worker_args.outbox,repo,producer,1);outbox.flush(client);outbox.flush(client)
+            pending+=outbox.db.execute('SELECT count(*) FROM messages WHERE receipt IS NULL').fetchone()[0]+outbox.db.execute('SELECT count(*) FROM completions WHERE receipt IS NULL').fetchone()[0]
+            outbox.db.close()
+        replay_count=sum(len(list(client.read('observations',{'run_id':a.run}))) for a in workers)
+        if args.workers == 2:
+            recovered=report['workers'][0]['recovery']['observation_id']
+            report['recovered_observation_count']=sum(o['observation_id']==recovered for o in observations)
+            if report['recovered_observation_count'] != 1:
+                raise ValueError('Recovery duplicated or lost the committed observation')
         report.update(revision=revision,upstream_commit=actual,fixtures=[r['path'] for r in selected],
                       observations=len(observations),outcomes=dict(Counter(o['outcome'] for o in observations)),
                       completed_work=sum(w['state']=='completed' for w in workitems),pending_outbox=pending,
@@ -161,6 +258,7 @@ def run(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--output',required=True)
     p.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll');p.add_argument('--image',default='test262-fixture:pilot')
+    p.add_argument('--workers',type=int,choices=(1,2),default=1)
     try:
         run(p.parse_args())
     except Exception as error:

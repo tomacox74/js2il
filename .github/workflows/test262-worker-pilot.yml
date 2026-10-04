@@ -42,11 +42,11 @@ jobs:
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
           git -C "$ROOT" sparse-checkout add /test/
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
-      - name: Execute ten variants through isolated worker and scoped API
+      - name: Execute two isolated workers and recover lost upload acknowledgement
         env:
           TEST262_PILOT_ADMIN_DSN: postgresql://postgres:disposable-pilot-only@127.0.0.1:5432/catalogue_pilot
         run: |
-          python -m scripts.test262.central.pilot --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
+          python -m scripts.test262.central.pilot --workers 2 --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
       - name: Preserve pilot report and acknowledged outbox
         if: always()
         uses: actions/upload-artifact@v7
