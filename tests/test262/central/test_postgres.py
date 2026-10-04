@@ -155,8 +155,8 @@ class PostgresTests(unittest.TestCase):
                             CREATE TABLE results(provenance,path,variant,document,finished,verdict);''')
                         db.executemany('INSERT INTO settings VALUES(?,?)',[('schema','1'),('compiler_commit',revision)])
                         db.execute('INSERT INTO provenance VALUES(?,?)', ('shared',json.dumps({'upstream':{'cloneUrl':'disposable-import','commit':'a'*40}})))
-                        db.execute('INSERT INTO fixtures VALUES(?,?,?,?,?,?)',('shared','test/import-replay.js','d'*64,'["default"]','runnable','[]'))
-                        db.execute('INSERT INTO results VALUES(?,?,?,?,?,?)',('shared','test/import-replay.js','default','{}',1,'matched'))
+                        db.execute('INSERT INTO fixtures VALUES(?,?,?,?,?,?)',('shared','test/import-replay.js','d'*64,'["strict"]','runnable','[]'))
+                        db.execute('INSERT INTO results VALUES(?,?,?,?,?,?)',('shared','test/import-replay.js','strict','{}',1,'matched'))
                 args.source=str(root/'latest.sqlite');args.source_uri='test:latest';args.outbox=str(root/'latest-outbox.sqlite')
                 # Seed through the old implementation, reproducing the already-deployed run.
                 with patch('scripts.test262.central.importer.start_mvp_run',
