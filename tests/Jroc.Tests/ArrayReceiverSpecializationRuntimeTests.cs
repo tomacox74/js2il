@@ -3,6 +3,16 @@ using Xunit;
 
 namespace Jroc.Tests;
 
+// Prototype mutations invalidate a process-wide Array fast-path cache. Keep the
+// allocation assertions isolated so another test cannot trigger a cache rescan
+// inside their measured intervals.
+[CollectionDefinition(CollectionName, DisableParallelization = true)]
+public sealed class ArrayReceiverSpecializationRuntimeTestsCollection
+{
+    public const string CollectionName = nameof(ArrayReceiverSpecializationRuntimeTestsCollection);
+}
+
+[Collection(ArrayReceiverSpecializationRuntimeTestsCollection.CollectionName)]
 public sealed class ArrayReceiverSpecializationRuntimeTests
 {
     [Fact]
@@ -111,15 +121,10 @@ public sealed class ArrayReceiverSpecializationRuntimeTests
         WithRealm(
             () =>
             {
-                // Exercise the methods past tiered-compilation thresholds so JIT
-                // metadata allocations cannot contaminate the measured operation.
-                for (var warmup = 0; warmup < 64; warmup++)
-                {
-                    var shiftWarmup = CreateDenseArray(10_000);
-                    shiftWarmup.shift();
-                    var unshiftWarmup = CreateDenseArray(10_000, 20_000);
-                    unshiftWarmup.unshift("first");
-                }
+                var shiftWarmup = CreateDenseArray(10_000);
+                shiftWarmup.shift();
+                var unshiftWarmup = CreateDenseArray(10_000, 20_000);
+                unshiftWarmup.unshift("first");
 
                 var shiftArray = CreateDenseArray(10_000);
                 var beforeShift =
