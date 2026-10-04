@@ -133,6 +133,7 @@ class PostgresTests(unittest.TestCase):
         from unittest.mock import patch
         from scripts.test262.central.client import Client, Outbox, identity, sha
         from scripts.test262.central.importer import import_snapshot, start_run
+        from psycopg.conninfo import make_conninfo
         repository = str(uuid.uuid4())
         self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github','import-replay','test/import-replay')",(repository,))
         producer = str(uuid.uuid4())
@@ -141,9 +142,8 @@ class PostgresTests(unittest.TestCase):
         self.db.execute("INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(%s,%s,'local','import test',%s)", (producer,repository,role))
         self.db.execute("INSERT INTO test262.api_subjects VALUES(%s,%s,%s,'coordinator','legacy',true)",(role,repository,producer))
         self.db.execute("UPDATE test262.schema_contract SET deployment_state='shadow'")
-        client = Client(DSN, 1)
-        client.db.execute('SET SESSION AUTHORIZATION catalogue_test_importer')
-        client.contract = client.db.execute('SELECT test262.api_contract()').fetchone()[0]
+        self.db.execute("ALTER ROLE catalogue_test_importer PASSWORD 'disposable-import-test'")
+        client = Client(make_conninfo(DSN,user=role,password='disposable-import-test'), 1)
         try:
             with tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
