@@ -328,24 +328,13 @@ public sealed class IteratorReviewRegressionTests
 
     private static void AssertBorrowedIteratorFromUsesOwningRealm()
     {
-        object fromFirstRealm = null!;
-        object iteratorPrototypeFromFirstRealm = null!;
-        object wrapperPrototypeFromFirstRealm = null!;
-        JsObject directIteratorFromFirstRealm = null!;
+        var (fromFirstRealm, wrapperPrototypeFromFirstRealm, directIteratorFromFirstRealm) =
+            CreateBorrowedIteratorFrom();
         object wrapperFromFirstRealm = null!;
 
-        WithRealm(() =>
-        {
-            fromFirstRealm =
-                ObjectRuntime.GetProperty(GlobalThis.Iterator, "from")!;
-            iteratorPrototypeFromFirstRealm = JsIterator.Prototype;
-            wrapperPrototypeFromFirstRealm = JsIterator.WrapperPrototype;
-            directIteratorFromFirstRealm = CreateIterator(
-                _ => IteratorResult.Create(null, true));
-            PrototypeChain.SetPrototype(
-                directIteratorFromFirstRealm,
-                iteratorPrototypeFromFirstRealm);
-        });
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
 
         WithRealm(() =>
         {
@@ -377,6 +366,28 @@ public sealed class IteratorReviewRegressionTests
                 wrapperPrototypeFromFirstRealm,
                 JsObjectConstructor.getPrototypeOf(wrapperFromFirstRealm));
         });
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static (object From, object WrapperPrototype, JsObject DirectIterator) CreateBorrowedIteratorFrom()
+    {
+        object fromFirstRealm = null!;
+        object wrapperPrototypeFromFirstRealm = null!;
+        JsObject directIteratorFromFirstRealm = null!;
+
+        WithRealm(() =>
+        {
+            fromFirstRealm =
+                ObjectRuntime.GetProperty(GlobalThis.Iterator, "from")!;
+            wrapperPrototypeFromFirstRealm = JsIterator.WrapperPrototype;
+            directIteratorFromFirstRealm = CreateIterator(
+                _ => IteratorResult.Create(null, true));
+            PrototypeChain.SetPrototype(
+                directIteratorFromFirstRealm,
+                JsIterator.Prototype);
+        });
+
+        return (fromFirstRealm, wrapperPrototypeFromFirstRealm, directIteratorFromFirstRealm);
     }
 
     private static void AssertConcreteIteratorPrototypesDefineBrandedOwnNextMethods()

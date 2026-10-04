@@ -133,7 +133,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     /// </summary>
     internal sealed class IntrinsicPropertyDescriptorStore : IPropertyDescriptorStore
     {
-        private readonly ConditionalWeakTable<object, DescriptorSlot> _slots = new();
+        private readonly RealmObjectTable<DescriptorSlot> _slots = new();
+
+        internal void Clear() => _slots.Clear();
 
         public bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
         {
