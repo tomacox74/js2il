@@ -9,6 +9,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - fix(runtime): preserve constructor realm ownership for cross-realm default
   prototypes and Array species creation; verify 10 previously failing pinned
   Test262 Array and AggregateError cases.
+- fix(runtime): retain a reachable function's defining intrinsic graph across GC,
+  preventing borrowed `Iterator.from` calls from switching realms; keep intrinsic
+  caches collectible by storing long-lived CLR identities in realm-owned
+  dictionaries rather than dependent handles (#2234).
 - test262: add deterministic native-porting automation for the initial
   computed-property-name basics area, with killable native-harness workers,
   streamed and versioned resumable SQLite evidence, active-build provenance

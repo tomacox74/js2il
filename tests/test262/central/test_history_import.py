@@ -86,3 +86,34 @@ class HistoryImportTests(unittest.TestCase):
                              ('conclusion', 'failure'), ('event', 'pull_request')):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 verify_run(dict(run, **{field: value}), self.repository)
+
+    def test_receipt_is_written_only_after_parity_and_source_checks(self):
+        import os
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock, patch
+        from scripts.test262.central.history_import import import_history
+        for missing in (False, True):
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                self.archive(directory, ids=(11,))
+                args = SimpleNamespace(directory=str(directory), repository_name=self.repository,
+                    kind='mvp', artifact_ids='11', max_snapshots=1, output=str(directory/'recovery'))
+                client = MagicMock()
+                client.contract = {'deployment_state': 'shadow', 'repository_id': 'repo',
+                                   'producer_id': 'producer', 'trust_class': 'legacy'}
+                def read(table, filters=None):
+                    return [{'entity_kind': 'observation', 'entity_id': 'obs'}] if table == 'import_records' else ([] if missing else [{'observation_id': 'obs'}])
+                client.read.side_effect = read
+                env = {'TEST262_DATABASE_URL': 'postgresql://localhost/disposable',
+                       'TEST262_REPOSITORY_ID': 'repo', 'TEST262_PRODUCER_ID': 'producer'}
+                with patch.dict(os.environ, env), patch('scripts.test262.central.history_import.check'), \
+                     patch('scripts.test262.central.history_import.Client', return_value=client), \
+                     patch('scripts.test262.central.history_import.import_snapshot', return_value={'import_id':'import','observations':1}):
+                    if missing:
+                        with self.assertRaisesRegex(ValueError, 'parity failed'):
+                            import_history(args)
+                        client.put.assert_not_called()
+                    else:
+                        import_history(args)
+                        self.assertEqual(client.put.call_args.args[1][0]['source_table'], 'history_verified_snapshot')
+                        self.assertTrue(json.loads((directory/'recovery/import-report.json').read_text())['complete'])

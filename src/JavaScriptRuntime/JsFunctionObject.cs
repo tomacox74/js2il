@@ -5,7 +5,8 @@ namespace JavaScriptRuntime;
 /// </summary>
 public abstract class JsFunctionObject : JsObject
 {
-    private readonly WeakReference<RuntimeIntrinsics> _owningIntrinsics;
+    // [[Realm]] must remain stable while the function is reachable.
+    private readonly RuntimeIntrinsics _owningIntrinsics;
     private object? _boundWithObject;
     private InvocationContextRequirements _plannedInvocationRequirements;
     private bool _hasPlannedInvocationRequirements;
@@ -18,15 +19,11 @@ public abstract class JsFunctionObject : JsObject
 
     private protected JsFunctionObject(RuntimeIntrinsics intrinsics)
     {
-        _owningIntrinsics = new WeakReference<RuntimeIntrinsics>(
-            intrinsics);
+        _owningIntrinsics = intrinsics;
         PrototypeChain.InitializePrototype(this, Function.GetPrototype(intrinsics));
     }
 
-    internal RuntimeIntrinsics OwningIntrinsics
-        => _owningIntrinsics.TryGetTarget(out var intrinsics)
-            ? intrinsics
-            : RuntimeIntrinsics.Current;
+    internal RuntimeIntrinsics OwningIntrinsics => _owningIntrinsics;
 
     /// <summary>
     /// Gets whether this function implements ECMAScript [[Construct]].
