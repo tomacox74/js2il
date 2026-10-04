@@ -99,7 +99,10 @@ def run_process_drill(client, dsn, args, corpus, fixture, revision, document, ou
                 'budget_scope_id': worker_args.budget, 'work_item_id': item}])
     context = multiprocessing.get_context('spawn')
     receiver, sender = context.Pipe(duplex=False)
-    child = context.Process(target=supervisor, args=(dsn, worker_args, sender, context.Event()))
+    # Keep the parent reference alive until the spawned child has attached to
+    # the named semaphore. Process.start() drops its copy of target arguments.
+    gate = context.Event()
+    child = context.Process(target=supervisor, args=(dsn, worker_args, sender, gate))
     try:
         report['stage'] = 'await-durable-spool'
         child.start()
