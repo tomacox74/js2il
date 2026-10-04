@@ -111,10 +111,15 @@ public sealed class ArrayReceiverSpecializationRuntimeTests
         WithRealm(
             () =>
             {
-                var shiftWarmup = CreateDenseArray(10_000);
-                shiftWarmup.shift();
-                var unshiftWarmup = CreateDenseArray(10_000, 20_000);
-                unshiftWarmup.unshift("first");
+                // Exercise the methods past tiered-compilation thresholds so JIT
+                // metadata allocations cannot contaminate the measured operation.
+                for (var warmup = 0; warmup < 64; warmup++)
+                {
+                    var shiftWarmup = CreateDenseArray(10_000);
+                    shiftWarmup.shift();
+                    var unshiftWarmup = CreateDenseArray(10_000, 20_000);
+                    unshiftWarmup.unshift("first");
+                }
 
                 var shiftArray = CreateDenseArray(10_000);
                 var beforeShift =
