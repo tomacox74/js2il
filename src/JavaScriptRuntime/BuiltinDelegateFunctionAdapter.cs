@@ -23,6 +23,16 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
         Delegate target,
         object[]? scopes = null,
         bool isConstructor = false)
+        : this(target, RuntimeIntrinsics.Current, scopes, isConstructor)
+    {
+    }
+
+    private BuiltinDelegateFunctionAdapter(
+        Delegate target,
+        RuntimeIntrinsics intrinsics,
+        object[]? scopes,
+        bool isConstructor)
+        : base(intrinsics)
     {
         Target = target ?? throw new ArgumentNullException(nameof(target));
         _scopes = scopes ?? RuntimeServices.EmptyScopes;
@@ -63,6 +73,22 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
         return GetOrCreateStableAdapter(target);
     }
 
+    internal static BuiltinDelegateFunctionAdapter FromDelegate(
+        Delegate target,
+        RuntimeIntrinsics intrinsics,
+        bool isConstructor = false)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(intrinsics);
+        return intrinsics.BuiltinAdapters.GetOrAdd(
+            target,
+            resolved => new BuiltinDelegateFunctionAdapter(
+                resolved,
+                intrinsics,
+                scopes: null,
+                isConstructor));
+    }
+
     private static BuiltinDelegateFunctionAdapter GetOrCreateStableAdapter(
         Delegate target)
     {
@@ -83,9 +109,14 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
             && RuntimeIntrinsics.Current.BuiltinAdapters.Contains(target);
     }
 
-    internal static object? WrapJavaScriptVisibleValue(object? value)
+    internal static object? WrapJavaScriptVisibleValue(
+        object? value,
+        RuntimeIntrinsics? intrinsics = null,
+        bool isConstructor = false)
         => value is Delegate target
-            ? FromDelegate(target)
+            ? intrinsics is null
+                ? FromDelegate(target)
+                : FromDelegate(target, intrinsics, isConstructor)
             : value;
 
     internal static object NormalizeJavaScriptObject(object value)

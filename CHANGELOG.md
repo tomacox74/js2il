@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): preserve constructor realm ownership for cross-realm default
+  prototypes and Array species creation; verify 10 previously failing pinned
+  Test262 Array and AggregateError cases.
 - fix(runtime): retain a reachable function's defining intrinsic graph across GC,
   preventing borrowed `Iterator.from` calls from switching realms; keep intrinsic
   caches collectible by storing long-lived CLR identities in realm-owned

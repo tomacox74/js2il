@@ -397,6 +397,9 @@ internal sealed class RuntimeIntrinsics
     internal object ObjectPrototype
         => GetOrCreate(RuntimeIntrinsicSlot.ObjectPrototype, static () => new JsObject());
 
+    internal object ArrayPrototype
+        => JavaScriptRuntime.Array.Prototype;
+
     internal object ErrorPrototype
         => GetOrCreate(RuntimeIntrinsicSlot.ErrorPrototype, static () => new JsObject());
 

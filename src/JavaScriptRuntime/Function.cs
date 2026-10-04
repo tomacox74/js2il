@@ -27,7 +27,10 @@ public static class Function
     /// objects whose [[Prototype]] is <c>%Function.prototype%</c>.
     /// </summary>
     internal static JsObject Prototype
-        => RuntimeIntrinsics.Current.GetOrCreate(
+        => GetPrototype(RuntimeIntrinsics.Current);
+
+    internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+        => intrinsics.GetOrCreate(
             RuntimeIntrinsicSlot.FunctionPrototype,
             static () => new JsObject(),
             static prototype => InitializePrototypeSurface(prototype));
@@ -849,7 +852,8 @@ public static class Function
                 throw new TypeError("Value is not a constructor");
             }
 
-            var instance = ObjectRuntime.CreateOrdinaryObject();
+            var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor);
+            var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
             var prototypeSource = newTarget is null or JsNull
                 ? constructor
                 : newTarget;
@@ -1086,10 +1090,13 @@ public static class Function
                     newTarget);
             }
 
-            var instance = ObjectRuntime.CreateOrdinaryObject();
+            var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor);
+            var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
 
             // Override the ordinary Object.prototype default only when ctor.prototype is an object.
             // Null and primitive prototype values use Object.prototype per GetPrototypeFromConstructor.
+            // Builtins that return their own object apply newTarget.prototype after their
+            // argument validation, preserving each constructor's required operation order.
             var proto = JavaScriptRuntime.ObjectRuntime.GetItem(constructor, "prototype");
             if (TypeUtilities.IsConstructorReturnOverride(proto))
             {
@@ -1106,9 +1113,10 @@ public static class Function
                     instance,
                     arguments,
                     newTarget);
-                result =
-                    BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
-                        result);
+                result = BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    result,
+                    RuntimeIntrinsics.GetFunctionRealm(constructor),
+                    isConstructor: true);
                 return TypeUtilities.IsConstructorReturnOverride(result)
                     ? ApplyBuiltinNewTargetPrototype(
                         result,
@@ -1174,9 +1182,24 @@ public static class Function
             }
 
             var prototype = ObjectRuntime.GetItem(newTarget, "prototype");
-            if (!TypeUtilities.IsPrimitive(prototype))
+            if (TypeUtilities.IsConstructorReturnOverride(prototype))
             {
                 PrototypeChain.SetPrototype(result, prototype!);
+            }
+            else
+            {
+                var intrinsics = RuntimeIntrinsics.GetFunctionRealm(newTarget);
+                var defaultPrototype = GlobalThis.IsAggregateErrorConstructorValue(constructor.Target)
+                    ? intrinsics.AggregateErrorPrototype
+                    : GlobalThis.IsArrayConstructorValue(constructor.Target)
+                        ? intrinsics.ArrayPrototype
+                        : null;
+                if (defaultPrototype is null)
+                {
+                    return result;
+                }
+
+                PrototypeChain.SetPrototype(result, defaultPrototype);
             }
 
             return result;

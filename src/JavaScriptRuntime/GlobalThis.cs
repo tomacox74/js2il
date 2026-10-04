@@ -1484,6 +1484,11 @@ namespace JavaScriptRuntime
                 || value is BuiltinDelegateFunctionAdapter adapter
                     && ReferenceEquals(adapter.Target, _arrayConstructorValue);
 
+        internal static bool IsAggregateErrorConstructorValue(object? value)
+            => ReferenceEquals(value, _aggregateErrorConstructorValue)
+                || value is BuiltinDelegateFunctionAdapter adapter
+                    && ReferenceEquals(adapter.Target, _aggregateErrorConstructorValue);
+
         public static Type Date => typeof(JavaScriptRuntime.Date);
 
         public static Delegate Promise => _promiseConstructorValue;

@@ -674,6 +674,14 @@ namespace JavaScriptRuntime
             var constructor = ObjectRuntime.GetProperty(originalArray, "constructor");
             if (constructor is not null && IsObjectValue(constructor))
             {
+                if (GlobalThis.IsArrayConstructorValue(constructor)
+                    && !ReferenceEquals(
+                        RuntimeIntrinsics.GetFunctionRealm(constructor),
+                        RuntimeIntrinsics.Current))
+                {
+                    return CreateDefaultArray(length);
+                }
+
                 constructor = ObjectRuntime.GetProperty(
                     constructor,
                     Symbol.species.DebugId);
