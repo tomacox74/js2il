@@ -6,6 +6,7 @@ Only this supervisor uses the DSN. Keep the outbox on durable local storage.
 import hashlib
 import json
 import os
+import time
 from pathlib import Path
 import sqlite3
 import uuid
@@ -61,8 +62,12 @@ class Client:
         return self.db.execute('SELECT test262.api_' + operation + '(' + ','.join(['%s'] * len(values)) + ')', values).fetchone()[0]
 
     def put(self, table, rows):
+        started = time.monotonic()
         for start in range(0, len(rows), 250):
             self.call('put', table, rows[start:start+250])
+            if os.getenv('TEST262_PROGRESS') == '1':
+                print('Uploaded', table, min(start+250, len(rows)), '/', len(rows),
+                      'records in', round(time.monotonic()-started, 1), 'seconds', flush=True)
 
     def read(self, table, filters=None, page=500):
         """Yield one table's scoped rows in bounded primary-key pages."""
@@ -160,6 +165,8 @@ class Outbox:
             receipt = client.call('ingest', request, rows)
             with self.db:
                 self.db.execute('UPDATE messages SET receipt=? WHERE request_id=?', (canonical(receipt), request))
+            if os.getenv('TEST262_PROGRESS') == '1':
+                print('Acknowledged observation batch:', len(rows), 'records', flush=True)
         for observation, work, generation in self.db.execute('SELECT observation_id,work_id,generation FROM completions WHERE receipt IS NULL ORDER BY rowid').fetchall():
             receipt = client.call('complete', work, generation, observation)
             with self.db:

@@ -112,6 +112,22 @@ required PR CI has passed.
 
 ### Manual GitHub Actions import
 
+Timed-out MVP imports can be retried with the same discovery run and original
+artifact IDs after checking database capacity. The retry revalidates the source
+archive hashes and regenerates observations from the immutable snapshot; it does
+not require copying an old outbox into the runner. Preserve the recovery artifact
+(including SQLite WAL files) for diagnosis. Stable observation and request IDs
+allow replay of partial uploads.
+
+MVP imports reuse a repository-scoped sealed inventory only after matching its
+upstream revision, normalized inventory digest and fixture count. An unfinished
+inventory is replayed through the existing immutable API. Result mappings are
+uploaded in batches, and each provenance's observation outbox is acknowledged
+before recording an immutable completion checkpoint. A retry skips checkpointed
+provenances; the final central observation/mapping parity check still runs before
+the snapshot is marked verified. The manual import job allows six hours and logs
+committed table/chunk counts without printing database credentials or payloads.
+
 Create environment `test262-catalogue-import`, restricted to `master`, with secret
 `TEST262_IMPORTER_DATABASE_URL` (the dedicated `test262_importer` session-pooler TLS
 connection string) and variables `TEST262_REPOSITORY_ID`,
