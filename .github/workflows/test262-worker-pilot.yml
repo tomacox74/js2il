@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/test262-worker-pilot.yml'
       - 'scripts/test262/central/pilot.py'
+      - 'scripts/test262/central/pilot_drills.py'
       - 'scripts/test262/central/worker.py'
       - 'scripts/test262/central/fixture.Dockerfile'
 permissions:
@@ -42,11 +43,11 @@ jobs:
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
           git -C "$ROOT" sparse-checkout add /test/
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
-      - name: Execute two isolated workers and recover lost upload acknowledgement
+      - name: Execute workers and verify upload, lease, conflict and budget recovery
         env:
           TEST262_PILOT_ADMIN_DSN: postgresql://postgres:disposable-pilot-only@127.0.0.1:5432/catalogue_pilot
         run: |
-          python -m scripts.test262.central.pilot --workers 2 --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
+          python -m scripts.test262.central.pilot --workers 2 --queue-drills --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
       - name: Preserve pilot report and acknowledged outbox
         if: always()
         uses: actions/upload-artifact@v7
