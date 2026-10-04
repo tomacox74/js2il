@@ -113,6 +113,24 @@ The reconciler does not automatically delete or cancel them. A deliberate cancel
 requires operator reconciliation after confirming the publisher has stopped. It never automatically merges or claims
 required PR CI has passed.
 
+
+### Native publication recovery verification
+
+The central invariants suite exercises real commits/pushes/fetches in temporary local
+Git repositories. GitHub PR responses and coordinator persistence are explicitly
+simulated; no test publishes a native PR or accesses production credentials. Cases cover
+a crash after branch push, PR creation followed by a lost acknowledgement, reuse of
+the same PR/commit, deleted branches on closed/merged PRs, absent-PR reservation fencing,
+and rejection of wrong parent, repository/base and changed head. Publication also checks
+that the validation manifest binds the exact patch digest and base revision. A closed PR
+retry reconciles its state before branch creation and cannot recreate its deleted branch.
+
+Passing these regressions establishes local Git recovery behavior. A protected GitHub
+App end-to-end native batch publication (fresh trusted evidence, independent focused
+validation, simulated interruption, same-PR recovery and required PR CI) remains separate
+operational acceptance on #2230. Neither local tests nor a green invariants workflow
+activate production or make historical native snapshots fresh acceptance.
+
 ## Import history before cutover
 
 ### Manual GitHub Actions import
@@ -420,21 +438,3 @@ or cleanup of an in-flight fixture container, nor loss before durable persistenc
 Review the `pilot-report.json` and `test262-worker-pilot-<run>-<attempt>` artifact before
 recording the isolated-execution item in #2230. Evidence stays in the disposable run;
 never upload this partial pilot corpus to production or activate Supabase from this job.
-
-
-### Native publication recovery verification
-
-The central invariants suite exercises real commits/pushes/fetches in temporary local
-Git repositories. GitHub PR responses and coordinator persistence are explicitly
-simulated; no test publishes a native PR or accesses production credentials. Cases cover
-a crash after branch push, PR creation followed by a lost acknowledgement, reuse of
-the same PR/commit, deleted branches on closed/merged PRs, absent-PR reservation fencing,
-and rejection of wrong parent, repository/base and changed head. Publication also checks
-that the validation manifest binds the exact patch digest and base revision. A closed PR
-retry reconciles its state before branch creation and cannot recreate its deleted branch.
-
-Passing these regressions establishes local Git recovery behavior. A protected GitHub
-App end-to-end native batch publication (fresh trusted evidence, independent focused
-validation, simulated interruption, same-PR recovery and required PR CI) remains separate
-operational acceptance on #2230. Neither local tests nor a green invariants workflow
-activate production or make historical native snapshots fresh acceptance.
