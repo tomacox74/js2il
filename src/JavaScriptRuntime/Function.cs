@@ -1090,13 +1090,14 @@ public static class Function
                     newTarget);
             }
 
-            var effectiveNewTarget = newTarget ?? constructor;
-            var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(effectiveNewTarget);
+            var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor);
             var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
 
             // Override the ordinary Object.prototype default only when ctor.prototype is an object.
             // Null and primitive prototype values use Object.prototype per GetPrototypeFromConstructor.
-            var proto = JavaScriptRuntime.ObjectRuntime.GetItem(effectiveNewTarget, "prototype");
+            // Builtins that return their own object apply newTarget.prototype after their
+            // argument validation, preserving each constructor's required operation order.
+            var proto = JavaScriptRuntime.ObjectRuntime.GetItem(constructor, "prototype");
             if (TypeUtilities.IsConstructorReturnOverride(proto))
             {
                 PrototypeChain.SetPrototype(instance, proto);
