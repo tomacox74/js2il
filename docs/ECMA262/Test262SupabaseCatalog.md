@@ -306,3 +306,46 @@ against one shared attempt/time budget, a real restricted login, and paged clien
 with a streamed NDJSON export. Full production activation,
 artifact history parity, a live reporter connection, an S3 retention configuration and a
 restore drill must be recorded on #2230 with actual evidence before closing it.
+
+## Automatic historical import batches
+
+The existing history workflow also runs hourly on the default branch. Automatic
+imports are **disabled by default**. Configure these repository **Actions variables**
+(the existing importer environment still supplies the dedicated database secret):
+
+| Variable | Purpose |
+|---|---|
+| `TEST262_HISTORY_AUTO_IMPORT` | Set `true` to enable; unset or `false` to pause |
+| `TEST262_HISTORY_ARCHIVE_RUN_ID` | Successful preserved discovery run; initially `37175509314` |
+| `TEST262_HISTORY_MANIFEST_SHA256` | Pin preserved manifest bytes; initially `dd708f3ce7ac05d92bf4b97a4f0680c4a6b7c383dc8ec120198ce22a9febfe1c` |
+| `TEST262_HISTORY_AUTO_KIND` | `mvp` (default), `native`, or `all` |
+| `TEST262_HISTORY_AUTO_BATCH_SIZE` | 1–5 snapshots per run, default 2 |
+| `TEST262_HISTORY_TRACKING_ISSUE` | Progress issue number, default 2242 |
+| `TEST262_HISTORY_AUTO_RESUME_RUN_ID` | Exact failed automatic run ID, only after diagnosis, to acknowledge retry |
+
+Enable after merging and configuring the archive/hash, initially using `mvp` and a
+batch size of 2. Each scheduled invocation uses the same concurrency group as manual
+imports. Schedule timing is best effort; it does not chain dispatches or require an
+Actions-write token. Protected environment approval rules still apply.
+
+A successful source now gets an immutable `history_verified_snapshot` receipt in
+`legacy_control_records` **after** central observation/mapping parity and unchanged
+source bytes are verified. Scheduled selection skips only matching source URI and
+ZIP/SQLite hashes; imported counts alone do not qualify. Previously imported sources
+without these receipts (including the original pilot) are safely replayed once to
+perform verification and create the receipt. No schema migration is needed.
+
+Any failed/cancelled automatic run blocks later automatic batches, even after many
+successful blocked/no-op runs. Inspect its preserved report/outbox, resolve the
+failure, then set `TEST262_HISTORY_AUTO_RESUME_RUN_ID` to that run's ID. A new failure
+requires a new acknowledgement. Turning the enable variable off pauses future
+starts; cancel an already-running job explicitly if it must stop immediately.
+
+When all matching archived snapshots have receipts, a completion marker avoids
+further archive downloads/imports for that archive/hash/kind. Hourly jobs may still
+perform lightweight checks; set the enable variable false, or select the next kind.
+Completion of `mvp` does not cover `native`. `history_complete=false` remains explicit
+for unavailable history. Scheduled runs append bounded milestone comments to the
+tracking issue and save a job summary, planning report and recovery artifact; they
+do not overwrite other agents' issue edits. Preserve evidence outside Actions expiry.
+An archive with more than 100 matching snapshots fails closed for manual splitting.
