@@ -11,7 +11,7 @@ from types import SimpleNamespace
 
 from .connection_check import check
 from .importer import import_snapshot
-from .client import Client
+from .client import Client, sha
 
 WORKFLOW = '.github/workflows/test262-history-import.yml'
 SOURCE_WORKFLOWS = ('test262-catalog.yml', 'test262-native-port.yml')
@@ -56,7 +56,7 @@ def digest(path):
     return h.hexdigest()
 
 
-def select(directory, repository, kind, artifact_ids, limit):
+def select(directory, repository, kind, artifact_ids, limit, verify_sources=True):
     if not 1 <= limit <= 100:
         raise ValueError('max_snapshots must be between 1 and 100')
     requested = set()
@@ -106,7 +106,7 @@ def select(directory, repository, kind, artifact_ids, limit):
     selected = rows[:limit]
     # Verify every selected source before any import write begins.
     for row in selected:
-        if digest(Path(row['archive'])) != row['archive_sha256'] or digest(Path(row['source'])) != row['sha256']:
+        if verify_sources and (digest(Path(row['archive'])) != row['archive_sha256'] or digest(Path(row['source'])) != row['sha256']):
             raise ValueError('Archived source checksum mismatch')
     return manifest, selected, len(rows) - len(selected)
 
@@ -162,6 +162,12 @@ def import_history(args):
                     raise ValueError('Central observation mapping parity failed')
                 if digest(Path(row['source'])) != row['sha256']:
                     raise ValueError('Original snapshot changed during import')
+                # Durable receipt is written only AFTER independent parity and source-byte checks.
+                client.put('legacy_control_records', [{'import_id': result['import_id'],
+                    'source_table': 'history_verified_snapshot', 'source_key': sha(row['source_uri']),
+                    'document': {'source_uri': row['source_uri'], 'sha256': row['sha256'],
+                                 'archive_sha256': row['archive_sha256'],
+                                 'observations': len(mappings)}}])
                 snapshot.update(state='verified', result=result, verified_observation_mappings=len(mappings))
                 save()
             report['complete'] = True
