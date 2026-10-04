@@ -79,6 +79,19 @@ A weak-keyed table is approved only when the key has the semantic lifetime of
 the cached value. Ephemeron values may refer back to their keys without keeping
 collectible types or JavaScript objects alive.
 
+JavaScript function objects strongly retain their defining intrinsic graph for
+their entire reachable lifetime; GC must never make a borrowed function resolve
+to the caller's realm instead. Builtin adapters and their CLR metadata belong to
+the intrinsic graph and are released with it, rather than via dependent handles
+keyed by long-lived CLR types or singleton delegate receivers. Prototype and
+intrinsic descriptor caches use `RealmObjectTable`: type entries are ordinary
+realm-owned dictionary entries, while instance entries remain weak-keyed. This
+prevents a long-lived CLR type from rooting a value-to-function-to-intrinsics
+cycle after the graph becomes unreachable. Escaped-function and cache GC
+regressions verify graph collection, weak instance keys and independent cache
+clearing alongside the disposed-runtime collection gates. Realm disposal also
+clears the prototype and intrinsic descriptor tables, including their type keys.
+
 The two generated-class receiver tables form reciprocal ephemeron associations:
 native or function-valued `super()` results retain the generated instance needed
 to invoke class methods, and that instance resolves `this` to the JavaScript

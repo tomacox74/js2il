@@ -305,7 +305,7 @@ internal sealed class RuntimeIntrinsics
     /// Per-realm [[Prototype]] storage for values that are not <see cref="JsObject"/>
     /// instances (<see cref="JsObject"/> stores its own prototype inline).
     /// </summary>
-    internal ConditionalWeakTable<object, PrototypeSlot> PrototypeSlots { get; } = new();
+    internal RealmObjectTable<PrototypeSlot> PrototypeSlots { get; } = new();
 
     /// <summary>
     /// Per-realm intrinsic descriptor baseline for non-<see cref="JsObject"/> targets.
@@ -601,6 +601,8 @@ internal sealed class RuntimeIntrinsics
 
         BuiltinAdapters.Clear();
         GlobalFunctionValues.Clear();
+        PrototypeSlots.Clear();
+        IntrinsicDescriptors.Clear();
     }
 
     private SlotEntry GetOrAddEntry(int index)
@@ -797,19 +799,18 @@ internal sealed class RuntimeIntrinsics
                 BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
         }
 
-        private readonly ConditionalWeakTable<Type, Entries> _staticAdapters = new();
-        private readonly ConditionalWeakTable<object, Entries> _instanceAdapters = new();
+        private readonly ConcurrentDictionary<object, Entries> _adapters =
+            new(ReferenceEqualityComparer.Instance);
 
         internal BuiltinDelegateFunctionAdapter GetOrAdd(
             Delegate target,
             Func<Delegate, BuiltinDelegateFunctionAdapter> factory)
         {
-            var entries = target.Target == null
-                ? _staticAdapters.GetOrCreateValue(
-                    target.Method.DeclaringType
-                        ?? throw new InvalidOperationException(
-                            "Runtime-owned static delegates require a declaring type."))
-                : _instanceAdapters.GetOrCreateValue(target.Target);
+            var owner = target.Target
+                ?? (object?)target.Method.DeclaringType
+                ?? throw new InvalidOperationException(
+                    "Runtime-owned static delegates require a declaring type.");
+            var entries = _adapters.GetOrAdd(owner, static _ => new Entries());
 
             return entries.Adapters.GetOrAdd(
                 (target.Method.MethodHandle, target.GetType()),
@@ -818,23 +819,16 @@ internal sealed class RuntimeIntrinsics
 
         internal bool Contains(Delegate target)
         {
-            if (target.Target == null)
-            {
-                return target.Method.DeclaringType is { } declaringType
-                    && _staticAdapters.TryGetValue(declaringType, out var staticEntries)
-                    && staticEntries.Adapters.ContainsKey(
-                        (target.Method.MethodHandle, target.GetType()));
-            }
-
-            return _instanceAdapters.TryGetValue(target.Target, out var instanceEntries)
-                && instanceEntries.Adapters.ContainsKey(
+            var owner = target.Target ?? (object?)target.Method.DeclaringType;
+            return owner is not null
+                && _adapters.TryGetValue(owner, out var entries)
+                && entries.Adapters.ContainsKey(
                     (target.Method.MethodHandle, target.GetType()));
         }
 
         internal void Clear()
         {
-            _staticAdapters.Clear();
-            _instanceAdapters.Clear();
+            _adapters.Clear();
         }
     }
 }

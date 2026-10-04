@@ -535,16 +535,146 @@ public sealed class RuntimeIntrinsicIsolationTests
     }
 
     [Fact]
+    public void EscapedFunction_RetainsDefiningIntrinsicsUntilCollected()
+    {
+        var references = CheckEscapedFunctionIntrinsics();
+
+        for (var attempt = 0;
+            attempt < 10 && references.Any(reference => reference.IsAlive);
+            attempt++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        Assert.All(references, reference => Assert.False(reference.IsAlive));
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static WeakReference[] CheckEscapedFunctionIntrinsics()
+    {
+        var (function, intrinsicsReference) = CreateEscapedFunction();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        Assert.True(intrinsicsReference.IsAlive);
+        WithRealm(() =>
+        {
+            Assert.NotSame(RuntimeIntrinsics.Current, intrinsicsReference.Target);
+            Assert.Same(intrinsicsReference.Target, RuntimeIntrinsics.GetFunctionRealm(function));
+            return true;
+        });
+        return [new WeakReference(function), intrinsicsReference];
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static (JsFunctionObject Function, WeakReference Intrinsics) CreateEscapedFunction()
+        => WithRealm(() =>
+        {
+            _ = GlobalThis.globalThis;
+            var function = Assert.IsAssignableFrom<JsFunctionObject>(
+                ObjectRuntime.GetProperty(GlobalThis.Iterator, "from"));
+            return (function, new WeakReference(RuntimeIntrinsics.Current));
+        });
+
+    [Fact]
+    public void RealmObjectTables_ReleaseInstanceKeysAndUnrootedTypeEntries()
+    {
+        var table = new RealmObjectTable<JsObject>();
+        var references = CreateWeakTableTargetCycle(table)
+            .Concat(CreateWeakTableOwnerCycle(typeof(RuntimeIntrinsicIsolationTests)))
+            .ToArray();
+
+        for (var attempt = 0;
+            attempt < 10 && references.Any(reference => reference.IsAlive);
+            attempt++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        Assert.All(references, reference => Assert.False(reference.IsAlive));
+        GC.KeepAlive(table);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static WeakReference[] CreateWeakTableTargetCycle(RealmObjectTable<JsObject> table)
+    {
+        var target = new object();
+        var value = table.GetOrCreateValue(target);
+        value["target"] = target;
+        value["owner"] = table;
+        return [new WeakReference(target), new WeakReference(value)];
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static WeakReference[] CreateWeakTableOwnerCycle(object target)
+    {
+        var table = new RealmObjectTable<JsObject>();
+        var value = table.GetOrCreateValue(target);
+        value["target"] = target;
+        value["owner"] = table;
+        return [new WeakReference(table), new WeakReference(value)];
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RealmObjectTables_ClearAndRemoveOnlyTheirOwnEntries(bool typeKey)
+    {
+        var target = typeKey ? (object)typeof(RuntimeIntrinsicIsolationTests) : new object();
+        var first = new RealmObjectTable<object>();
+        var second = new RealmObjectTable<object>();
+        var firstValue = first.GetOrCreateValue(target);
+        var secondValue = second.GetOrCreateValue(target);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        Assert.NotSame(firstValue, secondValue);
+        Assert.Same(firstValue, first.GetOrCreateValue(target));
+        Assert.Same(secondValue, second.GetOrCreateValue(target));
+
+        first.Clear();
+        Assert.False(first.TryGetValue(target, out _));
+        Assert.Same(secondValue, second.GetOrCreateValue(target));
+        Assert.NotSame(firstValue, first.GetOrCreateValue(target));
+        Assert.True(first.Remove(target));
+        Assert.False(first.TryGetValue(target, out _));
+        Assert.Same(secondValue, second.GetOrCreateValue(target));
+    }
+
+    [Fact]
     public void DisposedRealm_DropsItsIntrinsicSlots()
     {
         var realm = RuntimeOwnershipFactory.CreateIsolatedRealm();
         var intrinsics = realm.Intrinsics;
         var objectPrototype = intrinsics.ObjectPrototype;
+        var typeKey = typeof(RuntimeIntrinsicIsolationTests);
+        var instanceKey = new object();
+        foreach (var key in new[] { (object)typeKey, instanceKey })
+        {
+            intrinsics.PrototypeSlots.GetOrCreateValue(key).Prototype = objectPrototype;
+            intrinsics.IntrinsicDescriptors.DefineOrUpdate(key, "value", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = objectPrototype
+            });
+        }
 
         realm.Agent.Cluster.Dispose();
 
         Assert.NotSame(objectPrototype, intrinsics.ObjectPrototype);
         Assert.Empty(intrinsics.GlobalFunctionValues);
+        foreach (var key in new[] { (object)typeKey, instanceKey })
+        {
+            Assert.False(intrinsics.PrototypeSlots.TryGetValue(key, out _));
+            Assert.False(intrinsics.IntrinsicDescriptors.TryGetOwn(key, "value", out _));
+        }
     }
 
     [Fact]
