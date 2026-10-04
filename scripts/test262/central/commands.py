@@ -75,26 +75,28 @@ def prepare(client, args):
     client.put('budget_scopes',[{'budget_scope_id':budget,'repository_id':args.repository,'scope_kind':'run','external_key':args.budget_key,
                                  'candidate_limit':args.candidate_limit,'accepted_limit':args.accepted_limit,
                                  'attempt_limit':args.attempt_limit,'time_limit_ms':args.budget_ms}])
-    existing=client.snapshot()['tables']
-    registered={r['upstream_path'] for r in existing['registrations'] if r['snapshot_id']==snapshot}
+    registered={r['upstream_path'] for r in client.read('registrations',{'snapshot_id':snapshot})}
     eligible={e['fixture_id'] for e in eligibility if e['eligibility']=='runnable'}
     choices=[r for r in normalized if ids[r['path']] in eligible and (args.kind!='native' or r['path'] not in registered) and (not args.area or r['path'].startswith('test/'+args.area+'/'))]
-    terminal={(w['fixture_id'],w['variant']) for w in existing['work_items'] if w['provenance_id']==pid and w['state'] in ('completed','deferred','cancelled')}
+    terminal={(w['fixture_id'],w['variant']) for w in client.read('work_items',{'provenance_id':pid}) if w['state'] in ('completed','deferred','cancelled')}
+    reconciliation=client.one('reconciliation_state',pipeline='native',channel='master') if args.kind=='native' else None
     choices=[r for r in choices if any((ids[r['path']],v['variant']) not in terminal for v in r['variants'])]
     # Preserve component-sensitive retry hints and a bounded rotating discovery share.
     balanced=[r for r,_ in catalog.area_balanced([(dict(r,path=r['path']),None) for r in choices])]
     if args.kind=='native':
-        cur_hint=next((x for x in existing['reconciliation_state'] if x['pipeline']=='native' and x['channel']=='master'),{})
+        cur_hint=reconciliation or {}
         prior=cur_hint.get('last_reconciled_revision') or source
         if prior!=source and subprocess.run(['git','-C',str(REPO),'merge-base','--is-ancestor',prior,source],capture_output=True).returncode:
             raise ValueError('Prior validated target is not an ancestor')
         components=set(nativePorting.classify_changed_components(git('diff','--name-only',prior,source).splitlines()))
-        fixtures_by_id={f['fixture_id']:f for f in existing['fixtures']}
-        eligible_runs={r['run_id'] for r in existing['runs'] if r['trust_class'] in ('trusted','legacy')}
+        fixtures_by_id={}
+        eligible_runs={r['run_id'] for r in client.read('runs') if r['trust_class'] in ('trusted','legacy')}
         failure_hints=set()
-        for observed in existing['observations']:
-            if observed['run_id'] not in eligible_runs or observed['provenance_id']==pid or observed['outcome']!='fail':
+        for observed in client.read('observations',{'outcome':'fail'}):
+            if observed['run_id'] not in eligible_runs or observed['provenance_id']==pid:
                 continue
+            if observed['fixture_id'] not in fixtures_by_id:
+                fixtures_by_id[observed['fixture_id']]=client.one('fixtures',fixture_id=observed['fixture_id'])
             original_fixture=fixtures_by_id[observed['fixture_id']]
             if components.intersection(nativePorting.candidate_components(original_fixture['upstream_path'])):
                 failure_hints.add((original_fixture['upstream_path'],original_fixture['content_sha256'][2:]))
@@ -121,14 +123,14 @@ def prepare(client, args):
                                           'external_run_key':str(proof['id']),'target_revision':source,'conclusion':'success','proof':proof}])
     target={'repository_id':args.repository,'channel':'master','evidence_kind':args.kind,'provenance_id':pid,
             'registration_snapshot_id':snapshot,'validation_id':validation}
-    old=next((t for t in existing['reporting_targets'] if t['channel']=='master' and t['evidence_kind']==args.kind),None)
+    old=client.one('reporting_targets',channel='master',evidence_kind=args.kind)
     if old:
         client.call('transition','reporting_targets',{k:target[k] for k in ('repository_id','channel','evidence_kind')},old['version'],
                     {k:target[k] for k in ('provenance_id','registration_snapshot_id','validation_id')})
     else:
         client.put('reporting_targets',[target])
     if args.kind=='native':
-        cur=next((x for x in existing['reconciliation_state'] if x['pipeline']=='native' and x['channel']=='master'),None)
+        cur=reconciliation
         if cur is None:
             cur={'repository_id':args.repository,'pipeline':'native','channel':'master','authority_epoch':client.epoch,'version':0,'fallback_cursor':0}
             client.put('reconciliation_state',[cur])
@@ -157,30 +159,29 @@ def seal(client,args):
     context=json.loads(Path(args.context).read_text())
     if context['kind']!='native':
         raise ValueError('Native batch needs native context')
-    tables=client.snapshot()['tables']
-    invalid={x['observation_id'] for x in tables['observation_invalidations']}
-    trusted={r['run_id'] for r in tables['runs'] if r['trust_class']=='trusted' and r['provenance_id']==context['provenance']}
-    observations={}
-    for o in tables['observations']:
-        if o['run_id'] in trusted and o['source_kind']=='live' and o['observation_id'] not in invalid:
-            observations.setdefault(o['fixture_id'],{}).setdefault(o['variant'],[]).append(o)
-    variants={}
-    for v in tables['fixture_variants']:
-        if v['required']:
-            variants.setdefault(v['fixture_id'],[]).append(v['variant'])
-    accepted=[]; bindings=[]
-    budget=next(b for b in tables['budget_scopes'] if b['budget_scope_id']==context['budget'])
-    for fid in context['candidate_ids']:
-        by_variant=observations.get(fid,{})
-        required=variants.get(fid,[])
-        if not required or any(not by_variant.get(v) or any(o['outcome']!='pass' for o in by_variant[v]) for v in required):
-            continue
-        accepted.append(fid)
-        for v in required:
-            chosen=max(by_variant[v],key=lambda o:(o['received_at'],o['observation_id']))
-            bindings.append({'fixture_id':fid,'variant':v,'observation_id':chosen['observation_id']})
-        if len(accepted)>=budget['accepted_limit']:
-            break
+    with client.view():
+        trusted={r['run_id'] for r in client.read('runs',{'provenance_id':context['provenance']}) if r['trust_class']=='trusted'}
+        budget=client.one('budget_scopes',budget_scope_id=context['budget'])
+        accepted=[]; bindings=[]
+        for fid in context['candidate_ids']:
+            by_variant={}; contradicted=False
+            for o in client.read('observations',{'provenance_id':context['provenance'],'fixture_id':fid}):
+                if o['run_id'] not in trusted or client.one('observation_invalidations',observation_id=o['observation_id']):
+                    continue
+                # Only product evidence contradicts; infrastructure errors/incomplete attempts are retryable.
+                if o['outcome'] in ('fail','unsupported'):
+                    contradicted=True
+                elif o['outcome']=='pass' and o['source_kind']=='live':
+                    by_variant.setdefault(o['variant'],[]).append(o)
+            required=[v['variant'] for v in client.read('fixture_variants',{'fixture_id':fid}) if v['required']]
+            if contradicted or not required or any(not by_variant.get(v) for v in required):
+                continue
+            accepted.append(fid)
+            for v in required:
+                chosen=max(by_variant[v],key=lambda o:(o['received_at'],o['observation_id']))
+                bindings.append({'fixture_id':fid,'variant':v,'observation_id':chosen['observation_id']})
+            if len(accepted)>=budget['accepted_limit']:
+                break
     if not accepted:
         return {'accepted':0,'batch':None}
     batch=identity(args.repository,'native-batch',args.batch_key)
@@ -188,7 +189,7 @@ def seal(client,args):
                                   'validation_id':context['validation'],'registration_snapshot_id':context['registration_snapshot'],'budget_scope_id':context['budget']}])
     client.put('batch_fixtures',[{'batch_id':batch,'fixture_id':f,'state':'accepted'} for f in accepted])
     client.put('batch_evidence',[dict(row,batch_id=batch) for row in bindings])
-    stored=next((b for b in tables['native_batches'] if b['batch_id']==batch),None)
+    stored=client.one('native_batches',batch_id=batch)
     client.call('transition','native_batches',{'batch_id':batch},stored['version'] if stored else 0,{'state':'sealed'})
     result={'batch':batch,'accepted':len(accepted),'context':context}
     Path(args.output).write_text(canonical(result)+'\n')
@@ -199,9 +200,13 @@ def generate(client,args):
     """Build a disposable nativePorting cache solely from central sealed evidence."""
     batch=json.loads(Path(args.batch_file).read_text())
     context=batch['context']; batch_id=batch['batch']
-    tables=client.snapshot()['tables']
-    stored=next(b for b in tables['native_batches'] if b['batch_id']==batch_id)
-    if stored['state']!='sealed' or context['revision']!=git('rev-parse','HEAD'):
+    with client.view():
+        return generate_from_view(client,args,context,batch_id)
+
+
+def generate_from_view(client,args,context,batch_id):
+    stored=client.one('native_batches',batch_id=batch_id)
+    if stored is None or stored['state']!='sealed' or context['revision']!=git('rev-parse','HEAD'):
         raise ValueError('Generation needs fresh sealed acceptance at the current checkout SHA')
     cache=Path(args.cache)
     if cache.exists():
@@ -212,15 +217,13 @@ def generate(client,args):
                               candidate_limit=500,accepted_limit=500,variant_limit=2000,time_limit=86400))
     doc=context['identity']; compiler=sha(doc['binaries']); harness=sha(doc['harness']); environment=sha(doc['environment_identity'])
     db.execute('INSERT INTO active_provenance VALUES(?,?,?,?,0)',(context['run'],compiler,harness,environment))
-    fixtures={f['fixture_id']:f for f in tables['fixtures']}; obs={o['observation_id']:o for o in tables['observations']}
-    members=[b for b in tables['batch_fixtures'] if b['batch_id']==batch_id and b['state']=='accepted']
-    for member in members:
-        f=fixtures[member['fixture_id']]
-        evidence=[b for b in tables['batch_evidence'] if b['batch_id']==batch_id and b['fixture_id']==f['fixture_id']]
+    for member in client.read('batch_fixtures',{'batch_id':batch_id,'state':'accepted'}):
+        f=client.one('fixtures',fixture_id=member['fixture_id'])
+        evidence=list(client.read('batch_evidence',{'batch_id':batch_id,'fixture_id':f['fixture_id']}))
         db.execute('INSERT INTO candidates VALUES(?,?,?,?,?,?,?,?,?,0)',(context['run'],f['upstream_path'],f['content_sha256'][2:],canonical(sorted(e['variant'] for e in evidence)),
                    'central sealed evidence','native',context['provenance'],sha(doc['capabilities']),'accepted'))
         for e in evidence:
-            o=obs[e['observation_id']]
+            o=client.one('observations',observation_id=e['observation_id'])
             db.execute('''INSERT INTO attempts(run_id,path,variant,fixture_sha256,pin,compiler_identity,harness_identity,environment_identity,phase,diagnostic,outcome,failure_class,started_at,finished_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                        (context['run'],f['upstream_path'],e['variant'],f['content_sha256'][2:],pin,compiler,harness,environment,o['phase'],o['diagnostic_summary'],o['outcome'],o['failure_class'],datetime.fromisoformat(o['started_at']).timestamp(),datetime.fromisoformat(o['finished_at']).timestamp()))
     db.commit()

@@ -29,11 +29,16 @@ BEGIN
  PERFORM test262.api_ingest(1,gen_random_uuid(),jsonb_build_array(obs));
  BEGIN INSERT INTO test262.batch_evidence VALUES(batch,f,'non-strict',(obs->>'observation_id')::uuid); RAISE EXCEPTION 'Untrusted acceptance'; EXCEPTION WHEN check_violation THEN NULL; END;
  UPDATE test262.api_subjects SET trust_class='trusted' WHERE login_name=session_user;
+ -- A retryable infrastructure error before the trusted pass must not block acceptance.
+ PERFORM test262.api_ingest(1,gen_random_uuid(),jsonb_build_array(obs||jsonb_build_object('observation_id',gen_random_uuid(),'run_id',run,'outcome','infrastructure-error','failure_class','infrastructure-error','phase','timeout')));
+ PERFORM test262.api_ingest(1,gen_random_uuid(),jsonb_build_array(obs||jsonb_build_object('observation_id',gen_random_uuid(),'run_id',run,'outcome','incomplete')));
  obs=obs||jsonb_build_object('observation_id',o2,'run_id',run);
  PERFORM test262.api_ingest(1,gen_random_uuid(),jsonb_build_array(obs));
  INSERT INTO test262.batch_evidence VALUES(batch,f,'non-strict',o2);
  PERFORM test262.api_transition(1,'native_batches',jsonb_build_object('batch_id',batch),0,'{"state":"sealed"}');
  IF (SELECT state FROM test262.native_batches WHERE batch_id=batch)<>'sealed' THEN RAISE EXCEPTION 'Complete trusted native evidence not accepted'; END IF;
+ PERFORM test262.api_ingest(1,gen_random_uuid(),jsonb_build_array(obs||jsonb_build_object('observation_id',gen_random_uuid(),'outcome','infrastructure-error','failure_class','infrastructure-error','phase','unknown')));
+ IF (SELECT state FROM test262.native_batches WHERE batch_id=batch)<>'sealed' THEN RAISE EXCEPTION 'Late infrastructure error conflicted accepted batch'; END IF;
  obs=obs||jsonb_build_object('observation_id',fail_id,'outcome','fail','failure_class','semantic-defect');
  PERFORM test262.api_ingest(1,gen_random_uuid(),jsonb_build_array(obs));
  IF (SELECT state FROM test262.native_batches WHERE batch_id=batch)<>'conflicted' THEN RAISE EXCEPTION 'Late contradiction left batch sealed'; END IF;

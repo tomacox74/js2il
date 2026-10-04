@@ -79,3 +79,30 @@ class ClientTests(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
+
+
+class IsolationAndToolTests(unittest.TestCase):
+    def test_backup_tools_receive_uri_components_not_pgdatabase_uri(self):
+        from scripts.test262.central.backup import libpq_environment
+        env=libpq_environment('postgresql://writer:s%40cret@db.example:6543/catalogue?sslmode=require')
+        self.assertEqual((env['PGHOST'],env['PGPORT'],env['PGUSER'],env['PGPASSWORD'],env['PGDATABASE'],env['PGSSLMODE']),
+                         ('db.example','6543','writer','s@cret','catalogue','require'))
+        self.assertFalse(any('://' in v for k,v in env.items() if k.startswith('PG')))
+
+    def test_fixture_container_mount_excludes_checkout_secrets(self):
+        import argparse
+        from scripts.test262.central.inventory import REPO
+        from scripts.test262.central.worker import stage_runtime
+        with tempfile.TemporaryDirectory() as entry_dir, tempfile.TemporaryDirectory() as out:
+            entry=REPO/'artifacts'/'stage-test'/'bin'/'Jroc.dll'
+            entry.parent.mkdir(parents=True,exist_ok=True); entry.write_bytes(b'dll')
+            try:
+                staged=stage_runtime(argparse.Namespace(kind='mvp-composite',jroc=str(entry),host=None),Path(out)/'r')
+                files={p.relative_to(staged).as_posix() for p in staged.rglob('*') if p.is_file()}
+            finally:
+                import shutil; shutil.rmtree(REPO/'artifacts'/'stage-test')
+        self.assertIn('scripts/test262/catalogBridge.js',files)
+        self.assertIn('scripts/test262/runMvp.js',files)
+        self.assertIn('tests/test262/mvp-suites.json',files)
+        self.assertIn('artifacts/stage-test/bin/Jroc.dll',files)
+        self.assertFalse(any(f.startswith('.git') or 'outbox' in f or f.endswith('.py') for f in files))

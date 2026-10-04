@@ -9,6 +9,14 @@ import os
 from pathlib import Path
 import sqlite3
 import uuid
+from contextlib import contextmanager
+
+EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_variants', 'fixture_dependencies',
+                 'provenances', 'provenance_fixture_eligibility', 'runs', 'observations', 'observation_payloads',
+                 'observation_invalidations', 'validation_events', 'work_items', 'work_leases', 'budget_reservations',
+                 'budget_scopes', 'budget_work_items', 'registration_snapshots', 'registrations', 'reporting_targets',
+                 'native_batches', 'batch_fixtures', 'batch_evidence', 'publications', 'publication_checks', 'imports',
+                 'import_records', 'legacy_control_records', 'reconciliation_state', 'reconciliations', 'run_metrics')
 
 
 def canonical(value):
@@ -56,11 +64,60 @@ class Client:
         for start in range(0, len(rows), 250):
             self.call('put', table, rows[start:start+250])
 
-    def snapshot(self):
-        # Not a sequence-max cursor. One coherent MVCC snapshot; no lost concurrent commits.
+    def read(self, table, filters=None, page=500):
+        """Yield one table's scoped rows in bounded primary-key pages."""
+        after = None
+        while True:
+            result = self.db.execute('SELECT test262.api_read(%s,%s,%s,%s,%s)',
+                                     (self.epoch, table, self.Jsonb(filters or {}),
+                                      self.Jsonb(after) if after else None, page)).fetchone()[0]
+            yield from result['rows']
+            after = result['next']
+            if not after:
+                return
+
+    def rows(self, table, **filters):
+        return list(self.read(table, filters))
+
+    def one(self, table, **filters):
+        rows = list(self.read(table, filters, page=2))
+        if len(rows) > 1:
+            raise ValueError('Ambiguous catalogue lookup for ' + table)
+        return rows[0] if rows else None
+
+    @contextmanager
+    def view(self):
+        # Not a sequence-max cursor. Every page read inside shares one MVCC snapshot.
         with self.db.transaction():
             self.db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
-            return self.db.execute('SELECT test262.api_snapshot(%s)', (self.epoch,)).fetchone()[0]
+            yield self
+
+    def export(self, output):
+        """Stream a coherent scoped export as NDJSON; memory stays bounded by one page."""
+        output = Path(output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        temporary = output.with_name(output.name + '.partial')
+        digest = hashlib.sha256()
+        counts = {}
+        with self.view(), temporary.open('w', encoding='utf-8') as stream:
+            token, as_of = self.db.execute('SELECT txid_current_snapshot()::text, transaction_timestamp()').fetchone()
+            header = {'schema': 1, 'api': 1, 'epoch': self.epoch, 'repository_id': self.contract['repository_id'],
+                      'snapshot_token': token, 'as_of': as_of.isoformat()}
+
+            def emit(record):
+                line = canonical(record) + '\n'
+                digest.update(line.encode())
+                stream.write(line)
+
+            emit({'header': header})
+            for table in EXPORT_TABLES:
+                counts[table] = 0
+                for row in self.read(table):
+                    emit({'table': table, 'row': row})
+                    counts[table] += 1
+            stream.write(canonical({'footer': {'counts': counts, 'sha256': digest.hexdigest()}}) + '\n')
+        temporary.replace(output)
+        return dict(header, counts=counts, sha256=digest.hexdigest())
 
 
 class Outbox:

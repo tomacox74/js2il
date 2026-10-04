@@ -52,10 +52,7 @@ def main():
         if client.contract['repository_id']!=args.repository or client.contract['producer_id']!=args.producer:
             raise ValueError('Configured identities do not match authenticated database subject')
         if args.command=='export':
-            result=client.snapshot()
-            Path(args.output).parent.mkdir(parents=True,exist_ok=True)
-            Path(args.output).write_text(canonical(result)+'\n')
-            result={k:v for k,v in result.items() if k!='tables'}
+            result=client.export(args.output)
         elif args.command=='flush':
             Outbox(args.outbox,args.repository,args.producer,client.epoch).flush(client)
             result={'flushed':True}

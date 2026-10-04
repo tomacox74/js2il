@@ -1,6 +1,6 @@
 -- Transaction-scoped synthetic rows only. Run after both migrations in a disposable database.
 DO $test$
-DECLARE r uuid=gen_random_uuid(); p uuid=gen_random_uuid(); c uuid=gen_random_uuid(); f uuid=gen_random_uuid(); pv uuid=gen_random_uuid(); run uuid=gen_random_uuid(); b uuid=gen_random_uuid(); w uuid=gen_random_uuid(); obs uuid=gen_random_uuid(); request uuid=gen_random_uuid(); claim jsonb; result jsonb; data jsonb; rejected boolean;
+DECLARE r uuid=gen_random_uuid(); p uuid=gen_random_uuid(); c uuid=gen_random_uuid(); f uuid=gen_random_uuid(); pv uuid=gen_random_uuid(); run uuid=gen_random_uuid(); b uuid=gen_random_uuid(); w uuid=gen_random_uuid(); obs uuid=gen_random_uuid(); request uuid=gen_random_uuid(); claim jsonb; result jsonb; data jsonb; rejected boolean; page jsonb; other uuid=gen_random_uuid();
 BEGIN
  INSERT INTO test262.repositories VALUES(r,'github','central-test-'||r,'test/central',now());
  INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(p,r,'local','synthetic',session_user);
@@ -36,6 +36,22 @@ BEGIN
  PERFORM test262.api_complete(1,w,1,obs);
  IF (SELECT charged_attempts FROM test262.budget_scopes WHERE budget_scope_id=b)<>1 OR (SELECT charged_ms FROM test262.budget_scopes WHERE budget_scope_id=b)<>20 THEN RAISE EXCEPTION 'Budget double settlement'; END IF;
  BEGIN PERFORM test262.api_renew(1,w,1,30); RAISE EXCEPTION 'Completed lease renewed'; EXCEPTION WHEN serialization_failure THEN NULL; END;
+ -- Bounded keyset reads: scoped, filtered, primary-key ordered, and resumable.
+ INSERT INTO test262.repositories VALUES(other,'github','central-other-'||other,'test/other',now());
+ INSERT INTO test262.reconciliation_state(repository_id,pipeline,channel,authority_epoch) VALUES(r,'native','master',1),(r,'native','pr',1),(other,'native','master',1);
+ page=test262.api_read(1,'reconciliation_state','{}',NULL,1);
+ IF jsonb_array_length(page->'rows')<>1 OR page->'next' IS NULL OR page->'next'->>'channel'<>'master' THEN RAISE EXCEPTION 'First page/cursor mismatch: %',page; END IF;
+ page=test262.api_read(1,'reconciliation_state','{}',page->'next',1);
+ IF page->'rows'->0->>'channel'<>'pr' THEN RAISE EXCEPTION 'Keyset continuation mismatch: %',page; END IF;
+ IF test262.api_read(1,'reconciliation_state','{}',page->'next',1)->'rows'<>'[]'::jsonb THEN RAISE EXCEPTION 'Other repository rows leaked through read'; END IF;
+ IF jsonb_array_length(test262.api_read(1,'reconciliation_state','{"channel":"pr"}',NULL,10)->'rows')<>1 THEN RAISE EXCEPTION 'Equality filter ignored'; END IF;
+ IF jsonb_array_length(test262.api_read(1,'fixtures',jsonb_build_object('fixture_id',f),NULL,10)->'rows')<>1 THEN RAISE EXCEPTION 'Corpus-scoped read failed'; END IF;
+ BEGIN PERFORM test262.api_read(1,'reconciliation_state','{"channel;--":"x"}',NULL,10); RAISE EXCEPTION 'Unknown filter column accepted'; EXCEPTION WHEN raise_exception THEN IF SQLERRM<>'Invalid filter column' THEN RAISE; END IF; END;
+ BEGIN PERFORM test262.api_read(1,'reconciliation_state','{}',NULL,1001); RAISE EXCEPTION 'Unbounded page accepted'; EXCEPTION WHEN raise_exception THEN IF SQLERRM<>'Invalid page size' THEN RAISE; END IF; END;
+ BEGIN PERFORM test262.api_read(1,'api_subjects','{}',NULL,10); RAISE EXCEPTION 'Credential table readable'; EXCEPTION WHEN raise_exception THEN IF SQLERRM<>'Unsupported record type' THEN RAISE; END IF; END;
+ -- Authority epoch changes only through the audited cutover, never the writer API.
+ BEGIN PERFORM test262.api_transition(1,'reconciliation_state',jsonb_build_object('repository_id',r,'pipeline','native','channel','master'),0,'{"authority_epoch":2}'); RAISE EXCEPTION 'Writer changed authority epoch'; EXCEPTION WHEN raise_exception THEN IF SQLERRM='Writer changed authority epoch' THEN RAISE; END IF; END;
+ BEGIN PERFORM test262.api_put(1,'reconciliation_state',jsonb_build_array(jsonb_build_object('repository_id',r,'pipeline','native','channel','other','authority_epoch',2))); RAISE EXCEPTION 'Writer created foreign epoch'; EXCEPTION WHEN serialization_failure THEN NULL; END;
  UPDATE test262.api_subjects SET permission='ingest' WHERE login_name=session_user;
  BEGIN PERFORM test262.api_put(1,'fixtures','[]'); RAISE EXCEPTION 'Ingest obtained coordination'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
  BEGIN PERFORM test262.api_ingest(2,gen_random_uuid(),'[]'); RAISE EXCEPTION 'Stale epoch accepted'; EXCEPTION WHEN serialization_failure THEN NULL; END;

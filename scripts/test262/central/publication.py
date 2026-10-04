@@ -12,10 +12,50 @@ def gh(*args):
     return json.loads(subprocess.check_output(['gh',*args],text=True))
 
 
-def reconcile_publications(client,repository_name):
-    publications=client.snapshot()['tables']['publications']
+def owned_head(publication,head):
+    """True only when the remote commit is exactly this reservation's marker and patch bytes."""
+    subprocess.run(['git','fetch','--no-tags','origin',publication['branch_name']],cwd=REPO,check=True,capture_output=True)
+    if git('show','-s','--format=%B',head).strip()!=f'test262: native central batch {publication["batch_id"]}':
+        return False
+    actual=subprocess.check_output(['git','diff','--binary',head+'^',head,'--'],cwd=REPO)
+    return hashlib.sha256(actual).hexdigest()==publication['patch_sha256'].removeprefix('\\x')
+
+
+def recover_reservation(client,repository_name,publication):
+    """Resolve a reservation abandoned between branch push and PR number persistence."""
+    branch=publication['branch_name']
+    remote=subprocess.run(['git','ls-remote','--heads','origin',branch],cwd=REPO,capture_output=True,text=True,check=True).stdout.strip()
+    head=remote.split()[0] if remote else None
+    prs=gh('pr','list','--repo',repository_name,'--head',branch,'--state','all','--json','number,state,headRefOid')
+    key={'publication_id':publication['publication_id']}
+    if len(prs)>1 or (prs and (head is None or prs[0]['headRefOid']!=head or not owned_head(publication,head))):
+        return client.call('transition','publications',key,publication['version'],
+                           {'state':'blocked','closure_reason':'unverifiable PR for abandoned reservation; manual reconciliation required'})
+    if prs:
+        pr=prs[0]
+        if pr['state']=='MERGED':
+            patch={'state':'merged','closure_reason':'GitHub confirms merge'}
+        elif pr['state']=='CLOSED':
+            patch={'state':'closed-deferred','closure_reason':'GitHub confirms closure without merge'}
+        else:
+            patch={'state':'open'}
+        return client.call('transition','publications',key,publication['version'],dict(patch,pr_number=pr['number'],expected_head=head))
+    if head is not None:
+        if not owned_head(publication,head):
+            return client.call('transition','publications',key,publication['version'],
+                               {'state':'blocked','closure_reason':'foreign branch occupies reserved publication name'})
+        subprocess.run(['git','push','origin','--delete',branch],cwd=REPO,check=True)
+    return client.call('transition','publications',key,publication['version'],
+                       {'state':'cancelled','closure_reason':'reclaimed reservation abandoned before PR creation'})
+
+
+def reconcile_publications(client,repository_name,current=None):
+    publications=[p for state in ('reserved','open','updating') for p in client.read('publications',{'state':state})]
     for publication in publications:
-        if publication['state'] not in ('reserved','open','updating') or not publication['pr_number']:
+        if publication['publication_id']==current:
+            continue
+        if not publication['pr_number']:
+            recover_reservation(client,repository_name,publication)
             continue
         pr=gh('api',f'repos/{repository_name}/pulls/{publication["pr_number"]}')
         patch=None
@@ -43,19 +83,19 @@ def reconcile_publications(client,repository_name):
 
 
 def publish(client,args):
-    reconcile_publications(client,args.repository_name)
     batch=json.loads(Path(args.batch_file).read_text());context=batch['context']
     revision=context['revision'];batch_id=batch['batch']
+    pubid=identity(args.repository,'publication',batch_id)
+    # A rerun of this batch resumes its own reservation; any other abandoned one is reclaimed.
+    reconcile_publications(client,args.repository_name,pubid)
     if git('rev-parse','origin/master')!=revision or git('rev-parse','HEAD')!=revision:
         raise ValueError('Publication target has advanced; reconcile and refresh acceptance first')
     patch=Path(args.patch).read_bytes();manifest=Path(args.manifest).read_bytes()
-    pubid=identity(args.repository,'publication',batch_id)
     branch='test262/native-central-'+batch_id
-    tables=client.snapshot()['tables']
-    accepted=next(b for b in tables['native_batches'] if b['batch_id']==batch_id)
-    if accepted['state']!='sealed':
+    accepted=client.one('native_batches',batch_id=batch_id)
+    if accepted is None or accepted['state']!='sealed':
         raise ValueError('Publication acceptance is stale or conflicted')
-    existing=next((p for p in tables['publications'] if p['publication_id']==pubid),None)
+    existing=client.one('publications',publication_id=pubid)
     patchsha=hashlib.sha256(patch).hexdigest();manifestsha=hashlib.sha256(manifest).hexdigest()
     record={'publication_id':pubid,'repository_id':args.repository,'batch_id':batch_id,'branch_name':branch,
             'patch_sha256':bytea(patchsha),'manifest_sha256':bytea(manifestsha)}
@@ -94,6 +134,6 @@ def publish(client,args):
         url=subprocess.check_output(['gh','pr','create','--repo',args.repository_name,'--base','master','--head',branch,
                                       '--title',f'test262: native batch {batch_id}', '--body-file',args.body],text=True).strip()
         number=int(url.rsplit('/',1)[-1])
-    current=next(p for p in client.snapshot()['tables']['publications'] if p['publication_id']==pubid)
+    current=client.one('publications',publication_id=pubid)
     client.call('transition','publications',{'publication_id':pubid},current['version'],{'state':'open','pr_number':number,'expected_head':head})
     return {'publication_id':pubid,'pr_number':number,'head':head,'requires_independent_pr_ci':True}

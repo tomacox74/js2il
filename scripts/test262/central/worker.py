@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import tempfile
@@ -15,6 +16,22 @@ import uuid
 from .client import canonical, fixture_environment, Outbox
 from .importer import timestamp
 from .inventory import REPO
+
+
+def stage_runtime(args, destination):
+    """Copy only fixture runtime inputs, preserving repo-relative paths.
+
+    The checkout is never mounted: it holds .git credentials and the supervisor outbox.
+    """
+    destination = Path(destination)
+    for pattern, folder in (('*.js', 'scripts/test262'), ('*.json', 'tests/test262')):
+        target = destination / folder
+        target.mkdir(parents=True, exist_ok=True)
+        for source in (REPO / folder).glob(pattern):
+            shutil.copy2(source, target / source.name)
+    entry = Path(args.jroc if args.kind == 'mvp-composite' else args.host).resolve()
+    shutil.copytree(entry.parent, destination / entry.parent.relative_to(REPO))
+    return destination
 
 
 def run_container(args, fixture, variant, cap_ms, manifest, work):
@@ -26,7 +43,7 @@ def run_container(args, fixture, variant, cap_ms, manifest, work):
     name = 'test262-' + uuid.uuid4().hex
     common = ['docker','run','--name',name,'--rm','--network','none','--cap-drop','ALL',
               '--pids-limit','512','--security-opt','no-new-privileges','--read-only',
-              '--tmpfs','/tmp:rw,nosuid,size=256m','--mount','type=bind,src='+str(REPO)+',dst=/repo,readonly',
+              '--tmpfs','/tmp:rw,nosuid,size=256m','--mount','type=bind,src='+str(args.runtime)+',dst=/repo,readonly',
               '--mount','type=bind,src='+str(root)+',dst=/upstream,readonly',
               '--mount','type=bind,src='+str(work)+',dst=/work',args.image]
     if args.kind == 'mvp-composite':
@@ -56,11 +73,13 @@ def run_container(args, fixture, variant, cap_ms, manifest, work):
 
 
 def work(client, args):
-    snapshot = client.snapshot()['tables']
-    fixtures = {f['fixture_id']: f for f in snapshot['fixtures']}
-    dependencies = {}
-    for row in snapshot['fixture_dependencies']:
-        dependencies.setdefault(row['fixture_id'], []).append({'dependency_path':row['dependency_path'],'content_sha256':row['content_sha256'][2:]})
+    with tempfile.TemporaryDirectory(prefix='fixture-runtime-') as runtime:
+        args.runtime = stage_runtime(args, runtime)
+        Path(runtime).chmod(0o755)
+        return work_staged(client, args)
+
+
+def work_staged(client, args):
     outbox = Outbox(args.outbox,args.repository,args.producer,client.epoch)
     outbox.flush(client)
     started = time.monotonic()
@@ -73,7 +92,9 @@ def work(client, args):
         lease = client.call('claim',args.run,args.budget,cap,max(31,(cap+999)//1000+30))
         if lease is None or lease.get('budget_exhausted'):
             break
-        fixture = fixtures[lease['fixture_id']]
+        fixture = client.one('fixtures', fixture_id=lease['fixture_id'])
+        dependencies = [{'dependency_path':row['dependency_path'],'content_sha256':row['content_sha256'][2:]}
+                        for row in client.read('fixture_dependencies', {'fixture_id': fixture['fixture_id']})]
         if hashlib.sha256((Path(args.root)/fixture['upstream_path']).read_bytes()).hexdigest() != fixture['content_sha256'][2:]:
             raise ValueError('Fixture bytes differ from sealed inventory')
         begin = time.time()
@@ -83,7 +104,7 @@ def work(client, args):
                 workdir = Path(directory)
                 workdir.chmod(0o777)
                 # Permit traversal to the one isolated scratch directory, not a credentials directory.
-                value = run_container(args,fixture,lease['variant'],cap,{'dependencies':dependencies.get(fixture['fixture_id'],[])},workdir)
+                value = run_container(args,fixture,lease['variant'],cap,{'dependencies':dependencies},workdir)
             if args.kind=='mvp-composite':
                 cls = value['classification']
                 matched = cls['verdict']=='matched'

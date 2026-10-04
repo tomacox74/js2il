@@ -90,6 +90,7 @@ BEGIN
   IF NOT test262.api_scope(t,d,s.repository_id) AND t<>'corpora' THEN RAISE EXCEPTION 'Cross-repository write' USING ERRCODE='42501'; END IF;
   IF t='corpora' AND coalesce(d->>'inventory_state','staging')<>'staging' THEN RAISE EXCEPTION 'Corpus must start staging'; END IF;
   IF t='registration_snapshots' AND coalesce(d->>'state','staging')<>'staging' THEN RAISE EXCEPTION 'Snapshot must start staging'; END IF;
+  IF t='reconciliation_state' AND coalesce((d->>'authority_epoch')::bigint,1)<>epoch THEN RAISE EXCEPTION 'Reconciliation state must use the current authority epoch' USING ERRCODE='40001'; END IF;
   IF t='work_items' AND (coalesce(d->>'state','pending')<>'pending' OR coalesce((d->>'lease_generation')::bigint,0)<>0 OR d ? 'lease_owner' OR d ? 'completion_observation_id') THEN RAISE EXCEPTION 'Work must start pending'; END IF;
   IF EXISTS(SELECT 1 FROM jsonb_object_keys(d) k WHERE NOT EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid=format('test262.%I',t)::regclass AND attname=k AND attnum>0 AND NOT attisdropped)) THEN RAISE EXCEPTION 'Unknown column'; END IF;
   SELECT string_agg(format('%I',key),',' ORDER BY key),string_agg(format('x.%I',key),',' ORDER BY key) INTO cols,vals FROM jsonb_object_keys(d) key;
@@ -137,7 +138,8 @@ BEGIN
    INSERT INTO test262.observations SELECT o.*;
    INSERT INTO test262.observation_payloads VALUES(o.observation_id,d->'payload',NULL,NULL,CASE WHEN d ? 'payload' THEN 'hot' ELSE 'missing' END,NULL);
    -- A contradictory late observation cannot silently leave an accepted batch fresh.
-   IF o.outcome<>'pass' AND s.trust_class='trusted' THEN
+   -- Infrastructure errors, incomplete and deferred attempts are not product evidence.
+   IF o.outcome IN ('fail','unsupported') AND s.trust_class='trusted' THEN
     UPDATE test262.native_batches b SET state='conflicted',version=version+1 WHERE b.repository_id=s.repository_id AND b.provenance_id=o.provenance_id AND b.state IN ('sealed','awaiting-refresh') AND EXISTS(SELECT 1 FROM test262.batch_fixtures f WHERE f.batch_id=b.batch_id AND f.fixture_id=o.fixture_id AND f.state='accepted');
    END IF;
   END IF;
@@ -232,7 +234,8 @@ BEGIN
  WHEN 'native_batches' THEN allowed=ARRAY['state'];
  WHEN 'publications' THEN allowed=ARRAY['state','pr_number','expected_head','closure_reason'];
  WHEN 'reporting_targets' THEN allowed=ARRAY['provenance_id','registration_snapshot_id','validation_id','updated_at'];
- WHEN 'reconciliation_state' THEN allowed=ARRAY['last_validation_id','last_reconciled_revision','fallback_cursor','authority_epoch'];
+ -- authority_epoch changes only through the audited operator cutover.
+ WHEN 'reconciliation_state' THEN allowed=ARRAY['last_validation_id','last_reconciled_revision','fallback_cursor'];
  WHEN 'reconciliations' THEN allowed=ARRAY['state','committed_at'];
  WHEN 'batch_fixtures' THEN allowed=ARRAY['state'];
  ELSE RAISE EXCEPTION 'Unsupported transition';
@@ -272,21 +275,42 @@ CREATE FUNCTION test262.inventory_hash(c uuid) RETURNS bytea LANGUAGE sql SET se
  'dependencies',coalesce((SELECT jsonb_agg(jsonb_build_object('dependency_path',d.dependency_path,'content_sha256',encode(d.content_sha256,'hex'),'dependency_kind',d.dependency_kind,'resolved_path',rf.upstream_path) ORDER BY d.dependency_path) FROM test262.fixture_dependencies d LEFT JOIN test262.fixtures rf ON rf.fixture_id=d.resolved_fixture_id WHERE d.fixture_id=f.fixture_id),'[]')))||E'\n','' ORDER BY f.upstream_path COLLATE "C"),''),'UTF8')) FROM test262.fixtures f WHERE corpus_id=c;
 $$;
 
-CREATE FUNCTION test262.api_snapshot(epoch bigint) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
-DECLARE s test262.api_subjects; result jsonb='{}'; t text; a jsonb;
+-- Bounded keyset-paginated reads of one table. No whole-catalogue values are materialized.
+-- Callers needing a coherent multi-page/multi-table view issue all pages inside one
+-- REPEATABLE READ transaction; keyset paging on the primary key is then MVCC-consistent.
+CREATE FUNCTION test262.api_read(epoch bigint, t text, filter jsonb, after jsonb, page_size int) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
+DECLARE s test262.api_subjects; rel regclass; preds text[]; keys text[]; keycols text; afters text; rows jsonb; next jsonb;
 BEGIN
  s=test262.api_identity(epoch);
- IF current_setting('transaction_isolation') NOT IN ('repeatable read','serializable') THEN RAISE EXCEPTION 'Snapshot export requires REPEATABLE READ'; END IF;
- FOREACH t IN ARRAY ARRAY['corpora','repository_corpora','fixtures','fixture_variants','fixture_dependencies','provenances','provenance_fixture_eligibility','runs','observations','observation_payloads','observation_invalidations','validation_events','work_items','work_leases','budget_reservations','budget_scopes','budget_work_items','registration_snapshots','registrations','reporting_targets','native_batches','batch_fixtures','batch_evidence','publications','publication_checks','imports','import_records','legacy_control_records','reconciliation_state','reconciliations','run_metrics'] LOOP
-  EXECUTE format('SELECT coalesce(jsonb_agg(to_jsonb(x)),''[]''::jsonb) FROM test262.%I x WHERE test262.api_scope($1,to_jsonb(x),$2)',t) INTO a USING t,s.repository_id;
-  result=result||jsonb_build_object(t,a);
- END LOOP;
- RETURN jsonb_build_object('schema',1,'api',1,'epoch',epoch,'repository_id',s.repository_id,'snapshot_token',txid_current_snapshot()::text,'as_of',transaction_timestamp(),'tables',result);
+ IF NOT t=ANY(ARRAY['corpora','repository_corpora','fixtures','fixture_variants','fixture_dependencies','provenances','provenance_fixture_eligibility','runs','observations','observation_payloads','observation_invalidations','validation_events','work_items','work_leases','budget_reservations','budget_scopes','budget_work_items','registration_snapshots','registrations','reporting_targets','native_batches','batch_fixtures','batch_evidence','publications','publication_checks','imports','import_records','legacy_control_records','reconciliation_state','reconciliations','run_metrics']) THEN RAISE EXCEPTION 'Unsupported record type'; END IF;
+ IF page_size NOT BETWEEN 1 AND 1000 THEN RAISE EXCEPTION 'Invalid page size'; END IF;
+ -- Payload rows may each approach the 4 MiB ingest bound.
+ IF t='observation_payloads' THEN page_size=least(page_size,25); END IF;
+ rel=format('test262.%I',t)::regclass;
+ filter=coalesce(filter,'{}'); after=nullif(after,'null'::jsonb);
+ IF jsonb_typeof(filter)<>'object' OR (after IS NOT NULL AND jsonb_typeof(after)<>'object') THEN RAISE EXCEPTION 'Invalid read arguments'; END IF;
+ IF EXISTS(SELECT 1 FROM jsonb_each(filter) e WHERE jsonb_typeof(e.value)='null' OR NOT EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid=rel AND attname=e.key AND attnum>0 AND NOT attisdropped)) THEN RAISE EXCEPTION 'Invalid filter column'; END IF;
+ SELECT array_agg(a.attname::text ORDER BY u.ord) INTO keys FROM pg_constraint c CROSS JOIN LATERAL unnest(c.conkey) WITH ORDINALITY u(attnum,ord) JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attnum=u.attnum WHERE c.conrelid=rel AND c.contype='p';
+ SELECT coalesce(array_agg(format('x.%1$I=f.%1$I',k)),'{}') INTO preds FROM jsonb_object_keys(filter) k;
+ IF EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid=rel AND attname='repository_id' AND NOT attisdropped) THEN preds=preds||'x.repository_id=$3'::text;
+ ELSE preds=preds||'test262.api_scope($4,to_jsonb(x),$3)'::text; END IF;
+ SELECT string_agg(format('x.%I',k),','),string_agg(format('a.%I',k),',') INTO keycols,afters FROM unnest(keys) k;
+ IF after IS NOT NULL THEN
+  IF EXISTS(SELECT 1 FROM unnest(keys) k WHERE NOT after ? k) THEN RAISE EXCEPTION 'Cursor requires the exact primary key'; END IF;
+  preds=preds||format('ROW(%s)>ROW(%s)',keycols,afters);
+ END IF;
+ EXECUTE format('SELECT coalesce(jsonb_agg(r.j ORDER BY r.n),''[]''::jsonb) FROM (SELECT to_jsonb(x) j,row_number() OVER (ORDER BY %1$s) n FROM test262.%2$I x CROSS JOIN jsonb_populate_record(NULL::test262.%2$I,$1) f CROSS JOIN jsonb_populate_record(NULL::test262.%2$I,$2) a WHERE %3$s ORDER BY %1$s LIMIT %4$s) r',
+  keycols,t,array_to_string(preds,' AND '),page_size) INTO rows USING filter,coalesce(after,'{}'::jsonb),s.repository_id,t;
+ IF jsonb_array_length(rows)=page_size THEN
+  SELECT jsonb_object_agg(k,rows->-1->k) INTO next FROM unnest(keys) k;
+ END IF;
+ RETURN jsonb_build_object('rows',rows,'next',next);
 END $$;
 
 REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA test262 FROM PUBLIC,anon,authenticated,service_role,test262_ingest,test262_coordinator,test262_reporter;
 GRANT USAGE ON SCHEMA test262 TO test262_ingest,test262_coordinator;
-GRANT EXECUTE ON FUNCTION test262.api_contract(),test262.api_start_run(bigint,jsonb),test262.api_ingest(bigint,uuid,jsonb),test262.api_snapshot(bigint) TO test262_ingest,test262_coordinator;
+GRANT EXECUTE ON FUNCTION test262.api_contract(),test262.api_start_run(bigint,jsonb),test262.api_ingest(bigint,uuid,jsonb),test262.api_read(bigint,text,jsonb,jsonb,int) TO test262_ingest,test262_coordinator;
 GRANT EXECUTE ON FUNCTION test262.api_put(bigint,text,jsonb),test262.api_claim(bigint,uuid,uuid,bigint,int),test262.api_renew(bigint,uuid,bigint,int),test262.api_complete(bigint,uuid,bigint,uuid),test262.api_transition(bigint,text,jsonb,bigint,jsonb) TO test262_coordinator;
 UPDATE test262.schema_contract SET api_contract_version=1;
 
@@ -436,6 +460,38 @@ BEGIN
      RAISE EXCEPTION 'Completion observation does not match current work generation' USING ERRCODE='23514';
    END IF;
   END IF;
+ END IF;
+ RETURN NEW;
+END $$;
+
+-- Replaces the v1 seal guard: only product evidence (fail/unsupported) contradicts a pass.
+-- Infrastructure errors, timeouts recorded as incomplete and deferrals are retryable and
+-- must not permanently block a later trusted pass under the same provenance.
+CREATE OR REPLACE FUNCTION test262.guard_batch_seal() RETURNS trigger LANGUAGE plpgsql SET search_path=pg_catalog AS $$
+BEGIN
+ IF TG_OP='DELETE' THEN
+   IF OLD.state IN ('sealed','awaiting-refresh','conflicted') THEN RAISE EXCEPTION 'Cannot delete sealed batch' USING ERRCODE='23514'; END IF;
+   RETURN OLD;
+ END IF;
+ IF TG_OP='INSERT' AND NEW.state<>'planned' THEN RAISE EXCEPTION 'Batch must start planned' USING ERRCODE='23514'; END IF;
+ IF TG_OP='UPDATE' AND OLD.state IN ('sealed','awaiting-refresh','conflicted') THEN
+   IF ROW(OLD.repository_id,OLD.batch_key,OLD.provenance_id,OLD.validation_id,OLD.registration_snapshot_id,OLD.budget_scope_id) IS DISTINCT FROM ROW(NEW.repository_id,NEW.batch_key,NEW.provenance_id,NEW.validation_id,NEW.registration_snapshot_id,NEW.budget_scope_id) OR NEW.state NOT IN ('sealed','awaiting-refresh','conflicted','cancelled') THEN RAISE EXCEPTION 'Sealed batch identity is frozen' USING ERRCODE='23514'; END IF;
+ END IF;
+ IF NEW.state='sealed' THEN
+   IF NOT EXISTS(SELECT 1 FROM test262.batch_fixtures WHERE batch_id=NEW.batch_id AND state='accepted') THEN RAISE EXCEPTION 'Empty acceptance' USING ERRCODE='23514'; END IF;
+   IF EXISTS(
+     SELECT 1 FROM test262.batch_fixtures bf JOIN test262.fixtures f ON f.fixture_id=bf.fixture_id
+     WHERE bf.batch_id=NEW.batch_id AND bf.state='accepted' AND (
+       f.metadata_state<>'valid' OR
+       NOT EXISTS(SELECT 1 FROM test262.fixture_variants v WHERE v.fixture_id=f.fixture_id AND v.required) OR
+       EXISTS(SELECT 1 FROM test262.fixture_variants v WHERE v.fixture_id=f.fixture_id AND v.required AND NOT EXISTS(
+         SELECT 1 FROM test262.batch_evidence be JOIN test262.observations o ON o.observation_id=be.observation_id JOIN test262.runs r ON r.run_id=o.run_id
+         WHERE be.batch_id=NEW.batch_id AND be.fixture_id=f.fixture_id AND be.variant=v.variant AND o.provenance_id=NEW.provenance_id AND o.outcome='pass' AND r.trust_class='trusted' AND o.source_kind='live'
+         AND NOT EXISTS(SELECT 1 FROM test262.observation_invalidations i WHERE i.observation_id=o.observation_id))) OR
+       NOT EXISTS(SELECT 1 FROM test262.provenance_fixture_eligibility e WHERE e.provenance_id=NEW.provenance_id AND e.fixture_id=f.fixture_id AND e.eligibility='runnable') OR
+       (EXISTS(SELECT 1 FROM test262.fixture_dependencies d WHERE d.fixture_id=f.fixture_id) AND f.dependency_manifest_digest IS NULL) OR
+       EXISTS(SELECT 1 FROM test262.observations o JOIN test262.runs r ON r.run_id=o.run_id WHERE o.provenance_id=NEW.provenance_id AND o.fixture_id=f.fixture_id AND o.outcome IN ('fail','unsupported') AND r.trust_class='trusted' AND NOT EXISTS(SELECT 1 FROM test262.observation_invalidations i WHERE i.observation_id=o.observation_id))
+     )) THEN RAISE EXCEPTION 'Incomplete, excluded, invalidated or conflicting acceptance' USING ERRCODE='23514'; END IF;
  END IF;
  RETURN NEW;
 END $$;

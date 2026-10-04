@@ -45,8 +45,11 @@ CLI context must agree with the authenticated binding. The provision template do
 create or print a secret. Disable a compromised producer and its binding server-side.
 
 Fixture execution occurs in a new Docker container per variant. It has no network,
-host PID namespace, capabilities, secret environment or credential/outbox mounts. Only
-repo and pinned source are read-only mounts; one disposable work directory is writable.
+host PID namespace, capabilities, secret environment or credential/outbox mounts. The
+checkout itself is never mounted (it holds `.git` credentials and the outbox): a staged
+copy of only `scripts/test262/*.js`, `tests/test262/*.json` and the entry binary's output
+directory is mounted read-only at `/repo`, with the pinned source read-only at `/upstream`;
+one disposable work directory is writable.
 Allowlisting child environment alone would leave a same-user `/proc` credential risk.
 The Python supervisor alone connects to PostgreSQL. Build the fixture image before
 supplying supervisor secrets. The C# host also strips inherited credentials from its
@@ -64,9 +67,9 @@ worker environment for callers outside this pipeline.
 | `api_renew` | Owner + generation + unexpired lease; no resurrection |
 | `api_complete` | Requires the observation's exact lease run/generation; repeat is safe; late evidence never completes a newer generation |
 | `api_metric` | Stage measurement version/CAS; retries do not increment totals |
-| `api_transition` | Exact primary key + version/CAS; allowlisted mutable fields; inventory digest and fresh native seal checks |
+| `api_transition` | Exact primary key + version/CAS; allowlisted mutable fields; inventory digest and fresh native seal checks; never changes `authority_epoch` (only the audited `cutover.sql`) |
 | `api_reconcile` | Verified plan digest including next cursor, cursor CAS and durable queue insertion in one transaction; recovery identity differs from SHA |
-| `api_snapshot` | Explicit REPEATABLE READ transaction; coherent MVCC export, not a sequence-max incremental cursor |
+| `api_read` | One allowlisted table, repository-scoped, exact-column equality filters, primary-key keyset pages of at most 1000 rows (25 for payloads); callers needing a coherent multi-page view read inside one REPEATABLE READ READ ONLY transaction |
 
 Lock order is repository advisory lock, queue rows, budget rows. The repository lock
 serializes short catalogue transactions (including seal/ingest), while fixtures execute
@@ -93,11 +96,17 @@ Native acceptance needs every required variant, one native provenance, trusted l
 results, valid metadata, a verified dependency-manifest digest and a current validated
 master target. MVP, legacy and untrusted observations cannot qualify. Runtime-negative
 results include the type verified by the existing C# harness; compile negatives remain
-harness gaps. Contradictory trusted observations or invalidated evidence mark an already
-sealed batch conflicted; advancing its reporting target marks it awaiting refresh.
+harness gaps. Contradictory trusted product evidence (`fail`/`unsupported`) or invalidated
+evidence blocks sealing and marks an already sealed batch conflicted; retryable
+`infrastructure-error`, `incomplete` and `deferred` attempts do not. Advancing its
+reporting target marks it awaiting refresh.
 Publication requires a fresh sealed batch, reserves a unique branch/PR centrally, adopts
 a crash-after-push only after matching parent/commit marker/exact patch, and detects head
-ownership changes. It never automatically merges or claims required PR CI has passed.
+ownership changes. Before reserving, any other active reservation without a PR number is
+reconciled: an owned PR is adopted, an owned orphan branch is deleted and the reservation
+cancelled, and a foreign or unverifiable branch/PR blocks it for manual review. None of
+these keep the single-active-publication slot. It never automatically merges or claims
+required PR CI has passed.
 
 ## Import history before cutover
 
@@ -160,6 +169,12 @@ with the same scoped supervisor connection and the existing GitHub App's
 `TEST262_PORTING_APP_ID` / `TEST262_PORTING_APP_PRIVATE_KEY`. App publication triggers
 independent required PR CI. The central workflow defaults to discovery without publishing.
 It rebuilds a disposable native generator cache only from central sealed evidence.
+The credentialed `supervise` job only seals, generates and records the patch. A separate
+`validate` job with no environment secrets and non-persisted checkout credentials applies
+that patch at the target revision, runs the focused xUnit batch and the exact
+allowlist/hash `validate-patch` check, and requires its digest to equal the sealed patch.
+`publish` requires both jobs. Run artifacts are named per run ID (overwritten on rerun),
+so rerunning only a failed downstream job finds them.
 
 Before activation, require import parity, an off-project backup and completed restore
 drill, reporter query validation, the PostgreSQL CI concurrency suite, and a pilot of
@@ -196,7 +211,8 @@ versioning/Object Lock and independently enforce retention (daily recovery snaps
 long-lived historical archives; no automatic compact-evidence purge). The workflow uses
 PostgreSQL 17 `pg_dump`, an exported MVCC snapshot shared with exact table/view counts,
 SHA-256 manifests and KMS-encrypted off-project objects. It never dumps the performance
-schema. Also archive original imports and failed-run outboxes; 90-day Actions artifacts
+schema. Client tools receive the DSN as discrete libpq environment variables, never a
+URI in `PGDATABASE` (which libpq does not expand) or a password in process arguments. Also archive original imports and failed-run outboxes; 90-day Actions artifacts
 are recovery convenience, not the long-term backup policy.
 
 Perform a restore drill into a **new empty disposable** PostgreSQL 17 database:
@@ -225,10 +241,13 @@ python -m unittest discover -s tests/test262/central -p 'test_*.py' -v
 ```
 
 The client tests cover lost acknowledgments, durable completion replay, scope binding,
-secret environment exclusion, inventory identities and read-only import digests. SQL
+secret environment exclusion, inventory identities, read-only import digests, backup
+connection translation and the staged container mount allowlist. SQL
 regressions cover immutable replay, run/trust assignment, collision rejection, fenced
-settlement, stale epochs, incomplete/untrusted native acceptance, conflicts and blocking
-publication. The PostgreSQL test service also exercises simultaneous workers against
-one shared attempt/time budget and a real restricted login. Full production activation,
+settlement, stale epochs, writer-forbidden epoch changes, incomplete/untrusted native
+acceptance, infrastructure-error tolerance, product conflicts, bounded scoped paged reads
+and blocking publication. The PostgreSQL test service also exercises simultaneous workers
+against one shared attempt/time budget, a real restricted login, and paged client reads
+with a streamed NDJSON export. Full production activation,
 artifact history parity, a live reporter connection, an S3 retention configuration and a
 restore drill must be recorded on #2230 with actual evidence before closing it.

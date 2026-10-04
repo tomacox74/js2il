@@ -13,6 +13,28 @@ import tempfile
 import uuid
 
 
+LIBPQ_ENVIRONMENT={'host':'PGHOST','hostaddr':'PGHOSTADDR','port':'PGPORT','dbname':'PGDATABASE','user':'PGUSER',
+                   'password':'PGPASSWORD','sslmode':'PGSSLMODE','sslrootcert':'PGSSLROOTCERT','sslcert':'PGSSLCERT',
+                   'sslkey':'PGSSLKEY','sslcrl':'PGSSLCRL','channel_binding':'PGCHANNELBINDING','options':'PGOPTIONS',
+                   'application_name':'PGAPPNAME','connect_timeout':'PGCONNECT_TIMEOUT',
+                   'target_session_attrs':'PGTARGETSESSIONATTRS','gssencmode':'PGGSSENCMODE'}
+
+
+def libpq_environment(dsn):
+    """Translate a URI/keyword DSN into libpq variables.
+
+    libpq never expands a URI from PGDATABASE, and argv would expose the password.
+    """
+    from psycopg.conninfo import conninfo_to_dict
+    env={k:v for k,v in os.environ.items() if not k.startswith('PG')}
+    for key,value in conninfo_to_dict(dsn).items():
+        if key not in LIBPQ_ENVIRONMENT:
+            raise ValueError('Unsupported connection parameter for client tools: '+key)
+        if value is not None:
+            env[LIBPQ_ENVIRONMENT[key]]=str(value)
+    return env
+
+
 def run(command, env=None):
     subprocess.run(command,check=True,env=env)
 
@@ -22,7 +44,7 @@ def backup(args):
     dsn=os.environ['TEST262_BACKUP_DATABASE_URL']
     output=Path(args.output);output.mkdir(parents=True,exist_ok=True)
     archive=output/'catalogue.dump'
-    env=dict(os.environ,PGDATABASE=dsn)
+    env=libpq_environment(dsn)
     # Pin the dump and its verification counts to the SAME exported MVCC snapshot.
     with psycopg.connect(dsn) as db:
         db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
@@ -66,7 +88,7 @@ def restore(args):
         run(['pg_restore','--exit-on-error','--no-owner','--file',str(sql),str(archive)])
         with sql.open('a') as stream:
             stream.write("\nUPDATE test262.api_subjects SET enabled=false;\nUPDATE test262.schema_contract SET deployment_state='shadow',minimum_writer_epoch=minimum_writer_epoch+1;\n")
-        run(['psql','--no-psqlrc','--set','ON_ERROR_STOP=on','--single-transaction','--file',str(sql)],dict(os.environ,PGDATABASE=dsn))
+        run(['psql','--no-psqlrc','--set','ON_ERROR_STOP=on','--single-transaction','--file',str(sql)],libpq_environment(dsn))
     with psycopg.connect(dsn,autocommit=True) as db:
         for name,count in manifest['row_counts'].items():
             if not name.replace('_','').isalnum():

@@ -71,9 +71,37 @@ class PostgresTests(unittest.TestCase):
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
                 db.execute('SELECT * FROM test262.observations')
             db.execute('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY')
-            snapshot=db.execute('SELECT test262.api_snapshot(1)').fetchone()[0]
+            rows=[];after=None
+            while True:
+                page=db.execute('SELECT test262.api_read(1,%s,%s,%s,3)',('fixtures',Jsonb({}),Jsonb(after) if after else None)).fetchone()[0]
+                rows+=page['rows'];after=page['next']
+                if not after:
+                    break
             db.execute('ROLLBACK')
-            self.assertEqual(snapshot['repository_id'],self.repo)
+            self.assertEqual(sorted(r['fixture_id'] for r in rows),sorted(self.fixtures))
+
+    def test_client_paged_reads_and_streamed_export(self):
+        import hashlib, tempfile
+        from psycopg.conninfo import make_conninfo
+        from scripts.test262.central.client import Client
+        self.db.execute("ALTER ROLE catalogue_test_worker PASSWORD 'catalogue-test'")
+        client=Client(make_conninfo(DSN,user='catalogue_test_worker',password='catalogue-test'),1)
+        try:
+            self.assertEqual(sorted(r['fixture_id'] for r in client.read('fixtures',page=3)),sorted(self.fixtures))
+            self.assertEqual(client.one('fixtures',fixture_id=self.fixtures[0])['upstream_path'],'test/0.js')
+            self.assertIsNone(client.one('fixtures',fixture_id=str(uuid.uuid4())))
+            with tempfile.TemporaryDirectory() as directory:
+                output=Path(directory)/'export.ndjson'
+                summary=client.export(output)
+                lines=output.read_text().splitlines()
+        finally:
+            client.close()
+        header,footer=json.loads(lines[0])['header'],json.loads(lines[-1])['footer']
+        self.assertEqual(header['repository_id'],self.repo)
+        self.assertEqual(footer['counts']['fixtures'],10)
+        self.assertEqual(footer['sha256'],hashlib.sha256(''.join(l+'\n' for l in lines[:-1]).encode()).hexdigest())
+        self.assertEqual(summary['sha256'],footer['sha256'])
+        self.assertEqual(sum(footer['counts'].values()),len(lines)-2)
 
 
 if __name__=='__main__':
