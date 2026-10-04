@@ -415,3 +415,30 @@ or cleanup of an in-flight fixture container, nor loss before durable persistenc
 Review the `pilot-report.json` and `test262-worker-pilot-<run>-<attempt>` artifact before
 recording the isolated-execution item in #2230. Evidence stays in the disposable run;
 never upload this partial pilot corpus to production or activate Supabase from this job.
+
+
+### Disposable backup/restore pilot
+
+The isolated worker workflow also enables `--restore-drill`. After real execution,
+process-kill replay and queue controls, the pilot runs the production backup and restore
+tools with PostgreSQL 17 clients in a trusted container. It dumps the populated local
+`catalogue_pilot` database and restores into a new `catalogue_pilot_restore` database
+on the same disposable service. No Supabase or external-storage credentials are used.
+The source must be the loopback pilot admin connection, and the restore target name
+must be unused. Both databases are discarded with the Actions service.
+
+The drill independently compares canonical contents of every catalogue table,
+excluding only the deliberately changed binding-enabled/authority/epoch fields,
+and compares RLS, ACL and function security metadata. It checks that old bindings
+are disabled, the previous worker login cannot use the scoped API, authority is
+shadow at epoch two, and source contents/control state remain unchanged. A disposable
+`public.perf_results` sentinel verifies public performance data is excluded from the
+archive and preserved in the source. The normal restore tool also verifies the archive
+digest, exact snapshot table/view counts and validated constraints.
+
+Retained evidence includes `pilot-report.json`, `restore-drill/catalogue.dump`, and
+`restore-drill/manifest.json`; these contain only disposable pilot data. Passing this
+drill demonstrates the tool path and restored data/security behavior. It does not
+verify production backup-role permissions, KMS encryption, independent object retention,
+Object Lock, original historical archive preservation, or a restore of an off-project
+production backup. Those remain separate operational acceptance before cutover.

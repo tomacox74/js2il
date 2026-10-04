@@ -253,6 +253,13 @@ def run(args):
             report['queue_drills']={}
             run_drills(client,workargs,corpus,list(ids.values()),revision,report['queue_drills'])
             report['complete']=True
+        if args.restore_drill:
+            from .pilot_restore import run_restore_drill
+            report['complete']=False
+            report['stage']='backup-restore-drill'
+            report['restore_drill']={}
+            run_restore_drill(admin,output,report['restore_drill'])
+            report['complete']=True
         report['stage']='verified'
     except Exception as error:
         report['error_type']=type(error).__name__
@@ -274,6 +281,7 @@ if __name__=='__main__':
     p.add_argument('--workers',type=int,choices=(1,2),default=1)
     p.add_argument('--queue-drills',action='store_true')
     p.add_argument('--process-kill',action='store_true')
+    p.add_argument('--restore-drill',action='store_true')
     try:
         run(p.parse_args())
     except Exception as error:
