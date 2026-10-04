@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from scripts.test262.central.connection_check import check
+from scripts.test262.central.connection_check import CheckError, check, failure_message
 
 
 class ConnectionCheckTests(unittest.TestCase):
@@ -10,7 +10,7 @@ class ConnectionCheckTests(unittest.TestCase):
                 'TEST262_REPOSITORY_ID': 'repository', 'TEST262_PRODUCER_ID': 'producer',
                 'TEST262_AUTHORITY_EPOCH': '1'}
 
-    def connection(self, **changes):
+    def connection(self, login='test262_importer', **changes):
         contract = {'repository_id': 'repository', 'producer_id': 'producer',
                     'minimum_writer_epoch': 1, 'api_contract_version': 1,
                     'permission': 'coordinator', 'trust_class': 'legacy',
@@ -23,7 +23,7 @@ class ConnectionCheckTests(unittest.TestCase):
             if sql == 'SHOW transaction_read_only':
                 cursor.fetchone.return_value = ('on',)
             elif sql.startswith('SELECT session_user'):
-                cursor.fetchone.return_value = ('test262_importer', contract)
+                cursor.fetchone.return_value = (login, contract)
             return cursor
         db.execute.side_effect = execute
         return db
@@ -49,4 +49,30 @@ class ConnectionCheckTests(unittest.TestCase):
         values = dict(self.settings, TEST262_DATABASE_URL=self.settings['TEST262_DATABASE_URL'] + '?sslmode=disable')
         with patch.dict(os.environ, values), patch('psycopg.connect') as connect, self.assertRaises(ValueError):
             check('test262_importer', 'legacy')
+        connect.assert_not_called()
+
+    def test_wrong_login_and_binding_mismatch_have_specific_safe_diagnostics(self):
+        for changes, expected in (
+                ({'login': 'postgres'}, 'Wrong database login'),
+                ({'producer_id': 'another'}, 'Catalogue binding mismatch: producer_id')):
+            with self.subTest(changes=changes), patch.dict(os.environ, self.settings), \
+                    patch('psycopg.connect', return_value=self.connection(**changes)):
+                with self.assertRaises(CheckError) as caught:
+                    check('test262_importer', 'legacy')
+                self.assertIn(expected, failure_message(caught.exception))
+                self.assertNotIn('postgresql://', failure_message(caught.exception))
+
+    def test_external_error_text_is_never_displayed(self):
+        sensitive = 'postgresql://user:private-password@host/database'
+        for error in (ValueError(sensitive), RuntimeError(sensitive)):
+            self.assertNotIn(sensitive, failure_message(error))
+            self.assertNotIn('private-password', failure_message(error))
+
+    def test_invalid_epoch_reports_setting_without_value_or_connecting(self):
+        values = dict(self.settings, TEST262_AUTHORITY_EPOCH='private-value')
+        with patch.dict(os.environ, values), patch('psycopg.connect') as connect:
+            with self.assertRaises(CheckError) as caught:
+                check('test262_importer', 'legacy')
+            self.assertIn('TEST262_AUTHORITY_EPOCH must be an integer', failure_message(caught.exception))
+            self.assertNotIn('private-value', failure_message(caught.exception))
         connect.assert_not_called()
