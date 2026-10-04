@@ -383,6 +383,20 @@ are retained. `--workers 1` preserves the earlier baseline. This is a simulated
 transport acknowledgement loss/reconnect check; process-kill, lease-expiry, conflict,
 budget-exhaustion and native publication recovery remain separate acceptance drills.
 
+With `--queue-drills` (enabled by the PR workflow), the pilot then creates separate,
+explicitly synthetic control-test provenances. These never count as the ten real
+compiler fixture results. One lease expires at its actual 31-second server deadline;
+renewal must reject its stale generation, reclamation must increment the fence and
+conservatively charge the abandoned reservation, and late evidence must be retained
+without completing or changing the replacement lease/budget. Current completion must
+settle all reservations. The drill also rejects changed payloads under the same request
+or observation ID while preserving the original receipt/evidence. A one-attempt budget
+with two items must block excess claims both while reserved and after charging, leaving
+one untouched pending item and no reservations. The module checks the loopback pilot
+database/login before writes, and saves these results under `queue_drills` in the report.
+No clocks or lease rows are altered to simulate expiry. Actual process termination and
+native publication/restore acceptance remain separate drills.
+
 Review the `pilot-report.json` and `test262-worker-pilot-<run>-<attempt>` artifact before
 recording the isolated-execution item in #2230. Evidence stays in the disposable run;
 never upload this partial pilot corpus to production or activate Supabase from this job.

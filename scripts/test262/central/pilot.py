@@ -240,6 +240,13 @@ def run(args):
                 any(o['outcome'] in ('infrastructure-error','incomplete') for o in observations)):
             raise ValueError('Pilot execution/lease/outbox/budget invariant failed')
         report['complete']=True
+        if args.queue_drills:
+            from .pilot_drills import run_drills
+            report['complete']=False
+            report['stage']='queue-control-drills'
+            report['queue_drills']={}
+            run_drills(client,workargs,corpus,list(ids.values()),revision,report['queue_drills'])
+            report['complete']=True
         report['stage']='verified'
     except Exception as error:
         report['error_type']=type(error).__name__
@@ -259,6 +266,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--output',required=True)
     p.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll');p.add_argument('--image',default='test262-fixture:pilot')
     p.add_argument('--workers',type=int,choices=(1,2),default=1)
+    p.add_argument('--queue-drills',action='store_true')
     try:
         run(p.parse_args())
     except Exception as error:
