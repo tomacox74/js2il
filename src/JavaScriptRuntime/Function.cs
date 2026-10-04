@@ -1112,12 +1112,10 @@ public static class Function
                     instance,
                     arguments,
                     newTarget);
-                result = result is Delegate resultDelegate
-                    ? BuiltinDelegateFunctionAdapter.FromDelegate(
-                        resultDelegate,
-                        RuntimeIntrinsics.GetFunctionRealm(constructor),
-                        isConstructor: true)
-                    : result;
+                result = BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    result,
+                    RuntimeIntrinsics.GetFunctionRealm(constructor),
+                    isConstructor: true);
                 return TypeUtilities.IsConstructorReturnOverride(result)
                     ? ApplyBuiltinNewTargetPrototype(
                         result,

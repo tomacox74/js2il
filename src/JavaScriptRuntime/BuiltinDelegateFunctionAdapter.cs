@@ -109,16 +109,14 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
             && RuntimeIntrinsics.Current.BuiltinAdapters.Contains(target);
     }
 
-    internal static object? WrapJavaScriptVisibleValue(object? value)
-        => value is Delegate target
-            ? FromDelegate(target)
-            : value;
-
     internal static object? WrapJavaScriptVisibleValue(
         object? value,
-        RuntimeIntrinsics intrinsics)
+        RuntimeIntrinsics? intrinsics = null,
+        bool isConstructor = false)
         => value is Delegate target
-            ? FromDelegate(target, intrinsics)
+            ? intrinsics is null
+                ? FromDelegate(target)
+                : FromDelegate(target, intrinsics, isConstructor)
             : value;
 
     internal static object NormalizeJavaScriptObject(object value)
