@@ -80,6 +80,29 @@ class PostgresTests(unittest.TestCase):
             db.execute('ROLLBACK')
             self.assertEqual(sorted(r['fixture_id'] for r in rows),sorted(self.fixtures))
 
+    def test_indexed_replay_normalizes_uuid_keys_and_rejects_conflicts(self):
+        fixture = self.fixtures[0]
+        row = {'repository_id': self.repo, 'provenance_id': self.prov,
+               'fixture_id': fixture, 'eligibility': 'runnable', 'reason_codes': [],
+               'diagnostic': {'replay_test': True}}
+        with self.worker() as db:
+            receipt = db.execute('SELECT test262.api_put(1,%s,%s)',
+                                 ('provenance_fixture_eligibility', Jsonb([row]))).fetchone()[0]
+            self.assertEqual(receipt['records'], 1)
+            normalized = dict(row, repository_id=self.repo.upper(),
+                              provenance_id=self.prov.upper(), fixture_id=fixture.upper())
+            self.assertEqual(db.execute('SELECT test262.api_put(1,%s,%s)',
+                             ('provenance_fixture_eligibility', Jsonb([normalized]))).fetchone()[0], receipt)
+            with self.assertRaises(psycopg.errors.RaiseException):
+                db.execute('SELECT test262.api_put(1,%s,%s)',
+                           ('provenance_fixture_eligibility', Jsonb([dict(row, eligibility='unresolved')])))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                db.execute('SELECT test262.api_put(1,%s,%s)',
+                           ('provenance_fixture_eligibility', Jsonb([dict(row, repository_id=str(uuid.uuid4()))])))
+        stored = self.db.execute('SELECT eligibility,diagnostic FROM test262.provenance_fixture_eligibility WHERE provenance_id=%s AND fixture_id=%s',
+                                 (self.prov, fixture)).fetchone()
+        self.assertEqual(stored, ('runnable', {'replay_test': True}))
+
     def test_client_paged_reads_and_streamed_export(self):
         import hashlib, tempfile
         from psycopg.conninfo import make_conninfo
