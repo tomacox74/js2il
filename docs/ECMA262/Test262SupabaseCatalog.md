@@ -110,6 +110,45 @@ required PR CI has passed.
 
 ## Import history before cutover
 
+### Manual GitHub Actions import
+
+Create environment `test262-catalogue-import`, restricted to `master`, with secret
+`TEST262_IMPORTER_DATABASE_URL` (the dedicated `test262_importer` session-pooler TLS
+connection string) and variables `TEST262_REPOSITORY_ID`,
+`TEST262_IMPORTER_PRODUCER_ID` and `TEST262_AUTHORITY_EPOCH`. The workflows map the
+importer producer variable to `TEST262_PRODUCER_ID`; use the legacy binding, not the
+trusted supervisor. Leave `TEST262_CATALOGUE_AUTHORITY` unset.
+
+1. Run **Test262 importer connection test** on `master`. It verifies TLS, the exact
+   login/repository/producer binding, coordinator/legacy trust, API version, epoch and
+   inactive authority in an explicitly read-only transaction. No data is uploaded.
+2. Run **Test262 historical catalogue import** on `master` with `mode=discover`.
+   This job has no database credential. Download its
+   `test262-history-archive-<run-id>` artifact, inspect `history-manifest.json` and
+   preserve the original ZIPs in your independent archive before importing.
+3. Run the same workflow with `mode=import`, `archive_run_id` equal to that successful
+   discovery run, and `kind=mvp` initially. Choose original `artifact_ids` from the
+   manifest; the default bound is five snapshots. An explicit selection exceeding
+   the bound is rejected rather than silently truncated. Native/all imports
+   materialize the complete current pinned upstream inventory; mismatched historical
+   pins fail and must be handled separately, never silently substituted.
+4. Download `test262-history-import-recovery-<run-id>-<attempt>` and inspect
+   `import-report.json`. It records selected IDs, verified observation mappings,
+   source hashes and missing history. Failed uploads retain their SQLite outboxes.
+   Import reports and archive artifacts have 90-day Actions retention, which is
+   recovery convenience, not the independent long-term retention policy.
+5. Continue with additional explicit artifact IDs in bounded invocations. Defaults
+   select the first matching snapshots in the manifest, not the next unimported
+   snapshots. Replaying the same selection uses the importer's stable evidence IDs.
+
+The workflow validates the source discovery run's repository/workflow/master identity,
+checks original ZIP and SQLite hashes before writes, opens source databases read-only,
+checks central observation mapping coverage and confirms source bytes remain unchanged.
+It neither schedules tests nor changes authority/targets/publications. Original native
+state artifacts may lack the publication proof manifest; they remain legacy evidence,
+never proof of a publishable native batch. Local snapshots are not discovered by Actions;
+use the CLI below to import separately archived local copies.
+
 Inventory all available `test262-catalog`, shard and native state artifacts, using
 GitHub pagination. The helper archives recoverable master-workflow databases and records
 expired/missing runs in its manifest:

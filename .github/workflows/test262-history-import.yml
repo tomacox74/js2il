@@ -1,0 +1,115 @@
+name: Test262 historical catalogue import
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Discover archives first; import reads a previous discovery run
+        type: choice
+        options: [discover, import]
+        default: discover
+      archive_run_id:
+        description: Successful discovery run ID (required for import)
+        type: string
+        default: ''
+      kind:
+        description: Catalogue snapshots to import
+        type: choice
+        options: [mvp, native, all]
+        default: mvp
+      artifact_ids:
+        description: Optional comma-separated original artifact IDs from the manifest
+        type: string
+        default: ''
+      max_snapshots:
+        description: Maximum snapshots per invocation (1-100)
+        type: number
+        default: 5
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: test262-historical-import
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    if: github.ref == 'refs/heads/master' && inputs.mode == 'discover'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Discover and archive available master catalogue history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m scripts.test262.central.history --repository-name "$GITHUB_REPOSITORY" --output artifacts/test262/history
+      - name: Preserve original archives and inventory
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-history-archive-${{ github.run_id }}
+          path: artifacts/test262/history
+          if-no-files-found: error
+          retention-days: 90
+          overwrite: true
+
+  import:
+    if: github.ref == 'refs/heads/master' && inputs.mode == 'import'
+    runs-on: ubuntu-24.04
+    environment: test262-catalogue-import
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Verify archive run attribution and download its inventory
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARCHIVE_RUN_ID: ${{ inputs.archive_run_id }}
+        run: |
+          python -m scripts.test262.central.history_import download \
+            --run-id "$ARCHIVE_RUN_ID" --repository-name "$GITHUB_REPOSITORY" \
+            --output artifacts/test262/history
+      - name: Materialize complete pinned inventory for native history
+        if: inputs.kind != 'mvp'
+        run: |
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Verify importer binding and import selected immutable snapshots
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_IMPORTER_DATABASE_URL }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_IMPORTER_PRODUCER_ID }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          KIND: ${{ inputs.kind }}
+          ARTIFACT_IDS: ${{ inputs.artifact_ids }}
+          MAX_SNAPSHOTS: ${{ inputs.max_snapshots }}
+        run: |
+          python -m scripts.test262.central.history_import import \
+            --directory artifacts/test262/history --repository-name "$GITHUB_REPOSITORY" \
+            --kind "$KIND" --artifact-ids "$ARTIFACT_IDS" --max-snapshots "$MAX_SNAPSHOTS" \
+            --output artifacts/test262/import-recovery
+      - name: Preserve import report and upload outboxes, including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-history-import-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/import-recovery
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
