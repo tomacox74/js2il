@@ -33,12 +33,12 @@ def row_digest(db, table):
 def metadata(db):
     return db.execute("""
       SELECT 'relation',n.nspname,c.relname,c.relkind::text,
-             c.relrowsecurity::text,c.relforcerowsecurity::text,coalesce(c.relacl::text,'')
+             c.relrowsecurity::text,c.relforcerowsecurity::text,coalesce((SELECT string_agg(a::text,',' ORDER BY a::text) FROM unnest(c.relacl) a),'')
       FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
       WHERE n.nspname IN ('test262','test262_reporting') AND c.relkind IN ('r','v','S')
       UNION ALL
       SELECT 'function',n.nspname,p.proname,pg_get_function_identity_arguments(p.oid),
-             p.prosecdef::text,coalesce(p.proconfig::text,''),coalesce(p.proacl::text,'')
+             p.prosecdef::text,coalesce(p.proconfig::text,''),coalesce((SELECT string_agg(a::text,',' ORDER BY a::text) FROM unnest(p.proacl) a),'')
       FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
       WHERE n.nspname IN ('test262','test262_reporting')
       ORDER BY 1,2,3,4
@@ -97,9 +97,15 @@ def run_restore_drill(admin, output, report):
             backup.restore(SimpleNamespace(archive=str(output/'catalogue.dump'),manifest=str(output/'manifest.json')))
         report['stage'] = 'verify-content-and-privileges'
         with psycopg.connect(target, autocommit=True) as restored:
-            require({table:row_digest(restored,table) for table in tables} == digests,
+            recovered_digests = {table:row_digest(restored,table) for table in tables}
+            report['source_table_sha256'] = digests
+            report['restored_table_sha256'] = recovered_digests
+            report['content_mismatch_tables'] = [table for table in tables if digests[table] != recovered_digests[table]]
+            require(recovered_digests == digests,
                     'Restored catalogue content differs beyond intentional credential fencing')
-            require(metadata(restored) == privileges, 'Restored RLS/ACL/function security metadata differs')
+            recovered_privileges = metadata(restored)
+            report['security_metadata_mismatch_objects'] = sorted({':'.join(row[:4]) for row in set(privileges)^set(recovered_privileges)})
+            require(recovered_privileges == privileges, 'Restored RLS/ACL/function security metadata differs')
             require(restored.execute("SELECT to_regclass('public.perf_results')").fetchone()[0] is None,
                     'Performance sentinel entered the catalogue archive')
             require(restored.execute('SELECT deployment_state,minimum_writer_epoch FROM test262.schema_contract').fetchone() == ('shadow',2),
