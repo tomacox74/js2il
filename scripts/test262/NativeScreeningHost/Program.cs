@@ -136,6 +136,17 @@ try
             process.StartInfo.ArgumentList.Add(Assembly.GetExecutingAssembly().Location);
             process.StartInfo.ArgumentList.Add("--worker");
             process.StartInfo.ArgumentList.Add(requestPath);
+            // The host is also used without the central container wrapper. Never forward
+            // supervisor credentials into a fixture process.
+            var allowedEnvironment = new[] { "PATH", "HOME", "TMPDIR", "TEMP", "TMP", "LANG",
+                "LC_ALL", "DOTNET_ROOT", "DOTNET_NOLOGO", "DOTNET_SKIP_FIRST_TIME_EXPERIENCE",
+                "DOTNET_CLI_TELEMETRY_OPTOUT" };
+            process.StartInfo.Environment.Clear();
+            foreach (var name in allowedEnvironment)
+            {
+                if (Environment.GetEnvironmentVariable(name) is { } value)
+                    process.StartInfo.Environment[name] = value;
+            }
             process.Start();
             var output = process.StandardOutput.ReadToEndAsync();
             var error = process.StandardError.ReadToEndAsync();
@@ -252,7 +263,8 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
             allowUnhandledException: runtimeNegative,
             timeoutMs: timeoutMs);
         Test262SharedAssertHarness.AssertNoOutput(candidate.Path, result.Output);
-        return Result("pass", null, runtimeNegative ? "runtime" : "execution", "");
+        return Result("pass", null, runtimeNegative ? "runtime" : "execution", "",
+            runtimeNegative ? metadata.NegativeType : null);
     }
 
     catch (Exception exception)
@@ -267,11 +279,12 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
     }
 
     ScreeningResult Result(
-        string outcome, string? failureClass, string phase, string diagnostic)
+        string outcome, string? failureClass, string phase, string diagnostic, string? observedErrorType = null)
         => new(
             candidate.Path, variant, candidate.Sha256, outcome, failureClass,
             phase, diagnostic, started,
-            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000d);
+            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000d,
+            observedErrorType);
 }
 
 static bool IsSupportedInclude(string include)
@@ -380,7 +393,8 @@ sealed record ScreeningResult(
     string Phase,
     string Diagnostic,
     double StartedAt,
-    double FinishedAt);
+    double FinishedAt,
+    string? ObservedErrorType = null);
 
 sealed record Metadata(
     IReadOnlyList<string> Flags,

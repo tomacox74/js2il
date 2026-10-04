@@ -16,6 +16,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from central.client import fixture_environment
+
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_DB = REPO / "artifacts/test262/catalog.sqlite"
 SCHEMA_VERSION = "1"
@@ -167,7 +170,8 @@ def mismatch_message(label, expected, actual):
 def bridge(request, timeout=None):
     result = subprocess.run(
         ["node", str(REPO / "scripts/test262/catalogBridge.js")],
-        input=json.dumps(request), capture_output=True, text=True, cwd=REPO, timeout=timeout)
+        input=json.dumps(request), capture_output=True, text=True, cwd=REPO, timeout=timeout,
+        env=fixture_environment())
     if result.returncode:
         raise RuntimeError(result.stderr[-8000:])
     return json.loads(result.stdout)

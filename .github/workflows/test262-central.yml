@@ -1,0 +1,233 @@
+name: Test262 central catalogue
+on:
+  workflow_dispatch:
+    inputs:
+      kind:
+        type: choice
+        options: [mvp-composite, native]
+        default: mvp-composite
+      publish:
+        description: Publish a verified native batch using the GitHub App
+        type: boolean
+        default: false
+      area:
+        type: string
+        default: ''
+  schedule:
+    - cron: '15 6 * * 1'
+permissions:
+  contents: read
+  actions: read
+# Queue claims and budgets coordinate workers; this only serializes target preparation.
+concurrency:
+  group: test262-central-${{ inputs.kind || 'mvp-composite' }}
+  cancel-in-progress: false
+jobs:
+  supervise:
+    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' }}
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Build trusted binaries and isolated fixture image
+        run: |
+          dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
+          docker build -t test262-fixture:local -f scripts/test262/central/fixture.Dockerfile .
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Prepare and run centrally coordinated variants
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          KIND: ${{ inputs.kind || 'mvp-composite' }}
+          AREA: ${{ inputs.area }}
+        run: |
+          python -m scripts.test262.central.cli prepare --kind "$KIND" \
+            --root "$TEST262_ROOT" --revision "$(git rev-parse HEAD)" \
+            --run-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" \
+            --budget-key "actions:$GITHUB_RUN_ID" --area "$AREA" \
+            --output artifacts/test262/central-context.json
+          python -m scripts.test262.central.cli work \
+            --context artifacts/test262/central-context.json --root "$TEST262_ROOT" \
+            --outbox artifacts/test262/central-outbox.sqlite
+      - name: Seal and generate fresh native acceptance
+        if: ${{ inputs.kind == 'native' }}
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+        run: |
+          python -m scripts.test262.central.cli seal --context artifacts/test262/central-context.json \
+            --batch-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" --output artifacts/test262/central-batch.json
+          if [ -s artifacts/test262/central-batch.json ]; then
+            python -m scripts.test262.central.cli generate --batch-file artifacts/test262/central-batch.json \
+              --cache artifacts/test262/central-generation.sqlite --root "$TEST262_ROOT" \
+              --output artifacts/test262/central-generated.json
+            # Generated fixtures are NOT executed here: this job holds the database credential.
+            TARGET="$(python -c 'import json;print(json.load(open("artifacts/test262/central-context.json"))["revision"])')"
+            git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+            git diff --binary "$TARGET" -- > artifacts/test262/central-patch.diff
+          fi
+      - name: Flush and export coherent recovery snapshot
+        if: always()
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+        run: |
+          if [ -f artifacts/test262/central-outbox.sqlite ]; then
+            python -m scripts.test262.central.cli flush --outbox artifacts/test262/central-outbox.sqlite
+          fi
+          python -m scripts.test262.central.cli export --output artifacts/test262/central-snapshot.ndjson
+      - name: Preserve recovery outbox on failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          # Stable per run: a rerun of only a downstream job must find the same artifact.
+          name: test262-central-recovery-${{ github.run_id }}
+          path: artifacts/test262/central-*
+          if-no-files-found: warn
+          retention-days: 90
+          overwrite: true
+
+  validate:
+    # Executes generated fixtures with no catalogue/GitHub write credentials or environment secrets.
+    needs: supervise
+    if: ${{ inputs.kind == 'native' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-central-recovery-${{ github.run_id }}
+          path: artifacts/test262
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Apply sealed patch and run focused validation
+        run: |
+          if [ ! -s artifacts/test262/central-patch.diff ]; then
+            echo 'No sealed native batch to validate.'
+            exit 0
+          fi
+          TARGET="$(python -c 'import json;print(json.load(open("artifacts/test262/central-context.json"))["revision"])')"
+          git checkout --detach "$TARGET"
+          git apply artifacts/test262/central-patch.diff
+          git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+          CLASS="$(python - <<'PYCLASS'
+          import json, sys
+          sys.path.insert(0, 'scripts/test262')
+          import nativePorting
+          batch=json.load(open('artifacts/test262/central-batch.json'))
+          print(nativePorting.safe_identifier(batch['batch']))
+          PYCLASS
+          )"
+          dotnet test tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj -c Release --nologo \
+            --filter "FullyQualifiedName~NativePortBatch_$CLASS" --logger trx --results-directory artifacts/test262/central-validation
+          python - <<'PYTEST'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          files=list(Path('artifacts/test262/central-validation').glob('*.trx'))
+          assert files, 'No validation result'
+          for file in files:
+              counters=ET.parse(file).find('.//{*}Counters')
+              assert counters is not None and int(counters.get('total','0'))>0
+              assert counters.get('passed')==counters.get('total'), 'Focused validation did not pass'
+          PYTEST
+          python scripts/test262/nativePorting.py validate-patch --base-revision "$TARGET" \
+            --generated artifacts/test262/central-generated.json --output artifacts/test262/central-patch-validation.json
+          python - <<'PYDIGEST'
+          import hashlib, json
+          from pathlib import Path
+          result=json.loads(Path('artifacts/test262/central-patch-validation.json').read_text())
+          assert result['patch_digest']==hashlib.sha256(Path('artifacts/test262/central-patch.diff').read_bytes()).hexdigest(), 'Validated tree differs from sealed patch'
+          PYDIGEST
+          printf 'Fresh sealed native batch. Focused xUnit validation passed in a credential-free job. Required PR CI and human review remain required.\n' > artifacts/test262/central-pr-body.md
+      - uses: actions/upload-artifact@v7
+        with:
+          name: test262-central-validation-${{ github.run_id }}
+          path: |
+            artifacts/test262/central-patch-validation.json
+            artifacts/test262/central-pr-body.md
+            artifacts/test262/central-validation
+          if-no-files-found: ignore
+          retention-days: 90
+          overwrite: true
+
+  publish:
+    needs: [supervise, validate]
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.kind == 'native' && inputs.publish == true }}
+    environment: test262-catalogue-publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app
+        with:
+          app-id: ${{ vars.TEST262_PORTING_APP_ID }}
+          private-key: ${{ secrets.TEST262_PORTING_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-central-recovery-${{ github.run_id }}
+          path: artifacts/test262
+      - uses: actions/download-artifact@v8
+        with:
+          name: test262-central-validation-${{ github.run_id }}
+          path: artifacts/test262
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Reconcile central reservation and GitHub branch/PR
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          if [ -s artifacts/test262/central-patch.diff ] && [ -s artifacts/test262/central-patch-validation.json ]; then
+            python -m scripts.test262.central.cli publish --batch-file artifacts/test262/central-batch.json \
+              --patch artifacts/test262/central-patch.diff --manifest artifacts/test262/central-patch-validation.json \
+              --body artifacts/test262/central-pr-body.md
+          fi

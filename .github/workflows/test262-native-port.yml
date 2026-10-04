@@ -59,7 +59,7 @@ env:
 
 jobs:
   screen:
-    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' && github.event.workflow_run.event == 'push') }}
+    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY != 'supabase' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' && github.event.workflow_run.event == 'push')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:

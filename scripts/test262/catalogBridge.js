@@ -22,7 +22,10 @@ function classify(root, relativePath, pin) {
       ? ['module']
       : determineVariants(metadata.execution, null, relativePath);
     return { path: relativePath, sha256, variants,
-      state: reasons.length ? 'blocked' : 'runnable', reasons };
+      state: reasons.length ? 'blocked' : 'runnable', reasons,
+      metadata: { flags: metadata.flags, includes: metadata.includes, features: metadata.features,
+        negative: metadata.negative, execution: metadata.execution },
+      isSupportFile: /(?:^|\/)(?:_[^/]*|[^/]*_FIXTURE)\.js$/i.test(relativePath) };
   } catch (error) {
     return { path: relativePath, sha256, variants: [], state: 'metadata-error',
       reasons: [{ code: 'metadata-error', reason: error.message }] };
