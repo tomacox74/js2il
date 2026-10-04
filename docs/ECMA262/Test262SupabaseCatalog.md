@@ -369,7 +369,19 @@ It verifies ten observations/completed work items, ten charged attempts, zero re
 budget and zero pending outbox messages. Repeated acknowledged flushes must not add
 observations. Product pass/fail outcomes are recorded; infrastructure/incomplete
 outcomes fail operational acceptance. This is not full Test262 conformance or a native
-publication pilot, and does not replace two-worker/failure-injection acceptance.
+publication pilot.
+
+The workflow now passes `--workers 2`: two independent supervisor connections,
+run identities and durable outboxes race their first claims against the same queue
+and ten-attempt shared budget. Each executes five variants. Worker zero deliberately
+loses its first ingestion acknowledgement after the real server commits. Its
+supervisor stops, verifies one committed observation and pending upload/completion,
+then reconnects and resumes from that exact outbox before claiming more work.
+The final report requires distinct initial claims, exactly one copy of the recovered
+observation, ten completed items and zero pending uploads/reservations. Both outboxes
+are retained. `--workers 1` preserves the earlier baseline. This is a simulated
+transport acknowledgement loss/reconnect check; process-kill, lease-expiry, conflict,
+budget-exhaustion and native publication recovery remain separate acceptance drills.
 
 Review the `pilot-report.json` and `test262-worker-pilot-<run>-<attempt>` artifact before
 recording the isolated-execution item in #2230. Evidence stays in the disposable run;
