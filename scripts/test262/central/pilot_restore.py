@@ -51,6 +51,7 @@ def docker_tools(output):
         require(command[0] in ('pg_dump','pg_restore','psql'), 'Unexpected restore-drill command')
         environment = env if env is not None else os.environ
         options = ['docker','run','--rm','--network','host',
+                   '--user',f'{os.getuid()}:{os.getgid()}',
                    '--mount',f'type=bind,source={output},target={output}',
                    '--mount',f'type=bind,source={tempfile.gettempdir()},target={tempfile.gettempdir()}']
         # Values remain in process environment. Docker receives only variable names.
