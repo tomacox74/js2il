@@ -1,0 +1,62 @@
+name: Test262 connection test
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  connection:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    environment: test262-catalogue
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - run: python -m pip install 'psycopg[binary]==3.3.3'
+
+      - name: Verify database connection and binding
+        env:
+          DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+        run: |
+          python - <<'PY'
+          import os
+          import psycopg
+
+          for name in ("DATABASE_URL", "REPOSITORY_ID", "PRODUCER_ID", "AUTHORITY_EPOCH"):
+              if not os.environ.get(name):
+                  raise ValueError(f"Missing environment setting: {name}")
+
+          with psycopg.connect(
+              os.environ["DATABASE_URL"],
+              connect_timeout=20,
+              options="-c default_transaction_read_only=on -c statement_timeout=15000"
+          ) as db:
+              assert db.execute("SHOW transaction_read_only").fetchone()[0] == "on", "Read-only transaction required"
+              tls = db.execute(
+                  "SELECT ssl FROM pg_catalog.pg_stat_ssl WHERE pid = pg_backend_pid()"
+              ).fetchone()
+              assert tls and tls[0], "TLS connection required"
+              login, contract = db.execute(
+                  "SELECT session_user, test262.api_contract()"
+              ).fetchone()
+
+              assert login == "test262_supervisor", "Wrong database login"
+              assert contract, "Missing or disabled binding"
+              assert contract["repository_id"] == os.environ["REPOSITORY_ID"], "Repository mismatch"
+              assert contract["producer_id"] == os.environ["PRODUCER_ID"], "Producer mismatch"
+              assert contract["minimum_writer_epoch"] == int(os.environ["AUTHORITY_EPOCH"]), "Epoch mismatch"
+              assert contract["api_contract_version"] == 1, "API version mismatch"
+              assert contract["permission"] == "coordinator", "Permission mismatch"
+              assert contract["trust_class"] == "trusted", "Trust mismatch"
+
+              print("PASS: TLS connection and supervisor binding verified.")
+              print("Authority state:", contract["deployment_state"])
+          PY
