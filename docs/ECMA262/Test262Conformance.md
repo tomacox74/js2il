@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,923 | 12 | 6,577 | 23,512 | **71.98%** |
+| Built-in objects and APIs | 16,933 | 12 | 6,567 | 23,512 | **72.02%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,236 | 101 | 13,908 | 48,245 | **70.96%** |
+| **Total** | 34,246 | 101 | 13,898 | 48,245 | **70.98%** |
 
 ## Language Areas
 
@@ -193,8 +193,8 @@ bounded worker cleanup.
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
-| `AggregateError` | 24 | 0 | 1 | 25 | **96.00%** |
-| `Array` | 3,045 | 0 | 36 | 3,081 | **98.83%** |
+| `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
+| `Array` | 3,054 | 0 | 27 | 3,081 | **99.12%** |
 | `ArrayBuffer` | 191 | 0 | 5 | 196 | **97.45%** |
 | `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
 | `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |

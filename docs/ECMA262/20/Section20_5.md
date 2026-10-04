@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-08T20:06:27Z
+> Last generated (UTC): 2026-10-04T17:49:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -123,7 +123,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| AggregateError constructor and iterable error list | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AggregateError/FailingBatchExecutionTests.cs` | `test/built-ins/AggregateError/errors-iterabletolist-failures.js`<br>`test/built-ins/AggregateError/errors-iterabletolist.js`<br>`test/built-ins/AggregateError/message-method-prop-cast.js`<br>`test/built-ins/AggregateError/message-method-prop.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt-symbol.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt.js`<br>`test/built-ins/AggregateError/message-undefined-no-prop.js`<br>`test/built-ins/AggregateError/newtarget-is-undefined.js`<br>`test/built-ins/AggregateError/order-of-args-evaluation.js`<br>`test/built-ins/AggregateError/cause-property.js` | AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes writable non-enumerable errors and optional cause properties, and creates an own message property only for defined messages. Custom newTarget prototypes and cross-realm construction remain limited. |
+| AggregateError constructor and iterable error list | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AggregateError/CrossRealmExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AggregateError/FailingBatchExecutionTests.cs` | `test/built-ins/AggregateError/errors-iterabletolist-failures.js`<br>`test/built-ins/AggregateError/errors-iterabletolist.js`<br>`test/built-ins/AggregateError/message-method-prop-cast.js`<br>`test/built-ins/AggregateError/message-method-prop.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt-symbol.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt.js`<br>`test/built-ins/AggregateError/message-undefined-no-prop.js`<br>`test/built-ins/AggregateError/newtarget-is-undefined.js`<br>`test/built-ins/AggregateError/order-of-args-evaluation.js`<br>`test/built-ins/AggregateError/cause-property.js`<br>`test/built-ins/AggregateError/proto-from-ctor-realm.js` | AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes writable non-enumerable errors and optional cause properties, and creates an own message property only for defined messages. Cross-realm default-prototype construction now follows the NewTarget realm. |
 
 ### 20.5.7.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors))
 

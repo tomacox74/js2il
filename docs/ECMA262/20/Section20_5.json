@@ -445,6 +445,7 @@
         "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AggregateError/CrossRealmExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/AggregateError/FailingBatchExecutionTests.cs"
         ],
         "test262Paths": [
@@ -457,9 +458,10 @@
           "test/built-ins/AggregateError/message-undefined-no-prop.js",
           "test/built-ins/AggregateError/newtarget-is-undefined.js",
           "test/built-ins/AggregateError/order-of-args-evaluation.js",
-          "test/built-ins/AggregateError/cause-property.js"
+          "test/built-ins/AggregateError/cause-property.js",
+          "test/built-ins/AggregateError/proto-from-ctor-realm.js"
         ],
-        "notes": "AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes writable non-enumerable errors and optional cause properties, and creates an own message property only for defined messages. Custom newTarget prototypes and cross-realm construction remain limited."
+        "notes": "AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes writable non-enumerable errors and optional cause properties, and creates an own message property only for defined messages. Cross-realm default-prototype construction now follows the NewTarget realm."
       },
       {
         "clause": "20.5.7.2",

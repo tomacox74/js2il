@@ -976,9 +976,12 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction1 _objectPrototypeLookupSetterValue = PrototypeLookupSetter;
 
         internal static JsObject CreateOrdinaryObject()
+            => CreateOrdinaryObject(RuntimeIntrinsics.Current);
+
+        internal static JsObject CreateOrdinaryObject(RuntimeIntrinsics intrinsics)
         {
             var result = new JsObject();
-            PrototypeChain.SetPrototype(result, GlobalThis.ObjectPrototypeValue);
+            PrototypeChain.SetPrototype(result, intrinsics.ObjectPrototype);
             return result;
         }
 
@@ -2631,7 +2634,9 @@ namespace JavaScriptRuntime
 
             if (constructor is JsFunctionObject functionObject)
             {
-                return CallableOperations.Construct(functionObject, callArgs, newTarget);
+                var result = CallableOperations.Construct(functionObject, callArgs, newTarget);
+                ApplyConstructedPrototype(result, functionObject, newTarget);
+                return result;
             }
 
             object? ConstructTypeValue(Type type, object[] callArgs, object[] scopes, object? prototypeOwner = null)
@@ -2642,6 +2647,9 @@ namespace JavaScriptRuntime
                 }
 
                 var isDerivedClassType = prototypeOwner is JsClassConstructorObject { IsDerivedClass: true };
+                var constructionRealm = newTarget is not null and not JsNull
+                    ? RuntimeIntrinsics.GetFunctionRealm(newTarget)
+                    : RuntimeIntrinsics.Current;
                 RuntimeServices.PushCurrentArguments(callArgs);
                 var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
                     newTarget ?? prototypeOwner ?? type);
@@ -2654,12 +2662,9 @@ namespace JavaScriptRuntime
                 {
                     if (instance is not null && instance is not JsNull)
                     {
-                        var defaultPrototype = GetProperty(
-                            prototypeOwner ?? type,
-                            "prototype");
-                        var newTargetPrototype = GetProperty(
-                            newTarget ?? prototypeOwner ?? type,
-                            "prototype");
+                        var defaultPrototype = GetIntrinsicPrototypeForType(type, constructionRealm)
+                            ?? GetProperty(prototypeOwner ?? type, "prototype");
+                        var newTargetPrototype = GetProperty(newTarget ?? prototypeOwner ?? type, "prototype");
                         PrototypeChain.SetPrototype(
                             instance,
                             TypeUtilities.IsConstructorReturnOverride(
@@ -2670,6 +2675,15 @@ namespace JavaScriptRuntime
 
                     return instance;
                 }
+
+                static object? GetIntrinsicPrototypeForType(Type type, RuntimeIntrinsics intrinsics)
+                    => type == typeof(JavaScriptRuntime.Array)
+                        ? intrinsics.ArrayPrototype
+                        : type == typeof(JavaScriptRuntime.AggregateError)
+                            ? intrinsics.AggregateErrorPrototype
+                            : type == typeof(JavaScriptRuntime.Error)
+                                ? intrinsics.ErrorPrototype
+                                : null;
 
                 object? CompleteClassConstruction(object? instance)
                 {
@@ -2761,6 +2775,39 @@ namespace JavaScriptRuntime
                     RuntimeServices.SetCurrentNewTarget(previousNewTarget);
                     RuntimeServices.PopCurrentArguments();
                 }
+            }
+
+            static void ApplyConstructedPrototype(
+                object? result,
+                JsFunctionObject constructor,
+                object? newTarget)
+            {
+                if (result is null or JsNull || newTarget is null or JsNull)
+                {
+                    return;
+                }
+
+                var prototype = GetProperty(newTarget, "prototype");
+                if (TypeUtilities.IsConstructorReturnOverride(prototype))
+                {
+                    PrototypeChain.SetPrototype(result, prototype);
+                    return;
+                }
+
+                var intrinsics = RuntimeIntrinsics.GetFunctionRealm(newTarget);
+                var defaultPrototype = constructor is BuiltinDelegateFunctionAdapter adapter
+                    && GlobalThis.IsAggregateErrorConstructorValue(adapter.Target)
+                    ? intrinsics.AggregateErrorPrototype
+                    : constructor is BuiltinDelegateFunctionAdapter arrayAdapter
+                        && GlobalThis.IsArrayConstructorValue(arrayAdapter.Target)
+                            ? intrinsics.ArrayPrototype
+                            : null;
+                if (defaultPrototype is null)
+                {
+                    return;
+                }
+
+                PrototypeChain.SetPrototype(result, defaultPrototype);
             }
 
             if (constructor is JsObject
@@ -3666,7 +3713,8 @@ namespace JavaScriptRuntime
             {
                 result =
                     BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
-                        prop.GetValue(instance));
+                        prop.GetValue(instance),
+                        instance is GlobalThis global ? global.Intrinsics : RuntimeIntrinsics.Current);
                 return true;
             }
 
@@ -3675,7 +3723,8 @@ namespace JavaScriptRuntime
             {
                 result =
                     BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
-                        field.GetValue(instance));
+                        field.GetValue(instance),
+                        instance is GlobalThis global ? global.Intrinsics : RuntimeIntrinsics.Current);
                 return true;
             }
 
@@ -3686,7 +3735,8 @@ namespace JavaScriptRuntime
                     BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
                         getter.Invoke(
                             instance,
-                            System.Array.Empty<object>()));
+                            System.Array.Empty<object>()),
+                        instance is GlobalThis global ? global.Intrinsics : RuntimeIntrinsics.Current);
                 return true;
             }
 

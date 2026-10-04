@@ -256,9 +256,13 @@ public static class Test262HostRuntimeIntrinsics
 
     private static object CreateRealm()
     {
-        var realm = new JsObject();
-        ObjectRuntime.SetItem(realm, "global", GlobalThis.globalThis);
-        return realm;
+        var services = RuntimeServices.BuildServiceProvider();
+        var context = RuntimeExecutionContext.GetOrCreate(services);
+        using var scope = context.EnterAsRoot();
+
+        var result = new JsObject();
+        ObjectRuntime.SetItem(result, "global", context.GetOrCreateGlobalObject());
+        return result;
     }
 
     private static JsFunctionObject Unsupported262(string name)

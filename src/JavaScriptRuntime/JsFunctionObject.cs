@@ -12,10 +12,15 @@ public abstract class JsFunctionObject : JsObject
     private bool _supportsExplicitInvocationContext;
 
     protected JsFunctionObject()
+        : this(RuntimeIntrinsics.Current)
+    {
+    }
+
+    private protected JsFunctionObject(RuntimeIntrinsics intrinsics)
     {
         _owningIntrinsics = new WeakReference<RuntimeIntrinsics>(
-            RuntimeIntrinsics.Current);
-        PrototypeChain.InitializePrototype(this, Function.Prototype);
+            intrinsics);
+        PrototypeChain.InitializePrototype(this, Function.GetPrototype(intrinsics));
     }
 
     internal RuntimeIntrinsics OwningIntrinsics
