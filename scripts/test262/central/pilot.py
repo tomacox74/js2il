@@ -78,15 +78,17 @@ def run(args):
     started=time.monotonic()
     client=None
     try:
+        report['stage']='provision'
         admin=os.environ['TEST262_PILOT_ADMIN_DSN']
         repo,producer,dsn=provision(admin)
         client=Client(dsn=dsn,epoch=1)
         os.environ['TEST262_PILOT_CANARY']='must-not-reach-fixtures'
+        report['stage']='select-fixtures'
         inventory=catalog.bridge({'command':'inventory','root':str(Path(args.root).resolve())})
         selected=[]
         for row in sorted(inventory,key=lambda r:r['path']):
             if (row['path'].startswith('test/built-ins/Math/abs/') and row['state']=='runnable'
-                    and sorted(row['variants'])==['default','strict']):
+                    and sorted(row['variants'])==['non-strict','strict']):
                 normalized=normalize_fixture(row,args.root)
                 if normalized['dependency_manifest_digest'] and not normalized['is_support_file']:
                     selected.append(normalized)
@@ -95,6 +97,7 @@ def run(args):
         pin=json.loads((REPO/'tests/test262/test262.pin.json').read_text())['upstream']
         actual=subprocess.check_output(['git','-C',args.root,'rev-parse','HEAD'],text=True).strip()
         if actual!=pin['commit']:raise ValueError('Pilot upstream pin mismatch')
+        report['stage']='register-and-enqueue'
         corpus,ids=register(client,repo,pin,selected)
         revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True,cwd=REPO).strip()
         entry=Path(args.jroc).resolve()
@@ -118,8 +121,11 @@ def run(args):
         client.put('budget_work_items',[{'repository_id':repo,'budget_scope_id':workargs.budget,'work_item_id':w['work_item_id']} for w in workrows])
         with tempfile.TemporaryDirectory(prefix='pilot-runtime-') as runtime:
             stage_runtime(workargs,runtime);Path(runtime).chmod(0o755);workargs.runtime=runtime
+            report['stage']='isolation-probe'
             report['isolation']=isolation_probe(workargs,Path(args.root).resolve())
+            report['stage']='execute-worker'
             report['worker']=work_staged(client,workargs)
+        report['stage']='verify-results'
         observations=list(client.read('observations',{'run_id':workargs.run}))
         workitems=list(client.read('work_items',{'provenance_id':pid}))
         budget=client.one('budget_scopes',budget_scope_id=workargs.budget)
@@ -137,6 +143,7 @@ def run(args):
                 any(o['outcome'] in ('infrastructure-error','incomplete') for o in observations)):
             raise ValueError('Pilot execution/lease/outbox/budget invariant failed')
         report['complete']=True
+        report['stage']='verified'
     except Exception as error:
         report['error_type']=type(error).__name__
         raise

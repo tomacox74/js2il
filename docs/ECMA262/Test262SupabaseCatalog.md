@@ -360,7 +360,7 @@ refuses remote hosts, existing catalogue schemas and performance data before
 applying migrations. Only that disposable service receives active authority.
 
 The pilot registers a clearly identified partial inventory of five pinned Math.abs
-fixtures and executes their ten default/strict variants through the production
+fixtures and executes their ten non-strict/strict variants through the production
 worker's shared Docker isolation, API claims, durable outbox ingestion and completion.
 It checks isolation with the same container arguments: no external network,
 non-root UID, read-only root, zero effective capabilities, no-new-privileges,
