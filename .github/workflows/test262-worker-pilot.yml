@@ -1,0 +1,58 @@
+name: Test262 isolated worker pilot
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/test262-worker-pilot.yml'
+      - 'scripts/test262/central/pilot.py'
+      - 'scripts/test262/central/worker.py'
+      - 'scripts/test262/central/fixture.Dockerfile'
+permissions:
+  contents: read
+jobs:
+  pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: disposable-pilot-only
+          POSTGRES_DB: catalogue_pilot
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Build fixture runtime and isolation image
+        run: |
+          dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          docker build -t test262-fixture:pilot -f scripts/test262/central/fixture.Dockerfile .
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Execute ten variants through isolated worker and scoped API
+        env:
+          TEST262_PILOT_ADMIN_DSN: postgresql://postgres:disposable-pilot-only@127.0.0.1:5432/catalogue_pilot
+        run: |
+          python -m scripts.test262.central.pilot --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
+      - name: Preserve pilot report and acknowledged outbox
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-worker-pilot-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/worker-pilot
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
