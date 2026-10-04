@@ -33,12 +33,12 @@ def row_digest(db, table):
 def metadata(db):
     return db.execute("""
       SELECT 'relation',n.nspname,c.relname,c.relkind::text,
-             c.relrowsecurity::text,c.relforcerowsecurity::text,coalesce((SELECT string_agg(a::text,',' ORDER BY a::text) FROM unnest(c.relacl) a),'')
+             c.relrowsecurity::text,c.relforcerowsecurity::text,coalesce((SELECT string_agg(a::text,',' ORDER BY a::text) FROM unnest(coalesce(c.relacl,acldefault(CASE WHEN c.relkind='S' THEN 'S'::"char" ELSE 'r'::"char" END,c.relowner))) a),'')
       FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
       WHERE n.nspname IN ('test262','test262_reporting') AND c.relkind IN ('r','v','S')
       UNION ALL
       SELECT 'function',n.nspname,p.proname,pg_get_function_identity_arguments(p.oid),
-             p.prosecdef::text,coalesce(p.proconfig::text,''),coalesce((SELECT string_agg(a::text,',' ORDER BY a::text) FROM unnest(p.proacl) a),'')
+             p.prosecdef::text,coalesce(p.proconfig::text,''),coalesce((SELECT string_agg(a::text,',' ORDER BY a::text) FROM unnest(coalesce(p.proacl,acldefault('f',p.proowner))) a),'')
       FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
       WHERE n.nspname IN ('test262','test262_reporting')
       ORDER BY 1,2,3,4
