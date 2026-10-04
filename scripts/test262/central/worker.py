@@ -34,6 +34,15 @@ def stage_runtime(args, destination):
     return destination
 
 
+def container_arguments(args, root, work, name):
+    """Shared isolation boundary used by workers and the disposable pilot probe."""
+    return ['docker','run','--name',name,'--rm','--network','none','--cap-drop','ALL',
+              '--pids-limit','512','--security-opt','no-new-privileges','--read-only',
+              '--tmpfs','/tmp:rw,nosuid,size=256m','--mount','type=bind,src='+str(args.runtime)+',dst=/repo,readonly',
+              '--mount','type=bind,src='+str(root)+',dst=/upstream,readonly',
+              '--mount','type=bind,src='+str(work)+',dst=/work',args.image]
+
+
 def run_container(args, fixture, variant, cap_ms, manifest, work):
     root = Path(args.root).resolve()
     for dependency in manifest.get('dependencies', []):
@@ -41,11 +50,7 @@ def run_container(args, fixture, variant, cap_ms, manifest, work):
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != dependency['content_sha256']:
             raise ValueError('Dependency changed: ' + dependency['dependency_path'])
     name = 'test262-' + uuid.uuid4().hex
-    common = ['docker','run','--name',name,'--rm','--network','none','--cap-drop','ALL',
-              '--pids-limit','512','--security-opt','no-new-privileges','--read-only',
-              '--tmpfs','/tmp:rw,nosuid,size=256m','--mount','type=bind,src='+str(args.runtime)+',dst=/repo,readonly',
-              '--mount','type=bind,src='+str(root)+',dst=/upstream,readonly',
-              '--mount','type=bind,src='+str(work)+',dst=/work',args.image]
+    common = container_arguments(args, root, work, name)
     if args.kind == 'mvp-composite':
         jroc = '/repo/' + Path(args.jroc).resolve().relative_to(REPO).as_posix()
         request = {'root':'/upstream','output':'/work/case','fixture':fixture['upstream_path'],'variant':variant,

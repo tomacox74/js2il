@@ -349,3 +349,28 @@ for unavailable history. Scheduled runs append bounded milestone comments to the
 tracking issue and save a job summary, planning report and recovery artifact; they
 do not overwrite other agents' issue edits. Preserve evidence outside Actions expiry.
 An archive with more than 100 matching snapshots fails closed for manual splitting.
+
+## Isolated worker pilot before cutover
+
+`.github/workflows/test262-worker-pilot.yml` runs automatically on changes to the
+pilot/worker/image in a PR, or manually after merge. It uses an empty PostgreSQL 17
+service named `catalogue_pilot` on loopback and a newly bound restricted login.
+It references no protected environment or production connection secret. The pilot
+refuses remote hosts, existing catalogue schemas and performance data before
+applying migrations. Only that disposable service receives active authority.
+
+The pilot registers a clearly identified partial inventory of five pinned Math.abs
+fixtures and executes their ten default/strict variants through the production
+worker's shared Docker isolation, API claims, durable outbox ingestion and completion.
+It checks isolation with the same container arguments: no external network,
+non-root UID, read-only root, zero effective capabilities, no-new-privileges,
+separate PID namespace, and no database/GitHub credentials, checkout or outbox mount.
+It verifies ten observations/completed work items, ten charged attempts, zero reserved
+budget and zero pending outbox messages. Repeated acknowledged flushes must not add
+observations. Product pass/fail outcomes are recorded; infrastructure/incomplete
+outcomes fail operational acceptance. This is not full Test262 conformance or a native
+publication pilot, and does not replace two-worker/failure-injection acceptance.
+
+Review the `pilot-report.json` and `test262-worker-pilot-<run>-<attempt>` artifact before
+recording the isolated-execution item in #2230. Evidence stays in the disposable run;
+never upload this partial pilot corpus to production or activate Supabase from this job.
