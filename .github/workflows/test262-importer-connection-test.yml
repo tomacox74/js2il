@@ -1,0 +1,29 @@
+name: Test262 importer connection test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  connection:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    environment: test262-catalogue-import
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Check importer login without database writes
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_IMPORTER_DATABASE_URL }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_IMPORTER_PRODUCER_ID }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+        run: python -m scripts.test262.central.connection_check --login test262_importer --trust legacy
