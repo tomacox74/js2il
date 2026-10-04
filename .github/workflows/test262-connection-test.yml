@@ -29,21 +29,25 @@ jobs:
           python - <<'PY'
           import os
           import psycopg
+          from psycopg.conninfo import conninfo_to_dict
 
           for name in ("DATABASE_URL", "REPOSITORY_ID", "PRODUCER_ID", "AUTHORITY_EPOCH"):
               if not os.environ.get(name):
                   raise ValueError(f"Missing environment setting: {name}")
 
+          sslmode = conninfo_to_dict(os.environ["DATABASE_URL"]).get("sslmode", "require")
+          assert sslmode in ("require", "verify-ca", "verify-full"), "TLS connection required"
+
           with psycopg.connect(
               os.environ["DATABASE_URL"],
               connect_timeout=20,
-              options="-c default_transaction_read_only=on -c statement_timeout=15000"
+              sslmode=sslmode,
+              autocommit=True
           ) as db:
+              # Poolers may not forward startup options to the backend connection.
+              db.execute("BEGIN READ ONLY")
+              db.execute("SET LOCAL statement_timeout = '15s'")
               assert db.execute("SHOW transaction_read_only").fetchone()[0] == "on", "Read-only transaction required"
-              tls = db.execute(
-                  "SELECT ssl FROM pg_catalog.pg_stat_ssl WHERE pid = pg_backend_pid()"
-              ).fetchone()
-              assert tls and tls[0], "TLS connection required"
               login, contract = db.execute(
                   "SELECT session_user, test262.api_contract()"
               ).fetchone()
@@ -57,6 +61,7 @@ jobs:
               assert contract["permission"] == "coordinator", "Permission mismatch"
               assert contract["trust_class"] == "trusted", "Trust mismatch"
 
+              db.execute("ROLLBACK")
               print("PASS: TLS connection and supervisor binding verified.")
               print("Authority state:", contract["deployment_state"])
           PY
