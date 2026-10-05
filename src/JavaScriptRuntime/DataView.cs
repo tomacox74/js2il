@@ -11,7 +11,10 @@ namespace JavaScriptRuntime
 
         /// <summary>Realm-owned <c>DataView.prototype</c> (issue #1824).</summary>
         internal static object Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static object GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.DataViewPrototype,
                 static () => new JsObject());
 

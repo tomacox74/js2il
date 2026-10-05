@@ -1090,6 +1090,19 @@ public static class Function
                     newTarget);
             }
 
+            if (GlobalThis.IsBooleanConstructorTarget(constructor.Target))
+            {
+                var wrapper = new JavaScriptRuntime.Boolean(
+                    arguments.GetArgument(0));
+                var prototype = ObjectRuntime.GetItem(newTarget ?? constructor, "prototype");
+                PrototypeChain.SetPrototype(
+                    wrapper,
+                    TypeUtilities.IsConstructorReturnOverride(prototype)
+                        ? prototype
+                        : RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor).BooleanPrototype);
+                return wrapper;
+            }
+
             var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor);
             var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
 
@@ -1189,11 +1202,9 @@ public static class Function
             else
             {
                 var intrinsics = RuntimeIntrinsics.GetFunctionRealm(newTarget);
-                var defaultPrototype = GlobalThis.IsAggregateErrorConstructorValue(constructor.Target)
-                    ? intrinsics.AggregateErrorPrototype
-                    : GlobalThis.IsArrayConstructorValue(constructor.Target)
-                        ? intrinsics.ArrayPrototype
-                        : null;
+                var defaultPrototype = GlobalThis.GetIntrinsicConstructorPrototype(
+                    constructor.Target,
+                    intrinsics);
                 if (defaultPrototype is null)
                 {
                     return result;

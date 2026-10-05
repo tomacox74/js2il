@@ -10,6 +10,90 @@ namespace Jroc.Tests;
 /// </summary>
 public sealed class RuntimeIntrinsicIsolationTests
 {
+    [Theory]
+    [InlineData("Array", typeof(JavaScriptRuntime.Array))]
+    [InlineData("AggregateError", typeof(JavaScriptRuntime.AggregateError))]
+    [InlineData("Error", typeof(JavaScriptRuntime.Error))]
+    [InlineData("ArrayBuffer", typeof(JavaScriptRuntime.ArrayBuffer))]
+    [InlineData("SharedArrayBuffer", typeof(JavaScriptRuntime.SharedArrayBuffer))]
+    [InlineData("DataView", typeof(JavaScriptRuntime.DataView))]
+    [InlineData("Map", typeof(JavaScriptRuntime.Map))]
+    [InlineData("Set", typeof(JavaScriptRuntime.Set))]
+    [InlineData("WeakMap", typeof(JavaScriptRuntime.WeakMap))]
+    [InlineData("WeakSet", typeof(JavaScriptRuntime.WeakSet))]
+    [InlineData("RegExp", typeof(JavaScriptRuntime.RegExp))]
+    [InlineData("Boolean", typeof(JavaScriptRuntime.Boolean))]
+    public void BuiltinConstruction_DefaultPrototypeUsesNewTargetRealmAcrossRuntimeEntryPoints(
+        string name,
+        Type type)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        var foreignServices = RuntimeServices.BuildServiceProvider();
+        var context = RuntimeExecutionContext.GetOrCreate(services);
+        var foreignContext = RuntimeExecutionContext.GetOrCreate(foreignServices);
+
+        try
+        {
+            BuiltinDelegateFunctionAdapter newTarget;
+            object foreignConstructor;
+            object expectedDefault;
+            using (foreignContext.EnterAsRoot())
+            {
+                _ = GlobalThis.globalThis;
+                foreignConstructor = ObjectRuntime.GetProperty(GlobalThis.globalThis, name)!;
+                newTarget = BuiltinDelegateFunctionAdapter.FromDelegate(
+                    (Func<object[], object?>)(static _ => null),
+                    foreignContext.Realm.Intrinsics,
+                    isConstructor: true);
+                expectedDefault = foreignContext.Realm.Intrinsics.GetConstructorPrototype(type)!;
+            }
+
+            using (context.EnterAsRoot())
+            {
+                Assert.Same(expectedDefault, ObjectRuntime.GetProperty(foreignConstructor, "prototype"));
+                var descriptor = ObjectRuntime.getOwnPropertyDescriptor(foreignConstructor, "prototype");
+                Assert.Same(expectedDefault, ObjectRuntime.GetProperty(descriptor!, "value"));
+                var constructor = Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                    ObjectRuntime.GetProperty(GlobalThis.globalThis, name));
+                object?[] args = name == "DataView"
+                    ? [new JavaScriptRuntime.ArrayBuffer(0d)]
+                    : name == "Boolean" ? [true]
+                    : name == "AggregateError" ? [new JavaScriptRuntime.Array()]
+                    : [];
+                var explicitPrototype = new JsObject();
+                foreach (var prototype in new object?[] { null, JsNull.Null, 0d, "ignored", false, explicitPrototype })
+                {
+                    ObjectRuntime.SetProperty(newTarget, "prototype", prototype);
+                    var expected = ReferenceEquals(prototype, explicitPrototype)
+                        ? explicitPrototype
+                        : expectedDefault;
+                    var results = new[]
+                    {
+                        ObjectRuntime.ConstructValue(type, args!, newTarget),
+                        ObjectRuntime.ConstructValue(constructor, args!, newTarget),
+                        JavaScriptRuntime.Function.Construct(
+                            constructor,
+                            JsCallArguments.FromArray(args),
+                            newTarget)
+                    };
+                    foreach (var result in results)
+                    {
+                        Assert.Same(expected, ObjectRuntime.getPrototypeOf(result!));
+                        if (name == "Boolean")
+                        {
+                            Assert.True(Assert.IsType<JavaScriptRuntime.Boolean>(result).valueOf());
+                        }
+                    }
+                }
+            }
+        }
+        finally
+        {
+            context.Realm.Agent.Cluster.Dispose();
+            foreignContext.Realm.Agent.Cluster.Dispose();
+        }
+    }
+
     [Fact]
     public void PlainObjectRead_DoesNotMaterializeFunctionPrototype()
     {
