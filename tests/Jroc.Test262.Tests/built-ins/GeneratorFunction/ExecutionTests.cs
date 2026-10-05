@@ -46,6 +46,10 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task instance_name()
         => ExecutionTestFromFile("instance-name");
 
+    [Fact(DisplayName = "instance-prototype")]
+    public Task instance_prototype()
+        => ExecutionTestFromFile("instance-prototype");
+
     [Fact(DisplayName = "instance-restricted-properties")]
     public Task instance_restricted_properties()
         => ExecutionTestFromFile("instance-restricted-properties");

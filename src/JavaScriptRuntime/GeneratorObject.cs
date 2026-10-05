@@ -57,11 +57,18 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
-        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
-        DefineDataProperty(prototype, "next", (BuiltinFunction1)PrototypeNext);
-        DefineDataProperty(prototype, "return", (BuiltinFunction1)PrototypeReturn);
-        DefineDataProperty(prototype, "throw", (BuiltinFunction1)PrototypeThrow);
-        DefineDataProperty(prototype, Symbol.toStringTag.DebugId, "Generator");
+        PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = GeneratorFunctionPrototype
+        });
+        GlobalThis.DefineBuiltinFunctionProperty(prototype, "next", (BuiltinFunction1)PrototypeNext, 1d);
+        GlobalThis.DefineBuiltinFunctionProperty(prototype, "return", (BuiltinFunction1)PrototypeReturn, 1d);
+        GlobalThis.DefineBuiltinFunctionProperty(prototype, "throw", (BuiltinFunction1)PrototypeThrow, 1d);
+        GlobalThis.DefineIntrinsicToStringTagProperty(prototype, "Generator");
     }
 
     /// <summary>
@@ -74,7 +81,23 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         PrototypeChain.SetPrototype(prototype, Function.Prototype);
-        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
+        PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = _generatorFunctionConstructor
+        });
+        PropertyDescriptorStore.DefineOrUpdate(prototype, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = Prototype
+        });
+        GlobalThis.DefineIntrinsicToStringTagProperty(prototype, "GeneratorFunction");
 
         Function.InitializeFunctionInstance(_generatorFunctionConstructor, 1d, "GeneratorFunction", requiresInvocationContext: false);
         Function.MarkConstructible(_generatorFunctionConstructor);
