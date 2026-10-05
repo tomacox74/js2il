@@ -16,8 +16,7 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class GeneratorObject : JsObject, IJavaScriptIterator
 {
-    // Stable singleton used as %GeneratorPrototype%.constructor.
-    // Per ECMA-262, gen.constructor is the same function object for all generator instances.
+    // Stable singleton used as %GeneratorFunction%.
     private static readonly Func<object[], object?[]?, object?> _generatorFunctionConstructor =
         static (_, args) => CreateDynamicGeneratorFunction(args);
     /// <summary>Realm-owned <c>%GeneratorPrototype%</c> (issue #1824).</summary>
@@ -46,9 +45,9 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
     }
 
     /// <summary>
-    /// %GeneratorPrototype%.constructor — stable function object, same for all generator instances.
+    /// %GeneratorPrototype%.constructor — the shared %GeneratorFunction.prototype% object.
     /// </summary>
-    public object constructor => _generatorFunctionConstructor;
+    public object constructor => GeneratorFunctionPrototype;
     internal static object GeneratorFunctionPrototypeObject => GeneratorFunctionPrototype;
     internal static object GeneratorPrototypeObject => Prototype;
 
