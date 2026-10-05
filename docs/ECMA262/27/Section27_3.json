@@ -13,49 +13,49 @@
     {
       "clause": "27.3.1",
       "title": "The GeneratorFunction Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-constructor"
     },
     {
       "clause": "27.3.1.1",
       "title": "GeneratorFunction ( ... parameterArgs , bodyArg )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction"
     },
     {
       "clause": "27.3.2",
       "title": "Properties of the GeneratorFunction Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-constructor"
     },
     {
       "clause": "27.3.2.1",
       "title": "GeneratorFunction.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype"
     },
     {
       "clause": "27.3.3",
       "title": "Properties of the GeneratorFunction Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-prototype-object"
     },
     {
       "clause": "27.3.3.1",
       "title": "GeneratorFunction.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype.constructor"
     },
     {
       "clause": "27.3.3.2",
       "title": "GeneratorFunction.prototype.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype.prototype"
     },
     {
       "clause": "27.3.3.3",
       "title": "GeneratorFunction.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype-%symbol.tostringtag%"
     },
     {
@@ -94,9 +94,13 @@
           "tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js",
           "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
           "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
-          "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
+          "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/JavaScript/instance-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/prototype/JavaScript/Symbol.toStringTag.js",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/prototype/JavaScript/constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/prototype/JavaScript/prototype.js"
         ],
-        "notes": "JROC supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics."
+        "notes": "JROC supports generator syntax (`function*`, `yield`, `yield*`) and exposes the realm-owned GeneratorFunction prototype surface with constructor, prototype, and toStringTag metadata. Dynamic constructor invocation remains limited to the supported runtime forms."
       },
       {
         "clause": "27.3.4",

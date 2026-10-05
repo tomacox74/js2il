@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-08T11:28:52Z
+> Last generated (UTC): 2026-10-05T19:29:11Z
 
 _Lists clause numbers/titles/links only (no spec text) in the index above. See appendix for extracted spec text._
 
@@ -16,14 +16,14 @@ _Lists clause numbers/titles/links only (no spec text) in the index above. See a
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 27.3.1 | The GeneratorFunction Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-constructor) |
-| 27.3.1.1 | GeneratorFunction ( ... parameterArgs , bodyArg ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction) |
-| 27.3.2 | Properties of the GeneratorFunction Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-constructor) |
-| 27.3.2.1 | GeneratorFunction.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype) |
-| 27.3.3 | Properties of the GeneratorFunction Prototype Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-prototype-object) |
-| 27.3.3.1 | GeneratorFunction.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype.constructor) |
-| 27.3.3.2 | GeneratorFunction.prototype.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype.prototype) |
-| 27.3.3.3 | GeneratorFunction.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype-%symbol.tostringtag%) |
+| 27.3.1 | The GeneratorFunction Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-constructor) |
+| 27.3.1.1 | GeneratorFunction ( ... parameterArgs , bodyArg ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction) |
+| 27.3.2 | Properties of the GeneratorFunction Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-constructor) |
+| 27.3.2.1 | GeneratorFunction.prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype) |
+| 27.3.3 | Properties of the GeneratorFunction Prototype Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-prototype-object) |
+| 27.3.3.1 | GeneratorFunction.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype.constructor) |
+| 27.3.3.2 | GeneratorFunction.prototype.prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype.prototype) |
+| 27.3.3.3 | GeneratorFunction.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype-%symbol.tostringtag%) |
 | 27.3.4 | GeneratorFunction Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances) |
 | 27.3.4.1 | length | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-length) |
 | 27.3.4.2 | name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-name) |
@@ -38,7 +38,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Compiled generator callables are generated function objects | Supported | [`Generator_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_GeneratedFunctionObject_Semantics.js)<br>`tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/generators/ExecutionTests.cs` |  | Generator declarations, expressions, object methods, and class methods use generated JsFunctionObject instances with stable identity, own name/length/prototype properties, GeneratorFunction.prototype inheritance, arbitrary properties, and no [[Construct]]. Each invocation creates a fresh iterator and execution scope. |
-| Generator function declarations/expressions (`function*`) compile and return generator objects | Supported | [`Generator_BasicNext.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js) |  | JROC supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics. |
+| Generator function declarations/expressions (`function*`) compile and return generator objects | Supported | [`Generator_BasicNext.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js)<br>[`instance-prototype.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/JavaScript/instance-prototype.js)<br>[`Symbol.toStringTag.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/prototype/JavaScript/Symbol.toStringTag.js)<br>[`constructor.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/prototype/JavaScript/constructor.js)<br>[`prototype.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/prototype/JavaScript/prototype.js) |  | JROC supports generator syntax (`function*`, `yield`, `yield*`) and exposes the realm-owned GeneratorFunction prototype surface with constructor, prototype, and toStringTag metadata. Dynamic constructor invocation remains limited to the supported runtime forms. |
 
 ### 27.3.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-length))
 

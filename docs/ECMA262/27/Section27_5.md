@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-26T20:34:21Z
+> Last generated (UTC): 2026-10-05T19:29:11Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -47,11 +47,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %GeneratorPrototype%.constructor — stable function object, same for all generator instances | Supported | [`Generator_Prototype_Constructor.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_Constructor.js) |  |  |
+| %GeneratorPrototype%.constructor — stable function object, same for all generator instances | Supported | [`Generator_Prototype_Constructor.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_Constructor.js)<br>[`constructor.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/JavaScript/constructor.js) |  |  |
 
 ### 27.5.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-generator.prototype-%symbol.tostringtag%))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %GeneratorPrototype%[@@toStringTag] — Object.prototype.toString.call(gen) returns "[object Generator]" | Supported | [`Generator_Prototype_ToStringTag.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) |  |  |
+| %GeneratorPrototype%[@@toStringTag] — Object.prototype.toString.call(gen) returns "[object Generator]" | Supported | [`Generator_Prototype_ToStringTag.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js)<br>[`Symbol.toStringTag.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/JavaScript/Symbol.toStringTag.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/next/JavaScript/name.js)<br>[`property-descriptor.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/next/JavaScript/property-descriptor.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/return/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/throw/JavaScript/name.js) |  |  |
 

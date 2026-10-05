@@ -45,7 +45,7 @@ bounded worker cleanup.
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
 | Built-in objects and APIs | 16,943 | 12 | 6,557 | 23,512 | **72.06%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,256 | 101 | 13,888 | 48,245 | **71.00%** |
+| **Total** | 34,266 | 101 | 13,878 | 48,245 | **71.02%** |
 
 ## Language Areas
 
@@ -217,8 +217,8 @@ bounded worker cleanup.
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 46 | 0 | 1 | 47 | **97.87%** |
 | `Function` | 409 | 1 | 99 | 509 | **80.35%** |
-| `GeneratorFunction` | 17 | 0 | 6 | 23 | **73.91%** |
-| `GeneratorPrototype` | 45 | 0 | 16 | 61 | **73.77%** |
+| `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
+| `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
 | `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |

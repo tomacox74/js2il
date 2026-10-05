@@ -9,4 +9,16 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "extensibility")]
     public Task extensibility()
         => ExecutionTestFromFile("extensibility");
-}
+
+    [Fact(DisplayName = "Symbol.toStringTag")]
+    public Task Symbol_toStringTag()
+        => ExecutionTestFromFile("Symbol.toStringTag");
+
+    [Fact(DisplayName = "constructor")]
+    public Task constructor()
+        => ExecutionTestFromFile("constructor");
+
+    [Fact(DisplayName = "prototype")]
+    public Task prototype()
+        => ExecutionTestFromFile("prototype");
+}
