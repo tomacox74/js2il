@@ -37,8 +37,24 @@ public static class AsyncGeneratorFunction
             Kind = JsPropertyDescriptorKind.Data,
             Enumerable = false,
             Configurable = true,
-            Writable = true,
+            Writable = false,
             Value = _constructor
+        });
+        PropertyDescriptorStore.DefineOrUpdate(prototype, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = AsyncGeneratorObject.PrototypeObject
+        });
+        PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = "AsyncGeneratorFunction"
         });
 
         JavaScriptRuntime.Function.InitializeFunctionInstance(_constructor, 1d, "AsyncGeneratorFunction", requiresInvocationContext: false);
@@ -59,11 +75,16 @@ public static class AsyncGeneratorFunction
     {
         var callArgs = args ?? System.Array.Empty<object?>();
         var length = JavaScriptRuntime.Function.ParseDynamicFunctionParameterNames(callArgs).Length;
+        var functionIdentity = new object();
 
-        Func<object[], object?[]?, object?> functionValue = static (_, __) =>
+        Func<object[], object?[]?, object?> functionValue = (ignoredScopes, ignoredArguments) =>
+        {
+            GC.KeepAlive(functionIdentity);
             throw new NotSupportedException("Dynamically constructed async generator functions are not invokable in jroc. Use statically declared async generator functions instead.");
-        JavaScriptRuntime.AsyncFunction.InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
-        InitializeFunctionObject(functionValue);
-        return BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
+        };
+        var functionObject = BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
+        JavaScriptRuntime.AsyncFunction.InitializeFunctionInstance(functionObject, length, "anonymous", requiresInvocationContext: false);
+        InitializeFunctionObject(functionObject);
+        return functionObject;
     }
 }

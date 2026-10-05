@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,933 | 12 | 6,567 | 23,512 | **72.02%** |
+| Built-in objects and APIs | 16,943 | 12 | 6,557 | 23,512 | **72.06%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,246 | 101 | 13,898 | 48,245 | **70.98%** |
+| **Total** | 34,256 | 101 | 13,888 | 48,245 | **71.00%** |
 
 ## Language Areas
 
@@ -200,8 +200,8 @@ bounded worker cleanup.
 | `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |
 | `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
-| `AsyncGeneratorFunction` | 9 | 0 | 14 | 23 | **39.13%** |
-| `AsyncGeneratorPrototype` | 2 | 0 | 46 | 48 | **4.17%** |
+| `AsyncGeneratorFunction` | 14 | 0 | 9 | 23 | **60.87%** |
+| `AsyncGeneratorPrototype` | 7 | 0 | 41 | 48 | **14.58%** |
 | `AsyncIteratorPrototype` | 3 | 0 | 10 | 13 | **23.08%** |
 | `Atomics` | 346 | 0 | 36 | 382 | **90.58%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |

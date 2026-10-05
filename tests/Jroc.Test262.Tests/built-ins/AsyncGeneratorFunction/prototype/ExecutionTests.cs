@@ -17,4 +17,16 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "not-callable")]
     public Task not_callable()
         => ExecutionTestFromFile("not-callable");
+
+    [Fact(DisplayName = "Symbol.toStringTag")]
+    public Task Symbol_toStringTag()
+        => ExecutionTestFromFile("Symbol.toStringTag");
+
+    [Fact(DisplayName = "prototype")]
+    public Task prototype()
+        => ExecutionTestFromFile("prototype");
+
+    [Fact(DisplayName = "constructor")]
+    public Task constructor()
+        => ExecutionTestFromFile("constructor");
 }

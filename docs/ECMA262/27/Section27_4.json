@@ -13,49 +13,49 @@
     {
       "clause": "27.4.1",
       "title": "The AsyncGeneratorFunction Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-constructor"
     },
     {
       "clause": "27.4.1.1",
       "title": "AsyncGeneratorFunction ( ... parameterArgs , bodyArg )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction"
     },
     {
       "clause": "27.4.2",
       "title": "Properties of the AsyncGeneratorFunction Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-asyncgeneratorfunction"
     },
     {
       "clause": "27.4.2.1",
       "title": "AsyncGeneratorFunction.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-prototype"
     },
     {
       "clause": "27.4.3",
       "title": "Properties of the AsyncGeneratorFunction Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-asyncgeneratorfunction-prototype"
     },
     {
       "clause": "27.4.3.1",
       "title": "AsyncGeneratorFunction.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-prototype-constructor"
     },
     {
       "clause": "27.4.3.2",
       "title": "AsyncGeneratorFunction.prototype.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-prototype-prototype"
     },
     {
       "clause": "27.4.3.3",
       "title": "AsyncGeneratorFunction.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-prototype-%symbol.tostringtag%"
     },
     {
@@ -107,10 +107,15 @@
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
           "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/AsyncGeneratorFunction_length.js",
           "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/instance-length.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/instance-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/Symbol.toStringTag.js",
           "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/prop-desc.js",
           "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/not-callable.js"
         ],
-        "notes": "Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. Checked-in test262 evidence now also covers the callable `%AsyncGeneratorFunction%` length surface plus non-callable `%AsyncGeneratorFunction.prototype%` metadata, but the full spec-level AsyncGeneratorFunction constructor/prototype intrinsic set is still not exposed globally."
+        "notes": "Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. The intrinsic constructor and prototype expose the specified length, constructor, prototype, and toStringTag metadata. Dynamic construction returns distinct metadata-correct async-generator function objects, but invoking their dynamically parsed bodies remains unsupported."
       }
     ]
   }

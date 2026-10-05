@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): correct async-generator intrinsic prototype metadata and
+  dynamic-constructor function identity; port 10 previously failing pinned
+  Test262 AsyncGeneratorFunction and AsyncGeneratorPrototype cases.
 - fix(runtime): preserve constructor realm ownership for cross-realm default
   prototypes and Array species creation; verify 10 previously failing pinned
   Test262 Array and AggregateError cases.
