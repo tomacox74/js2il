@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-04T17:49:21Z
+> Last generated (UTC): 2026-10-05T23:31:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -116,7 +116,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Error Exception representation and realm-owned prototype | Supported with Limitations | `tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs` |  | Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance still receives its current realm's Error.prototype through the non-JsObject fallback prototype storage. |
+| Error Exception representation and realm-owned prototype | Supported with Limitations | `tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs`<br>`tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs` |  | Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance receives its current realm's Error.prototype by default through non-JsObject prototype storage. Reflective construction with a non-object new target prototype selects Error.prototype from the new target's realm. |
 | Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/ExecutionTests.cs` | `test/built-ins/Error/message_property.js`<br>`test/built-ins/Error/cause_property.js` | Error instances expose inherited name plus conditionally created own message and cause data properties with standard descriptors. stack remains backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
 
 ### 20.5.7.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-aggregate-error))

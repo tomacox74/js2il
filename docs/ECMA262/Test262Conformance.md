@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,963 | 12 | 6,537 | 23,512 | **72.15%** |
+| Built-in objects and APIs | 16,969 | 12 | 6,531 | 23,512 | **72.17%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,276 | 101 | 13,868 | 48,245 | **71.05%** |
+| **Total** | 34,282 | 101 | 13,862 | 48,245 | **71.06%** |
 
 ## Language Areas
 
@@ -195,7 +195,7 @@ bounded worker cleanup.
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
 | `Array` | 3,054 | 0 | 27 | 3,081 | **99.12%** |
-| `ArrayBuffer` | 191 | 0 | 5 | 196 | **97.45%** |
+| `ArrayBuffer` | 192 | 0 | 4 | 196 | **97.96%** |
 | `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
 | `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |
 | `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
@@ -205,8 +205,8 @@ bounded worker cleanup.
 | `AsyncIteratorPrototype` | 13 | 0 | 0 | 13 | **100.00%** |
 | `Atomics` | 346 | 0 | 36 | 382 | **90.58%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
-| `Boolean` | 49 | 0 | 2 | 51 | **96.08%** |
-| `DataView` | 550 | 0 | 11 | 561 | **98.04%** |
+| `Boolean` | 50 | 0 | 1 | 51 | **98.04%** |
+| `DataView` | 552 | 0 | 9 | 561 | **98.40%** |
 | `Date` | 575 | 0 | 19 | 594 | **96.80%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
@@ -237,12 +237,12 @@ bounded worker cleanup.
 | `Promise` | 437 | 0 | 240 | 677 | **64.55%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,150 | 0 | 729 | 1,879 | **61.20%** |
+| `RegExp` | 1,151 | 0 | 728 | 1,879 | **61.26%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
-| `SharedArrayBuffer` | 94 | 0 | 10 | 104 | **90.38%** |
+| `SharedArrayBuffer` | 95 | 0 | 9 | 104 | **91.35%** |
 | `String` | 1,194 | 1 | 28 | 1,223 | **97.63%** |
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
