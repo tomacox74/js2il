@@ -18,7 +18,8 @@ public static class AsyncIterator
         DefineDataProperty(Prototype, "constructor", asyncIteratorConstructorValue);
         DefineDataProperty(Prototype, "next", (BuiltinFunction0)PrototypeNext);
         DefineDataProperty(Prototype, "return", (BuiltinFunction1)PrototypeReturn);
-        DefineDataProperty(Prototype, Symbol.asyncIterator.DebugId, (BuiltinFunction0)PrototypeSymbolAsyncIterator);
+        DefineSymbolFunction(Symbol.asyncIterator, (BuiltinFunction0)PrototypeSymbolAsyncIterator);
+        DefineSymbolFunction(Symbol.asyncDispose, (BuiltinFunction0)PrototypeSymbolAsyncDispose);
         DefineDataProperty(Prototype, Symbol.toStringTag.DebugId, "AsyncIterator");
     }
 
@@ -40,6 +41,13 @@ public static class AsyncIterator
             Writable = true,
             Value = value
         });
+    }
+
+    private static void DefineSymbolFunction(Symbol symbol, BuiltinFunction0 function)
+    {
+        Function.InitializeFunctionInstance(function, 0d, $"[{symbol.Description}]", requiresInvocationContext: false);
+        Function.MarkUndefinedPrototype(function);
+        DefineDataProperty(Prototype, symbol.DebugId, function);
     }
 
     private static object? PrototypeNext(object? thisArgument)
@@ -72,5 +80,46 @@ public static class AsyncIterator
     private static object? PrototypeSymbolAsyncIterator(object? thisArgument)
     {
         return thisArgument;
+    }
+
+    private static object? PrototypeSymbolAsyncDispose(object? thisArgument)
+    {
+        var capability = Promise.withResolvers();
+        try
+        {
+            if (thisArgument is null or JsNull)
+            {
+                throw new TypeError("Async iterator disposal requires a non-null receiver");
+            }
+
+            var returnMethod = ObjectRuntime.GetProperty(thisArgument, "return");
+            if (returnMethod is null or JsNull)
+            {
+                CallableOperations.Call1(capability.resolve, null, null);
+            }
+            else
+            {
+                if (!CallableOperations.IsCallable(returnMethod))
+                {
+                    throw new TypeError("Async iterator return method is not callable");
+                }
+
+                var result = CallableOperations.Call1(returnMethod, thisArgument, null);
+                var promise = (Promise)Promise.resolve(result)!;
+                BuiltinFunction1 fulfilled = (_, _) =>
+                {
+                    CallableOperations.Call1(capability.resolve, null, null);
+                    return null;
+                };
+                promise.then(fulfilled, capability.reject);
+            }
+        }
+        catch (Exception exception) when (exception is not ScriptProcessExitException)
+        {
+            var reason = exception is JsThrownValueException thrown ? thrown.Value : exception;
+            CallableOperations.Call1(capability.reject, null, reason);
+        }
+
+        return capability.promise;
     }
 }

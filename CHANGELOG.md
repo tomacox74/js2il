@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(runtime): implement async iterator `Symbol.asyncDispose` with awaited
+  return-method completion and promise rejection semantics; correct the
+  `Symbol.asyncIterator` function name and verify 10 previously failing pinned
+  Test262 AsyncIteratorPrototype cases.
 - fix(runtime): correct async-generator intrinsic prototype metadata and
   dynamic-constructor function identity; port 10 previously failing pinned
   Test262 AsyncGeneratorFunction and AsyncGeneratorPrototype cases.

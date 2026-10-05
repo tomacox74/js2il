@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-25T05:57:05Z
+> Last generated (UTC): 2026-10-05T20:46:24Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -55,7 +55,8 @@
 | 27.1.3.3.14.1 | get Iterator.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-iterator.prototype-%symbol.tostringtag%) |
 | 27.1.3.3.14.2 | set Iterator.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set-iterator.prototype-%symbol.tostringtag%) |
 | 27.1.4 | The %AsyncIteratorPrototype% Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asynciteratorprototype) |
-| 27.1.4.1 | %AsyncIteratorPrototype% [ %Symbol.asyncIterator% ] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%asynciteratorprototype%-%symbol.asynciterator%) |
+| 27.1.4.1 | %AsyncIteratorPrototype% [ %Symbol.asyncIterator% ] ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-%asynciteratorprototype%-%symbol.asynciterator%) |
+| 27.1.4.2 | %AsyncIteratorPrototype% [ %Symbol.asyncDispose% ] ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-%asynciteratorprototype%-@@asyncDispose) |
 | 27.1.5 | Async-from-Sync Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-from-sync-iterator-objects) |
 | 27.1.5.1 | CreateAsyncFromSyncIterator ( syncIteratorRecord ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createasyncfromsynciterator) |
 | 27.1.5.2 | The %AsyncFromSyncIteratorPrototype% Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%asyncfromsynciteratorprototype%-object) |
@@ -109,5 +110,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Public AsyncIterator surface is exposed with %Symbol.asyncIterator% for runtime async iterators | Supported with Limitations | [`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) |  | Global `AsyncIterator` and `%AsyncIteratorPrototype%[@@asyncIterator]` are exposed, and runtime async iterators inherit that public surface. Async iterator helper methods beyond the prototype exposure are still not implemented. |
+| Public AsyncIterator surface is exposed with %Symbol.asyncIterator% for runtime async iterators | Supported with Limitations | [`Iterator_Helper_Next_Return.js`](../../../tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncIterator/JavaScript/name.js) |  | Global `AsyncIterator` and `%AsyncIteratorPrototype%[@@asyncIterator]` are exposed, and runtime async iterators inherit that public surface. Async iterator helper methods beyond the prototype exposure are still not implemented. |
+
+### 27.1.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-%asynciteratorprototype%-@@asyncDispose))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Async iterator disposal awaits return-method completion and resolves to undefined | Supported | [`invokes-return.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/invokes-return.js)<br>[`is-function.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/is-function.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/name.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/prop-desc.js)<br>[`return-val.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/return-val.js)<br>[`throw-rejected-return.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-rejected-return.js)<br>[`throw-return-getter.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-return-getter.js)<br>[`throw-return.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-return.js) |  | The built-in Symbol.asyncDispose method calls the receiver's return method with one undefined argument, awaits its completion using intrinsic promise operations, and discards its fulfilled value. Missing or null return methods resolve to undefined; invalid receivers, non-callable return methods, thrown values, and rejected returns reject the returned promise. Its name, length, and property descriptors follow the intrinsic contract. |
 
