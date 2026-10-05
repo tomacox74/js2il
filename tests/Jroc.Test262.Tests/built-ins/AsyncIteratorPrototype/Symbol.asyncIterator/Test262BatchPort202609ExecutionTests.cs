@@ -10,6 +10,10 @@ public class Test262BatchPort202609ExecutionTests : InMemoryExecutionTestsBase
     public Task length()
         => ExecutionTestFromFile("length");
 
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
     [Fact(DisplayName = "prop-desc")]
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
