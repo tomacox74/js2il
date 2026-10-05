@@ -21,4 +21,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "instance-length")]
+    public Task instance_length()
+        => ExecutionTestFromFile("instance-length");
 }
