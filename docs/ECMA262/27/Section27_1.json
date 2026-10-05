@@ -258,8 +258,14 @@
     {
       "clause": "27.1.4.1",
       "title": "%AsyncIteratorPrototype% [ %Symbol.asyncIterator% ] ( )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-%asynciteratorprototype%-%symbol.asynciterator%"
+    },
+    {
+      "clause": "27.1.4.2",
+      "title": "%AsyncIteratorPrototype% [ %Symbol.asyncDispose% ] ( )",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-%asynciteratorprototype%-@@asyncDispose"
     },
     {
       "clause": "27.1.5",
@@ -421,9 +427,28 @@
         "testScripts": [
           "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js",
           "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
-          "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+          "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncIterator/JavaScript/name.js"
         ],
         "notes": "Global `AsyncIterator` and `%AsyncIteratorPrototype%[@@asyncIterator]` are exposed, and runtime async iterators inherit that public surface. Async iterator helper methods beyond the prototype exposure are still not implemented."
+      },
+      {
+        "clause": "27.1.4.2",
+        "feature": "Async iterator disposal awaits return-method completion and resolves to undefined",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-%asynciteratorprototype%-@@asyncDispose",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/invokes-return.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/is-function.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/prop-desc.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/return-val.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-rejected-return.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-return-getter.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-return.js"
+        ],
+        "notes": "The built-in Symbol.asyncDispose method calls the receiver's return method with one undefined argument, awaits its completion using intrinsic promise operations, and discards its fulfilled value. Missing or null return methods resolve to undefined; invalid receivers, non-callable return methods, thrown values, and rejected returns reject the returned promise. Its name, length, and property descriptors follow the intrinsic contract."
       }
     ]
   }
