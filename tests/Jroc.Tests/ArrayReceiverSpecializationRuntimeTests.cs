@@ -3,6 +3,16 @@ using Xunit;
 
 namespace Jroc.Tests;
 
+// Prototype mutations invalidate a process-wide Array fast-path cache. Keep the
+// allocation assertions isolated so another test cannot trigger a cache rescan
+// inside their measured intervals.
+[CollectionDefinition(CollectionName, DisableParallelization = true)]
+public sealed class ArrayReceiverSpecializationRuntimeTestsCollection
+{
+    public const string CollectionName = nameof(ArrayReceiverSpecializationRuntimeTestsCollection);
+}
+
+[Collection(ArrayReceiverSpecializationRuntimeTestsCollection.CollectionName)]
 public sealed class ArrayReceiverSpecializationRuntimeTests
 {
     [Fact]
