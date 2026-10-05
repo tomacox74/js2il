@@ -194,14 +194,14 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
-| `Array` | 3,058 | 0 | 23 | 3,081 | **99.25%** |
+| `Array` | 3,054 | 0 | 27 | 3,081 | **99.12%** |
 | `ArrayBuffer` | 191 | 0 | 5 | 196 | **97.45%** |
 | `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
 | `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |
 | `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
-| `AsyncGeneratorFunction` | 12 | 0 | 11 | 23 | **52.17%** |
-| `AsyncGeneratorPrototype` | 5 | 0 | 43 | 48 | **10.42%** |
+| `AsyncGeneratorFunction` | 14 | 0 | 9 | 23 | **60.87%** |
+| `AsyncGeneratorPrototype` | 7 | 0 | 41 | 48 | **14.58%** |
 | `AsyncIteratorPrototype` | 3 | 0 | 10 | 13 | **23.08%** |
 | `Atomics` | 346 | 0 | 36 | 382 | **90.58%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |

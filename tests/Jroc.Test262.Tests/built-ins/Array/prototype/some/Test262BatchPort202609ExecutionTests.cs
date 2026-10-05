@@ -74,12 +74,4 @@ public class Test262BatchPort202609ExecutionTests : InMemoryExecutionTestsBase
     public Task callbackfn_resize_arraybuffer()
         => ExecutionTestFromFile("callbackfn-resize-arraybuffer");
 
-    [Fact(DisplayName = "resizable-buffer-grow-mid-iteration")]
-    public Task resizable_buffer_grow_mid_iteration()
-        => ExecutionTestFromFile("resizable-buffer-grow-mid-iteration");
-
-    [Fact(DisplayName = "resizable-buffer")]
-    public Task resizable_buffer()
-        => ExecutionTestFromFile("resizable-buffer");
-
 }

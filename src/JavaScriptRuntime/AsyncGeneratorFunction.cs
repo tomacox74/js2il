@@ -37,7 +37,7 @@ public static class AsyncGeneratorFunction
             Kind = JsPropertyDescriptorKind.Data,
             Enumerable = false,
             Configurable = true,
-            Writable = true,
+            Writable = false,
             Value = _constructor
         });
         PropertyDescriptorStore.DefineOrUpdate(prototype, "prototype", new JsPropertyDescriptor

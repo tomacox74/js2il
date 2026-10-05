@@ -143,7 +143,11 @@
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_GeneratedFunctionObject_Semantics.js",
-         "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-as-yield-operand.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/next/Test262BatchPort202609ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/return/Test262BatchPort202609ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/throw/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-as-yield-operand.js",
          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-promise-as-yield-operand.js",
          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js",
          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-yield-as-operand.js",
@@ -156,7 +160,7 @@
          "tests/Jroc.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-obj.js",
          "tests/Jroc.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-string.js"
        ],
-       "notes": "Async generator objects use a dedicated %AsyncGeneratorPrototype% surface with next/return/throw, constructor, and AsyncGenerator toStringTag properties above %AsyncIteratorPrototype%. Generated async-generator function objects create a fresh iterator scope per invocation and apply their mutable own prototype property to each returned iterator."
+       "notes": "Async generator objects use a dedicated %AsyncGeneratorPrototype% surface above %AsyncIteratorPrototype%. Its constructor and AsyncGenerator toStringTag descriptors and the next/return/throw function name and length metadata follow the intrinsic contract. Generated async-generator function objects create a fresh iterator scope per invocation and apply their mutable own prototype property to each returned iterator."
       }
     ]
   }

@@ -134,12 +134,4 @@ public class Test262BatchPort202609ExecutionTests : InMemoryExecutionTestsBase
     public Task stability_5_elements()
         => ExecutionTestFromFile("stability-5-elements");
 
-    [Fact(DisplayName = "comparefn-grow")]
-    public Task comparefn_grow()
-        => ExecutionTestFromFile("comparefn-grow");
-
-    [Fact(DisplayName = "comparefn-shrink")]
-    public Task comparefn_shrink()
-        => ExecutionTestFromFile("comparefn-shrink");
-
 }

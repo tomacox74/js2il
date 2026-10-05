@@ -10,8 +10,8 @@ public class Test262BatchPort202609ExecutionTests : InMemoryExecutionTestsBase
     public Task return_promise()
         => ExecutionTestFromFile("return-promise");
 
-    [Fact(DisplayName = "name")]
-    public Task name()
-        => ExecutionTestFromFile("name");
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
 
 }

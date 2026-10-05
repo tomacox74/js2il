@@ -9,4 +9,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "constructor")]
     public Task constructor()
         => ExecutionTestFromFile("constructor");
+
+    [Fact(DisplayName = "Symbol.toStringTag")]
+    public Task Symbol_toStringTag()
+        => ExecutionTestFromFile("Symbol.toStringTag");
 }

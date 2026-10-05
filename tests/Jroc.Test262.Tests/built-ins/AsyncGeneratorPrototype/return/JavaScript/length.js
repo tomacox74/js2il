@@ -2,11 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-asyncgenerator-prototype-next
+esid: sec-asyncgenerator-prototype-return
 description: >
-  AsyncGenerator.prototype.next.length is 1.
+  AsyncGenerator.prototype.return.length is 1.
 info: |
-  AsyncGenerator.prototype.next ( value )
+  AsyncGenerator.prototype.return ( value )
 
   17 ECMAScript Standard Built-in Objects:
     Every built-in Function object, including constructors, has a length
@@ -26,7 +26,7 @@ features: [async-iteration]
 async function* g() {}
 var AsyncGeneratorPrototype = Object.getPrototypeOf(g).prototype;
 
-verifyProperty(AsyncGeneratorPrototype.next, "length", {
+verifyProperty(AsyncGeneratorPrototype.return, "length", {
   value: 1,
   enumerable: false,
   writable: false,

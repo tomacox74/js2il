@@ -25,4 +25,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "prototype")]
     public Task prototype()
         => ExecutionTestFromFile("prototype");
+
+    [Fact(DisplayName = "constructor")]
+    public Task constructor()
+        => ExecutionTestFromFile("constructor");
 }

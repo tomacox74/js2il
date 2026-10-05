@@ -55,21 +55,23 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
                 Writable = false,
                 Value = asyncGeneratorFunctionPrototype
             });
-        DefineDataProperty(
+        GlobalThis.DefineBuiltinFunctionProperty(
             PrototypeObject,
             "next",
-            (BuiltinFunction1)PrototypeNext);
-        DefineDataProperty(
+            (BuiltinFunction1)PrototypeNext,
+            1d);
+        GlobalThis.DefineBuiltinFunctionProperty(
             PrototypeObject,
             "return",
-            (BuiltinFunction1)PrototypeReturn);
-        DefineDataProperty(
+            (BuiltinFunction1)PrototypeReturn,
+            1d);
+        GlobalThis.DefineBuiltinFunctionProperty(
             PrototypeObject,
             "throw",
-            (BuiltinFunction1)PrototypeThrow);
-        DefineDataProperty(
+            (BuiltinFunction1)PrototypeThrow,
+            1d);
+        GlobalThis.DefineIntrinsicToStringTagProperty(
             PrototypeObject,
-            Symbol.toStringTag.DebugId,
             "AsyncGenerator");
     }
 

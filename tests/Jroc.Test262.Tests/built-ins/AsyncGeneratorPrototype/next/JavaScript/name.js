@@ -2,11 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-asyncgenerator-prototype-return
+esid: sec-asyncgenerator-prototype-next
 description: >
-  Generator.prototype.next.name is "return".
+  Generator.prototype.next.name is "next".
 info: |
-  Generator.prototype.return ( value )
+  Generator.prototype.next ( value )
 
   17 ECMAScript Standard Built-in Objects:
     Every built-in Function object, including constructors, that is not
@@ -23,8 +23,8 @@ features: [async-iteration]
 async function* g() {}
 var AsyncGeneratorPrototype = Object.getPrototypeOf(g).prototype;
 
-verifyProperty(AsyncGeneratorPrototype.return, "name", {
-  value: "return",
+verifyProperty(AsyncGeneratorPrototype.next, "name", {
+  value: "next",
   enumerable: false,
   writable: false,
   configurable: true,
