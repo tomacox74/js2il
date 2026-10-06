@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): use the new target's realm for built-in constructor default
+  prototypes, including reflective Boolean wrappers; verify 10 previously
+  failing pinned Test262 cases across Boolean, RegExp, collections, buffers,
+  and DataView.
 - feat(runtime): implement async iterator `Symbol.asyncDispose` with awaited
   return-method completion and promise rejection semantics; correct the
   `Symbol.asyncIterator` function name and verify 10 previously failing pinned

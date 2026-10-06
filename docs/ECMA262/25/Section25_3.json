@@ -253,6 +253,21 @@
   "support": {
     "entries": [
       {
+        "clause": "25.3.2.1",
+        "feature": "Cross-realm DataView constructor default prototype",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-dataview-buffer-byteoffset-bytelength",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/DataView/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/JavaScript/proto-from-ctor-realm-sab.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/DataView/proto-from-ctor-realm.js",
+          "test/built-ins/DataView/proto-from-ctor-realm-sab.js"
+        ],
+        "notes": "For both ArrayBuffer and SharedArrayBuffer backing stores, a non-object new target prototype selects the DataView.prototype intrinsic from the new target's realm."
+      },
+      {
         "clause": "25.3",
         "feature": "DataView conformance coverage",
         "status": "Supported with Limitations",

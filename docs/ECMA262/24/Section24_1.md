@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -52,6 +52,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm Map constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/Map/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/Map/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the Map.prototype intrinsic from the new target's realm. |
 | new Map() | Supported | [`Map_Constructor_Empty.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Empty.js) | `test/built-ins/Map/undefined-newtarget.js` | Zero-argument construction lowers to JavaScriptRuntime.Map() and produces an insertion-ordered keyed collection. |
 | new Map(iterable) | Supported | [`Map_Constructor_Iterable.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Iterable.js) |  | JavaScriptRuntime.Map accepts a single iterable argument, consumes it via the runtime iterator protocol, observes constructor adder lookup/call-order semantics, treats an own/inherited undefined @@iterator as a TypeError, and inserts each [key, value] pair in order for the covered test262 constructor cases. |
 

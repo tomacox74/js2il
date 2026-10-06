@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,6 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm WeakSet constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/WeakSet/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/WeakSet/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the WeakSet.prototype intrinsic from the new target's realm. |
 | new WeakSet() | Supported | [`WeakSet_Constructor_Empty.js`](../../../tests/Jroc.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js) | `test/built-ins/WeakSet/undefined-newtarget.js` | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
 | new WeakSet(iterable) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/WeakSet/PortNext200ExecutionTests.cs` | `test/built-ins/WeakSet/iterator-close-after-add-failure.js` | WeakSet(iterable) consumes iterable values through the constructor's adder path and closes iterators while preserving the original abrupt completion. Weak-value validation and broader exotic iterator edge cases remain partial. |
 

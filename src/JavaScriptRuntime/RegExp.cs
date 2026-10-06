@@ -39,7 +39,10 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction2 SplitSymbolDelegate = SplitSymbolMethod;
         /// <summary>Realm-owned <c>RegExp.prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.RegExpPrototype,
                 static () => new JsObject(),
                 static prototype => InitializePrototype(prototype));

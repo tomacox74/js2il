@@ -434,9 +434,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-error-instances",
         "testScripts": [
-          "tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs"
+          "tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs",
+          "tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs"
         ],
-        "notes": "Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance still receives its current realm's Error.prototype through the non-JsObject fallback prototype storage."
+        "notes": "Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance receives its current realm's Error.prototype by default through non-JsObject prototype storage. Reflective construction with a non-object new target prototype selects Error.prototype from the new target's realm."
       },
       {
         "clause": "20.5.7.1.1",

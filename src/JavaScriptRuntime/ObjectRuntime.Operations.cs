@@ -2662,7 +2662,7 @@ namespace JavaScriptRuntime
                 {
                     if (instance is not null && instance is not JsNull)
                     {
-                        var defaultPrototype = GetIntrinsicPrototypeForType(type, constructionRealm)
+                        var defaultPrototype = constructionRealm.GetConstructorPrototype(type)
                             ?? GetProperty(prototypeOwner ?? type, "prototype");
                         var newTargetPrototype = GetProperty(newTarget ?? prototypeOwner ?? type, "prototype");
                         PrototypeChain.SetPrototype(
@@ -2675,15 +2675,6 @@ namespace JavaScriptRuntime
 
                     return instance;
                 }
-
-                static object? GetIntrinsicPrototypeForType(Type type, RuntimeIntrinsics intrinsics)
-                    => type == typeof(JavaScriptRuntime.Array)
-                        ? intrinsics.ArrayPrototype
-                        : type == typeof(JavaScriptRuntime.AggregateError)
-                            ? intrinsics.AggregateErrorPrototype
-                            : type == typeof(JavaScriptRuntime.Error)
-                                ? intrinsics.ErrorPrototype
-                                : null;
 
                 object? CompleteClassConstruction(object? instance)
                 {
@@ -2796,12 +2787,8 @@ namespace JavaScriptRuntime
 
                 var intrinsics = RuntimeIntrinsics.GetFunctionRealm(newTarget);
                 var defaultPrototype = constructor is BuiltinDelegateFunctionAdapter adapter
-                    && GlobalThis.IsAggregateErrorConstructorValue(adapter.Target)
-                    ? intrinsics.AggregateErrorPrototype
-                    : constructor is BuiltinDelegateFunctionAdapter arrayAdapter
-                        && GlobalThis.IsArrayConstructorValue(arrayAdapter.Target)
-                            ? intrinsics.ArrayPrototype
-                            : null;
+                    ? GlobalThis.GetIntrinsicConstructorPrototype(adapter.Target, intrinsics)
+                    : null;
                 if (defaultPrototype is null)
                 {
                     return;
@@ -4038,6 +4025,15 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (GlobalThis.IsArrayConstructorValue(target)
+                && string.Equals(propName, "prototype", StringComparison.Ordinal)
+                && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
+            {
+                descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                descriptor.Value = RuntimeIntrinsics.GetFunctionRealm(target).ArrayPrototype;
+                return true;
+            }
+
             if (target is JsObject jsObject
                 && target is not JavaScriptRuntime.Node.Buffer
                 && target is not JsClassConstructorObject)
@@ -4064,15 +4060,6 @@ namespace JavaScriptRuntime
 
                 return jsObject.GetOwnPropertyDescriptor(propName, out descriptor)
                     == PropertyDescriptorLookup.Found;
-            }
-
-            if (GlobalThis.IsArrayConstructorValue(target)
-                && string.Equals(propName, "prototype", StringComparison.Ordinal)
-                && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
-            {
-                descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
-                descriptor.Value = JavaScriptRuntime.Array.Prototype;
-                return true;
             }
 
             if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
@@ -4544,7 +4531,7 @@ namespace JavaScriptRuntime
             if (GlobalThis.IsArrayConstructorValue(target)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
-                value = JavaScriptRuntime.Array.Prototype;
+                value = RuntimeIntrinsics.GetFunctionRealm(target).ArrayPrototype;
                 return true;
             }
 
@@ -6120,10 +6107,9 @@ namespace JavaScriptRuntime
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
 
-            if (obj is BuiltinDelegateFunctionAdapter arrayConstructor
-                && GlobalThis.IsArrayConstructorValue(arrayConstructor))
+            if (name == "prototype" && GlobalThis.IsArrayConstructorValue(obj))
             {
-                obj = arrayConstructor.Target;
+                return RuntimeIntrinsics.GetFunctionRealm(obj).ArrayPrototype;
             }
 
             if (IsRestrictedFunctionPrototypeProperty(obj, name))

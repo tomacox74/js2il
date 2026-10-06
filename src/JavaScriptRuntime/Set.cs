@@ -20,7 +20,10 @@ namespace JavaScriptRuntime
                 static prototype => InitializeIteratorPrototype(prototype));
         /// <summary>Realm-owned <c>Set.prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.SetPrototype,
                 static () => new JsObject(),
                 static exp => InitializePrototype(exp));

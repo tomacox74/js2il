@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-26T05:20:09Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -128,6 +128,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm RegExp constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/RegExp/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/RegExp/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the RegExp.prototype intrinsic from the new target's realm. |
 | RegExp ( pattern , flags ) | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js)<br>[`IntrinsicCallables_RegExp_ToString_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/ExecutionTests.RegExpSyntaxBatch.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/lookBehind/ExecutionTests.RegExpSyntaxBatch.cs` | suite `built_ins.RegExp`<br>suite `built_ins.RegExp.lookBehind` | Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity. The expanded Test262 evidence also covers constructor identity and flags, literal parsing, legacy pattern semantics, and supported lookbehind forms. |
 
 ### 22.2.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.escape))

@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,6 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Boolean(value) (callable primitive conversion) | Supported | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) |  | Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean). |
+| Cross-realm Boolean constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/Boolean/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/Boolean/proto-from-ctor-realm.js` | Reflect.construct creates a Boolean wrapper and uses the new target's realm-specific Boolean.prototype when its prototype property is not an object. |
 | new Boolean(value) | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Jroc.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) |  | Constructs a Boolean wrapper object with `Boolean.prototype` semantics. |
 
 ### 20.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object))

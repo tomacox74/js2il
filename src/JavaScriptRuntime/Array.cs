@@ -187,7 +187,10 @@ namespace JavaScriptRuntime
         /// every <c>Array.prototype</c> mutation.
         /// </summary>
         internal static JsObject Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.ArrayPrototype,
                 static () => new Array(initializeIntrinsicSurface: false),
                 static prototype =>

@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-04T17:49:21Z
+> Last generated (UTC): 2026-10-05T23:31:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -88,6 +88,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Array/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/isArray/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/length/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/entries/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/every/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/find/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLast/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/findLastIndex/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/flat/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/forEach/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/join/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/keys/ArrayConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Array/prototype/NextBatchExecutionTests.cs` |  | 317 additional pinned Test262 cases verify Array construction and length semantics, Array.isArray, iterator metadata, and core entries, every, filter, find, findIndex, findLast, findLastIndex, flat, forEach, join, keys, search, mutation, sort, and toLocaleString behavior. This includes direct calls that use the same generic algorithms as Array.prototype, generic Array methods and iterators applied to TypedArray views as their resizable buffers grow or shrink, and Array.prototype's Array-exotic indexed-property and length behavior. The verified cases cover callback invocation, abrupt completion, coercion, property descriptors, sparse arrays, standard metadata, and supported error paths. Array.fromAsync support is described separately below. Cross-realm default-prototype construction and cross-realm ArraySpeciesCreate behavior now follow the relevant realm; remaining Proxy/species behavior remains limited. |
+
+### 23.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-array-constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Realm-specific Array constructor prototype access and fallback | Supported | `tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs`<br>[`proto-from-ctor-realm-zero.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/JavaScript/proto-from-ctor-realm-zero.js)<br>[`proto-from-ctor-realm-one.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/JavaScript/proto-from-ctor-realm-one.js)<br>[`proto-from-ctor-realm-two.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/JavaScript/proto-from-ctor-realm-two.js) | `test/built-ins/Array/proto-from-ctor-realm-zero.js`<br>`test/built-ins/Array/proto-from-ctor-realm-one.js`<br>`test/built-ins/Array/proto-from-ctor-realm-two.js` | Borrowed Array constructors retain their realm-specific prototype in property reads and descriptors. When the new target's prototype is not an object, construction selects the Array.prototype intrinsic from the new target's realm. |
 
 ### 23.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-array))
 

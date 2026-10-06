@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-24T06:12:11Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -69,6 +69,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm DataView constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/DataView/JavaScript/proto-from-ctor-realm.js)<br>[`proto-from-ctor-realm-sab.js`](../../../tests/Jroc.Test262.Tests/built-ins/DataView/JavaScript/proto-from-ctor-realm-sab.js) | `test/built-ins/DataView/proto-from-ctor-realm.js`<br>`test/built-ins/DataView/proto-from-ctor-realm-sab.js` | For both ArrayBuffer and SharedArrayBuffer backing stores, a non-object new target prototype selects the DataView.prototype intrinsic from the new target's realm. |
 | DataView(buffer, byteOffset, byteLength) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/DetachmentBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/DataViewConstructorExecutionTests.cs`<br>[`DataView_ByteOffset_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js)<br>[`DataView_BoundsChecks_RangeError.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js)<br>[`DataView_InvalidByteOffset_ByteLength_Messages.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js) | `test/built-ins/DataView/newtarget-undefined-throws.js`<br>`test/built-ins/DataView/detached-buffer.js`<br>`test/built-ins/DataView/toindex-bytelength.js`<br>`test/built-ins/DataView/toindex-bytelength-sab.js` | Supports DataView construction over ArrayBuffer and SharedArrayBuffer, including byteOffset/byteLength ToIndex coercion (explicit null is zero), resizable views, and rejection of detached buffers after observable argument coercions. Custom newTarget prototype side effects remain limited. |
 
 ### 25.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-constructor))

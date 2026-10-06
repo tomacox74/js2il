@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-24T06:12:10Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -71,6 +71,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | ArrayBuffer(length) | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) |  | Implemented as a JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers, and maxByteLength enables resizable buffers within the runtime's supported allocation range. Immutable buffers are not implemented. |
+| Cross-realm ArrayBuffer constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/ArrayBuffer/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the ArrayBuffer.prototype intrinsic from the new target's realm. |
 
 ### 25.1.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.isview))
 

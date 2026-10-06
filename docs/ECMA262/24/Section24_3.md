@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-24T01:16:21Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,6 +37,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm WeakMap constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/WeakMap/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/WeakMap/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the WeakMap.prototype intrinsic from the new target's realm. |
 | new WeakMap() | Supported | [`WeakMap_Constructor_Empty.js`](../../../tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js) | `test/built-ins/WeakMap/undefined-newtarget.js` | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
 | new WeakMap(iterable) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/WeakMap/PortNext200ExecutionTests.cs` | `test/built-ins/WeakMap/iterator-close-after-set-failure.js`<br>`test/built-ins/WeakMap/iterator-item-first-entry-returns-abrupt.js`<br>`test/built-ins/WeakMap/iterator-item-second-entry-returns-abrupt.js` | WeakMap(iterable) consumes iterable entry pairs through the constructor's adder path, observes accessor properties on entry objects, and closes iterators while preserving the original abrupt completion. Weak-key validation and broader exotic iterator edge cases remain partial. |
 

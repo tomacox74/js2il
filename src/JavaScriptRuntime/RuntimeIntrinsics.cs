@@ -398,7 +398,7 @@ internal sealed class RuntimeIntrinsics
         => GetOrCreate(RuntimeIntrinsicSlot.ObjectPrototype, static () => new JsObject());
 
     internal object ArrayPrototype
-        => JavaScriptRuntime.Array.Prototype;
+        => JavaScriptRuntime.Array.GetPrototype(this);
 
     internal object ErrorPrototype
         => GetOrCreate(RuntimeIntrinsicSlot.ErrorPrototype, static () => new JsObject());
@@ -485,6 +485,21 @@ internal sealed class RuntimeIntrinsics
 
     internal object Uint16ArrayPrototype
         => GetOrCreate(RuntimeIntrinsicSlot.Uint16ArrayPrototype, static () => new JsObject());
+
+    internal object? GetConstructorPrototype(Type type)
+        => type == typeof(JavaScriptRuntime.Array) ? ArrayPrototype
+            : type == typeof(JavaScriptRuntime.AggregateError) ? AggregateErrorPrototype
+            : type == typeof(JavaScriptRuntime.Error) ? ErrorPrototype
+            : type == typeof(JavaScriptRuntime.Boolean) ? BooleanPrototype
+            : type == typeof(JavaScriptRuntime.ArrayBuffer) ? ArrayBufferPrototype
+            : type == typeof(JavaScriptRuntime.SharedArrayBuffer) ? SharedArrayBufferPrototype
+            : type == typeof(JavaScriptRuntime.DataView) ? DataView.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.Map) ? Map.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.Set) ? Set.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.WeakMap) ? WeakMap.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.WeakSet) ? WeakSet.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.RegExp) ? RegExp.GetPrototype(this)
+            : null;
 
     /// <summary>
     /// Returns the intrinsic in <paramref name="slot"/>, creating it on first use.

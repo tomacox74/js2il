@@ -1372,6 +1372,30 @@ namespace JavaScriptRuntime
             => ReferenceEquals(target, _bigIntFunctionValue)
                 || target.Method == _bigIntFunctionValue.Method;
 
+        internal static bool IsBooleanConstructorTarget(Delegate target)
+            => ReferenceEquals(target, _booleanFunctionValue)
+                || target.Method == _booleanFunctionValue.Method;
+
+        internal static object? GetIntrinsicConstructorPrototype(
+            Delegate target,
+            RuntimeIntrinsics intrinsics)
+        {
+            var type = ReferenceEquals(target, _arrayConstructorValue) ? typeof(JavaScriptRuntime.Array)
+                : ReferenceEquals(target, _aggregateErrorConstructorValue) ? typeof(JavaScriptRuntime.AggregateError)
+                : ReferenceEquals(target, _errorConstructorValue) ? typeof(JavaScriptRuntime.Error)
+                : ReferenceEquals(target, _arrayBufferConstructorValue) ? typeof(JavaScriptRuntime.ArrayBuffer)
+                : ReferenceEquals(target, _sharedArrayBufferConstructorValue) ? typeof(JavaScriptRuntime.SharedArrayBuffer)
+                : ReferenceEquals(target, _dataViewConstructorValue) ? typeof(JavaScriptRuntime.DataView)
+                : ReferenceEquals(target, _mapConstructorValue) ? typeof(JavaScriptRuntime.Map)
+                : ReferenceEquals(target, _setConstructorValue) ? typeof(JavaScriptRuntime.Set)
+                : ReferenceEquals(target, _weakMapConstructorValue) ? typeof(JavaScriptRuntime.WeakMap)
+                : ReferenceEquals(target, _weakSetConstructorValue) ? typeof(JavaScriptRuntime.WeakSet)
+                : ReferenceEquals(target, _regExpConstructorValue) ? typeof(JavaScriptRuntime.RegExp)
+                : IsBooleanConstructorTarget(target) ? typeof(JavaScriptRuntime.Boolean)
+                : null;
+            return type is null ? null : intrinsics.GetConstructorPrototype(type);
+        }
+
         internal static bool IsPromiseConstructorValue(object? value)
             => ReferenceEquals(value, _promiseConstructorValue)
                 || value is BuiltinDelegateFunctionAdapter adapter

@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-06T20:03:06Z
+> Last generated (UTC): 2026-10-05T23:23:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -61,6 +61,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Set conformance coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Set/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/Symbol.species/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/Symbol.iterator/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/add/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/clear/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/constructor/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/delete/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/difference/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/entries/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/forEach/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/has/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/intersection/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isDisjointFrom/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSubsetOf/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSupersetOf/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/size/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/symmetricDifference/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/union/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/values/SetConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/SetRuntimeSemanticsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/forEach/SetRuntimeSemanticsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/size/SetRuntimeSemanticsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/values/SetRuntimeSemanticsBatchExecutionTests.cs` |  | 286 additional pinned Test262 cases verify Set construction, species and iterator metadata, add, clear, delete, entries, forEach, has, size, values, and the Set composition and relation methods. Verified coverage includes insertion order, SameValueZero matching, live traversal after mutation, coercion, callback behavior, subclass receivers, set-like operands, iterator protocol and closing behavior, descriptors, and supported error paths. The remaining cross-realm case is not yet published. |
+
+### 24.2.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-set-records))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Cross-realm Set constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/Set/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/Set/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the Set.prototype intrinsic from the new target's realm. |
 
 ### 24.2.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-getsetrecord))
 
