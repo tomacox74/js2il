@@ -439,6 +439,37 @@
   "support": {
     "entries": [
       {
+        "clause": "23.2.5.1.1",
+        "feature": "Cross-realm concrete TypedArray default prototypes",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-allocatetypedarray",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/no-args/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/length-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/object-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/typedarray-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors/buffer-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors-bigint/no-args/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors-bigint/length-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/ctors-bigint/buffer-arg/JavaScript/proto-from-ctor-realm.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArrayConstructors/ctors/no-args/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors/length-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors/object-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors/buffer-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors-bigint/no-args/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors-bigint/length-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/proto-from-ctor-realm.js",
+          "test/built-ins/TypedArrayConstructors/ctors-bigint/buffer-arg/proto-from-ctor-realm.js"
+        ],
+        "notes": "When newTarget.prototype is not an object, supported numeric and BigInt TypedArray constructors select the corresponding intrinsic prototype from newTarget's realm. This applies to no-argument, length, array-like, typed-array copy, and ArrayBuffer construction. Explicit object prototypes remain unchanged. Runtime coverage also verifies direct Function construction and CLR-type construction for all eleven supported concrete TypedArray families without losing internal length."
+      },
+      {
         "clause": "23.2",
         "feature": "ArrayBuffer-backed TypedArray subset",
         "status": "Supported with Limitations",

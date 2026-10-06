@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,979 | 12 | 6,521 | 23,512 | **72.21%** |
+| Built-in objects and APIs | 16,989 | 12 | 6,511 | 23,512 | **72.26%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,292 | 101 | 13,852 | 48,245 | **71.08%** |
+| **Total** | 34,302 | 101 | 13,842 | 48,245 | **71.10%** |
 
 ## Language Areas
 
@@ -250,7 +250,7 @@ bounded worker cleanup.
 | `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
 | `TypedArray` | 1,365 | 0 | 73 | 1,438 | **94.92%** |
-| `TypedArrayConstructors` | 693 | 0 | 43 | 736 | **94.16%** |
+| `TypedArrayConstructors` | 703 | 0 | 33 | 736 | **95.52%** |
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
 | `WeakMap` | 141 | 0 | 0 | 141 | **100.00%** |
