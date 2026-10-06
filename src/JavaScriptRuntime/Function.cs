@@ -1073,14 +1073,14 @@ public static class Function
             {
                 return JavaScriptRuntime.Number.Construct(
                     arguments.ToArray(),
-                    newTarget);
+                    newTarget ?? constructor);
             }
 
             if (GlobalThis.IsStringConstructorTarget(constructor.Target))
             {
                 return JavaScriptRuntime.String.Construct(
                     arguments.ToArray(),
-                    newTarget);
+                    newTarget ?? constructor);
             }
 
             if (GlobalThis.IsBigIntConstructorTarget(constructor.Target))

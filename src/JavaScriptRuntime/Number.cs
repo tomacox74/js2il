@@ -133,9 +133,13 @@ namespace JavaScriptRuntime
             if (newTarget is not null and not JsNull)
             {
                 var candidatePrototype = ObjectRuntime.GetItem(newTarget, "prototype");
-                if (candidatePrototype is JsNull || TypeUtilities.IsConstructorReturnOverride(candidatePrototype))
+                if (TypeUtilities.IsConstructorReturnOverride(candidatePrototype))
                 {
                     prototype = candidatePrototype;
+                }
+                else
+                {
+                    prototype = RuntimeIntrinsics.GetFunctionRealm(newTarget).NumberPrototype;
                 }
             }
 

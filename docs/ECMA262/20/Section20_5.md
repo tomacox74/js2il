@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-05T23:31:39Z
+> Last generated (UTC): 2026-10-06T02:28:03Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -32,9 +32,9 @@
 | 20.5.5.4 | SyntaxError | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-native-error-types-used-in-this-standard-syntaxerror) |
 | 20.5.5.5 | TypeError | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-native-error-types-used-in-this-standard-typeerror) |
 | 20.5.5.6 | URIError | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-native-error-types-used-in-this-standard-urierror) |
-| 20.5.6 | NativeError Object Structure | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror-object-structure) |
-| 20.5.6.1 | The NativeError Constructors | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror-constructors) |
-| 20.5.6.1.1 | NativeError ( message [ , options ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror) |
+| 20.5.6 | NativeError Object Structure | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror-object-structure) |
+| 20.5.6.1 | The NativeError Constructors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror-constructors) |
+| 20.5.6.1.1 | NativeError ( message [ , options ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror) |
 | 20.5.6.2 | Properties of the NativeError Constructors | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-nativeerror-constructors) |
 | 20.5.6.2.1 | NativeError .prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-nativeerror.prototype) |
 | 20.5.6.3 | Properties of the NativeError Prototype Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-nativeerror-prototype-objects) |
@@ -118,6 +118,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Error Exception representation and realm-owned prototype | Supported with Limitations | `tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs`<br>`tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs` |  | Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance receives its current realm's Error.prototype by default through non-JsObject prototype storage. Reflective construction with a non-object new target prototype selects Error.prototype from the new target's realm. |
 | Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js)<br>`tests/Jroc.Test262.Tests/built-ins/Error/ExecutionTests.cs` | `test/built-ins/Error/message_property.js`<br>`test/built-ins/Error/cause_property.js` | Error instances expose inherited name plus conditionally created own message and cause data properties with standard descriptors. stack remains backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
+
+### 20.5.6.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-nativeerror))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Cross-realm NativeError constructor default prototypes | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/NativeErrors/EvalError/JavaScript/proto-from-ctor-realm.js)<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/NativeErrors/RangeError/JavaScript/proto-from-ctor-realm.js)<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/NativeErrors/ReferenceError/JavaScript/proto-from-ctor-realm.js)<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/NativeErrors/SyntaxError/JavaScript/proto-from-ctor-realm.js)<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/NativeErrors/TypeError/JavaScript/proto-from-ctor-realm.js)<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/NativeErrors/URIError/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/NativeErrors/EvalError/proto-from-ctor-realm.js`<br>`test/built-ins/NativeErrors/RangeError/proto-from-ctor-realm.js`<br>`test/built-ins/NativeErrors/ReferenceError/proto-from-ctor-realm.js`<br>`test/built-ins/NativeErrors/SyntaxError/proto-from-ctor-realm.js`<br>`test/built-ins/NativeErrors/TypeError/proto-from-ctor-realm.js`<br>`test/built-ins/NativeErrors/URIError/proto-from-ctor-realm.js` | Each NativeError constructor selects its matching prototype intrinsic from the new target's realm when the prototype property is not an object, including undefined, null, Boolean, String, Symbol, and Number values. CLR exception identity is preserved. |
 
 ### 20.5.7.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-aggregate-error))
 

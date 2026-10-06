@@ -80,6 +80,20 @@
     "entries": [
       {
         "clause": "26.1.1.1",
+        "feature": "Cross-realm WeakRef constructor default prototype",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-target",
+        "testScripts": [
+          "tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/WeakRef/JavaScript/proto-from-ctor-realm.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/WeakRef/proto-from-ctor-realm.js"
+        ],
+        "notes": "For a non-object new target prototype, construction selects WeakRef.prototype from the new target's realm without changing the weakly held target."
+      },
+      {
+        "clause": "26.1.1.1",
         "feature": "WeakRef construction and weak-target validation",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-target",

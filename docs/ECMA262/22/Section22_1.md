@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-15T07:52:56Z
+> Last generated (UTC): 2026-10-06T02:28:03Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -85,6 +85,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm String wrapper default prototype | Supported | `tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs`<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/String/proto-from-ctor-realm.js` | Reflective String construction retains the boxed string value and selects String.prototype from the new target's realm for any non-object prototype, including null. Explicit object prototypes are preserved. |
 | String ( value ) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js)<br>[`S15.5.1.1_A1_T14.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/JavaScript/S15.5.1.1_A1_T14.js)<br>[`S15.5.1.1_A1_T8.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/JavaScript/S15.5.1.1_A1_T8.js) | `test/built-ins/String/S15.5.1.1_A1_T14.js`<br>`test/built-ins/String/S15.5.1.1_A1_T8.js` | Runtime coercion follows DotNet2JSConversions.ToString and always returns a primitive string. It now honors ordinary object-to-primitive coercion for arrays so overridden Array.prototype.toString can participate, and numeric -0 stringifies as "0". Wrapper object semantics (property attributes, prototype chain) are not implemented. |
 
 ### 22.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode))

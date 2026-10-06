@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): complete cross-realm default-prototype selection for NativeError,
+  Number, String, WeakRef, and FinalizationRegistry constructors; treat null
+  Number/String prototypes as intrinsic fallbacks and verify 10 previously
+  failing pinned Test262 cases.
 - fix(runtime): use the new target's realm for built-in constructor default
   prototypes, including reflective Boolean wrappers; verify 10 previously
   failing pinned Test262 cases across Boolean, RegExp, collections, buffers,

@@ -25,7 +25,10 @@ namespace JavaScriptRuntime
         private static int substringCacheNextIndex;
         /// <summary>Realm-owned <c>String.prototype</c> intrinsic (issue #1824).</summary>
         internal static JsObject Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.StringPrototype,
                 static () => new JsObject(),
                 static prototype => InitializePrototype(prototype));
@@ -463,9 +466,13 @@ namespace JavaScriptRuntime
             if (newTarget is not null and not JsNull)
             {
                 var candidatePrototype = ObjectRuntime.GetItem(newTarget, "prototype");
-                if (candidatePrototype is JsNull || TypeUtilities.IsConstructorReturnOverride(candidatePrototype))
+                if (TypeUtilities.IsConstructorReturnOverride(candidatePrototype))
                 {
                     prototype = candidatePrototype;
+                }
+                else
+                {
+                    prototype = GetPrototype(RuntimeIntrinsics.GetFunctionRealm(newTarget));
                 }
             }
 

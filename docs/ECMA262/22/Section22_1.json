@@ -349,6 +349,20 @@
   "support": {
     "entries": [
       {
+        "clause": "22.1.1.1",
+        "feature": "Cross-realm String wrapper default prototype",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string-constructor-string-value",
+        "testScripts": [
+          "tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/String/JavaScript/proto-from-ctor-realm.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/proto-from-ctor-realm.js"
+        ],
+        "notes": "Reflective String construction retains the boxed string value and selects String.prototype from the new target's realm for any non-object prototype, including null. Explicit object prototypes are preserved."
+      },
+      {
         "clause": "22.1.1",
         "feature": "String constructor (call/new)",
         "status": "Supported with Limitations",

@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,969 | 12 | 6,531 | 23,512 | **72.17%** |
+| Built-in objects and APIs | 16,979 | 12 | 6,521 | 23,512 | **72.21%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,282 | 101 | 13,862 | 48,245 | **71.06%** |
+| **Total** | 34,292 | 101 | 13,852 | 48,245 | **71.08%** |
 
 ## Language Areas
 
@@ -215,7 +215,7 @@ bounded worker cleanup.
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
 | `Error` | 55 | 0 | 3 | 58 | **94.83%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
-| `FinalizationRegistry` | 46 | 0 | 1 | 47 | **97.87%** |
+| `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
 | `Function` | 409 | 1 | 99 | 509 | **80.35%** |
 | `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
@@ -229,8 +229,8 @@ bounded worker cleanup.
 | `MapIteratorPrototype` | 6 | 0 | 5 | 11 | **54.55%** |
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
-| `NativeErrors` | 88 | 0 | 6 | 94 | **93.62%** |
-| `Number` | 337 | 0 | 1 | 338 | **99.70%** |
+| `NativeErrors` | 94 | 0 | 0 | 94 | **100.00%** |
+| `Number` | 338 | 0 | 0 | 338 | **100.00%** |
 | `Object` | 3,338 | 0 | 73 | 3,411 | **97.86%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
@@ -243,7 +243,7 @@ bounded worker cleanup.
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 95 | 0 | 9 | 104 | **91.35%** |
-| `String` | 1,194 | 1 | 28 | 1,223 | **97.63%** |
+| `String` | 1,195 | 1 | 27 | 1,223 | **97.71%** |
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |
@@ -254,7 +254,7 @@ bounded worker cleanup.
 | `Uint8Array` | 46 | 0 | 22 | 68 | **67.65%** |
 | `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
 | `WeakMap` | 141 | 0 | 0 | 141 | **100.00%** |
-| `WeakRef` | 28 | 0 | 1 | 29 | **96.55%** |
+| `WeakRef` | 29 | 0 | 0 | 29 | **100.00%** |
 | `WeakSet` | 85 | 0 | 0 | 85 | **100.00%** |
 
 ## Annex B Features
