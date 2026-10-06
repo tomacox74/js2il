@@ -1383,6 +1383,12 @@ namespace JavaScriptRuntime
             var type = ReferenceEquals(target, _arrayConstructorValue) ? typeof(JavaScriptRuntime.Array)
                 : ReferenceEquals(target, _aggregateErrorConstructorValue) ? typeof(JavaScriptRuntime.AggregateError)
                 : ReferenceEquals(target, _errorConstructorValue) ? typeof(JavaScriptRuntime.Error)
+                : ReferenceEquals(target, _evalErrorConstructorValue) ? typeof(JavaScriptRuntime.EvalError)
+                : ReferenceEquals(target, _rangeErrorConstructorValue) ? typeof(JavaScriptRuntime.RangeError)
+                : ReferenceEquals(target, _referenceErrorConstructorValue) ? typeof(JavaScriptRuntime.ReferenceError)
+                : ReferenceEquals(target, _syntaxErrorConstructorValue) ? typeof(JavaScriptRuntime.SyntaxError)
+                : ReferenceEquals(target, _typeErrorConstructorValue) ? typeof(JavaScriptRuntime.TypeError)
+                : ReferenceEquals(target, _uriErrorConstructorValue) ? typeof(JavaScriptRuntime.URIError)
                 : ReferenceEquals(target, _arrayBufferConstructorValue) ? typeof(JavaScriptRuntime.ArrayBuffer)
                 : ReferenceEquals(target, _sharedArrayBufferConstructorValue) ? typeof(JavaScriptRuntime.SharedArrayBuffer)
                 : ReferenceEquals(target, _dataViewConstructorValue) ? typeof(JavaScriptRuntime.DataView)
@@ -1390,8 +1396,12 @@ namespace JavaScriptRuntime
                 : ReferenceEquals(target, _setConstructorValue) ? typeof(JavaScriptRuntime.Set)
                 : ReferenceEquals(target, _weakMapConstructorValue) ? typeof(JavaScriptRuntime.WeakMap)
                 : ReferenceEquals(target, _weakSetConstructorValue) ? typeof(JavaScriptRuntime.WeakSet)
+                : ReferenceEquals(target, _weakRefConstructorValue) ? typeof(JavaScriptRuntime.WeakRef)
+                : ReferenceEquals(target, _finalizationRegistryConstructorValue) ? typeof(JavaScriptRuntime.FinalizationRegistry)
                 : ReferenceEquals(target, _regExpConstructorValue) ? typeof(JavaScriptRuntime.RegExp)
                 : IsBooleanConstructorTarget(target) ? typeof(JavaScriptRuntime.Boolean)
+                : IsNumberConstructorTarget(target) ? typeof(JavaScriptRuntime.Number)
+                : IsStringConstructorTarget(target) ? typeof(JavaScriptRuntime.String)
                 : null;
             return type is null ? null : intrinsics.GetConstructorPrototype(type);
         }

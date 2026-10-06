@@ -490,7 +490,15 @@ internal sealed class RuntimeIntrinsics
         => type == typeof(JavaScriptRuntime.Array) ? ArrayPrototype
             : type == typeof(JavaScriptRuntime.AggregateError) ? AggregateErrorPrototype
             : type == typeof(JavaScriptRuntime.Error) ? ErrorPrototype
+            : type == typeof(JavaScriptRuntime.EvalError) ? EvalErrorPrototype
+            : type == typeof(JavaScriptRuntime.RangeError) ? RangeErrorPrototype
+            : type == typeof(JavaScriptRuntime.ReferenceError) ? ReferenceErrorPrototype
+            : type == typeof(JavaScriptRuntime.SyntaxError) ? SyntaxErrorPrototype
+            : type == typeof(JavaScriptRuntime.TypeError) ? TypeErrorPrototype
+            : type == typeof(JavaScriptRuntime.URIError) ? URIErrorPrototype
             : type == typeof(JavaScriptRuntime.Boolean) ? BooleanPrototype
+            : type == typeof(JavaScriptRuntime.Number) ? NumberPrototype
+            : type == typeof(JavaScriptRuntime.String) ? String.GetPrototype(this)
             : type == typeof(JavaScriptRuntime.ArrayBuffer) ? ArrayBufferPrototype
             : type == typeof(JavaScriptRuntime.SharedArrayBuffer) ? SharedArrayBufferPrototype
             : type == typeof(JavaScriptRuntime.DataView) ? DataView.GetPrototype(this)
@@ -498,6 +506,8 @@ internal sealed class RuntimeIntrinsics
             : type == typeof(JavaScriptRuntime.Set) ? Set.GetPrototype(this)
             : type == typeof(JavaScriptRuntime.WeakMap) ? WeakMap.GetPrototype(this)
             : type == typeof(JavaScriptRuntime.WeakSet) ? WeakSet.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.WeakRef) ? WeakRef.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.FinalizationRegistry) ? FinalizationRegistry.GetPrototype(this)
             : type == typeof(JavaScriptRuntime.RegExp) ? RegExp.GetPrototype(this)
             : null;
 

@@ -23,6 +23,16 @@ public sealed class RuntimeIntrinsicIsolationTests
     [InlineData("WeakSet", typeof(JavaScriptRuntime.WeakSet))]
     [InlineData("RegExp", typeof(JavaScriptRuntime.RegExp))]
     [InlineData("Boolean", typeof(JavaScriptRuntime.Boolean))]
+    [InlineData("Number", typeof(JavaScriptRuntime.Number))]
+    [InlineData("String", typeof(JavaScriptRuntime.String))]
+    [InlineData("EvalError", typeof(JavaScriptRuntime.EvalError))]
+    [InlineData("RangeError", typeof(JavaScriptRuntime.RangeError))]
+    [InlineData("ReferenceError", typeof(JavaScriptRuntime.ReferenceError))]
+    [InlineData("SyntaxError", typeof(JavaScriptRuntime.SyntaxError))]
+    [InlineData("TypeError", typeof(JavaScriptRuntime.TypeError))]
+    [InlineData("URIError", typeof(JavaScriptRuntime.URIError))]
+    [InlineData("WeakRef", typeof(JavaScriptRuntime.WeakRef))]
+    [InlineData("FinalizationRegistry", typeof(JavaScriptRuntime.FinalizationRegistry))]
     public void BuiltinConstruction_DefaultPrototypeUsesNewTargetRealmAcrossRuntimeEntryPoints(
         string name,
         Type type)
@@ -55,11 +65,27 @@ public sealed class RuntimeIntrinsicIsolationTests
                 Assert.Same(expectedDefault, ObjectRuntime.GetProperty(descriptor!, "value"));
                 var constructor = Assert.IsType<BuiltinDelegateFunctionAdapter>(
                     ObjectRuntime.GetProperty(GlobalThis.globalThis, name));
-                object?[] args = name == "DataView"
-                    ? [new JavaScriptRuntime.ArrayBuffer(0d)]
-                    : name == "Boolean" ? [true]
-                    : name == "AggregateError" ? [new JavaScriptRuntime.Array()]
-                    : [];
+                object?[] args = name switch
+                {
+                    "DataView" => [new JavaScriptRuntime.ArrayBuffer(0d)],
+                    "Boolean" => [true],
+                    "Number" => [42d],
+                    "String" => ["boxed"],
+                    "AggregateError" => [new JavaScriptRuntime.Array()],
+                    "WeakRef" => [new JsObject()],
+                    "FinalizationRegistry" => [BuiltinDelegateFunctionAdapter.FromDelegate(
+                        (BuiltinFunction1)(static (_, _) => null))],
+                    _ => []
+                };
+                if (name is "Number" or "String")
+                {
+                    var borrowed = Assert.IsType<BuiltinDelegateFunctionAdapter>(foreignConstructor);
+                    var instance = JavaScriptRuntime.Function.Construct(
+                        borrowed,
+                        JsCallArguments.FromArray(args),
+                        newTarget: null);
+                    Assert.Same(expectedDefault, ObjectRuntime.getPrototypeOf(instance!));
+                }
                 var explicitPrototype = new JsObject();
                 foreach (var prototype in new object?[] { null, JsNull.Null, 0d, "ignored", false, explicitPrototype })
                 {
@@ -67,21 +93,41 @@ public sealed class RuntimeIntrinsicIsolationTests
                     var expected = ReferenceEquals(prototype, explicitPrototype)
                         ? explicitPrototype
                         : expectedDefault;
-                    var results = new[]
+                    var results = new List<object?>
                     {
-                        ObjectRuntime.ConstructValue(type, args!, newTarget),
                         ObjectRuntime.ConstructValue(constructor, args!, newTarget),
                         JavaScriptRuntime.Function.Construct(
                             constructor,
                             JsCallArguments.FromArray(args),
                             newTarget)
                     };
+                    if (!(type.IsAbstract && type.IsSealed))
+                    {
+                        results.Add(ObjectRuntime.ConstructValue(type, args!, newTarget));
+                    }
                     foreach (var result in results)
                     {
                         Assert.Same(expected, ObjectRuntime.getPrototypeOf(result!));
                         if (name == "Boolean")
                         {
                             Assert.True(Assert.IsType<JavaScriptRuntime.Boolean>(result).valueOf());
+                        }
+                        else if (name == "Number")
+                        {
+                            Assert.Equal(42d, JavaScriptRuntime.Number.ThisNumberValue(result));
+                        }
+                        else if (name == "String")
+                        {
+                            Assert.Equal(
+                                "boxed",
+                                CallableOperations.Call(
+                                    ObjectRuntime.GetProperty(expectedDefault, "valueOf"),
+                                    result,
+                                    []));
+                        }
+                        else if (name == "WeakRef")
+                        {
+                            Assert.Same(args[0], Assert.IsType<JavaScriptRuntime.WeakRef>(result).deref());
                         }
                     }
                 }

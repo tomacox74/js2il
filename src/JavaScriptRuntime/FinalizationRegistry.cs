@@ -8,7 +8,10 @@ namespace JavaScriptRuntime
     {
         /// <summary>Realm-owned <c>FinalizationRegistry.prototype</c> intrinsic (issue #1824).</summary>
         internal static object Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static object GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.FinalizationRegistryPrototype,
                 static () => new JsObject(),
                 static prototype => InitializePrototype(prototype));
