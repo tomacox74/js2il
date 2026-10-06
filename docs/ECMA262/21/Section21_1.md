@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T05:54:19Z
+> Last generated (UTC): 2026-10-06T02:28:03Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -57,6 +57,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Cross-realm Number wrapper default prototype | Supported | `tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs`<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/Number/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/Number/proto-from-ctor-realm.js` | Reflective Number construction retains the boxed numeric value and selects Number.prototype from the new target's realm for any non-object prototype, including null. Explicit object prototypes are preserved. |
 | Number ( value ) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Number/PortNext200ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringBinaryLiteral.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Number/ExecutionTests.StringOctalLiteral.cs` | `built-ins/Number/return-abrupt-tonumber-value.js`<br>`built-ins/Number/S15.7.1.1_A1.js`<br>`built-ins/Number/S9.3_A1_T1.js`<br>`built-ins/Number/S9.3.1_A17.js`<br>`built-ins/Number/S9.3_A2_T1.js`<br>`built-ins/Number/S9.3_A3_T1.js`<br>`built-ins/Number/S9.3_A4.1_T1.js`<br>`built-ins/Number/S9.3.1_A1.js`<br>`built-ins/Number/S9.3.1_A7.js`<br>`test/built-ins/Number/bigint-conversion.js`<br>`test/built-ins/Number/string-binary-literal.js`<br>`test/built-ins/Number/string-octal-literal.js` | Direct calls to the global Number function preserve observable abrupt completions even when the converted value is discarded. BigInt arguments are converted with IEEE-754 round-to-nearest, ties-to-even semantics, while abstract ToNumber coercion continues to reject BigInt. Binary strings with 0b/0B prefixes and octal strings with 0o/0O prefixes share exact integer accumulation and correctly rounded Number conversion; malformed or empty payloads produce NaN. Checked-in coverage includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, binary-string, octal-string, object-wrapper, non-canonical infinity-string, and BigInt coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete. |
 
 ### 21.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-number-constructor))

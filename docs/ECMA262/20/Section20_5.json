@@ -120,19 +120,19 @@
     {
       "clause": "20.5.6",
       "title": "NativeError Object Structure",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-nativeerror-object-structure"
     },
     {
       "clause": "20.5.6.1",
       "title": "The NativeError Constructors",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-nativeerror-constructors"
     },
     {
       "clause": "20.5.6.1.1",
       "title": "NativeError ( message [ , options ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-nativeerror"
     },
     {
@@ -312,6 +312,29 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "20.5.6.1.1",
+        "feature": "Cross-realm NativeError constructor default prototypes",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-nativeerror",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/NativeErrors/EvalError/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/NativeErrors/RangeError/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/NativeErrors/ReferenceError/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/NativeErrors/SyntaxError/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/NativeErrors/TypeError/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/NativeErrors/URIError/JavaScript/proto-from-ctor-realm.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/NativeErrors/EvalError/proto-from-ctor-realm.js",
+          "test/built-ins/NativeErrors/RangeError/proto-from-ctor-realm.js",
+          "test/built-ins/NativeErrors/ReferenceError/proto-from-ctor-realm.js",
+          "test/built-ins/NativeErrors/SyntaxError/proto-from-ctor-realm.js",
+          "test/built-ins/NativeErrors/TypeError/proto-from-ctor-realm.js",
+          "test/built-ins/NativeErrors/URIError/proto-from-ctor-realm.js"
+        ],
+        "notes": "Each NativeError constructor selects its matching prototype intrinsic from the new target's realm when the prototype property is not an object, including undefined, null, Boolean, String, Symbol, and Number values. CLR exception identity is preserved."
+      },
       {
         "clause": "20.5.1.1",
         "feature": "Error(message) (callable creates instance)",

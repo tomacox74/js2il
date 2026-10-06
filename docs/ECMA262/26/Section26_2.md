@@ -4,7 +4,7 @@
 
 [Back to Section26](Section26.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T06:08:55Z
+> Last generated (UTC): 2026-10-06T02:28:03Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,6 +34,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | FinalizationRegistry construction and cleanup callback | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/ExecutionTests.cs`<br>[`FinalizationRegistry_Cleanup_Order.js`](../../../tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | `test/built-ins/FinalizationRegistry/newtarget-prototype-is-not-object.js`<br>`test/built-ins/FinalizationRegistry/returns-new-object-from-constructor.js`<br>`test/built-ins/FinalizationRegistry/undefined-newtarget-throws.js` | Supports construction only with new and uses the intrinsic FinalizationRegistry prototype when a newTarget prototype is not an object. Cleanup callbacks are queued through a host-managed finalization queue and become deterministic when a host-opt-in non-standard gc() helper forces collection. Custom newTarget prototypes, cross-realm construction, and cleanup timing outside that helper remain limited. |
+
+### 26.2.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-finalization-registry-cleanup-callback))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Cross-realm FinalizationRegistry constructor default prototype | Supported | `tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs`<br>[`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/FinalizationRegistry/proto-from-ctor-realm.js` | For a non-object new target prototype, construction selects FinalizationRegistry.prototype from the new target's realm while preserving cleanup callback validation. |
 
 ### 26.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-constructor))
 

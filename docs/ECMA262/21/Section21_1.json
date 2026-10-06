@@ -181,6 +181,20 @@
   "support": {
     "entries": [
       {
+        "clause": "21.1.1.1",
+        "feature": "Cross-realm Number wrapper default prototype",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-number-constructor-number-value",
+        "testScripts": [
+          "tests/Jroc.Tests/RuntimeIntrinsicIsolationTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Number/JavaScript/proto-from-ctor-realm.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Number/proto-from-ctor-realm.js"
+        ],
+        "notes": "Reflective Number construction retains the boxed numeric value and selects Number.prototype from the new target's realm for any non-object prototype, including null. Explicit object prototypes are preserved."
+      },
+      {
         "clause": "21.1.1",
         "feature": "The Number Constructor",
         "status": "Supported with Limitations",
