@@ -11,7 +11,10 @@ namespace JavaScriptRuntime
         private static readonly BigInteger Modulus = BigInteger.One << 64;
 
         internal static JsObject Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.BigInt64ArrayPrototype,
                 static () => new JsObject());
 

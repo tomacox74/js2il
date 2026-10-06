@@ -33,6 +33,17 @@ public sealed class RuntimeIntrinsicIsolationTests
     [InlineData("URIError", typeof(JavaScriptRuntime.URIError))]
     [InlineData("WeakRef", typeof(JavaScriptRuntime.WeakRef))]
     [InlineData("FinalizationRegistry", typeof(JavaScriptRuntime.FinalizationRegistry))]
+    [InlineData("Float64Array", typeof(JavaScriptRuntime.Float64Array))]
+    [InlineData("Float32Array", typeof(JavaScriptRuntime.Float32Array))]
+    [InlineData("Int32Array", typeof(JavaScriptRuntime.Int32Array))]
+    [InlineData("Int16Array", typeof(JavaScriptRuntime.Int16Array))]
+    [InlineData("Int8Array", typeof(JavaScriptRuntime.Int8Array))]
+    [InlineData("Uint32Array", typeof(JavaScriptRuntime.Uint32Array))]
+    [InlineData("Uint16Array", typeof(JavaScriptRuntime.Uint16Array))]
+    [InlineData("Uint8Array", typeof(JavaScriptRuntime.Uint8Array))]
+    [InlineData("Uint8ClampedArray", typeof(JavaScriptRuntime.Uint8ClampedArray))]
+    [InlineData("BigInt64Array", typeof(JavaScriptRuntime.BigInt64Array))]
+    [InlineData("BigUint64Array", typeof(JavaScriptRuntime.BigUint64Array))]
     public void BuiltinConstruction_DefaultPrototypeUsesNewTargetRealmAcrossRuntimeEntryPoints(
         string name,
         Type type)
@@ -75,6 +86,7 @@ public sealed class RuntimeIntrinsicIsolationTests
                     "WeakRef" => [new JsObject()],
                     "FinalizationRegistry" => [BuiltinDelegateFunctionAdapter.FromDelegate(
                         (BuiltinFunction1)(static (_, _) => null))],
+                    _ when typeof(TypedArrayBase).IsAssignableFrom(type) => [2d],
                     _ => []
                 };
                 if (name is "Number" or "String")
@@ -128,6 +140,10 @@ public sealed class RuntimeIntrinsicIsolationTests
                         else if (name == "WeakRef")
                         {
                             Assert.Same(args[0], Assert.IsType<JavaScriptRuntime.WeakRef>(result).deref());
+                        }
+                        else if (result is TypedArrayBase typedArray)
+                        {
+                            Assert.Equal(2d, typedArray.length);
                         }
                     }
                 }

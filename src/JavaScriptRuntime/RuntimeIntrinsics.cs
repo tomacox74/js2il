@@ -509,6 +509,17 @@ internal sealed class RuntimeIntrinsics
             : type == typeof(JavaScriptRuntime.WeakRef) ? WeakRef.GetPrototype(this)
             : type == typeof(JavaScriptRuntime.FinalizationRegistry) ? FinalizationRegistry.GetPrototype(this)
             : type == typeof(JavaScriptRuntime.RegExp) ? RegExp.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.Float64Array) ? Float64ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Float32Array) ? Float32ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Int32Array) ? Int32ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Int16Array) ? Int16ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Int8Array) ? Int8ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Uint32Array) ? Uint32ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Uint16Array) ? Uint16ArrayPrototype
+            : type == typeof(JavaScriptRuntime.Uint8Array) ? Uint8Array.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.Uint8ClampedArray) ? Uint8ClampedArray.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.BigInt64Array) ? BigInt64Array.GetPrototype(this)
+            : type == typeof(JavaScriptRuntime.BigUint64Array) ? BigUint64Array.GetPrototype(this)
             : null;
 
     /// <summary>
