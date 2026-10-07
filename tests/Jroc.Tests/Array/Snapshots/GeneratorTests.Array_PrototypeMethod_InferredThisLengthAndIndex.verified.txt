@@ -1520,11 +1520,12 @@
 		IL_06b3: ldstr "prototype"
 		IL_06b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_06bd: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_06c2: stloc.s 7
-		IL_06c4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_06c9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_06ce: stloc.s 7
-		IL_06d0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_06c2: ldnull
+		IL_06c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_06c8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_06cd: ldc.i4.1
+		IL_06ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_06d3: stloc.s 7
 		IL_06d5: ldloc.s 7
 		IL_06d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_06dc: volatile.

@@ -25,26 +25,6 @@ public sealed partial class HIRToLIRLowerer
 
             ctorReturnTemp = EnsureObject(ctorReturnTemp);
 
-            if (_isDerivedConstructor)
-            {
-                var overrideLabel = CreateLabel();
-                var endReturnCheckLabel = CreateLabel();
-                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(ctorReturnTemp, overrideLabel));
-                _methodBodyIR.Instructions.Add(new LIRBranch(endReturnCheckLabel));
-                _methodBodyIR.Instructions.Add(new LIRLabel(overrideLabel));
-
-                var isObjectReturnTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                    nameof(JavaScriptRuntime.Function),
-                    nameof(JavaScriptRuntime.Function.IsConstructorReturnOverride),
-                    new[] { ctorReturnTemp },
-                    isObjectReturnTemp));
-                DefineTempStorage(isObjectReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isObjectReturnTemp, endReturnCheckLabel));
-                _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Derived constructors may only return object or undefined"));
-                _methodBodyIR.Instructions.Add(new LIRLabel(endReturnCheckLabel));
-            }
-
             if (!TryGetEnclosingClassRegistryName(out var registryClassName))
             {
                 return false;
@@ -128,6 +108,17 @@ public sealed partial class HIRToLIRLowerer
             returnTempVar = CreateTempVariable();
             lirInstructions.Add(new LIRConstUndefined(returnTempVar));
             DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            if (_callableKind == CallableKind.Constructor
+                && TryGetEnclosingClassRegistryName(out var registryClassName)
+                && registryClassName != null
+                && _classRegistry?.TryGetPrivateField(registryClassName, "__jroc_ctorReturn", out _) == true)
+            {
+                lirInstructions.Add(new LIRStoreUserClassInstanceField(
+                    RegistryClassName: registryClassName,
+                    FieldName: "__jroc_ctorReturn",
+                    IsPrivateField: true,
+                    Value: returnTempVar));
+            }
         }
 
         // Async try/finally lowering: a return inside a protected region must flow through finally.

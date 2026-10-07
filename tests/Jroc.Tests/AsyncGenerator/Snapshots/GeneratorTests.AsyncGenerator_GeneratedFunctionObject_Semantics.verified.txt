@@ -6079,11 +6079,12 @@
 			IL_18f3: ldstr "prototype"
 			IL_18f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 			IL_18fd: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_1902: stloc.s 12
-			IL_1904: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_1909: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_190e: stloc.s 12
-			IL_1910: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_1902: ldnull
+			IL_1903: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_1908: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_190d: ldc.i4.1
+			IL_190e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+			IL_1913: stloc.s 12
 			IL_1915: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_191a: stloc.s 21
 			IL_191c: ldloc.s 11

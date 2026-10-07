@@ -376,7 +376,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 524 (0x20c)
+		// Code size: 477 (0x1dd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope,
@@ -456,122 +456,102 @@
 		IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
 		IL_009e: newobj instance void Modules.Classes_Constructor_ReturnObjectOverridesThis/A::.ctor(object[])
 		IL_00a3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00a8: stloc.3
-		IL_00a9: ldloc.3
-		IL_00aa: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/A
-		IL_00af: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00b4: ldstr "prototype"
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00be: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00c3: ldloc.3
-		IL_00c4: castclass Modules.Classes_Constructor_ReturnObjectOverridesThis/A
-		IL_00c9: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/A::__jroc_ctorReturn
-		IL_00ce: dup
-		IL_00cf: brfalse IL_00e5
+		IL_00a8: dup
+		IL_00a9: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/A
+		IL_00ae: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00b3: ldstr "prototype"
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00bd: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00c2: dup
+		IL_00c3: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/A::__jroc_ctorReturn
+		IL_00c8: ldnull
+		IL_00c9: ldc.i4.0
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_00cf: stloc.3
+		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d5: stloc.s 9
+		IL_00d7: volatile.
+		IL_00d9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_00de: brfalse IL_00f3
 
-		IL_00d4: dup
-		IL_00d5: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
-		IL_00da: brfalse IL_00e5
+		IL_00e3: ldloc.3
+		IL_00e4: ldstr "a"
+		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ee: br IL_0108
 
-		IL_00df: stloc.3
-		IL_00e0: br IL_00e6
+		IL_00f3: ldloc.3
+		IL_00f4: ldstr "a"
+		IL_00f9: ldstr "Classes_Constructor_ReturnObjectOverridesThis:Modules.Classes_Constructor_ReturnObjectOverridesThis:__js_module_init__:22"
+		IL_00fe: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00e5: pop
+		IL_0108: stloc.s 10
+		IL_010a: ldloc.s 9
+		IL_010c: ldloc.s 10
+		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0113: pop
+		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0119: stloc.s 9
+		IL_011b: volatile.
+		IL_011d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0122: brfalse IL_0137
 
-		IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00eb: stloc.s 9
-		IL_00ed: volatile.
-		IL_00ef: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_00f4: brfalse IL_0109
+		IL_0127: ldloc.3
+		IL_0128: ldstr "b"
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0132: br IL_014c
 
-		IL_00f9: ldloc.3
-		IL_00fa: ldstr "a"
-		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0104: br IL_011e
+		IL_0137: ldloc.3
+		IL_0138: ldstr "b"
+		IL_013d: ldstr "Classes_Constructor_ReturnObjectOverridesThis:Modules.Classes_Constructor_ReturnObjectOverridesThis:__js_module_init__:27"
+		IL_0142: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0109: ldloc.3
-		IL_010a: ldstr "a"
-		IL_010f: ldstr "Classes_Constructor_ReturnObjectOverridesThis:Modules.Classes_Constructor_ReturnObjectOverridesThis:__js_module_init__:22"
-		IL_0114: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_014c: stloc.s 10
+		IL_014e: ldloc.s 9
+		IL_0150: ldloc.s 10
+		IL_0152: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0157: pop
+		IL_0158: ldc.i4.0
+		IL_0159: newarr [System.Runtime]System.Object
+		IL_015e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0163: newobj instance void Modules.Classes_Constructor_ReturnObjectOverridesThis/B::.ctor()
+		IL_0168: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_016d: dup
+		IL_016e: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/B
+		IL_0173: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0178: ldstr "prototype"
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0182: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0187: dup
+		IL_0188: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/B::__jroc_ctorReturn
+		IL_018d: ldnull
+		IL_018e: ldc.i4.0
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_0194: stloc.s 4
+		IL_0196: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_019b: stloc.s 9
+		IL_019d: volatile.
+		IL_019f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_01a4: brfalse IL_01ba
 
-		IL_011e: stloc.s 10
-		IL_0120: ldloc.s 9
-		IL_0122: ldloc.s 10
-		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0129: pop
-		IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012f: stloc.s 9
-		IL_0131: volatile.
-		IL_0133: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_0138: brfalse IL_014d
+		IL_01a9: ldloc.s 4
+		IL_01ab: ldstr "a"
+		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01b5: br IL_01d0
 
-		IL_013d: ldloc.3
-		IL_013e: ldstr "b"
-		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0148: br IL_0162
+		IL_01ba: ldloc.s 4
+		IL_01bc: ldstr "a"
+		IL_01c1: ldstr "Classes_Constructor_ReturnObjectOverridesThis:Modules.Classes_Constructor_ReturnObjectOverridesThis:__js_module_init__:35"
+		IL_01c6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_014d: ldloc.3
-		IL_014e: ldstr "b"
-		IL_0153: ldstr "Classes_Constructor_ReturnObjectOverridesThis:Modules.Classes_Constructor_ReturnObjectOverridesThis:__js_module_init__:27"
-		IL_0158: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0162: stloc.s 10
-		IL_0164: ldloc.s 9
-		IL_0166: ldloc.s 10
-		IL_0168: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_016d: pop
-		IL_016e: ldc.i4.0
-		IL_016f: newarr [System.Runtime]System.Object
-		IL_0174: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0179: newobj instance void Modules.Classes_Constructor_ReturnObjectOverridesThis/B::.ctor()
-		IL_017e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0183: stloc.s 4
-		IL_0185: ldloc.s 4
-		IL_0187: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/B
-		IL_018c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0191: ldstr "prototype"
-		IL_0196: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_019b: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_01a0: ldloc.s 4
-		IL_01a2: castclass Modules.Classes_Constructor_ReturnObjectOverridesThis/B
-		IL_01a7: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/B::__jroc_ctorReturn
-		IL_01ac: dup
-		IL_01ad: brfalse IL_01c4
-
-		IL_01b2: dup
-		IL_01b3: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
-		IL_01b8: brfalse IL_01c4
-
-		IL_01bd: stloc.s 4
-		IL_01bf: br IL_01c5
-
-		IL_01c4: pop
-
-		IL_01c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01ca: stloc.s 9
-		IL_01cc: volatile.
-		IL_01ce: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_01d3: brfalse IL_01e9
-
-		IL_01d8: ldloc.s 4
-		IL_01da: ldstr "a"
-		IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01e4: br IL_01ff
-
-		IL_01e9: ldloc.s 4
-		IL_01eb: ldstr "a"
-		IL_01f0: ldstr "Classes_Constructor_ReturnObjectOverridesThis:Modules.Classes_Constructor_ReturnObjectOverridesThis:__js_module_init__:35"
-		IL_01f5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_01fa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_01ff: stloc.s 10
-		IL_0201: ldloc.s 9
-		IL_0203: ldloc.s 10
-		IL_0205: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_020a: pop
-		IL_020b: ret
+		IL_01d0: stloc.s 10
+		IL_01d2: ldloc.s 9
+		IL_01d4: ldloc.s 10
+		IL_01d6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01db: pop
+		IL_01dc: ret
 	} // end of method Classes_Constructor_ReturnObjectOverridesThis::__js_module_init__
 
 } // end of class Modules.Classes_Constructor_ReturnObjectOverridesThis

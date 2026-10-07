@@ -924,11 +924,12 @@
 		IL_0753: ldstr "prototype"
 		IL_0758: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_075d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0762: stloc.s 10
-		IL_0764: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0769: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_076e: stloc.s 10
-		IL_0770: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_0762: ldnull
+		IL_0763: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0768: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_076d: ldc.i4.1
+		IL_076e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_0773: stloc.s 10
 		IL_0775: ldloc.s 10
 		IL_0777: ldc.r8 1
 		IL_0780: ldc.r8 42

@@ -924,8 +924,15 @@ public sealed partial class HIRToLIRLowerer
 
                 int outerTryStart = CreateLabel();
                 int outerTryEnd = CreateLabel();
+                int catchStart = CreateLabel();
+                int catchEnd = CreateLabel();
                 int finallyStart = CreateLabel();
                 int finallyEnd = CreateLabel();
+
+                var throwingTemp = CreateTempVariable();
+                DefineTempStorage(throwingTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                SetTempVariableSlot(throwingTemp, CreateAnonymousVariableSlot("$forOf_throwing", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+                lirInstructions.Add(new LIRCopyTemp(falseTemp, throwingTemp));
 
                 int loopStartLabel = CreateLabel();
                 int loopUpdateLabel = CreateLabel();
@@ -1004,6 +1011,13 @@ public sealed partial class HIRToLIRLowerer
                     lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
                     lirInstructions.Add(new LIRLeave(loopEndLabel));
 
+                    lirInstructions.Add(new LIRLabel(catchStart));
+                    var exceptionTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRStoreException(exceptionTemp));
+                    DefineTempStorage(exceptionTemp, new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception)));
+                    lirInstructions.Add(new LIRCopyTemp(trueTemp, throwingTemp));
+                    lirInstructions.Add(new LIRThrow(exceptionTemp, IsExceptionPropagation: true));
+                    lirInstructions.Add(new LIRLabel(catchEnd));
                     lirInstructions.Add(new LIRLabel(outerTryEnd));
 
                     lirInstructions.Add(new LIRLabel(finallyStart));
@@ -1011,12 +1025,25 @@ public sealed partial class HIRToLIRLowerer
                     int finallySkipClose = CreateLabel();
                     lirInstructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
                     lirInstructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
+                    int throwClose = CreateLabel();
+                    lirInstructions.Add(new LIRBranchIfTrue(throwingTemp, throwClose));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("ObjectRuntime", "IteratorClose", new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRBranch(finallySkipClose));
+                    lirInstructions.Add(new LIRLabel(throwClose));
                     lirInstructions.Add(new LIRCallIntrinsicStaticVoid("ObjectRuntime", "IteratorCloseForThrowCompletion", new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRLabel(finallySkipClose));
                     lirInstructions.Add(new LIREndFinally());
                     lirInstructions.Add(new LIRLabel(finallyEnd));
 
                     lirInstructions.Add(new LIRLabel(loopEndLabel));
+
+                    _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+                        ExceptionRegionKind.Catch,
+                        TryStartLabelId: outerTryStart,
+                        TryEndLabelId: catchStart,
+                        HandlerStartLabelId: catchStart,
+                        HandlerEndLabelId: catchEnd,
+                        CatchType: typeof(System.Exception)));
 
                     _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
                         ExceptionRegionKind.Finally,

@@ -124,7 +124,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 403 (0x193)
+		// Code size: 452 (0x1c4)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral/Scope,
@@ -133,12 +133,14 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
 			[4] bool,
 			[5] bool,
-			[6] object,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[8] object,
-			[9] bool,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[11] float64
+			[6] bool,
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[9] object,
+			[10] bool,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[12] float64,
+			[13] class [System.Runtime]System.Exception
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral/Scope::.ctor()
@@ -146,141 +148,170 @@
 		IL_0006: nop
 		IL_0007: ldc.i4.8
 		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: stloc.s 7
-		IL_000f: ldloc.s 7
+		IL_000d: stloc.s 8
+		IL_000f: ldloc.s 8
 		IL_0011: ldc.r8 8
 		IL_001a: ldc.i4.1
 		IL_001b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::SetLength(float64, bool)
-		IL_0020: ldloc.s 7
+		IL_0020: ldloc.s 8
 		IL_0022: ldc.r8 0.0
 		IL_002b: ldc.r8 0.0
 		IL_0034: ldc.i4.1
 		IL_0035: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-		IL_003a: ldloc.s 7
+		IL_003a: ldloc.s 8
 		IL_003c: ldc.r8 1
 		IL_0045: ldstr "a"
 		IL_004a: ldc.i4.1
 		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
 		IL_0050: pop
-		IL_0051: ldloc.s 7
+		IL_0051: ldloc.s 8
 		IL_0053: ldc.r8 2
 		IL_005c: ldc.i4.1
 		IL_005d: box [System.Runtime]System.Boolean
 		IL_0062: ldc.i4.1
 		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
 		IL_0068: pop
-		IL_0069: ldloc.s 7
+		IL_0069: ldloc.s 8
 		IL_006b: ldc.r8 3
 		IL_0074: ldc.i4.0
 		IL_0075: box [System.Runtime]System.Boolean
 		IL_007a: ldc.i4.1
 		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
 		IL_0080: pop
-		IL_0081: ldloc.s 7
+		IL_0081: ldloc.s 8
 		IL_0083: ldc.r8 4
 		IL_008c: ldc.i4.0
 		IL_008d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_0092: ldc.i4.1
 		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
 		IL_0098: pop
-		IL_0099: ldloc.s 7
+		IL_0099: ldloc.s 8
 		IL_009b: ldc.r8 6
 		IL_00a4: ldnull
 		IL_00a5: ldc.i4.1
 		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
 		IL_00ab: pop
-		IL_00ac: ldloc.s 7
+		IL_00ac: ldloc.s 8
 		IL_00ae: ldc.r8 7
 		IL_00b7: ldc.r8 (00 00 00 00 00 00 F8 FF)
 		IL_00c0: ldc.i4.1
 		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-		IL_00c6: ldloc.s 7
+		IL_00c6: ldloc.s 8
 		IL_00c8: stloc.1
 		IL_00c9: ldc.r8 0.0
 		IL_00d2: box [System.Runtime]System.Double
 		IL_00d7: stloc.2
 		IL_00d8: ldstr "iterator"
 		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_00e2: stloc.s 8
+		IL_00e2: stloc.s 9
 		IL_00e4: ldloc.1
-		IL_00e5: ldloc.s 8
+		IL_00e5: ldloc.s 9
 		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember0(object, object)
-		IL_00ec: stloc.s 8
-		IL_00ee: ldloc.s 8
+		IL_00ec: stloc.s 9
+		IL_00ee: ldloc.s 9
 		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
 		IL_00f5: stloc.3
 		IL_00f6: ldc.i4.0
 		IL_00f7: stloc.s 4
 		IL_00f9: ldc.i4.0
 		IL_00fa: stloc.s 5
+		IL_00fc: ldc.i4.0
+		IL_00fd: stloc.s 6
 		.try
 		{
-			// loop start (head: IL_00fc)
-				IL_00fc: ldc.i4.1
-				IL_00fd: stloc.s 4
-				IL_00ff: ldloc.3
-				IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_0105: stloc.s 8
-				IL_0107: ldloc.s 8
-				IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-				IL_010e: stloc.s 9
-				IL_0110: ldloc.s 9
-				IL_0112: brtrue IL_0165
+			.try
+			{
+				// loop start (head: IL_00ff)
+					IL_00ff: ldc.i4.1
+					IL_0100: stloc.s 4
+					IL_0102: ldloc.3
+					IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_0108: stloc.s 9
+					IL_010a: ldloc.s 9
+					IL_010c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_0111: stloc.s 10
+					IL_0113: ldloc.s 10
+					IL_0115: brtrue IL_0168
 
-				IL_0117: ldloc.s 8
-				IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_011e: stloc.s 8
-				IL_0120: ldc.i4.0
-				IL_0121: stloc.s 4
-				IL_0123: ldloc.s 8
-				IL_0125: stloc.s 6
-				IL_0127: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_012c: stloc.s 10
-				IL_012e: ldloc.s 10
-				IL_0130: ldloc.s 6
-				IL_0132: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0137: pop
-				IL_0138: ldloc.2
-				IL_0139: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_013e: ldc.r8 1
-				IL_0147: add
-				IL_0148: stloc.s 11
-				IL_014a: ldloc.s 11
-				IL_014c: box [System.Runtime]System.Double
-				IL_0151: stloc.2
-				IL_0152: br IL_00fc
-			// end loop
-			IL_0157: ldloc.3
-			IL_0158: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_015d: ldc.i4.1
-			IL_015e: stloc.s 5
-			IL_0160: leave IL_0182
+					IL_011a: ldloc.s 9
+					IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_0121: stloc.s 9
+					IL_0123: ldc.i4.0
+					IL_0124: stloc.s 4
+					IL_0126: ldloc.s 9
+					IL_0128: stloc.s 7
+					IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_012f: stloc.s 11
+					IL_0131: ldloc.s 11
+					IL_0133: ldloc.s 7
+					IL_0135: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_013a: pop
+					IL_013b: ldloc.2
+					IL_013c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0141: ldc.r8 1
+					IL_014a: add
+					IL_014b: stloc.s 12
+					IL_014d: ldloc.s 12
+					IL_014f: box [System.Runtime]System.Double
+					IL_0154: stloc.2
+					IL_0155: br IL_00ff
+				// end loop
+				IL_015a: ldloc.3
+				IL_015b: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_0160: ldc.i4.1
+				IL_0161: stloc.s 5
+				IL_0163: leave IL_01b3
 
-			IL_0165: ldc.i4.1
-			IL_0166: stloc.s 4
-			IL_0168: leave IL_0182
+				IL_0168: ldc.i4.1
+				IL_0169: stloc.s 4
+				IL_016b: leave IL_01b3
+			} // end .try
+			catch [System.Runtime]System.Exception
+			{
+				IL_0170: stloc.s 13
+				IL_0172: ldc.i4.1
+				IL_0173: stloc.s 6
+				IL_0175: ldloc.s 13
+				IL_0177: isinst [System.Runtime]System.Exception
+				IL_017c: dup
+				IL_017d: brtrue IL_018b
+
+				IL_0182: pop
+				IL_0183: ldloc.s 13
+				IL_0185: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+				IL_018a: throw
+
+				IL_018b: throw
+			} // end handler
 		} // end .try
 		finally
 		{
-			IL_016d: ldloc.s 4
-			IL_016f: brtrue IL_0181
+			IL_018c: ldloc.s 4
+			IL_018e: brtrue IL_01b2
 
-			IL_0174: ldloc.s 5
-			IL_0176: brtrue IL_0181
+			IL_0193: ldloc.s 5
+			IL_0195: brtrue IL_01b2
 
-			IL_017b: ldloc.3
-			IL_017c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_019a: ldloc.s 6
+			IL_019c: brtrue IL_01ac
 
-			IL_0181: endfinally
+			IL_01a1: ldloc.3
+			IL_01a2: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_01a7: br IL_01b2
+
+			IL_01ac: ldloc.3
+			IL_01ad: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+
+			IL_01b2: endfinally
 		} // end handler
 
-		IL_0182: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0187: stloc.s 10
-		IL_0189: ldloc.s 10
-		IL_018b: ldloc.2
-		IL_018c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0191: pop
-		IL_0192: ret
+		IL_01b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01b8: stloc.s 11
+		IL_01ba: ldloc.s 11
+		IL_01bc: ldloc.2
+		IL_01bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c2: pop
+		IL_01c3: ret
 	} // end of method ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral

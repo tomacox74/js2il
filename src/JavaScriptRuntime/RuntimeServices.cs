@@ -464,6 +464,10 @@ public class RuntimeServices
                 args,
                 newTarget);
         }
+        else if (constructor is JsClassConstructorObject)
+        {
+            constructed = ObjectRuntime.ConstructValue(constructor, args, newTarget);
+        }
         else if (constructor is JsFunctionObject functionObject
             && functionObject.IsConstructor)
         {
@@ -520,6 +524,30 @@ public class RuntimeServices
         }
 
         return value;
+    }
+
+    public static object? ResolveClassConstructorResult(
+        object instance,
+        object? returnValue,
+        object? boundThis,
+        bool isDerived)
+    {
+        if (TypeUtilities.IsConstructorReturnOverride(returnValue))
+        {
+            return returnValue;
+        }
+
+        if (!isDerived)
+        {
+            return instance;
+        }
+
+        if (returnValue is not null)
+        {
+            throw new TypeError("Derived constructors may only return object or undefined");
+        }
+
+        return ResolveLexicalThis(boundThis);
     }
 
     public static JsClassConstructorObject InitializeClassConstructorObject(

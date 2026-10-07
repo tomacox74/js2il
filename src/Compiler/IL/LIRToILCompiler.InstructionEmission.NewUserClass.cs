@@ -132,7 +132,6 @@ internal sealed partial class LIRToILCompiler
                         && classRegistry.TryGet(newUserClass.RegistryClassName, out classTypeForPrototype);
 
                     bool resultUsed = IsMaterialized(newUserClass.Result, allocation);
-                    bool resultAlreadyStored = false;
 
                     if (newUserClass.IsDerivedConstructor)
                     {
@@ -194,144 +193,85 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(setPrototype);
                     }
 
-                    bool derivedReceiverPrototypeAttached = false;
-                    if (newUserClass.IsDerivedConstructor && hasPrototype)
+                    var ctorReturnField = default(FieldDefinitionHandle);
+                    bool hasConstructorReturn = classRegistry != null
+                        && classRegistry.TryGetPrivateField(
+                            newUserClass.RegistryClassName,
+                            "__jroc_ctorReturn",
+                            out ctorReturnField);
+                    if (!newUserClass.IsDerivedConstructor && !hasConstructorReturn)
+                    {
+                        if (resultUsed)
+                        {
+                            EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                            if (hasPrototype)
+                            {
+                                EmitLoadTemp(newUserClass.Result, ilEncoder, allocation, methodDescriptor);
+                                EmitAttachClassPrototype();
+                            }
+                        }
+                        else if (hasPrototype)
+                        {
+                            EmitAttachClassPrototype();
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
+                        break;
+                    }
+
+                    if (hasPrototype)
                     {
                         // Attach the class prototype only to the receiver allocated by newobj.
                         // A function-valued base constructor may replace the derived result object.
                         ilEncoder.OpCode(ILOpCode.Dup);
                         EmitAttachClassPrototype();
-                        derivedReceiverPrototypeAttached = true;
                     }
 
-                    if (newUserClass.IsDerivedConstructor && resultUsed)
+                    if (newUserClass.IsDerivedConstructor || hasConstructorReturn)
                     {
-                        // The derived constructor's result is the initialized lexical `this` binding,
-                        // which may be a replacement object returned by a function-valued base constructor.
-                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
-                        resultAlreadyStored = true;
-
-                        var getThis = _memberRefRegistry.GetOrAddMethod(
+                        // Read the return slot from the allocated receiver, before choosing
+                        // a replacement object or resolving a possibly uninitialized `this`.
+                        if (hasConstructorReturn)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.OpCode(ILOpCode.Ldfld);
+                            ilEncoder.Token(ctorReturnField);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+                        if (newUserClass.IsDerivedConstructor)
+                        {
+                            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis),
+                                parameterTypes: Type.EmptyTypes));
+                            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.PopDerivedConstructorThisBinding),
+                                parameterTypes: Type.EmptyTypes));
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+                        ilEncoder.LoadConstantI4(newUserClass.IsDerivedConstructor ? 1 : 0);
+                        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis),
-                            parameterTypes: Type.EmptyTypes);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getThis);
-
-                        var resolveThis = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
-                            parameterTypes: new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(resolveThis);
-                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
-                    }
-
-                    if (newUserClass.IsDerivedConstructor)
-                    {
-                        var popDerivedThis = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.PopDerivedConstructorThisBinding),
-                            parameterTypes: Type.EmptyTypes);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(popDerivedThis);
-                        // Stack: [instance] (unchanged — PopDerivedConstructorThisBinding returns void)
-                    }
-
-                    if (!resultUsed && !hasPrototype)
-                    {
-                        ilEncoder.OpCode(ILOpCode.Pop);
-                        break;
+                            nameof(JavaScriptRuntime.RuntimeServices.ResolveClassConstructorResult),
+                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object), typeof(bool) }));
                     }
 
                     if (resultUsed)
                     {
-                        if (!resultAlreadyStored)
-                        {
-                            // Store the constructed instance as the default result.
-                            EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
-                        }
-                    }
-
-                    if (hasPrototype && !derivedReceiverPrototypeAttached)
-                    {
-                        if (resultUsed)
-                        {
-                            // Reload instance from result local.
-                            EmitLoadTemp(newUserClass.Result, ilEncoder, allocation, methodDescriptor);
-                        }
-                        // Else: instance is still on the stack from newobj — use it directly.
-                        // Stack: [instance]
-
-                        EmitAttachClassPrototype();
-                        // Stack: [] (instance consumed by SetPrototype)
-                    }
-
-                    if (!resultUsed)
-                    {
-                        if (derivedReceiverPrototypeAttached)
-                        {
-                            ilEncoder.OpCode(ILOpCode.Pop);
-                        }
-                        // Prototype was set; instance was consumed. Nothing left to do.
-                        break;
-                    }
-
-                    // PL5.4a: If the JS constructor explicitly returned an object, new-expr evaluates to that object;
-                    // if it returned a primitive/null/undefined, the constructed instance is used.
-                    if (classRegistry != null
-                        && classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__jroc_ctorReturn", out var ctorReturnField)
-                        && classRegistry.TryGet(newUserClass.RegistryClassName, out var classTypeHandle))
-                    {
-                        var keepThis = ilEncoder.DefineLabel();
-                        var done = ilEncoder.DefineLabel();
-
-                        // Load the hidden ctor return field from the constructed instance.
-                        EmitLoadTemp(newUserClass.Result, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(classTypeHandle);
-                        ilEncoder.OpCode(ILOpCode.Ldfld);
-                        ilEncoder.Token(ctorReturnField);
-
-                        // If null/undefined => keep constructed instance.
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        ilEncoder.Branch(ILOpCode.Brfalse, keepThis);
-
-                        // If not an object (primitive) => base constructors keep the instance,
-                        // but derived constructors must reject explicit primitive returns.
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        var isOverride = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.TypeUtilities),
-                            nameof(JavaScriptRuntime.TypeUtilities.IsConstructorReturnOverride),
-                            parameterTypes: new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(isOverride);
-                        if (newUserClass.IsDerivedConstructor)
-                        {
-                            var overrideObject = ilEncoder.DefineLabel();
-                            ilEncoder.Branch(ILOpCode.Brtrue, overrideObject);
-
-                            ilEncoder.OpCode(ILOpCode.Pop);
-                            var typeErrorCtor = _memberRefRegistry.GetOrAddConstructor(
-                                typeof(JavaScriptRuntime.TypeError),
-                                parameterTypes: new[] { typeof(string) });
-                            ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("Derived constructors may only return object or undefined"));
-                            ilEncoder.OpCode(ILOpCode.Newobj);
-                            ilEncoder.Token(typeErrorCtor);
-                            ilEncoder.OpCode(ILOpCode.Throw);
-
-                            ilEncoder.MarkLabel(overrideObject);
-                        }
-                        ilEncoder.Branch(ILOpCode.Brfalse, keepThis);
-
-                        // Override result with the returned object.
                         EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
-                        ilEncoder.Branch(ILOpCode.Br, done);
-
-                        // Keep constructed instance; discard the return value.
-                        ilEncoder.MarkLabel(keepThis);
+                    }
+                    else
+                    {
                         ilEncoder.OpCode(ILOpCode.Pop);
-                        ilEncoder.MarkLabel(done);
                     }
                     break;
                 }
