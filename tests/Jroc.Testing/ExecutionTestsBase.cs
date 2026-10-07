@@ -16,7 +16,7 @@ namespace Jroc.Tests
             _testCategory = testCategory;
         }
 
-        protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
+        protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null, int executionTimeoutMs = 30000)
         {
             if (IsTest262ExecutionTest())
             {
@@ -55,7 +55,7 @@ namespace Jroc.Tests
             {
                 var materializedArtifact = compiled.MaterializedArtifact
                     ?? compiled.Artifact.Materialize(compiled.OutputDirectory);
-                output = ExecuteGeneratedAssembly(materializedArtifact.AssemblyPath, allowUnhandledException, testName);
+                output = ExecuteGeneratedAssembly(materializedArtifact.AssemblyPath, allowUnhandledException, testName, executionTimeoutMs);
             }
             else
             {
