@@ -330,7 +330,7 @@
     {
       "clause": "22.2.5.3",
       "title": "get RegExp [ %Symbol.species% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp-%symbol.species%"
     },
     {
@@ -570,6 +570,79 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "22.2.5.3",
+        "feature": "RegExp Symbol.species accessor",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp-%symbol.species%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/Symbol.species/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/Symbol.species/JavaScript/symbol-species-name.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/Symbol.species/length.js",
+          "test/built-ins/RegExp/Symbol.species/symbol-species-name.js"
+        ],
+        "notes": "RegExp exposes a configurable, non-enumerable Symbol.species accessor whose getter returns its receiver unchanged. The getter has length 0 and the configurable, non-writable, non-enumerable name get [Symbol.species]."
+      },
+      {
+        "clause": "22.2.6",
+        "feature": "RegExp prototype getter function names",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-regexp-prototype-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/dotAll/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/flags/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/global/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/hasIndices/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/ignoreCase/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/multiline/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/source/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/sticky/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicode/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/name.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/prototype/dotAll/name.js",
+          "test/built-ins/RegExp/prototype/flags/name.js",
+          "test/built-ins/RegExp/prototype/global/name.js",
+          "test/built-ins/RegExp/prototype/hasIndices/name.js",
+          "test/built-ins/RegExp/prototype/ignoreCase/name.js",
+          "test/built-ins/RegExp/prototype/multiline/name.js",
+          "test/built-ins/RegExp/prototype/source/name.js",
+          "test/built-ins/RegExp/prototype/sticky/name.js",
+          "test/built-ins/RegExp/prototype/unicode/name.js",
+          "test/built-ins/RegExp/prototype/unicodeSets/name.js"
+        ],
+        "notes": "Each intrinsic RegExp prototype getter is initialized as a zero-argument built-in function named get followed by its property name, with the required configurable, non-writable, non-enumerable name descriptor. This includes unicodeSets getter metadata, but does not add v-flag pattern support."
+      },
+      {
+        "clause": "22.2.6.4.1",
+        "feature": "RegExp flag getter intrinsic-prototype receivers",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexphasflag",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/dotAll/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/global/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/hasIndices/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/ignoreCase/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/multiline/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/sticky/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicode/JavaScript/this-val-regexp-prototype.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/this-val-regexp-prototype.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/prototype/dotAll/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/global/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/hasIndices/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/ignoreCase/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/multiline/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/sticky/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/unicode/this-val-regexp-prototype.js",
+          "test/built-ins/RegExp/prototype/unicodeSets/this-val-regexp-prototype.js"
+        ],
+        "notes": "The dotAll, global, hasIndices, ignoreCase, multiline, sticky, unicode, and unicodeSets getters return undefined when their receiver is their own realm's intrinsic RegExp.prototype. Ordinary RegExp instances retain their stored flag values, unrelated receivers still fail brand checks, and the source getter's intrinsic-prototype value remains (?:)."
+      },
       {
         "clause": "22.2.4.1",
         "feature": "Cross-realm RegExp constructor default prototype",

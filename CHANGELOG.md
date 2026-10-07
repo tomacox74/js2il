@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): initialize RegExp getter names and metadata, return undefined
+  for intrinsic-prototype flag receivers, and expose RegExp Symbol.species;
+  verify 20 previously failing pinned Test262 cases.
 - fix(runtime): select concrete TypedArray default prototypes from the new
   target's realm across numeric and BigInt constructors; verify 10 previously
   failing pinned Test262 cases covering no arguments, length, array-like,

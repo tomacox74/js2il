@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 16,989 | 12 | 6,511 | 23,512 | **72.26%** |
+| Built-in objects and APIs | 17,009 | 12 | 6,491 | 23,512 | **72.34%** |
 | Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,302 | 101 | 13,842 | 48,245 | **71.10%** |
+| **Total** | 34,322 | 101 | 13,822 | 48,245 | **71.14%** |
 
 ## Language Areas
 
@@ -237,7 +237,7 @@ bounded worker cleanup.
 | `Promise` | 437 | 0 | 240 | 677 | **64.55%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,151 | 0 | 728 | 1,879 | **61.26%** |
+| `RegExp` | 1,171 | 0 | 708 | 1,879 | **62.32%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
