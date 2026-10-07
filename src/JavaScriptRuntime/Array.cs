@@ -30,6 +30,7 @@ namespace JavaScriptRuntime
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
+            PrototypeChain.SetPrototype(ImmutablePrototype, GlobalThis.ObjectPrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

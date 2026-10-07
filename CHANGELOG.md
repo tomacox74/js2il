@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- refactor(runtime): move intrinsic metadata and prototype configuration from
+  GlobalThis into the owning runtime implementations; keep realm bootstrap
+  orchestration and shared Object, TypedArray, and NativeError setup centralized
+  only at their appropriate family boundaries.
 - fix(runtime): expose TypedArray reduce metadata and shared Array toString
   identity, validate toReversed receivers and post-coercion with indices, and
   implement Uint8Array Base64 decoding options, bounded chunk consumption,

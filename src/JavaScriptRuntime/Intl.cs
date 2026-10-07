@@ -2,6 +2,18 @@ using System.Globalization;
 
 namespace JavaScriptRuntime;
 
+internal static class Intl
+{
+    internal static void ConfigureIntrinsicSurface(object namespaceValue)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        GlobalThis.DefineIntrinsicToStringTagProperty(namespaceValue, "Intl");
+        GlobalThis.DefineIntrinsicDataProperty(namespaceValue, "NumberFormat", typeof(JavaScriptRuntime.IntlNumberFormat));
+        GlobalThis.DefineIntrinsicDataProperty(namespaceValue, "Segmenter", typeof(JavaScriptRuntime.IntlSegmenter));
+    }
+}
+
 public sealed class IntlNumberFormat
 {
     public string format(object? value)

@@ -5,6 +5,13 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Reflect")]
     public static class Reflect
     {
+        internal static void ConfigureIntrinsicSurface(object namespaceValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            GlobalThis.DefineIntrinsicToStringTagProperty(namespaceValue, "Reflect");
+        }
+
         public static object? apply(object? target, object? thisArgument, object? argumentsList)
         {
             if (!IsCallableValue(target))

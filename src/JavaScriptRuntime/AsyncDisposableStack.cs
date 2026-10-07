@@ -41,7 +41,7 @@ public sealed class AsyncDisposableStack : JsObject
     {
     }
 
-    internal static void InitializeIntrinsicSurface(object objectPrototype)
+    internal static void ConfigureIntrinsicSurface(object objectPrototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 

@@ -31,7 +31,7 @@ namespace JavaScriptRuntime
             return null;
         }
 
-        internal static void InitializeIntrinsicSurface(object objectPrototype)
+        internal static void ConfigureIntrinsicSurface(object objectPrototype)
         {
             GlobalThis.ConfigureBuiltinFunctionObject(typeof(AbortController));
             PrototypeChain.SetPrototype(Prototype, objectPrototype);
@@ -218,7 +218,7 @@ namespace JavaScriptRuntime
             return string.Equals(DotNet2JSConversions.ToString(eventName), "abort", StringComparison.Ordinal);
         }
 
-        internal static void InitializeIntrinsicSurface(object objectPrototype)
+        internal static void ConfigureIntrinsicSurface(object objectPrototype)
         {
             GlobalThis.ConfigureBuiltinFunctionObject(typeof(AbortSignal));
             PrototypeChain.SetPrototype(Prototype, objectPrototype);

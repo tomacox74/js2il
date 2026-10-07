@@ -9,6 +9,153 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("Symbol")]
 public sealed class Symbol
 {
+    internal static void ConfigureIntrinsicSurface(object constructorValue, object prototypeValue, object objectPrototype)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        BuiltinFunction0 descriptionGetter = SymbolPrototypeDescription;
+        BuiltinFunction0 toPrimitive = SymbolPrototypeToPrimitive;
+        PrototypeChain.SetPrototype(prototypeValue, objectPrototype);
+        GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+        // The "description" parameter is optional (Symbol ( [ description ] )), so the
+        // spec-mandated length is 0. BuiltinFunction1's automatic length inference always
+        // reports 1 (one JS-visible parameter), so it must be overridden explicitly here to
+        // preserve the pre-migration length value that the legacy array-based ABI computed.
+        JavaScriptRuntime.Function.DefineMetadataProperty(constructorValue, "length", 0d);
+        PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = prototypeValue
+        });
+
+        PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = constructorValue
+        });
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            descriptionGetter,
+            0d,
+            "get description",
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(descriptionGetter));
+        GlobalThis.DefineUndefinedPrototypeProperty(descriptionGetter);
+        PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "description", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Enumerable = false,
+            Configurable = true,
+            Get = descriptionGetter
+        });
+        GlobalThis.DefineBuiltinFunctionProperty(
+            prototypeValue,
+            "toString",
+            (BuiltinFunction0)(thisArgument =>
+                TryGetThisSymbolValue(thisArgument, out var symbol)
+                    ? symbol.toString()
+                    : throw new TypeError("Symbol.prototype.toString called on incompatible receiver")),
+            0d);
+        GlobalThis.DefineBuiltinFunctionProperty(
+            prototypeValue,
+            "valueOf",
+            (BuiltinFunction0)(thisArgument =>
+                TryGetThisSymbolValue(thisArgument, out var symbol)
+                    ? symbol.valueOf()
+                    : throw new TypeError("Symbol.prototype.valueOf called on incompatible receiver")),
+            0d);
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            toPrimitive,
+            1d,
+            "[Symbol.toPrimitive]",
+            requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(toPrimitive));
+        GlobalThis.DefineUndefinedPrototypeProperty(toPrimitive);
+        PropertyDescriptorStore.DefineOrUpdate(
+            prototypeValue,
+            global::JavaScriptRuntime.Symbol.toPrimitive.DebugId,
+            new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = toPrimitive
+            });
+        GlobalThis.DefineIntrinsicToStringTagProperty(prototypeValue, "Symbol");
+        GlobalThis.DefineIntrinsicDataProperty(constructorValue, "for", (Func<object?, object>)global::JavaScriptRuntime.Symbol.@for);
+        GlobalThis.DefineIntrinsicDataProperty(constructorValue, "keyFor", (Func<object?, object?>)global::JavaScriptRuntime.Symbol.keyFor);
+        DefineWellKnownSymbolProperty(constructorValue, "iterator", global::JavaScriptRuntime.Symbol.iterator);
+        DefineWellKnownSymbolProperty(constructorValue, "asyncIterator", global::JavaScriptRuntime.Symbol.asyncIterator);
+        DefineWellKnownSymbolProperty(constructorValue, "hasInstance", global::JavaScriptRuntime.Symbol.hasInstance);
+        DefineWellKnownSymbolProperty(constructorValue, "isConcatSpreadable", global::JavaScriptRuntime.Symbol.isConcatSpreadable);
+        DefineWellKnownSymbolProperty(constructorValue, "match", global::JavaScriptRuntime.Symbol.match);
+        DefineWellKnownSymbolProperty(constructorValue, "matchAll", global::JavaScriptRuntime.Symbol.matchAll);
+        DefineWellKnownSymbolProperty(constructorValue, "replace", global::JavaScriptRuntime.Symbol.replace);
+        DefineWellKnownSymbolProperty(constructorValue, "search", global::JavaScriptRuntime.Symbol.search);
+        DefineWellKnownSymbolProperty(constructorValue, "species", global::JavaScriptRuntime.Symbol.species);
+        DefineWellKnownSymbolProperty(constructorValue, "split", global::JavaScriptRuntime.Symbol.split);
+        DefineWellKnownSymbolProperty(constructorValue, "toPrimitive", global::JavaScriptRuntime.Symbol.toPrimitive);
+        DefineWellKnownSymbolProperty(constructorValue, "toStringTag", global::JavaScriptRuntime.Symbol.toStringTag);
+        DefineWellKnownSymbolProperty(constructorValue, "unscopables", global::JavaScriptRuntime.Symbol.unscopables);
+        DefineWellKnownSymbolProperty(constructorValue, "dispose", global::JavaScriptRuntime.Symbol.dispose);
+        DefineWellKnownSymbolProperty(constructorValue, "asyncDispose", global::JavaScriptRuntime.Symbol.asyncDispose);
+    }
+
+    private static bool TryGetThisSymbolValue(
+        object? thisValue,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out JavaScriptRuntime.Symbol? symbol)
+    {
+        if (thisValue is JavaScriptRuntime.Symbol directSymbol)
+        {
+            symbol = directSymbol;
+            return true;
+        }
+
+        if (thisValue != null
+            && PropertyDescriptorStore.TryGetOwn(thisValue, ObjectRuntime.PrimitiveValuePropertyName, out var descriptor)
+            && descriptor.Value is JavaScriptRuntime.Symbol boxedSymbol)
+        {
+            symbol = boxedSymbol;
+            return true;
+        }
+
+        symbol = null;
+        return false;
+    }
+
+    private static object? SymbolPrototypeDescription(object? thisArgument)
+    {
+        if (!TryGetThisSymbolValue(thisArgument, out var symbol))
+        {
+            throw new TypeError("Symbol.prototype.description called on incompatible receiver");
+        }
+
+        return symbol.Description;
+    }
+
+    private static object? SymbolPrototypeToPrimitive(object? thisArgument)
+    {
+        return TryGetThisSymbolValue(thisArgument, out var symbol)
+            ? symbol
+            : throw new TypeError("Symbol.prototype[Symbol.toPrimitive] called on incompatible receiver");
+    }
+
+    private static void DefineWellKnownSymbolProperty(object constructorValue, string key, global::JavaScriptRuntime.Symbol value)
+    {
+        PropertyDescriptorStore.DefineOrUpdate(constructorValue, key, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = value
+        });
+    }
+
     private static long _nextId;
 
     // Well-known symbols used by core language features.

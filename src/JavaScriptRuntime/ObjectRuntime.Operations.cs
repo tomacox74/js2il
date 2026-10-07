@@ -1007,7 +1007,9 @@ namespace JavaScriptRuntime
         public static void ConfigureIntrinsicSurface(object objectConstructorValue, object objectPrototypeValue)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+            GlobalThis.ConfigureBuiltinFunctionObject(objectConstructorValue);
             Function.MarkConstructible(objectConstructorValue);
+            PrototypeChain.SetPrototype(objectPrototypeValue, JsNull.Null);
 
             DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: false, writable: false);
 
