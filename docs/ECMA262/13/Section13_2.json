@@ -438,9 +438,21 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
-          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js",
+          "tests/Jroc.Test262.Tests/language/computed-property-names/basics/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/computed-property-names/object/accessor/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/computed-property-names/object/method/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/computed-property-names/object/property/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/computed-property-names/to-name-side-effects/ExecutionTests.cs"
         ],
-        "notes": "Lowered as sequential JavaScriptRuntime.Object.SetItem(target, key, value) calls to preserve left-to-right evaluation order and key coercion to string."
+        "test262Paths": [
+          "test/language/computed-property-names/basics/symbol.js",
+          "test/language/computed-property-names/object/accessor/getter-duplicates.js",
+          "test/language/computed-property-names/object/method/method-super.js",
+          "test/language/computed-property-names/object/property/number-duplicates.js",
+          "test/language/computed-property-names/to-name-side-effects/object.js"
+        ],
+        "notes": "Sequential object-literal property definitions preserve string, numeric, and Symbol keys. Key coercion runs once per definition; inferred function names reuse the canonical key without repeating user-visible coercion. The native harness verifies all 17 pinned computed-property-names basics and object cases, including methods, generators, accessors, duplicate definitions, super calls, and coercion side effects."
       },
       {
         "clause": "13.2.5.3",
