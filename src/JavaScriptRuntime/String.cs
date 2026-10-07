@@ -60,17 +60,23 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
 
+            DefinePrototypeMethod(prototype, "anchor", (BuiltinFunction1)(static (receiver, name) => CreateHtml(receiver, "a", "name", name)), 1);
             DefinePrototypeMethod(prototype, "at", (BuiltinFunction1)PrototypeAt, 1);
             DefinePrototypeMethod(prototype, "big", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "big")), 0);
+            DefinePrototypeMethod(prototype, "blink", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "blink")), 0);
             DefinePrototypeMethod(prototype, "bold", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "b")), 0);
             DefinePrototypeMethod(prototype, "charAt", (BuiltinFunction1)PrototypeCharAt, 1);
             DefinePrototypeMethod(prototype, "charCodeAt", (BuiltinFunction1)PrototypeCharCodeAt, 1);
             DefinePrototypeMethod(prototype, "codePointAt", (BuiltinFunction1)PrototypeCodePointAt, 1);
             DefinePrototypeMethod(prototype, "concat", (BuiltinFunctionVariadic)PrototypeConcat, 1);
             DefinePrototypeMethod(prototype, "endsWith", (BuiltinFunction2)PrototypeEndsWith, 1);
+            DefinePrototypeMethod(prototype, "fixed", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "tt")), 0);
+            DefinePrototypeMethod(prototype, "fontcolor", (BuiltinFunction1)(static (receiver, color) => CreateHtml(receiver, "font", "color", color)), 1);
+            DefinePrototypeMethod(prototype, "fontsize", (BuiltinFunction1)(static (receiver, size) => CreateHtml(receiver, "font", "size", size)), 1);
             DefinePrototypeMethod(prototype, "includes", (BuiltinFunction2)PrototypeIncludes, 1);
             DefinePrototypeMethod(prototype, "indexOf", (BuiltinFunction2)PrototypeIndexOf, 1);
             DefinePrototypeMethod(prototype, "isWellFormed", (BuiltinFunction0)PrototypeIsWellFormed, 0);
+            DefinePrototypeMethod(prototype, "italics", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "i")), 0);
             DefinePrototypeMethod(prototype, "lastIndexOf", (BuiltinFunction2)PrototypeLastIndexOf, 1);
             DefinePrototypeMethod(prototype, "localeCompare", (BuiltinFunction3)PrototypeLocaleCompare, 1);
             DefinePrototypeMethod(prototype, "match", (BuiltinFunction1)PrototypeMatch, 1);
@@ -765,10 +771,17 @@ namespace JavaScriptRuntime
         private static object? PrototypeTrimStart(object? thisArgument)
             => TrimStart(ThisStringValue(thisArgument));
 
-        private static string CreateHtml(object? receiver, string tag)
+        private static string CreateHtml(object? receiver, string tag, string attribute = "", object? value = null)
         {
             RequireObjectCoercible(receiver);
-            return $"<{tag}>{DotNet2JSConversions.ToString(receiver)}</{tag}>";
+            var content = DotNet2JSConversions.ToString(receiver);
+            if (attribute.Length == 0)
+            {
+                return $"<{tag}>{content}</{tag}>";
+            }
+
+            var attributeValue = DotNet2JSConversions.ToString(value).Replace("\"", "&quot;", StringComparison.Ordinal);
+            return $"<{tag} {attribute}=\"{attributeValue}\">{content}</{tag}>";
         }
 
         private static object? PrototypeValueOf(object? thisArgument)
