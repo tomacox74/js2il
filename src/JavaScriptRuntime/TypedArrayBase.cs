@@ -467,7 +467,7 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        public object? reduce(object[]? args)
+        public object? reduce(object?[]? args)
         {
             var length = GetCurrentLengthForIteration();
             var callback = GetRequiredCallback(args, "reduce");
@@ -541,10 +541,11 @@ namespace JavaScriptRuntime
 
         public TypedArrayBase toReversed()
         {
-            var reversed = CreateSameTypeWithLength(_length);
-            for (int i = 0; i < _length; i++)
+            var length = GetCurrentLengthForIteration();
+            var reversed = CreateSameTypeWithLength(length);
+            for (int i = 0; i < length; i++)
             {
-                reversed.WriteElementObject(i, ReadElementObject(_length - i - 1));
+                reversed.WriteElementObject(i, ReadElementObject(length - i - 1));
             }
 
             return reversed;
@@ -566,28 +567,28 @@ namespace JavaScriptRuntime
 
         public TypedArrayBase with(object?[]? args)
         {
+            var length = GetCurrentLengthForIteration();
             var index = GetArgument(args, 0);
             var value = GetArgument(args, 1);
             var relativeIndex = ToIntegerOrInfinity(index);
             var actualIndex = relativeIndex < 0
-                ? _length + relativeIndex
+                ? length + relativeIndex
                 : relativeIndex;
 
             // Coerce the replacement before validating the index. Its side effects
             // are observable before the copy is made and before a RangeError.
             var elementValue = CoerceElementValue(value);
-            if (actualIndex < 0 || actualIndex >= _length)
+            if (IsOutOfBounds || actualIndex < 0 || actualIndex >= GetCurrentLengthOrZero())
             {
                 throw new RangeError($"Invalid {TypedArrayName} index");
             }
 
-            var result = CreateSameTypeWithLength(_length);
-            for (var i = 0; i < _length; i++)
+            var result = CreateSameTypeWithLength(length);
+            for (var i = 0; i < length; i++)
             {
-                result.WriteElementObject(i, ReadElementObject(i));
+                result.WriteElementObject(i, i == actualIndex ? elementValue : ReadElementOrUndefined(i));
             }
 
-            result.WriteElementObject((int)actualIndex, elementValue);
             return result;
         }
 

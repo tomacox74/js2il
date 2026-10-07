@@ -96,21 +96,20 @@ namespace JavaScriptRuntime
             => FromSource(nameof(Uint8Array), source, mapper, thisArg, static values => new Uint8Array(values));
 
         public static Uint8Array fromBase64(object? value)
+            => fromBase64(value, null);
+
+        public static Uint8Array fromBase64(object? value, object? options)
         {
             if (value is not string text)
             {
                 throw new TypeError("Uint8Array.fromBase64 requires a string input");
             }
 
-            try
-            {
-                var decoded = System.Convert.FromBase64String(text);
-                return new Uint8Array(new ArrayBuffer(decoded, cloneBuffer: false), 0, decoded.Length);
-            }
-            catch (FormatException ex)
-            {
-                throw new SyntaxError("Invalid base64 input", ex);
-            }
+            var decodingOptions = GetBase64DecodingOptions(options);
+            var decoded = new byte[(text.Length / 4) * 3 + 3];
+            var result = DecodeBase64(text, decodingOptions.Alphabet, decodingOptions.LastChunkHandling, decoded);
+            global::System.Array.Resize(ref decoded, result.Written);
+            return new Uint8Array(new ArrayBuffer(decoded, cloneBuffer: false), 0, decoded.Length);
         }
 
         public static Uint8Array fromHex(object? source)
@@ -154,7 +153,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunction(
                 constructorValue,
                 "fromBase64",
-                (BuiltinFunction1)ConstructorFromBase64,
+                (BuiltinFunction2)ConstructorFromBase64,
                 1);
             DefineBuiltinFunction(
                 constructorValue,
@@ -164,7 +163,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunction(
                 Prototype,
                 "setFromBase64",
-                (BuiltinFunction1)PrototypeSetFromBase64,
+                (BuiltinFunction2)PrototypeSetFromBase64,
                 1);
             DefineBuiltinFunction(
                 Prototype,
@@ -209,31 +208,23 @@ namespace JavaScriptRuntime
             => (Uint8Array)SubarrayCore(start, end);
 
         public JsObject setFromBase64(object? source)
+            => setFromBase64(source, null);
+
+        public JsObject setFromBase64(object? source, object? options)
         {
             if (source is not string text)
             {
                 throw new TypeError("Uint8Array.prototype.setFromBase64 requires a string input");
             }
 
-            byte[] decoded;
-            try
-            {
-                decoded = System.Convert.FromBase64String(text);
-            }
-            catch (FormatException ex)
-            {
-                throw new SyntaxError("Invalid base64 input", ex);
-            }
-
-            var written = global::System.Math.Min(LengthElements, decoded.Length);
-            if (written > 0)
-            {
-                Buffer.BlockCopy(decoded, 0, BufferObject.RawBytes, ByteOffsetBytes, written);
-            }
+            var decodingOptions = GetBase64DecodingOptions(options);
+            var length = GetCurrentLengthForIteration();
+            var decoded = DecodeBase64(text, decodingOptions.Alphabet, decodingOptions.LastChunkHandling,
+                BufferObject.RawBytes.AsSpan(ByteOffsetBytes, length));
 
             var result = new JsObject();
-            result.SetNumber("read", text.Length);
-            result.SetNumber("written", written);
+            result.SetNumber("read", decoded.Read);
+            result.SetNumber("written", decoded.Written);
             return result;
         }
 
@@ -244,13 +235,14 @@ namespace JavaScriptRuntime
                 throw new TypeError("Uint8Array.prototype.setFromHex requires a string input");
             }
 
+            var length = GetCurrentLengthForIteration();
             if ((text.Length & 1) != 0)
             {
                 throw new SyntaxError("Invalid hexadecimal input");
             }
 
             var written = 0;
-            var maxBytes = global::System.Math.Min(LengthElements, text.Length / 2);
+            var maxBytes = global::System.Math.Min(length, text.Length / 2);
             while (written < maxBytes)
             {
                 var sourceIndex = written * 2;
@@ -279,10 +271,11 @@ namespace JavaScriptRuntime
 
         public string toHex()
         {
-            var hex = new char[checked(LengthElements * 2)];
+            var length = GetCurrentLengthForIteration();
+            var hex = new char[checked(length * 2)];
             const string digits = "0123456789abcdef";
 
-            for (var i = 0; i < LengthElements; i++)
+            for (var i = 0; i < length; i++)
             {
                 var value = BufferObject.RawBytes[ByteOffsetBytes + i];
                 hex[i * 2] = digits[value >> 4];
@@ -301,20 +294,20 @@ namespace JavaScriptRuntime
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Uint8Array(buffer, byteOffset, length);
 
-        private static object? ConstructorFromBase64(object? thisArgument, object? source)
-            => fromBase64(source);
+        private static object? ConstructorFromBase64(object? thisArgument, object? source, object? options)
+            => fromBase64(source, options);
 
         private static object? ConstructorFromHex(object? thisArgument, object? source)
             => fromHex(source);
 
-        private static object? PrototypeSetFromBase64(object? thisArgument, object? source)
+        private static object? PrototypeSetFromBase64(object? thisArgument, object? source, object? options)
         {
             if (thisArgument is not Uint8Array array)
             {
                 throw new TypeError("Uint8Array.prototype.setFromBase64 called on incompatible receiver");
             }
 
-            return array.setFromBase64(source);
+            return array.setFromBase64(source, options);
         }
 
         private static object? PrototypeSetFromHex(object? thisArgument, object? source)
@@ -378,6 +371,7 @@ namespace JavaScriptRuntime
                 }
             }
 
+            _ = GetCurrentLengthForIteration();
             var encoded = System.Convert.ToBase64String(CopyRawBytes());
             if (alphabet == "base64url")
             {
@@ -385,6 +379,171 @@ namespace JavaScriptRuntime
             }
 
             return omitPadding ? encoded.TrimEnd('=') : encoded;
+        }
+
+        private static (string Alphabet, string LastChunkHandling) GetBase64DecodingOptions(object? options)
+        {
+            if (options is null)
+            {
+                return ("base64", "loose");
+            }
+
+            if (options is JsNull || TypeUtilities.IsPrimitive(options))
+            {
+                throw new TypeError("Base64 decoding options must be an object");
+            }
+
+            var alphabetValue = ObjectRuntime.GetProperty(options, "alphabet");
+            var alphabet = alphabetValue is null ? "base64" : alphabetValue as string;
+            if (alphabet is not ("base64" or "base64url"))
+            {
+                throw new TypeError("Base64 alphabet must be 'base64' or 'base64url'");
+            }
+
+            var handlingValue = ObjectRuntime.GetProperty(options, "lastChunkHandling");
+            var handling = handlingValue is null ? "loose" : handlingValue as string;
+            if (handling is not ("loose" or "strict" or "stop-before-partial"))
+            {
+                throw new TypeError("Invalid base64 lastChunkHandling");
+            }
+
+            return (alphabet, handling);
+        }
+
+        private static (int Read, int Written) DecodeBase64(
+            string text, string alphabet, string lastChunkHandling, Span<byte> destination)
+        {
+            if (destination.Length == 0)
+            {
+                return (0, 0);
+            }
+
+            var read = 0;
+            var written = 0;
+            var index = 0;
+            var chunkLength = 0;
+            var bits = 0;
+            while (true)
+            {
+                index = SkipAsciiWhitespace(text, index);
+                if (index == text.Length)
+                {
+                    if (chunkLength != 0)
+                    {
+                        if (lastChunkHandling == "stop-before-partial")
+                        {
+                            return (read, written);
+                        }
+
+                        if (lastChunkHandling == "strict" || chunkLength == 1)
+                        {
+                            throw new SyntaxError("Invalid base64 input");
+                        }
+
+                        WriteBase64Chunk(destination, ref written, bits, chunkLength, false);
+                    }
+
+                    return (text.Length, written);
+                }
+
+                var character = text[index++];
+                if (character == '=')
+                {
+                    if (chunkLength < 2)
+                    {
+                        throw new SyntaxError("Invalid base64 padding");
+                    }
+
+                    index = SkipAsciiWhitespace(text, index);
+                    if (chunkLength == 2)
+                    {
+                        if (index == text.Length && lastChunkHandling == "stop-before-partial")
+                        {
+                            return (read, written);
+                        }
+
+                        if (index == text.Length || text[index] != '=')
+                        {
+                            throw new SyntaxError("Invalid base64 padding");
+                        }
+
+                        index = SkipAsciiWhitespace(text, index + 1);
+                    }
+
+                    if (index != text.Length)
+                    {
+                        throw new SyntaxError("Invalid base64 padding");
+                    }
+
+                    WriteBase64Chunk(destination, ref written, bits, chunkLength, lastChunkHandling == "strict");
+                    return (text.Length, written);
+                }
+
+                var digit = character switch
+                {
+                    >= 'A' and <= 'Z' => character - 'A',
+                    >= 'a' and <= 'z' => character - 'a' + 26,
+                    >= '0' and <= '9' => character - '0' + 52,
+                    '+' when alphabet == "base64" => 62,
+                    '/' when alphabet == "base64" => 63,
+                    '-' when alphabet == "base64url" => 62,
+                    '_' when alphabet == "base64url" => 63,
+                    _ => -1
+                };
+                if (digit < 0)
+                {
+                    throw new SyntaxError("Invalid base64 character");
+                }
+
+                var remaining = destination.Length - written;
+                if ((remaining == 1 && chunkLength == 2) || (remaining == 2 && chunkLength == 3))
+                {
+                    return (read, written);
+                }
+
+                bits = (bits << 6) | digit;
+                if (++chunkLength == 4)
+                {
+                    WriteBase64Chunk(destination, ref written, bits, chunkLength, false);
+                    chunkLength = 0;
+                    bits = 0;
+                    read = index;
+                    if (written == destination.Length)
+                    {
+                        return (read, written);
+                    }
+                }
+            }
+        }
+
+        private static void WriteBase64Chunk(Span<byte> destination, ref int written, int bits, int length, bool strict)
+        {
+            var unusedBits = (4 - length) * 2;
+            if (strict && (bits & ((1 << unusedBits) - 1)) != 0)
+            {
+                throw new SyntaxError("Invalid base64 overflow bits");
+            }
+
+            bits <<= (4 - length) * 6;
+            destination[written++] = (byte)(bits >> 16);
+            if (length >= 3)
+            {
+                destination[written++] = (byte)(bits >> 8);
+            }
+            if (length == 4)
+            {
+                destination[written++] = (byte)bits;
+            }
+        }
+
+        private static int SkipAsciiWhitespace(string text, int index)
+        {
+            while (index < text.Length && text[index] is '\t' or '\n' or '\f' or '\r' or ' ')
+            {
+                index++;
+            }
+
+            return index;
         }
 
         private static void DefineBuiltinFunction(
