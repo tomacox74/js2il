@@ -474,7 +474,11 @@
           "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-10-c-ii-2.js",
           "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-11-b-1.js",
           "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-13-a-1.js",
-          "tests/Jroc.Test262.Tests/language/arguments-object/RelatedLanguageConformance12BatchTests.cs"
+          "tests/Jroc.Test262.Tests/language/arguments-object/RelatedLanguageConformance12BatchTests.cs",
+          "tests/Jroc.Test262.Tests/language/arguments-object/RemainingArgumentsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/arguments-object/mapped/RemainingArgumentsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/arguments-object/unmapped/RemainingArgumentsExecutionTests.cs",
+          "tests/Jroc.Tests/ExoticViewObjectRepresentationTests.cs"
         ],
         "test262Suites": [
           "pr",
@@ -500,9 +504,13 @@
           "test/language/arguments-object/10.6-13-c-2-s.js",
           "test/language/arguments-object/10.6-13-c-3-s.js",
           "test/language/arguments-object/ArgumentsObject_callee-descriptor-non-strict.js",
-          "test/language/arguments-object/ArgumentsObject_global-TypeError.js"
+          "test/language/arguments-object/ArgumentsObject_global-TypeError.js",
+          "test/language/arguments-object/mapped/Symbol.iterator.js",
+          "test/language/arguments-object/unmapped/Symbol.iterator.js",
+          "test/language/arguments-object/async-gen-meth-args-trailing-comma-single-args.js",
+          "test/language/arguments-object/cls-decl-async-private-gen-meth-static-args-trailing-comma-spread-operator.js"
         ],
-        "notes": "When referenced, non-arrow functions lazily materialize a dedicated ArgumentsObject that inherits Object.prototype. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped semantics; covered cases include indexed reads/writes/deletion, own indexed-property descriptors, length and callee descriptors, Object.prototype inheritance, own-key enumeration, for..of value iteration, non-strict callee data descriptors, and strict restricted callee accessors. The native Test262 harness additionally verifies 161 current-provenance arguments-object fixtures, including mapped/unmapped parameter aliasing and trailing-comma argument lists. Remaining gaps are mainly full [[DefineOwnProperty]] invariants, exhaustive legacy caller/callee edge cases, and exact abstract-operation factoring for 10.4.4.7 rather than absence of mapped arguments support."
+        "notes": "When referenced, non-arrow functions lazily materialize a dedicated ArgumentsObject that inherits Object.prototype. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped semantics; covered cases include indexed reads/writes/deletion, own indexed-property descriptors, length and callee descriptors, Object.prototype inheritance, own-key enumeration, for..of value iteration, non-strict callee data descriptors, and strict restricted callee accessors. Both mapped and unmapped objects define an own writable, non-enumerable, configurable Symbol.iterator whose value is the realm's original Array values function, unaffected by later Array.prototype mutations. The native Test262 harness verifies all 261 runnable arguments-object cases at the pinned revision, including async-generator function, public/private method, static method, and trailing-comma argument lists; the remaining two cases are explicitly unsupported because they require eval. Published coverage accounts for all 263 arguments-object cases. Broader limitations remain in full exotic invariants and exact abstract-operation factoring rather than absence of mapped arguments support."
       },
       {
         "clause": "10.4.5",

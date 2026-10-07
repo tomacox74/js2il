@@ -44,14 +44,14 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
-| Language syntax and semantics | 17,342 | 89 | 6,216 | 23,647 | **73.34%** |
-| **Total** | 34,442 | 101 | 13,702 | 48,245 | **71.39%** |
+| Language syntax and semantics | 17,404 | 91 | 6,152 | 23,647 | **73.60%** |
+| **Total** | 34,504 | 103 | 13,638 | 48,245 | **71.52%** |
 
 ## Language Areas
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| `arguments-object` | 199 | 0 | 64 | 263 | **75.67%** |
+| `arguments-object` | 261 | 2 | 0 | 263 | **99.24%** |
 | `asi` | 102 | 0 | 0 | 102 | **100.00%** |
 | `block-scope` | 144 | 1 | 0 | 145 | **99.31%** |
 | `comments` | 22 | 0 | 30 | 52 | **42.31%** |
