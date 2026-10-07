@@ -9,7 +9,10 @@ namespace JavaScriptRuntime
         /// <summary>Realm-owned <c>Uint8ClampedArray.prototype</c> (issue #1824). The constructor surface is
         /// wired per realm from this slot instead of from a process-wide static ctor.</summary>
         internal static JsObject Prototype
-            => RuntimeIntrinsics.Current.GetOrCreate(
+            => GetPrototype(RuntimeIntrinsics.Current);
+
+        internal static JsObject GetPrototype(RuntimeIntrinsics intrinsics)
+            => intrinsics.GetOrCreate(
                 RuntimeIntrinsicSlot.Uint8ClampedArrayPrototype,
                 static () => new JsObject(),
                 static prototype => InitializePrototype(prototype));

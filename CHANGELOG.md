@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): select concrete TypedArray default prototypes from the new
+  target's realm across numeric and BigInt constructors; verify 10 previously
+  failing pinned Test262 cases covering no arguments, length, array-like,
+  typed-array copy, and buffer construction.
 - fix(runtime): complete cross-realm default-prototype selection for NativeError,
   Number, String, WeakRef, and FinalizationRegistry constructors; treat null
   Number/String prototypes as intrinsic fallbacks and verify 10 previously
