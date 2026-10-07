@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-06T02:28:03Z
+> Last generated (UTC): 2026-10-07T22:49:51Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -111,6 +111,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | String.raw | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js)<br>`tests/Jroc.Tests/String/StringConstructorBuiltinAdapterRuntimeTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/String/raw/ExecutionTests.cs` | `test/built-ins/String/raw/nextkey-is-symbol-throws.js`<br>`test/built-ins/String/raw/return-the-string-value.js`<br>`test/built-ins/String/raw/returns-abrupt-from-next-key-toString.js`<br>`test/built-ins/String/raw/returns-abrupt-from-next-key.js`<br>`test/built-ins/String/raw/returns-abrupt-from-substitution-symbol.js`<br>`test/built-ins/String/raw/substitutions-are-appended-on-same-index.js`<br>`test/built-ins/String/raw/template-length-is-symbol-throws.js`<br>`test/built-ins/String/raw/template-length-throws.js` | Implemented in JavaScriptRuntime.String.Raw with a shared variadic argument-array path for direct and receiver-aware calls. Applies ToObject to the template and raw values, reads the actual raw.length property with the ToLength bound, and accesses segments and needed substitutions in order. String conversion preserves observable getters and abrupt completions, rejects Symbol primitives, and honors custom primitive conversion on boxed Symbols. Unused substitutions are not coerced. Very large results remain subject to CLR string and memory limits; broad exotic-object and property-attribute coverage remains limited. |
+
+### 22.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-prototype-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Annex B String.prototype.big and bold | Supported | `tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/big/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/bold/ExecutionTests.cs` | `test/annexB/built-ins/String/prototype/big/B.2.3.3.js`<br>`test/annexB/built-ins/String/prototype/big/this-val-tostring-err.js`<br>`test/annexB/built-ins/String/prototype/bold/B.2.3.5.js` | The legacy big and bold methods reject null or undefined receivers, coerce other receivers to strings with abrupt-completion propagation, and wrap the unescaped content in big or b HTML tags. Both expose standard writable, non-enumerable, configurable prototype properties and length zero. |
 
 ### 22.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at))
 

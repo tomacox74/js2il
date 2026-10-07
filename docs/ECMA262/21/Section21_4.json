@@ -583,6 +583,23 @@
   "support": {
     "entries": [
       {
+        "clause": "21.4.4",
+        "feature": "Annex B Date.prototype.getYear, setYear, and toGMTString",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.setyear",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/annexB/built-ins/Date/prototype/getYear/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/annexB/built-ins/Date/prototype/setYear/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/annexB/built-ins/Date/prototype/toGMTString/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/annexB/built-ins/Date/prototype/setYear/date-value-read-before-tonumber-when-date-is-invalid.js",
+          "test/annexB/built-ins/Date/prototype/setYear/year-number-absolute.js",
+          "test/annexB/built-ins/Date/prototype/toGMTString/value.js"
+        ],
+        "notes": "getYear returns the local year minus 1900. setYear snapshots the stored date before year coercion, recovers invalid dates from local epoch components, maps integer years 0 through 99 to 1900 through 1999, and applies TimeClip. toGMTString is the same function object as toUTCString. Local getters use calendar arithmetic beyond the CLR date range; the existing zero-offset fallback outside that range remains."
+      },
+      {
         "clause": "21.4.2",
         "feature": "new Date() (current time)",
         "status": "Supported",

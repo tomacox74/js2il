@@ -42,10 +42,10 @@ bounded worker cleanup.
 
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
+| Annex B | 30 | 0 | 1,056 | 1,086 | **2.76%** |
 | Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
 | Language syntax and semantics | 17,342 | 89 | 6,216 | 23,647 | **73.34%** |
-| **Total** | 34,382 | 101 | 13,762 | 48,245 | **71.27%** |
+| **Total** | 34,412 | 101 | 13,732 | 48,245 | **71.33%** |
 
 ## Language Areas
 
@@ -262,12 +262,12 @@ bounded worker cleanup.
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `built-ins/Array` | 0 | 0 | 1 | 1 | **0.00%** |
-| `built-ins/Date` | 0 | 0 | 24 | 24 | **0.00%** |
+| `built-ins/Date` | 21 | 0 | 3 | 24 | **87.50%** |
 | `built-ins/escape` | 0 | 0 | 16 | 16 | **0.00%** |
 | `built-ins/Function` | 0 | 0 | 6 | 6 | **0.00%** |
 | `built-ins/Object` | 0 | 0 | 1 | 1 | **0.00%** |
 | `built-ins/RegExp` | 0 | 0 | 62 | 62 | **0.00%** |
-| `built-ins/String` | 0 | 0 | 111 | 111 | **0.00%** |
+| `built-ins/String` | 9 | 0 | 102 | 111 | **8.11%** |
 | `built-ins/TypedArrayConstructors` | 0 | 0 | 1 | 1 | **0.00%** |
 | `built-ins/unescape` | 0 | 0 | 19 | 19 | **0.00%** |
 | `language/comments` | 0 | 0 | 8 | 8 | **0.00%** |
