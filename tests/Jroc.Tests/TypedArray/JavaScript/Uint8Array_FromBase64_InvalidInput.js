@@ -1,6 +1,6 @@
 "use strict";
 
-for (const input of ["A", "AAA", "??", "Zm9v?"]) {
+for (const input of ["A", "AAAAA", "??", "Zm9v?"]) {
   try {
     Uint8Array.fromBase64(input);
     console.log("no error");

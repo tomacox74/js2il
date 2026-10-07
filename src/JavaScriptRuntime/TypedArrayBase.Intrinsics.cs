@@ -16,7 +16,6 @@ namespace JavaScriptRuntime
         private static readonly BuiltinFunction0 _typedArrayByteOffsetGetterValue = TypedArrayPrototypeByteOffset;
         private static readonly BuiltinFunction0 _typedArrayByteLengthGetterValue = TypedArrayPrototypeByteLength;
         private static readonly BuiltinFunction0 _typedArrayToStringTagGetterValue = TypedArrayPrototypeToStringTag;
-        private static readonly BuiltinFunction0 _typedArrayToStringValue = TypedArrayPrototypeToString;
         private static readonly BuiltinFunction2 _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly BuiltinFunctionVariadic _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
@@ -100,7 +99,14 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "sort", _typedArraySortValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "toSorted", _typedArrayToSortedValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "with", _typedArrayWithValue, 2d);
-            GlobalThis.DefineBuiltinFunctionProperty(prototype, "toString", _typedArrayToStringValue, 0d);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = ObjectRuntime.GetProperty(intrinsics.ArrayPrototype, "toString")
+            });
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "toLocaleString", _typedArrayToLocaleStringValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "copyWithin", _typedArrayCopyWithinValue, 2d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "fill", _typedArrayFillValue, 1d);
@@ -108,6 +114,7 @@ namespace JavaScriptRuntime
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findLast", _typedArrayFindLastValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "reduceRight", _typedArrayReduceRightValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototype, "reduce", (BuiltinFunctionVariadic)TypedArrayPrototypeReduce, 1d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "toReversed", _typedArrayToReversedValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "entries", _typedArrayEntriesValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototype, "keys", _typedArrayKeysValue, 0d);
@@ -575,16 +582,6 @@ namespace JavaScriptRuntime
             return typedArray;
         }
 
-        private static object? TypedArrayPrototypeToString(object? thisArgument)
-        {
-            if (thisArgument is not TypedArrayBase typedArray)
-            {
-                throw new TypeError("TypedArray.prototype.toString called on incompatible receiver");
-            }
-
-            return typedArray.toString();
-        }
-
         private static object? TypedArrayPrototypeToLocaleString(object? thisArgument, object? locales, object? options)
         {
             if (thisArgument is not TypedArrayBase typedArray)
@@ -656,6 +653,9 @@ namespace JavaScriptRuntime
 
             return typedArray.reduceRight(arguments.ToArray());
         }
+
+        private static object? TypedArrayPrototypeReduce(object? thisArgument, in JsCallArguments arguments)
+            => GetTypedArrayReceiver(thisArgument, "reduce").reduce(arguments.ToArray());
 
         private static object? TypedArrayPrototypeToReversed(object? thisArgument)
         {

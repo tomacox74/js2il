@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "23.3",
   "title": "Uint8Array Objects",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-uint8array",
   "parent": {
     "clause": "23"
@@ -12,7 +12,7 @@
     {
       "clause": "23.3.1",
       "title": "Additional Properties of the Uint8Array Constructor",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-constructor"
     },
     {
@@ -30,7 +30,7 @@
     {
       "clause": "23.3.2",
       "title": "Additional Properties of the Uint8Array Prototype Object",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-prototype-object"
     },
     {
@@ -60,43 +60,43 @@
     {
       "clause": "23.3.3",
       "title": "Abstract Operations for Uint8Array Objects",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-abstract-operations-for-uint8array-objects"
     },
     {
       "clause": "23.3.3.1",
       "title": "ValidateUint8Array ( ta )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-validateuint8array"
     },
     {
       "clause": "23.3.3.2",
       "title": "GetUint8ArrayBytes ( ta )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getuint8arraybytes"
     },
     {
       "clause": "23.3.3.3",
       "title": "SetUint8ArrayBytes ( into , bytes )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-setuint8arraybytes"
     },
     {
       "clause": "23.3.3.4",
       "title": "SkipAsciiWhitespace ( string , index )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-skipasciiwhitespace"
     },
     {
       "clause": "23.3.3.5",
       "title": "DecodeFinalBase64Chunk ( chunk , throwOnExtraBits )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-decodefinalbase64chunk"
     },
     {
       "clause": "23.3.3.6",
       "title": "DecodeFullLengthBase64Chunk ( chunk )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-decodefulllengthbase64chunk"
     },
     {
@@ -117,9 +117,26 @@
       {
         "clause": "23.3",
         "feature": "Uint8Array base64/hex extensions",
-        "status": "Incomplete",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-uint8array",
-        "notes": "Uint8Array.fromBase64 and Uint8Array.prototype.setFromBase64 support default base64 decoding/result semantics. Uint8Array.prototype.toBase64 supports base64/base64url alphabets and optional padding. Uint8Array.fromHex, Uint8Array.prototype.setFromHex, and Uint8Array.prototype.toHex support hexadecimal conversion with the specified descriptors, metadata, and receiver behavior. Advanced decoding options and detached-buffer behavior remain unsupported."
+        "notes": "Base64 decoding supports base64/base64url alphabets, loose/strict/stop-before-partial final chunks, ASCII whitespace, padding and strict overflow-bit validation, whole-chunk capacity limits, precise read/written records, and writes completed before later syntax errors. Encoding supports both alphabets and optional padding. Base64/hex instance methods validate attachment and current bounds after their specified input/option side effects. Broader resizable-buffer and exotic-object coverage is not exhaustive."
+      },
+      {
+        "clause": "23.3.1.1",
+        "feature": "Uint8Array.fromBase64",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-uint8array.frombase64",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/fromBase64/TypedArrayConformanceExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Uint8Array/fromBase64/alphabet.js",
+          "test/built-ins/Uint8Array/fromBase64/last-chunk-handling.js",
+          "test/built-ins/Uint8Array/fromBase64/last-chunk-invalid.js",
+          "test/built-ins/Uint8Array/fromBase64/option-coercion.js",
+          "test/built-ins/Uint8Array/fromBase64/whitespace.js"
+        ],
+        "notes": "Supports both alphabets and all three final-chunk modes through direct and receiver-aware intrinsic calls, retaining length 1. Options are objects with ordered, single getter reads and string-valued validation without ToString coercion. Only ASCII whitespace is ignored; malformed characters, padding, incomplete strict chunks, and strict overflow bits throw SyntaxError."
       },
       {
         "clause": "23.3.2.2",
@@ -136,7 +153,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromHex/JavaScript/subarray.js",
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromHex/JavaScript/target-size.js",
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromHex/JavaScript/throws-when-string-length-is-odd.js",
-          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromHex/JavaScript/writes-up-to-error.js"
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromHex/JavaScript/writes-up-to-error.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromHex/JavaScript/detached-buffer.js"
         ],
         "test262Paths": [
           "test/built-ins/Uint8Array/prototype/setFromHex/descriptor.js",
@@ -148,9 +166,10 @@
           "test/built-ins/Uint8Array/prototype/setFromHex/subarray.js",
           "test/built-ins/Uint8Array/prototype/setFromHex/target-size.js",
           "test/built-ins/Uint8Array/prototype/setFromHex/throws-when-string-length-is-odd.js",
-          "test/built-ins/Uint8Array/prototype/setFromHex/writes-up-to-error.js"
+          "test/built-ins/Uint8Array/prototype/setFromHex/writes-up-to-error.js",
+          "test/built-ins/Uint8Array/prototype/setFromHex/detached-buffer.js"
         ],
-        "notes": "Supports strict string input, bounded writes into Uint8Array views, read/written result records, odd-length and invalid-character SyntaxErrors, writes completed byte pairs before later invalid input, and standard non-constructible built-in metadata. Detached-buffer behavior remains unsupported."
+        "notes": "Supports strict string input, bounded writes into Uint8Array views, read/written result records, odd-length and invalid-character SyntaxErrors, writes completed byte pairs before later invalid input, and standard non-constructible built-in metadata. Detached and out-of-bounds receivers are rejected before decoding."
       },
       {
         "clause": "23.3.2.1",
@@ -159,13 +178,24 @@
         "specUrl": "https://tc39.es/ecma262/#sec-uint8array.prototype.setfrombase64",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/JavaScript/descriptor.js",
-          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/JavaScript/results.js"
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/JavaScript/results.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/TypedArrayConformanceExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/Uint8Array/prototype/setFromBase64/descriptor.js",
-          "test/built-ins/Uint8Array/prototype/setFromBase64/results.js"
+          "test/built-ins/Uint8Array/prototype/setFromBase64/results.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/alphabet.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/detached-buffer.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/last-chunk-handling.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/option-coercion.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/subarray.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/target-size.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/whitespace.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/writes-up-to-error.js"
         ],
-        "notes": "Supports default-alphabet RFC 4648 vectors, Uint8Array view writes, read/written result records, receiver and string validation, and the standard property descriptor. Alphabet and last-chunk options, precise bounded-input consumption, partial writes before malformed input, and detached buffers remain unsupported."
+        "notes": "Uses the shared option-aware Base64 decoder with view-relative, whole-chunk capacity limits and precise read/written records. Completed chunks remain written if a later chunk is malformed; exhausted targets ignore unconsumed trailing input, including all input for an empty target. Options are read and validated before current attachment/bounds checks. Broader resizable-buffer and exotic-object coverage is not exhaustive."
       },
       {
         "clause": "23.3.2.3",
@@ -180,7 +210,8 @@
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/nonconstructor.js",
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/omit-padding.js",
           "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/option-coercion.js",
-          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/results.js"
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/results.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/detached-buffer.js"
         ],
         "test262Paths": [
           "test/built-ins/Uint8Array/prototype/toBase64/alphabet.js",
@@ -190,9 +221,23 @@
           "test/built-ins/Uint8Array/prototype/toBase64/nonconstructor.js",
           "test/built-ins/Uint8Array/prototype/toBase64/omit-padding.js",
           "test/built-ins/Uint8Array/prototype/toBase64/option-coercion.js",
-          "test/built-ins/Uint8Array/prototype/toBase64/results.js"
+          "test/built-ins/Uint8Array/prototype/toBase64/results.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/detached-buffer.js"
         ],
-        "notes": "Supports RFC 4648 vectors, base64 and base64url alphabets, optional padding omission, option getter ordering and coercion, receiver validation, and standard non-constructible built-in metadata. Detached-buffer behavior remains unsupported."
+        "notes": "Supports RFC 4648 vectors, base64 and base64url alphabets, optional padding omission, option getter ordering and coercion, receiver validation, and standard non-constructible built-in metadata. Attachment and current bounds are checked after option getters, including getters that detach the buffer."
+      },
+      {
+        "clause": "23.3.2.4",
+        "feature": "Uint8Array.prototype.toHex",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-uint8array.prototype.tohex",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toHex/JavaScript/detached-buffer.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Uint8Array/prototype/toHex/detached-buffer.js"
+        ],
+        "notes": "Encodes the current in-bounds view as lowercase hexadecimal and rejects detached or out-of-bounds receivers before reading bytes."
       }
     ]
   }
