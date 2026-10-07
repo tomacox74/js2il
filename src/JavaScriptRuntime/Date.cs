@@ -150,7 +150,7 @@ namespace JavaScriptRuntime
             return CoerceComponentsToMs(args, useLocalTime: false);
         }
 
-        internal static void InitializeIntrinsicSurface(object objectPrototype)
+        internal static void ConfigureIntrinsicSurface(object objectPrototype)
         {
             GlobalThis.ConfigureBuiltinFunctionObject(typeof(Date));
             PrototypeChain.SetPrototype(Prototype, objectPrototype);

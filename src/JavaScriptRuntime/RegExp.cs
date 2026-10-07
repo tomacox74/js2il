@@ -12,6 +12,18 @@ namespace JavaScriptRuntime
     [IntrinsicObject("RegExp", IntrinsicCallKind.ConstructorLike)]
     public sealed class RegExp : JsObject, IExoticJsObject
     {
+        private static readonly Func<object[], object?[], object?> _regExpEscapeValue = static (_, args) =>
+            JavaScriptRuntime.RegExp.Escape(args != null && args.Length > 0 ? args[0] : null);
+
+        internal static void ConfigureIntrinsicSurface(object constructorValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            GlobalThis.ConfigureConstructorPrototypeSurface(constructorValue, JavaScriptRuntime.RegExp.Prototype, objectPrototype);
+            GlobalThis.DefineSpeciesAccessorProperty(constructorValue);
+            GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "escape", _regExpEscapeValue, 1d);
+        }
+
         [Flags]
         private enum WellKnownSymbolFastPathFlags
         {

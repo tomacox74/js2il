@@ -8,6 +8,81 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Number")]
     public static class Number
     {
+        private static readonly BuiltinFunction1 _numberPrototypeToStringValue = static (thisArgument, radix) =>
+            JavaScriptRuntime.Number.ToStringWithRadix(thisArgument, radix);
+
+        private static readonly BuiltinFunction0 _numberPrototypeValueOfValue = static thisArgument =>
+            JavaScriptRuntime.Number.ThisNumberValue(thisArgument);
+        private static readonly BuiltinFunction1 _numberPrototypeToExponentialValue = static (thisArgument, fractionDigits) =>
+            JavaScriptRuntime.Number.ToExponentialString(thisArgument, fractionDigits);
+        private static readonly BuiltinFunction1 _numberPrototypeToFixedValue = static (thisArgument, fractionDigits) =>
+            JavaScriptRuntime.Number.ToFixedString(thisArgument, fractionDigits);
+        private static readonly BuiltinFunction0 _numberPrototypeToLocaleStringValue = static thisArgument =>
+            JavaScriptRuntime.Number.ToLocaleStringString(thisArgument);
+        private static readonly BuiltinFunction1 _numberPrototypeToPrecisionValue = static (thisArgument, precision) =>
+            JavaScriptRuntime.Number.ToPrecisionString(thisArgument, precision);
+
+        private static readonly Func<object?, bool> _numberIsFiniteValue = JavaScriptRuntime.Number.isFinite;
+        private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
+        private static readonly Func<object?, bool> _numberIsNaNValue = JavaScriptRuntime.Number.isNaN;
+        private static readonly Func<object?, bool> _numberIsSafeIntegerValue = JavaScriptRuntime.Number.isSafeInteger;
+
+        internal static void ConfigureIntrinsicSurface(object constructorValue, object prototypeValue, object objectPrototype, Delegate parseIntValue, Delegate parseFloatValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PrototypeChain.SetPrototype(prototypeValue, objectPrototype);
+            GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(
+                constructorValue);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            GlobalThis.DefineIntrinsicDataProperty(prototypeValue, "constructor", constructorValue);
+            GlobalThis.ConfigureBuiltinFunctionObject(_numberIsIntegerValue);
+            GlobalThis.ConfigureBuiltinFunctionObject(_numberIsFiniteValue);
+            GlobalThis.ConfigureBuiltinFunctionObject(_numberIsNaNValue);
+            GlobalThis.ConfigureBuiltinFunctionObject(_numberIsSafeIntegerValue);
+            GlobalThis.DefineIntrinsicDataProperty(constructorValue, "isFinite", _numberIsFiniteValue);
+            GlobalThis.DefineIntrinsicDataProperty(constructorValue, "isInteger", _numberIsIntegerValue);
+            GlobalThis.DefineIntrinsicDataProperty(constructorValue, "isNaN", _numberIsNaNValue);
+            GlobalThis.DefineIntrinsicDataProperty(constructorValue, "isSafeInteger", _numberIsSafeIntegerValue);
+            GlobalThis.DefineUndefinedPrototypeProperty(_numberIsFiniteValue);
+            GlobalThis.DefineUndefinedPrototypeProperty(_numberIsIntegerValue);
+            GlobalThis.DefineUndefinedPrototypeProperty(_numberIsNaNValue);
+            GlobalThis.DefineUndefinedPrototypeProperty(_numberIsSafeIntegerValue);
+            GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toExponential", _numberPrototypeToExponentialValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toFixed", _numberPrototypeToFixedValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toLocaleString", _numberPrototypeToLocaleStringValue, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toPrecision", _numberPrototypeToPrecisionValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toString", _numberPrototypeToStringValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "valueOf", _numberPrototypeValueOfValue, 0d);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "MAX_VALUE", double.MaxValue);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "MIN_VALUE", double.Epsilon);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "MAX_SAFE_INTEGER", 9007199254740991d);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "MIN_SAFE_INTEGER", -9007199254740991d);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "NaN", double.NaN);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "NEGATIVE_INFINITY", double.NegativeInfinity);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "POSITIVE_INFINITY", double.PositiveInfinity);
+            GlobalThis.DefineIntrinsicConstantDataProperty(constructorValue, "EPSILON", 2.220446049250313e-16);
+            GlobalThis.DefineIntrinsicDataProperty(constructorValue, "parseFloat", parseFloatValue);
+            GlobalThis.DefineIntrinsicDataProperty(constructorValue, "parseInt", parseIntValue);
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, JavaScriptRuntime.Number.NumberDataPropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = 0d
+            });
+            GlobalThis.DefineIntrinsicDataProperty(prototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Number");
+        }
+
         internal const string NumberDataPropertyName = "[[NumberData]]";
 
         /// <summary>

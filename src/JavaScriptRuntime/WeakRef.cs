@@ -5,6 +5,29 @@ namespace JavaScriptRuntime
     [IntrinsicObject("WeakRef")]
     public sealed class WeakRef
     {
+        internal static void ConfigureIntrinsicSurface(object constructorValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            GlobalThis.ConfigureConstructorPrototypeSurface(constructorValue, JavaScriptRuntime.WeakRef.Prototype, objectPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "WeakRef"
+            });
+        }
+
         /// <summary>Realm-owned <c>WeakRef.prototype</c> intrinsic (issue #1824).</summary>
         internal static object Prototype
             => GetPrototype(RuntimeIntrinsics.Current);

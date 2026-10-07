@@ -6,6 +6,31 @@ namespace JavaScriptRuntime
     [IntrinsicObject("FinalizationRegistry")]
     public sealed class FinalizationRegistry
     {
+        internal static void ConfigureIntrinsicSurface(object constructorValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            GlobalThis.ConfigureConstructorPrototypeSurface(
+                constructorValue,
+                JavaScriptRuntime.FinalizationRegistry.Prototype, objectPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "FinalizationRegistry"
+            });
+        }
+
         /// <summary>Realm-owned <c>FinalizationRegistry.prototype</c> intrinsic (issue #1824).</summary>
         internal static object Prototype
             => GetPrototype(RuntimeIntrinsics.Current);

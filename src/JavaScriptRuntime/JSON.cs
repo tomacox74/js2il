@@ -10,6 +10,53 @@ namespace JavaScriptRuntime
     [IntrinsicObject("JSON")]
     public static class JSON
     {
+        private static readonly Func<object[], object?[], object?> _jsonStringifyValue = static (_, args) =>
+        {
+            var value = args != null && args.Length > 0 ? args[0] : null;
+            var replacer = args != null && args.Length > 1 ? args[1] : null;
+            var space = args != null && args.Length > 2 ? args[2] : null;
+            return JavaScriptRuntime.JSON.Stringify(value, replacer, space);
+        };
+        private static readonly Func<object[], object?[], object?> _jsonParseValue = static (_, args) =>
+        {
+            var text = args != null && args.Length > 0 ? args[0] : null;
+            var reviver = args != null && args.Length > 1 ? args[1] : null;
+            return JavaScriptRuntime.JSON.Parse(text, reviver);
+        };
+        private static readonly Func<object[], object?[], object?> _jsonRawJsonValue = static (_, args) =>
+            JavaScriptRuntime.JSON.RawJSON(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly Func<object[], object?[], object?> _jsonIsRawJsonValue = static (_, args) =>
+            JavaScriptRuntime.JSON.IsRawJSON(args != null && args.Length > 0 ? args[0] : null);
+
+        internal static void ConfigureIntrinsicSurface(object namespaceValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PrototypeChain.SetPrototype(namespaceValue, objectPrototype);
+            GlobalThis.DefineIntrinsicToStringTagProperty(namespaceValue, "JSON");
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "parse", _jsonParseValue, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "rawJSON", _jsonRawJsonValue, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "isRawJSON", _jsonIsRawJsonValue, 1d);
+            GlobalThis.ConfigureBuiltinFunctionObject(_jsonStringifyValue);
+            PropertyDescriptorStore.DefineOrUpdate(_jsonStringifyValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "stringify"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_jsonStringifyValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 3d
+            });
+            GlobalThis.DefineIntrinsicDataProperty(namespaceValue, "stringify", _jsonStringifyValue);
+        }
+
         private sealed class RawJsonData
         {
             public RawJsonData(string text)

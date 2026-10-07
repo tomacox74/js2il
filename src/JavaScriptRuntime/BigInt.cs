@@ -15,6 +15,50 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("BigInt")]
 public static class BigInt
 {
+    // Static; the receiver is ignored (issue #1895).
+    private static readonly BuiltinFunction2 _bigIntAsIntNValue = static (_, bits, bigint) =>
+        global::JavaScriptRuntime.BigInt.AsIntN(bits, bigint);
+    // Static; the receiver is ignored (issue #1895).
+    private static readonly BuiltinFunction2 _bigIntAsUintNValue = static (_, bits, bigint) =>
+        global::JavaScriptRuntime.BigInt.AsUintN(bits, bigint);
+    private static readonly BuiltinFunction1 _bigIntPrototypeToStringValue = static (thisArgument, radix) =>
+        global::JavaScriptRuntime.BigInt.ToString(global::JavaScriptRuntime.BigInt.ThisBigIntValue(thisArgument), radix);
+    private static readonly BuiltinFunction0 _bigIntPrototypeToLocaleStringValue = static thisArgument =>
+        global::JavaScriptRuntime.BigInt.ToLocaleString(thisArgument);
+    private static readonly BuiltinFunction0 _bigIntPrototypeValueOfValue = static thisArgument =>
+        global::JavaScriptRuntime.BigInt.ThisBigIntValue(thisArgument);
+
+    internal static void ConfigureIntrinsicSurface(object constructorValue, object prototypeValue, object objectPrototype)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        // Unlike Number.prototype/Boolean.prototype, the BigInt prototype object is
+        // *not* a BigInt object and must not carry a [[BigIntData]] internal slot
+        // (sec-properties-of-the-bigint-prototype-object), so no PrimitiveValue data
+        // property is defined here; ThisBigIntValue(BigInt.prototype) must throw.
+        PrototypeChain.SetPrototype(prototypeValue, objectPrototype);
+        JavaScriptRuntime.Function.InitializeFunctionInstance(constructorValue, 1d, "BigInt");
+        JavaScriptRuntime.Function.MarkConstructible(
+            constructorValue);
+        PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = prototypeValue
+        });
+        GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "asIntN", _bigIntAsIntNValue, 2d);
+        GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "asUintN", _bigIntAsUintNValue, 2d);
+        GlobalThis.DefineIntrinsicDataProperty(prototypeValue, "constructor", constructorValue);
+        GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toLocaleString", _bigIntPrototypeToLocaleStringValue, 0d);
+        // BigInt.prototype.toString ( [ radix ] ): radix is an optional parameter,
+        // so per the built-in function length convention its "length" is 0.
+        GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toString", _bigIntPrototypeToStringValue, 0d);
+        GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "valueOf", _bigIntPrototypeValueOfValue, 0d);
+        GlobalThis.DefineIntrinsicToStringTagProperty(prototypeValue, "BigInt");
+    }
+
     private const string Digits = "0123456789abcdefghijklmnopqrstuvwxyz";
     private const double MaxSafeInteger = 9007199254740991d;
 

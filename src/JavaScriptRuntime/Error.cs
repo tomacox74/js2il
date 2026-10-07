@@ -17,6 +17,104 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Error", IntrinsicCallKind.BuiltInError)]
     public class Error : Exception
     {
+        private static readonly BuiltinFunction1 _errorIsErrorValue = static (_, arg) =>
+            arg is JavaScriptRuntime.Error;
+
+        internal static void ConfigureIntrinsicSurface(object constructorValue, object prototypeValue, string name, object parentPrototype, double length = 1d, object? parentConstructor = null)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, parentPrototype);
+
+            // Error and the NativeError constructors (EvalError, RangeError, ReferenceError,
+            // SyntaxError, TypeError, URIError) all have a length of 1; AggregateError and
+            // SuppressedError pass their own larger arities via the length parameter.
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = length
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = name
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = name
+            });
+
+            if (parentConstructor is not null)
+            {
+                PrototypeChain.SetPrototype(constructorValue, parentConstructor);
+            }
+
+            if (name == "Error")
+            {
+                GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "isError", _errorIsErrorValue, 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toString", (BuiltinFunction0)ErrorPrototypeToString, 0d);
+            }
+        }
+
+        private static object? ErrorPrototypeToString(object? thisArgument)
+        {
+            var thisVal = thisArgument;
+            if (TypeUtilities.IsPrimitive(thisVal))
+            {
+                throw new TypeError("Error.prototype.toString called on incompatible receiver");
+            }
+
+            var nameValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal!, "name");
+            var messageValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal!, "message");
+
+            var name = nameValue is null
+                ? "Error"
+                : DotNet2JSConversions.ToStringRejectingSymbols(nameValue);
+            var message = messageValue is null
+                ? string.Empty
+                : DotNet2JSConversions.ToStringRejectingSymbols(messageValue);
+
+            if (string.IsNullOrEmpty(name)) return message;
+            if (string.IsNullOrEmpty(message)) return name;
+            return $"{name}: {message}";
+        }
+
         private readonly string _constructedStack;
 
         // PascalCase (JS has a 'name' string property on Error instances)
@@ -192,6 +290,19 @@ namespace JavaScriptRuntime
     [IntrinsicObject("AggregateError", IntrinsicCallKind.BuiltInError)]
     public class AggregateError : Error
     {
+        internal static void ConfigureIntrinsicSurface(object constructorValue, RuntimeIntrinsics intrinsics, object errorConstructorValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            Error.ConfigureIntrinsicSurface(
+                constructorValue,
+                intrinsics.AggregateErrorPrototype,
+                "AggregateError",
+                intrinsics.ErrorPrototype,
+                length: 2d,
+                parentConstructor: errorConstructorValue);
+        }
+
         public JavaScriptRuntime.Array Errors { get; private set; }
         public JavaScriptRuntime.Array errors => Errors; // JS-style alias
 
@@ -299,6 +410,19 @@ namespace JavaScriptRuntime
     [IntrinsicObject("SuppressedError", IntrinsicCallKind.BuiltInError)]
     public class SuppressedError : Error
     {
+        internal static void ConfigureIntrinsicSurface(object constructorValue, RuntimeIntrinsics intrinsics, object errorConstructorValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            Error.ConfigureIntrinsicSurface(
+                constructorValue,
+                intrinsics.SuppressedErrorPrototype,
+                "SuppressedError",
+                intrinsics.ErrorPrototype,
+                length: 3d,
+                parentConstructor: errorConstructorValue);
+        }
+
         public object? ErrorValue { get; }
         public object? SuppressedValue { get; }
 

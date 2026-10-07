@@ -45,6 +45,8 @@ public static class Function
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
+        PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
+        PrototypeChain.SetPrototype(RestrictedPropertiesPrototype, Prototype);
         GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
         MarkConstructible(constructorValue);
         PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor

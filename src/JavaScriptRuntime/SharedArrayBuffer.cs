@@ -3,6 +3,90 @@ namespace JavaScriptRuntime
     [IntrinsicObject("SharedArrayBuffer")]
     public sealed class SharedArrayBuffer : ArrayBuffer
     {
+        private static readonly BuiltinFunction1 _sharedArrayBufferPrototypeGrowValue = static (thisArgument, newLength) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.SharedArrayBuffer buffer)
+            {
+                throw new TypeError("SharedArrayBuffer.prototype.grow called on incompatible receiver");
+            }
+
+            return buffer.grow(newLength);
+        };
+        private static readonly BuiltinFunction2 _sharedArrayBufferPrototypeSliceValue = static (thisArgument, start, end) =>
+        {
+            if (thisArgument is not JavaScriptRuntime.SharedArrayBuffer buffer)
+            {
+                throw new TypeError("SharedArrayBuffer.prototype.slice called on incompatible receiver");
+            }
+
+            return buffer.slice(start, end);
+        };
+
+        internal new static void ConfigureIntrinsicSurface(object constructorValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            GlobalThis.ConfigureConstructorPrototypeSurface(
+                constructorValue,
+                JavaScriptRuntime.SharedArrayBuffer.SharedPrototype, objectPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "SharedArrayBuffer"
+            });
+            DefineSharedArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
+            DefineSharedArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
+            DefineSharedArrayBufferAccessor("growable", static buffer => buffer.growable);
+            GlobalThis.DefineBuiltinFunctionProperty(
+                JavaScriptRuntime.SharedArrayBuffer.SharedPrototype,
+                "grow",
+                _sharedArrayBufferPrototypeGrowValue,
+                1d);
+            GlobalThis.DefineBuiltinFunctionProperty(
+                JavaScriptRuntime.SharedArrayBuffer.SharedPrototype,
+                "slice",
+                _sharedArrayBufferPrototypeSliceValue,
+                2d);
+            GlobalThis.DefineIntrinsicToStringTagProperty(JavaScriptRuntime.SharedArrayBuffer.SharedPrototype, "SharedArrayBuffer");
+        }
+
+        private static void DefineSharedArrayBufferAccessor(
+            string propertyName,
+            Func<JavaScriptRuntime.SharedArrayBuffer, object?> read)
+        {
+            BuiltinFunction0 getter = thisArgument =>
+            {
+                if (thisArgument is not JavaScriptRuntime.SharedArrayBuffer buffer)
+                {
+                    throw new TypeError($"get SharedArrayBuffer.prototype.{propertyName} called on incompatible receiver");
+                }
+                return read(buffer);
+            };
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                getter,
+                0d,
+                $"get {propertyName}",
+                requiresInvocationContext: !BuiltinFunctionDelegates.IsReceiverAware(getter));
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.SharedArrayBuffer.SharedPrototype, propertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = getter
+            });
+        }
+
         private readonly RuntimeSharedArrayBufferBackingStore _backingStore;
 
         internal static object SharedPrototype

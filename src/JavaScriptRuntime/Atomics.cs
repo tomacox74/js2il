@@ -5,6 +5,28 @@ namespace JavaScriptRuntime
 {
     public static class Atomics
     {
+        internal static void ConfigureIntrinsicSurface(object namespaceValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PrototypeChain.SetPrototype(namespaceValue, objectPrototype);
+            GlobalThis.DefineIntrinsicToStringTagProperty(namespaceValue, "Atomics");
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "add", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.add, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "and", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.and, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "compareExchange", (Func<object?, object?, object?, object?, object>)JavaScriptRuntime.Atomics.compareExchange, 4d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "exchange", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.exchange, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "isLockFree", (Func<object?, bool>)JavaScriptRuntime.Atomics.isLockFree, 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "load", (Func<object?, object?, object>)JavaScriptRuntime.Atomics.load, 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "notify", (Func<object?, object?, object?, double>)JavaScriptRuntime.Atomics.notify, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "or", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.or, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "pause", (Func<object?, object?>)JavaScriptRuntime.Atomics.pause, 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "store", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.store, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "sub", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.sub, 3d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "waitAsync", (Func<object?, object?, object?, object?, object>)JavaScriptRuntime.Atomics.waitAsync, 4d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "xor", (Func<object?, object?, object?, object>)JavaScriptRuntime.Atomics.xor, 3d);
+        }
+
         private enum Operation { Add, And, CompareExchange, Exchange, Load, Or, Store, Sub, Xor }
 
         public static object add(object? array, object? index, object? value)

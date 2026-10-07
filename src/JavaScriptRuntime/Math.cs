@@ -9,6 +9,22 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Math")]
     public static class Math
     {
+        internal static void ConfigureIntrinsicSurface(object namespaceValue, object objectPrototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            PrototypeChain.SetPrototype(namespaceValue, objectPrototype);
+            GlobalThis.DefineIntrinsicToStringTagProperty(namespaceValue, "Math");
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "E", JavaScriptRuntime.Math.E);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "LN10", JavaScriptRuntime.Math.LN10);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "LN2", JavaScriptRuntime.Math.LN2);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "LOG10E", JavaScriptRuntime.Math.LOG10E);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "LOG2E", JavaScriptRuntime.Math.LOG2E);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "PI", JavaScriptRuntime.Math.PI);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "SQRT1_2", JavaScriptRuntime.Math.SQRT1_2);
+            GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "SQRT2", JavaScriptRuntime.Math.SQRT2);
+        }
+
         // 20.2.1 Value Properties of the Math Object
         public static double E => global::System.Math.E;
         public static double LN10 => global::System.Math.Log(10.0);
