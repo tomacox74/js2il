@@ -40,6 +40,14 @@ public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<str
         UpdateLengthDescriptor();
         UpdateCalleeDescriptor();
         PrototypeChain.InitializePrototype(this, GlobalThis.ObjectPrototypeValue);
+        DefineOwnProperty(Symbol.iterator.DebugId, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = ObjectRuntime.GetProperty(Array.ImmutablePrototype, "values")
+        });
     }
 
     public override object? this[string key]
@@ -242,8 +250,6 @@ public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<str
     public IJavaScriptIterator values() => new ValueIterator(this);
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    internal IJavaScriptIterator CreateValueIterator() => new ValueIterator(this);
 
     private static string?[] BuildMappedParameterNames(string[]? parameterNames, int argumentCount)
     {
