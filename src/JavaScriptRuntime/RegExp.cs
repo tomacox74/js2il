@@ -522,13 +522,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "test", (BuiltinFunction1)PrototypeTest, 1d);
             DefinePrototypeMethod(prototype, "toString", (BuiltinFunction0)PrototypeToString, 0d);
             DefinePrototypeGetter(prototype, "dotAll", static regExp => regExp.dotAll);
-            PropertyDescriptorStore.DefineOrUpdate(prototype, "flags", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = false,
-                Configurable = true,
-                Get = (BuiltinFunction0)PrototypeFlags
-            });
+            DefinePrototypeAccessor(prototype, "flags", (BuiltinFunction0)PrototypeFlags);
             DefinePrototypeGetter(prototype, "global", static regExp => regExp.global);
             DefinePrototypeGetter(prototype, "hasIndices", static regExp => regExp.hasIndices);
             DefinePrototypeGetter(prototype, "ignoreCase", static regExp => regExp.ignoreCase);
@@ -576,16 +570,29 @@ namespace JavaScriptRuntime
             JsObject prototype,
             string key,
             Func<RegExp, object?> getter)
+            => DefinePrototypeAccessor(
+                prototype,
+                key,
+                thisArgument => ReferenceEquals(thisArgument, prototype)
+                    ? key == "source" ? "(?:)" : null
+                    : getter(GetRegExpReceiver(thisArgument, key)));
+
+        private static void DefinePrototypeAccessor(
+            JsObject prototype,
+            string key,
+            BuiltinFunction0 getter)
         {
+            Function.InitializeFunctionInstance(
+                getter,
+                0d,
+                $"get {key}",
+                requiresInvocationContext: false);
             PropertyDescriptorStore.DefineOrUpdate(prototype, key, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
                 Configurable = true,
-                Get = (BuiltinFunction0)(thisArgument =>
-                    ReferenceEquals(thisArgument, prototype)
-                        ? key == "source" ? "(?:)" : false
-                        : getter(GetRegExpReceiver(thisArgument, key)))
+                Get = getter
             });
         }
 

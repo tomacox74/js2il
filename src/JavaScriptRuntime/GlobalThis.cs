@@ -610,6 +610,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(_jsonValue, "stringify", _jsonStringifyValue);
             DefineIntrinsicDataProperty(_numberPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Number");
             ConfigureConstructorPrototypeSurface(_regExpConstructorValue, JavaScriptRuntime.RegExp.Prototype);
+            DefineSpeciesAccessorProperty(_regExpConstructorValue);
             DefineBuiltinFunctionProperty(_regExpConstructorValue, "escape", _regExpEscapeValue, 1d);
             ConfigureBuiltinFunctionObject(_numberFunctionValue);
             JavaScriptRuntime.Function.MarkConstructible(
