@@ -626,7 +626,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         }
     }
 
-    private static void DefineWithoutMirroring(
+    internal static void DefineWithoutMirroring(
         object target,
         string key,
         JsPropertyDescriptor descriptor,

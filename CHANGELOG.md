@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): coerce computed property keys once, preserve class constructor
+  metadata and property ordering, reject static prototype redefinitions, and
+  resolve duplicate class accessors through their JavaScript descriptors.
+  Complete all 48 pinned computed-property-names Test262 cases without skips.
 - fix(runtime): give mapped and unmapped arguments objects an own
   Symbol.iterator property with the realm's original Array values function,
   preserving identity after Array.prototype mutation. Complete the remaining

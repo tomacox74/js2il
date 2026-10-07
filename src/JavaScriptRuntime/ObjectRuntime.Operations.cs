@@ -3721,8 +3721,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            // Compiled class accessors belong to the JavaScript prototype, not CLR instances.
             var getter = FindAccessorMethod(type, "get", name, bindingFlags, parameterCount: 0);
-            if (getter != null)
+            if (getter != null
+                && getter.DeclaringType?.Assembly.IsDefined(
+                    typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false) != true)
             {
                 result =
                     BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
@@ -3760,7 +3763,9 @@ namespace JavaScriptRuntime
             }
 
             var setter = FindAccessorMethod(type, "set", name, bindingFlags, parameterCount: 1);
-            if (setter != null)
+            if (setter != null
+                && setter.DeclaringType?.Assembly.IsDefined(
+                    typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false) != true)
             {
                 setter.Invoke(instance, new object?[] { value });
                 return true;
