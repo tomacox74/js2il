@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): expose legacy String anchor, blink, fixed, fontcolor, fontsize,
+  and italics methods using shared receiver-first HTML construction and
+  double-quote attribute escaping; verify 30 previously failing pinned
+  Test262 cases.
 - fix(runtime): implement Annex B Date getYear/setYear and the toGMTString
   alias, retain captured date values during year coercion, support local getters
   outside the CLR date range, and expose String big/bold HTML wrappers; verify

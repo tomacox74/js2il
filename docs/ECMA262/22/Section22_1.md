@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-07T22:49:51Z
+> Last generated (UTC): 2026-10-07T22:59:24Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -116,7 +116,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Annex B String.prototype.big and bold | Supported | `tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/big/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/bold/ExecutionTests.cs` | `test/annexB/built-ins/String/prototype/big/B.2.3.3.js`<br>`test/annexB/built-ins/String/prototype/big/this-val-tostring-err.js`<br>`test/annexB/built-ins/String/prototype/bold/B.2.3.5.js` | The legacy big and bold methods reject null or undefined receivers, coerce other receivers to strings with abrupt-completion propagation, and wrap the unescaped content in big or b HTML tags. Both expose standard writable, non-enumerable, configurable prototype properties and length zero. |
+| Annex B String HTML wrappers (eight methods) | Supported | `tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/big/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/bold/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/anchor/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/blink/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/fixed/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/fontcolor/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/fontsize/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/annexB/built-ins/String/prototype/italics/ExecutionTests.cs` | `test/annexB/built-ins/String/prototype/big/B.2.3.3.js`<br>`test/annexB/built-ins/String/prototype/big/this-val-tostring-err.js`<br>`test/annexB/built-ins/String/prototype/bold/B.2.3.5.js`<br>`test/annexB/built-ins/String/prototype/anchor/B.2.3.2.js`<br>`test/annexB/built-ins/String/prototype/anchor/attr-tostring-err.js`<br>`test/annexB/built-ins/String/prototype/fontcolor/B.2.3.7.js`<br>`test/annexB/built-ins/String/prototype/fontsize/B.2.3.8.js`<br>`test/annexB/built-ins/String/prototype/italics/B.2.3.9.js` | The legacy anchor, big, blink, bold, fixed, fontcolor, fontsize, and italics methods reject null or undefined receivers and coerce other receivers to strings before any attribute coercion, propagating abrupt completions. HTML content remains unescaped; anchor names, font colors, and font sizes escape only double quotes as &quot;. All eight expose standard writable, non-enumerable, configurable prototype properties. Attribute-taking methods have length one; the others have length zero. The remaining Annex B HTML wrappers are not yet implemented. |
 
 ### 22.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at))
 
