@@ -953,12 +953,13 @@ public class RuntimeServices
 
         if (string.Equals(propName, "name", StringComparison.Ordinal))
         {
-            if (PropertyDescriptorStore.TryGetOwn(
+            var hasExplicitName = PropertyDescriptorStore.TryGetOwn(
                     classConstructorValue.Type,
                     propName,
                     out var typeNameDescriptor)
                 && (typeNameDescriptor.Kind == JsPropertyDescriptorKind.Accessor
-                    || typeNameDescriptor.Value is not null))
+                    || typeNameDescriptor.Value is not null);
+            if (hasExplicitName)
             {
                 descriptor = CloneDescriptor(typeNameDescriptor);
             }
@@ -978,6 +979,7 @@ public class RuntimeServices
                 classConstructorValue,
                 propName,
                 descriptor);
+            classConstructorValue.HasBootstrapName = !hasExplicitName;
             return true;
         }
 
@@ -1748,7 +1750,8 @@ public class RuntimeServices
 
         if (constructorValue is JsClassConstructorObject classConstructorValue)
         {
-            if (HasOwnOrLazyClassNameProperty(classConstructorValue))
+            if (!classConstructorValue.HasBootstrapName
+                && HasOwnOrLazyClassNameProperty(classConstructorValue))
             {
                 return classConstructorValue;
             }
