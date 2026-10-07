@@ -3,6 +3,14 @@ using JavaScriptRuntime.DependencyInjection;
 
 namespace Jroc.Tests.String;
 
+// Keep the zero-allocation measurement isolated from concurrent test activity.
+[CollectionDefinition(CollectionName, DisableParallelization = true)]
+public sealed class BuiltinAdapterRuntimeTestsCollection
+{
+    public const string CollectionName = nameof(BuiltinAdapterRuntimeTestsCollection);
+}
+
+[Collection(BuiltinAdapterRuntimeTestsCollection.CollectionName)]
 public sealed class BuiltinAdapterRuntimeTests
 {
     private static readonly string[] PrototypeMethodNames =
