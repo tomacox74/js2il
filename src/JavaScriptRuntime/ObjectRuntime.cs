@@ -129,10 +129,11 @@ namespace JavaScriptRuntime
 
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
         {
-            ConfigureFunctionNameFromPropertyKey(prop, value);
+            var key = ToPropertyKeyString(prop);
+            ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(key), value);
             return DefineDataPropertyCore(
                 target,
-                ToPropertyKeyString(prop),
+                key,
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: true);
@@ -215,10 +216,12 @@ namespace JavaScriptRuntime
 
         public static object DefineClassElementDataProperty(object target, object? prop, object? value)
         {
-            ConfigureFunctionNameFromPropertyKey(prop, value);
+            var key = ToPropertyKeyString(prop);
+            EnsureClassElementCanBeDefined(target, key);
+            ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(key), value);
             return DefineDataPropertyCore(
                 target,
-                ToPropertyKeyString(prop),
+                key,
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: false);
@@ -289,8 +292,8 @@ namespace JavaScriptRuntime
 
         public static object DefineClassFieldDataProperty(object target, object? prop, object? value)
         {
-            ConfigureFunctionNameFromPropertyKey(prop, value);
             var key = ToPropertyKeyString(prop);
+            ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(key), value);
             if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
                 || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
                 && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
@@ -308,7 +311,21 @@ namespace JavaScriptRuntime
         }
 
         public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)
-            => DefineAccessorProperty(target, prop, getter, setter, enumerable: false, createDictionarySlot: false);
+        {
+            var key = ToPropertyKeyString(prop);
+            EnsureClassElementCanBeDefined(target, key);
+            return DefineAccessorProperty(target, key, getter, setter, enumerable: false, createDictionarySlot: false);
+        }
+
+        internal static void EnsureClassElementCanBeDefined(object target, string key)
+        {
+            if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
+                || (PropertyDescriptorStore.TryGetOwn(target, key, out var existing)
+                    && !existing.Configurable))
+            {
+                throw new TypeError($"Cannot redefine property: {key}");
+            }
+        }
 
         private static object DefineAccessorProperty(
             object target,

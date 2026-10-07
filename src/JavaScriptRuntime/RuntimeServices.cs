@@ -568,6 +568,7 @@ public class RuntimeServices
             ? constructor
             : _classConstructorValues.GetOrAdd(cacheKey, constructor);
         RuntimeIntrinsics.AssociateFunction(materialized);
+        EnsureClassConstructorCoreMetadataProperties(materialized);
         CopyStaticClassDescriptors(type, materialized);
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
             materialized,
@@ -635,16 +636,17 @@ public class RuntimeServices
 
         foreach (var key in PropertyDescriptorStore.GetOwnKeys(sourcePrototype))
         {
-            if (string.Equals(key, "constructor", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
             if (PropertyDescriptorStore.TryGetOwn(
                     sourcePrototype,
                     key,
                     out var descriptor))
             {
+                if (string.Equals(key, "constructor", StringComparison.Ordinal)
+                    && descriptor.Kind == JsPropertyDescriptorKind.Data
+                    && ReferenceEquals(descriptor.Value, constructor.Type))
+                {
+                    continue;
+                }
                 PropertyDescriptorStore.DefineOrUpdate(
                     targetPrototype,
                     key,
@@ -747,6 +749,11 @@ public class RuntimeServices
             TypeUtilities.ToBoolean(isAsyncValue),
             scopes);
 
+        if (metadata.IsStatic)
+        {
+            ObjectRuntime.EnsureClassElementCanBeDefined(ownerValue, propertyKey);
+        }
+
         var slot = _lazyClassMetadata.GetOrCreateValue(ownerType);
         lock (slot)
         {
@@ -790,6 +797,7 @@ public class RuntimeServices
         var clrMethodName = clrMethodNameValue as string
             ?? throw new TypeError("Class method definition requires a CLR method name");
         var key = ObjectRuntime.ToPropertyKeyString(keyValue);
+        ObjectRuntime.EnsureClassElementCanBeDefined(targetValue, key);
         var functionName = functionNameValue as string ?? key;
         var length = lengthValue is double d ? d : 0d;
         var isStatic = TypeUtilities.ToBoolean(isStaticValue);
@@ -857,6 +865,7 @@ public class RuntimeServices
         var clrMethodName = clrMethodNameValue as string
             ?? throw new TypeError("Class accessor definition requires a CLR method name");
         var key = ObjectRuntime.ToPropertyKeyString(keyValue);
+        ObjectRuntime.EnsureClassElementCanBeDefined(targetValue, key);
         var functionName = functionNameValue as string ?? key;
         var length = lengthValue is double d ? d : 0d;
         var isStatic = TypeUtilities.ToBoolean(isStaticValue);
@@ -944,12 +953,13 @@ public class RuntimeServices
 
         if (string.Equals(propName, "name", StringComparison.Ordinal))
         {
-            if (PropertyDescriptorStore.TryGetOwn(
+            var hasExplicitName = PropertyDescriptorStore.TryGetOwn(
                     classConstructorValue.Type,
                     propName,
                     out var typeNameDescriptor)
                 && (typeNameDescriptor.Kind == JsPropertyDescriptorKind.Accessor
-                    || typeNameDescriptor.Value is not null))
+                    || typeNameDescriptor.Value is not null);
+            if (hasExplicitName)
             {
                 descriptor = CloneDescriptor(typeNameDescriptor);
             }
@@ -969,6 +979,7 @@ public class RuntimeServices
                 classConstructorValue,
                 propName,
                 descriptor);
+            classConstructorValue.HasBootstrapName = !hasExplicitName;
             return true;
         }
 
@@ -987,7 +998,16 @@ public class RuntimeServices
                 {
                     if (PropertyDescriptorStore.TryGetOwn(existingPrototype, key, out var existingDescriptor))
                     {
-                        PropertyDescriptorStore.DefineOrUpdate(protoObj, key, CloneDescriptor(existingDescriptor));
+                        if (string.Equals(key, "constructor", StringComparison.Ordinal)
+                            && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
+                            && ReferenceEquals(existingDescriptor.Value, classConstructorValue.Type))
+                        {
+                            existingDescriptor = CloneDescriptor(existingDescriptor);
+                            existingDescriptor.Value = classConstructorValue;
+                        }
+                        // Bootstrap identity must not overwrite the CLR type's shared prototype.
+                        PropertyDescriptorStore.DefineWithoutMirroring(
+                            protoObj, key, CloneDescriptor(existingDescriptor), isIntrinsicBaseline: false);
                     }
                 }
 
@@ -998,6 +1018,18 @@ public class RuntimeServices
                 }
             }
 
+            if (!PropertyDescriptorStore.TryGetOwn(protoObj, "constructor", out _))
+            {
+                PropertyDescriptorStore.DefineWithoutMirroring(protoObj, "constructor", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = classConstructorValue
+                }, isIntrinsicBaseline: false);
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1005,15 +1037,6 @@ public class RuntimeServices
                 Configurable = false,
                 Writable = false,
                 Value = protoObj
-            });
-
-            PropertyDescriptorStore.DefineOrUpdate(protoObj, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = classConstructorValue
             });
 
             return PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor);
@@ -1727,7 +1750,8 @@ public class RuntimeServices
 
         if (constructorValue is JsClassConstructorObject classConstructorValue)
         {
-            if (HasOwnOrLazyClassNameProperty(classConstructorValue))
+            if (!classConstructorValue.HasBootstrapName
+                && HasOwnOrLazyClassNameProperty(classConstructorValue))
             {
                 return classConstructorValue;
             }

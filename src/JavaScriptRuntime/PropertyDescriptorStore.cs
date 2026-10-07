@@ -461,6 +461,12 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         descriptor = NormalizeDescriptor(descriptor);
         ValidateTargetAndKey(target, key);
 
+        if (target is JsClassConstructorObject constructor
+            && string.Equals(key, "name", StringComparison.Ordinal))
+        {
+            constructor.HasBootstrapName = false;
+        }
+
         if (target is JsObject jsObject)
         {
             if (IsIntrinsicInitialization)
@@ -626,7 +632,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         }
     }
 
-    private static void DefineWithoutMirroring(
+    internal static void DefineWithoutMirroring(
         object target,
         string key,
         JsPropertyDescriptor descriptor,

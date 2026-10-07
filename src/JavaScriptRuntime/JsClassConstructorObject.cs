@@ -20,6 +20,9 @@ public abstract class JsClassConstructorObject : JsFunctionObject
 
     public int FormalParameterCount { get; private set; }
 
+    // Eager default metadata must remain eligible for class NamedEvaluation.
+    internal bool HasBootstrapName { get; set; }
+
     internal bool IsDerivedClass { get; set; }
 
     internal JsClassConstructorObject? PrivateBrandBaseConstructor { get; set; }

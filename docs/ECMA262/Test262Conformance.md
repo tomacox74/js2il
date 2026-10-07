@@ -44,8 +44,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
-| Language syntax and semantics | 17,404 | 91 | 6,152 | 23,647 | **73.60%** |
-| **Total** | 34,504 | 103 | 13,638 | 48,245 | **71.52%** |
+| Language syntax and semantics | 17,452 | 91 | 6,104 | 23,647 | **73.80%** |
+| **Total** | 34,552 | 103 | 13,590 | 48,245 | **71.62%** |
 
 ## Language Areas
 
@@ -55,7 +55,7 @@ bounded worker cleanup.
 | `asi` | 102 | 0 | 0 | 102 | **100.00%** |
 | `block-scope` | 144 | 1 | 0 | 145 | **99.31%** |
 | `comments` | 22 | 0 | 30 | 52 | **42.31%** |
-| `computed-property-names` | 0 | 0 | 48 | 48 | **0.00%** |
+| `computed-property-names` | 48 | 0 | 0 | 48 | **100.00%** |
 | `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
