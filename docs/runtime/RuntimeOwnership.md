@@ -47,8 +47,10 @@ state owner. See [Runtime lifecycle](RuntimeLifecycle.md).
   `GlobalThis.GetFunctionValue`, the intrinsic descriptor baseline for
   non-`JsObject` targets, and the `[[Prototype]]` fallback slots for values that
   are not `JsObject` instances. `GlobalThis` is constructed with its owning
-  realm's `RuntimeIntrinsics` and wires prototype chains, built-in methods, and
-  constructor linkage against it once per realm instead of once per process. See
+  realm's `RuntimeIntrinsics` and coordinates intrinsic surface configuration
+  against it once per realm instead of once per process. Each intrinsic
+  implementation owns its prototype chains, built-in methods, and constructor
+  linkage. See
   [`RuntimeIntrinsics.cs`](../../src/JavaScriptRuntime/RuntimeIntrinsics.cs) for
   the slot list and lifecycle.
 - `RuntimeModuleState` owns the realm's CommonJS and ESM graph, including
@@ -117,6 +119,40 @@ module state, and realm-created value caches; its agent owns one scheduling
 graph.
 
 ## Intrinsic ownership
+
+### Surface configuration
+
+`GlobalThis.InitializeIntrinsicsCore` is the realm bootstrap coordinator, not
+the specification table for every built-in. It invokes the owning runtime
+implementation's `ConfigureIntrinsicSurface` method; names, lengths, property
+attributes, constants, accessors, constructor/prototype links, and
+`Symbol.toStringTag` definitions belong with that implementation. Prototype
+slot initializers remain with their owning types as well.
+
+The primitive constructors (`Number`, `Boolean`, `BigInt`, `Symbol`),
+namespace objects (`Math`, `JSON`, `Reflect`, `Atomics`, `Intl`), `RegExp`,
+weak-reference constructors, and `SharedArrayBuffer` own their configuration.
+`Date`, disposable stacks, and abort globals use the same configuration entry
+point naming. `Intl` configures the namespace's existing constructor bindings;
+it does not add new `Intl.NumberFormat` or `Intl.Segmenter` behavior.
+
+Common family setup stays shared rather than introducing forwarding methods
+on every type: `TypedArrayBase.ConfigureIntrinsicSurface` configures the
+TypedArray family, and `ObjectRuntime.ConfigureIntrinsicSurface` owns the
+Object surface. `Error.ConfigureIntrinsicSurface` supplies the common Error
+and NativeError layout; `AggregateError` and `SuppressedError` delegate to it
+with their own arities and constructor inheritance.
+
+`GlobalThis` retains callable constructor bindings, global-function setup,
+global-property seeding, and reusable descriptor helpers. Constructor aliases
+that must retain identity, such as `Number.parseInt` and the global `parseInt`,
+are passed as the same callable value rather than recreated by the intrinsic.
+Configuration runs inside the realm's intrinsic-initialization baseline and
+must not capture a realm, prototype, or mutable JavaScript value in a
+process-wide static. Bootstrap remains once-per-realm and reentrant; it must
+not reapply defaults over later user mutations.
+
+### Realm-owned values
 
 Every JavaScript object that a realm can observe as a global, constructor,
 prototype, or built-in function is created for that realm alone:
