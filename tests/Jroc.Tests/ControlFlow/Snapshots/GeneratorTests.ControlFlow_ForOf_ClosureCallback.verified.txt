@@ -268,21 +268,23 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 201 (0xc9)
+				// Code size: 250 (0xfa)
 				.maxstack 12
 				.locals init (
 					[0] object,
 					[1] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
 					[2] bool,
 					[3] bool,
-					[4] object,
+					[4] bool,
 					[5] object,
-					[6] bool
+					[6] object,
+					[7] bool,
+					[8] class [System.Runtime]System.Exception
 				)
 
 				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
-				IL_0005: stloc.s 5
-				IL_0007: ldloc.s 5
+				IL_0005: stloc.s 6
+				IL_0007: ldloc.s 6
 				IL_0009: stloc.0
 				IL_000a: ldc.i4.3
 				IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -301,79 +303,108 @@
 				IL_0044: stloc.2
 				IL_0045: ldc.i4.0
 				IL_0046: stloc.3
+				IL_0047: ldc.i4.0
+				IL_0048: stloc.s 4
 				.try
 				{
-					// loop start (head: IL_0047)
-						IL_0047: ldc.i4.1
-						IL_0048: stloc.2
-						IL_0049: ldloc.1
-						IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-						IL_004f: stloc.s 5
-						IL_0051: ldloc.s 5
-						IL_0053: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-						IL_0058: stloc.s 6
-						IL_005a: ldloc.s 6
-						IL_005c: brtrue IL_00ad
+					.try
+					{
+						// loop start (head: IL_004a)
+							IL_004a: ldc.i4.1
+							IL_004b: stloc.2
+							IL_004c: ldloc.1
+							IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+							IL_0052: stloc.s 6
+							IL_0054: ldloc.s 6
+							IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+							IL_005b: stloc.s 7
+							IL_005d: ldloc.s 7
+							IL_005f: brtrue IL_00b0
 
-						IL_0061: ldloc.s 5
-						IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-						IL_0068: stloc.s 5
-						IL_006a: ldc.i4.0
-						IL_006b: stloc.2
-						IL_006c: ldloc.s 5
-						IL_006e: stloc.s 4
-						IL_0070: ldarg.0
-						IL_0071: ldc.i4.1
-						IL_0072: ldelem.ref
-						IL_0073: castclass Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope
-						IL_0078: ldfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
-						IL_007d: stloc.s 5
-						IL_007f: ldloc.s 5
-						IL_0081: ldc.i4.2
-						IL_0082: newarr [System.Runtime]System.Object
-						IL_0087: dup
-						IL_0088: ldc.i4.0
-						IL_0089: ldarg.0
-						IL_008a: ldc.i4.0
-						IL_008b: ldelem.ref
-						IL_008c: stelem.ref
-						IL_008d: dup
-						IL_008e: ldc.i4.1
-						IL_008f: ldarg.0
-						IL_0090: ldc.i4.1
-						IL_0091: ldelem.ref
-						IL_0092: stelem.ref
-						IL_0093: ldloc.s 4
-						IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-						IL_009a: pop
-						IL_009b: br IL_0047
-					// end loop
-					IL_00a0: ldloc.1
-					IL_00a1: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-					IL_00a6: ldc.i4.1
-					IL_00a7: stloc.3
-					IL_00a8: leave IL_00c7
+							IL_0064: ldloc.s 6
+							IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+							IL_006b: stloc.s 6
+							IL_006d: ldc.i4.0
+							IL_006e: stloc.2
+							IL_006f: ldloc.s 6
+							IL_0071: stloc.s 5
+							IL_0073: ldarg.0
+							IL_0074: ldc.i4.1
+							IL_0075: ldelem.ref
+							IL_0076: castclass Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope
+							IL_007b: ldfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
+							IL_0080: stloc.s 6
+							IL_0082: ldloc.s 6
+							IL_0084: ldc.i4.2
+							IL_0085: newarr [System.Runtime]System.Object
+							IL_008a: dup
+							IL_008b: ldc.i4.0
+							IL_008c: ldarg.0
+							IL_008d: ldc.i4.0
+							IL_008e: ldelem.ref
+							IL_008f: stelem.ref
+							IL_0090: dup
+							IL_0091: ldc.i4.1
+							IL_0092: ldarg.0
+							IL_0093: ldc.i4.1
+							IL_0094: ldelem.ref
+							IL_0095: stelem.ref
+							IL_0096: ldloc.s 5
+							IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+							IL_009d: pop
+							IL_009e: br IL_004a
+						// end loop
+						IL_00a3: ldloc.1
+						IL_00a4: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+						IL_00a9: ldc.i4.1
+						IL_00aa: stloc.3
+						IL_00ab: leave IL_00f8
 
-					IL_00ad: ldc.i4.1
-					IL_00ae: stloc.2
-					IL_00af: leave IL_00c7
+						IL_00b0: ldc.i4.1
+						IL_00b1: stloc.2
+						IL_00b2: leave IL_00f8
+					} // end .try
+					catch [System.Runtime]System.Exception
+					{
+						IL_00b7: stloc.s 8
+						IL_00b9: ldc.i4.1
+						IL_00ba: stloc.s 4
+						IL_00bc: ldloc.s 8
+						IL_00be: isinst [System.Runtime]System.Exception
+						IL_00c3: dup
+						IL_00c4: brtrue IL_00d2
+
+						IL_00c9: pop
+						IL_00ca: ldloc.s 8
+						IL_00cc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+						IL_00d1: throw
+
+						IL_00d2: throw
+					} // end handler
 				} // end .try
 				finally
 				{
-					IL_00b4: ldloc.2
-					IL_00b5: brtrue IL_00c6
+					IL_00d3: ldloc.2
+					IL_00d4: brtrue IL_00f7
 
-					IL_00ba: ldloc.3
-					IL_00bb: brtrue IL_00c6
+					IL_00d9: ldloc.3
+					IL_00da: brtrue IL_00f7
 
-					IL_00c0: ldloc.1
-					IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+					IL_00df: ldloc.s 4
+					IL_00e1: brtrue IL_00f1
 
-					IL_00c6: endfinally
+					IL_00e6: ldloc.1
+					IL_00e7: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+					IL_00ec: br IL_00f7
+
+					IL_00f1: ldloc.1
+					IL_00f2: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+
+					IL_00f7: endfinally
 				} // end handler
 
-				IL_00c7: ldnull
-				IL_00c8: ret
+				IL_00f8: ldnull
+				IL_00f9: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner

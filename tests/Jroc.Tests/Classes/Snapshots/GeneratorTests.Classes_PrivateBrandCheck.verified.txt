@@ -1110,11 +1110,12 @@
 		IL_0246: ldstr "prototype"
 		IL_024b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_0250: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0255: stloc.s 16
-		IL_0257: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_0261: stloc.s 16
-		IL_0263: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_0255: ldnull
+		IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_025b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_0260: ldc.i4.1
+		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_0266: stloc.s 16
 		IL_0268: volatile.
 		IL_026a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
 		IL_026f: brfalse IL_0287

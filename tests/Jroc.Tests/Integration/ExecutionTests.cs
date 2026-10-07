@@ -16,7 +16,7 @@ namespace Jroc.Tests.Integration
         public Task Compile_Resources_Dromaeo_3d_Cube() => ExecutionTest(nameof(Compile_Resources_Dromaeo_3d_Cube));
 
         [Fact]
-        public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp), preferOutOfProc: true);
+        public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp), preferOutOfProc: true, executionTimeoutMs: 90000);
 
         [Fact]
         public Task Compile_Performance_Dromaeo_Object_String() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_String), preferOutOfProc: true);

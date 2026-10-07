@@ -728,6 +728,15 @@ public static class HIRBuilder
                         return false;
                     }
 
+                    // Captured scopes belong to the CLR carrier, not the JavaScript `this`.
+                    // They must be available even before super() or an explicit object return.
+                    HIRStatement? scopesInitialization = null;
+                    if (hasScopesParameter)
+                    {
+                        scopesInitialization = initStatements[0];
+                        initStatements.RemoveAt(0);
+                    }
+
                     if (isDerivedConstructor && initStatements.Count > 0)
                     {
                         var superCallIndex = FindInitializerInsertionIndexForDerivedConstructor(bodyStatements, initStatements);
@@ -745,6 +754,11 @@ public static class HIRBuilder
                     else
                     {
                         bodyStatements.InsertRange(0, initStatements);
+                    }
+
+                    if (scopesInitialization != null)
+                    {
+                        bodyStatements.Insert(0, scopesInitialization);
                     }
 
                     method = new HIRMethod
@@ -963,12 +977,16 @@ public static class HIRBuilder
                         return false;
                     }
 
+                    HIRStatement? scopesInitialization = null;
+                    if (hasScopesParameter)
+                    {
+                        scopesInitialization = initStatements[0];
+                        initStatements.RemoveAt(0);
+                    }
+
                     if (isDerivedConstructor && initStatements.Count > 0)
                     {
-                        // Insert initializers after the earliest usable super() evaluation.
-                        // For exact JS semantics we prefer a top-level `super(...)` statement; when the
-                        // only pending initializer is the hidden `_scopes` field we can also tolerate a
-                        // nested `super()` (e.g. `super[super()]`) and insert after that statement.
+                        // Insert instance initializers after the earliest usable super() evaluation.
                         var superCallIndex = FindInitializerInsertionIndexForDerivedConstructor(bodyStatements, initStatements);
 
                         if (superCallIndex < 0)
@@ -984,6 +1002,11 @@ public static class HIRBuilder
                     else
                     {
                         bodyStatements.InsertRange(0, initStatements);
+                    }
+
+                    if (scopesInitialization != null)
+                    {
+                        bodyStatements.Insert(0, scopesInitialization);
                     }
 
                     method = new HIRMethod

@@ -114,6 +114,32 @@
   "support": {
     "entries": [
       {
+        "clause": "15.7.14",
+        "feature": "Derived constructor completion and superclass initialization",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/ConstructorCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/builtin-objects/Array/ConstructorCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/builtin-objects/NativeError/ConstructorCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/builtin-objects/Object/ConstructorCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/internals/Construct/ConstructorCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/subclass/class-definition-null-proto-contains-return-override.js",
+          "test/language/statements/class/subclass/class-definition-null-proto-this.js",
+          "test/language/statements/class/subclass/derived-class-return-override-for-of.js",
+          "test/language/statements/class/subclass/derived-class-return-override-with-object.js",
+          "test/language/statements/class/subclass/derived-class-return-override-with-this.js",
+          "test/language/statements/class/subclass/derived-class-return-override-with-undefined.js",
+          "test/language/statements/class/subclass/builtin-objects/Array/super-must-be-called.js",
+          "test/language/statements/class/subclass/builtin-objects/NativeError/TypeError-super.js",
+          "test/language/statements/class/subclass/builtin-objects/Object/constructor-returns-non-object.js",
+          "test/built-ins/Function/internals/Construct/derived-this-uninitialized.js"
+        ],
+        "notes": "The native harness verifies 30 previously failing pinned constructor cases. Derived constructors require an initialized this binding on undefined completion, even when the constructed value is discarded; explicit object returns bypass this resolution, while other primitive returns throw TypeError after the body and iterator cleanup have completed. Captured scopes are available before super(), including arrows and null heritage. Dynamic class-valued super constructors use class construction rather than ordinary function invocation. Other exotic subclass and class-field initialization edge cases remain limited."
+      },
+      {
         "clause": "15.7.13",
         "feature": "Nested class private names, static field descriptors, and private setters",
         "status": "Supported with Limitations",

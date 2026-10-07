@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): enforce derived-constructor completion checks even when the
+  result is discarded, preserve object return overrides and pre-super captured
+  scopes, and check primitive returns after iterator cleanup; verify 30
+  previously failing pinned Test262 constructor cases.
 - fix(runtime): initialize RegExp getter names and metadata, return undefined
   for intrinsic-prototype flag receivers, and expose RegExp Symbol.species;
   verify 20 previously failing pinned Test262 cases.

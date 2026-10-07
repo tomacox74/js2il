@@ -211,6 +211,17 @@ public sealed partial class HIRToLIRLowerer
                 resultTempVar = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRLoadThis(resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                if (_isLexicallyEnclosedByDerivedConstructor)
+                {
+                    // Resolving a derived lexical binding can throw even when its value is unused.
+                    var resolvedThis = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
+                        new[] { resultTempVar },
+                        resolvedThis));
+                    DefineTempStorage(resolvedThis, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    resultTempVar = resolvedThis;
+                }
                 return true;
 
             case HIRNewTargetExpression:

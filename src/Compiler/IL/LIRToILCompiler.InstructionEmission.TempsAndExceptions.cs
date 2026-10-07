@@ -109,7 +109,8 @@ internal sealed partial class LIRToILCompiler
 
             case LIRThrow throwInstr:
                 {
-                    if (MethodBody.IsAsync
+                    if (!throwInstr.IsExceptionPropagation
+                        && MethodBody.IsAsync
                         && MethodBody.AsyncInfo is not { HasAwaits: true }
                         && !MethodBody.IsGenerator
                         && !methodDescriptor.ReturnsVoid)

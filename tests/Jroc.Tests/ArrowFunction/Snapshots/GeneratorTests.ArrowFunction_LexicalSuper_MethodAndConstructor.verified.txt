@@ -878,26 +878,26 @@
 
 			IL_0000: newobj instance void Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived/Scope_ctor::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldc.i4.1
-			IL_0007: newarr [System.Runtime]System.Object
-			IL_000c: dup
-			IL_000d: ldc.i4.0
-			IL_000e: ldarg.2
-			IL_000f: box [System.Runtime]System.Double
-			IL_0014: stelem.ref
-			IL_0015: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_001a: ldarg.0
-			IL_001b: ldarg.2
-			IL_001c: box [System.Runtime]System.Double
-			IL_0021: call instance void Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Base::.ctor(object)
-			IL_0026: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_002b: ldarg.0
-			IL_002c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_0031: ldarg.1
-			IL_0032: stloc.1
-			IL_0033: ldarg.0
-			IL_0034: ldloc.1
-			IL_0035: stfld object[] Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived::_scopes
+			IL_0006: ldarg.1
+			IL_0007: stloc.1
+			IL_0008: ldarg.0
+			IL_0009: ldloc.1
+			IL_000a: stfld object[] Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived::_scopes
+			IL_000f: ldc.i4.1
+			IL_0010: newarr [System.Runtime]System.Object
+			IL_0015: dup
+			IL_0016: ldc.i4.0
+			IL_0017: ldarg.2
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stelem.ref
+			IL_001e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0023: ldarg.0
+			IL_0024: ldarg.2
+			IL_0025: box [System.Runtime]System.Double
+			IL_002a: call instance void Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Base::.ctor(object)
+			IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0034: ldarg.0
+			IL_0035: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
 			IL_003a: ldc.i4.1
 			IL_003b: newarr [System.Runtime]System.Object
 			IL_0040: dup
@@ -1005,7 +1005,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 777 (0x309)
+		// Code size: 778 (0x30a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Scope,
@@ -1174,106 +1174,107 @@
 		IL_01b7: ldstr "prototype"
 		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_01c1: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_01c6: stloc.2
+		IL_01c6: ldnull
 		IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_01d1: stloc.2
-		IL_01d2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_01d7: volatile.
-		IL_01d9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_01de: brfalse IL_01f3
+		IL_01cc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_01d1: ldc.i4.1
+		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_01d7: stloc.2
+		IL_01d8: volatile.
+		IL_01da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_01df: brfalse IL_01f4
 
-		IL_01e3: ldloc.2
-		IL_01e4: ldstr "fromConstructor"
-		IL_01e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01ee: br IL_0208
+		IL_01e4: ldloc.2
+		IL_01e5: ldstr "fromConstructor"
+		IL_01ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01ef: br IL_0209
 
-		IL_01f3: ldloc.2
-		IL_01f4: ldstr "fromConstructor"
-		IL_01f9: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:35"
-		IL_01fe: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01f4: ldloc.2
+		IL_01f5: ldstr "fromConstructor"
+		IL_01fa: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:35"
+		IL_01ff: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_0204: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0208: stloc.3
-		IL_0209: ldloc.2
-		IL_020a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_020f: stloc.s 6
-		IL_0211: ldloc.s 6
-		IL_0213: isinst Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived
-		IL_0218: dup
-		IL_0219: brfalse IL_022a
+		IL_0209: stloc.3
+		IL_020a: ldloc.2
+		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0210: stloc.s 6
+		IL_0212: ldloc.s 6
+		IL_0214: isinst Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived
+		IL_0219: dup
+		IL_021a: brfalse IL_022b
 
-		IL_021e: callvirt instance object Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived::makeReader()
-		IL_0223: stloc.s 4
-		IL_0225: br IL_0239
+		IL_021f: callvirt instance object Modules.ArrowFunction_LexicalSuper_MethodAndConstructor/Derived::makeReader()
+		IL_0224: stloc.s 4
+		IL_0226: br IL_023a
 
-		IL_022a: pop
-		IL_022b: ldloc.s 6
-		IL_022d: ldstr "makeReader"
-		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0237: stloc.s 4
+		IL_022b: pop
+		IL_022c: ldloc.s 6
+		IL_022e: ldstr "makeReader"
+		IL_0233: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0238: stloc.s 4
 
-		IL_0239: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_023e: stloc.s 10
-		IL_0240: ldloc.3
-		IL_0241: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0246: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_024b: dup
-		IL_024c: ldstr "value"
-		IL_0251: ldc.r8 99
-		IL_025a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_025f: stloc.s 11
-		IL_0261: volatile.
-		IL_0263: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_0268: brfalse IL_027e
+		IL_023a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_023f: stloc.s 10
+		IL_0241: ldloc.3
+		IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0247: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_024c: dup
+		IL_024d: ldstr "value"
+		IL_0252: ldc.r8 99
+		IL_025b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0260: stloc.s 11
+		IL_0262: volatile.
+		IL_0264: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_0269: brfalse IL_027f
 
-		IL_026d: ldstr "call"
-		IL_0272: ldloc.s 11
-		IL_0274: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0279: br IL_0294
+		IL_026e: ldstr "call"
+		IL_0273: ldloc.s 11
+		IL_0275: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_027a: br IL_0295
 
-		IL_027e: ldstr "call"
-		IL_0283: ldloc.s 11
-		IL_0285: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:46"
-		IL_028a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_028f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_027f: ldstr "call"
+		IL_0284: ldloc.s 11
+		IL_0286: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:46"
+		IL_028b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_0290: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0294: stloc.s 6
-		IL_0296: ldloc.s 10
-		IL_0298: ldloc.s 6
-		IL_029a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_029f: pop
-		IL_02a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02a5: stloc.s 10
-		IL_02a7: ldloc.s 4
-		IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02ae: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_02b3: dup
-		IL_02b4: ldstr "value"
-		IL_02b9: ldc.r8 99
-		IL_02c2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_02c7: stloc.s 11
-		IL_02c9: volatile.
-		IL_02cb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_02d0: brfalse IL_02e6
+		IL_0295: stloc.s 6
+		IL_0297: ldloc.s 10
+		IL_0299: ldloc.s 6
+		IL_029b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02a0: pop
+		IL_02a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02a6: stloc.s 10
+		IL_02a8: ldloc.s 4
+		IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02af: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_02b4: dup
+		IL_02b5: ldstr "value"
+		IL_02ba: ldc.r8 99
+		IL_02c3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_02c8: stloc.s 11
+		IL_02ca: volatile.
+		IL_02cc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_02d1: brfalse IL_02e7
 
-		IL_02d5: ldstr "call"
-		IL_02da: ldloc.s 11
-		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02e1: br IL_02fc
+		IL_02d6: ldstr "call"
+		IL_02db: ldloc.s 11
+		IL_02dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02e2: br IL_02fd
 
-		IL_02e6: ldstr "call"
-		IL_02eb: ldloc.s 11
-		IL_02ed: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:53"
-		IL_02f2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_02f7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_02e7: ldstr "call"
+		IL_02ec: ldloc.s 11
+		IL_02ee: ldstr "ArrowFunction_LexicalSuper_MethodAndConstructor:Modules.ArrowFunction_LexicalSuper_MethodAndConstructor:__js_module_init__:53"
+		IL_02f3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_02f8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_02fc: stloc.s 6
-		IL_02fe: ldloc.s 10
-		IL_0300: ldloc.s 6
-		IL_0302: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0307: pop
-		IL_0308: ret
+		IL_02fd: stloc.s 6
+		IL_02ff: ldloc.s 10
+		IL_0301: ldloc.s 6
+		IL_0303: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0308: pop
+		IL_0309: ret
 	} // end of method ArrowFunction_LexicalSuper_MethodAndConstructor::__js_module_init__
 
 } // end of class Modules.ArrowFunction_LexicalSuper_MethodAndConstructor

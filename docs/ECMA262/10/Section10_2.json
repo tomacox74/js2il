@@ -138,9 +138,16 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js",
-          "tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/ConstructorCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/internals/Construct/ConstructorCompletionExecutionTests.cs"
         ],
-        "notes": "Generated ordinary function objects implement a separate construction-body adapter rather than routing construction through ordinary [[Call]]. The runtime allocates from newTarget.prototype with Object.prototype fallback, propagates new.target, honors object-versus-primitive return overrides, forwards bound construction, and supports function-valued bases of derived classes. Less-common exotic and realm-sensitive OrdinaryCreateFromConstructor cases remain limited."
+        "test262Paths": [
+          "test/built-ins/Function/internals/Construct/derived-this-uninitialized.js",
+          "test/language/statements/class/subclass/derived-class-return-override-for-of.js",
+          "test/language/statements/class/subclass/derived-class-return-override-with-object.js"
+        ],
+        "notes": "Generated ordinary function objects implement a separate construction-body adapter rather than routing construction through ordinary [[Call]]. The runtime allocates from newTarget.prototype with Object.prototype fallback, propagates new.target, honors object-versus-primitive return overrides, forwards bound construction, and supports function-valued bases of derived classes. Direct and reflective class construction share completion rules: derived primitive returns are rejected after the body completes, object returns bypass uninitialized-this checks, and undefined completion resolves the lexical this binding even when the result is unused. Less-common exotic and realm-sensitive OrdinaryCreateFromConstructor cases remain limited."
       },
       {
         "clause": "10.2.4",

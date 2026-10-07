@@ -2678,16 +2678,20 @@ namespace JavaScriptRuntime
 
                 object? CompleteClassConstruction(object? instance)
                 {
-                    if (!isDerivedClassType)
+                    if (prototypeOwner is not JsClassConstructorObject || instance is null)
                     {
                         return AttachClassPrototype(instance);
                     }
 
-                    var effectiveThis = RuntimeServices.ResolveLexicalThis(
-                        RuntimeServices.GetCurrentThis());
-                    return ReferenceEquals(effectiveThis, instance)
-                        ? AttachClassPrototype(instance)
-                        : effectiveThis;
+                    AttachClassPrototype(instance);
+                    var returnField = type.GetField(
+                        "__jroc_ctorReturn",
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                    return RuntimeServices.ResolveClassConstructorResult(
+                        instance,
+                        returnField?.GetValue(instance),
+                        RuntimeServices.GetCurrentThis(),
+                        isDerivedClassType);
                 }
 
                 try

@@ -1921,15 +1921,15 @@
 				[0] object[]
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void Modules.Classes_GeneratedMethodFunctionObjects/Base::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Classes_GeneratedMethodFunctionObjects/Example::_scopes
+			IL_0000: ldarg.1
+			IL_0001: stloc.0
+			IL_0002: ldarg.0
+			IL_0003: ldloc.0
+			IL_0004: stfld object[] Modules.Classes_GeneratedMethodFunctionObjects/Example::_scopes
+			IL_0009: ldarg.0
+			IL_000a: call instance void Modules.Classes_GeneratedMethodFunctionObjects/Base::.ctor()
+			IL_000f: ldarg.0
+			IL_0010: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
 			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_001f: ldstr "value"
@@ -2907,11 +2907,12 @@
 		IL_0334: ldstr "prototype"
 		IL_0339: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_033e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0343: stloc.s 4
-		IL_0345: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_034f: stloc.s 4
-		IL_0351: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_0343: ldnull
+		IL_0344: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0349: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_034e: ldc.i4.1
+		IL_034f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_0354: stloc.s 4
 		IL_0356: volatile.
 		IL_0358: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
 		IL_035d: brfalse IL_0372

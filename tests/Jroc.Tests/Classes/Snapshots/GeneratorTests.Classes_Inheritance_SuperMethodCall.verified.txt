@@ -553,7 +553,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 488 (0x1e8)
+		// Code size: 489 (0x1e9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Inheritance_SuperMethodCall/Scope,
@@ -708,32 +708,33 @@
 		IL_0188: ldstr "prototype"
 		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_0192: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0197: stloc.3
+		IL_0197: ldnull
 		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_01a2: stloc.3
-		IL_01a3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_01a8: ldloc.3
-		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ae: volatile.
-		IL_01b0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_01b5: brfalse IL_01c9
+		IL_019d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_01a2: ldc.i4.1
+		IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+		IL_01a8: stloc.3
+		IL_01a9: ldloc.3
+		IL_01aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01af: volatile.
+		IL_01b1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_01b6: brfalse IL_01ca
 
-		IL_01ba: ldstr "m"
-		IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01c4: br IL_01dd
+		IL_01bb: ldstr "m"
+		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01c5: br IL_01de
 
-		IL_01c9: ldstr "m"
-		IL_01ce: ldstr "Classes_Inheritance_SuperMethodCall:Modules.Classes_Inheritance_SuperMethodCall:__js_module_init__:32"
-		IL_01d3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_01ca: ldstr "m"
+		IL_01cf: ldstr "Classes_Inheritance_SuperMethodCall:Modules.Classes_Inheritance_SuperMethodCall:__js_module_init__:32"
+		IL_01d4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_01dd: stloc.3
-		IL_01de: ldloc.s 7
-		IL_01e0: ldloc.3
-		IL_01e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01e6: pop
-		IL_01e7: ret
+		IL_01de: stloc.3
+		IL_01df: ldloc.s 7
+		IL_01e1: ldloc.3
+		IL_01e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01e7: pop
+		IL_01e8: ret
 	} // end of method Classes_Inheritance_SuperMethodCall::__js_module_init__
 
 } // end of class Modules.Classes_Inheritance_SuperMethodCall

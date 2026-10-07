@@ -463,7 +463,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 332 (0x14c)
+			// Code size: 333 (0x14d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/Scope,
@@ -572,35 +572,36 @@
 			IL_00f6: ldstr "prototype"
 			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 			IL_0100: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0105: stloc.3
+			IL_0105: ldnull
 			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0110: stloc.3
-			IL_0111: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-			IL_0116: ldloc.3
-			IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_011c: stloc.3
-			IL_011d: ldloc.3
-			IL_011e: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-			IL_0123: dup
-			IL_0124: brfalse IL_0134
+			IL_010b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_0110: ldc.i4.1
+			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
+			IL_0116: stloc.3
+			IL_0117: ldloc.3
+			IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_011d: stloc.3
+			IL_011e: ldloc.3
+			IL_011f: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_0124: dup
+			IL_0125: brfalse IL_0135
 
-			IL_0129: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
-			IL_012e: stloc.3
-			IL_012f: br IL_0141
+			IL_012a: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
+			IL_012f: stloc.3
+			IL_0130: br IL_0142
 
-			IL_0134: pop
-			IL_0135: ldloc.3
-			IL_0136: ldstr "n"
-			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0140: stloc.3
+			IL_0135: pop
+			IL_0136: ldloc.3
+			IL_0137: ldstr "n"
+			IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0141: stloc.3
 
-			IL_0141: ldloc.s 6
-			IL_0143: ldloc.3
-			IL_0144: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0149: pop
-			IL_014a: ldnull
-			IL_014b: ret
+			IL_0142: ldloc.s 6
+			IL_0144: ldloc.3
+			IL_0145: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_014a: pop
+			IL_014b: ldnull
+			IL_014c: ret
 		} // end of method makeAndRun::__js_call__
 
 	} // end of class makeAndRun

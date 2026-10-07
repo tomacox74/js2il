@@ -616,8 +616,9 @@ public record LIRUnwrapCatchException(TempVariable Exception, TempVariable Resul
 /// <summary>
 /// Throws a JavaScript value. If the value is a CLR Exception, throws it directly;
 /// otherwise wraps it in JsThrownValueException and throws.
+/// Exception propagation preserves CLR unwinding instead of returning a rejected async promise.
 /// </summary>
-public record LIRThrow(TempVariable Value) : LIRInstruction;
+public record LIRThrow(TempVariable Value, bool IsExceptionPropagation = false) : LIRInstruction;
 
 /// <summary>
 /// Throws a new JavaScriptRuntime.TypeError with the provided message.

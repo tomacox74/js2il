@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.29](https://github.com/tomacox74/js2il/releases/tag/v0.12.29).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.30](https://github.com/tomacox74/js2il/releases/tag/v0.12.30).
 
 ## How to Read This Report
 
@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 0 | 0 | 1,086 | 1,086 | **0.00%** |
-| Built-in objects and APIs | 17,009 | 12 | 6,491 | 23,512 | **72.34%** |
-| Language syntax and semantics | 17,313 | 89 | 6,245 | 23,647 | **73.21%** |
-| **Total** | 34,322 | 101 | 13,822 | 48,245 | **71.14%** |
+| Built-in objects and APIs | 17,010 | 12 | 6,490 | 23,512 | **72.35%** |
+| Language syntax and semantics | 17,342 | 89 | 6,216 | 23,647 | **73.34%** |
+| **Total** | 34,352 | 101 | 13,792 | 48,245 | **71.20%** |
 
 ## Language Areas
 
@@ -76,7 +76,7 @@ bounded worker cleanup.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,647 | 35 | 2,655 | 9,337 | **71.19%** |
+| `statements` | 6,676 | 35 | 2,626 | 9,337 | **71.50%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -163,7 +163,7 @@ bounded worker cleanup.
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 2,447 | 0 | 1,920 | 4,367 | **56.03%** |
+| `class` | 2,476 | 0 | 1,891 | 4,367 | **56.70%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |
@@ -216,7 +216,7 @@ bounded worker cleanup.
 | `Error` | 55 | 0 | 3 | 58 | **94.83%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 409 | 1 | 99 | 509 | **80.35%** |
+| `Function` | 410 | 1 | 98 | 509 | **80.55%** |
 | `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
