@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): expose TypedArray reduce metadata and shared Array toString
+  identity, validate toReversed receivers and post-coercion with indices, and
+  implement Uint8Array Base64 decoding options, bounded chunk consumption,
+  partial writes, and detached-buffer checks; verify 30 previously failing
+  pinned Test262 cases.
 - fix(compiler): enforce derived-constructor completion checks even when the
   result is discarded, preserve object return overrides and pre-super captured
   scopes, and check primitive returns after iterator cleanup; verify 30

@@ -671,6 +671,26 @@
         "notes": "The supported TypedArray families share every(), some(), find(), findIndex(), findLast(), findLastIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. The callback methods expose receiver-aware intrinsic methods, validate initial buffer state, capture the current length before callback validation, and observe detached/resized elements as undefined without caching invalidated values. filter() honors custom species; remaining species and resize behavior is incomplete."
       },
       {
+        "clause": "23.2.3.23",
+        "feature": "%TypedArray%.prototype.reduce",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.reduce",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduce/TypedArrayConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduce/BigInt/TypedArrayConformanceExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/reduce/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/reduce/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/reduce/length.js",
+          "test/built-ins/TypedArray/prototype/reduce/name.js",
+          "test/built-ins/TypedArray/prototype/reduce/prop-desc.js",
+          "test/built-ins/TypedArray/prototype/reduce/return-abrupt-from-this-out-of-bounds.js",
+          "test/built-ins/TypedArray/prototype/reduce/BigInt/return-abrupt-from-this-out-of-bounds.js"
+        ],
+        "notes": "The shared prototype owns a receiver-aware reduce built-in with name reduce, length 1, and writable, configurable, non-enumerable metadata. Calls validate attachment and current bounds before callback validation across Number and BigInt families, and preserve the existing reduction traversal and accumulator behavior. Broader cross-realm and exotic-object coverage is not exhaustive."
+      },
+      {
         "clause": "23.2.3.24",
         "feature": "%TypedArray%.prototype.reduceRight",
         "status": "Supported with Limitations",
@@ -716,9 +736,10 @@
           "test/built-ins/TypedArray/prototype/toReversed/length.js",
           "test/built-ins/TypedArray/prototype/toReversed/name.js",
           "test/built-ins/TypedArray/prototype/toReversed/property-descriptor.js",
-          "test/built-ins/TypedArray/prototype/toReversed/reverses.js"
+          "test/built-ins/TypedArray/prototype/toReversed/reverses.js",
+          "test/built-ins/TypedArray/prototype/toReversed/this-value-invalid.js"
         ],
-        "notes": "Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families, ignores overridden constructor/species values, and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported."
+        "notes": "Creates a same-type reversed copy without mutating the receiver, ignores overridden constructor/species values, and exposes standard built-in metadata. Receiver attachment and current bounds are validated before reading the current length, including detached and out-of-bounds views. Broader resizable-buffer and exotic-object coverage is not exhaustive."
       },
       {
         "clause": "23.2.3.29",
@@ -819,7 +840,10 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js"
         ],
-        "notes": "fill(), reverse(), join(), toString(), and toLocaleString() are shared across the supported families and return same-type results/views where applicable. Locale-aware formatting, species interactions, and the remaining prototype metadata surface are still limited."
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/toString.js"
+        ],
+        "notes": "fill(), reverse(), join(), toString(), and toLocaleString() are shared across the supported families and return same-type results/views where applicable. The shared prototype's toString property is the same built-in function object as Array.prototype.toString, with writable, configurable, non-enumerable metadata. Locale-aware formatting, species interactions, and the remaining prototype metadata surface are still limited."
       },
       {
         "clause": "23.2.3.26 / 23.2.5",
@@ -1018,9 +1042,12 @@
           "test/built-ins/TypedArray/prototype/with/negative-fractional-index-truncated-to-zero.js",
           "test/built-ins/TypedArray/prototype/with/not-a-constructor.js",
           "test/built-ins/TypedArray/prototype/with/order-of-evaluation.js",
-          "test/built-ins/TypedArray/prototype/with/value-throw-completion.js"
+          "test/built-ins/TypedArray/prototype/with/value-throw-completion.js",
+          "test/built-ins/TypedArray/prototype/with/index-validated-against-current-length.js",
+          "test/built-ins/TypedArray/prototype/with/negative-index-resize-to-out-of-bounds.js",
+          "test/built-ins/TypedArray/prototype/with/valid-typedarray-index-checked-after-coercions.js"
         ],
-        "notes": "Supported non-BigInt TypedArray families return immutable same-type copies, apply ToIntegerOrInfinity index coercion with negative indexing, coerce replacement values before range validation, ignore overridden length and species values, and expose standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported."
+        "notes": "Supported TypedArray families return same-type copies without mutating the receiver, apply ToIntegerOrInfinity index coercion with negative indexing, ignore overridden length and species values, and expose standard built-in metadata. Initial attachment/bounds and length are captured before coercions. Replacement coercion precedes index validation against the current post-coercion view, while negative indices and result lengths use the original length; growth, shrinkage, and out-of-bounds transitions follow this ordering. Broader resizable-buffer and exotic-object coverage is not exhaustive."
       },
       {
         "clause": "23.2.2.1",
