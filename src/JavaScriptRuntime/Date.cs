@@ -222,6 +222,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod("getUTCMinutes", static date => date.getUTCMinutes(), 0d);
             DefinePrototypeMethod("getUTCMonth", static date => date.getUTCMonth(), 0d);
             DefinePrototypeMethod("getUTCSeconds", static date => date.getUTCSeconds(), 0d);
+            DefinePrototypeMethod("getYear", static date => date.getYear(), 0d);
 
             DefineDateSetter("setDate", 2, 1d);
             DefineDateSetter("setFullYear", 0, 3d, recoverInvalidDate: true);
@@ -238,6 +239,7 @@ namespace JavaScriptRuntime
             DefineDateSetter("setUTCMinutes", 4, 3d, utc: true);
             DefineDateSetter("setUTCMonth", 1, 2d, utc: true);
             DefineDateSetter("setUTCSeconds", 5, 2d, utc: true);
+            DefinePrototypeMethod("setYear", static (date, year) => date.setYear(year), 1d);
 
             DefinePrototypeMethod("toDateString", static date => date.toDateString(), 0d);
             DefinePrototypeMethod("toISOString", static date => date.toISOString(), 0d);
@@ -248,6 +250,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod("toString", static date => date.toString(), 0d);
             DefinePrototypeMethod("toTimeString", static date => date.toTimeString(), 0d);
             DefinePrototypeMethod("toUTCString", static date => date.toUTCString(), 0d);
+            GlobalThis.DefineIntrinsicDataProperty(
+                Prototype, "toGMTString", ObjectRuntime.GetProperty(Prototype, "toUTCString"));
             DefinePrototypeMethod("valueOf", static date => date.valueOf(), 0d);
 
             BuiltinFunction1 toPrimitive = static (thisArgument, hint) =>
@@ -677,6 +681,11 @@ namespace JavaScriptRuntime
             return GetLocalPart(static date => date.Year);
         }
 
+        public object getYear() => GetLocalPart(static date => date.Year - 1900d);
+
+        public object setYear(object? year) =>
+            SetDateParts(false, 0, true, 1, year, null, null, null, null, null, null, legacyYear: true);
+
         public object getMonth()
         {
             return GetLocalPart(static date => date.Month - 1);
@@ -1070,14 +1079,14 @@ namespace JavaScriptRuntime
             return GetUtcDateTime().ToLocalTime();
         }
 
-        private object GetLocalPart(Func<DateTimeOffset, double> selector)
+        private object GetLocalPart(Func<DateParts, double> selector)
         {
             if (double.IsNaN(_msSinceEpoch))
             {
                 return double.NaN;
             }
 
-            return selector(GetLocalDateTime());
+            return selector(GetLocalParts(out _));
         }
 
         private object GetUtcPart(Func<DateParts, double> selector)
@@ -1127,7 +1136,8 @@ namespace JavaScriptRuntime
             object? hour,
             object? minute,
             object? second,
-            object? millisecond)
+            object? millisecond,
+            bool legacyYear = false)
         {
             // Capture [[DateValue]] before any user-defined ToNumber conversion can mutate it.
             var storedTime = _msSinceEpoch;
@@ -1153,6 +1163,11 @@ namespace JavaScriptRuntime
             {
                 _msSinceEpoch = double.NaN;
                 return _msSinceEpoch;
+            }
+
+            if (legacyYear && resolvedYear >= 0d && resolvedYear <= 99d)
+            {
+                resolvedYear += 1900d;
             }
 
             var localTime = MakeDate(

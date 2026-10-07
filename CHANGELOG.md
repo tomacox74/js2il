@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): implement Annex B Date getYear/setYear and the toGMTString
+  alias, retain captured date values during year coercion, support local getters
+  outside the CLR date range, and expose String big/bold HTML wrappers; verify
+  30 previously failing pinned Test262 cases.
 - refactor(runtime): move intrinsic metadata and prototype configuration from
   GlobalThis into the owning runtime implementations; keep realm bootstrap
   orchestration and shared Object, TypedArray, and NativeError setup centralized

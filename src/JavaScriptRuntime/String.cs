@@ -61,6 +61,8 @@ namespace JavaScriptRuntime
 
 
             DefinePrototypeMethod(prototype, "at", (BuiltinFunction1)PrototypeAt, 1);
+            DefinePrototypeMethod(prototype, "big", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "big")), 0);
+            DefinePrototypeMethod(prototype, "bold", (BuiltinFunction0)(static receiver => CreateHtml(receiver, "b")), 0);
             DefinePrototypeMethod(prototype, "charAt", (BuiltinFunction1)PrototypeCharAt, 1);
             DefinePrototypeMethod(prototype, "charCodeAt", (BuiltinFunction1)PrototypeCharCodeAt, 1);
             DefinePrototypeMethod(prototype, "codePointAt", (BuiltinFunction1)PrototypeCodePointAt, 1);
@@ -762,6 +764,12 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeTrimStart(object? thisArgument)
             => TrimStart(ThisStringValue(thisArgument));
+
+        private static string CreateHtml(object? receiver, string tag)
+        {
+            RequireObjectCoercible(receiver);
+            return $"<{tag}>{DotNet2JSConversions.ToString(receiver)}</{tag}>";
+        }
 
         private static object? PrototypeValueOf(object? thisArgument)
             => ThisStringValue(thisArgument);
