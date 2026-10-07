@@ -42,10 +42,10 @@ bounded worker cleanup.
 
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| Annex B | 30 | 0 | 1,056 | 1,086 | **2.76%** |
+| Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
 | Language syntax and semantics | 17,342 | 89 | 6,216 | 23,647 | **73.34%** |
-| **Total** | 34,412 | 101 | 13,732 | 48,245 | **71.33%** |
+| **Total** | 34,442 | 101 | 13,702 | 48,245 | **71.39%** |
 
 ## Language Areas
 
@@ -267,7 +267,7 @@ bounded worker cleanup.
 | `built-ins/Function` | 0 | 0 | 6 | 6 | **0.00%** |
 | `built-ins/Object` | 0 | 0 | 1 | 1 | **0.00%** |
 | `built-ins/RegExp` | 0 | 0 | 62 | 62 | **0.00%** |
-| `built-ins/String` | 9 | 0 | 102 | 111 | **8.11%** |
+| `built-ins/String` | 39 | 0 | 72 | 111 | **35.14%** |
 | `built-ins/TypedArrayConstructors` | 0 | 0 | 1 | 1 | **0.00%** |
 | `built-ins/unescape` | 0 | 0 | 19 | 19 | **0.00%** |
 | `language/comments` | 0 | 0 | 8 | 8 | **0.00%** |
