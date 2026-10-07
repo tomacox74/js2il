@@ -5068,11 +5068,6 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CreateIterator(s);
             }
 
-            if (iterable is ArgumentsObject argumentsObject)
-            {
-                return argumentsObject.CreateValueIterator();
-            }
-
             if (iterable is JavaScriptRuntime.TypedArrayBase typedArray)
             {
                 return typedArray.values();

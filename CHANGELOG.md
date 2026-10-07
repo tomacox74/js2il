@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): give mapped and unmapped arguments objects an own
+  Symbol.iterator property with the realm's original Array values function,
+  preserving identity after Array.prototype mutation. Complete the remaining
+  64 pinned arguments-object Test262 cases: 62 passing and two explicitly
+  skipped because eval is unsupported.
 - fix(runtime): expose legacy String anchor, blink, fixed, fontcolor, fontsize,
   and italics methods using shared receiver-first HTML construction and
   double-quote attribute escaping; verify 30 previously failing pinned

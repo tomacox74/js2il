@@ -5,6 +5,30 @@ namespace Jroc.Tests;
 
 public sealed class ExoticViewObjectRepresentationTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ArgumentsIterator_RetainsIntrinsicIdentityAfterPrototypeMutation(bool restrictCallee)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        var originalValues = ObjectRuntime.GetProperty(JavaScriptRuntime.Array.Prototype, "values");
+        ObjectRuntime.SetProperty(JavaScriptRuntime.Array.Prototype, "values", "changed");
+        ObjectRuntime.SetItem(JavaScriptRuntime.Array.Prototype, Symbol.iterator, "changed");
+
+        var arguments = new ArgumentsObject([1d, 2d], null, null, null, restrictCallee);
+
+        Assert.Same(originalValues, ObjectRuntime.GetItem(arguments, Symbol.iterator));
+        var iterator = Assert.IsAssignableFrom<IJavaScriptIterator>(
+            CallableOperations.Call0(originalValues, arguments));
+        Assert.Equal(1d, iterator.Next().value);
+        Assert.Equal(2d, iterator.Next().value);
+        Assert.True(iterator.Next().done);
+
+        Assert.True(ObjectRuntime.DeleteItem(arguments, Symbol.iterator));
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetIterator(arguments));
+    }
+
     [Fact]
     public void ExoticViews_UseInlineJsObjectStorageWithoutMovingInternalSlots()
     {
