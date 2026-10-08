@@ -43,9 +43,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
+| Built-in objects and APIs | 17,043 | 12 | 6,457 | 23,512 | **72.49%** |
 | Language syntax and semantics | 17,452 | 91 | 6,104 | 23,647 | **73.80%** |
-| **Total** | 34,552 | 103 | 13,590 | 48,245 | **71.62%** |
+| **Total** | 34,555 | 103 | 13,587 | 48,245 | **71.62%** |
 
 ## Language Areas
 
@@ -210,10 +210,10 @@ bounded worker cleanup.
 | `Date` | 575 | 0 | 19 | 594 | **96.80%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
-| `DisposableStack` | 92 | 0 | 1 | 93 | **98.92%** |
+| `DisposableStack` | 93 | 0 | 0 | 93 | **100.00%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
-| `Error` | 55 | 0 | 3 | 58 | **94.83%** |
+| `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
 | `Function` | 410 | 1 | 98 | 509 | **80.55%** |
