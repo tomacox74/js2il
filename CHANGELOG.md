@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 41 additional pinned fixtures from native batch `02bf3372-c399-58f9-994f-d0066e480749`.
 - test262: verify 3 additional pinned fixtures from native batch `5583f6ad-630a-5ee6-b8ac-0041fd606eab`.
 - fix(runtime): coerce computed property keys once, preserve class constructor
   metadata and property ordering, reject static prototype redefinitions, and
