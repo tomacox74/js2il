@@ -53,6 +53,8 @@ def prepare(client, args):
     doc = {'runner':args.kind,'upstream':pin,'inventory':corpus,'binaries':catalog.hash_files(entry.parent,['*.dll','*.deps.json','*.runtimeconfig.json']),
            'harness':catalog.hash_files(root,['harness/**/*']),'tooling':tooling,'capabilities':capabilities,
            'environment_identity':env['identity'],'timeouts':{'runtime':args.runtime_timeout,'compile':args.compile_timeout,'cap_ms':args.cap_ms}}
+    if getattr(args, 'compilation_coverage', False):
+        doc['compiler_options'] = {'compilation_coverage': True, 'coverage_measurement': 'statement-source-sites-v1'}
     pid = provenance(client,args.repository,corpus,args.kind,doc)
     eligibility=[]
     for original, row in zip(inventory,normalized):
@@ -158,6 +160,7 @@ def prepare(client, args):
     result={'repository':args.repository,'producer':args.producer,'run':run,'budget':budget,'provenance':pid,
             'kind':args.kind,'revision':source,'registration_snapshot':snapshot,'validation':validation,
             'corpus':corpus,'candidate_ids':[ids[r['path']] for r in choices],'cap_ms':args.cap_ms,'identity':doc}
+    result['compilation_coverage'] = getattr(args, 'compilation_coverage', False)
     Path(args.output).parent.mkdir(parents=True,exist_ok=True)
     Path(args.output).write_text(canonical(result)+'\n')
     return {key:value for key,value in result.items() if key!='identity'}

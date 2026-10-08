@@ -15,6 +15,8 @@ public sealed record JrocCompiledAssemblyArtifact(
     /// <summary>Supplied entries in input order, excluding modules loaded only as dependencies.</summary>
     public IReadOnlyList<JrocCompiledEntryModule> EntryModules { get; init; } = [];
 
+    public CompilationCoverageReport? CompilationCoverage { get; init; }
+
     /// <summary>
     /// Writes this artifact and its runtime dependencies to <paramref name="outputDirectory"/>.
     /// </summary>

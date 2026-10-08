@@ -17,6 +17,7 @@ public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
     public string? DiagnosticFilePath { get; init; }
 
     public bool AnalyzeUnused { get; init; }
+    public bool CollectCompilationCoverage { get; init; }
 
     public bool GenerateModuleExportContracts { get; init; } = true;
 

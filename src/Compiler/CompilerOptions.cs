@@ -10,6 +10,7 @@ public class CompilerOptions
     public bool Verbose { get; set; } = false;
     public string? DiagnosticFilePath { get; set; } = null;
     public bool AnalyzeUnused { get; set; } = false;    
+    public bool CollectCompilationCoverage { get; set; }
     public bool DiagnosticsEnabled => Verbose || !string.IsNullOrWhiteSpace(DiagnosticFilePath);
 
     /// <summary>

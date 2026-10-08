@@ -63,6 +63,7 @@ function printHelp() {
     '  --limit <count>            Limit the number of selected test files before variant expansion.',
     '  --variant <name>           Restrict execution to non-strict or strict for the selected file(s).',
     '  --list                     List the selected MVP cases without compiling or running them.',
+    '  --compilation-coverage     Include static compiler-mode reports in summary.json.',
     '  --help                     Show this help.',
   ].join('\n'));
 }
@@ -84,6 +85,7 @@ function parseArgs(argv) {
     limit: null,
     variant: null,
     list: false,
+    compilationCoverage: false,
     help: false,
   };
 
@@ -138,6 +140,9 @@ function parseArgs(argv) {
         break;
       case '--list':
         args.list = true;
+        break;
+      case '--compilation-coverage':
+        args.compilationCoverage = true;
         break;
       default:
         throw new Error(`Unknown argument: ${argument}`);
@@ -1089,6 +1094,9 @@ function createReproCommand(rootPath, repro, args) {
   if (args.jroc) {
     command.push('--jroc', quoteForDisplay(args.jroc));
   }
+  if (args.compilationCoverage) {
+    command.push('--compilation-coverage');
+  }
 
   return command.join(' ');
 }
@@ -1118,6 +1126,22 @@ function createUnexpectedCaseResult(testCase, kind, phase, detail, observed) {
 }
 
 function evaluateCase(rootPath, outputRoot, testCase, jroc, args) {
+  const result = evaluateCaseCore(rootPath, outputRoot, testCase, jroc, args);
+  if (args.compilationCoverage) {
+    const reportPath = path.join(createCaseDirectory(outputRoot, testCase), 'compilation-coverage.json');
+    if (fs.existsSync(reportPath)) {
+      result.compilation_coverage = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+    } else {
+      result.compilation_coverage_unavailable = `Compiler did not produce a report (${result.observed.compile.status}).`;
+      if (result.observed.compile.status === 'succeeded') {
+        throw new Error(result.compilation_coverage_unavailable);
+      }
+    }
+  }
+  return result;
+}
+
+function evaluateCaseCore(rootPath, outputRoot, testCase, jroc, args) {
   const caseDirectory = createCaseDirectory(outputRoot, testCase);
   fs.mkdirSync(caseDirectory, { recursive: true });
 
@@ -1130,7 +1154,7 @@ function evaluateCase(rootPath, outputRoot, testCase, jroc, args) {
     path.join(caseDirectory, 'compile'),
     jroc,
     args.compileTimeoutSeconds * 1000,
-    [],
+    args.compilationCoverage ? ['--coverage-report', path.join(caseDirectory, 'compilation-coverage.json')] : [],
   );
 
   const negative = testCase.metadata.negative;
@@ -1583,7 +1607,21 @@ function runMvp(argv) {
   const kindCounts = createCountMap(results, result => result.classification.kind, RESULT_KIND_ORDER);
   const summaryPath = defaultSummaryPath(outputRoot);
   const linkageSummary = createLinkageSummary(linkageConfig, results, matchedLinkageGroupIds, Boolean(args.linkageConfig));
-  writeSummaryReport(summaryPath, createSummaryReport(pin, args, plan, results, exitCode, linkageSummary));
+  const report = createSummaryReport(pin, args, plan, results, exitCode, linkageSummary);
+  if (args.compilationCoverage) {
+    const crypto = require('node:crypto');
+    const directory = path.dirname(jroc.path);
+    const files = jroc.type === 'dll'
+      ? fs.readdirSync(directory).filter(name => /\.(dll|deps\.json|runtimeconfig\.json)$/.test(name)).sort()
+      : [path.basename(jroc.path)];
+    report.compilationCoverageIdentity = {
+      measurement: 'statement-source-sites-v1',
+      compiler: jroc,
+      files: Object.fromEntries(files.map(name => [name,
+        crypto.createHash('sha256').update(fs.readFileSync(path.join(directory, name))).digest('hex')])),
+    };
+  }
+  writeSummaryReport(summaryPath, report);
 
   const kindSummary = Object.keys(kindCounts)
     .map(key => `${key}=${kindCounts[key]}`)

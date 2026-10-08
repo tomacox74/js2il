@@ -51,6 +51,7 @@ function run(request) {
       relativePath: fixture, absolutePath: path.join(root, fixture), variant, metadata,
     }, { type: 'dll', path: jroc }, {
       timeoutSeconds: timeout, compileTimeoutSeconds: compileTimeout,
+      compilationCoverage: request.compilationCoverage === true,
     });
   } finally {
     // The caller allocates this directory exclusively for this one variant.

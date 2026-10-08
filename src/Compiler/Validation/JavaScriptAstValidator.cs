@@ -38,8 +38,12 @@ public class JavaScriptAstValidator : IAstValidator
     }
 
     public ValidationResult Validate(Acornima.Ast.Program ast)
+        => Validate(ast, null);
+
+    internal ValidationResult Validate(Acornima.Ast.Program ast,
+        Action<Jroc.DebugSymbols.SourceSpan, string>? unsupportedSiteRecorder)
     {
-        var result = new ValidationResult { IsValid = true };
+        var result = new ValidationResult { IsValid = true, UnsupportedSiteRecorder = unsupportedSiteRecorder };
 
         // Top-level import/export declarations are allowed for native static ES modules; the same
         // declarations remain rejected when nested (not a direct child of Program.Body).
@@ -209,7 +213,7 @@ public class JavaScriptAstValidator : IAstValidator
                     // (e.g. inside a block or function) remain unsupported.
                     if (!topLevelModuleNodes.Contains(node))
                     {
-                        result.Errors.Add($"ES6 modules are not yet supported (line {node.Location.Start.Line})");
+                        AddUnsupportedError(result, "ES6 modules are not yet supported", node);
                         result.IsValid = false;
                     }
                     break;
@@ -241,7 +245,7 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.DebuggerStatement:
-                    result.Errors.Add($"The 'debugger' statement is not supported (line {node.Location.Start.Line})");
+                    AddUnsupportedError(result, "The 'debugger' statement is not supported", node);
                     result.IsValid = false;
                     break;
 
@@ -280,7 +284,7 @@ public class JavaScriptAstValidator : IAstValidator
                     // Support super in derived class methods/constructors.
                     if (!currentContext.AllowsSuper)
                     {
-                        result.Errors.Add($"The 'super' keyword is not yet supported in this context (line {node.Location.Start.Line})");
+                        AddUnsupportedError(result, "The 'super' keyword is not yet supported in this context", node);
                         result.IsValid = false;
                     }
                     break;
@@ -289,7 +293,7 @@ public class JavaScriptAstValidator : IAstValidator
                     // 'this' is supported in class methods/constructors and non-arrow functions.
                     if (!currentContext.AllowsThis)
                     {
-                        result.Errors.Add($"The 'this' keyword is not yet supported in this context (line {node.Location.Start.Line})");
+                        AddUnsupportedError(result, "The 'this' keyword is not yet supported in this context", node);
                         result.IsValid = false;
                     }
                     break;
@@ -943,7 +947,7 @@ public class JavaScriptAstValidator : IAstValidator
                                 AddError(
                                     result,
                                     "eval is not supported by JROC at this time; support will be added in a future release",
-                                    id);
+                                    id, unsupported: true);
                                 break;
                             }
 
@@ -1389,11 +1393,30 @@ public class JavaScriptAstValidator : IAstValidator
         return false;
     }
 
-    private static void AddError(ValidationResult result, string message, Node node)
+    private static void AddUnsupportedError(ValidationResult result, string message, Node node)
+    {
+        result.Errors.Add($"{message} (line {node.Location.Start.Line})");
+        result.IsValid = false;
+        RecordUnsupported(result, node, message);
+    }
+
+    private static void RecordUnsupported(ValidationResult result, Node node, string message)
+    {
+        if (result.UnsupportedSiteRecorder is { } record)
+        {
+            record(Jroc.DebugSymbols.SourceSpan.FromNode(node, string.Empty), message);
+        }
+    }
+
+    private static void AddError(ValidationResult result, string message, Node node, bool unsupported = false)
     {
         var loc = node.Location.Start;
         result.Errors.Add($"{message} (line {loc.Line}, col {loc.Column})");
         result.IsValid = false;
+        if (unsupported)
+        {
+            RecordUnsupported(result, node, message);
+        }
     }
 
     private static void AddWarning(ValidationResult result, string message, Node node)
@@ -1686,7 +1709,7 @@ public class JavaScriptAstValidator : IAstValidator
             if (!method.Computed
                 && !Jroc.Services.ClassElementNames.TryGetPropertyName(method.Key, computed: false, out _))
             {
-                result.Errors.Add($"Computed/non-identifier method names in classes are not yet supported (line {node.Location.Start.Line})");
+                AddUnsupportedError(result, "Computed/non-identifier method names in classes are not yet supported", node);
                 result.IsValid = false;
                 return;
             }
@@ -1700,7 +1723,7 @@ public class JavaScriptAstValidator : IAstValidator
             && !pdef.Computed
             && !Jroc.Services.ClassElementNames.TryGetPropertyName(pdef.Key, computed: false, out _))
         {
-            result.Errors.Add($"Computed/non-identifier class field names are not yet supported (line {node.Location.Start.Line})");
+            AddUnsupportedError(result, "Computed/non-identifier class field names are not yet supported", node);
             result.IsValid = false;
         }
     }
@@ -1744,7 +1767,7 @@ public class JavaScriptAstValidator : IAstValidator
                 else
                 {
                     // Dynamic/non-literal require argument detected.
-                    result.Errors.Add($"Dynamic require() with non-literal argument is not supported (line {node.Location.Start.Line})");
+                    AddUnsupportedError(result, "Dynamic require() with non-literal argument is not supported", node);
                     result.IsValid = false;
                 }
             }
@@ -1761,7 +1784,7 @@ public class JavaScriptAstValidator : IAstValidator
 
             if (hasNonNullOptions)
             {
-                result.Errors.Add($"Import options (second parameter to import()) are not yet supported (line {node.Location.Start.Line})");
+                AddUnsupportedError(result, "Import options (second parameter to import()) are not yet supported", node);
                 result.IsValid = false;
             }
         }
@@ -1782,7 +1805,7 @@ public class JavaScriptAstValidator : IAstValidator
         // Check for parameter count limit
         if (paramCount > 32)
         {
-            result.Errors.Add($"Functions with more than 32 parameters are not yet supported (line {node.Location.Start.Line})");
+            AddUnsupportedError(result, "Functions with more than 32 parameters are not yet supported", node);
             result.IsValid = false;
         }
 

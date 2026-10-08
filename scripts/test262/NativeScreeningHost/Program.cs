@@ -55,7 +55,7 @@ if (args.Length == 2 && args[0] == "--worker")
             File.ReadAllText(args[1]), options)
             ?? throw new InvalidOperationException("The worker request is empty.");
         var result = Screen(
-            request.Root, request.Candidate, request.Variant, request.TimeoutMs);
+            request.Root, request.Candidate, request.Variant, request.TimeoutMs, request.CompilationCoverage);
         Console.WriteLine(JsonSerializer.Serialize(result, recordOptions));
         return 0;
     }
@@ -94,7 +94,7 @@ try
             }
 
             output.WriteLine(JsonSerializer.Serialize(
-                RunWorker(root, candidate, variant, plan.TimeoutMs, options),
+                RunWorker(root, candidate, variant, plan.TimeoutMs, plan.CompilationCoverage, options),
                 recordOptions));
             output.Flush();
             screened++;
@@ -111,6 +111,7 @@ try
         ScreeningCandidate candidate,
         string variant,
         int timeoutMs,
+        bool compilationCoverage,
         JsonSerializerOptions options)
     {
         var started = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000d;
@@ -121,7 +122,7 @@ try
             File.WriteAllText(
                 requestPath,
                 JsonSerializer.Serialize(
-                    new WorkerRequest(root, candidate, variant, timeoutMs), options));
+                    new WorkerRequest(root, candidate, variant, timeoutMs, compilationCoverage), options));
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -189,8 +190,9 @@ catch (Exception exception)
     return 2;
 }
 
-static ScreeningResult Screen(string root, ScreeningCandidate candidate, string variant, int timeoutMs)
+static ScreeningResult Screen(string root, ScreeningCandidate candidate, string variant, int timeoutMs, bool compilationCoverage)
 {
+    Jroc.CompilationCoverageReport? coverage = null;
     root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
     var started = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000d;
     var sourcePath = Path.GetFullPath(Path.Combine(root, candidate.Path));
@@ -261,7 +263,8 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
             requestedName => ResolveFixture(
                 root, sourcePath, candidate.Path, requestedName, variantSource),
             allowUnhandledException: runtimeNegative,
-            timeoutMs: timeoutMs);
+            timeoutMs: timeoutMs,
+            onCompilationCoverage: compilationCoverage ? report => coverage = report : null);
         Test262SharedAssertHarness.AssertNoOutput(candidate.Path, result.Output);
         return Result("pass", null, runtimeNegative ? "runtime" : "execution", "",
             runtimeNegative ? metadata.NegativeType : null);
@@ -284,7 +287,8 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
             candidate.Path, variant, candidate.Sha256, outcome, failureClass,
             phase, diagnostic, started,
             DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000d,
-            observedErrorType);
+            observedErrorType,
+            coverage is null ? null : JsonSerializer.Deserialize<JsonElement>(coverage.ToJson()));
 }
 
 static bool IsSupportedInclude(string include)
@@ -371,7 +375,8 @@ sealed record ScreeningPlan(
     int TimeoutMs,
     int VariantLimit,
     int TimeLimitSeconds,
-    IReadOnlyList<ScreeningCandidate> Candidates);
+    IReadOnlyList<ScreeningCandidate> Candidates,
+    bool CompilationCoverage = false);
 
 sealed record ScreeningCandidate(
     string Path,
@@ -382,7 +387,8 @@ sealed record WorkerRequest(
     string Root,
     ScreeningCandidate Candidate,
     string Variant,
-    int TimeoutMs);
+    int TimeoutMs,
+    bool CompilationCoverage = false);
 
 sealed record ScreeningResult(
     string Path,
@@ -394,7 +400,8 @@ sealed record ScreeningResult(
     string Diagnostic,
     double StartedAt,
     double FinishedAt,
-    string? ObservedErrorType = null);
+    string? ObservedErrorType = null,
+    JsonElement? CompilationCoverage = null);
 
 sealed record Metadata(
     IReadOnlyList<string> Flags,

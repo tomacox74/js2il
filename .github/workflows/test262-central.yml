@@ -13,6 +13,10 @@ on:
       area:
         type: string
         default: ''
+      compilation_coverage:
+        description: Collect static compiler-mode reports with separate provenance
+        type: boolean
+        default: false
       export_snapshot:
         description: Also export the entire catalogue (bounded to five minutes)
         type: boolean
@@ -66,14 +70,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           KIND: ${{ inputs.kind || 'mvp-composite' }}
           AREA: ${{ inputs.area }}
+          COMPILATION_COVERAGE: ${{ inputs.compilation_coverage || 'false' }}
           TEST262_PROGRESS: '1'
           TEST262_DIAGNOSTIC_FILE: artifacts/test262/central-diagnostic.json
         run: |
+          COVERAGE_ARGS=()
+          if [ "$COMPILATION_COVERAGE" = "true" ]; then
+            COVERAGE_ARGS+=(--compilation-coverage)
+          fi
           python -m scripts.test262.central.cli prepare --kind "$KIND" \
             --root "$TEST262_ROOT" --revision "$(git rev-parse HEAD)" \
             --run-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" \
             --budget-key "actions:$GITHUB_RUN_ID" --area "$AREA" \
-            --output artifacts/test262/central-context.json
+            --output artifacts/test262/central-context.json "${COVERAGE_ARGS[@]}"
           python -m scripts.test262.central.cli work \
             --context artifacts/test262/central-context.json --root "$TEST262_ROOT" \
             --outbox artifacts/test262/central-outbox.sqlite
@@ -123,6 +132,23 @@ jobs:
             timeout --signal=TERM --kill-after=15s 240s \
               python -m scripts.test262.central.cli flush --outbox artifacts/test262/central-outbox.sqlite
           fi
+      - name: Aggregate retained compiler reports without database credentials
+        if: ${{ always() && inputs.compilation_coverage }}
+        timeout-minutes: 3
+        run: |
+          if [ -f artifacts/test262/central-outbox.sqlite ]; then
+            python -m scripts.test262.compilationCoverage --outbox artifacts/test262/central-outbox.sqlite \
+              --context artifacts/test262/central-context.json --output artifacts/test262/central-compilation-coverage.json
+          fi
+      - name: Retain central compiler coverage
+        if: ${{ always() && inputs.compilation_coverage }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-central-compilation-coverage-${{ github.run_id }}
+          path: artifacts/test262/central-compilation-coverage.json
+          if-no-files-found: error
+          retention-days: 90
+          overwrite: true
       - name: Export coherent recovery snapshot when requested
         if: ${{ always() && inputs.export_snapshot == true }}
         timeout-minutes: 6
@@ -270,4 +296,3 @@ jobs:
               --patch artifacts/test262/central-patch.diff --manifest artifacts/test262/central-patch-validation.json \
               --body artifacts/test262/central-pr-body.md
           fi
-

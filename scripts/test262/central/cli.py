@@ -30,6 +30,7 @@ def parser():
     q.add_argument('--attempt-limit',type=int,default=400); q.add_argument('--budget-ms',type=int,default=1200000)
     q.add_argument('--cap-ms',type=int,default=120000); q.add_argument('--runtime-timeout',type=int,default=30)
     q.add_argument('--compile-timeout',type=int,default=60); q.add_argument('--area',default='')
+    q.add_argument('--compilation-coverage',action='store_true')
     q.add_argument('--output',required=True)
     w=sub.add_parser('work'); w.add_argument('--context',required=True); w.add_argument('--root',required=True)
     w.add_argument('--outbox',required=True); w.add_argument('--image',default='test262-fixture:local')
@@ -75,6 +76,7 @@ def main(argv=None):
                     setattr(args,field,context[field])
                 args.runtime_timeout=context['identity']['timeouts']['runtime']
                 args.compile_timeout=context['identity']['timeouts']['compile']
+                args.compilation_coverage=context.get('compilation_coverage',False)
                 if args.repository!=context['repository'] or args.producer!=context['producer']:
                     raise ValueError('Context belongs to another supervisor')
                 result=work(client,args)
