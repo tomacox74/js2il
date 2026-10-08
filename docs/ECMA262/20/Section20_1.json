@@ -865,12 +865,17 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.isprototypeof",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js",
-          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.3_A2.js"
+          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.3_A2.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/isPrototypeOf/ExecutionTests.cs"
         ],
         "test262Paths": [
-          "test/built-ins/Object/S15.2.3_A2.js"
+          "test/built-ins/Object/S15.2.3_A2.js",
+          "test/built-ins/Object/prototype/isPrototypeOf/arg-is-proxy.js",
+          "test/built-ins/Object/prototype/isPrototypeOf/name.js",
+          "test/built-ins/Object/prototype/isPrototypeOf/null-this-and-primitive-arg-returns-false.js",
+          "test/built-ins/Object/prototype/isPrototypeOf/undefined-this-and-primitive-arg-returns-false.js"
         ],
-        "notes": "Implemented by walking the PrototypeChain side-table and enabling prototype-chain lookup before the walk. Current coverage includes Function.prototype as the Object constructor's [[Prototype]]."
+        "notes": "Returns false for non-object arguments before coercing the receiver, boxes primitive receivers, and walks the observable [[GetPrototypeOf]] operation, including proxy traps and abrupt completions. The builtin has standard name/length metadata without an own prototype property. Current coverage includes Function.prototype as the Object constructor's [[Prototype]], proxy arguments, and null/undefined receivers with primitive arguments."
       },
       {
         "clause": "20.1.3.4",
@@ -918,9 +923,14 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.valueof",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/valueOf/ExecutionTests.cs"
         ],
-        "notes": "Returns the current this value after null/undefined checks in the runtime call path."
+        "test262Paths": [
+          "test/built-ins/Object/prototype/valueOf/15.2.4.4-1.js",
+          "test/built-ins/Object/prototype/valueOf/15.2.4.4-2.js"
+        ],
+        "notes": "Applies ToObject to the receiver: rejects null/undefined, boxes primitives using the runtime's standard Object conversion, and returns object receivers unchanged. Pinned Test262 coverage verifies Boolean primitive boxing."
       },
       {
         "clause": "20.1.3.8",
@@ -973,9 +983,14 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.__lookupGetter__",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupGetter__/PrototypeFailuresExecutionTests.cs"
         ],
-        "notes": "Looks up getter accessors on own/prototype descriptor chain when available."
+        "test262Paths": [
+          "test/built-ins/Object/prototype/__lookupGetter__/lookup-own-proto-err.js",
+          "test/built-ins/Object/prototype/__lookupGetter__/lookup-proto-proto-err.js"
+        ],
+        "notes": "Boxes the receiver and searches own descriptors before invoking the observable [[GetPrototypeOf]] operation at each level. Proxy prototype-trap failures propagate for both the receiver and inherited prototypes; own data properties stop the lookup."
       },
       {
         "clause": "20.1.3.9.4",
@@ -983,9 +998,14 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.__lookupSetter__",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupSetter__/PrototypeFailuresExecutionTests.cs"
         ],
-        "notes": "Looks up setter accessors on own/prototype descriptor chain when available."
+        "test262Paths": [
+          "test/built-ins/Object/prototype/__lookupSetter__/lookup-own-proto-err.js",
+          "test/built-ins/Object/prototype/__lookupSetter__/lookup-proto-proto-err.js"
+        ],
+        "notes": "Boxes the receiver and searches own descriptors before invoking the observable [[GetPrototypeOf]] operation at each level. Proxy prototype-trap failures propagate for both the receiver and inherited prototypes; own data properties stop the lookup."
       },
       {
         "clause": "20.1.4",
