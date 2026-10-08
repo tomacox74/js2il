@@ -32,7 +32,7 @@ def github_validation(repository, revision):
     return {key:run[key] for key in ('id','head_sha','head_branch','event','conclusion','html_url','workflow_id','updated_at')}
 
 
-def prepare(client, args):
+def prepare_inventory(client, args):
     root = Path(args.root).resolve()
     source = git('rev-parse','HEAD')
     if source != args.revision or git('status','--porcelain','--untracked-files=no'):
@@ -80,6 +80,66 @@ def prepare(client, args):
                             'eligibility':state,'reason_codes':reasons,
                             'diagnostic':{'source_state':original['state']}})
     client.put('provenance_fixture_eligibility',eligibility)
+    return {'source':source, 'corpus':corpus, 'ids':ids, 'snapshot':snapshot,
+            'pid':pid, 'doc':doc, 'normalized':normalized, 'eligibility':eligibility}
+
+
+def current_master(repository):
+    result=json.loads(subprocess.check_output(['gh','api',f'repos/{repository}/branches/master'],text=True))
+    return result['commit']['sha']
+
+
+def refresh(client, args):
+    """Refresh registration/provenance only. Never allocate screening or publication work."""
+    if client.contract['deployment_state']!='active':
+        raise ValueError('Registration refresh requires active central authority')
+    source=git('rev-parse','HEAD')
+    if source!=args.revision or git('status','--porcelain','--untracked-files=no'):
+        raise ValueError('Refresh requires a clean checkout of the requested exact revision')
+    result={'revision':source, 'screening_started':False, 'publication_started':False}
+    def finish(status, **values):
+        result.update(status=status, **values)
+        Path(args.output).parent.mkdir(parents=True,exist_ok=True)
+        Path(args.output).write_text(canonical(result)+'\n')
+        return result
+    if current_master(args.repository_name)!=source:
+        return finish('superseded')
+    proof=github_validation(args.repository_name,source)
+    old=client.one('reporting_targets',channel='master',evidence_kind='native')
+    if old:
+        snapshot=client.one('registration_snapshots',snapshot_id=old['registration_snapshot_id'])
+        validation=client.one('validation_events',validation_id=old['validation_id']) if old.get('validation_id') else None
+        if (snapshot and snapshot['source_revision']==source and snapshot['state']=='sealed'
+            and validation and validation['target_revision']==source and validation['conclusion']=='success'):
+            return finish('already-current',registration_snapshot=old['registration_snapshot_id'],
+                          validation=old['validation_id'],provenance=old['provenance_id'])
+    args.kind='native'
+    prepared=prepare_inventory(client,args)
+    validation=identity(args.repository,'test262-mvp.yml',proof['id'])
+    client.put('validation_events',[{'validation_id':validation,'repository_id':args.repository,
+        'workflow_identity':'test262-mvp.yml','external_run_key':str(proof['id']),
+        'target_revision':source,'conclusion':'success','proof':proof}])
+    # A newer push can arrive during inventory registration. Its target must never
+    # be overwritten by this now obsolete revision. Immutable preparation is safe.
+    if current_master(args.repository_name)!=source:
+        return finish('superseded')
+    target={'repository_id':args.repository,'channel':'master','evidence_kind':'native',
+            'provenance_id':prepared['pid'],'registration_snapshot_id':prepared['snapshot'],
+            'validation_id':validation}
+    if old:
+        client.call('transition','reporting_targets',
+                    {k:target[k] for k in ('repository_id','channel','evidence_kind')},old['version'],
+                    {k:target[k] for k in ('provenance_id','registration_snapshot_id','validation_id')})
+    else:
+        client.put('reporting_targets',[target])
+    return finish('refreshed',registration_snapshot=prepared['snapshot'],provenance=prepared['pid'],
+                  validation=validation,validation_run=proof['id'],validation_url=proof['html_url'])
+
+
+def prepare(client, args):
+    prepared=prepare_inventory(client,args)
+    source,corpus,ids,snapshot,pid,doc,normalized,eligibility=(prepared[k] for k in
+        ('source','corpus','ids','snapshot','pid','doc','normalized','eligibility'))
     run = start_run(client,args,pid,args.run_key,source,'mvp' if args.kind=='mvp-composite' else 'native')
     budget = identity(args.repository,'budget',args.budget_key)
     client.put('budget_scopes',[{'budget_scope_id':budget,'repository_id':args.repository,'scope_kind':'run','external_key':args.budget_key,
@@ -131,6 +191,8 @@ def prepare(client, args):
         validation=identity(args.repository,'test262-mvp.yml',proof['id'])
         client.put('validation_events',[{'validation_id':validation,'repository_id':args.repository,'workflow_identity':'test262-mvp.yml',
                                           'external_run_key':str(proof['id']),'target_revision':source,'conclusion':'success','proof':proof}])
+    if args.kind=='native' and current_master(args.repository_name)!=source:
+        raise ValueError('Master advanced during preparation; rerun at the current revision')
     target={'repository_id':args.repository,'channel':'master','evidence_kind':args.kind,'provenance_id':pid,
             'registration_snapshot_id':snapshot,'validation_id':validation}
     old=client.one('reporting_targets',channel='master',evidence_kind=args.kind)

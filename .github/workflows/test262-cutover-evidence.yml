@@ -1,6 +1,11 @@
 name: Test262 cutover evidence preservation
 on:
   workflow_dispatch:
+    inputs:
+      evidence_manifest:
+        description: Reviewed repository manifest defining the complete required artifact set
+        type: string
+        default: scripts/test262/central/cutover-evidence.json
 permissions:
   contents: read
   actions: read
@@ -32,7 +37,8 @@ jobs:
           TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
           TEST262_BACKUP_KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
           EVIDENCE_OUTPUT: /tmp/test262-cutover-report
-        run: python -m scripts.test262.central.cutover_evidence
+          EVIDENCE_MANIFEST: ${{ inputs.evidence_manifest }}
+        run: python -m scripts.test262.central.cutover_evidence --manifest "$EVIDENCE_MANIFEST"
       - uses: actions/upload-artifact@v7
         if: always()
         with:

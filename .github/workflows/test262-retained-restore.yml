@@ -3,10 +3,12 @@ on:
   workflow_dispatch:
     inputs:
       backup_suffix:
-        description: Exact backup prefix relative to TEST262_BACKUP_S3_URI (YYYY/MM/DD/run-attempt)
+        description: Exact backup prefix (YYYY/MM/DD/run-attempt); blank selects latest verified backup
         type: string
-        required: true
-        default: '2026/10/07/37568873456-1'
+        required: false
+        default: ''
+  schedule:
+    - cron: '10 5 * * 0'
 permissions:
   contents: read
   id-token: write
@@ -15,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
-    # Manual on reviewed master only; no production database secret is referenced.
+    # Manual or weekly on reviewed master only; no production database secret is referenced.
     if: github.ref == 'refs/heads/master'
     environment: test262-catalogue-backup
     runs-on: ubuntu-24.04
@@ -69,3 +71,4 @@ jobs:
       - name: Remove temporary backup material
         if: always()
         run: rm -rf /tmp/test262-retained-restore
+

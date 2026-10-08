@@ -1,8 +1,6 @@
 name: Test262 historical catalogue import
 
 on:
-  schedule:
-    - cron: '23 * * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -63,11 +61,10 @@ jobs:
           overwrite: true
 
   import:
-    if: github.ref == 'refs/heads/master' && (inputs.mode == 'import' || (github.event_name == 'schedule' && vars.TEST262_HISTORY_AUTO_IMPORT == 'true'))
+    if: github.ref == 'refs/heads/master' && inputs.mode == 'import'
     permissions:
       contents: read
       actions: read
-      issues: write
     runs-on: ubuntu-24.04
     environment: test262-catalogue-import
     timeout-minutes: 360
@@ -82,27 +79,7 @@ jobs:
         with:
           node-version: '24'
       - run: python -m pip install -r scripts/test262/central/requirements.txt
-      - name: Select next automatic batch from durable verification receipts
-        id: auto
-        if: github.event_name == 'schedule'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TEST262_DATABASE_URL: ${{ secrets.TEST262_IMPORTER_DATABASE_URL }}
-          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
-          TEST262_PRODUCER_ID: ${{ vars.TEST262_IMPORTER_PRODUCER_ID }}
-          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
-          TEST262_HISTORY_MANIFEST_SHA256: ${{ vars.TEST262_HISTORY_MANIFEST_SHA256 }}
-          TEST262_HISTORY_AUTO_RESUME_RUN_ID: ${{ vars.TEST262_HISTORY_AUTO_RESUME_RUN_ID }}
-          ARCHIVE_RUN_ID: ${{ vars.TEST262_HISTORY_ARCHIVE_RUN_ID }}
-          KIND: ${{ vars.TEST262_HISTORY_AUTO_KIND || 'mvp' }}
-          MAX_SNAPSHOTS: ${{ vars.TEST262_HISTORY_AUTO_BATCH_SIZE || '2' }}
-        run: |
-          python -m scripts.test262.central.history_auto plan \
-            --archive-run-id "$ARCHIVE_RUN_ID" --repository-name "$GITHUB_REPOSITORY" \
-            --kind "$KIND" --max-snapshots "$MAX_SNAPSHOTS" \
-            --directory artifacts/test262/history --output artifacts/test262/import-recovery/auto-plan.json
       - name: Verify archive run attribution and download its inventory
-        if: github.event_name != 'schedule'
         env:
           GH_TOKEN: ${{ github.token }}
           ARCHIVE_RUN_ID: ${{ inputs.archive_run_id }}
@@ -111,13 +88,12 @@ jobs:
             --run-id "$ARCHIVE_RUN_ID" --repository-name "$GITHUB_REPOSITORY" \
             --output artifacts/test262/history
       - name: Materialize complete pinned inventory for native history
-        if: (github.event_name != 'schedule' && inputs.kind != 'mvp') || (github.event_name == 'schedule' && steps.auto.outputs.has_pending == 'true' && vars.TEST262_HISTORY_AUTO_KIND != 'mvp' && vars.TEST262_HISTORY_AUTO_KIND != '')
+        if: inputs.kind != 'mvp'
         run: |
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
           git -C "$ROOT" sparse-checkout add /test/
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
       - name: Verify importer binding and import selected immutable snapshots
-        if: github.event_name != 'schedule' || steps.auto.outputs.has_pending == 'true'
         env:
           PYTHONUNBUFFERED: '1'
           TEST262_PROGRESS: '1'
@@ -125,9 +101,9 @@ jobs:
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
           TEST262_PRODUCER_ID: ${{ vars.TEST262_IMPORTER_PRODUCER_ID }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
-          KIND: ${{ github.event_name == 'schedule' && (vars.TEST262_HISTORY_AUTO_KIND || 'mvp') || inputs.kind }}
-          ARTIFACT_IDS: ${{ github.event_name == 'schedule' && steps.auto.outputs.artifact_ids || inputs.artifact_ids }}
-          MAX_SNAPSHOTS: ${{ github.event_name == 'schedule' && (vars.TEST262_HISTORY_AUTO_BATCH_SIZE || '2') || inputs.max_snapshots }}
+          KIND: ${{ inputs.kind }}
+          ARTIFACT_IDS: ${{ inputs.artifact_ids }}
+          MAX_SNAPSHOTS: ${{ inputs.max_snapshots }}
         run: |
           python -m scripts.test262.central.history_import import \
             --directory artifacts/test262/history --repository-name "$GITHUB_REPOSITORY" \
@@ -142,13 +118,3 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
-      - name: Record automatic progress in tracking issue
-        if: always() && github.event_name == 'schedule'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          OUTCOME: ${{ job.status }}
-          TRACKING_ISSUE: ${{ vars.TEST262_HISTORY_TRACKING_ISSUE || '2242' }}
-        run: |
-          python -m scripts.test262.central.history_auto report \
-            --directory artifacts/test262/import-recovery --repository-name "$GITHUB_REPOSITORY" \
-            --issue "$TRACKING_ISSUE" --outcome "$OUTCOME"

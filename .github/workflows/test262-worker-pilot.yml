@@ -4,14 +4,12 @@ on:
   pull_request:
     paths:
       - '.github/workflows/test262-worker-pilot.yml'
-      - 'scripts/test262/central/pilot.py'
-      - 'scripts/test262/central/pilot_drills.py'
-      - 'scripts/test262/central/pilot_process.py'
-      - 'scripts/test262/central/pilot_restore.py'
-      - 'scripts/test262/central/backup.py'
-      - 'supabase/migrations/**'
-      - 'scripts/test262/central/worker.py'
-      - 'scripts/test262/central/fixture.Dockerfile'
+      - 'scripts/test262/central/**'
+      - 'scripts/test262/catalog.py'
+      - 'scripts/test262/nativePorting.py'
+      - 'scripts/test262/catalogBridge.js'
+      - 'tests/test262/central/**'
+      - 'supabase/**'
 permissions:
   contents: read
 jobs:
@@ -61,3 +59,4 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
+

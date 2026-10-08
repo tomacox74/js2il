@@ -96,6 +96,7 @@ class NativeScopeTests(unittest.TestCase):
                                 ('registrations', lambda *a: 'snapshot'),
                                 ('provenance', lambda *a: 'provenance'),
                                 ('start_run', lambda *a: 'run'),
+                                ('current_master', lambda *a: 'revision'),
                                 ('github_validation', lambda *a: {'id': 1})]:
                 stack.enter_context(patch.object(commands, name, value))
             stack.enter_context(patch.object(commands.catalog, 'bridge', return_value=inventory))

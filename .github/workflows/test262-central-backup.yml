@@ -8,7 +8,7 @@ permissions:
   id-token: write
 jobs:
   backup:
-    if: ${{ vars.TEST262_BACKUP_S3_URI != '' }}
+    if: ${{ vars.TEST262_BACKUP_S3_URI != '' && github.ref == 'refs/heads/master' }}
     environment: test262-catalogue-backup
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - run: python -m pip install -r scripts/test262/central/requirements.txt boto3
       - name: Install matching PostgreSQL 17 client
         run: |
           sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
@@ -36,6 +36,14 @@ jobs:
           python -m scripts.test262.central.backup backup --output /tmp/test262-backup \
             --destination "$DESTINATION/$(date -u +%Y/%m/%d)/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --kms-key "$KMS_KEY"
+      - name: Preserve exact-version backup verification report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-catalogue-backup-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/test262-backup/backup-report.json
+          if-no-files-found: warn
+          retention-days: 90
       - name: Remove local backup material
         if: always()
         run: rm -rf /tmp/test262-backup

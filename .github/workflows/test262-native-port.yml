@@ -1,11 +1,6 @@
 name: Test262 native porting
 
 on:
-  workflow_run:
-    workflows: ["test262 MVP"]
-    types: [completed]
-  schedule:
-    - cron: "15 * * * *"
   workflow_dispatch:
     inputs:
       revision:
@@ -616,3 +611,4 @@ jobs:
           path: artifacts/test262/native.sqlite
           if-no-files-found: error
           retention-days: 90
+
