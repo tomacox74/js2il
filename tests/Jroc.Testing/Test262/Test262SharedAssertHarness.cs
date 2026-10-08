@@ -33,7 +33,8 @@ public static class Test262SharedAssertHarness
                     allowUnhandledException: allowUnhandledException,
                     addMocks: addMocks,
                     hostRuntimeIntrinsics: hostRuntimeIntrinsics,
-                    timeoutMs: timeoutMs));
+                    timeoutMs: timeoutMs,
+                    parseAsModule: metadata.Module));
     }
 
     public static InMemoryTestExecutionResult ExecuteCompiledEntry(
@@ -58,6 +59,9 @@ public static class Test262SharedAssertHarness
 
     public static IReadOnlyList<string> GetHarnessIncludes(string entryScript)
         => ParseFrontmatter(entryScript).Includes;
+
+    public static bool IsModule(string entryScript)
+        => ParseFrontmatter(entryScript).Module;
 
     private static InMemoryTestExecutionResult ExecuteWithFixtureRuntime(
         string testName,
@@ -145,9 +149,11 @@ public static class Test262SharedAssertHarness
         }
 
         var body = match.Groups["body"].Value.Replace("\r\n", "\n").Replace('\r', '\n');
+        var flags = ParseArrayValue(body, "flags");
         return new FrontmatterMetadata(
-            ParseArrayValue(body, "flags").Contains("onlyStrict", StringComparer.Ordinal),
-            ParseArrayValue(body, "flags").Contains("async", StringComparer.Ordinal),
+            flags.Contains("onlyStrict", StringComparer.Ordinal),
+            flags.Contains("async", StringComparer.Ordinal),
+            flags.Contains("module", StringComparer.Ordinal),
             ParseArrayValue(body, "includes"),
             ParseScalarValue(body, "phase"),
             ParseScalarValue(body, "type"));
@@ -340,10 +346,11 @@ public static class Test262SharedAssertHarness
     private sealed record FrontmatterMetadata(
         bool OnlyStrict,
         bool Async,
+        bool Module,
         IReadOnlyList<string> Includes,
         string? NegativePhase,
         string? NegativeType)
     {
-        public static FrontmatterMetadata Empty { get; } = new(false, false, Array.Empty<string>(), null, null);
+        public static FrontmatterMetadata Empty { get; } = new(false, false, false, Array.Empty<string>(), null, null);
     }
 }

@@ -16,9 +16,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-comments",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/language/comments/LexicalSourceConformanceBatchTests.cs"
+          "tests/Jroc.Test262.Tests/language/comments/LexicalSourceConformanceBatchTests.cs",
+          "tests/Jroc.Test262.Tests/language/comments/RemainingCommentsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/comments/hashbang/RemainingCommentsExecutionTests.cs"
         ],
-        "notes": "Twenty-two pinned Test262 comment fixtures are natively verified, covering single-line, multi-line, HTML-style, and hashbang comment handling."
+        "notes": "All 52 pinned Test262 comment cases have published outcomes: 46 are natively verified and six are explicitly excluded because eval is unsupported. Coverage includes single-line, multi-line, HTML-style, and hashbang comments, hashbang line terminators and invalid placements, and escaped hashbang rejection. Module fixtures use the Module parse goal even without import/export syntax. Function-family constructors reject hashbang prefixes in parameter and body source after ordered argument coercion; general dynamic string execution remains limited."
       }
     ]
   }

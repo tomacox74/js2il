@@ -114,8 +114,7 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
     private static object CreateDynamicGeneratorFunction(object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
-        var parameterNames = Function.ParseDynamicFunctionParameterNames(callArgs);
-        var body = callArgs.Length == 0 ? string.Empty : DotNet2JSConversions.ToString(callArgs[^1]);
+        var (parameterNames, body) = Function.PrepareDynamicFunctionSource(callArgs);
 
         Func<object[], object?[]?, object?> functionValue = (_, invocationArgs) =>
             new DynamicGeneratorIterator(EvaluateDynamicGeneratorBody(body, parameterNames, invocationArgs ?? System.Array.Empty<object?>()));

@@ -25,6 +25,8 @@ in-memory assembly for that folder. Nested fixtures under the same `JavaScript/`
 directory share it; a nested test directory with its own `JavaScript/` directory
 has a separate assembly. Logical entry names avoid CLR identifier collisions,
 while the original fixture paths remain the source paths for debugging.
+Fixtures marked `flags: [module]` explicitly select the Module parse goal
+without changing their paths, even when their source has no import or export declarations.
 The assembly is loaded once per folder and unloaded when the xUnit execution
 run ends; each case executes only its own entry with fresh runtime services,
 test262 helpers, async completion, and output capture.
@@ -44,8 +46,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
-| Language syntax and semantics | 17,452 | 91 | 6,104 | 23,647 | **73.80%** |
-| **Total** | 34,552 | 103 | 13,590 | 48,245 | **71.62%** |
+| Language syntax and semantics | 17,476 | 97 | 6,074 | 23,647 | **73.90%** |
+| **Total** | 34,576 | 109 | 13,560 | 48,245 | **71.67%** |
 
 ## Language Areas
 
@@ -54,7 +56,7 @@ bounded worker cleanup.
 | `arguments-object` | 261 | 2 | 0 | 263 | **99.24%** |
 | `asi` | 102 | 0 | 0 | 102 | **100.00%** |
 | `block-scope` | 144 | 1 | 0 | 145 | **99.31%** |
-| `comments` | 22 | 0 | 30 | 52 | **42.31%** |
+| `comments` | 46 | 6 | 0 | 52 | **88.46%** |
 | `computed-property-names` | 48 | 0 | 0 | 48 | **100.00%** |
 | `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |

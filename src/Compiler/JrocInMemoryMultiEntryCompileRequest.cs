@@ -4,7 +4,10 @@ namespace Jroc;
 public sealed record JrocInMemoryEntrySource(
     string EntryFilePath,
     string? SourceText = null,
-    string? RootModuleIdOverride = null);
+    string? RootModuleIdOverride = null)
+{
+    public bool ParseAsModule { get; init; }
+}
 
 /// <summary>Compiles several independent entry sources into one in-memory assembly.</summary>
 public sealed record JrocInMemoryMultiEntryCompileRequest(IReadOnlyList<JrocInMemoryEntrySource> Entries)

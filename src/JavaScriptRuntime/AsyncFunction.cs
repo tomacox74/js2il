@@ -170,7 +170,7 @@ public static class AsyncFunction
     private static object CreateDynamicAsyncFunction(object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
-        var length = Function.ParseDynamicFunctionParameterNames(callArgs).Length;
+        var length = Function.PrepareDynamicFunctionSource(callArgs).ParameterNames.Length;
 
         // Ordinary placeholder body; the receiver is ignored (issue #1895).
         BuiltinFunction0 functionValue = static thisArgument => Promise.resolve(null);

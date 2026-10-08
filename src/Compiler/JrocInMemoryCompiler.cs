@@ -82,7 +82,10 @@ public static class JrocInMemoryCompiler
         ArgumentException.ThrowIfNullOrWhiteSpace(request.EntryFilePath);
 
         return Compile(new JrocInMemoryMultiEntryCompileRequest(
-            [new JrocInMemoryEntrySource(request.EntryFilePath, request.SourceText, request.RootModuleIdOverride)])
+            [new JrocInMemoryEntrySource(request.EntryFilePath, request.SourceText, request.RootModuleIdOverride)
+            {
+                ParseAsModule = request.ParseAsModule
+            }])
         {
             AssemblyName = request.AssemblyName,
             FileSystem = request.FileSystem,
@@ -140,7 +143,10 @@ public static class JrocInMemoryCompiler
 
         var compiler = services.GetRequiredService<Compiler>();
         var artifact = compiler.CompileToArtifact(
-            request.Entries.Select(entry => new JrocCompileEntry(entry.EntryFilePath, entry.RootModuleIdOverride)).ToArray(),
+            request.Entries.Select(entry => new JrocCompileEntry(entry.EntryFilePath, entry.RootModuleIdOverride)
+            {
+                ParseAsModule = entry.ParseAsModule
+            }).ToArray(),
             request.DefaultEntryFilePath);
         if (artifact is not null)
         {

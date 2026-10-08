@@ -81,6 +81,7 @@ public class ModuleLoader
 
         var entryPaths = new List<string>(entries.Count);
         var entryOverrides = new Dictionary<string, string?>(PathComparer);
+        var moduleGoalEntries = new HashSet<string>(PathComparer);
         var originalPaths = new Dictionary<string, string>(PathComparer);
         foreach (var entry in entries)
         {
@@ -99,6 +100,10 @@ public class ModuleLoader
             }
 
             originalPaths.Add(path, entry.EntryFilePath);
+            if (entry.ParseAsModule)
+            {
+                moduleGoalEntries.Add(path);
+            }
             if (entries.Count > 1
                 && entry.RootModuleIdOverride is not null
                 && TryNormalizeBareAlias(entry.RootModuleIdOverride) is null)
@@ -173,6 +178,7 @@ public class ModuleLoader
                 diagnostics,
                 entryOverride,
                 requestedAliasModuleId,
+                moduleGoalEntries.Contains(currentPath),
                 out var module);
             if (module is null)
             {
@@ -357,14 +363,21 @@ public class ModuleLoader
         return true;
     }
 
+    private Acornima.Ast.Program ParseModuleSource(string source, string sourceFile, bool parseAsModule)
+        => parseAsModule
+            ? _parser.ParseJavaScriptModule(source, sourceFile)
+            : _parser.ParseJavaScript(source, sourceFile);
+
     private bool TryLoadAndParseModule(
         string modulePath,
         string rootModulePath,
         ModuleLoadDiagnostics diagnostics,
         string? rootModuleIdOverride,
         string? requestedAliasModuleId,
+        bool parseAsModule,
         out ModuleDefinition? module)
     {
+        parseAsModule |= string.Equals(Path.GetExtension(modulePath), ".mjs", StringComparison.OrdinalIgnoreCase);
         string jsSource;
         try
         {
@@ -398,7 +411,7 @@ public class ModuleLoader
 
         try
         {
-            ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
+            ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule);
         }
         catch (Exception ex)
         {
@@ -429,7 +442,7 @@ public class ModuleLoader
             jsSource = requestRewrittenSource;
             try
             {
-                ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
+                ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule);
             }
             catch (Exception ex)
             {
@@ -477,7 +490,7 @@ public class ModuleLoader
             jsSource = rewrittenSource;
             try
             {
-                ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
+                ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule);
             }
             catch (Exception ex)
             {

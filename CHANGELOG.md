@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): reject hashbang prefixes in dynamic Function-family parameter
+  and body source after ordered, single argument coercion. Parse `.mjs` sources
+  and Test262 module fixtures using the Module goal, including hashbang-only
+  modules. Complete the remaining 30 pinned comments Test262 cases: 24 verified
+  passing and six explicitly skipped because eval is unsupported.
 - fix(runtime): coerce computed property keys once, preserve class constructor
   metadata and property ordering, reject static prototype redefinitions, and
   resolve duplicate class accessors through their JavaScript descriptors.

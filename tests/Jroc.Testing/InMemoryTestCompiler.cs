@@ -20,8 +20,14 @@ public static class InMemoryTestCompiler
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
         HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
-        int timeoutMs = 30000)
+        int timeoutMs = 30000,
+        bool parseAsModule = false)
     {
+        if (parseAsModule && executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 })
+        {
+            throw new ArgumentException("Module-goal entries cannot use the legacy additional-script bootstrap.", nameof(parseAsModule));
+        }
+
         var (script, sourcePath) = getJavaScriptAndSourcePath(testName);
         var fileSystem = new MockFileSystem();
         string entryPath;
@@ -118,7 +124,8 @@ public static class InMemoryTestCompiler
                     RootModuleIdOverride = rootModuleIdOverride,
                     EmitPdb = true,
                     AssumeUnmodifiedHostGlobals = true,
-                    HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty
+                    HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty,
+                    ParseAsModule = parseAsModule
                 });
         }
         finally

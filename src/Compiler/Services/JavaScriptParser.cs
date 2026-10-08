@@ -8,11 +8,13 @@ public class JavaScriptParser : IParser
 {
     private readonly Parser _scriptParser;
     private readonly Parser _topLevelAwaitParser;
+    private readonly Parser _moduleParser;
 
     public JavaScriptParser()
     {
         _scriptParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: false));
         _topLevelAwaitParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: true));
+        _moduleParser = new Parser(new ParserOptions { EcmaVersion = EcmaVersion.Latest });
     }
 
     private static ParserOptions CreateParserOptions(bool allowAwaitOutsideFunction)
@@ -42,6 +44,18 @@ public class JavaScriptParser : IParser
             {
                 throw new Exception($"Failed to parse JavaScript: {ex.Message}", ex);
             }
+        }
+    }
+
+    public Acornima.Ast.Program ParseJavaScriptModule(string source, string sourceFile)
+    {
+        try
+        {
+            return _moduleParser.ParseModule(source, sourceFile);
+        }
+        catch (ParseErrorException ex)
+        {
+            throw new Exception($"Failed to parse JavaScript module: {ex.Message}", ex);
         }
     }
 

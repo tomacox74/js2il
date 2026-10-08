@@ -5,6 +5,44 @@ namespace Jroc.Tests.Function;
 public sealed class FunctionRuntimeTests
 {
     [Fact]
+    public void DynamicFunctionConstructorsCoerceArgumentsOnceBeforeRejectingHashbang()
+    {
+        const string source = """
+            const constructors = [
+                Function,
+                (async function () {}).constructor,
+                (function* () {}).constructor,
+                (async function* () {}).constructor
+            ];
+            for (const ctor of constructors) {
+                const order = [];
+                const parameter = { toString() { order.push("parameter"); return "#!\n_"; } };
+                const body = { toString() { order.push("body"); return ""; } };
+                assert.throws(SyntaxError, () => ctor(parameter, body));
+                assert.sameValue(order.join(","), "parameter,body");
+                assert.throws(SyntaxError, () => new ctor("a", "#!\n_"));
+            }
+            """;
+        var result = Test262SharedAssertHarness.CompileAndExecute(
+            "dynamic_function_coercion", "FunctionRuntime",
+            _ => (source, "dynamic_function_coercion.js"));
+        Assert.Empty(result.Output);
+    }
+
+    [Theory]
+    [InlineData("'#!';")]
+    [InlineData("\"#!\";")]
+    [InlineData("`#!`;")]
+    [InlineData("// #!\n")]
+    [InlineData("/* #! */")]
+    public void DynamicFunctionSourcePreservesHashbangTextInLiteralsAndComments(string body)
+    {
+        var source = JavaScriptRuntime.Function.PrepareDynamicFunctionSource(new object?[] { "a", body });
+        Assert.Equal(new[] { "a" }, source.ParameterNames);
+        Assert.Equal(body, source.Body);
+    }
+
+    [Fact]
     public void CollectRestArguments_UsesTypedStartIndexAndReturnsArray()
     {
         var previousArguments = RuntimeServices.SetCurrentArguments(new object?[] { "first", 2d, true });

@@ -32,6 +32,7 @@ Common request options:
 | `FileSystem` | Supply a file-system abstraction for source/dependency resolution. |
 | `AssemblyName` | Assembly identity and artifact basename; defaults to the entry filename without its extension. |
 | `RootModuleIdOverride` | Override the root module's logical ID. |
+| `ParseAsModule` | Parse the entry with the Module goal, including sources without import/export syntax. Defaults to `false`; `.mjs` files always use the Module goal. |
 | `EmitPdb` | Include Portable PDB bytes with original source locations. |
 | `Verbose` / `DiagnosticFilePath` | Enable verbose compiler diagnostics or capture diagnostics to a file. |
 | `AnalyzeUnused` | Enable unused analysis diagnostics. |
@@ -143,6 +144,8 @@ rather than execute it immediately. No output files are written implicitly.
 Pass several `JrocInMemoryEntrySource` values to compile unrelated scripts in
 one call. Their paths identify the source for diagnostics and relative module
 resolution; they need not exist on disk when `SourceText` is provided.
+Set `ParseAsModule = true` on individual entries to select the Module goal
+without renaming their paths. Self-imports keep the same entry identity.
 
 ```csharp
 using Jroc;

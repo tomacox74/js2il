@@ -74,7 +74,7 @@ public static class AsyncGeneratorFunction
     private static object? AsyncGeneratorFunctionConstructor(object[] scopes, object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
-        var length = JavaScriptRuntime.Function.ParseDynamicFunctionParameterNames(callArgs).Length;
+        var length = JavaScriptRuntime.Function.PrepareDynamicFunctionSource(callArgs).ParameterNames.Length;
         var functionIdentity = new object();
 
         Func<object[], object?[]?, object?> functionValue = (ignoredScopes, ignoredArguments) =>
