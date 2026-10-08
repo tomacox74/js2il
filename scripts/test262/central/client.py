@@ -97,8 +97,16 @@ class Client:
             self.db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
             yield self
 
-    def export(self, output):
+    def export(self, output, seconds=None):
         """Stream a coherent scoped export as NDJSON; memory stays bounded by one page."""
+        if seconds is not None and seconds <= 0:
+            raise ValueError('Export deadline must be positive')
+        deadline = time.monotonic() + seconds if seconds is not None else None
+
+        def check_deadline():
+            if deadline is not None and time.monotonic() >= deadline:
+                raise TimeoutError('Coherent export deadline exceeded; output is incomplete')
+
         output = Path(output)
         output.parent.mkdir(parents=True, exist_ok=True)
         temporary = output.with_name(output.name + '.partial')
@@ -116,10 +124,19 @@ class Client:
 
             emit({'header': header})
             for table in EXPORT_TABLES:
+                check_deadline()
+                if os.getenv('TEST262_PROGRESS') == '1':
+                    print('Exporting', table, flush=True)
                 counts[table] = 0
                 for row in self.read(table):
+                    check_deadline()
                     emit({'table': table, 'row': row})
                     counts[table] += 1
+                    if os.getenv('TEST262_PROGRESS') == '1' and counts[table] % 5000 == 0:
+                        print('Exported', table, counts[table], 'records', flush=True)
+                if os.getenv('TEST262_PROGRESS') == '1':
+                    print('Exported', table, counts[table], 'records total', flush=True)
+            check_deadline()
             stream.write(canonical({'footer': {'counts': counts, 'sha256': digest.hexdigest()}}) + '\n')
         temporary.replace(output)
         return dict(header, counts=counts, sha256=digest.hexdigest())
@@ -179,3 +196,4 @@ def fixture_environment(source=None):
     allowed = ('PATH','HOME','TMPDIR','TEMP','TMP','LANG','LC_ALL','DOTNET_ROOT','DOTNET_NOLOGO',
                'DOTNET_SKIP_FIRST_TIME_EXPERIENCE','DOTNET_CLI_TELEMETRY_OPTOUT')
     return {key: source[key] for key in allowed if key in source}
+
