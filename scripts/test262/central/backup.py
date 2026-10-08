@@ -79,7 +79,7 @@ def restore(args):
         if exists or perf:
             raise ValueError('Restore requires a new empty disposable database')
         # Catalogue privileges from the archive reference only these dedicated roles.
-        for role in ('test262_ingest','test262_coordinator','test262_reporter','anon','authenticated','service_role'):
+        for role in ('test262_ingest','test262_coordinator','test262_reporter','test262_backup','anon','authenticated','service_role'):
             db.execute('DO $$ BEGIN IF NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname=\''+role+'\') THEN CREATE ROLE '+role+' NOLOGIN; END IF; END $$')
     # Credential fencing is part of the restore transaction: no committed window
     # can expose restored enabled bindings/active authority, even if validation fails.
