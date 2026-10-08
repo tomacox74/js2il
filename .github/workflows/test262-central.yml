@@ -32,7 +32,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   supervise:
-    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' }}
+    concurrency:
+      group: test262-central-${{ inputs.kind == 'native' && 'native-target' || 'mvp-target' }}
+      cancel-in-progress: false
+    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && github.ref == 'refs/heads/master' }}
     environment: test262-catalogue
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -296,3 +299,4 @@ jobs:
               --patch artifacts/test262/central-patch.diff --manifest artifacts/test262/central-patch-validation.json \
               --body artifacts/test262/central-pr-body.md
           fi
+

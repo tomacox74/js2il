@@ -1,13 +1,6 @@
 name: Test262 artifact catalog
 
 on:
-  push:
-    branches: [master, test262/artifact-catalog]
-    paths:
-      - .github/workflows/test262-catalog.yml
-      - scripts/test262/catalog.py
-      - scripts/test262/catalogBridge.js
-      - scripts/test262/catalog.test.js
   workflow_dispatch:
     inputs:
       limit:
@@ -22,9 +15,6 @@ on:
         description: Optional upstream path substring (inventory is still complete)
         type: string
         default: ""
-  schedule:
-    - cron: "15 6 * * 1"
-
 permissions:
   contents: read
   actions: read

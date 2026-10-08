@@ -5,16 +5,15 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import sys
-from urllib.parse import urlsplit
 
 
 def verify(args):
     import boto3
     import psycopg
     from psycopg.conninfo import conninfo_to_dict
+    from .retained_objects import BACKUP_SUFFIX, destination, verify_bucket, verify_object, latest_receipt
 
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
@@ -25,7 +24,8 @@ def verify(args):
         # A production DSN cannot be substituted even by environment configuration.
         dsn = os.environ["TEST262_RESTORE_DATABASE_URL"]
         connection = conninfo_to_dict(dsn)
-        if connection.get("host") not in ("127.0.0.1", "localhost"):
+        if (connection.get("host") not in ("127.0.0.1", "localhost")
+            or connection.get("hostaddr", os.getenv("PGHOSTADDR", "127.0.0.1")) not in ("127.0.0.1", "::1")):
             raise ValueError("Restore must use loopback")
         if connection.get("dbname") != "catalogue_retained_restore":
             raise ValueError("Restore must use the dedicated disposable database")
@@ -35,60 +35,27 @@ def verify(args):
                 raise ValueError("PostgreSQL 17 required")
             if db.execute("SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname IN ('test262','test262_reporting')) OR to_regclass('public.perf_results') IS NOT NULL").fetchone()[0]:
                 raise ValueError("Disposable target is not empty")
-        if not re.fullmatch(r"\d{4}/\d{2}/\d{2}/\d+-[1-9]\d*", args.backup_suffix):
-            raise ValueError("Invalid backup suffix")
-        uri = urlsplit(os.environ["TEST262_BACKUP_S3_URI"])
-        if uri.scheme != "s3" or not uri.netloc or uri.query or uri.fragment:
-            raise ValueError("Invalid S3 destination")
-        prefix = "/".join(filter(None, (uri.path.strip("/"), args.backup_suffix)))
-        s3 = boto3.client("s3")
-        report.update(bucket=uri.netloc, prefix=prefix, objects={})
-        report["stage"] = "retention-metadata"
-        # Bucket settings alone are insufficient: inspect the actual stored versions.
-        versioning = s3.get_bucket_versioning(Bucket=uri.netloc)
-        lock = s3.get_object_lock_configuration(Bucket=uri.netloc)["ObjectLockConfiguration"]
-        default = lock.get("Rule", {}).get("DefaultRetention", {})
-        bucket_ok = (versioning.get("Status") == "Enabled"
-                     and lock.get("ObjectLockEnabled") == "Enabled"
-                     and default.get("Mode") == "COMPLIANCE"
-                     and (default.get("Days", 0) >= 35 or default.get("Years", 0) >= 1))
-        report["bucket_retention_verified"] = bucket_ok
-        retention_ok = bucket_ok
-        now = datetime.now(timezone.utc)
-        for name in ("catalogue.dump", "manifest.json"):
-            key = prefix + "/" + name
-            head = s3.head_object(Bucket=uri.netloc, Key=key)
-            version = head.get("VersionId")
-            if not version or version == "null":
-                raise ValueError("Backup object has no immutable version ID")
-            retention = s3.get_object_retention(Bucket=uri.netloc, Key=key, VersionId=version).get("Retention", {})
-            until = retention.get("RetainUntilDate")
-            object_ok = (head.get("ServerSideEncryption") == "aws:kms"
-                         and head.get("SSEKMSKeyId") == os.environ["TEST262_BACKUP_KMS_KEY"]
-                         and retention.get("Mode") == "COMPLIANCE"
-                         and until is not None and until > now)
-            retention_ok = retention_ok and object_ok
-            report["objects"][name] = {
-                "version_id": version, "content_length": head["ContentLength"],
-                "encryption": head.get("ServerSideEncryption"),
-                "kms_key": head.get("SSEKMSKeyId"), "lock_mode": retention.get("Mode"),
-                "retain_until": until.isoformat() if until else None,
-                "retention_verified": object_ok}
-            report["stage"] = "download-exact-version"
-            response = s3.get_object(Bucket=uri.netloc, Key=key, VersionId=version)
-            if response.get("VersionId") != version:
-                raise ValueError("Downloaded object version mismatch")
-            digest = hashlib.sha256()
-            byte_count = 0
-            with (output / name).open("wb") as stream:
-                with response["Body"] as body:
-                    for chunk in iter(lambda: body.read(1024 * 1024), b""):
-                        stream.write(chunk)
-                        digest.update(chunk)
-                        byte_count += len(chunk)
-            if byte_count != head["ContentLength"]:
-                raise ValueError("Downloaded object length mismatch")
-            report["objects"][name]["sha256"] = digest.hexdigest()
+        bucket,base=destination(os.environ['TEST262_BACKUP_S3_URI'])
+        s3=boto3.client('s3');kms=os.environ['TEST262_BACKUP_KMS_KEY']
+        report['stage']='retention-metadata'
+        verify_bucket(s3,bucket)
+        report['bucket_retention_verified']=True
+        receipt=None
+        if args.backup_suffix:
+            if not BACKUP_SUFFIX.fullmatch(args.backup_suffix):
+                raise ValueError('Invalid backup suffix')
+            prefix='/'.join(filter(None,(base,args.backup_suffix)))
+            report['selection']='explicit-prefix'
+        else:
+            report['stage']='select-latest-verified-backup'
+            prefix,receipt,receipt_proof=latest_receipt(s3,bucket,base,kms,output)
+            report.update(selection='latest-verified-receipt',receipt=receipt_proof)
+        report.update(bucket=bucket,prefix=prefix,objects={})
+        for name in ('catalogue.dump','manifest.json'):
+            report['stage']='download-exact-version'
+            report['objects'][name]=verify_object(s3,bucket,prefix+'/'+name,kms,
+                pinned=receipt['objects'][name] if receipt else None,output=output/name)
+        retention_ok=True
         report["stage"] = "digest"
         manifest = json.loads((output / "manifest.json").read_text())
         if report["objects"]["catalogue.dump"]["sha256"] != manifest["sha256"]:
@@ -129,12 +96,12 @@ def verify(args):
         print(json.dumps({k: report[k] for k in
                          ("stage", "restore_verified", "independent_retention_verified")}))
         # Only the sanitized report is retained by the workflow.
-        for name in ("catalogue.dump", "manifest.json"):
+        for name in ("catalogue.dump", "manifest.json", "backup-report.json"):
             (output / name).unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--backup-suffix", required=True)
+    parser.add_argument("--backup-suffix", default="", help="Exact prefix; omit to restore latest verified receipt, at most 48h old")
     parser.add_argument("--output", required=True)
     raise SystemExit(verify(parser.parse_args()))

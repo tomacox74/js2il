@@ -264,12 +264,10 @@ replaying through the normal API. Observation IDs, request IDs and payloads rema
 so overlapping snapshots and pre-fix outboxes can replay without rewriting old evidence.
 Mismatched scope/provenance still fails closed; native import attribution is unchanged.
 
-For the failure tracked in #2242, merge the importer fix to `master` first; no Supabase
-migration is needed. Then acknowledge failed run `37237023718` with Actions variable
-`TEST262_HISTORY_AUTO_RESUME_RUN_ID=37237023718`. The next scheduled run uses the updated
-master scripts. Rerunning the old run uses its old checkout and does not deploy this fix.
-Inspect the next recovery report and central parity before marking the blocked source
-verified. Acknowledging this failure does not authorize production workers or cutover.
+The pre-cutover retry and automatic-resume incidents are recorded in #2242. Historical
+imports now remain manual maintenance only: use current reviewed master scripts and the
+original pinned discovery archive. A historical retry requires an explicit inactive
+authority maintenance window; it must not run alongside active central workers.
 
 ## Workflow setup and authority transition
 
@@ -292,6 +290,45 @@ that patch at the target revision, runs the focused xUnit batch and the exact
 allowlist/hash `validate-patch` check, and requires its digest to equal the sealed patch.
 `publish` requires both jobs. Run artifacts are named per run ID (overwritten on rerun),
 so rerunning only a failed downstream job finds them.
+
+### Workflow operating policy
+
+Keep the following GitHub Actions enabled/disabled settings after merging. YAML trigger
+changes do not alter GitHub's separate workflow enablement flags.
+
+| Workflow file | Normal state | Trigger/use |
+| --- | --- | --- |
+| `test262-central-refresh.yml` | Enabled (new) | Refresh only after successful exact-SHA master-push MVP CI; manual master fallback |
+| `test262-central.yml` | Enabled | Manual bounded screening; existing weekly MVP discovery; native publication only with explicit `publish=true` |
+| `test262-mvp.yml` | Enabled | Required PR/master regression gates and daily conformance |
+| `test262-central-tests.yml` | Enabled | Central code/schema or any Test262 workflow changes; manual verification |
+| `test262-worker-pilot.yml` | Enabled | Shared central/tooling/schema changes; manual isolated worker drill |
+| `test262-central-backup.yml` | Enabled | Daily 03:40 UTC catalogue-only backup, exact-version encrypted readback and receipt |
+| `test262-retained-restore.yml` | Enabled | Sunday 05:10 UTC restore latest verified backup to disposable PG17; manual exact-prefix recovery |
+| `test262-connection-test.yml` | Enabled | Manual trusted coordinator connection check |
+| `test262-cutover-evidence.yml` | Enabled | Manual preservation of the reviewed manifest's entire required artifact set |
+| `test262-catalog.yml` | Disabled | Retained legacy manual recovery; no automatic triggers |
+| `test262-native-port.yml` | Disabled | Retained legacy manual recovery; no workflow-run trigger |
+| `test262-history-import.yml` | Disabled | Manual discovery/import maintenance only; no hourly cron |
+| `test262-importer-connection-test.yml` | Disabled | Manual inactive-authority historical importer maintenance |
+
+Delete none of the legacy workflows while archive, recovery or audit references depend on
+them. Leave `TEST262_HISTORY_AUTO_IMPORT=false`; re-enabling a legacy file must not restore
+automatic SQLite authority.
+
+The new registration refresh accepts only a successful **master push** `test262 MVP` run
+for the exact current master SHA. PR, scheduled, failed, foreign-repository and obsolete
+runs do not authorize a refresh. A manual fallback repeats the same exact-SHA validation.
+It prepares the pinned corpus, sealed native registration inventory and current trusted
+binary/harness/tooling provenance, then selects the native reporting target through CAS.
+It does not allocate runs, budgets, queue work or reconciliation cursors, execute fixtures,
+seal batches or publish a PR. An already current validated snapshot is a read-only no-op;
+a newer push during preparation leaves immutable records but cannot select the obsolete
+target. Refresh and manual native supervision share a non-cancelling concurrency group;
+GitHub may coalesce pending refreshes. Failed refreshes retain sanitized diagnostics and
+require a manual retry after diagnosis; the next successful push also retries the latest
+revision. Fresh native evidence still comes from explicit native screening. This automatic
+path does not change the MVP reporting target, which advances through central MVP runs.
 
 For initial production verification, dispatch the current `master` with
 `kind=mvp-composite`, `area=built-ins/Math/abs`, `publish=false`, and
@@ -368,6 +405,36 @@ schema. Client tools receive the DSN as discrete libpq environment variables, ne
 URI in `PGDATABASE` (which libpq does not expand) or a password in process arguments. Also archive original imports and failed-run outboxes; 90-day Actions artifacts
 are recovery convenience, not the long-term backup policy.
 
+Each daily backup verifies bucket versioning and at least 35 days default COMPLIANCE
+Object Lock retention, checks the exact stored object versions' KMS key and unexpired lock,
+and streams a full SHA-256/length readback matching the exported snapshot. Only after both
+`catalogue.dump` and `manifest.json` pass does it publish and verify an encrypted retained
+`backup-report.json` receipt at that run/attempt prefix. The sanitized Actions report
+records object version IDs, digests, retention and receipt identity. The OIDC role needs
+versioned object reads, retention/bucket-policy reads and prefix listing as well as writes.
+
+The weekly retained-restore workflow chooses the newest completed receipt within 48 hours,
+verifies the receipt's own immutable bytes/retention, then downloads **its pinned object
+versions**, even if the latest S3 keys changed. A missing, stale or broken newest receipt
+fails instead of falling back to an older apparently green backup. It restores into the
+empty loopback `catalogue_retained_restore` PostgreSQL 17 service, checks counts/views,
+constraints/permissions and shadow/epoch fencing, and retains a sanitized report. No
+production database secret is available in the restore job. Scheduled restores need a
+post-upgrade verified backup receipt; manual exact-prefix restore remains available for
+older snapshots. Upload/readback success and restore verification remain separate evidence.
+
+`test262-cutover-evidence.yml` reads `scripts/test262/central/cutover-evidence.json` (or another
+reviewed committed manifest supplied manually). Add every required archive/checkpoint,
+recovery/outbox and restore artifact's immutable ID/ZIP SHA, history-manifest SHA and expected
+source parity to that manifest by PR. The verifier requires the entire configured artifact
+set, independently verifies source hashes/import mappings/outbox acknowledgements/restore
+reports, and reads back every preserved encrypted Object Lock version plus its report.
+The default manifest retains the original eight cutover artifacts and the last five source
+recoveries; it is an explicitly selected scope, not a claim that all 62 entries' archives
+have been independently retained. Further historical archive retention remains tracked in
+#2230/#2242; archive retention horizons require a separate long-term policy. The manifest
+cannot set `history_complete=true` while the known gaps remain.
+
 Perform a restore drill into a **new empty disposable** PostgreSQL 17 database:
 
 ```bash
@@ -379,7 +446,7 @@ Set `TEST262_RESTORE_DATABASE_URL` through the secret manager. The tool refuses 
 containing catalogue schemas or `public.perf_results`, verifies the digest and exact
 snapshot counts, queries restored views and checks constraints/permissions. It disables
 all restored credential bindings, increments epoch and leaves authority shadow. Archive
-the drill report off-project and schedule repeat drills independently. Credentials and
+the drill report off-project; the retained-restore workflow supplies recurring disposable verification. Credentials and
 role memberships must be reprovisioned explicitly; restoring a dump must not reactivate
 workers. A backup job's successful upload is not proof of a completed restore drill.
 
@@ -405,53 +472,28 @@ with a streamed NDJSON export. Full production activation,
 artifact history parity, a live reporter connection, an S3 retention configuration and a
 restore drill must be recorded on #2230 with actual evidence before closing it.
 
-## Automatic historical import batches
+## Historical import maintenance
 
-The existing history workflow also runs hourly on the default branch. Automatic
-imports are **disabled by default**. Configure these repository **Actions variables**
-(the existing importer environment still supplies the dedicated database secret):
+`test262-history-import.yml` has no cron or automatic import branch. Keep it and the
+importer connection test disabled in normal operation; `TEST262_HISTORY_AUTO_IMPORT=false`
+remains the paused operator setting. Historical archives and `history_auto.py` are retained
+for attribution/recovery, not as live scheduling authority. Re-enable manual maintenance
+only for an approved recovery window, verify the dedicated legacy importer binding and
+inactive authority, then select the exact archive run, kind and source artifact IDs.
 
-| Variable | Purpose |
-|---|---|
-| `TEST262_HISTORY_AUTO_IMPORT` | Set `true` to enable; unset or `false` to pause |
-| `TEST262_HISTORY_ARCHIVE_RUN_ID` | Successful preserved discovery run; initially `37175509314` |
-| `TEST262_HISTORY_MANIFEST_SHA256` | Pin preserved manifest bytes; initially `dd708f3ce7ac05d92bf4b97a4f0680c4a6b7c383dc8ec120198ce22a9febfe1c` |
-| `TEST262_HISTORY_AUTO_KIND` | `mvp` (default), `native`, or `all` |
-| `TEST262_HISTORY_AUTO_BATCH_SIZE` | 1–5 snapshots per run, default 2 |
-| `TEST262_HISTORY_TRACKING_ISSUE` | Progress issue number, default 2242 |
-| `TEST262_HISTORY_AUTO_RESUME_RUN_ID` | Exact failed automatic run ID, only after diagnosis, to acknowledge retry |
-
-Enable after merging and configuring the archive/hash, initially using `mvp` and a
-batch size of 2. Each scheduled invocation uses the same concurrency group as manual
-imports. Schedule timing is best effort; it does not chain dispatches or require an
-Actions-write token. Protected environment approval rules still apply.
-
-A successful source now gets an immutable `history_verified_snapshot` receipt in
-`legacy_control_records` **after** central observation/mapping parity and unchanged
-source bytes are verified. Scheduled selection skips only matching source URI and
-ZIP/SQLite hashes; imported counts alone do not qualify. Previously imported sources
-without these receipts (including the original pilot) are safely replayed once to
-perform verification and create the receipt. No schema migration is needed.
-
-Any failed/cancelled automatic run blocks later automatic batches, even after many
-successful blocked/no-op runs. Inspect its preserved report/outbox, resolve the
-failure, then set `TEST262_HISTORY_AUTO_RESUME_RUN_ID` to that run's ID. A new failure
-requires a new acknowledgement. Turning the enable variable off pauses future
-starts; cancel an already-running job explicitly if it must stop immediately.
-
-When all matching archived snapshots have receipts, a completion marker avoids
-further archive downloads/imports for that archive/hash/kind. Hourly jobs may still
-perform lightweight checks; set the enable variable false, or select the next kind.
-Completion of `mvp` does not cover `native`. `history_complete=false` remains explicit
-for unavailable history. Scheduled runs append bounded milestone comments to the
-tracking issue and save a job summary, planning report and recovery artifact; they
-do not overwrite other agents' issue edits. Preserve evidence outside Actions expiry.
-An archive with more than 100 matching snapshots fails closed for manual splitting.
+A successful source gets an immutable `history_verified_snapshot` receipt in
+`legacy_control_records` only after central observation/mapping parity and unchanged source
+bytes are verified. Counts or a green run alone do not qualify. Inspect `import-report.json`
+and preserve source ZIP/SQLite hashes, outboxes/WAL, recovery links and missing-artifact
+limitations. Verification of a selected source set does not cover every historical archive:
+11 unavailable archive gaps still keep `history_complete=false`. Record a material recovery
+milestone on #2242 without overwriting other agents' issue edits.
 
 ## Isolated worker pilot before cutover
 
 `.github/workflows/test262-worker-pilot.yml` runs automatically on changes to the
-pilot/worker/image in a PR, or manually after merge. It uses an empty PostgreSQL 17
+shared central coordinator/client/helpers, catalogue bridge/porting tooling, invariants
+tests and Supabase definitions in a PR, or manually after merge. It uses an empty PostgreSQL 17
 service named `catalogue_pilot` on loopback and a newly bound restricted login.
 It references no protected environment or production connection secret. The pilot
 refuses remote hosts, existing catalogue schemas and performance data before
@@ -540,4 +582,5 @@ drill demonstrates the tool path and restored data/security behavior. It does no
 verify production backup-role permissions, KMS encryption, independent object retention,
 Object Lock, original historical archive preservation, or a restore of an off-project
 production backup. Those remain separate operational acceptance before cutover.
+
 

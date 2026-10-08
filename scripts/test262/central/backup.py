@@ -39,7 +39,7 @@ def run(command, env=None):
     subprocess.run(command,check=True,env=env)
 
 
-def backup(args):
+def create_snapshot(args):
     import psycopg
     dsn=os.environ['TEST262_BACKUP_DATABASE_URL']
     output=Path(args.output);output.mkdir(parents=True,exist_ok=True)
@@ -59,12 +59,59 @@ def backup(args):
     manifest={'sha256':digest,'contract':{k:str(v) if hasattr(v,'isoformat') else v for k,v in contract.items()},'row_counts':counts,'view_counts':view_counts,
               'roles':['test262_ingest','test262_coordinator','test262_reporter'],'contains_performance_data':False}
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    if args.destination:
+    return archive,output/'manifest.json'
+
+
+def backup(args):
+    from datetime import datetime, timezone
+    from .retained_objects import destination, verify_bucket, verify_object
+    output=Path(args.output);output.mkdir(parents=True,exist_ok=True)
+    report_path=output/'backup-report.json'
+    report={'schema_version':1,'backup_verified':False,'stage':'snapshot','objects':{},
+            'contains_performance_data':False}
+    try:
+        archive,manifest=create_snapshot(args)
+        if not args.destination:
+            return
         if not args.kms_key:
             raise ValueError('An external KMS key is required')
-        for file in (archive,output/'manifest.json'):
-            run(['aws','s3','cp',str(file),args.destination.rstrip('/')+'/'+file.name,'--sse','aws:kms','--sse-kms-key-id',args.kms_key,'--only-show-errors'])
-        print('Encrypted catalogue backup uploaded; verify object version IDs and retention at the destination.')
+        import boto3
+        s3=boto3.client('s3')
+        bucket,prefix=destination(args.destination)
+        report.update(bucket=bucket,prefix=prefix,stage='retention-metadata')
+        verify_bucket(s3,bucket)
+        report['bucket_retention_verified']=True
+        extra={'ServerSideEncryption':'aws:kms','SSEKMSKeyId':args.kms_key}
+        for file in (archive,manifest):
+            report['stage']='upload-'+file.name
+            key=prefix+'/'+file.name
+            s3.upload_file(str(file),bucket,key,ExtraArgs=extra)
+            report['stage']='verify-'+file.name
+            proof=verify_object(s3,bucket,key,args.kms_key)
+            with file.open('rb') as stream:
+                local=hashlib.file_digest(stream,'sha256').hexdigest()
+            if proof['sha256']!=local or proof['content_length']!=file.stat().st_size:
+                raise ValueError('Uploaded backup bytes differ from snapshot')
+            report['objects'][file.name]=proof
+        report.update(backup_verified=True,stage='complete',checked_at=datetime.now(timezone.utc).isoformat())
+        report_path.write_text(json.dumps(report,indent=2)+'\n')
+        # Only publish a discoverable receipt after both exact-version readbacks pass.
+        key=prefix+'/backup-report.json'
+        s3.upload_file(str(report_path),bucket,key,ExtraArgs=extra)
+        with report_path.open('rb') as stream:
+            pinned=hashlib.file_digest(stream,'sha256').hexdigest()
+        receipt=verify_object(s3,bucket,key,args.kms_key)
+        if receipt['sha256']!=pinned:
+            raise ValueError('Published backup receipt differs')
+        report['receipt']=dict(receipt,key=key)
+        print(json.dumps({'backup_verified':True,'receipt_version':receipt['version_id']}))
+    except Exception as error:
+        report.update(backup_verified=False,error_class=type(error).__name__,failed_stage=report['stage'],stage='failed')
+        report['aws_error_code']=getattr(error,'response',{}).get('Error',{}).get('Code')
+        raise
+    finally:
+        report.setdefault('checked_at',datetime.now(timezone.utc).isoformat())
+        report_path.write_text(json.dumps(report,indent=2)+'\n')
 
 
 def restore(args):
