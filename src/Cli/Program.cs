@@ -52,6 +52,18 @@ public class JrocArgs
     [ArgShortcut("--assume-unmodified-host-globals")]
     public bool AssumeUnmodifiedHostGlobals { get; set; }
 
+    [ArgDescription("Analyze compilation coverage without writing or running the assembly")]
+    [ArgShortcut("--coverage")]
+    public bool Coverage { get; set; }
+
+    [ArgDescription("Print machine-readable JSON for coverage analysis")]
+    [ArgShortcut("--json")]
+    public bool Json { get; set; }
+
+    [ArgDescription("Write a compilation coverage JSON report (also supported during normal compilation)")]
+    [ArgShortcut("--coverage-report")]
+    public string? CoverageReport { get; set; }
+
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
@@ -63,6 +75,11 @@ class Program
     {
         try
         {
+            var coverageCommand = args.Length > 0 && args[0] == "coverage";
+            if (coverageCommand)
+            {
+                args = args[1..];
+            }
             var remainingArgs = ExtractAdditionalInputs(args, out var additionalInputs);
             var parsed = Args.Parse<JrocArgs>(remainingArgs);
             if (parsed == null)
@@ -74,6 +91,24 @@ class Program
             if (parsed.AdditionalInput is not null)
             {
                 throw new ArgException("Use -a <file> or --additional-input <file> for each additional entry.");
+            }
+
+            var coverageOnly = coverageCommand || parsed.Coverage;
+            if (parsed.Json && !coverageOnly)
+            {
+                throw new ArgException("--json requires the coverage command or --coverage.");
+            }
+            if (parsed.Json && parsed.Verbose)
+            {
+                throw new ArgException("--json cannot be combined with verbose console diagnostics.");
+            }
+            if (parsed.Json && parsed.AnalyzeUnused)
+            {
+                throw new ArgException("--json cannot be combined with unused-analysis console output.");
+            }
+            if (coverageOnly && !string.IsNullOrWhiteSpace(parsed.OutputPath))
+            {
+                throw new ArgException("Coverage analysis does not write assemblies; use --coverage-report <file> for its JSON output.");
             }
 
             // Version handling (PowerArgs default alias is -Version from property name)
@@ -103,6 +138,7 @@ class Program
                 DiagnosticFilePath = diagnosticFilePath,
                 AnalyzeUnused = parsed.AnalyzeUnused,
                 EmitPdb = parsed.EmitPdb,
+                CollectCompilationCoverage = !string.IsNullOrWhiteSpace(parsed.CoverageReport),
                 AssumeUnmodifiedHostGlobals = parsed.AssumeUnmodifiedHostGlobals
             });
             var logger = servicesProvider.GetRequiredService<ICompilerOutput>();
@@ -173,6 +209,27 @@ class Program
             }
 
             var compiler = servicesProvider.GetRequiredService<Compiler>();
+            if (coverageOnly)
+            {
+                var entries = new List<JrocInMemoryEntrySource>
+                {
+                    new(entryPath, RootModuleIdOverride: hasModuleId ? parsed.ModuleId : null)
+                };
+                entries.AddRange(additionalInputs.Select(path => new JrocInMemoryEntrySource(path)));
+                var analysis = JrocInMemoryCompiler.AnalyzeCompilationCoverage(
+                    new JrocInMemoryMultiEntryCompileRequest(entries)
+                    {
+                        AssemblyName = parsed.AssemblyName,
+                        Verbose = parsed.Verbose,
+                        AnalyzeUnused = parsed.AnalyzeUnused,
+                        EmitPdb = parsed.EmitPdb,
+                        AssumeUnmodifiedHostGlobals = parsed.AssumeUnmodifiedHostGlobals
+                    }, logger);
+                Console.WriteLine(parsed.Json ? analysis.Report.ToJson() : analysis.Report.ToText());
+                var written = WriteCoverageReport(parsed.CoverageReport, analysis.Report, logger);
+                Environment.ExitCode = analysis.Report.CompilationSucceeded && written ? 0 : 1;
+                return;
+            }
             bool success;
             if (additionalInputs.Count == 0)
             {
@@ -184,7 +241,10 @@ class Program
                 entries.AddRange(additionalInputs.Select(path => new JrocCompileEntry(path)));
                 success = compiler.Compile(entries);
             }
-            Environment.ExitCode = success ? 0 : 1;
+            var reportWritten = string.IsNullOrWhiteSpace(parsed.CoverageReport)
+                || (compiler.CompilationCoverage is { } report
+                    && WriteCoverageReport(parsed.CoverageReport, report, logger));
+            Environment.ExitCode = success && reportWritten ? 0 : 1;
         }
         catch (ArgException ex)
         {
@@ -195,6 +255,26 @@ class Program
             PrintUsage(errorLogger);
             Environment.ExitCode = 1;
             return;
+        }
+    }
+
+    private static bool WriteCoverageReport(string? requestedPath, CompilationCoverageReport report, ICompilerOutput logger)
+    {
+        if (string.IsNullOrWhiteSpace(requestedPath))
+        {
+            return true;
+        }
+        try
+        {
+            var path = Path.GetFullPath(requestedPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, report.ToJson(), new System.Text.UTF8Encoding(false));
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            logger.WriteLineError($"Error writing compilation coverage report: {exception.Message}");
+            return false;
         }
     }
 
@@ -249,6 +329,7 @@ class Program
     {
         logger.WriteLineError("Usage: jroc <InputFile> [<OutputPath>] [options]");
         logger.WriteLineError("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
+        logger.WriteLineError("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
         logger.WriteLineError("");
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
@@ -260,6 +341,9 @@ class Program
         logger.WriteLineError("--diagnostic-file <path> Write diagnostics output to a text file");
         logger.WriteLineError("--analyzeunused        Analyze and report unused properties and methods");
         logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
+        logger.WriteLineError("--coverage             Analyze compilation modes without writing assemblies");
+        logger.WriteLineError("--json                 Print coverage analysis as JSON");
+        logger.WriteLineError("--coverage-report <file> Write compilation-mode JSON during analysis or normal compilation");
         logger.WriteLineError("--version              Show version information and exit");
         logger.WriteLineError("-h, -?, --help         Show help and exit");
     }

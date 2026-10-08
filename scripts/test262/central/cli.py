@@ -3,8 +3,8 @@ import argparse
 import json
 import os
 from pathlib import Path
-import sys
 from .client import Client, canonical, Outbox
+from .diagnostics import report_failure, stage
 
 
 def parser():
@@ -17,6 +17,7 @@ def parser():
     i.add_argument('--missing-artifacts',action='append',default=[])
     i.add_argument('--outbox',required=True)
     e=sub.add_parser('export'); e.add_argument('--output',required=True)
+    e.add_argument('--seconds', type=int, help='Total export deadline; incomplete output stays .partial')
     f=sub.add_parser('flush'); f.add_argument('--outbox',required=True)
     q=sub.add_parser('prepare')
     q.add_argument('--kind',choices=['mvp-composite','native'],required=True)
@@ -29,6 +30,7 @@ def parser():
     q.add_argument('--attempt-limit',type=int,default=400); q.add_argument('--budget-ms',type=int,default=1200000)
     q.add_argument('--cap-ms',type=int,default=120000); q.add_argument('--runtime-timeout',type=int,default=30)
     q.add_argument('--compile-timeout',type=int,default=60); q.add_argument('--area',default='')
+    q.add_argument('--compilation-coverage',action='store_true')
     q.add_argument('--output',required=True)
     w=sub.add_parser('work'); w.add_argument('--context',required=True); w.add_argument('--root',required=True)
     w.add_argument('--outbox',required=True); w.add_argument('--image',default='test262-fixture:local')
@@ -43,16 +45,17 @@ def parser():
     return p
 
 
-def main():
-    args=parser().parse_args()
+def main(argv=None):
+    args=parser().parse_args(argv)
     if not args.repository or not args.producer:
         raise ValueError('Explicit repository/producer identities required')
-    client=Client()
+    with stage('connect'):
+        client=Client()
     try:
         if client.contract['repository_id']!=args.repository or client.contract['producer_id']!=args.producer:
             raise ValueError('Configured identities do not match authenticated database subject')
         if args.command=='export':
-            result=client.export(args.output)
+            result=client.export(args.output, seconds=args.seconds)
         elif args.command=='flush':
             Outbox(args.outbox,args.repository,args.producer,client.epoch).flush(client)
             result={'flushed':True}
@@ -73,20 +76,30 @@ def main():
                     setattr(args,field,context[field])
                 args.runtime_timeout=context['identity']['timeouts']['runtime']
                 args.compile_timeout=context['identity']['timeouts']['compile']
+                args.compilation_coverage=context.get('compilation_coverage',False)
                 if args.repository!=context['repository'] or args.producer!=context['producer']:
                     raise ValueError('Context belongs to another supervisor')
                 result=work(client,args)
             else:
                 result=getattr(commands,args.command)(client,args)
         print(canonical(result))
+    except Exception as error:
+        if not getattr(error, '_test262_stage', None):
+            error._test262_stage = args.command
+        raise
     finally:
         client.close()
 
 
-if __name__=='__main__':
-    # Never echo a DSN or connection exception containing credentials into Actions logs.
+def run(argv=None):
     try:
-        main()
+        main(argv)
+        return 0
     except Exception as error:
-        print('Catalogue operation failed ('+type(error).__name__+'). Inspect scoped database/audit logs.',file=sys.stderr)
-        raise SystemExit(1)
+        report_failure(error)
+        return 1
+
+
+if __name__=='__main__':
+    raise SystemExit(run())
+

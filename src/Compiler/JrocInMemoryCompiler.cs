@@ -81,7 +81,38 @@ public static class JrocInMemoryCompiler
         ArgumentNullException.ThrowIfNull(request);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.EntryFilePath);
 
-        return Compile(new JrocInMemoryMultiEntryCompileRequest(
+        return Compile(ToMultiEntryRequest(request), compilerOutput);
+    }
+
+    public static CompilationCoverageAnalysis AnalyzeCompilationCoverage(
+        JrocInMemoryCompileRequest request,
+        ICompilerOutput? compilerOutput = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.EntryFilePath);
+        return AnalyzeCompilationCoverage(ToMultiEntryRequest(request), compilerOutput);
+    }
+
+    public static CompilationCoverageAnalysis AnalyzeCompilationCoverage(
+        JrocInMemoryMultiEntryCompileRequest request,
+        ICompilerOutput? compilerOutput = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var (artifact, report, diagnostic) = CompileRequest(
+            request with { CollectCompilationCoverage = true }, compilerOutput);
+        if (report is null)
+        {
+            throw new InvalidOperationException("Coverage-enabled compilation did not produce a report.");
+        }
+        if (artifact is null)
+        {
+            report = report with { Diagnostics = report.Diagnostics.Append(diagnostic).ToArray() };
+        }
+        return new CompilationCoverageAnalysis(artifact, report);
+    }
+
+    private static JrocInMemoryMultiEntryCompileRequest ToMultiEntryRequest(JrocInMemoryCompileRequest request)
+        => new(
             [new JrocInMemoryEntrySource(request.EntryFilePath, request.SourceText, request.RootModuleIdOverride)
             {
                 ParseAsModule = request.ParseAsModule
@@ -93,11 +124,11 @@ public static class JrocInMemoryCompiler
             Verbose = request.Verbose,
             DiagnosticFilePath = request.DiagnosticFilePath,
             AnalyzeUnused = request.AnalyzeUnused,
+            CollectCompilationCoverage = request.CollectCompilationCoverage,
             GenerateModuleExportContracts = request.GenerateModuleExportContracts,
             AssumeUnmodifiedHostGlobals = request.AssumeUnmodifiedHostGlobals,
             HostRuntimeIntrinsics = request.HostRuntimeIntrinsics
-        }, compilerOutput);
-    }
+        };
 
     /// <summary>
     /// Compiles independent entry sources into one loadable artifact without writing the assembly or PDB to disk.
@@ -106,6 +137,14 @@ public static class JrocInMemoryCompiler
     public static JrocCompiledAssemblyArtifact Compile(
         JrocInMemoryMultiEntryCompileRequest request,
         ICompilerOutput? compilerOutput = null)
+    {
+        var (artifact, _, diagnostic) = CompileRequest(request, compilerOutput);
+        return artifact ?? throw new InvalidOperationException(diagnostic);
+    }
+
+    private static (JrocCompiledAssemblyArtifact? Artifact, CompilationCoverageReport? Report, string Diagnostic) CompileRequest(
+        JrocInMemoryMultiEntryCompileRequest request,
+        ICompilerOutput? compilerOutput)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.Entries);
@@ -129,6 +168,7 @@ public static class JrocInMemoryCompiler
             Verbose = request.Verbose,
             DiagnosticFilePath = request.DiagnosticFilePath,
             AnalyzeUnused = request.AnalyzeUnused,
+            CollectCompilationCoverage = request.CollectCompilationCoverage,
             GenerateModuleExportContracts = request.GenerateModuleExportContracts,
             AssumeUnmodifiedHostGlobals = request.AssumeUnmodifiedHostGlobals,
             HostRuntimeIntrinsics = request.HostRuntimeIntrinsics
@@ -150,10 +190,10 @@ public static class JrocInMemoryCompiler
             request.DefaultEntryFilePath);
         if (artifact is not null)
         {
-            return artifact;
+            return (artifact, compiler.CompilationCoverage, string.Empty);
         }
 
-        throw new InvalidOperationException(BuildCompilationFailureMessage(capturingOutput));
+        return (null, compiler.CompilationCoverage, BuildCompilationFailureMessage(capturingOutput));
     }
 
     private static IFileSystem CreateEffectiveFileSystem(JrocInMemoryMultiEntryCompileRequest request)

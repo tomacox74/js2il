@@ -214,6 +214,120 @@ namespace Jroc.Tests
             }
         }
 
+        [Theory]
+        [InlineData("var value = 1;", 0, true)]
+        [InlineData("throw new Error('coverage must not execute source');", 0, true)]
+        [InlineData("eval('var unsupported = 1;');", 1, false)]
+        public void Coverage_Json_IsCleanAndDoesNotWriteAssemblies(string source, int expectedExit, bool succeeded)
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_coverage_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "sample.js");
+            var reportFile = Path.Combine(tempRoot, "coverage.json");
+            File.WriteAllText(jsFile, source);
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc("coverage", jsFile, "--json", "--coverage-report", reportFile);
+                Assert.Equal(expectedExit, code);
+                using var report = System.Text.Json.JsonDocument.Parse(stdout);
+                Assert.Equal(succeeded, report.RootElement.GetProperty("compilationSucceeded").GetBoolean());
+                Assert.Equal(stdout.Trim(), File.ReadAllText(reportFile).Trim());
+                Assert.Empty(Directory.GetFiles(tempRoot, "*.dll"));
+                if (succeeded)
+                {
+                    Assert.True(string.IsNullOrWhiteSpace(stderr));
+                }
+                else
+                {
+                    Assert.Contains("eval", stderr);
+                    Assert.Equal(1, report.RootElement.GetProperty("counts").GetProperty("unsupported").GetInt32());
+                }
+            }
+            finally
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Coverage_HumanSummaryIncludesMeasurementAndSourceDetails()
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_coverage_text_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "sample.js");
+            File.WriteAllText(jsFile, "function read(value, key) { return value[key]; }");
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc("coverage", jsFile);
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr));
+                Assert.Contains("JROC compilation coverage", stdout);
+                Assert.Contains("statement-source-sites-v1", stdout);
+                Assert.Contains("Runtime / dynamic dispatch", stdout);
+                Assert.Contains(jsFile + ":1:", stdout);
+            }
+            finally
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void NormalCompilationCanWriteCoverageAlongsideTheAssembly()
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_coverage_compile_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "sample.js");
+            var output = Path.Combine(tempRoot, "out");
+            var reportFile = Path.Combine(tempRoot, "coverage.json");
+            File.WriteAllText(jsFile, "var value = 1;");
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(jsFile, "-o", output, "--coverage-report", reportFile);
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr));
+                Assert.True(File.Exists(Path.Combine(output, "sample.dll")));
+                using var report = System.Text.Json.JsonDocument.Parse(File.ReadAllText(reportFile));
+                Assert.True(report.RootElement.GetProperty("complete").GetBoolean());
+            }
+            finally
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
+
+        [Theory]
+        [InlineData("--json", "-v")]
+        [InlineData("--json", "--analyzeunused")]
+        [InlineData("--output", "out")]
+        public void Coverage_RejectsIncompatibleOptions(string option, string value)
+        {
+            var (code, _, stderr) = RunOutOfProc("coverage", "unused.js", option, value);
+            Assert.Equal(1, code);
+            Assert.Contains("coverage", stderr, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public void Coverage_ReportWriteFailureIsExplicit()
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_coverage_error_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "sample.js");
+            File.WriteAllText(jsFile, "var value = 1;");
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc("coverage", jsFile, "--json", "--coverage-report", tempRoot);
+                Assert.Equal(1, code);
+                Assert.Contains("Error writing compilation coverage report", stderr);
+                using var report = System.Text.Json.JsonDocument.Parse(stdout);
+                Assert.True(report.RootElement.GetProperty("compilationSucceeded").GetBoolean());
+            }
+            finally
+            {
+                Directory.Delete(tempRoot, recursive: true);
+            }
+        }
+
         [Fact]
         public void Convert_WithAssemblyName_UsesIdentityForAllArtifacts()
         {

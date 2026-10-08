@@ -21,6 +21,7 @@ public static class InMemoryTestCompiler
         Action<ServiceContainer>? addMocks = null,
         HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
         int timeoutMs = 30000,
+        Action<CompilationCoverageReport>? onCompilationCoverage = null,
         bool parseAsModule = false)
     {
         if (parseAsModule && executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 })
@@ -116,17 +117,27 @@ public static class InMemoryTestCompiler
         JrocCompiledAssemblyArtifact artifact;
         try
         {
-            artifact = JrocInMemoryCompiler.Compile(
-                new JrocInMemoryCompileRequest(entryPath)
-                {
-                    SourceText = entrySourceText,
-                    FileSystem = fileSystem,
-                    RootModuleIdOverride = rootModuleIdOverride,
-                    EmitPdb = true,
-                    AssumeUnmodifiedHostGlobals = true,
-                    HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty,
-                    ParseAsModule = parseAsModule
-                });
+            var request = new JrocInMemoryCompileRequest(entryPath)
+            {
+                SourceText = entrySourceText,
+                FileSystem = fileSystem,
+                RootModuleIdOverride = rootModuleIdOverride,
+                EmitPdb = true,
+                AssumeUnmodifiedHostGlobals = true,
+                HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty,
+                ParseAsModule = parseAsModule
+            };
+            if (onCompilationCoverage is null)
+            {
+                artifact = JrocInMemoryCompiler.Compile(request);
+            }
+            else
+            {
+                var analysis = JrocInMemoryCompiler.AnalyzeCompilationCoverage(request);
+                onCompilationCoverage(analysis.Report);
+                artifact = analysis.Artifact
+                    ?? throw new InvalidOperationException(string.Join(Environment.NewLine, analysis.Report.Diagnostics));
+            }
         }
         finally
         {

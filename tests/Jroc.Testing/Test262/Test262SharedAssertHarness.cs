@@ -17,7 +17,8 @@ public static class Test262SharedAssertHarness
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
-        int timeoutMs = 30000)
+        int timeoutMs = 30000,
+        Action<CompilationCoverageReport>? onCompilationCoverage = null)
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
@@ -34,6 +35,7 @@ public static class Test262SharedAssertHarness
                     addMocks: addMocks,
                     hostRuntimeIntrinsics: hostRuntimeIntrinsics,
                     timeoutMs: timeoutMs,
+                    onCompilationCoverage: onCompilationCoverage,
                     parseAsModule: metadata.Module));
     }
 

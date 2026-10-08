@@ -45,9 +45,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,040 | 12 | 6,460 | 23,512 | **72.47%** |
-| Language syntax and semantics | 17,476 | 97 | 6,074 | 23,647 | **73.90%** |
-| **Total** | 34,576 | 109 | 13,560 | 48,245 | **71.67%** |
+| Built-in objects and APIs | 17,060 | 12 | 6,440 | 23,512 | **72.56%** |
+| Language syntax and semantics | 17,500 | 97 | 6,050 | 23,647 | **74.01%** |
+| **Total** | 34,620 | 109 | 13,516 | 48,245 | **71.76%** |
 
 ## Language Areas
 
@@ -62,7 +62,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 8,722 | 53 | 2,263 | 11,038 | **79.02%** |
+| `expressions` | 8,746 | 53 | 2,239 | 11,038 | **79.24%** |
 | `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -91,8 +91,8 @@ bounded worker cleanup.
 | `arrow-function` | 336 | 0 | 7 | 343 | **97.96%** |
 | `assignment` | 489 | 0 | 0 | 489 | **100.00%** |
 | `assignmenttargettype` | 318 | 0 | 6 | 324 | **98.15%** |
-| `async-arrow-function` | 40 | 0 | 20 | 60 | **66.67%** |
-| `async-function` | 38 | 0 | 55 | 93 | **40.86%** |
+| `async-arrow-function` | 46 | 0 | 14 | 60 | **76.67%** |
+| `async-function` | 56 | 0 | 37 | 93 | **60.22%** |
 | `async-generator` | 212 | 0 | 411 | 623 | **34.03%** |
 | `await` | 9 | 0 | 13 | 22 | **40.91%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
@@ -212,10 +212,10 @@ bounded worker cleanup.
 | `Date` | 575 | 0 | 19 | 594 | **96.80%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
-| `DisposableStack` | 92 | 0 | 1 | 93 | **98.92%** |
+| `DisposableStack` | 93 | 0 | 0 | 93 | **100.00%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
-| `Error` | 55 | 0 | 3 | 58 | **94.83%** |
+| `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
 | `Function` | 410 | 1 | 98 | 509 | **80.55%** |
@@ -233,10 +233,10 @@ bounded worker cleanup.
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
 | `NativeErrors` | 94 | 0 | 0 | 94 | **100.00%** |
 | `Number` | 338 | 0 | 0 | 338 | **100.00%** |
-| `Object` | 3,338 | 0 | 73 | 3,411 | **97.86%** |
+| `Object` | 3,340 | 0 | 71 | 3,411 | **97.92%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
-| `Promise` | 437 | 0 | 240 | 677 | **64.55%** |
+| `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
 | `RegExp` | 1,171 | 0 | 708 | 1,879 | **62.32%** |

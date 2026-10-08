@@ -74,6 +74,20 @@ public class ParserTests
     }
 
     [Fact]
+    public void Test262CoveragePreservesModuleMetadata()
+    {
+        CompilationCoverageReport? report = null;
+        var exception = Assert.ThrowsAny<Exception>(() => Test262SharedAssertHarness.CompileAndExecute(
+            "module_goal_coverage", "Parser",
+            _ => ("/*---\nflags: [module]\n---*/\nvar yield = 1;", "module_goal_coverage.js"),
+            onCompilationCoverage: collected => report = collected));
+        Assert.Contains("Failed to parse JavaScript module", exception.ToString());
+        Assert.NotNull(report);
+        Assert.False(report.CompilationSucceeded);
+        Assert.False(report.Complete);
+    }
+
+    [Fact]
     public void VisitAst_SimpleFunction_VisitsAllNodes()
     {
         // Arrange

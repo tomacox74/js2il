@@ -9,6 +9,7 @@ import sys
 from .client import bytea, canonical, fixture_environment, identity, sha
 from .inventory import normalize_fixture, register, registrations, REPO
 from .importer import provenance, start_run
+from .diagnostics import stage
 
 sys.path.insert(0, str(REPO/'scripts/test262'))
 import catalog
@@ -36,11 +37,14 @@ def prepare(client, args):
     source = git('rev-parse','HEAD')
     if source != args.revision or git('status','--porcelain','--untracked-files=no'):
         raise ValueError('Prepare requires a clean checkout of the requested exact revision')
-    inventory = catalog.bridge({'command':'inventory','root':str(root)})
-    pin = json.loads((REPO/'tests/test262/test262.pin.json').read_text())['upstream']
-    normalized = [normalize_fixture(row,root) for row in inventory]
-    corpus, ids = register(client,args.repository,pin,normalized)
-    snapshot = registrations(client,args.repository,source,ids)
+    with stage('prepare.inventory'):
+        inventory = catalog.bridge({'command':'inventory','root':str(root)})
+        pin = json.loads((REPO/'tests/test262/test262.pin.json').read_text())['upstream']
+        normalized = [normalize_fixture(row,root) for row in inventory]
+    with stage('prepare.corpus'):
+        corpus, ids = register(client,args.repository,pin,normalized,reuse_sealed=True)
+    with stage('prepare.registrations'):
+        snapshot = registrations(client,args.repository,source,ids)
     entry = Path(args.jroc if args.kind=='mvp-composite' else args.host).resolve()
     capabilities = {} if args.kind=='mvp-composite' else json.loads(subprocess.check_output(['dotnet',str(entry),'--capabilities'],text=True,env=fixture_environment()))
     env = catalog.environment(entry)
@@ -49,12 +53,18 @@ def prepare(client, args):
     doc = {'runner':args.kind,'upstream':pin,'inventory':corpus,'binaries':catalog.hash_files(entry.parent,['*.dll','*.deps.json','*.runtimeconfig.json']),
            'harness':catalog.hash_files(root,['harness/**/*']),'tooling':tooling,'capabilities':capabilities,
            'environment_identity':env['identity'],'timeouts':{'runtime':args.runtime_timeout,'compile':args.compile_timeout,'cap_ms':args.cap_ms}}
+    if getattr(args, 'compilation_coverage', False):
+        doc['compiler_options'] = {'compilation_coverage': True, 'coverage_measurement': 'statement-source-sites-v1'}
     pid = provenance(client,args.repository,corpus,args.kind,doc)
     eligibility=[]
     for original, row in zip(inventory,normalized):
         state = 'runnable'
+        reasons = [reason['code'] for reason in original['reasons']]
         if row['is_support_file']:
             state='policy-excluded'
+        elif args.kind=='native' and not nativePorting.porting_supported_path(row['path']):
+            state='policy-excluded'
+            reasons.append('native-porting-area')
         elif row['metadata_state']!='valid':
             state='metadata-error'
         elif args.kind=='mvp-composite' and original['state']!='runnable':
@@ -67,7 +77,7 @@ def prepare(client, args):
             if negative.get('phase') in ('parse','early','resolution') or 'raw' in meta.get('flags',[]) or any(i not in includes for i in meta.get('includes',[])) or row['dependency_manifest_digest'] is None:
                 state='harness-gap'
         eligibility.append({'repository_id':args.repository,'provenance_id':pid,'fixture_id':ids[row['path']],
-                            'eligibility':state,'reason_codes':[reason['code'] for reason in original['reasons']],
+                            'eligibility':state,'reason_codes':reasons,
                             'diagnostic':{'source_state':original['state']}})
     client.put('provenance_fixture_eligibility',eligibility)
     run = start_run(client,args,pid,args.run_key,source,'mvp' if args.kind=='mvp-composite' else 'native')
@@ -150,6 +160,7 @@ def prepare(client, args):
     result={'repository':args.repository,'producer':args.producer,'run':run,'budget':budget,'provenance':pid,
             'kind':args.kind,'revision':source,'registration_snapshot':snapshot,'validation':validation,
             'corpus':corpus,'candidate_ids':[ids[r['path']] for r in choices],'cap_ms':args.cap_ms,'identity':doc}
+    result['compilation_coverage'] = getattr(args, 'compilation_coverage', False)
     Path(args.output).parent.mkdir(parents=True,exist_ok=True)
     Path(args.output).write_text(canonical(result)+'\n')
     return {key:value for key,value in result.items() if key!='identity'}
@@ -164,6 +175,10 @@ def seal(client,args):
         budget=client.one('budget_scopes',budget_scope_id=context['budget'])
         accepted=[]; bindings=[]
         for fid in context['candidate_ids']:
+            # Older pending contexts may predate native porting area exclusions.
+            fixture = client.one('fixtures', fixture_id=fid)
+            if not nativePorting.porting_supported_path(fixture['upstream_path']):
+                continue
             by_variant={}; contradicted=False
             for o in client.read('observations',{'provenance_id':context['provenance'],'fixture_id':fid}):
                 if o['run_id'] not in trusted or client.one('observation_invalidations',observation_id=o['observation_id']):
@@ -208,6 +223,12 @@ def generate_from_view(client,args,context,batch_id):
     stored=client.one('native_batches',batch_id=batch_id)
     if stored is None or stored['state']!='sealed' or context['revision']!=git('rev-parse','HEAD'):
         raise ValueError('Generation needs fresh sealed acceptance at the current checkout SHA')
+    fixtures = [client.one('fixtures', fixture_id=member['fixture_id'])
+                for member in client.read('batch_fixtures',{'batch_id':batch_id,'state':'accepted'})]
+    for fixture in fixtures:
+        if not nativePorting.porting_supported_path(fixture['upstream_path']):
+            # Never silently trim an already sealed batch or partially generate it.
+            raise ValueError('Sealed fixture is outside supported areas: ' + fixture['upstream_path'])
     cache=Path(args.cache)
     if cache.exists():
         raise ValueError('Generation cache must be new; never restore downstream authority')
@@ -217,8 +238,7 @@ def generate_from_view(client,args,context,batch_id):
                               candidate_limit=500,accepted_limit=500,variant_limit=2000,time_limit=86400))
     doc=context['identity']; compiler=sha(doc['binaries']); harness=sha(doc['harness']); environment=sha(doc['environment_identity'])
     db.execute('INSERT INTO active_provenance VALUES(?,?,?,?,0)',(context['run'],compiler,harness,environment))
-    for member in client.read('batch_fixtures',{'batch_id':batch_id,'state':'accepted'}):
-        f=client.one('fixtures',fixture_id=member['fixture_id'])
+    for f in fixtures:
         evidence=list(client.read('batch_evidence',{'batch_id':batch_id,'fixture_id':f['fixture_id']}))
         db.execute('INSERT INTO candidates VALUES(?,?,?,?,?,?,?,?,?,0)',(context['run'],f['upstream_path'],f['content_sha256'][2:],canonical(sorted(e['variant'] for e in evidence)),
                    'central sealed evidence','native',context['provenance'],sha(doc['capabilities']),'accepted'))
@@ -230,3 +250,4 @@ def generate_from_view(client,args,context,batch_id):
     result=nativePorting.generate_batch(db,argparse.Namespace(run_id=context['run'],upstream=args.root,destination=str(REPO),output=args.output))
     db.close()
     return result
+

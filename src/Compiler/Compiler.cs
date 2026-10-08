@@ -18,6 +18,8 @@ public class Compiler
     private readonly IServiceProvider _serviceProvider;
     private readonly ICompilerOutput _ux;
     private readonly Microsoft.Extensions.Logging.ILogger<Compiler> _diagnosticLogger;
+    private readonly CompilationCoverageCollector? _coverage;
+    public CompilationCoverageReport? CompilationCoverage { get; private set; }
 
     public Compiler(
         IServiceProvider serviceProvider,
@@ -36,6 +38,9 @@ public class Compiler
         this._serviceProvider = serviceProvider;
         this._ux = ux;
         this._diagnosticLogger = diagnosticLogger;
+        _coverage = options.CollectCompilationCoverage
+            ? serviceProvider.GetRequiredService<CompilationCoverageCollector>()
+            : null;
     }   
 
     public bool Compile(string inputFile, string? rootModuleIdOverride = null)
@@ -73,6 +78,34 @@ public class Compiler
         IReadOnlyList<JrocCompileEntry> entries,
         string? defaultEntryFilePath = null)
     {
+        if (_coverage is null)
+        {
+            return CompileToArtifactCore(entries, defaultEntryFilePath);
+        }
+
+        JrocCompiledAssemblyArtifact? artifact;
+        try
+        {
+            artifact = CompileToArtifactCore(entries, defaultEntryFilePath);
+        }
+        catch (NotSupportedException exception)
+        {
+            _coverage.RecordDiagnostic(exception.Message);
+            _ux.WriteLineError($"Error: {exception.Message}");
+            artifact = null;
+        }
+        if (artifact is null)
+        {
+            _coverage.RecordDiagnostic("Compilation failed; this report covers only observed source sites.");
+        }
+        CompilationCoverage = _coverage.CreateReport(artifact is not null);
+        return artifact is null ? null : artifact with { CompilationCoverage = CompilationCoverage };
+    }
+
+    private JrocCompiledAssemblyArtifact? CompileToArtifactCore(
+        IReadOnlyList<JrocCompileEntry> entries,
+        string? defaultEntryFilePath)
+    {
         if (entries is null || entries.Count == 0)
         {
             _ux.WriteLineError("Error: Provide at least one entry file.");
@@ -98,7 +131,8 @@ public class Compiler
             IR.IRPipelineMetrics.Reset();
         }
 
-        var modules = this._moduleLoader.LoadModules(entries, defaultEntryFilePath);
+        var modules = this._moduleLoader.LoadModules(entries, defaultEntryFilePath,
+            _coverage is null ? null : _coverage.RecordUnsupported);
         if (modules == null)
         {
             return null;

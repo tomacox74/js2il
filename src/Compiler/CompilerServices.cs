@@ -40,6 +40,10 @@ public static class CompilerServices
 
         // compiler and compiler options
         services.AddSingleton(options);
+        if (options.CollectCompilationCoverage)
+        {
+            services.AddSingleton<CompilationCoverageCollector>();
+        }
         services.AddSingleton(options.HostRuntimeIntrinsics);
         services.AddSingleton<JavaScriptRuntime.IRuntimeIntrinsicCatalog>(
             _ => new JavaScriptRuntime.RuntimeIntrinsicCatalog(options.HostRuntimeIntrinsics));
