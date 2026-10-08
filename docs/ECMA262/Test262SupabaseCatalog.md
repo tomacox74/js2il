@@ -15,11 +15,28 @@ login bindings, legacy control-record preservation and explicit budget enrollmen
 It does not activate authority, create passwords, grant an existing performance login
 new privileges, import history, or touch `public.perf_results`.
 
-The selected production project currently remains `schema-only`, epoch 1. SQL API
-regressions were rehearsed there in rollback-only subtransactions: neither API objects
-nor synthetic catalogue rows were retained. The repository CI applies both migrations
-to an empty PostgreSQL 17 database and runs concurrent claim/budget and privilege tests.
-The rollback rehearsals are validation entries in migration history, not deployments.
+Production cutover was verified on 2026-10-08: both migrations are deployed,
+authority is `active`, and minimum writer epoch is 2. The core path includes live
+MVP ingestion/completion, GitHub App native publication with independent PR CI,
+merged-master CI and exact-source registration refresh; see
+[the activation record](https://github.com/tomacox74/js2il/issues/2230#issuecomment-6052583593)
+and [post-merge verification](https://github.com/tomacox74/js2il/issues/2230#issuecomment-6058883917).
+Verify the live scoped API contract and selected target before each authorized run;
+do not hardcode a saved epoch as future authority or replay cutover during porting.
+
+Historical import parity covers 62 recoverable entries; 11 unavailable archive gaps
+keep `history_complete=false`. Complete long-term artifact retention and client
+run/budget/publication lifecycle bookkeeping remain follow-ups in #2230/#2242.
+The repository CI applies both migrations to empty PostgreSQL 17 and tests
+concurrent claims/budgets, privilege isolation and native evidence invariants.
+
+For coding agents, use the catalogue-first rules in
+[`test262-porting`](../../.github/skills/test262-porting/SKILL.md). Read-only
+reporting or an approved coherent export guides selection; local branch tests
+remain PR validation until separately recorded through the reviewed central path.
+An agent without central access must disclose offline scope, not fall back to
+SQLite authority. The central workflow checks out master; after merging a manual
+port/fix, verify exact-SHA master CI and a subsequent central registration refresh.
 
 ## Restricted identities and process boundary
 
@@ -282,6 +299,18 @@ For initial production verification, dispatch the current `master` with
 the complete normalized inventory identity, pin and count. Native registration
 hashes resolve each fixture under its C# caller's `JavaScript` directory, including
 nested literal names; the upstream path alone does not identify its local bytes.
+
+Native porting discovery and sealing use the generator's supported roots:
+`test/language/` and `test/built-ins/`. Other roots, including `test/harness/`, remain
+in the full catalogue and may be screened by MVP, but native preparation records
+them as `policy-excluded` with reason `native-porting-area` and never schedules
+them for porting. An explicit area cannot override that policy. Sealing also
+filters older pending contexts; generation rejects an already sealed mixed-scope
+batch before creating a generation cache or copying fixtures. It never silently
+trims immutable sealed evidence. After a scope-related generation failure, retain
+the old batch/outbox and start a new native run on the fixed master after its
+master-push MVP validation succeeds, with `publish=false` and
+`export_snapshot=false`; inspect fresh patch validation before publication.
 
 The central workflow preserves context, diagnostics and outbox/WAL files before
 attempting a bounded recovery flush, and then uploads the final recovery artifact.

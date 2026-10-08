@@ -1,6 +1,6 @@
 ---
 name: test262-batch-porting
-description: Port large, efficient batches of pinned upstream test262 cases by screening up to 500 candidates and splitting implementation work when failures span multiple root causes.
+description: Port coherent batches of pinned upstream test262 cases using central Supabase evidence, with up to 500 candidate leads and implementation groups split by root cause.
 tier: standard
 applyTo: 'tests/Jroc.Test262.Tests/**,tests/Jroc.Testing/Test262/**,tests/test262/**,scripts/test262/**,src/Compiler/**,src/JavaScriptRuntime/**,docs/ECMA262/**,CHANGELOG.md'
 ---
@@ -32,17 +32,19 @@ arbitrary numeric target at the cost of mixing unrelated product changes.
 
 ## Workflow
 
-### 1. Restore the catalog and inventory the pinned corpus
+### 1. Read central evidence and inventory the pinned corpus
 
-Start with **Catalog-First Candidate Selection** in `test262-porting`, not a
-new full-corpus preflight. Download the `test262-catalog` Actions artifact or
-reuse a local database, inspect `summary.json` provenance/completeness, and run
-`catalog.py export --refresh-registrations` against the working tree. Full
-commands and artifact behavior are in `docs/ECMA262/Test262Catalog.md`.
+Start with **Catalog-First Candidate Selection** in `test262-porting`.
+Read scoped Supabase reporting or an approved coherent central export and
+record the selected target, source revision, provenance and as-of time.
+Reconcile central registration snapshots with unmerged working-tree and
+pending-PR registrations. Follow `docs/ECMA262/Test262SupabaseCatalog.md`;
+do not restore a legacy SQLite artifact as shared authority.
 
-Use the catalog's full upstream paths and refreshed registration inventory
-as the starting point, verifying the mapping below. Keep SQLite databases,
-exports, and batch lists out of source control.
+Use complete upstream paths and the reconciled registration inventory.
+Keep exports, outboxes, disposable generation caches and batch lists out of
+source control. When central access is unavailable, apply the skill's
+explicit offline-diagnosis rules rather than silently falling back.
 
 1. Run `node scripts/test262/bootstrap.js --print-root`.
 2. Use only the commit pinned by `tests/test262/test262.pin.json`.
@@ -66,17 +68,19 @@ test262 output directory; do not commit planning manifests.
 ### 2. Select up to 500 coherent candidates
 
 Choose candidates from one built-in, language construct, or closely related
-set of clauses. Prefer compatible all-variant passes in
-`passing-unported.txt`, in deterministic path order within the chosen area.
-Use `historical-passing-unported.txt` as a secondary discovery source requiring
-fresh confirmation, not as current pass evidence. Favor an area with enough
-known passes over repeatedly screening the same known failures. Honor an
-explicitly requested feature area.
+set of clauses. Prefer compatible all-required-variant central evidence in
+deterministic path order. Historical and MVP evidence are discovery hints,
+not fresh native acceptance. Legacy `passing-unported.txt` and
+`historical-passing-unported.txt` are usable only as labeled offline/historical
+leads. Favor an area with enough known passes for coverage-only work; honor
+an explicitly requested area or broken-test root cause.
 
 The catalog may contain only a partially scanned corpus. Select up to 500
 coherent candidates from the known evidence; do not block a useful batch on an
 exhaustive scan or describe the known subset as the complete passing list.
-`failures.csv` is for focused shared-gap work, not coverage-only intake.
+Central product-failure clusters are for focused shared-gap work, not
+coverage-only intake. A legacy `failures.csv` needs its source/provenance
+limitations recorded before use.
 
 Before copying fixtures:
 
@@ -92,18 +96,21 @@ to reach 500.
 
 ### 3. Preflight and classify
 
-Reuse compatible catalog results before launching new preflight work.
-`passing-unported.txt` requires every metadata-selected variant to pass under
-one provenance; never aggregate a fixture from just one passing variant or
-combine strict/non-strict results from different builds.
+Reuse compatible central evidence before launching new screening. Require
+every metadata-selected variant under one provenance; never aggregate a
+fixture from one passing variant or mix builds/evidence kinds.
 
-For missing or stale evidence, use a bounded `catalog.py scan --filter ...`
-after initializing against the current build, then export the results.
-Its `--limit` counts variants and each result is checkpointed immediately.
-Use `node scripts/test262/runMvp.js` with an individual `--file` or area filter
-for diagnosis; do not restrict variants when claiming a full fixture pass.
-MVP and native C# harness behavior can differ, so the focused native suite
-remains the acceptance gate even for catalogued passes.
+For missing central evidence, propose an authorized bounded central workflow
+run as described in `test262-porting`; its isolated workers own shared claims,
+budgets and outbox acknowledgements. The 500-candidate intake ceiling does
+not override the supervisor's configured execution budget.
+
+For a compiler fix on a feature branch, use focused native tests or
+`node scripts/test262/runMvp.js` with an individual `--file` or area filter
+for local diagnosis. The central workflow screens master, not an unmerged
+branch. Keep local validation separate from trusted central observations.
+Use local `catalog.py scan` only under the explicit offline-diagnosis scope;
+never claim its checkpointed SQLite rows were uploaded centrally.
 
 Classify each candidate as:
 
@@ -163,10 +170,11 @@ Validate after each coherent group rather than waiting for all 500 candidates:
 
 All accepted tests must pass before the batch is complete. Report deferred
 large-gap and policy-excluded cases separately; do not count them as ported.
-Refresh catalog registration exclusions using
-`catalog.py export --refresh-registrations` after the accepted ports are
-registered. Record native failures separately for follow-up without relabeling
-MVP results as native evidence.
+Reconcile working-tree registration exclusions after adding the ports.
+Record native failures separately without relabeling MVP or local results
+as trusted native evidence. After merge, follow the exact-SHA master CI and
+central registration-refresh checks in `test262-porting`; a local export
+does not perform that refresh.
 
 ### 7. Complete documentation
 

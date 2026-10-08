@@ -1,6 +1,6 @@
 ---
 name: find-failing-test262-tests
-description: Discover which test262 tests are failing and not yet ported into tests/Jroc.Test262.Tests, identifying good candidates for future porting cycles.
+description: Discover unported failing test262 cases from scoped central Supabase reporting, distinguishing current product failures from historical, harness and infrastructure evidence.
 tier: standard
 applyTo: 'tests/Jroc.Test262.Tests/**,scripts/test262/**,docs/ECMA262/**'
 ---
@@ -19,25 +19,33 @@ Identify failing test262 test cases that:
 ## Workflow
 
 1. **Consult the catalog before probing**:
-   - Follow **Catalog-First Candidate Selection** in `test262-porting` to
-     download the `test262-catalog` Actions artifact and refresh registrations.
-     Commands and provenance rules are in `docs/ECMA262/Test262Catalog.md`.
-   - Read `summary.json` for the pinned revision, evaluation fingerprint,
-     completeness, and registration warnings.
-   - Use `failures.csv` to find recorded `runtime-mismatch` clusters. Subtract
-     `registered.txt` using complete upstream paths: the failures export is
-     not restricted to unported tests.
+   - Follow **Catalog-First Candidate Selection** in `test262-porting`:
+     query authorized scoped Supabase reporting or use an approved coherent
+     central export. Read `docs/ECMA262/Test262SupabaseCatalog.md`.
+   - Record pin, target/source revision, evidence kind, provenance,
+     registration-snapshot identity and as-of time. Reconcile the central
+     snapshot with working-tree and pending-PR registrations.
+   - Use central product-failure clusters, with full upstream paths, to find
+     demonstrated semantic failures. Exclude already registered cases using
+     complete paths; distinguish central master from unmerged branch state.
    - Treat `runner-error`, metadata errors, policy exclusions, and timeouts
      separately from demonstrated runtime semantic mismatches. Historical
      failures need reproduction on the current build before diagnosis.
-   - If the user wants **passing** unported tests, use
-     `passing-unported.txt` instead; it requires all selected variants to pass.
-     Do not present a partially scanned catalog as an exhaustive result.
+   - For **passing** unported tests, require every required variant under
+     one compatible provenance and keep MVP/historical hints separate from
+     trusted native acceptance. Do not present partial coverage as exhaustive.
+   - If central read access/export is unavailable, state that limitation and
+     use the explicit offline rules in `test262-porting`. Legacy
+     `failures.csv`/`registered.txt` lists may guide diagnosis but cannot
+     establish current central status.
 
 2. **Probe missing or stale evidence by feature area**:
-   - Prefer bounded `catalog.py scan --filter ... --limit 100 --seconds 120`
-     after `init` against the current build; export afterward to retain
-     checkpointed results. The limit counts variants, not fixtures.
+   - For shared evidence, use an authorized bounded central workflow run;
+     its supervisor owns claims/budgets and isolates fixture execution.
+   - For a feature-branch fix, reproduce locally with focused native tests
+     or targeted MVP probes and report these as local validation. Central
+     workflow runs check out master. Use `catalog.py scan` only for labeled
+     offline diagnosis; it does not acknowledge central ingestion.
    - Use `node scripts/test262/runMvp.js` for targeted reproduction:
    - Filter by built-in category (e.g., `built-ins/Array`, `built-ins/String`)
    - Limit test count to avoid timeout (start with `--limit 50` to `--limit 100`)
@@ -84,7 +92,9 @@ node scripts/test262/runMvp.js --filter "built-ins/Array/prototype" --limit 60
 - Test262 cache: `artifacts/test262/cache/<sha>/test/`
 - Ported tests: `tests/Jroc.Test262.Tests/<category>/<feature>/JavaScript/`
 - Execution tests: `tests/Jroc.Test262.Tests/<category>/<feature>/ExecutionTests.cs`
-- Catalog: `artifacts/test262/catalog.sqlite`, or a downloaded `test262-catalog`
-  Actions artifact; reuse recorded evidence before probing.
+- Catalogue authority: scoped Supabase reporting/approved coherent central
+  exports; see `docs/ECMA262/Test262SupabaseCatalog.md`.
+- Local SQLite artifacts: offline/historical hints or caches only; never the
+  shared authority or proof of trusted central native acceptance.
 - Running test262 MVP: `node scripts/test262/runMvp.js` for targeted reproduction.
 - Spec support docs: `docs/ECMA262/` (use clause status and support notes to spot missing functionality)

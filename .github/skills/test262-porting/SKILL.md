@@ -1,6 +1,6 @@
 ---
 name: test262-porting
-description: Port upstream test262 cases and extend the native C# test262 harness when a fixture requires another helper.
+description: Port or fix pinned upstream test262 cases using the central Supabase catalogue for shared evidence, and extend the native C# harness when required.
 tier: standard
 applyTo: 'tests/Jroc.Test262.Tests/**,tests/Jroc.Testing/Test262/**,tests/test262/**,.github/copilot-instructions.md'
 ---
@@ -15,80 +15,98 @@ Keep the upstream `test262` case as the source of truth by copying the JavaScrip
 
 ## Catalog-First Candidate Selection
 
-Before discovering candidates, consult the **Test262 artifact catalog**.
-The SQLite database and generated lists are published by
-`.github/workflows/test262-catalog.yml` as the `test262-catalog` Actions artifact.
-See `docs/ECMA262/Test262Catalog.md` for the schema, provenance rules, and
-workflow inputs. Keep downloads and generated lists under ignored
-`artifacts/test262/` or session storage, not in Git.
+Use the **central Supabase catalogue** as the shared source of evidence,
+registration snapshots, reporting targets, leases and budgets. Read
+[the central catalogue runbook](../../../docs/ECMA262/Test262SupabaseCatalog.md)
+before selection or screening. Repository variable
+`TEST262_CATALOGUE_AUTHORITY=supabase` selects this backend; legacy SQLite
+artifacts do not become authoritative when copied into a checkout.
 
-1. Look for an existing local catalog or a completed catalog workflow run.
-   Select a trusted run from the intended branch that actually published the
-   aggregate artifact; do not assume the latest run has one:
+1. Update the working branch from current `master` and read its instructions.
+   Scope central reporting to repository
+   `faf01df8-aa65-4375-a708-6c1e555f957b`, the pinned revision in
+   `tests/test262/test262.pin.json`, evidence kind and selected channel.
+   Use an authorized read-only reporting connection/connector or an
+   operator-provided coherent central export. Start with
+   `test262_reporting.v_current_fixture_status`,
+   `v_historical_candidates`, `v_native_acceptance` and
+   `v_failure_clusters`; inspect their actual column definitions before
+   querying. Record source/as-of time, source revision, provenance, target
+   and registration-snapshot identities, required variants and limitations.
+   Never request supervisor/publication credentials for candidate discovery.
 
-   ```sh
-   gh run list --workflow test262-catalog.yml --branch master --limit 10
-   # Replace RUN_ID with the selected run ID; use a fresh download directory.
-   gh run download RUN_ID --name test262-catalog --dir artifacts/test262/catalog-download
-   ```
+2. Compare central registration evidence with the actual working-tree C#
+   registrations and fixture hashes, including pending PRs and legacy paths.
+   Use complete upstream paths, never basenames. A master snapshot cannot
+   know about this checkout's unmerged registrations; subtract those locally
+   without deleting or replacing central registrations. Resolve unmapped or
+   ambiguous entries before counting a candidate as unported.
 
-   Use the feature branch instead of `master` when evaluating a catalog not
-   yet published on the default branch. Do not overwrite a database being
-   written by an active scan.
+3. Prefer compatible all-required-variant evidence for coverage-only ports.
+   Treat historical passes and MVP composite-runner passes as discovery
+   hints, not fresh native acceptance. For broken-test work, group central
+   product failures by root cause and reproduce them on the branch build.
+   Keep harness gaps, policy exclusions, metadata errors, infrastructure
+   errors and incomplete work separate. Do not combine variants across
+   provenance, pins, dependencies or evidence kinds.
 
-2. Read `summary.json` before using any list. Verify the upstream pin against
-   `tests/test262/test262.pin.json`, examine the fingerprint and runner identity,
-   and report scan completeness. `inventory_complete` does not mean execution
-   is complete. A false `complete_passing_unported_list` means the exported
-   passes are only the known subset, not all passing unported tests.
-
-3. Refresh registration exclusions against the working tree:
-
-   ```sh
-   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite \
-     export --refresh-registrations --output artifacts/test262/catalog-download
-   ```
-
-   Inspect `registration_warnings` in the new summary. Resolve candidates
-   against actual C# registrations and canonical/legacy fixture paths; never
-   suppress a candidate by basename alone.
-
-4. Prefer `passing-unported.txt`, then `historical-passing-unported.txt` when
-   selecting coverage-only ports. "Current" in a downloaded catalog refers
-   to its recorded environment, not automatically this checkout or local
-   build. Each accepted catalog pass must have **every required variant**
-   passing under one provenance; missing variants, timeouts, metadata errors,
-   and unsupported requirements are not passes.
-
-   To establish local provenance or resume missing evidence, build the current
-   compiler, initialize the database, and run only a bounded relevant area:
+4. Use the reviewed `.github/workflows/test262-central.yml` supervisor for
+   authorized shared screening, queue claims and durable uploads. Inspect
+   existing runs before proposing additional work:
 
    ```sh
-   dotnet build src/Cli/Jroc.csproj -c Release
-   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite init --expand
-   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite \
-     scan --filter built-ins/Array/prototype/at --limit 100 --seconds 120
-   python3 scripts/test262/catalog.py --db artifacts/test262/catalog-download/catalog.sqlite \
-     export --refresh-registrations --output artifacts/test262/catalog-download
+   gh run list --workflow test262-central.yml --branch master --limit 10
+   gh run view RUN_ID --json headSha,status,conclusion,jobs
+   gh api repos/tomacox74/js2il/actions/runs/RUN_ID/artifacts
    ```
 
-   Change the filter to the requested area. `--limit` counts **variants**, not
-   fixtures. Initialization retains old evidence as historical when the
-   fingerprint changes. Ordinary scans resume missing variants; use `--retry`
-   only for a deliberate recheck. If no artifact is available, use the default
-   `artifacts/test262/catalog.sqlite` with `init --expand`, bounded `scan`, and
-   `export` rather than starting another whole-corpus local scan.
+   The workflow checks out `master`; selecting a feature branch in the
+   dispatch UI does not screen that branch's compiler fix. Request a bounded
+   `area` with `kind=native` for native screening or `mvp-composite` for
+   discovery; default to `publish=false`. Dispatch/publication requires
+   existing task authorization. `export_snapshot` is optional and defaults
+   to false: ordinary recovery artifacts contain context/outboxes, not
+   necessarily a complete catalogue. A central NDJSON export needs a matching
+   repository header, snapshot token/as-of time and verified footer counts
+   and SHA-256; reject `.partial` files or a missing completion footer.
+   Do not restart disabled `test262-catalog.yml` or legacy native workflows.
 
-5. Catalog evidence comes from the **MVP composite-JavaScript runner**, not the
-   native C# harness. Historical or otherwise incompatible passes need fresh
-   confirmation. Always run the focused native `Jroc.Test262.Tests` suite
-   after porting; catalog passes alone never count as published conformance.
-   Do not rerun MVP preflight unnecessarily for candidates with compatible,
-   complete evidence. Use targeted probes for missing evidence or diagnosis.
+5. Run focused native tests on the working-tree compiler to diagnose and
+   validate a fix. These local results are valid PR validation but do not
+   automatically enter Supabase or qualify as trusted central evidence.
+   Report that distinction explicitly. Never run fixtures in a process with
+   database/GitHub write credentials. Shared execution uses the scoped
+   supervisor and isolated fixture containers from the runbook; preserve
+   outboxes until server receipts and completion acknowledgements are
+   verified. Do not directly update tables, reporting targets, trust classes,
+   leases or authority, or manufacture observations from TRX/SQLite counts.
 
-After an accepted port, refresh registrations and exports again so subsequent
-selection excludes it. Leave exhaustive discovery to the resumable catalog
-workflow; do not wait for a complete catalog before porting a known-good batch.
+6. After porting, recheck complete-path registrations locally and document
+   the candidate/evidence source and focused validation in the PR. After
+   merge, verify required master CI at the exact merged SHA, then verify a
+   central preparation/registration refresh selects that SHA and maps the
+   new fixtures. Ordinary PR/master test CI alone does not refresh Supabase
+   registrations. Core catalogue acceptance additionally requires fresh
+   trusted required-variant bindings, acknowledged ingestion/completions and
+   settled reservations; a green workflow or registration count is not proof.
+
+### Offline diagnosis and SQLite caches
+
+If read-only central access or a usable central export is unavailable, state
+the access limitation. Continue scoped compiler/harness diagnosis and local
+PR validation when authorized, but mark selection/evidence as offline,
+untrusted with respect to central acceptance, and potentially stale. Do not
+claim a central refresh, current global completeness or trusted native
+acceptance. Do not block a concrete compiler fix on a whole-corpus scan.
+
+Use `catalog.py`, `nativePorting.py` and legacy SQLite lists only as explicit
+offline diagnostics, historical discovery or disposable generation caches.
+Their local `export --refresh-registrations` changes only local state; it
+does not update Supabase. Follow the legacy/offline command reference in
+`docs/ECMA262/Test262Catalog.md` only with that scope stated. Never import an
+agent's local database as a replacement for active central state or reuse
+another producer's IDs/epoch. A source registration, local pass, legacy import
+or accepted batch each has a different meaning.
 
 ## Porting Workflow
 
