@@ -22,6 +22,7 @@ public sealed record JrocInMemoryMultiEntryCompileRequest(IReadOnlyList<JrocInMe
     public string? DiagnosticFilePath { get; init; }
 
     public bool AnalyzeUnused { get; init; }
+    public bool CollectCompilationCoverage { get; init; }
 
     public bool GenerateModuleExportContracts { get; init; } = true;
 

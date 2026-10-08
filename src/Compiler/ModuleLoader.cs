@@ -71,7 +71,8 @@ public class ModuleLoader
 
     public Modules? LoadModules(
         IReadOnlyList<JrocCompileEntry> entries,
-        string? defaultEntryFilePath = null)
+        string? defaultEntryFilePath = null,
+        Action<SourceSpan, string>? unsupportedSiteRecorder = null)
     {
         if (entries is null || entries.Count == 0)
         {
@@ -173,6 +174,7 @@ public class ModuleLoader
                 diagnostics,
                 entryOverride,
                 requestedAliasModuleId,
+                unsupportedSiteRecorder,
                 out var module);
             if (module is null)
             {
@@ -363,6 +365,7 @@ public class ModuleLoader
         ModuleLoadDiagnostics diagnostics,
         string? rootModuleIdOverride,
         string? requestedAliasModuleId,
+        Action<SourceSpan, string>? unsupportedSiteRecorder,
         out ModuleDefinition? module)
     {
         string jsSource;
@@ -623,7 +626,7 @@ public class ModuleLoader
         {
             _diagnosticLogger.LogInformation("Validating module: {ModulePath}", modulePath);
         }
-        var validationResult = _validator.Validate(ast);
+        var validationResult = _validator.Validate(ast, unsupportedSiteRecorder);
         if (!validationResult.IsValid)
         {
             diagnostics.AddValidationErrors(module.ModuleId, modulePath, validationResult.Errors);

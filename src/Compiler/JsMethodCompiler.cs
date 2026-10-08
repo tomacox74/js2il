@@ -139,6 +139,7 @@ internal sealed class JsMethodCompiler
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private readonly ILogger<JsMethodCompiler> _diagnosticLogger;
     private readonly bool _diagnosticsEnabled;
+    private readonly CompilationCoverageCollector? _coverage;
 
     public JsMethodCompiler(
         MetadataBuilder metadataBuilder,
@@ -166,6 +167,9 @@ internal sealed class JsMethodCompiler
         _moduleTypeRegistry = moduleTypeRegistry;
         _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog;
         _diagnosticsEnabled = options.DiagnosticsEnabled;
+        _coverage = options.CollectCompilationCoverage
+            ? serviceProvider.GetRequiredService<CompilationCoverageCollector>()
+            : null;
         _diagnosticLogger = diagnosticLogger;
         _serviceProvider = serviceProvider;
     }
@@ -1099,6 +1103,8 @@ internal sealed class JsMethodCompiler
 
         if (!HIRBuilder.TryParseMethod(node, scope, callableKind, hasScopesParameter, out var hirMethod))
         {
+            _coverage?.RecordUnsupported(Jroc.DebugSymbols.SourceSpan.FromNode(node, scope.ModuleId ?? string.Empty),
+                $"HIR cannot lower {node.Type}.");
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR parse failed for node type {node.Type}");
             return false;
         }
@@ -1107,6 +1113,8 @@ internal sealed class JsMethodCompiler
         var callableRegistry = _serviceProvider.GetService<CallableRegistry>();
         if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId, isDerivedConstructor: isDerivedConstructor, callableRegistry: callableRegistry, generatedFunctionObjectRegistry: _serviceProvider.GetService<GeneratedFunctionObjectRegistry>(), runtimeIntrinsicCatalog: _runtimeIntrinsicCatalog))
         {
+            _coverage?.RecordUnsupported(Jroc.DebugSymbols.SourceSpan.FromNode(node, scope.ModuleId ?? string.Empty),
+                $"LIR cannot lower {node.Type}.");
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
         }
@@ -1176,6 +1184,7 @@ internal sealed class JsMethodCompiler
                     : scopeName);
         }
 
+        _coverage?.RecordMethod(lirMethod!);
         methodBody = lirMethod!;
         return true;
     }

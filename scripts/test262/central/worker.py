@@ -55,6 +55,8 @@ def run_container(args, fixture, variant, cap_ms, manifest, work):
         jroc = '/repo/' + Path(args.jroc).resolve().relative_to(REPO).as_posix()
         request = {'root':'/upstream','output':'/work/case','fixture':fixture['upstream_path'],'variant':variant,
                    'jroc':jroc,'timeout':args.runtime_timeout,'compileTimeout':args.compile_timeout}
+        if getattr(args, 'compilation_coverage', False):
+            request['compilationCoverage'] = True
         command = common[:2] + ['-i'] + common[2:] + ['node','/repo/scripts/test262/catalogBridge.js']
         stdin = canonical(request)
     else:
@@ -62,6 +64,8 @@ def run_container(args, fixture, variant, cap_ms, manifest, work):
         plan = {'upstream_root':'/upstream','timeout_ms':max(1,cap_ms-10000),'variant_limit':1,
                 'time_limit_seconds':max(1,cap_ms//1000),
                 'candidates':[{'path':fixture['upstream_path'],'sha256':fixture['content_sha256'][2:],'variants':[variant]}]}
+        if getattr(args, 'compilation_coverage', False):
+            plan['compilation_coverage'] = True
         (work/'plan.json').write_text(canonical(plan))
         command = common + ['dotnet',host,'--plan','/work/plan.json']
         stdin = None

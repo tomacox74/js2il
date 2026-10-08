@@ -20,7 +20,8 @@ public static class InMemoryTestCompiler
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
         HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
-        int timeoutMs = 30000)
+        int timeoutMs = 30000,
+        Action<CompilationCoverageReport>? onCompilationCoverage = null)
     {
         var (script, sourcePath) = getJavaScriptAndSourcePath(testName);
         var fileSystem = new MockFileSystem();
@@ -110,16 +111,26 @@ public static class InMemoryTestCompiler
         JrocCompiledAssemblyArtifact artifact;
         try
         {
-            artifact = JrocInMemoryCompiler.Compile(
-                new JrocInMemoryCompileRequest(entryPath)
-                {
-                    SourceText = entrySourceText,
-                    FileSystem = fileSystem,
-                    RootModuleIdOverride = rootModuleIdOverride,
-                    EmitPdb = true,
-                    AssumeUnmodifiedHostGlobals = true,
-                    HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty
-                });
+            var request = new JrocInMemoryCompileRequest(entryPath)
+            {
+                SourceText = entrySourceText,
+                FileSystem = fileSystem,
+                RootModuleIdOverride = rootModuleIdOverride,
+                EmitPdb = true,
+                AssumeUnmodifiedHostGlobals = true,
+                HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty
+            };
+            if (onCompilationCoverage is null)
+            {
+                artifact = JrocInMemoryCompiler.Compile(request);
+            }
+            else
+            {
+                var analysis = JrocInMemoryCompiler.AnalyzeCompilationCoverage(request);
+                onCompilationCoverage(analysis.Report);
+                artifact = analysis.Artifact
+                    ?? throw new InvalidOperationException(string.Join(Environment.NewLine, analysis.Report.Diagnostics));
+            }
         }
         finally
         {

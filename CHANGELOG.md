@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(compiler): add opt-in compilation-mode coverage with source locations,
+  reasons, counts and percentages, text/JSON CLI and SDK analysis, partial
+  unsupported reports, Test262 aggregation independent of correctness, and
+  retained bounded CI artifacts.
 - fix(runtime): coerce computed property keys once, preserve class constructor
   metadata and property ordering, reject static prototype redefinitions, and
   resolve duplicate class accessors through their JavaScript descriptors.

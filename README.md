@@ -79,6 +79,7 @@ the input file.
 jroc <InputFile> [<OutputPath>] [options]
 jroc <InputFile> [<OutputPath>] -a <file> [-a <file> ...] [options]
 jroc --moduleid <ModuleId> [<OutputPath>] [options]
+jroc coverage <InputFile> [--json] [--coverage-report <file>]
 ```
 
 | Option | Description |
@@ -92,6 +93,9 @@ jroc --moduleid <ModuleId> [<OutputPath>] [options]
 | `--diagnostic-file <path>` | Write compiler diagnostics to a text file. |
 | `--analyzeunused` | Report unused functions, properties, and variables. |
 | `--pdb` | Emit Portable PDB debug symbols. |
+| `--coverage` | Analyze compilation modes in memory without writing or executing an assembly. |
+| `--json` | Print machine-readable coverage JSON in analysis mode. |
+| `--coverage-report <file>` | Write a coverage JSON report, also during normal compilation. |
 | `--assume-unmodified-host-globals` | Opt into guard-free calls to provably unchanged built-ins when the host guarantees pristine global bindings throughout execution. |
 | `--version` | Print the installed JROC version. |
 | `-h`, `-?`, `--help` | Show command-line help. |
@@ -123,6 +127,11 @@ dotnet out/app.dll
 `app.js` is the default entry when the assembly runs, and its basename (`app`)
 determines the assembly name and output filenames unless `--assemblyname`
 overrides it. Additional files do not produce separate assemblies.
+
+Use `jroc coverage app.js` to inspect direct IL, bound runtime intrinsics,
+dynamic/fallback paths, and unsupported sites independently of correctness.
+See [compilation-mode coverage](docs/compiler/CompilationCoverage.md) for the
+source-site measurement and Test262 aggregation.
 
 ## Use JROC from .NET projects
 

@@ -13,6 +13,10 @@ on:
       area:
         type: string
         default: ''
+      compilation_coverage:
+        description: Collect static compiler-mode reports with separate provenance
+        type: boolean
+        default: false
   schedule:
     - cron: '15 6 * * 1'
 permissions:
@@ -61,12 +65,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           KIND: ${{ inputs.kind || 'mvp-composite' }}
           AREA: ${{ inputs.area }}
+          COMPILATION_COVERAGE: ${{ inputs.compilation_coverage || 'false' }}
         run: |
+          COVERAGE_ARGS=()
+          if [ "$COMPILATION_COVERAGE" = "true" ]; then
+            COVERAGE_ARGS+=(--compilation-coverage)
+          fi
           python -m scripts.test262.central.cli prepare --kind "$KIND" \
             --root "$TEST262_ROOT" --revision "$(git rev-parse HEAD)" \
             --run-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" \
             --budget-key "actions:$GITHUB_RUN_ID" --area "$AREA" \
-            --output artifacts/test262/central-context.json
+            --output artifacts/test262/central-context.json "${COVERAGE_ARGS[@]}"
           python -m scripts.test262.central.cli work \
             --context artifacts/test262/central-context.json --root "$TEST262_ROOT" \
             --outbox artifacts/test262/central-outbox.sqlite
@@ -101,6 +110,22 @@ jobs:
             python -m scripts.test262.central.cli flush --outbox artifacts/test262/central-outbox.sqlite
           fi
           python -m scripts.test262.central.cli export --output artifacts/test262/central-snapshot.ndjson
+      - name: Aggregate retained compiler reports without database credentials
+        if: ${{ always() && inputs.compilation_coverage }}
+        run: |
+          if [ -f artifacts/test262/central-outbox.sqlite ]; then
+            python -m scripts.test262.compilationCoverage --outbox artifacts/test262/central-outbox.sqlite \
+              --context artifacts/test262/central-context.json --output artifacts/test262/central-compilation-coverage.json
+          fi
+      - name: Retain central compiler coverage
+        if: ${{ always() && inputs.compilation_coverage }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-central-compilation-coverage-${{ github.run_id }}
+          path: artifacts/test262/central-compilation-coverage.json
+          if-no-files-found: error
+          retention-days: 90
+          overwrite: true
       - name: Preserve recovery outbox on failure
         if: always()
         uses: actions/upload-artifact@v7

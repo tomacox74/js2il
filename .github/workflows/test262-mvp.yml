@@ -62,7 +62,24 @@ jobs:
         run: npm run test262:bootstrap
 
       - name: Run bounded test262 PR suite
-        run: npm run test262:run-pr -- --output "$TEST262_ARTIFACT_DIR"
+        run: npm run test262:run-pr -- --output "$TEST262_ARTIFACT_DIR" --compilation-coverage
+
+      - name: Aggregate compilation modes independently of correctness
+        if: always()
+        run: |
+          if [ -f "$TEST262_ARTIFACT_DIR/summary.json" ]; then
+            python -m scripts.test262.compilationCoverage --summary "$TEST262_ARTIFACT_DIR/summary.json" \
+              --output "$TEST262_ARTIFACT_DIR/compilation-coverage.json"
+          fi
+
+      - name: Retain compiler coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-pr-compilation-coverage
+          path: artifacts/test262/pr/compilation-coverage.json
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Append test262 PR summary
         if: always()
@@ -153,7 +170,24 @@ jobs:
         run: npm run test262:bootstrap
 
       - name: Run bounded test262 nightly suite
-        run: npm run test262:run-nightly -- --output "$TEST262_ARTIFACT_DIR"
+        run: npm run test262:run-nightly -- --output "$TEST262_ARTIFACT_DIR" --compilation-coverage
+
+      - name: Aggregate nightly compilation modes
+        if: always()
+        run: |
+          if [ -f "$TEST262_ARTIFACT_DIR/summary.json" ]; then
+            python -m scripts.test262.compilationCoverage --summary "$TEST262_ARTIFACT_DIR/summary.json" \
+              --output "$TEST262_ARTIFACT_DIR/compilation-coverage.json"
+          fi
+
+      - name: Retain nightly compiler coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-nightly-compilation-coverage
+          path: artifacts/test262/nightly/compilation-coverage.json
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Append test262 nightly summary
         if: always()

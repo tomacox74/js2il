@@ -13,6 +13,7 @@ These design documents describe the JROC compiler pipeline, including callable p
 
 ## Lowering, code generation, and optimization
 
+- [Compilation-mode coverage](CompilationCoverage.md)
 - [Async/await lowering specification](AsyncAwait_LoweringSpec.md)
 - [Async/await three-way comparison](AsyncAwait_ThreeWay_Comparison.md)
 - [Guarded String intrinsic calls](GuardedStringIntrinsicCalls.md)

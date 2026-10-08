@@ -35,6 +35,7 @@ Common request options:
 | `EmitPdb` | Include Portable PDB bytes with original source locations. |
 | `Verbose` / `DiagnosticFilePath` | Enable verbose compiler diagnostics or capture diagnostics to a file. |
 | `AnalyzeUnused` | Enable unused analysis diagnostics. |
+| `CollectCompilationCoverage` | Opt into static source-site compilation-mode reporting on the returned artifact; defaults to `false`. |
 | `AssumeUnmodifiedHostGlobals` | Opt into branch-free built-in global calls when source analysis proves their bindings unchanged and the host guarantees pristine bindings for every invocation. Defaults to `false`. |
 
 When `SourceText` is present, it overlays the entry file at `EntryFilePath`;
@@ -137,6 +138,19 @@ The artifact contains `AssemblyName`, `PeBytes`, optional `PdbBytes`,
 `ModuleIds`, `EntryModuleId`, `EntryModuleAliases`, and `EntryModules`. Use this form when the
 application needs to inspect or persist runtime-generated compilation output
 rather than execute it immediately. No output files are written implicitly.
+
+### Compilation-mode analysis
+
+`JrocInMemoryCompiler.AnalyzeCompilationCoverage(request)` accepts either request
+type and returns a `CompilationCoverageAnalysis`. `Report` includes source
+locations, reasons, counts, percentages, and compilation diagnostics; `Artifact`
+is null on recognized compilation failure. Analysis does not load or execute
+source, and compiles only once. Unexpected compiler exceptions still propagate.
+
+For ordinary compilation, enable `CollectCompilationCoverage` and inspect the
+successful artifact's optional `CompilationCoverage` property. Disabled requests
+have no report or collector. See [compilation-mode coverage](../../compiler/CompilationCoverage.md)
+for measurement semantics, JSON schema, partial reports, and Test262 integration.
 
 ### Multiple independent entries
 
