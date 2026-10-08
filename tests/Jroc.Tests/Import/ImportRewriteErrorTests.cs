@@ -21,7 +21,7 @@ console.log(x);
     }
 
     [Fact]
-    public void Import_DeleteIdentifier_ShouldFailCompilation()
+    public void Import_DeleteIdentifier_ShouldFailModuleParsing()
     {
         var ex = Assert.Throws<InvalidOperationException>(() => Compile("""
 import { x } from "./lib.mjs";
@@ -29,7 +29,7 @@ delete x;
 console.log(x);
 """, libSource: "export let x = 1;\n"));
 
-        Assert.Contains("Cannot delete import binding 'x'", ex.Message);
+        Assert.Contains("Failed to parse JavaScript module", ex.Message);
     }
 
     [Fact]

@@ -129,9 +129,11 @@ namespace JavaScriptRuntime
                 "eval is not supported by JROC at this time; support will be added in a future release");
         private static readonly Func<object[], object?, object> _bigIntFunctionValue = static (_, value) =>
             global::JavaScriptRuntime.BigInt.Call(value);
-        private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, body) =>
+        private static readonly Func<object[], object?[]?, Delegate> _functionConstructorValue = static (_, args) =>
         {
-            if (body is null)
+            var callArgs = args ?? System.Array.Empty<object?>();
+            JavaScriptRuntime.Function.PrepareDynamicFunctionSource(callArgs);
+            if (callArgs.Length == 0 || callArgs[0] is null)
             {
                 var bodyObject = new EmptyDynamicFunctionBody();
                 BuiltinFunctionVariadic function = bodyObject.Invoke;
@@ -1094,7 +1096,7 @@ namespace JavaScriptRuntime
         /// Currently exposed as a callable function value so libraries can reference it as a global identifier.
         /// Invoking it will throw until Function constructor semantics are implemented.
         /// </summary>
-        public static Func<object[], object?, Delegate> Function => _functionConstructorValue;
+        public static Func<object[], object?[]?, Delegate> Function => _functionConstructorValue;
 
         public static Delegate SharedArrayBuffer => _sharedArrayBufferConstructorValue;
         internal static object SharedArrayBufferIntrinsicConstructor

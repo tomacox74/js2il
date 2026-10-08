@@ -4,7 +4,7 @@
 
 [Back to Section12](Section12.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-08T21:54:24Z
+> Last generated (UTC): 2026-10-08T00:07:22Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -18,5 +18,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Comment lexical syntax | Supported with Limitations | `tests/Jroc.Test262.Tests/language/comments/LexicalSourceConformanceBatchTests.cs` |  | Twenty-two pinned Test262 comment fixtures are natively verified, covering single-line, multi-line, HTML-style, and hashbang comment handling. |
+| Comment lexical syntax | Supported with Limitations | `tests/Jroc.Test262.Tests/language/comments/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/comments/RemainingCommentsExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/comments/hashbang/RemainingCommentsExecutionTests.cs` |  | All 52 pinned Test262 comment cases have published outcomes: 46 are natively verified and six are explicitly excluded because eval is unsupported. Coverage includes single-line, multi-line, HTML-style, and hashbang comments, hashbang line terminators and invalid placements, and escaped hashbang rejection. Module fixtures use the Module parse goal even without import/export syntax. Function-family constructors reject hashbang prefixes in parameter and body source after ordered argument coercion; general dynamic string execution remains limited. |
 

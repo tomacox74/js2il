@@ -38,6 +38,56 @@ public class ParserTests
     }
 
     [Fact]
+    public void ParseModule_Hashbang_UsesModuleGoal()
+    {
+        var ast = _parser.ParseJavaScriptModule("#! comment\n", "original.js");
+        Assert.IsType<Acornima.Ast.Module>(ast);
+        Assert.Empty(ast.Body);
+    }
+
+    [Theory]
+    [InlineData("return 1;")]
+    [InlineData("var yield = 1;")]
+    [InlineData("if (true) { export {}; }")]
+    public void ParseModule_RejectsPermissiveScriptSyntax(string source)
+    {
+        Assert.NotNull(_parser.ParseJavaScript(source, "script.js"));
+        var exception = Assert.Throws<Exception>(() => _parser.ParseJavaScriptModule(source, "original.js"));
+        Assert.Contains("Failed to parse JavaScript module", exception.Message);
+    }
+
+    [Theory]
+    [InlineData("/*---\nflags: [module, raw]\n---*/", true)]
+    [InlineData("/*---\nflags:\n  - module\n---*/", true)]
+    [InlineData("/*---\nflags: [raw]\n---*/", false)]
+    [InlineData("// module", false)]
+    public void Test262ModuleMetadataSelectsModuleGoal(string source, bool expected)
+        => Assert.Equal(expected, Test262SharedAssertHarness.IsModule(source));
+
+    [Fact]
+    public void Test262ModuleMetadataUsesStrictModuleGrammarWithoutImports()
+    {
+        var exception = Assert.ThrowsAny<Exception>(() => Test262SharedAssertHarness.CompileAndExecute(
+            "module_goal", "Parser",
+            _ => ("/*---\nflags: [module]\n---*/\nvar yield = 1;", "module_goal.js")));
+        Assert.Contains("Failed to parse JavaScript module", exception.ToString());
+    }
+
+    [Fact]
+    public void Test262CoveragePreservesModuleMetadata()
+    {
+        CompilationCoverageReport? report = null;
+        var exception = Assert.ThrowsAny<Exception>(() => Test262SharedAssertHarness.CompileAndExecute(
+            "module_goal_coverage", "Parser",
+            _ => ("/*---\nflags: [module]\n---*/\nvar yield = 1;", "module_goal_coverage.js"),
+            onCompilationCoverage: collected => report = collected));
+        Assert.Contains("Failed to parse JavaScript module", exception.ToString());
+        Assert.NotNull(report);
+        Assert.False(report.CompilationSucceeded);
+        Assert.False(report.Complete);
+    }
+
+    [Fact]
     public void VisitAst_SimpleFunction_VisitsAllNodes()
     {
         // Arrange

@@ -48,6 +48,7 @@ public static class Function
         PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
         PrototypeChain.SetPrototype(RestrictedPropertiesPrototype, Prototype);
         GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+        DefineMetadataProperty(constructorValue, "length", 1d);
         MarkConstructible(constructorValue);
         PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
         {
@@ -783,15 +784,24 @@ public static class Function
             return false;
         }
 
-        internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
+        internal static (string[] ParameterNames, string Body) PrepareDynamicFunctionSource(object?[] args)
         {
-            if (args.Length <= 1)
+            var sources = args.Select(DotNet2JSConversions.ToString).ToArray();
+            foreach (var source in sources)
             {
-                return System.Array.Empty<string>();
+                // Hashbang comments belong only to the beginning of a Script or Module,
+                // never to a Function constructor's parameter or body source.
+                if (source.TrimStart().StartsWith("#!", StringComparison.Ordinal))
+                {
+                    throw new SyntaxError("Hashbang comments are not allowed in dynamic function source.");
+                }
             }
 
-            return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var parameterNames = sources.Length <= 1
+                ? System.Array.Empty<string>()
+                : string.Join(",", sources.Take(sources.Length - 1))
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            return (parameterNames, sources.Length == 0 ? string.Empty : sources[^1]);
         }
 
         public static object? SetInferredNameIfAnonymous(object? functionValue, object? propertyKey)

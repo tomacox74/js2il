@@ -109,8 +109,10 @@ internal sealed class Test262FolderAssemblyCache : IDisposable
                 aliasedPaths.Add(logicalPath, path);
             }
             fileSystem.AddFile(logicalPath, Test262SharedAssertHarness.PrepareEntryScript(script), path);
-            entries.Add(new JrocInMemoryEntrySource(
-                logicalPath));
+            entries.Add(new JrocInMemoryEntrySource(logicalPath)
+            {
+                ParseAsModule = Test262SharedAssertHarness.IsModule(script)
+            });
             includes.UnionWith(Test262SharedAssertHarness.GetHarnessIncludes(script));
         }
 

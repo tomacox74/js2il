@@ -87,6 +87,27 @@ public sealed class CompilationCoverageTests
         Assert.Contains("Failed to parse", string.Join(" ", analysis.Report.Diagnostics));
     }
 
+    [Theory]
+    [InlineData("#! comment\nvar value = 1;", true)]
+    [InlineData("var yield = 1;", false)]
+    public void SingleEntryAnalysisPreservesExplicitModuleParseGoal(string source, bool succeeds)
+    {
+        var analysis = JrocInMemoryCompiler.AnalyzeCompilationCoverage(
+            Request(source) with { ParseAsModule = true });
+        Assert.Equal(succeeds, analysis.Report.CompilationSucceeded);
+        Assert.Equal(succeeds, analysis.Report.Complete);
+        if (succeeds)
+        {
+            Assert.NotNull(analysis.Artifact);
+            Assert.NotEmpty(analysis.Report.Sites);
+        }
+        else
+        {
+            Assert.Null(analysis.Artifact);
+            Assert.Contains("Failed to parse JavaScript module", string.Join(" ", analysis.Report.Diagnostics));
+        }
+    }
+
     [Fact]
     public void SitesDeduplicateAcrossLoweringExpansionAndKeepWorstMode()
     {

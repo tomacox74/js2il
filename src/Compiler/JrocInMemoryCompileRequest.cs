@@ -10,6 +10,8 @@ public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
 
     public string? RootModuleIdOverride { get; init; }
 
+    public bool ParseAsModule { get; init; }
+
     public bool EmitPdb { get; init; }
 
     public bool Verbose { get; init; }
