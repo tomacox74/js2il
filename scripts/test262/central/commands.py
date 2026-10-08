@@ -9,6 +9,7 @@ import sys
 from .client import bytea, canonical, fixture_environment, identity, sha
 from .inventory import normalize_fixture, register, registrations, REPO
 from .importer import provenance, start_run
+from .diagnostics import stage
 
 sys.path.insert(0, str(REPO/'scripts/test262'))
 import catalog
@@ -36,11 +37,14 @@ def prepare(client, args):
     source = git('rev-parse','HEAD')
     if source != args.revision or git('status','--porcelain','--untracked-files=no'):
         raise ValueError('Prepare requires a clean checkout of the requested exact revision')
-    inventory = catalog.bridge({'command':'inventory','root':str(root)})
-    pin = json.loads((REPO/'tests/test262/test262.pin.json').read_text())['upstream']
-    normalized = [normalize_fixture(row,root) for row in inventory]
-    corpus, ids = register(client,args.repository,pin,normalized)
-    snapshot = registrations(client,args.repository,source,ids)
+    with stage('prepare.inventory'):
+        inventory = catalog.bridge({'command':'inventory','root':str(root)})
+        pin = json.loads((REPO/'tests/test262/test262.pin.json').read_text())['upstream']
+        normalized = [normalize_fixture(row,root) for row in inventory]
+    with stage('prepare.corpus'):
+        corpus, ids = register(client,args.repository,pin,normalized,reuse_sealed=True)
+    with stage('prepare.registrations'):
+        snapshot = registrations(client,args.repository,source,ids)
     entry = Path(args.jroc if args.kind=='mvp-composite' else args.host).resolve()
     capabilities = {} if args.kind=='mvp-composite' else json.loads(subprocess.check_output(['dotnet',str(entry),'--capabilities'],text=True,env=fixture_environment()))
     env = catalog.environment(entry)
@@ -230,3 +234,4 @@ def generate_from_view(client,args,context,batch_id):
     result=nativePorting.generate_batch(db,argparse.Namespace(run_id=context['run'],upstream=args.root,destination=str(REPO),output=args.output))
     db.close()
     return result
+
