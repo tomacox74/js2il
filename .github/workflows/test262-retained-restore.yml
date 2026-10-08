@@ -1,0 +1,71 @@
+name: Test262 retained backup restore verification
+on:
+  workflow_dispatch:
+    inputs:
+      backup_suffix:
+        description: Exact backup prefix relative to TEST262_BACKUP_S3_URI (YYYY/MM/DD/run-attempt)
+        type: string
+        required: true
+        default: '2026/10/07/37568873456-1'
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: test262-retained-backup-restore
+  cancel-in-progress: false
+jobs:
+  verify:
+    # Manual on reviewed master only; no production database secret is referenced.
+    if: github.ref == 'refs/heads/master'
+    environment: test262-catalogue-backup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: disposable-restore-only
+          POSTGRES_DB: catalogue_retained_restore
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d catalogue_retained_restore"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt boto3
+      - name: Install PostgreSQL 17 clients
+        run: |
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+          echo '/usr/lib/postgresql/17/bin' >> "$GITHUB_PATH"
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.TEST262_BACKUP_AWS_ROLE }}
+          aws-region: ${{ vars.TEST262_BACKUP_AWS_REGION }}
+      - name: Verify exact retained objects and restore to disposable PostgreSQL
+        env:
+          TEST262_RESTORE_DATABASE_URL: postgresql://postgres:disposable-restore-only@127.0.0.1:5432/catalogue_retained_restore
+          TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
+          TEST262_BACKUP_KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
+          BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
+        run: |
+          python -m scripts.test262.central.retained_restore \
+            --backup-suffix "$BACKUP_SUFFIX" --output /tmp/test262-retained-restore
+      - name: Preserve sanitized verification report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-retained-restore-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/test262-retained-restore/restore-report.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Remove temporary backup material
+        if: always()
+        run: rm -rf /tmp/test262-retained-restore
