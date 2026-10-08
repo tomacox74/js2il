@@ -283,6 +283,18 @@ the complete normalized inventory identity, pin and count. Native registration
 hashes resolve each fixture under its C# caller's `JavaScript` directory, including
 nested literal names; the upstream path alone does not identify its local bytes.
 
+Native porting discovery and sealing use the generator's supported roots:
+`test/language/` and `test/built-ins/`. Other roots, including `test/harness/`, remain
+in the full catalogue and may be screened by MVP, but native preparation records
+them as `policy-excluded` with reason `native-porting-area` and never schedules
+them for porting. An explicit area cannot override that policy. Sealing also
+filters older pending contexts; generation rejects an already sealed mixed-scope
+batch before creating a generation cache or copying fixtures. It never silently
+trims immutable sealed evidence. After a scope-related generation failure, retain
+the old batch/outbox and start a new native run on the fixed master after its
+master-push MVP validation succeeds, with `publish=false` and
+`export_snapshot=false`; inspect fresh patch validation before publication.
+
 The central workflow preserves context, diagnostics and outbox/WAL files before
 attempting a bounded recovery flush, and then uploads the final recovery artifact.
 Preparation has a 35-minute limit and recovery flush has a four-minute process

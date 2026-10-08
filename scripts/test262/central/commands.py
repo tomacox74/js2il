@@ -57,8 +57,12 @@ def prepare(client, args):
     eligibility=[]
     for original, row in zip(inventory,normalized):
         state = 'runnable'
+        reasons = [reason['code'] for reason in original['reasons']]
         if row['is_support_file']:
             state='policy-excluded'
+        elif args.kind=='native' and not nativePorting.porting_supported_path(row['path']):
+            state='policy-excluded'
+            reasons.append('native-porting-area')
         elif row['metadata_state']!='valid':
             state='metadata-error'
         elif args.kind=='mvp-composite' and original['state']!='runnable':
@@ -71,7 +75,7 @@ def prepare(client, args):
             if negative.get('phase') in ('parse','early','resolution') or 'raw' in meta.get('flags',[]) or any(i not in includes for i in meta.get('includes',[])) or row['dependency_manifest_digest'] is None:
                 state='harness-gap'
         eligibility.append({'repository_id':args.repository,'provenance_id':pid,'fixture_id':ids[row['path']],
-                            'eligibility':state,'reason_codes':[reason['code'] for reason in original['reasons']],
+                            'eligibility':state,'reason_codes':reasons,
                             'diagnostic':{'source_state':original['state']}})
     client.put('provenance_fixture_eligibility',eligibility)
     run = start_run(client,args,pid,args.run_key,source,'mvp' if args.kind=='mvp-composite' else 'native')
@@ -168,6 +172,10 @@ def seal(client,args):
         budget=client.one('budget_scopes',budget_scope_id=context['budget'])
         accepted=[]; bindings=[]
         for fid in context['candidate_ids']:
+            # Older pending contexts may predate native porting area exclusions.
+            fixture = client.one('fixtures', fixture_id=fid)
+            if not nativePorting.porting_supported_path(fixture['upstream_path']):
+                continue
             by_variant={}; contradicted=False
             for o in client.read('observations',{'provenance_id':context['provenance'],'fixture_id':fid}):
                 if o['run_id'] not in trusted or client.one('observation_invalidations',observation_id=o['observation_id']):
@@ -212,6 +220,12 @@ def generate_from_view(client,args,context,batch_id):
     stored=client.one('native_batches',batch_id=batch_id)
     if stored is None or stored['state']!='sealed' or context['revision']!=git('rev-parse','HEAD'):
         raise ValueError('Generation needs fresh sealed acceptance at the current checkout SHA')
+    fixtures = [client.one('fixtures', fixture_id=member['fixture_id'])
+                for member in client.read('batch_fixtures',{'batch_id':batch_id,'state':'accepted'})]
+    for fixture in fixtures:
+        if not nativePorting.porting_supported_path(fixture['upstream_path']):
+            # Never silently trim an already sealed batch or partially generate it.
+            raise ValueError('Sealed fixture is outside supported areas: ' + fixture['upstream_path'])
     cache=Path(args.cache)
     if cache.exists():
         raise ValueError('Generation cache must be new; never restore downstream authority')
@@ -221,8 +235,7 @@ def generate_from_view(client,args,context,batch_id):
                               candidate_limit=500,accepted_limit=500,variant_limit=2000,time_limit=86400))
     doc=context['identity']; compiler=sha(doc['binaries']); harness=sha(doc['harness']); environment=sha(doc['environment_identity'])
     db.execute('INSERT INTO active_provenance VALUES(?,?,?,?,0)',(context['run'],compiler,harness,environment))
-    for member in client.read('batch_fixtures',{'batch_id':batch_id,'state':'accepted'}):
-        f=client.one('fixtures',fixture_id=member['fixture_id'])
+    for f in fixtures:
         evidence=list(client.read('batch_evidence',{'batch_id':batch_id,'fixture_id':f['fixture_id']}))
         db.execute('INSERT INTO candidates VALUES(?,?,?,?,?,?,?,?,?,0)',(context['run'],f['upstream_path'],f['content_sha256'][2:],canonical(sorted(e['variant'] for e in evidence)),
                    'central sealed evidence','native',context['provenance'],sha(doc['capabilities']),'accepted'))
