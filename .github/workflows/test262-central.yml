@@ -17,6 +17,10 @@ on:
         description: Collect static compiler-mode reports with separate provenance
         type: boolean
         default: false
+      export_snapshot:
+        description: Also export the entire catalogue (bounded to five minutes)
+        type: boolean
+        default: false
   schedule:
     - cron: '15 6 * * 1'
 permissions:
@@ -57,6 +61,7 @@ jobs:
           git -C "$ROOT" sparse-checkout add /test/
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
       - name: Prepare and run centrally coordinated variants
+        timeout-minutes: 35
         env:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
@@ -66,6 +71,8 @@ jobs:
           KIND: ${{ inputs.kind || 'mvp-composite' }}
           AREA: ${{ inputs.area }}
           COMPILATION_COVERAGE: ${{ inputs.compilation_coverage || 'false' }}
+          TEST262_PROGRESS: '1'
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/central-diagnostic.json
         run: |
           COVERAGE_ARGS=()
           if [ "$COMPILATION_COVERAGE" = "true" ]; then
@@ -98,20 +105,36 @@ jobs:
             git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
             git diff --binary "$TARGET" -- > artifacts/test262/central-patch.diff
           fi
-      - name: Flush and export coherent recovery snapshot
+      - name: Preserve local evidence before recovery
         if: always()
+        timeout-minutes: 3
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-central-local-${{ github.run_id }}
+          path: |
+            artifacts/test262/central-*
+            !artifacts/test262/*.partial
+          if-no-files-found: warn
+          retention-days: 90
+          overwrite: true
+      - name: Flush durable recovery outbox
+        if: always()
+        timeout-minutes: 5
         env:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
           TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          TEST262_PROGRESS: '1'
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/central-flush-diagnostic.json
         run: |
           if [ -f artifacts/test262/central-outbox.sqlite ]; then
-            python -m scripts.test262.central.cli flush --outbox artifacts/test262/central-outbox.sqlite
+            timeout --signal=TERM --kill-after=15s 240s \
+              python -m scripts.test262.central.cli flush --outbox artifacts/test262/central-outbox.sqlite
           fi
-          python -m scripts.test262.central.cli export --output artifacts/test262/central-snapshot.ndjson
       - name: Aggregate retained compiler reports without database credentials
         if: ${{ always() && inputs.compilation_coverage }}
+        timeout-minutes: 3
         run: |
           if [ -f artifacts/test262/central-outbox.sqlite ]; then
             python -m scripts.test262.compilationCoverage --outbox artifacts/test262/central-outbox.sqlite \
@@ -126,13 +149,30 @@ jobs:
           if-no-files-found: error
           retention-days: 90
           overwrite: true
+      - name: Export coherent recovery snapshot when requested
+        if: ${{ always() && inputs.export_snapshot == true }}
+        timeout-minutes: 6
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          TEST262_PROGRESS: '1'
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/central-export-diagnostic.json
+        run: |
+          timeout --signal=TERM --kill-after=15s 300s \
+            python -m scripts.test262.central.cli export --seconds 270 \
+              --output artifacts/test262/central-snapshot.ndjson
       - name: Preserve recovery outbox on failure
         if: always()
+        timeout-minutes: 3
         uses: actions/upload-artifact@v7
         with:
           # Stable per run: a rerun of only a downstream job must find the same artifact.
           name: test262-central-recovery-${{ github.run_id }}
-          path: artifacts/test262/central-*
+          path: |
+            artifacts/test262/central-*
+            !artifacts/test262/*.partial
           if-no-files-found: warn
           retention-days: 90
           overwrite: true

@@ -113,9 +113,13 @@ def registrations(client, repository, source_revision, corpus_rows):
     paths, warnings = catalog.registration_inventory(root)
     records = []
     for path, sources in sorted(paths.items()):
-        native_file = root / path.removeprefix('test/')
-        native_file = native_file.parent / 'JavaScript' / native_file.name
         for source in sorted(sources):
+            # Literal fixture names are relative to the C# caller's JavaScript
+            # directory, including any nested segments in the name. Two callers
+            # can register the same upstream path from different local files.
+            caller = Path(source).parent
+            relative = Path(path.removeprefix('test/')).relative_to(caller)
+            native_file = root / caller / 'JavaScript' / relative
             records.append({'upstream_path': path, 'source_file': source, 'native_fixture_sha256': bytea(hash_bytes(native_file.read_bytes())),
                             'registration_kind': 'native', 'fixture_id': corpus_rows.get(path)})
     snapshot = identity(repository, source_revision, sha(records))
@@ -124,3 +128,4 @@ def registrations(client, repository, source_revision, corpus_rows):
     client.put('registrations', [dict(r, snapshot_id=snapshot) for r in records])
     client.call('transition', 'registration_snapshots', {'snapshot_id': snapshot}, 0, {'state': 'sealed'})
     return snapshot
+

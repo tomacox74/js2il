@@ -276,6 +276,30 @@ allowlist/hash `validate-patch` check, and requires its digest to equal the seal
 `publish` requires both jobs. Run artifacts are named per run ID (overwritten on rerun),
 so rerunning only a failed downstream job finds them.
 
+For initial production verification, dispatch the current `master` with
+`kind=mvp-composite`, `area=built-ins/Math/abs`, `publish=false`, and
+`export_snapshot=false`. Preparation reuses a sealed inventory only after checking
+the complete normalized inventory identity, pin and count. Native registration
+hashes resolve each fixture under its C# caller's `JavaScript` directory, including
+nested literal names; the upstream path alone does not identify its local bytes.
+
+The central workflow preserves context, diagnostics and outbox/WAL files before
+attempting a bounded recovery flush, and then uploads the final recovery artifact.
+Preparation has a 35-minute limit and recovery flush has a four-minute process
+deadline. Full-history NDJSON export is optional and disabled by default; enable
+`export_snapshot` only when that export is needed. It has a 270-second client
+deadline plus a 300-second process limit. A timed-out export remains `.partial`,
+has no completion footer, and is excluded from recovery uploads. A missing export
+is not a successful snapshot. The independently retained backup workflow remains
+the full-catalogue backup path; a local outbox artifact is not a substitute for it.
+
+Failure diagnostics retain only operation stage, exception class, SQLSTATE when
+present, safe repository-relative missing-file paths/allowlisted missing tools,
+and repository file/line locations. They never print exception messages, connection
+strings, stack locals or database payloads. Confirm live observations, completed
+work, acknowledged outboxes and settled reservations before accepting production
+execution; a green workflow or historical row count alone is insufficient.
+
 Before activation, require import parity, an off-project backup and completed restore
 drill, reporter query validation, the PostgreSQL CI concurrency suite, and a pilot of
 isolated fixture execution. Stop legacy workflow invocations and drain/disable their
@@ -487,3 +511,4 @@ drill demonstrates the tool path and restored data/security behavior. It does no
 verify production backup-role permissions, KMS encryption, independent object retention,
 Object Lock, original historical archive preservation, or a restore of an off-project
 production backup. Those remain separate operational acceptance before cutover.
+
