@@ -54,6 +54,11 @@ def canonical(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
+def porting_supported_path(path: str) -> bool:
+    """Areas supported by native test generation and coverage accounting."""
+    return path.startswith(("test/language/", "test/built-ins/"))
+
+
 def file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -460,7 +465,7 @@ def catalog_candidates(
         retry_candidates: list[dict[str, Any]] = []
         fallback_candidates: list[dict[str, Any]] = []
         for row in rows:
-            if not native_eligible_state(row):
+            if not porting_supported_path(row["path"]) or not native_eligible_state(row):
                 continue
             variants = json.loads(row["variants"])
             if not variants:
@@ -1325,6 +1330,10 @@ def generate_batch(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
     summary = report(db, argparse.Namespace(run_id=args.run_id, output=None))
     if not summary["accepted"]:
         raise ValueError("Batch generation requires at least one freshly accepted fixture")
+    # Validate the entire batch before copying any files into the checkout.
+    for relative in summary["accepted"]:
+        if not porting_supported_path(relative):
+            raise ValueError(f"Accepted fixture is outside supported areas: {relative}")
     upstream = Path(args.upstream).resolve()
     root = Path(args.destination).resolve()
     test_root = root / "tests/Jroc.Test262.Tests"
@@ -1332,8 +1341,6 @@ def generate_batch(db: sqlite3.Connection, args: argparse.Namespace) -> dict[str
     grouped: dict[Path, list[tuple[str, bool]]] = {}
     method_names: dict[Path, set[str]] = {}
     for relative in summary["accepted"]:
-        if not relative.startswith(("test/language/", "test/built-ins/")):
-            raise ValueError(f"Accepted fixture is outside supported areas: {relative}")
         source = upstream / relative
         if not source.is_file():
             raise ValueError(f"Missing pinned fixture: {relative}")
@@ -1911,3 +1918,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
