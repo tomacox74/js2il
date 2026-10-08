@@ -2,6 +2,13 @@
 
 # Test262 artifact catalog
 
+> **Legacy/offline reference:** when `TEST262_CATALOGUE_AUTHORITY=supabase`,
+> [the central catalogue](Test262SupabaseCatalog.md) is the shared authority.
+> The SQLite scan/export and legacy workflow commands below describe local
+> diagnosis, historical artifacts and caches. They do not upload observations,
+> refresh Supabase registrations or establish trusted central native acceptance.
+> Do not restart disabled legacy workflows during normal porting.
+
 The **Test262 artifact catalog** workflow stores a resumable SQLite database in
 GitHub Actions artifacts, not Git. Locally the default is
 `artifacts/test262/catalog.sqlite` (already ignored).
