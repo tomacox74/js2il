@@ -45,9 +45,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,089 | 13 | 6,410 | 23,512 | **72.68%** |
+| Built-in objects and APIs | 17,094 | 13 | 6,405 | 23,512 | **72.70%** |
 | Language syntax and semantics | 17,500 | 97 | 6,050 | 23,647 | **74.01%** |
-| **Total** | 34,649 | 110 | 13,486 | 48,245 | **71.82%** |
+| **Total** | 34,654 | 110 | 13,481 | 48,245 | **71.83%** |
 
 ## Language Areas
 
@@ -198,8 +198,8 @@ bounded worker cleanup.
 | `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
 | `Array` | 3,054 | 0 | 27 | 3,081 | **99.12%** |
 | `ArrayBuffer` | 192 | 0 | 4 | 196 | **97.96%** |
-| `ArrayIteratorPrototype` | 18 | 0 | 9 | 27 | **66.67%** |
-| `AsyncDisposableStack` | 103 | 0 | 1 | 104 | **99.04%** |
+| `ArrayIteratorPrototype` | 21 | 0 | 6 | 27 | **77.78%** |
+| `AsyncDisposableStack` | 104 | 0 | 0 | 104 | **100.00%** |
 | `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
 | `AsyncGeneratorFunction` | 14 | 0 | 9 | 23 | **60.87%** |
@@ -218,7 +218,7 @@ bounded worker cleanup.
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 410 | 1 | 98 | 509 | **80.55%** |
+| `Function` | 411 | 1 | 97 | 509 | **80.75%** |
 | `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
