@@ -23,6 +23,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - feat(compiler): execute class decorators in source evaluation/reverse application
   order, with class contexts, validated replacements and added initializers.
   Preserve original class lexical bindings and reject unimplemented element decorators.
+- test262: verify 23 additional pinned fixtures from native batch `2ff9167d-ea5d-5a2e-8341-83ec65c872b0`.
 - fix(runtime): honor legacy Object accessor/prototype proxy traps, initialize
   Object prototype method metadata, and apply ordered toString brand and
   Symbol.toStringTag lookup without synthetic primitive/Date tags. String
