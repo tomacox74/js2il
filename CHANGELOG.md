@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): enforce monotonic Atomics.waitAsync timeout deadlines instead
+  of relying on fixed timer padding, preserving notification and cancellation.
 - test262: complete the remaining 148 pinned class-expression fixtures: 87
   verified passing and 61 explicitly skipped because eval is unsupported.
   Fix repeated class identities/private brands, computed field evaluation,

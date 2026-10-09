@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using JavaScriptRuntime;
 using JavaScriptRuntime.EngineCore;
@@ -89,6 +90,41 @@ public sealed class AtomicsWaitAsyncRuntimeTests
         Assert.False((bool)ObjectRuntime.GetProperty(timedOut, "async")!);
         Assert.Equal("timed-out", ObjectRuntime.GetProperty(timedOut, "value"));
         Assert.Equal(0, cluster.SharedServices.Atomics.WaiterCount);
+    }
+
+    [Fact]
+    public async Task WaitAsyncTimeoutNeverCompletesBeforeRequestedDuration()
+    {
+        using var cluster = new RuntimeAgentCluster();
+        var agent = cluster.CreateAgent();
+        var realm = agent.CreateRealm();
+        RuntimeServices.ConfigureServiceProvider(realm.Services);
+        RuntimeSharedArrayBufferBackingStore store;
+        using (RuntimeExecutionContext.GetOrCreate(realm.Services).EnterAsRoot())
+        {
+            store = new SharedArrayBuffer(4d).BackingStore;
+        }
+
+        foreach (var timeout in new[] { 1, 10, 200 })
+        {
+            for (var iteration = 0; iteration < 20; iteration++)
+            {
+                var completed = new TaskCompletionSource<(string? Result, double Elapsed)>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var started = Stopwatch.GetTimestamp();
+                var immediate = cluster.SharedServices.Atomics.WaitAsync(
+                    agent, store, 0, 0, timeout,
+                    () => { },
+                    result =>
+                    {
+                        completed.SetResult((result, Stopwatch.GetElapsedTime(started).TotalMilliseconds));
+                    });
+                Assert.Null(immediate);
+                var completion = await completed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                Assert.Equal("timed-out", completion.Result);
+                Assert.True(completion.Elapsed >= timeout, $"Timeout {timeout} ms completed after {completion.Elapsed:F3} ms.");
+                Assert.Equal(0, cluster.SharedServices.Atomics.WaiterCount);
+            }
+        }
     }
 
     [Fact]
