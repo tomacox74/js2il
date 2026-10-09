@@ -7,6 +7,12 @@
 > The SQLite scan/export and legacy workflow commands below describe local
 > diagnosis, historical artifacts and caches. They do not upload observations,
 > refresh Supabase registrations or establish trusted central native acceptance.
+>
+> Local agents can reuse `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` from JROC
+> performance analysis for catalogue REST reads once the read-only API permissions
+> are enabled. The deployed `anon` role currently lacks reporting access. Follow
+> [Local agent read access](Test262SupabaseCatalog.md#local-agent-read-access) for
+> the permissions prerequisite, bounded queries and read-only connector fallback.
 > Do not restart disabled legacy workflows during normal porting.
 
 The **Test262 artifact catalog** workflow stores a resumable SQLite database in
@@ -315,3 +321,4 @@ failure clusters with path, variant, phase and diagnostic. The generation and
 patch-validation documents add exact output paths, hashes and the binary patch
 digest; `native-manifest.json` binds those files to the originating workflow
 run and target revision.
+

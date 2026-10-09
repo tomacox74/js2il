@@ -27,7 +27,14 @@ artifacts do not become authoritative when copied into a checkout.
    `faf01df8-aa65-4375-a708-6c1e555f957b`, the pinned revision in
    `tests/test262/test262.pin.json`, evidence kind and selected channel.
    Use an authorized read-only reporting connection/connector or an
-   operator-provided coherent central export. Start with
+   operator-provided coherent central export. For local Data API reads, reuse
+   `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` from JROC performance analysis;
+   follow **Local agent read access** in the runbook for `apikey`, custom-schema
+   headers and bounded queries. These variables work for the catalogue only
+   after its read-only API exposure/role permissions are enabled; the deployed
+   `anon` role currently lacks reporting access. Use the authorized read-only
+   connector/export if denied, never a service-role key or supervisor DSN.
+   Concurrent readers in separate checkouts are supported. Start with
    `test262_reporting.v_current_fixture_status`,
    `v_historical_candidates`, `v_native_acceptance` and
    `v_failure_clusters`; inspect their actual column definitions before
@@ -247,3 +254,4 @@ evidence. Update both customer-facing conformance documents in the same PR:
 When the cases also change the feature support story, update the relevant
 `docs/ECMA262/**/Section*.json` entries, regenerate their Markdown, and update
 `CHANGELOG.md` in the same PR.
+

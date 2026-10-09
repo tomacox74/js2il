@@ -21,7 +21,12 @@ Identify failing test262 test cases that:
 1. **Consult the catalog before probing**:
    - Follow **Catalog-First Candidate Selection** in `test262-porting`:
      query authorized scoped Supabase reporting or use an approved coherent
-     central export. Read `docs/ECMA262/Test262SupabaseCatalog.md`.
+     central export. Read **Local agent read access** in
+     `docs/ECMA262/Test262SupabaseCatalog.md`. Reuse `SUPABASE_URL` and
+     `SUPABASE_PUBLISHABLE_KEY` from performance analysis for bounded REST reads
+     when catalogue API exposure and read permissions are enabled. The deployed
+     `anon` role currently lacks those rights; use the read-only connector/export
+     on access denial. Never substitute service-role or coordinator credentials.
    - Record pin, target/source revision, evidence kind, provenance,
      registration-snapshot identity and as-of time. Reconcile the central
      snapshot with working-tree and pending-PR registrations.
@@ -98,3 +103,4 @@ node scripts/test262/runMvp.js --filter "built-ins/Array/prototype" --limit 60
   shared authority or proof of trusted central native acceptance.
 - Running test262 MVP: `node scripts/test262/runMvp.js` for targeted reproduction.
 - Spec support docs: `docs/ECMA262/` (use clause status and support notes to spot missing functionality)
+
