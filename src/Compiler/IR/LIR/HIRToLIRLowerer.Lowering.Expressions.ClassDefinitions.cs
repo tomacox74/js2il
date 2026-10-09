@@ -7,6 +7,51 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private bool TryLowerCaptureClassComputedFieldKey(
+        HIRCaptureClassComputedFieldKeyExpression expression,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+        if (!TryLowerExpression(expression.Key, out var key)
+            || !TryLowerClassInitializationOwner(expression.Owner, out var owner))
+        {
+            return false;
+        }
+
+        var id = CreateStringConstant(expression.FieldId);
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetClassComputedFieldKey),
+            [EnsureObject(owner), EnsureObject(id), EnsureObject(key)],
+            resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryLowerClassComputedFieldKey(
+        HIRClassComputedFieldKeyExpression expression,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+        if (!TryLowerExpression(expression.Receiver, out var receiver))
+        {
+            return false;
+        }
+
+        var type = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(expression.RegistryClassName, type));
+        DefineTempStorage(type, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+        var id = CreateStringConstant(expression.FieldId);
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.GetClassComputedFieldKey),
+            [type, EnsureObject(receiver), EnsureObject(id)],
+            resultTempVar,
+            [typeof(Type), typeof(object), typeof(object)]));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private bool TryLowerDefineClassDataPropertyExpression(HIRDefineClassDataPropertyExpression expression, out TempVariable resultTempVar)
     {
         resultTempVar = default;

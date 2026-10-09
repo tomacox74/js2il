@@ -250,7 +250,7 @@ public sealed class CallableDiscovery
         // Discover constructor
         var ctor = classBody.Body
             .OfType<MethodDefinition>()
-            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+            .FirstOrDefault(ClassElementNames.IsConstructor);
             
         if (ctor != null)
         {
@@ -265,6 +265,7 @@ public sealed class CallableDiscovery
                 Kind = CallableKind.ClassConstructor,
                 DeclaringScopeName = parentScopeName,
                 Name = className,
+                Location = SourceLocation.FromNode(astNode!),
                 JsParamCount = ctorParamCount,
                 NeedsArgumentsObject = ctorNeedsArgumentsObject,
                 HasRestParameters = hasRestParams,
@@ -292,6 +293,7 @@ public sealed class CallableDiscovery
                 Kind = CallableKind.ClassConstructor,
                 DeclaringScopeName = parentScopeName,
                 Name = className,
+                Location = SourceLocation.FromNode(astNode!),
                 JsParamCount = 0,
                 NeedsArgumentsObject = false,
                 HasRestParameters = false,
@@ -322,6 +324,7 @@ public sealed class CallableDiscovery
                 Kind = CallableKind.ClassStaticInitializer,
                 DeclaringScopeName = parentScopeName,
                 Name = className,
+                Location = SourceLocation.FromNode(astNode!),
                 JsParamCount = 0,
                 NeedsArgumentsObject = false,
                 HasRestParameters = false,
@@ -486,7 +489,9 @@ public sealed class CallableDiscovery
             discoveredClassMethods,
             baseClassRegistryName,
             baseIntrinsicName,
-            ClassRequiresParentScopes(classScope, classBody));
+            ClassRequiresParentScopes(classScope),
+            astNode is ClassDeclaration { Decorators.Count: > 0 }
+                or ClassExpression { Decorators.Count: > 0 });
         
         // Recurse into class scope for any nested callables in method bodies
         // (e.g., arrows defined inside methods)
@@ -588,6 +593,7 @@ public sealed class CallableDiscovery
     private static bool HasImplicitArgumentsBinding(Scope functionScope)
     {
         return functionScope.Bindings.TryGetValue("arguments", out var binding)
+            && binding.Kind == BindingKind.Var
             && ReferenceEquals(binding.DeclarationNode, functionScope.AstNode);
     }
 
@@ -649,14 +655,8 @@ public sealed class CallableDiscovery
             : ($"{baseScope.DotNetNamespace ?? "Classes"}.{baseScope.DotNetTypeName ?? baseScope.Name}", null);
     }
 
-    private static bool ClassRequiresParentScopes(
-        Scope classScope,
-        ClassBody classBody)
+    private static bool ClassRequiresParentScopes(Scope classScope)
         => classScope.ReferencesParentScopeVariables
-           || classBody.Body.Any(element =>
-               element is PropertyDefinition
-               || element is StaticBlock
-               || element is MethodDefinition { Computed: true })
            || classScope.HasDescendantCallableReferencingParentScopeVariables;
 
     private static Scope? FindScopeForClassBinding(

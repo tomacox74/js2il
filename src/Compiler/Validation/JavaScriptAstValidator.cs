@@ -80,9 +80,27 @@ public class JavaScriptAstValidator : IAstValidator
         
         // Visit all nodes in the AST
         var walker = new AstWalker();
+        var fieldInitializers = new HashSet<Node>(ReferenceEqualityComparer.Instance);
         walker.VisitWithContext(ast, node =>
         {
             var currentContext = contextStack.Peek();
+            if (node is PropertyDefinition { Value: { } initializer })
+            {
+                fieldInitializers.Add(initializer);
+            }
+            if (fieldInitializers.Remove(node))
+            {
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = true,
+                    AllowsSuper = true,
+                    ScopeOwner = node,
+                    InDerivedClass = currentContext.InDerivedClass,
+                    AllowsNewTarget = true,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
+                });
+                currentContext = contextStack.Peek();
+            }
 
             // Track when we're inside a derived class (class with an extends clause).
             if (node is ClassDeclaration cd)
@@ -135,7 +153,7 @@ public class JavaScriptAstValidator : IAstValidator
                 contextStack.Push(new ValidationContext
                 {
                     AllowsThis = true,
-                    AllowsSuper = currentContext.InDerivedClass,
+                    AllowsSuper = true,
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InDerivedClass = currentContext.InDerivedClass,
@@ -150,8 +168,7 @@ public class JavaScriptAstValidator : IAstValidator
                 contextStack.Push(new ValidationContext
                 {
                     AllowsThis = true,
-                    // Allow super in class methods/constructors only when we're inside a derived class.
-                    AllowsSuper = currentContext.InDerivedClass,
+                    AllowsSuper = true,
                     ScopeOwner = methodDef,
                     // Track the function expression that is the method body so we don't treat it as nested
                     MethodDefinitionFunctionValue = methodDef.Value,
@@ -347,7 +364,7 @@ public class JavaScriptAstValidator : IAstValidator
             }
         }, exitNode =>
         {
-            if (contextStack.Count > 1 && ReferenceEquals(contextStack.Peek().ScopeOwner, exitNode))
+            while (contextStack.Count > 1 && ReferenceEquals(contextStack.Peek().ScopeOwner, exitNode))
             {
                 contextStack.Pop();
             }
@@ -1706,6 +1723,13 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is MethodDefinition method)
         {
+            if (method.Decorators.Count > 0)
+            {
+                AddUnsupportedError(result, "Class element decorators are not yet supported", node);
+                result.IsValid = false;
+                return;
+            }
+
             if (!method.Computed
                 && !Jroc.Services.ClassElementNames.TryGetPropertyName(method.Key, computed: false, out _))
             {
@@ -1719,6 +1743,13 @@ public class JavaScriptAstValidator : IAstValidator
 
     private void ValidatePropertyDefinition(Node node, ValidationResult result)
     {
+        if (node is PropertyDefinition { Decorators.Count: > 0 })
+        {
+            AddUnsupportedError(result, "Class element decorators are not yet supported", node);
+            result.IsValid = false;
+            return;
+        }
+
         if (node is PropertyDefinition pdef
             && !pdef.Computed
             && !Jroc.Services.ClassElementNames.TryGetPropertyName(pdef.Key, computed: false, out _))

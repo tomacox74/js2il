@@ -383,7 +383,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 262 (0x106)
+		// Code size: 292 (0x124)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope,
@@ -393,11 +393,12 @@
 			[4] object,
 			[5] object[],
 			[6] class [System.Runtime]System.Type,
-			[7] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter,
-			[8] float64,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[10] bool,
-			[11] object
+			[7] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/FunctionObject,
+			[8] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter,
+			[9] float64,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[11] bool,
+			[12] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope::.ctor()
@@ -426,65 +427,77 @@
 		IL_004c: ldtoken Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter
 		IL_0051: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0056: stloc.s 6
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.0
-		IL_0061: stelem.ref
-		IL_0062: stloc.s 5
-		IL_0064: ldloc.s 5
-		IL_0066: ldc.i4.0
-		IL_0067: newarr [System.Runtime]System.Object
-		IL_006c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0071: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::.ctor(object[])
-		IL_0076: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_007b: stloc.2
-		IL_007c: ldloc.2
-		IL_007d: ldtoken Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter
-		IL_0082: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0087: ldstr "prototype"
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0091: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0096: ldloc.2
-		IL_0097: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter>(!!0)
-		IL_009c: stloc.s 7
-		IL_009e: ldloc.s 7
-		IL_00a0: callvirt instance float64 Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::count()
-		IL_00a5: stloc.s 8
-		IL_00a7: ldloc.s 8
-		IL_00a9: box [System.Runtime]System.Double
-		IL_00ae: stloc.3
-		IL_00af: ldloc.1
-		IL_00b0: ldc.r8 10
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00be: stloc.s 4
-		IL_00c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c5: stloc.s 9
-		IL_00c7: ldloc.s 9
-		IL_00c9: ldloc.3
-		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cf: pop
-		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d5: stloc.s 9
-		IL_00d7: ldloc.s 9
-		IL_00d9: ldloc.s 4
-		IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e0: pop
-		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e6: stloc.s 9
-		IL_00e8: ldloc.3
-		IL_00e9: ldloc.s 4
-		IL_00eb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_00f0: stloc.s 10
-		IL_00f2: ldloc.s 10
-		IL_00f4: box [System.Runtime]System.Boolean
-		IL_00f9: stloc.s 11
-		IL_00fb: ldloc.s 9
-		IL_00fd: ldloc.s 11
-		IL_00ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0104: pop
-		IL_0105: ret
+		IL_0058: ldloc.s 5
+		IL_005a: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/FunctionObject::.ctor(object[])
+		IL_005f: ldloc.s 6
+		IL_0061: ldloc.s 5
+		IL_0063: ldc.i4.0
+		IL_0064: conv.r8
+		IL_0065: ldc.i4.0
+		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_006b: castclass Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/FunctionObject
+		IL_0070: stloc.s 7
+		IL_0072: ldc.i4.1
+		IL_0073: newarr [System.Runtime]System.Object
+		IL_0078: dup
+		IL_0079: ldc.i4.0
+		IL_007a: ldloc.0
+		IL_007b: stelem.ref
+		IL_007c: stloc.s 5
+		IL_007e: ldloc.s 5
+		IL_0080: ldc.i4.0
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_008b: ldloc.s 7
+		IL_008d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0092: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::.ctor(object[])
+		IL_0097: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_009c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00a1: stloc.2
+		IL_00a2: ldloc.2
+		IL_00a3: ldloc.s 7
+		IL_00a5: ldstr "prototype"
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00af: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00b4: ldloc.2
+		IL_00b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter>(!!0)
+		IL_00ba: stloc.s 8
+		IL_00bc: ldloc.s 8
+		IL_00be: callvirt instance float64 Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::count()
+		IL_00c3: stloc.s 9
+		IL_00c5: ldloc.s 9
+		IL_00c7: box [System.Runtime]System.Double
+		IL_00cc: stloc.3
+		IL_00cd: ldloc.1
+		IL_00ce: ldc.r8 10
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00dc: stloc.s 4
+		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e3: stloc.s 10
+		IL_00e5: ldloc.s 10
+		IL_00e7: ldloc.3
+		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ed: pop
+		IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f3: stloc.s 10
+		IL_00f5: ldloc.s 10
+		IL_00f7: ldloc.s 4
+		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fe: pop
+		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0104: stloc.s 10
+		IL_0106: ldloc.3
+		IL_0107: ldloc.s 4
+		IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_010e: stloc.s 11
+		IL_0110: ldloc.s 11
+		IL_0112: box [System.Runtime]System.Boolean
+		IL_0117: stloc.s 12
+		IL_0119: ldloc.s 10
+		IL_011b: ldloc.s 12
+		IL_011d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0122: pop
+		IL_0123: ret
 	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn

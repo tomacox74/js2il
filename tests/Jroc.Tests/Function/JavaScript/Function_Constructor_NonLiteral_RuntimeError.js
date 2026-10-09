@@ -1,17 +1,23 @@
 "use strict";
 
-const body = "return 1;";
+function callDynamic(body) {
+    return Function(body);
+}
 
-try {
-    Function(body);
-    console.log("call-no-error");
-} catch (e) {
-    console.log(String(e).includes("string literal arguments"));
+function constructDynamic(body) {
+    return new Function(body);
 }
 
 try {
-    new Function(body);
+    callDynamic("return 1;");
+    console.log("call-no-error");
+} catch (e) {
+    console.log(String(e).includes("statically discoverable source strings"));
+}
+
+try {
+    constructDynamic("return 1;");
     console.log("new-no-error");
 } catch (e) {
-    console.log(String(e).includes("string literal arguments"));
+    console.log(String(e).includes("statically discoverable source strings"));
 }

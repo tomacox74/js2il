@@ -886,7 +886,7 @@ public sealed class TwoPhaseCompilationCoordinator
                         // For synthetic constructor callables, prefer the actual constructor MethodDefinition if present.
                         ctorNodeOverride = classBody.Body
                             .OfType<Acornima.Ast.MethodDefinition>()
-                            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                            .FirstOrDefault(ClassElementNames.IsConstructor);
                     }
 
                     body = methodCompiler.CompileClassConstructorBodyTwoPhase(
@@ -1001,7 +1001,7 @@ public sealed class TwoPhaseCompilationCoordinator
         // Constructor (explicit or synthetic)
         var ctorMember = classBody.Body
             .OfType<Acornima.Ast.MethodDefinition>()
-            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+            .FirstOrDefault(ClassElementNames.IsConstructor);
 
         if (ctorMember != null && _registry.TryGetCallableIdForAstNode(ctorMember, out var ctorCallable))
         {
@@ -1009,11 +1009,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
         else
         {
-            var synthCtor = _discoveredCallables!.FirstOrDefault(c =>
-                c.Kind == CallableKind.ClassConstructor
-                && string.Equals(c.Name, className, StringComparison.Ordinal)
-                && string.Equals(c.DeclaringScopeName, expectedDeclaringScopeName, StringComparison.Ordinal));
-            if (synthCtor != null)
+            if (_registry.TryGetCallableIdForAstNode(classBody, out var synthCtor))
             {
                 yield return synthCtor;
             }
@@ -1040,11 +1036,7 @@ public sealed class TwoPhaseCompilationCoordinator
             || element is Acornima.Ast.MethodDefinition methodDefinition && methodDefinition.Static && methodDefinition.Computed);
         if (hasStaticClassEvaluation)
         {
-            var cctor = _discoveredCallables!.FirstOrDefault(c =>
-                c.Kind == CallableKind.ClassStaticInitializer
-                && string.Equals(c.Name, className, StringComparison.Ordinal)
-                && string.Equals(c.DeclaringScopeName, expectedDeclaringScopeName, StringComparison.Ordinal));
-            if (cctor != null)
+            if (_registry.TryGetCallableIdForAstNode(classScope.AstNode!, out var cctor))
             {
                 yield return cctor;
             }

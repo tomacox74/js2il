@@ -2276,6 +2276,10 @@ internal sealed partial class LIRToILCompiler
                     return true;
                 }
                 ilEncoder.LoadArgument(0);
+                ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedClassMethodThis),
+                    [typeof(object)]));
                 return true;
             case LIRLoadScopesArgument:
                 if (!methodDescriptor.HasScopesParameter)

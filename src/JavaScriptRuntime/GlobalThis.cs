@@ -147,7 +147,7 @@ namespace JavaScriptRuntime
             }
 
             throw new JavaScriptRuntime.Error(
-                "The Function constructor only supports compile-time string literal arguments in jroc.");
+                "The Function constructor requires statically discoverable source strings at the call site in jroc; runtime code generation is not supported.");
         };
 
         private sealed class EmptyDynamicFunctionBody
@@ -1092,9 +1092,8 @@ namespace JavaScriptRuntime
         public static Delegate eval => _evalValue;
 
         /// <summary>
-        /// ECMAScript global Function constructor value (placeholder).
-        /// Currently exposed as a callable function value so libraries can reference it as a global identifier.
-        /// Invoking it will throw until Function constructor semantics are implemented.
+        /// ECMAScript global Function constructor value.
+        /// Nonempty source requires a compiler-prepared call site; unprepared runtime source throws.
         /// </summary>
         public static Func<object[], object?[]?, Delegate> Function => _functionConstructorValue;
 

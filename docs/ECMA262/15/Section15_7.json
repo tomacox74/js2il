@@ -115,6 +115,44 @@
     "entries": [
       {
         "clause": "15.7.14",
+        "feature": "Class-expression Test262 coverage and evaluation identity",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/class/ClassCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/ClassCompletionExecutionTests.cs",
+          "tests/Jroc.Tests/ClassInitializationLoweringTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/private-static-field-multiple-evaluations-of-class-factory.js",
+          "test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-function-ctor.js",
+          "test/language/expressions/class/elements/static-field-init-this-inside-arrow-function.js",
+          "test/language/expressions/class/elements/optional-chaining-private-getter.js"
+        ],
+        "notes": "All 4,059 unique standalone class-expression tests at the pinned revision have documented outcomes: 3,955 verified passing and 104 known unsupported eval cases. The final batch adds 87 verified cases and 61 eval exclusions. Repeated class evaluations preserve distinct constructor/private-brand identity and per-constructor computed field keys. Computed keys are coerced once during class evaluation before static fields/blocks, then reused during construction. Static initialization preserves field descriptors, anonymous function names and lexical arrow receivers. Optional private chains short-circuit before private receiver checks. Static blocks discover their nested declarations, async parameter failures reject promises, and class methods omit forbidden own caller/arguments properties. Statically discoverable Function-constructor sources are guarded against source or constructor replacement and execute in their owning realm; general runtime code generation and eval remain unsupported. Simple super-property assignments preserve the reference before evaluating the right-hand side; compound/logical super assignments remain explicitly unsupported. Proposal decorators and auto-accessors have the separate limitations below."
+      },
+      {
+        "clause": "15.7.14",
+        "feature": "Decorators proposal class decorators",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-decorators/",
+        "testScripts": [
+          "tests/Jroc.Tests/ClassDecoratorTests.cs"
+        ],
+        "notes": "Class decorator expressions are evaluated in source order before heritage. Computed keys and method definitions precede reverse-order class decorator application, which occurs before static fields and blocks. Each decorator receives a fresh kind/name/addInitializer context; an anonymous class without an inferred name has an undefined context name. Callable replacement values are supported through ordinary runtime call/construct interfaces, while source-named class lexical bindings continue to refer to the original class. Added initializers run in registration order after static initialization with the final class as their receiver. Abrupt decoration prevents static initialization, and abrupt static initialization prevents the extra initializers. Noncallable decorators, replacements, and initializer callbacks throw TypeError; addInitializer is invalid once its decorator returns. Element decorators (including decorated auto-accessors) are explicitly rejected rather than silently omitted. Decorator metadata is not implemented."
+      },
+      {
+        "clause": "15.7.13",
+        "feature": "Decorators proposal public auto-accessors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-decorators/",
+        "testScripts": [
+          "tests/Jroc.Tests/ClassAutoAccessorNormalizerTests.cs"
+        ],
+        "notes": "Parser AST normalization lowers undecorated, noncomputed public auto-accessors to collision-free private backing fields and getter/setter pairs before scope discovery. Backing initialization retains source order and locations; ordinary class accessor lowering supplies nonenumerable configurable descriptors and private receiver branding. Native tests cover instance reads/writes, undefined initialization, escaped identifier names, inheritance, and static reads/writes both during and after class initialization. Computed, private, and decorated auto-accessors are explicitly rejected with source locations. Class decorators are preserved for separate handling."
+      },
+      {
+        "clause": "15.7.14",
         "feature": "Computed class property names, metadata ordering, and duplicate accessors",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation",

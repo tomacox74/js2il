@@ -64,6 +64,13 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerCallExpressionCore(callExpr, out resultTempVar);
         }
 
+        // The guarded branches must not duplicate source-planned suspension points.
+        if (callExpr.Arguments.Any(argument => CountAwaitExpressionsInExpression(argument) > 0
+            || CountYieldExpressionsInExpression(argument) > 0))
+        {
+            return TryLowerDynamicGlobalCall(callExpr, callee, out resultTempVar);
+        }
+
         var original = EmitOriginalGlobalBindingCheck(name);
         var fallbackLabel = CreateLabel();
         var endLabel = CreateLabel();

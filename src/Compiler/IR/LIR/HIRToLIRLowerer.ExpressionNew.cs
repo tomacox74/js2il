@@ -94,6 +94,11 @@ public sealed partial class HIRToLIRLowerer
 
         if (newExpr.Callee is HIRInitializedUserClassTypeExpression initializedClassExpr)
         {
+            if (initializedClassExpr.Decorators.Count > 0)
+            {
+                return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+            }
+
             var classSemantics = initializedClassExpr.ClassScope.ClassSemantics;
             if (classSemantics == null)
             {
@@ -122,7 +127,8 @@ public sealed partial class HIRToLIRLowerer
                 out var classScope,
                 out var declaredClassSemantics))
         {
-            if (declaredClassSemantics.IsExpression)
+            if (declaredClassSemantics.IsExpression
+                || declaredClassSemantics.HasClassDecorators)
             {
                 return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
             }

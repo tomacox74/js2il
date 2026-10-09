@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime;
 
-public class RuntimeServices
+public partial class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<InvocationFrame?> _currentInvocation = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
@@ -563,6 +563,7 @@ public class RuntimeServices
 
         var length = (int)formalParameterCount;
         constructor.Initialize(type, scopes, length);
+        constructor.HasIndependentClassIdentity = freshIdentity;
         var cacheKey = new ClassConstructorCacheKey(type, scopes, length);
         var materialized = freshIdentity
             ? constructor
@@ -811,8 +812,19 @@ public class RuntimeServices
         var method = ownerType.GetMethod(clrMethodName, flags)
             ?? throw new TypeError($"Class method '{clrMethodName}' was not found on {ownerType.FullName}");
 
-        Func<object[], object?[]?, object?> functionValue = (_, args) =>
-            InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, args);
+        BuiltinFunctionVariadic functionValue = (object? receiver, in JsCallArguments args) =>
+        {
+            try
+            {
+                return InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, receiver, args.ToArray());
+            }
+            catch (Exception exception) when (isAsync && !isGenerator)
+            {
+                return Promise.reject(exception is JsThrownValueException thrown
+                    ? thrown.Value
+                    : exception);
+            }
+        };
 
         if (isAsync)
         {
@@ -822,8 +834,6 @@ public class RuntimeServices
         {
             Function.InitializeFunctionInstance(functionValue, length, functionName);
         }
-        Function.DefineRestrictedFunctionProperties(functionValue);
-
         if (isGenerator)
         {
             GeneratorObject.InitializeGeneratorFunctionSurface(functionValue);
@@ -880,8 +890,8 @@ public class RuntimeServices
         var method = ownerType.GetMethod(clrMethodName, flags)
             ?? throw new TypeError($"Class accessor '{clrMethodName}' was not found on {ownerType.FullName}");
 
-        Func<object[], object?[]?, object?> functionValue = (_, args) =>
-            InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, args);
+        BuiltinFunctionVariadic functionValue = (object? receiver, in JsCallArguments args) =>
+            InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, receiver, args.ToArray());
 
         if (isAsync)
         {
@@ -891,8 +901,6 @@ public class RuntimeServices
         {
             Function.InitializeFunctionInstance(functionValue, length, functionName);
         }
-        Function.DefineRestrictedFunctionProperties(functionValue);
-
         if (isGenerator)
         {
             GeneratorObject.InitializeGeneratorFunctionSurface(functionValue);
@@ -1206,9 +1214,10 @@ public class RuntimeServices
         object[] scopes,
         bool isStatic,
         bool isPrivate,
+        object? receiver,
         object?[]? args)
     {
-        var receiver = ResolveLexicalThis(GetCurrentThis());
+        receiver = ResolveLexicalThis(receiver);
         if (isPrivate && !HasClassPrivateMethodBrand(receiver, ownerType, isStatic))
         {
             throw new TypeError("Receiver does not have the requested private method");
@@ -1222,6 +1231,9 @@ public class RuntimeServices
                 instance = RuntimeHelpers.GetUninitializedObject(ownerType);
                 ownerType.GetField("_scopes", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                     ?.SetValue(instance, scopes);
+                _generatedClassMethodReceivers.Add(
+                    instance,
+                    new GeneratedClassMethodReceiverSlot(receiver));
             }
             else
             {
@@ -1270,6 +1282,9 @@ public class RuntimeServices
             && _generatedClassReplacementReceivers.TryGetValue(receiver, out var replacement)
             && ownerType.IsInstanceOfType(replacement.Receiver))
         {
+            _generatedClassMethodReceivers.AddOrUpdate(
+                replacement.Receiver,
+                new GeneratedClassMethodReceiverSlot(receiver));
             return replacement.Receiver;
         }
 
@@ -1302,6 +1317,10 @@ public class RuntimeServices
         JsFunctionObject functionObject)
     {
         receiver = ResolveLexicalThis(receiver);
+        if (privateBrand == null)
+        {
+            return receiver!;
+        }
         var hasOwnerType = receiver switch
         {
             Type type => type == ownerType,
@@ -1734,7 +1753,7 @@ public class RuntimeServices
 
     public static object SetClassConstructorInferredName(object constructorValue, object nameValue)
     {
-        if (nameValue is not string inferredName || string.IsNullOrWhiteSpace(inferredName))
+        if (nameValue is not string inferredName)
         {
             return constructorValue;
         }
@@ -2010,8 +2029,7 @@ public class RuntimeServices
 
     public static void InitializeConstructedClassPrototype(object instance)
     {
-        if (GetCurrentNewTarget() is JsClassConstructorObject constructor
-            && constructor.Type.IsInstanceOfType(instance))
+        if (GetCurrentNewTarget() is JsClassConstructorObject constructor)
         {
             var brand = _classInstancePrivateBrands.GetOrCreateValue(instance);
             lock (brand.Constructors)

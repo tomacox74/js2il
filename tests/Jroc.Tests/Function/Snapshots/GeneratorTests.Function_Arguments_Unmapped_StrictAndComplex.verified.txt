@@ -76,16 +76,281 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_strictFn
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+					01 00 1b 53 63 6f 70 65 20 61 72 67 75 6d 65 6e
+					74 73 3d 7b 61 72 67 75 6d 65 6e 74 73 7d 00 00
+				)
+				// Fields
+				.field public object arguments
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.2
+					IL_0008: ldc.i4.1
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method assembly hidebysig static 
+					object __js_call_with_arguments__ (
+						class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
+						object[] scopes,
+						object[] arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 31 (0x1f)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: ldc.i4.2
+					IL_0002: ldarg.0
+					IL_0003: ldc.i4.0
+					IL_0004: ldnull
+					IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedDirectCallThis(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, bool, object)
+					IL_000a: ldarg.2
+					IL_000b: ldarg.0
+					IL_000c: ldnull
+					IL_000d: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::CreateFromArray(int32, object, object[], object, object)
+					IL_0012: ldarg.2
+					IL_0013: ldc.i4.0
+					IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_0019: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+					IL_001e: ret
+				} // end of method FunctionObject::__js_call_with_arguments__
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 29 (0x1d)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: ldc.i4.2
+					IL_0002: ldarg.1
+					IL_0003: ldarg.2
+					IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+					IL_0009: ldarg.0
+					IL_000a: ldnull
+					IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+					IL_0010: ldarg.2
+					IL_0011: ldc.i4.0
+					IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0017: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+					IL_001c: ret
+				} // end of method FunctionObject::CallCore
+
+				.method family hidebysig virtual 
+					instance object ConstructBodyCore (
+						object receiver,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+						object newTarget
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 29 (0x1d)
+					.maxstack 8
+
+					IL_0000: ldarg.3
+					IL_0001: ldc.i4.2
+					IL_0002: ldarg.1
+					IL_0003: ldarg.2
+					IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+					IL_0009: ldarg.0
+					IL_000a: ldarg.3
+					IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
+					IL_0010: ldarg.2
+					IL_0011: ldc.i4.0
+					IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0017: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
+					IL_001c: ret
+				} // end of method FunctionObject::ConstructBodyCore
+
+				.method family hidebysig virtual 
+					instance object ConstructCore (
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+						object newTarget
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldarg.1
+					IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+					IL_0007: ldarg.2
+					IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+					IL_000d: ret
+				} // end of method FunctionObject::ConstructCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object newTarget,
+					valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
+					object a
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 00 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 233 (0xe9)
+				.maxstack 8
+				.locals init (
+					[0] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope,
+					[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[2] object
+				)
+
+				IL_0000: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldloc.0
+				IL_0007: ldarg.1
+				IL_0008: ldloc.0
+				IL_0009: ldnull
+				IL_000a: ldc.i4.0
+				IL_000b: ldc.i4.1
+				IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, string[], bool, bool)
+				IL_0011: stfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope::arguments
+				IL_0016: nop
+				IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_001c: stloc.1
+				IL_001d: ldloc.1
+				IL_001e: ldarg.2
+				IL_001f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0024: pop
+				IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_002a: stloc.1
+				IL_002b: ldloc.0
+				IL_002c: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope::arguments
+				IL_0031: ldc.r8 0.0
+				IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_003f: stloc.2
+				IL_0040: ldloc.1
+				IL_0041: ldloc.2
+				IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0047: pop
+				IL_0048: ldloc.0
+				IL_0049: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope::arguments
+				IL_004e: stloc.2
+				IL_004f: ldloc.2
+				IL_0050: ldc.r8 0.0
+				IL_0059: ldc.r8 41
+				IL_0062: ldc.i4.1
+				IL_0063: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+				IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_006d: stloc.1
+				IL_006e: ldloc.1
+				IL_006f: ldarg.2
+				IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0075: pop
+				IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_007b: stloc.1
+				IL_007c: ldloc.0
+				IL_007d: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope::arguments
+				IL_0082: ldc.r8 0.0
+				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0090: stloc.2
+				IL_0091: ldloc.1
+				IL_0092: ldloc.2
+				IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0098: pop
+				IL_0099: ldc.r8 99
+				IL_00a2: box [System.Runtime]System.Double
+				IL_00a7: starg.s a
+				IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00ae: stloc.1
+				IL_00af: ldloc.1
+				IL_00b0: ldc.r8 99
+				IL_00b9: box [System.Runtime]System.Double
+				IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00c3: pop
+				IL_00c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00c9: stloc.1
+				IL_00ca: ldloc.0
+				IL_00cb: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/Scope::arguments
+				IL_00d0: ldc.r8 0.0
+				IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00de: stloc.2
+				IL_00df: ldloc.1
+				IL_00e0: ldloc.2
+				IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00e6: pop
+				IL_00e7: ldnull
+				IL_00e8: ret
+			} // end of method FunctionExpression_strictFn::__js_call__
+
+		} // end of class FunctionExpression_strictFn
+
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-				01 00 1b 53 63 6f 70 65 20 61 72 67 75 6d 65 6e
-				74 73 3d 7b 61 72 67 75 6d 65 6e 74 73 7d 00 00
-			)
-			// Fields
-			.field public object arguments
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -110,16 +375,12 @@
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 15 (0xf)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.2
-				IL_0008: ldc.i4.1
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
+				IL_0006: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -144,33 +405,19 @@
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
-			.method assembly hidebysig static 
-				object __js_call_with_arguments__ (
-					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
-					object[] scopes,
-					object[] arguments
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 31 (0x1f)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
-				IL_0000: ldnull
-				IL_0001: ldc.i4.2
-				IL_0002: ldarg.0
-				IL_0003: ldc.i4.0
-				IL_0004: ldnull
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedDirectCallThis(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, bool, object)
-				IL_000a: ldarg.2
-				IL_000b: ldarg.0
-				IL_000c: ldnull
-				IL_000d: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::CreateFromArray(int32, object, object[], object, object)
-				IL_0012: ldarg.2
-				IL_0013: ldc.i4.0
-				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
-				IL_0019: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
-				IL_001e: ret
-			} // end of method FunctionObject::__js_call_with_arguments__
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject::ResolveThisArgumentCore
 
 			.method family hidebysig virtual 
 				instance object CallCore (
@@ -179,22 +426,12 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 29 (0x1d)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldnull
-				IL_0001: ldc.i4.2
-				IL_0002: ldarg.1
-				IL_0003: ldarg.2
-				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-				IL_0009: ldarg.0
-				IL_000a: ldnull
-				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
-				IL_0010: ldarg.2
-				IL_0011: ldc.i4.0
-				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0017: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
-				IL_001c: ret
+				IL_0001: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'::__js_call__(object)
+				IL_0006: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -205,22 +442,12 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 29 (0x1d)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldarg.3
-				IL_0001: ldc.i4.2
-				IL_0002: ldarg.1
-				IL_0003: ldarg.2
-				IL_0004: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-				IL_0009: ldarg.0
-				IL_000a: ldarg.3
-				IL_000b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::Create(int32, object, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object, object)
-				IL_0010: ldarg.2
-				IL_0011: ldc.i4.0
-				IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0017: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'::__js_call__(object, valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object)
-				IL_001c: ret
+				IL_0001: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'::__js_call__(object)
+				IL_0006: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -247,99 +474,35 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object newTarget,
-				valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext invocationContext,
-				object a
+				object newTarget
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 233 (0xe9)
+			// Code size: 34 (0x22)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[2] object
+				[1] object[],
+				[2] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldarg.1
-			IL_0008: ldloc.0
-			IL_0009: ldnull
-			IL_000a: ldc.i4.0
-			IL_000b: ldc.i4.1
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext, object, string[], bool, bool)
-			IL_0011: stfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope::arguments
-			IL_0016: nop
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: ldarg.2
-			IL_001f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0024: pop
-			IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_002a: stloc.1
-			IL_002b: ldloc.0
-			IL_002c: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope::arguments
-			IL_0031: ldc.r8 0.0
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_003f: stloc.2
-			IL_0040: ldloc.1
-			IL_0041: ldloc.2
-			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0047: pop
-			IL_0048: ldloc.0
-			IL_0049: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope::arguments
-			IL_004e: stloc.2
-			IL_004f: ldloc.2
-			IL_0050: ldc.r8 0.0
-			IL_0059: ldc.r8 41
-			IL_0062: ldc.i4.1
-			IL_0063: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006d: stloc.1
-			IL_006e: ldloc.1
-			IL_006f: ldarg.2
-			IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0075: pop
-			IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007b: stloc.1
-			IL_007c: ldloc.0
-			IL_007d: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope::arguments
-			IL_0082: ldc.r8 0.0
-			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0090: stloc.2
-			IL_0091: ldloc.1
-			IL_0092: ldloc.2
-			IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0098: pop
-			IL_0099: ldc.r8 99
-			IL_00a2: box [System.Runtime]System.Double
-			IL_00a7: starg.s a
-			IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ae: stloc.1
-			IL_00af: ldloc.1
-			IL_00b0: ldc.r8 99
-			IL_00b9: box [System.Runtime]System.Double
-			IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00c3: pop
-			IL_00c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c9: stloc.1
-			IL_00ca: ldloc.0
-			IL_00cb: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/Scope::arguments
-			IL_00d0: ldc.r8 0.0
-			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00de: stloc.2
-			IL_00df: ldloc.1
-			IL_00e0: ldloc.2
-			IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00e6: pop
-			IL_00e7: ldnull
-			IL_00e8: ret
+			IL_0006: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_000b: stloc.1
+			IL_000c: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/FunctionObject::.ctor()
+			IL_0011: ldc.i4.1
+			IL_0012: conv.r8
+			IL_0013: ldstr ""
+			IL_0018: ldc.i4.0
+			IL_0019: ldc.i4.0
+			IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionExpression_strictFn/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_001f: stloc.2
+			IL_0020: ldloc.2
+			IL_0021: ret
 		} // end of method '<>DynamicFunction_L3C18'::__js_call__
 
 	} // end of class <>DynamicFunction_L3C18
@@ -348,16 +511,345 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_complexFn
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+					01 00 1b 53 63 6f 70 65 20 61 72 67 75 6d 65 6e
+					74 73 3d 7b 61 72 67 75 6d 65 6e 74 73 7d 00 00
+				)
+				// Nested Types
+				.class nested public auto ansi beforefieldinit Block_L9C56
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Block_L9C56::.ctor
+
+				} // end of class Block_L9C56
+
+
+				// Fields
+				.field public object arguments
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 15 (0xf)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.6
+					IL_0008: ldc.i4.0
+					IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
+					IL_000e: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object ResolveThisArgumentCore (
+						object thisArgument
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.1
+					IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+					IL_0006: ret
+				} // end of method FunctionObject::ResolveThisArgumentCore
+
+				.method assembly hidebysig static 
+					object __js_call_with_arguments__ (
+						class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
+						object[] scopes,
+						object[] arguments
+					) cil managed 
+				{
+					// Header size: 12
+					// Code size: 34 (0x22)
+					.maxstack 8
+					.locals init (
+						[0] object
+					)
+
+					IL_0000: ldarg.0
+					IL_0001: ldarg.2
+					IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
+					.try
+					{
+						IL_0007: ldnull
+						IL_0008: ldarg.2
+						IL_0009: ldc.i4.0
+						IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+						IL_000f: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn::__js_call__(object, object)
+						IL_0014: stloc.0
+						IL_0015: leave IL_0020
+					} // end .try
+					finally
+					{
+						IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
+						IL_001f: endfinally
+					} // end handler
+
+					IL_0020: ldloc.0
+					IL_0021: ret
+				} // end of method FunctionObject::__js_call_with_arguments__
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 18 (0x12)
+					.maxstack 8
+
+					IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_0005: ldarg.2
+					IL_0006: ldc.i4.0
+					IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_000c: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn::__js_call__(object, object)
+					IL_0011: ret
+				} // end of method FunctionObject::CallCore
+
+				.method family hidebysig virtual 
+					instance object ConstructBodyCore (
+						object receiver,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+						object newTarget
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.3
+					IL_0001: ldarg.2
+					IL_0002: ldc.i4.0
+					IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0008: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn::__js_call__(object, object)
+					IL_000d: ret
+				} // end of method FunctionObject::ConstructBodyCore
+
+				.method family hidebysig virtual 
+					instance object ConstructCore (
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+						object newTarget
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldarg.1
+					IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+					IL_0007: ldarg.2
+					IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+					IL_000d: ret
+				} // end of method FunctionObject::ConstructCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object newTarget,
+					object a
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 00 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 345 (0x159)
+				.maxstack 8
+				.locals init (
+					[0] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope,
+					[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[2] object
+				)
+
+				IL_0000: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldloc.0
+				IL_0007: ldloc.0
+				IL_0008: ldnull
+				IL_0009: ldc.i4.1
+				IL_000a: ldc.i4.0
+				IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[], bool, bool)
+				IL_0010: stfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::arguments
+				IL_0015: ldarg.1
+				IL_0016: brtrue IL_002b
+
+				IL_001b: ldc.r8 10
+				IL_0024: box [System.Runtime]System.Double
+				IL_0029: starg.s a
+
+				IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0030: stloc.1
+				IL_0031: ldloc.1
+				IL_0032: ldarg.1
+				IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0038: pop
+				IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_003e: stloc.1
+				IL_003f: ldloc.0
+				IL_0040: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::arguments
+				IL_0045: ldc.r8 0.0
+				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0053: stloc.2
+				IL_0054: ldloc.1
+				IL_0055: ldloc.2
+				IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_005b: pop
+				IL_005c: ldloc.0
+				IL_005d: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::arguments
+				IL_0062: stloc.2
+				IL_0063: ldloc.2
+				IL_0064: ldc.r8 0.0
+				IL_006d: ldc.r8 41
+				IL_0076: ldc.i4.0
+				IL_0077: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+				IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0081: stloc.1
+				IL_0082: ldloc.1
+				IL_0083: ldarg.1
+				IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0089: pop
+				IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_008f: stloc.1
+				IL_0090: ldloc.0
+				IL_0091: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::arguments
+				IL_0096: ldc.r8 0.0
+				IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00a4: stloc.2
+				IL_00a5: ldloc.1
+				IL_00a6: ldloc.2
+				IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00ac: pop
+				IL_00ad: ldc.r8 99
+				IL_00b6: box [System.Runtime]System.Double
+				IL_00bb: starg.s a
+				IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00c2: stloc.1
+				IL_00c3: ldloc.1
+				IL_00c4: ldc.r8 99
+				IL_00cd: box [System.Runtime]System.Double
+				IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00d7: pop
+				IL_00d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00dd: stloc.1
+				IL_00de: ldloc.0
+				IL_00df: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::arguments
+				IL_00e4: ldc.r8 0.0
+				IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00f2: stloc.2
+				IL_00f3: ldloc.1
+				IL_00f4: ldloc.2
+				IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00fa: pop
+				IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0100: stloc.1
+				IL_0101: ldloc.0
+				IL_0102: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/Scope::arguments
+				IL_0107: stloc.2
+				IL_0108: ldloc.2
+				IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+				IL_010e: stloc.2
+				IL_010f: ldloc.2
+				IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0115: volatile.
+				IL_0117: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+				IL_011c: brfalse IL_0135
+
+				IL_0121: ldstr "join"
+				IL_0126: ldstr ","
+				IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0130: br IL_014e
+
+				IL_0135: ldstr "join"
+				IL_013a: ldstr ","
+				IL_013f: ldstr "Function_Arguments_Unmapped_StrictAndComplex:<TwoPhaseDummy_M7>:__js_call__:52"
+				IL_0144: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+				IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+
+				IL_014e: stloc.2
+				IL_014f: ldloc.1
+				IL_0150: ldloc.2
+				IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0156: pop
+				IL_0157: ldnull
+				IL_0158: ret
+			} // end of method FunctionExpression_complexFn::__js_call__
+
+		} // end of class FunctionExpression_complexFn
+
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-				01 00 1b 53 63 6f 70 65 20 61 72 67 75 6d 65 6e
-				74 73 3d 7b 61 72 67 75 6d 65 6e 74 73 7d 00 00
-			)
-			// Fields
-			.field public object arguments
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -382,16 +874,12 @@
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 15 (0xf)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldc.i4.6
-				IL_0008: ldc.i4.0
-				IL_0009: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::InitializeInvocationContext(int32, bool)
-				IL_000e: ret
+				IL_0006: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -412,7 +900,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.1
+				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
@@ -430,43 +918,6 @@
 				IL_0006: ret
 			} // end of method FunctionObject::ResolveThisArgumentCore
 
-			.method assembly hidebysig static 
-				object __js_call_with_arguments__ (
-					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
-					object[] scopes,
-					object[] arguments
-				) cil managed 
-			{
-				// Header size: 12
-				// Code size: 34 (0x22)
-				.maxstack 8
-				.locals init (
-					[0] object
-				)
-
-				IL_0000: ldarg.0
-				IL_0001: ldarg.2
-				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
-				.try
-				{
-					IL_0007: ldnull
-					IL_0008: ldarg.2
-					IL_0009: ldc.i4.0
-					IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
-					IL_000f: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'::__js_call__(object, object)
-					IL_0014: stloc.0
-					IL_0015: leave IL_0020
-				} // end .try
-				finally
-				{
-					IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
-					IL_001f: endfinally
-				} // end handler
-
-				IL_0020: ldloc.0
-				IL_0021: ret
-			} // end of method FunctionObject::__js_call_with_arguments__
-
 			.method family hidebysig virtual 
 				instance object CallCore (
 					object thisArgument,
@@ -474,15 +925,12 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 18 (0x12)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_0005: ldarg.2
-				IL_0006: ldc.i4.0
-				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000c: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'::__js_call__(object, object)
-				IL_0011: ret
+				IL_0000: ldnull
+				IL_0001: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'::__js_call__(object)
+				IL_0006: ret
 			} // end of method FunctionObject::CallCore
 
 			.method family hidebysig virtual 
@@ -493,15 +941,12 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldarg.3
-				IL_0001: ldarg.2
-				IL_0002: ldc.i4.0
-				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0008: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'::__js_call__(object, object)
-				IL_000d: ret
+				IL_0001: call object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'::__js_call__(object)
+				IL_0006: ret
 			} // end of method FunctionObject::ConstructBodyCore
 
 			.method family hidebysig virtual 
@@ -528,133 +973,36 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object newTarget,
-				object a
+				object newTarget
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 345 (0x159)
+			// Code size: 39 (0x27)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[2] object
+				[1] object[],
+				[2] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldnull
-			IL_0009: ldc.i4.1
-			IL_000a: ldc.i4.0
-			IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[], bool, bool)
-			IL_0010: stfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::arguments
-			IL_0015: ldarg.1
-			IL_0016: brtrue IL_002b
-
-			IL_001b: ldc.r8 10
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: starg.s a
-
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: stloc.1
-			IL_0031: ldloc.1
-			IL_0032: ldarg.1
-			IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0038: pop
-			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003e: stloc.1
-			IL_003f: ldloc.0
-			IL_0040: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::arguments
-			IL_0045: ldc.r8 0.0
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0053: stloc.2
-			IL_0054: ldloc.1
-			IL_0055: ldloc.2
-			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_005b: pop
-			IL_005c: ldloc.0
-			IL_005d: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::arguments
-			IL_0062: stloc.2
-			IL_0063: ldloc.2
-			IL_0064: ldc.r8 0.0
-			IL_006d: ldc.r8 41
-			IL_0076: ldc.i4.0
-			IL_0077: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-			IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0081: stloc.1
-			IL_0082: ldloc.1
-			IL_0083: ldarg.1
-			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0089: pop
-			IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_008f: stloc.1
-			IL_0090: ldloc.0
-			IL_0091: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::arguments
-			IL_0096: ldc.r8 0.0
-			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00a4: stloc.2
-			IL_00a5: ldloc.1
-			IL_00a6: ldloc.2
-			IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00ac: pop
-			IL_00ad: ldc.r8 99
-			IL_00b6: box [System.Runtime]System.Double
-			IL_00bb: starg.s a
-			IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c2: stloc.1
-			IL_00c3: ldloc.1
-			IL_00c4: ldc.r8 99
-			IL_00cd: box [System.Runtime]System.Double
-			IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00d7: pop
-			IL_00d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00dd: stloc.1
-			IL_00de: ldloc.0
-			IL_00df: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::arguments
-			IL_00e4: ldc.r8 0.0
-			IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00f2: stloc.2
-			IL_00f3: ldloc.1
-			IL_00f4: ldloc.2
-			IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00fa: pop
-			IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0100: stloc.1
-			IL_0101: ldloc.0
-			IL_0102: ldfld object Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/Scope::arguments
-			IL_0107: stloc.2
-			IL_0108: ldloc.2
-			IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_010e: stloc.2
-			IL_010f: ldloc.2
-			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0115: volatile.
-			IL_0117: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_011c: brfalse IL_0135
-
-			IL_0121: ldstr "join"
-			IL_0126: ldstr ","
-			IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0130: br IL_014e
-
-			IL_0135: ldstr "join"
-			IL_013a: ldstr ","
-			IL_013f: ldstr "Function_Arguments_Unmapped_StrictAndComplex:<TwoPhaseDummy_M5>:__js_call__:52"
-			IL_0144: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-			IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-			IL_014e: stloc.2
-			IL_014f: ldloc.1
-			IL_0150: ldloc.2
-			IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0156: pop
-			IL_0157: ldnull
-			IL_0158: ret
+			IL_0006: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_000b: stloc.1
+			IL_000c: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/FunctionObject::.ctor()
+			IL_0011: ldc.i4.0
+			IL_0012: conv.r8
+			IL_0013: ldstr ""
+			IL_0018: ldc.i4.1
+			IL_0019: ldc.i4.0
+			IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionExpression_complexFn/FunctionObject>(!!0)
+			IL_0024: stloc.2
+			IL_0025: ldloc.2
+			IL_0026: ret
 		} // end of method '<>DynamicFunction_L9C19'::__js_call__
 
 	} // end of class <>DynamicFunction_L9C19
@@ -690,66 +1038,137 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 131 (0x83)
+		// Code size: 292 (0x124)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Arguments_Unmapped_StrictAndComplex/Scope,
-			[1] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject,
-			[2] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject,
-			[3] object[]
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object[],
+			[5] object[],
+			[6] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject,
+			[7] class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldc.i4.1
-		IL_0008: newarr [System.Runtime]System.Object
-		IL_000d: dup
-		IL_000e: ldc.i4.0
-		IL_000f: ldloc.0
-		IL_0010: stelem.ref
+		IL_0007: ldstr "Function"
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0011: stloc.3
-		IL_0012: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject::.ctor()
-		IL_0017: ldc.i4.1
-		IL_0018: conv.r8
-		IL_0019: ldstr ""
-		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.0
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
-		IL_0026: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_002b: stloc.3
-		IL_002c: ldloc.1
-		IL_002d: ldloc.3
-		IL_002e: ldc.r8 1
-		IL_0037: box [System.Runtime]System.Double
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0041: pop
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldloc.0
-		IL_004b: stelem.ref
-		IL_004c: stloc.3
-		IL_004d: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject::.ctor()
-		IL_0052: ldc.i4.0
-		IL_0053: conv.r8
-		IL_0054: ldstr ""
-		IL_0059: ldc.i4.1
-		IL_005a: ldc.i4.0
-		IL_005b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject>(!!0)
-		IL_0065: stloc.2
-		IL_0066: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_006b: stloc.3
-		IL_006c: ldloc.2
-		IL_006d: ldloc.3
-		IL_006e: ldc.r8 1
-		IL_0077: box [System.Runtime]System.Double
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0081: pop
-		IL_0082: ret
+		IL_0012: ldc.i4.2
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldstr "a"
+		IL_001f: stelem.ref
+		IL_0020: dup
+		IL_0021: ldc.i4.1
+		IL_0022: ldstr "\"use strict\";console.log(a);console.log(arguments[0]);arguments[0]=41;console.log(a);console.log(arguments[0]);a=99;console.log(a);console.log(arguments[0]);"
+		IL_0027: stelem.ref
+		IL_0028: stloc.s 4
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
+		IL_0033: stelem.ref
+		IL_0034: stloc.s 5
+		IL_0036: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject::.ctor()
+		IL_003b: ldc.i4.0
+		IL_003c: conv.r8
+		IL_003d: ldstr ""
+		IL_0042: ldc.i4.0
+		IL_0043: ldc.i4.0
+		IL_0044: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L3C18'/FunctionObject>(!!0)
+		IL_004e: stloc.s 6
+		IL_0050: ldc.i4.2
+		IL_0051: newarr [System.Runtime]System.Object
+		IL_0056: dup
+		IL_0057: ldc.i4.0
+		IL_0058: ldstr "a"
+		IL_005d: stelem.ref
+		IL_005e: dup
+		IL_005f: ldc.i4.1
+		IL_0060: ldstr "\"use strict\";console.log(a);console.log(arguments[0]);arguments[0]=41;console.log(a);console.log(arguments[0]);a=99;console.log(a);console.log(arguments[0]);"
+		IL_0065: stelem.ref
+		IL_0066: stloc.s 5
+		IL_0068: ldloc.3
+		IL_0069: ldnull
+		IL_006a: ldloc.s 4
+		IL_006c: ldloc.s 6
+		IL_006e: ldloc.s 5
+		IL_0070: ldnull
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallPreparedDynamicFunction(object, object, object[], object, object[], object)
+		IL_0076: stloc.1
+		IL_0077: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007c: stloc.s 5
+		IL_007e: ldloc.1
+		IL_007f: ldloc.s 5
+		IL_0081: ldc.r8 1
+		IL_008a: box [System.Runtime]System.Double
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0094: pop
+		IL_0095: ldstr "Function"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009f: stloc.3
+		IL_00a0: ldc.i4.2
+		IL_00a1: newarr [System.Runtime]System.Object
+		IL_00a6: dup
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldstr "a = 10"
+		IL_00ad: stelem.ref
+		IL_00ae: dup
+		IL_00af: ldc.i4.1
+		IL_00b0: ldstr "console.log(a);console.log(arguments[0]);arguments[0]=41;console.log(a);console.log(arguments[0]);a=99;console.log(a);console.log(arguments[0]);console.log(Object.keys(arguments).join(\",\"));"
+		IL_00b5: stelem.ref
+		IL_00b6: stloc.s 5
+		IL_00b8: ldc.i4.1
+		IL_00b9: newarr [System.Runtime]System.Object
+		IL_00be: dup
+		IL_00bf: ldc.i4.0
+		IL_00c0: ldloc.0
+		IL_00c1: stelem.ref
+		IL_00c2: stloc.s 4
+		IL_00c4: newobj instance void Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject::.ctor()
+		IL_00c9: ldc.i4.0
+		IL_00ca: conv.r8
+		IL_00cb: ldstr ""
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldc.i4.0
+		IL_00d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Arguments_Unmapped_StrictAndComplex/'<>DynamicFunction_L9C19'/FunctionObject>(!!0)
+		IL_00dc: stloc.s 7
+		IL_00de: ldc.i4.2
+		IL_00df: newarr [System.Runtime]System.Object
+		IL_00e4: dup
+		IL_00e5: ldc.i4.0
+		IL_00e6: ldstr "a = 10"
+		IL_00eb: stelem.ref
+		IL_00ec: dup
+		IL_00ed: ldc.i4.1
+		IL_00ee: ldstr "console.log(a);console.log(arguments[0]);arguments[0]=41;console.log(a);console.log(arguments[0]);a=99;console.log(a);console.log(arguments[0]);console.log(Object.keys(arguments).join(\",\"));"
+		IL_00f3: stelem.ref
+		IL_00f4: stloc.s 4
+		IL_00f6: ldloc.3
+		IL_00f7: ldnull
+		IL_00f8: ldloc.s 5
+		IL_00fa: ldloc.s 7
+		IL_00fc: ldloc.s 4
+		IL_00fe: ldnull
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallPreparedDynamicFunction(object, object, object[], object, object[], object)
+		IL_0104: stloc.2
+		IL_0105: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_010a: stloc.s 4
+		IL_010c: ldloc.2
+		IL_010d: ldloc.s 4
+		IL_010f: ldc.r8 1
+		IL_0118: box [System.Runtime]System.Double
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0122: pop
+		IL_0123: ret
 	} // end of method Function_Arguments_Unmapped_StrictAndComplex::__js_module_init__
 
 } // end of class Modules.Function_Arguments_Unmapped_StrictAndComplex

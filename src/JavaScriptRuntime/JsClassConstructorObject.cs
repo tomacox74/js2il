@@ -25,7 +25,11 @@ public abstract class JsClassConstructorObject : JsFunctionObject
 
     internal bool IsDerivedClass { get; set; }
 
+    internal bool HasIndependentClassIdentity { get; set; }
+
     internal JsClassConstructorObject? PrivateBrandBaseConstructor { get; set; }
+
+    internal Dictionary<string, string> ComputedFieldKeys { get; } = new(StringComparer.Ordinal);
 
     internal void Initialize(
         Type type,

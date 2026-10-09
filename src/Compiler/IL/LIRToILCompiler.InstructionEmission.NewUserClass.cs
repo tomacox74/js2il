@@ -53,44 +53,10 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
                     }
 
-                    // Before the newobj call, push all actual call-site arguments into the invocation frame so that
-                    // the 'arguments' keyword inside the constructor chain (including base constructors) reflects
-                    // the actual values passed by the caller — even when MaxArgCount is 0 (default derived ctor).
-                    {
-                        var pushCurrentArguments = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentArguments),
-                            parameterTypes: new[] { typeof(object[]) });
-
-                        // Build object[] of all argc arguments. The array itself is consumed by PushCurrentArguments
-                        // (void return), so this block does not perturb the eval stack (scopes may already be pushed).
-                        ilEncoder.LoadConstantI4(argc);
-                        ilEncoder.OpCode(ILOpCode.Newarr);
-                        ilEncoder.Token(_bclReferences.ObjectType);
-
-                        for (int i = 0; i < argc; i++)
-                        {
-                            ilEncoder.OpCode(ILOpCode.Dup);
-                            ilEncoder.LoadConstantI4(i);
-                            EmitLoadTempAsObject(newUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
-                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
-                        }
-
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(pushCurrentArguments);
-                        // Stack unchanged: [] or [scopes] (PushCurrentArguments is void)
-                    }
+                    EmitPushUserClassConstructionContext(newUserClass, ilEncoder, allocation, methodDescriptor);
 
                     if (newUserClass.IsDerivedConstructor)
                     {
-                        EmitLoadTempAsObject(newUserClass.NewTarget, ilEncoder, allocation, methodDescriptor);
-                        var pushCurrentNewTarget = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentNewTarget),
-                            parameterTypes: new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(pushCurrentNewTarget);
-
                         var pushDerivedThis = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.RuntimeServices),
                             nameof(JavaScriptRuntime.RuntimeServices.PushDerivedConstructorThisBinding),
@@ -133,7 +99,6 @@ internal sealed partial class LIRToILCompiler
 
                     bool resultUsed = IsMaterialized(newUserClass.Result, allocation);
 
-                    if (newUserClass.IsDerivedConstructor)
                     {
                         var popCurrentNewTarget = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.RuntimeServices),
@@ -156,26 +121,11 @@ internal sealed partial class LIRToILCompiler
 
                     void EmitAttachClassPrototype()
                     {
-                        if (newUserClass.IsDerivedConstructor)
-                        {
-                            EmitLoadTempAsObject(
-                                newUserClass.NewTarget,
-                                ilEncoder,
-                                allocation,
-                                methodDescriptor);
-                        }
-                        else
-                        {
-                            ilEncoder.OpCode(ILOpCode.Ldtoken);
-                            ilEncoder.Token(classTypeForPrototype);
-                            var getTypeFromHandleForPrototype =
-                                _memberRefRegistry.GetOrAddMethod(
-                                    typeof(Type),
-                                    nameof(Type.GetTypeFromHandle),
-                                    parameterTypes: new[] { typeof(RuntimeTypeHandle) });
-                            ilEncoder.OpCode(ILOpCode.Call);
-                            ilEncoder.Token(getTypeFromHandleForPrototype);
-                        }
+                        EmitLoadTempAsObject(
+                            newUserClass.NewTarget,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
 
                         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
                         var getProperty = _memberRefRegistry.GetOrAddMethod(
@@ -281,5 +231,33 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    private void EmitPushUserClassConstructionContext(
+        LIRNewUserClass construction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        // The invocation frame retains extra arguments even when the CLR signature cannot accept them.
+        ilEncoder.LoadConstantI4(construction.Arguments.Count);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+        for (var index = 0; index < construction.Arguments.Count; index++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(index);
+            EmitLoadTempAsObject(construction.Arguments[index], ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        }
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentArguments),
+            parameterTypes: new[] { typeof(object[]) }));
+        EmitLoadTempAsObject(construction.NewTarget, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentNewTarget),
+            parameterTypes: new[] { typeof(object) }));
     }
 }

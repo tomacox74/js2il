@@ -2615,6 +2615,7 @@ namespace JavaScriptRuntime
                 var constructionRealm = newTarget is not null and not JsNull
                     ? RuntimeIntrinsics.GetFunctionRealm(newTarget)
                     : RuntimeIntrinsics.Current;
+                var previousThis = RuntimeServices.GetCurrentThis();
                 RuntimeServices.PushCurrentArguments(callArgs);
                 var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
                     newTarget ?? prototypeOwner ?? type);
@@ -2732,6 +2733,7 @@ namespace JavaScriptRuntime
                     {
                         RuntimeServices.PopDerivedConstructorThisBinding();
                     }
+                    RuntimeServices.SetCurrentThis(previousThis);
                     RuntimeServices.SetCurrentNewTarget(previousNewTarget);
                     RuntimeServices.PopCurrentArguments();
                 }
@@ -3531,7 +3533,8 @@ namespace JavaScriptRuntime
                 && !TryGetCompiledStaticClassField(target, name, out _)
                 && !defaultDataObject.HasNonDataDescriptors)
             {
-                return defaultDataObject.HasOwnPropertyValue(name);
+                return defaultDataObject.HasOwnPropertyValue(name)
+                    || RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, name, out _);
             }
 
             if (PropertyDescriptorStore.IsDeleted(target, name))
@@ -3540,6 +3543,11 @@ namespace JavaScriptRuntime
             }
 
             if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
+            {
+                return true;
+            }
+
+            if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, name, out _))
             {
                 return true;
             }

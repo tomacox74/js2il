@@ -157,38 +157,6 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // User-defined class static field access (e.g., Greeter.message).
-        // Classes are compiled as .NET types, and static class fields are emitted as CLR static fields.
-        // When the receiver is the class identifier, lower directly to a static field load.
-        if (propAccessExpr.Object is HIRVariableExpression classVarExpr
-            && TryGetRegistryClassNameForClassSymbol(
-                classVarExpr.Name,
-                out var registryClassName))
-        {
-            if (_classRegistry == null
-                || !_classRegistry.TryGetStaticField(registryClassName, propAccessExpr.PropertyName, out _))
-            {
-                goto LowerGenericPropertyAccess;
-            }
-
-            _methodBodyIR.Instructions.Add(new LIRLoadUserClassStaticField(
-                RegistryClassName: registryClassName,
-                FieldName: propAccessExpr.PropertyName,
-                Result: resultTempVar));
-
-            if (!_classRegistry.TryGetStaticFieldClrType(registryClassName, propAccessExpr.PropertyName, out var staticFieldClrType))
-            {
-                staticFieldClrType = typeof(object);
-            }
-            var storageKind = (staticFieldClrType == typeof(double)
-                || staticFieldClrType == typeof(bool)
-                || staticFieldClrType == typeof(JavaScriptRuntime.JsNull))
-                ? ValueStorageKind.UnboxedValue
-                : ValueStorageKind.Reference;
-            DefineTempStorage(resultTempVar, new ValueStorage(storageKind, staticFieldClrType));
-            return true;
-        }
-
         if (propAccessExpr.Object is HIRSuperExpression
             && TryGetEnclosingBaseClassRegistryName(out var baseClassRegistryName)
             && baseClassRegistryName != null)

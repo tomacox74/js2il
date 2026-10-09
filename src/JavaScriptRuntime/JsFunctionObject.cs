@@ -69,7 +69,10 @@ public abstract class JsFunctionObject : JsObject
         => ConstructBodyCore(receiver, arguments, newTarget);
 
     internal object? ResolveThisArgument(object? thisArgument)
-        => ResolveThisArgumentCore(thisArgument);
+    {
+        using var realmScope = RuntimeServices.EnterFunctionRealm(this);
+        return ResolveThisArgumentCore(thisArgument);
+    }
 
     internal object? ResolveCallNewTarget()
         => ResolveCallNewTargetCore();

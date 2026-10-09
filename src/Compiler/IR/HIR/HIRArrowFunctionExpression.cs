@@ -21,6 +21,7 @@ public sealed class HIRArrowFunctionExpression : HIRExpression
 	public Scope FunctionScope { get; }
 	public bool RequiresLexicalSuperConstructorContext { get; }
 	public bool ContainsSuperConstructorCallInBody { get; }
+	public HIRExpression? CapturedThis { get; init; }
 	public CallableMaterializationDecision MaterializationDecision { get; set; }
 		= CallableMaterializationDecision.UnboundEvaluation;
 }

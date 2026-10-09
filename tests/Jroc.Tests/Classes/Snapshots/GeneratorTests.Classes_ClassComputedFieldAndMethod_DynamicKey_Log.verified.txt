@@ -308,10 +308,12 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 78 (0x4e)
 			.maxstack 8
 			.locals init (
-				[0] object[]
+				[0] object[],
+				[1] class [System.Runtime]System.Type,
+				[2] object
 			)
 
 			IL_0000: ldarg.0
@@ -323,13 +325,23 @@
 			IL_000e: ldarg.0
 			IL_000f: ldloc.0
 			IL_0010: stfld object[] Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::_scopes
-			IL_0015: ldarg.0
-			IL_0016: ldstr "value"
-			IL_001b: ldc.r8 41
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_002e: pop
-			IL_002f: ret
+			IL_0015: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+			IL_001a: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001f: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+			IL_0024: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: ldarg.0
+			IL_002c: ldstr "86"
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetClassComputedFieldKey(class [System.Runtime]System.Type, object, object)
+			IL_0036: stloc.2
+			IL_0037: ldarg.0
+			IL_0038: ldloc.2
+			IL_0039: ldc.r8 41
+			IL_0042: box [System.Runtime]System.Double
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
+			IL_004c: pop
+			IL_004d: ret
 		} // end of method Example::.ctor
 
 	} // end of class Example
@@ -365,200 +377,207 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 523 (0x20b)
+		// Code size: 533 (0x215)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope,
 			[1] object,
 			[2] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example,
-			[3] class [System.Runtime]System.Type,
-			[4] object,
-			[5] object[],
-			[6] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[8] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example,
-			[9] bool,
-			[10] object
+			[3] object[],
+			[4] class [System.Runtime]System.Type,
+			[5] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject,
+			[6] object,
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[9] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example,
+			[10] bool,
+			[11] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-		IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0011: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-		IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_001b: stloc.3
-		IL_001c: volatile.
-		IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0023: brfalse IL_0038
-
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldloc.0
+		IL_0010: stelem.ref
+		IL_0011: stloc.3
+		IL_0012: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+		IL_0017: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001c: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0026: stloc.s 4
 		IL_0028: ldloc.3
-		IL_0029: ldstr "prototype"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0033: br IL_004d
+		IL_0029: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.s 4
+		IL_0030: ldloc.3
+		IL_0031: ldc.i4.0
+		IL_0032: conv.r8
+		IL_0033: ldc.i4.0
+		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0039: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject
+		IL_003e: stloc.s 5
+		IL_0040: ldloc.s 5
+		IL_0042: ldstr "Example"
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
+		IL_004c: stloc.s 6
+		IL_004e: ldloc.s 6
+		IL_0050: ldstr "86"
+		IL_0055: ldstr "value"
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassComputedFieldKey(object, object, object)
+		IL_005f: pop
+		IL_0060: volatile.
+		IL_0062: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0067: brfalse IL_007d
 
-		IL_0038: ldloc.3
-		IL_0039: ldstr "prototype"
-		IL_003e: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:9"
-		IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_006c: ldloc.s 6
+		IL_006e: ldstr "prototype"
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0078: br IL_0093
 
-		IL_004d: stloc.s 4
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldloc.0
-		IL_0058: stelem.ref
-		IL_0059: stloc.s 5
-		IL_005b: ldloc.s 4
-		IL_005d: ldstr "bump"
-		IL_0062: ldloc.s 5
-		IL_0064: ldc.i4.0
-		IL_0065: ldelem.ref
-		IL_0066: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope
-		IL_006b: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey/FunctionObject::.ctor(class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope)
-		IL_0070: ldc.i4.0
-		IL_0071: conv.r8
-		IL_0072: ldstr ""
-		IL_0077: ldc.i4.0
-		IL_0078: ldc.i4.0
-		IL_0079: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_007e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey/FunctionObject>(!!0)
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_0088: pop
-		IL_0089: ldc.i4.1
-		IL_008a: newarr [System.Runtime]System.Object
-		IL_008f: dup
-		IL_0090: ldc.i4.0
-		IL_0091: ldloc.0
-		IL_0092: stelem.ref
-		IL_0093: stloc.s 5
-		IL_0095: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-		IL_009a: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_009f: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-		IL_00a4: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00a9: stloc.3
-		IL_00aa: ldloc.s 5
-		IL_00ac: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject::.ctor(object[])
-		IL_00b1: ldloc.3
-		IL_00b2: ldloc.s 5
+		IL_007d: ldloc.s 6
+		IL_007f: ldstr "prototype"
+		IL_0084: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:16"
+		IL_0089: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0093: stloc.s 7
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: stelem.ref
+		IL_009f: stloc.3
+		IL_00a0: ldloc.s 7
+		IL_00a2: ldstr "bump"
+		IL_00a7: ldloc.3
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldelem.ref
+		IL_00aa: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope
+		IL_00af: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey/FunctionObject::.ctor(class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope)
 		IL_00b4: ldc.i4.0
 		IL_00b5: conv.r8
-		IL_00b6: ldc.i4.0
-		IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00bc: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject
-		IL_00c1: stloc.s 6
-		IL_00c3: ldloc.s 6
-		IL_00c5: stloc.1
-		IL_00c6: ldc.i4.1
-		IL_00c7: newarr [System.Runtime]System.Object
-		IL_00cc: dup
-		IL_00cd: ldc.i4.0
-		IL_00ce: ldloc.0
-		IL_00cf: stelem.ref
-		IL_00d0: stloc.s 5
-		IL_00d2: ldloc.s 5
-		IL_00d4: ldc.i4.0
-		IL_00d5: newarr [System.Runtime]System.Object
-		IL_00da: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00df: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::.ctor(object[])
-		IL_00e4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00e9: stloc.2
-		IL_00ea: ldloc.2
-		IL_00eb: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-		IL_00f0: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00f5: ldstr "prototype"
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00ff: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0109: stloc.s 7
-		IL_010b: volatile.
-		IL_010d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0112: brfalse IL_0127
+		IL_00b6: ldstr ""
+		IL_00bb: ldc.i4.0
+		IL_00bc: ldc.i4.0
+		IL_00bd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey/FunctionObject>(!!0)
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00cc: pop
+		IL_00cd: ldloc.s 6
+		IL_00cf: stloc.1
+		IL_00d0: ldc.i4.1
+		IL_00d1: newarr [System.Runtime]System.Object
+		IL_00d6: dup
+		IL_00d7: ldc.i4.0
+		IL_00d8: ldloc.0
+		IL_00d9: stelem.ref
+		IL_00da: stloc.3
+		IL_00db: ldloc.3
+		IL_00dc: ldc.i4.0
+		IL_00dd: newarr [System.Runtime]System.Object
+		IL_00e2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00e7: ldloc.1
+		IL_00e8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_00ed: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::.ctor(object[])
+		IL_00f2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_00f7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00fc: stloc.2
+		IL_00fd: ldloc.2
+		IL_00fe: ldloc.1
+		IL_00ff: ldstr "prototype"
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0109: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_010e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0113: stloc.s 8
+		IL_0115: volatile.
+		IL_0117: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_011c: brfalse IL_0131
 
-		IL_0117: ldloc.2
-		IL_0118: ldstr "value"
-		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0122: br IL_013c
+		IL_0121: ldloc.2
+		IL_0122: ldstr "value"
+		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012c: br IL_0146
 
-		IL_0127: ldloc.2
-		IL_0128: ldstr "value"
-		IL_012d: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:25"
-		IL_0132: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0131: ldloc.2
+		IL_0132: ldstr "value"
+		IL_0137: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:29"
+		IL_013c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_013c: stloc.s 4
-		IL_013e: ldloc.s 7
-		IL_0140: ldloc.s 4
-		IL_0142: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0147: pop
-		IL_0148: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_014d: stloc.s 7
-		IL_014f: ldloc.2
-		IL_0150: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example>(!!0)
-		IL_0155: stloc.s 8
-		IL_0157: ldloc.s 8
-		IL_0159: ldstr "bump"
-		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember0(object, object)
-		IL_0163: stloc.s 4
-		IL_0165: ldloc.s 7
-		IL_0167: ldloc.s 4
-		IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_016e: pop
-		IL_016f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0174: stloc.s 7
-		IL_0176: volatile.
-		IL_0178: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_017d: brfalse IL_0192
+		IL_0146: stloc.s 6
+		IL_0148: ldloc.s 8
+		IL_014a: ldloc.s 6
+		IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0151: pop
+		IL_0152: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0157: stloc.s 8
+		IL_0159: ldloc.2
+		IL_015a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example>(!!0)
+		IL_015f: stloc.s 9
+		IL_0161: ldloc.s 9
+		IL_0163: ldstr "bump"
+		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember0(object, object)
+		IL_016d: stloc.s 6
+		IL_016f: ldloc.s 8
+		IL_0171: ldloc.s 6
+		IL_0173: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0178: pop
+		IL_0179: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_017e: stloc.s 8
+		IL_0180: volatile.
+		IL_0182: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0187: brfalse IL_019c
 
-		IL_0182: ldloc.2
-		IL_0183: ldstr "value"
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_018d: br IL_01a7
+		IL_018c: ldloc.2
+		IL_018d: ldstr "value"
+		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0197: br IL_01b1
 
-		IL_0192: ldloc.2
-		IL_0193: ldstr "value"
-		IL_0198: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:36"
-		IL_019d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_019c: ldloc.2
+		IL_019d: ldstr "value"
+		IL_01a2: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:40"
+		IL_01a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_01a7: stloc.s 4
-		IL_01a9: ldloc.s 7
-		IL_01ab: ldloc.s 4
-		IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01b2: pop
-		IL_01b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01b8: stloc.s 7
-		IL_01ba: volatile.
-		IL_01bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_01c1: brfalse IL_01d6
+		IL_01b1: stloc.s 6
+		IL_01b3: ldloc.s 8
+		IL_01b5: ldloc.s 6
+		IL_01b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01bc: pop
+		IL_01bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01c2: stloc.s 8
+		IL_01c4: volatile.
+		IL_01c6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_01cb: brfalse IL_01e0
 
-		IL_01c6: ldloc.2
-		IL_01c7: ldstr "fieldKey"
-		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01d1: br IL_01eb
+		IL_01d0: ldloc.2
+		IL_01d1: ldstr "fieldKey"
+		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01db: br IL_01f5
 
-		IL_01d6: ldloc.2
-		IL_01d7: ldstr "fieldKey"
-		IL_01dc: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:41"
-		IL_01e1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_01e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01e0: ldloc.2
+		IL_01e1: ldstr "fieldKey"
+		IL_01e6: ldstr "Classes_ClassComputedFieldAndMethod_DynamicKey_Log:Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log:__js_module_init__:45"
+		IL_01eb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_01eb: stloc.s 4
-		IL_01ed: ldloc.s 4
-		IL_01ef: ldnull
-		IL_01f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_01f5: stloc.s 9
-		IL_01f7: ldloc.s 9
-		IL_01f9: box [System.Runtime]System.Boolean
-		IL_01fe: stloc.s 10
-		IL_0200: ldloc.s 7
-		IL_0202: ldloc.s 10
-		IL_0204: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0209: pop
-		IL_020a: ret
+		IL_01f5: stloc.s 6
+		IL_01f7: ldloc.s 6
+		IL_01f9: ldnull
+		IL_01fa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01ff: stloc.s 10
+		IL_0201: ldloc.s 10
+		IL_0203: box [System.Runtime]System.Boolean
+		IL_0208: stloc.s 11
+		IL_020a: ldloc.s 8
+		IL_020c: ldloc.s 11
+		IL_020e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0213: pop
+		IL_0214: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DynamicKey_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log

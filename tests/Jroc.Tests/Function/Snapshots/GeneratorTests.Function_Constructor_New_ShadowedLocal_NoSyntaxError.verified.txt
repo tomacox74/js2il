@@ -228,7 +228,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 211 (0xd3)
+		// Code size: 248 (0xf8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/Scope,
@@ -239,7 +239,8 @@
 			[5] object[],
 			[6] class Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/ClassExpression_L3C16/Scope_ctor/FunctionObject,
 			[7] object,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[8] object[],
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError/Scope::.ctor()
@@ -284,34 +285,51 @@
 		IL_0076: ldstr "Function"
 		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
 		IL_0080: stloc.2
-		IL_0081: ldloc.2
-		IL_0082: dup
-		IL_0083: ldstr "if ("
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
-		IL_008d: stloc.3
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0093: stloc.s 8
-		IL_0095: volatile.
-		IL_0097: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_009c: brfalse IL_00b1
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldstr "if ("
+		IL_008e: stelem.ref
+		IL_008f: stloc.s 5
+		IL_0091: ldc.i4.1
+		IL_0092: newarr [System.Runtime]System.Object
+		IL_0097: dup
+		IL_0098: ldc.i4.0
+		IL_0099: ldstr "if ("
+		IL_009e: stelem.ref
+		IL_009f: stloc.s 8
+		IL_00a1: ldloc.2
+		IL_00a2: ldnull
+		IL_00a3: ldloc.s 5
+		IL_00a5: ldnull
+		IL_00a6: ldloc.s 8
+		IL_00a8: ldstr "Unexpected token '}' (Function_Constructor_New_ShadowedLocal_NoSyntaxError:3:1)"
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructPreparedDynamicFunction(object, object, object[], object, object[], object)
+		IL_00b2: stloc.3
+		IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b8: stloc.s 9
+		IL_00ba: volatile.
+		IL_00bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00c1: brfalse IL_00d6
 
-		IL_00a1: ldloc.3
-		IL_00a2: ldstr "source"
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ac: br IL_00c6
+		IL_00c6: ldloc.3
+		IL_00c7: ldstr "source"
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d1: br IL_00eb
 
-		IL_00b1: ldloc.3
-		IL_00b2: ldstr "source"
-		IL_00b7: ldstr "Function_Constructor_New_ShadowedLocal_NoSyntaxError:Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError:__js_module_init__:22"
-		IL_00bc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00d6: ldloc.3
+		IL_00d7: ldstr "source"
+		IL_00dc: ldstr "Function_Constructor_New_ShadowedLocal_NoSyntaxError:Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError:__js_module_init__:28"
+		IL_00e1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00c6: stloc.s 7
-		IL_00c8: ldloc.s 8
-		IL_00ca: ldloc.s 7
-		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d1: pop
-		IL_00d2: ret
+		IL_00eb: stloc.s 7
+		IL_00ed: ldloc.s 9
+		IL_00ef: ldloc.s 7
+		IL_00f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f6: pop
+		IL_00f7: ret
 	} // end of method Function_Constructor_New_ShadowedLocal_NoSyntaxError::__js_module_init__
 
 } // end of class Modules.Function_Constructor_New_ShadowedLocal_NoSyntaxError

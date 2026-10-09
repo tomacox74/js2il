@@ -211,6 +211,26 @@ namespace JavaScriptRuntime
             return CallableOperations.Call(method, receiver, arguments);
         }
 
+        public static object GetSuperPropertyBase()
+        {
+            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
+            if (homeObject is null or JsNull)
+            {
+                throw new TypeError("Super object is unavailable");
+            }
+            return PrototypeChain.GetPrototypeOrNull(homeObject)
+                ?? throw new TypeError("Super object has no prototype");
+        }
+
+        public static object? SetSuperProperty(object prototype, object? receiver, string propertyName, object? value)
+        {
+            if (!ReflectSet(prototype, propertyName, value, receiver))
+            {
+                throw new TypeError($"Cannot assign to super property '{propertyName}'");
+            }
+            return value;
+        }
+
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
             => DefineAccessorProperty(target, prop, getter, setter, enumerable: true, createDictionarySlot: true);
 
@@ -297,7 +317,7 @@ namespace JavaScriptRuntime
             if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
                 || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
                 && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
-                && !existingDescriptor.Writable))
+                && !existingDescriptor.Configurable))
             {
                 throw new TypeError($"Cannot redefine property: {key}");
             }

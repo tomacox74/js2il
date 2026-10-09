@@ -308,6 +308,7 @@ public static class CallableOperations
         in JsCallArguments arguments,
         object? newTarget)
     {
+        using var realmScope = RuntimeServices.EnterFunctionRealm(functionObject);
         var effectiveThisArgument = functionObject.ResolveThisArgument(thisArgument);
         var requirements = functionObject.InvocationRequirements;
         if (functionObject.SupportsExplicitInvocationContext
@@ -346,6 +347,7 @@ public static class CallableOperations
         in JsCallArguments arguments,
         object? newTarget)
     {
+        using var realmScope = RuntimeServices.EnterFunctionRealm(functionObject);
         var requirements = functionObject.InvocationRequirements;
         if (functionObject.SupportsExplicitInvocationContext
             || requirements == InvocationContextRequirements.None)
@@ -378,6 +380,7 @@ public static class CallableOperations
         in JsCallArguments arguments,
         object? newTarget)
     {
+        using var realmScope = RuntimeServices.EnterFunctionRealm(functionObject);
         var requirements = functionObject.InvocationRequirements;
         if (functionObject.SupportsExplicitInvocationContext
             || requirements == InvocationContextRequirements.None)

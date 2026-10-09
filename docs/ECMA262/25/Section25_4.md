@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-25T21:34:59Z
+> Last generated (UTC): 2026-10-09T10:25:01Z
 
 JROC exposes integer typed-array atomic operations, isLockFree, pause, synchronous Atomics.wait for Int32Array and BigInt64Array, and Atomics.notify and waitAsync with waiter coordination. Full multi-agent memory-model conformance remains unverified.
 
@@ -76,7 +76,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Atomics.waitAsync and Atomics.notify | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Atomics/waitAsync/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Atomics/notify/ExecutionTests.cs`<br>`tests/Jroc.Tests/AtomicsWaitAsyncRuntimeTests.cs` | `test/built-ins/Atomics/waitAsync/descriptor.js`<br>`test/built-ins/Atomics/notify/descriptor.js` | 75 pinned tests verify notification counts, validation and coercion ordering, BigInt64 waits, and waitAsync immediate results. Additional native agent tests cover cross-agent notification and asynchronous waits; the complete ECMA-262 memory model remains unverified. |
+| Atomics.waitAsync and Atomics.notify | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Atomics/waitAsync/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Atomics/notify/ExecutionTests.cs`<br>`tests/Jroc.Tests/AtomicsWaitAsyncRuntimeTests.cs` | `test/built-ins/Atomics/waitAsync/descriptor.js`<br>`test/built-ins/Atomics/notify/descriptor.js` | 75 pinned tests verify notification counts, validation and coercion ordering, BigInt64 waits, and waitAsync immediate results. Additional native agent tests cover cross-agent notification and asynchronous waits. Finite waitAsync timeouts recheck a monotonic deadline so an early timer wakeup cannot resolve the promise before the requested duration; the complete ECMA-262 memory model remains unverified. |
 
 ### 25.4.17 ([tc39.es](https://tc39.es/ecma262/#sec-atomics-%symbol.tostringtag%))
 

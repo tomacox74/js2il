@@ -698,15 +698,13 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_SuperExpression_ReportsError()
+    public void Validate_SuperPropertyInNonDerivedClass_IsValid()
     {
-        // super is only supported in derived class methods/constructors.
-        // Using it in a non-derived class should be rejected by validation.
         var js = "class NotDerived { foo() { super.foo(); } }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("super"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

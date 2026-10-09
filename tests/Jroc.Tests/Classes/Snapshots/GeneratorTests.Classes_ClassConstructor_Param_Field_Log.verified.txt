@@ -340,14 +340,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 118 (0x76)
+		// Code size: 145 (0x91)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_Param_Field_Log/Scope,
 			[1] class Modules.Classes_ClassConstructor_Param_Field_Log/Greeter,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] class Modules.Classes_ClassConstructor_Param_Field_Log/Greeter
+			[4] class Modules.Classes_ClassConstructor_Param_Field_Log/Greeter/Scope_ctor/FunctionObject,
+			[5] class Modules.Classes_ClassConstructor_Param_Field_Log/Greeter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_Param_Field_Log/Scope::.ctor()
@@ -366,30 +367,42 @@
 		IL_001d: ldtoken Modules.Classes_ClassConstructor_Param_Field_Log/Greeter
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0027: stloc.3
-		IL_0028: ldc.i4.1
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldstr "Alice"
-		IL_0035: stelem.ref
-		IL_0036: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_003b: ldstr "Alice"
-		IL_0040: newobj instance void Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::.ctor(string)
-		IL_0045: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_004a: stloc.1
-		IL_004b: ldloc.1
-		IL_004c: ldtoken Modules.Classes_ClassConstructor_Param_Field_Log/Greeter
-		IL_0051: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0056: ldstr "prototype"
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0065: ldloc.1
-		IL_0066: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_Param_Field_Log/Greeter>(!!0)
-		IL_006b: stloc.s 4
-		IL_006d: ldloc.s 4
-		IL_006f: callvirt instance object Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::sayName()
-		IL_0074: pop
-		IL_0075: ret
+		IL_0028: ldloc.2
+		IL_0029: newobj instance void Modules.Classes_ClassConstructor_Param_Field_Log/Greeter/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.3
+		IL_002f: ldloc.2
+		IL_0030: ldc.i4.1
+		IL_0031: conv.r8
+		IL_0032: ldc.i4.0
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0038: castclass Modules.Classes_ClassConstructor_Param_Field_Log/Greeter/Scope_ctor/FunctionObject
+		IL_003d: stloc.s 4
+		IL_003f: ldc.i4.1
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldstr "Alice"
+		IL_004c: stelem.ref
+		IL_004d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0052: ldloc.s 4
+		IL_0054: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0059: ldstr "Alice"
+		IL_005e: newobj instance void Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::.ctor(string)
+		IL_0063: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0068: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_006d: stloc.1
+		IL_006e: ldloc.1
+		IL_006f: ldloc.s 4
+		IL_0071: ldstr "prototype"
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_007b: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0080: ldloc.1
+		IL_0081: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_Param_Field_Log/Greeter>(!!0)
+		IL_0086: stloc.s 5
+		IL_0088: ldloc.s 5
+		IL_008a: callvirt instance object Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::sayName()
+		IL_008f: pop
+		IL_0090: ret
 	} // end of method Classes_ClassConstructor_Param_Field_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_Param_Field_Log

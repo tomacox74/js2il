@@ -347,168 +347,175 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 448 (0x1c0)
+		// Code size: 464 (0x1d0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassFieldTypeInference_Primitives/Scope,
 			[1] object,
 			[2] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter,
-			[3] class [System.Runtime]System.Type,
-			[4] object,
-			[5] object[],
-			[6] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_ctor/FunctionObject,
-			[7] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[3] object[],
+			[4] class [System.Runtime]System.Type,
+			[5] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_ctor/FunctionObject,
+			[6] object,
+			[7] object,
+			[8] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0011: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_001b: stloc.3
-		IL_001c: volatile.
-		IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0023: brfalse IL_0038
-
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldloc.0
+		IL_0010: stelem.ref
+		IL_0011: stloc.3
+		IL_0012: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
+		IL_0017: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001c: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
+		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0026: stloc.s 4
 		IL_0028: ldloc.3
-		IL_0029: ldstr "prototype"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0033: br IL_004d
+		IL_0029: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.s 4
+		IL_0030: ldloc.3
+		IL_0031: ldc.i4.0
+		IL_0032: conv.r8
+		IL_0033: ldc.i4.0
+		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0039: castclass Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_ctor/FunctionObject
+		IL_003e: stloc.s 5
+		IL_0040: ldloc.s 5
+		IL_0042: ldstr "Counter"
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
+		IL_004c: stloc.s 6
+		IL_004e: volatile.
+		IL_0050: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0055: brfalse IL_006b
 
-		IL_0038: ldloc.3
-		IL_0039: ldstr "prototype"
-		IL_003e: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:6"
-		IL_0043: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_005a: ldloc.s 6
+		IL_005c: ldstr "prototype"
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0066: br IL_0081
 
-		IL_004d: stloc.s 4
-		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0054: stloc.s 5
-		IL_0056: ldloc.s 4
-		IL_0058: ldstr "increment"
-		IL_005d: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_increment/FunctionObject::.ctor()
-		IL_0062: ldc.i4.0
-		IL_0063: conv.r8
-		IL_0064: ldstr "increment"
-		IL_0069: ldc.i4.1
-		IL_006a: ldc.i4.0
-		IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_increment/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_increment/FunctionObject>(!!0)
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_007a: pop
-		IL_007b: ldc.i4.1
-		IL_007c: newarr [System.Runtime]System.Object
-		IL_0081: dup
-		IL_0082: ldc.i4.0
-		IL_0083: ldloc.0
-		IL_0084: stelem.ref
-		IL_0085: stloc.s 5
-		IL_0087: ldloc.s 5
-		IL_0089: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_ctor/FunctionObject::.ctor(object[])
-		IL_008e: ldloc.3
-		IL_008f: ldloc.s 5
-		IL_0091: ldc.i4.0
-		IL_0092: conv.r8
-		IL_0093: ldc.i4.0
-		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0099: castclass Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_ctor/FunctionObject
-		IL_009e: stloc.s 6
-		IL_00a0: ldloc.s 6
-		IL_00a2: stloc.1
-		IL_00a3: ldc.i4.0
-		IL_00a4: newarr [System.Runtime]System.Object
-		IL_00a9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00ae: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter::.ctor()
-		IL_00b3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00b8: stloc.2
-		IL_00b9: ldloc.2
-		IL_00ba: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_00bf: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00c4: ldstr "prototype"
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00ce: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00d3: ldloc.2
-		IL_00d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
-		IL_00d9: stloc.s 7
-		IL_00db: ldloc.s 7
-		IL_00dd: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
-		IL_00e2: pop
+		IL_006b: ldloc.s 6
+		IL_006d: ldstr "prototype"
+		IL_0072: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:10"
+		IL_0077: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0081: stloc.s 7
+		IL_0083: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0088: stloc.3
+		IL_0089: ldloc.s 7
+		IL_008b: ldstr "increment"
+		IL_0090: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_increment/FunctionObject::.ctor()
+		IL_0095: ldc.i4.0
+		IL_0096: conv.r8
+		IL_0097: ldstr "increment"
+		IL_009c: ldc.i4.1
+		IL_009d: ldc.i4.0
+		IL_009e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_increment/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00a3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/Scope_increment/FunctionObject>(!!0)
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00ad: pop
+		IL_00ae: ldloc.s 6
+		IL_00b0: stloc.1
+		IL_00b1: ldc.i4.0
+		IL_00b2: newarr [System.Runtime]System.Object
+		IL_00b7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00bc: ldloc.1
+		IL_00bd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_00c2: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter::.ctor()
+		IL_00c7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_00cc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00d1: stloc.2
+		IL_00d2: ldloc.2
+		IL_00d3: ldloc.1
+		IL_00d4: ldstr "prototype"
+		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00de: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_00e3: ldloc.2
 		IL_00e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
-		IL_00e9: stloc.s 7
-		IL_00eb: ldloc.s 7
+		IL_00e9: stloc.s 8
+		IL_00eb: ldloc.s 8
 		IL_00ed: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
 		IL_00f2: pop
-		IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f8: stloc.s 8
-		IL_00fa: volatile.
-		IL_00fc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_0101: brfalse IL_0116
-
-		IL_0106: ldloc.2
-		IL_0107: ldstr "value"
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0111: br IL_012b
+		IL_00f3: ldloc.2
+		IL_00f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
+		IL_00f9: stloc.s 8
+		IL_00fb: ldloc.s 8
+		IL_00fd: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
+		IL_0102: pop
+		IL_0103: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0108: stloc.s 9
+		IL_010a: volatile.
+		IL_010c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0111: brfalse IL_0126
 
 		IL_0116: ldloc.2
 		IL_0117: ldstr "value"
-		IL_011c: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:27"
-		IL_0121: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0121: br IL_013b
 
-		IL_012b: stloc.s 4
-		IL_012d: ldloc.s 8
-		IL_012f: ldloc.s 4
-		IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0136: pop
-		IL_0137: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_013c: stloc.s 8
-		IL_013e: volatile.
-		IL_0140: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0145: brfalse IL_015a
+		IL_0126: ldloc.2
+		IL_0127: ldstr "value"
+		IL_012c: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:29"
+		IL_0131: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_014a: ldloc.2
-		IL_014b: ldstr "name"
-		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0155: br IL_016f
+		IL_013b: stloc.s 6
+		IL_013d: ldloc.s 9
+		IL_013f: ldloc.s 6
+		IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0146: pop
+		IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_014c: stloc.s 9
+		IL_014e: volatile.
+		IL_0150: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0155: brfalse IL_016a
 
 		IL_015a: ldloc.2
 		IL_015b: ldstr "name"
-		IL_0160: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:32"
-		IL_0165: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0165: br IL_017f
 
-		IL_016f: stloc.s 4
-		IL_0171: ldloc.s 8
-		IL_0173: ldloc.s 4
-		IL_0175: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_017a: pop
-		IL_017b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0180: stloc.s 8
-		IL_0182: volatile.
-		IL_0184: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_0189: brfalse IL_019e
+		IL_016a: ldloc.2
+		IL_016b: ldstr "name"
+		IL_0170: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:34"
+		IL_0175: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_018e: ldloc.2
-		IL_018f: ldstr "active"
-		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0199: br IL_01b3
+		IL_017f: stloc.s 6
+		IL_0181: ldloc.s 9
+		IL_0183: ldloc.s 6
+		IL_0185: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_018a: pop
+		IL_018b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0190: stloc.s 9
+		IL_0192: volatile.
+		IL_0194: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0199: brfalse IL_01ae
 
 		IL_019e: ldloc.2
 		IL_019f: ldstr "active"
-		IL_01a4: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:37"
-		IL_01a9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a9: br IL_01c3
 
-		IL_01b3: stloc.s 4
-		IL_01b5: ldloc.s 8
-		IL_01b7: ldloc.s 4
-		IL_01b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01be: pop
-		IL_01bf: ret
+		IL_01ae: ldloc.2
+		IL_01af: ldstr "active"
+		IL_01b4: ldstr "Classes_ClassFieldTypeInference_Primitives:Modules.Classes_ClassFieldTypeInference_Primitives:__js_module_init__:39"
+		IL_01b9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01c3: stloc.s 6
+		IL_01c5: ldloc.s 9
+		IL_01c7: ldloc.s 6
+		IL_01c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ce: pop
+		IL_01cf: ret
 	} // end of method Classes_ClassFieldTypeInference_Primitives::__js_module_init__
 
 } // end of class Modules.Classes_ClassFieldTypeInference_Primitives

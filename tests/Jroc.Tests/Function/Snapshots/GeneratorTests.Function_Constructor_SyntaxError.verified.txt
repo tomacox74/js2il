@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 255 (0xff)
+		// Code size: 283 (0x11b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Constructor_SyntaxError/Scope,
@@ -152,12 +152,13 @@
 			[3] object,
 			[4] string,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.SyntaxError,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[8] string,
-			[9] object,
-			[10] bool,
-			[11] object
+			[6] object,
+			[7] object[],
+			[8] object[],
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[10] string,
+			[11] bool,
+			[12] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Constructor_SyntaxError/Scope::.ctor()
@@ -166,104 +167,114 @@
 		.try
 		{
 			IL_0007: nop
-			IL_0008: ldstr "Unexpected token '}' (dynamic-function:3:1)"
-			IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.SyntaxError::.ctor(string)
+			IL_0008: ldstr "Function"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_0012: stloc.s 6
-			IL_0014: ldloc.s 6
-			IL_0016: isinst [System.Runtime]System.Exception
-			IL_001b: dup
-			IL_001c: brtrue IL_002a
-
-			IL_0021: pop
-			IL_0022: ldloc.s 6
-			IL_0024: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0029: throw
-
-			IL_002a: throw
-
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: stloc.s 7
-			IL_0032: ldloc.s 7
-			IL_0034: ldstr "no-error"
-			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003e: pop
-			IL_003f: leave IL_00fb
+			IL_0014: ldc.i4.1
+			IL_0015: newarr [System.Runtime]System.Object
+			IL_001a: dup
+			IL_001b: ldc.i4.0
+			IL_001c: ldstr "if ("
+			IL_0021: stelem.ref
+			IL_0022: stloc.s 7
+			IL_0024: ldc.i4.1
+			IL_0025: newarr [System.Runtime]System.Object
+			IL_002a: dup
+			IL_002b: ldc.i4.0
+			IL_002c: ldstr "if ("
+			IL_0031: stelem.ref
+			IL_0032: stloc.s 8
+			IL_0034: ldloc.s 6
+			IL_0036: ldnull
+			IL_0037: ldloc.s 7
+			IL_0039: ldnull
+			IL_003a: ldloc.s 8
+			IL_003c: ldstr "Unexpected token '}' (Function_Constructor_SyntaxError:3:1)"
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructPreparedDynamicFunction(object, object, object[], object, object[], object)
+			IL_0046: pop
+			IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004c: stloc.s 9
+			IL_004e: ldloc.s 9
+			IL_0050: ldstr "no-error"
+			IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_005a: pop
+			IL_005b: leave IL_0117
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0044: stloc.1
-			IL_0045: ldloc.1
-			IL_0046: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_004b: dup
-			IL_004c: brtrue IL_0061
+			IL_0060: stloc.1
+			IL_0061: ldloc.1
+			IL_0062: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0067: dup
+			IL_0068: brtrue IL_007d
 
-			IL_0051: pop
-			IL_0052: ldloc.1
-			IL_0053: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0058: dup
-			IL_0059: brtrue IL_006c
+			IL_006d: pop
+			IL_006e: ldloc.1
+			IL_006f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0074: dup
+			IL_0075: brtrue IL_0088
 
-			IL_005e: pop
-			IL_005f: rethrow
+			IL_007a: pop
+			IL_007b: rethrow
 
-			IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0066: stloc.2
-			IL_0067: br IL_006d
+			IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0082: stloc.2
+			IL_0083: br IL_0089
 
-			IL_006c: stloc.2
+			IL_0088: stloc.2
 
-			IL_006d: ldloc.2
-			IL_006e: stloc.3
-			IL_006f: ldloc.3
-			IL_0070: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0075: stloc.s 4
-			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007c: stloc.s 7
-			IL_007e: ldloc.s 4
-			IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
-			IL_0085: stloc.s 8
-			IL_0087: ldc.i4.0
-			IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_008d: brfalse IL_00aa
+			IL_0089: ldloc.2
+			IL_008a: stloc.3
+			IL_008b: ldloc.3
+			IL_008c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0091: stloc.s 4
+			IL_0093: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0098: stloc.s 9
+			IL_009a: ldloc.s 4
+			IL_009c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
+			IL_00a1: stloc.s 10
+			IL_00a3: ldc.i4.0
+			IL_00a4: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_00a9: brfalse IL_00c6
 
-			IL_0092: ldloc.s 8
-			IL_0094: ldstr "SyntaxError"
-			IL_0099: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-			IL_009e: box [System.Runtime]System.Boolean
-			IL_00a3: stloc.s 9
-			IL_00a5: br IL_00bd
+			IL_00ae: ldloc.s 10
+			IL_00b0: ldstr "SyntaxError"
+			IL_00b5: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+			IL_00ba: box [System.Runtime]System.Boolean
+			IL_00bf: stloc.s 6
+			IL_00c1: br IL_00d9
 
-			IL_00aa: ldloc.s 8
-			IL_00ac: ldstr "includes"
-			IL_00b1: ldstr "SyntaxError"
-			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00bb: stloc.s 9
+			IL_00c6: ldloc.s 10
+			IL_00c8: ldstr "includes"
+			IL_00cd: ldstr "SyntaxError"
+			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00d7: stloc.s 6
 
-			IL_00bd: ldloc.s 7
-			IL_00bf: ldloc.s 9
-			IL_00c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00c6: pop
-			IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00cc: stloc.s 7
-			IL_00ce: ldloc.s 4
-			IL_00d0: callvirt instance int32 [System.Runtime]System.String::get_Length()
-			IL_00d5: conv.r8
-			IL_00d6: ldc.r8 0.0
-			IL_00df: cgt
-			IL_00e1: stloc.s 10
-			IL_00e3: ldloc.s 10
-			IL_00e5: box [System.Runtime]System.Boolean
-			IL_00ea: stloc.s 11
-			IL_00ec: ldloc.s 7
-			IL_00ee: ldloc.s 11
-			IL_00f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00f5: pop
-			IL_00f6: leave IL_00fb
+			IL_00d9: ldloc.s 9
+			IL_00db: ldloc.s 6
+			IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00e2: pop
+			IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e8: stloc.s 9
+			IL_00ea: ldloc.s 4
+			IL_00ec: callvirt instance int32 [System.Runtime]System.String::get_Length()
+			IL_00f1: conv.r8
+			IL_00f2: ldc.r8 0.0
+			IL_00fb: cgt
+			IL_00fd: stloc.s 11
+			IL_00ff: ldloc.s 11
+			IL_0101: box [System.Runtime]System.Boolean
+			IL_0106: stloc.s 12
+			IL_0108: ldloc.s 9
+			IL_010a: ldloc.s 12
+			IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0111: pop
+			IL_0112: leave IL_0117
 		} // end handler
 
-		IL_00fb: ldnull
-		IL_00fc: stloc.s 5
-		IL_00fe: ret
+		IL_0117: ldnull
+		IL_0118: stloc.s 5
+		IL_011a: ret
 	} // end of method Function_Constructor_SyntaxError::__js_module_init__
 
 } // end of class Modules.Function_Constructor_SyntaxError

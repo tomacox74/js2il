@@ -79,6 +79,27 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit StaticBlock_L5C2
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method StaticBlock_L5C2::.ctor
+
+			} // end of class StaticBlock_L5C2
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -226,7 +247,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 299 (0x12b)
+		// Code size: 526 (0x20e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassStaticBlock_DeclarationOrder/Scope,
@@ -236,7 +257,8 @@
 			[4] class Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject,
 			[5] object,
 			[6] object,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassStaticBlock_DeclarationOrder/Scope::.ctor()
@@ -265,81 +287,144 @@
 		IL_0037: castclass Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject
 		IL_003c: stloc.s 4
 		IL_003e: ldloc.s 4
-		IL_0040: stloc.1
-		IL_0041: ldc.r8 1
-		IL_004a: box [System.Runtime]System.Double
-		IL_004f: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_0054: ldc.i4.1
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldloc.0
-		IL_005d: stelem.ref
-		IL_005e: stloc.2
-		IL_005f: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
-		IL_0064: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0069: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
-		IL_006e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0073: stloc.3
-		IL_0074: ldloc.2
-		IL_0075: newobj instance void Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject::.ctor(object[])
-		IL_007a: ldloc.3
-		IL_007b: ldloc.2
-		IL_007c: ldc.i4.0
-		IL_007d: conv.r8
-		IL_007e: ldc.i4.0
-		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_0084: castclass Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject
-		IL_0089: stloc.s 4
-		IL_008b: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_0090: stloc.s 5
-		IL_0092: ldloc.s 5
-		IL_0094: ldc.r8 2
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_00a2: stloc.s 6
-		IL_00a4: ldloc.s 4
-		IL_00a6: ldstr "value"
-		IL_00ab: ldloc.s 6
-		IL_00ad: ldc.i4.1
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00b3: pop
-		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b9: stloc.s 7
-		IL_00bb: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_00c0: stloc.s 5
-		IL_00c2: ldstr "block:"
-		IL_00c7: ldloc.s 5
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00ce: stloc.s 6
-		IL_00d0: ldloc.s 7
-		IL_00d2: ldloc.s 6
-		IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d9: pop
-		IL_00da: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_00df: stloc.s 5
-		IL_00e1: ldloc.s 5
-		IL_00e3: ldc.r8 3
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_00f1: stloc.s 6
-		IL_00f3: ldloc.s 6
-		IL_00f5: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-		IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ff: stloc.s 7
-		IL_0101: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_0106: stloc.s 5
-		IL_0108: ldloc.s 7
-		IL_010a: ldloc.s 5
-		IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0111: pop
-		IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0117: stloc.s 7
-		IL_0119: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-		IL_011e: stloc.s 5
+		IL_0040: ldstr "Example"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
+		IL_004a: stloc.s 5
+		IL_004c: ldloc.s 5
+		IL_004e: stloc.1
+		IL_004f: ldc.r8 1
+		IL_0058: box [System.Runtime]System.Double
+		IL_005d: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_0062: ldloc.s 5
+		IL_0064: ldstr "value"
+		IL_0069: ldc.r8 1
+		IL_0072: box [System.Runtime]System.Double
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
+		IL_007c: pop
+		IL_007d: volatile.
+		IL_007f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0084: brfalse IL_009a
+
+		IL_0089: ldloc.s 5
+		IL_008b: ldstr "value"
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0095: br IL_00b0
+
+		IL_009a: ldloc.s 5
+		IL_009c: ldstr "value"
+		IL_00a1: ldstr "Classes_ClassStaticBlock_DeclarationOrder:Modules.Classes_ClassStaticBlock_DeclarationOrder:__js_module_init__:18"
+		IL_00a6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_00b0: stloc.s 6
+		IL_00b2: ldloc.s 6
+		IL_00b4: ldc.r8 2
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00c2: stloc.s 7
+		IL_00c4: ldloc.s 5
+		IL_00c6: ldstr "value"
+		IL_00cb: ldloc.s 7
+		IL_00cd: ldc.i4.1
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00d3: pop
+		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d9: stloc.s 8
+		IL_00db: volatile.
+		IL_00dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00e2: brfalse IL_00f8
+
+		IL_00e7: ldloc.s 5
+		IL_00e9: ldstr "value"
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f3: br IL_010e
+
+		IL_00f8: ldloc.s 5
+		IL_00fa: ldstr "value"
+		IL_00ff: ldstr "Classes_ClassStaticBlock_DeclarationOrder:Modules.Classes_ClassStaticBlock_DeclarationOrder:__js_module_init__:27"
+		IL_0104: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_010e: stloc.s 6
+		IL_0110: ldstr "block:"
+		IL_0115: ldloc.s 6
+		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_011c: stloc.s 7
+		IL_011e: ldloc.s 8
 		IL_0120: ldloc.s 7
-		IL_0122: ldloc.s 5
-		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0129: pop
-		IL_012a: ret
+		IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0127: pop
+		IL_0128: volatile.
+		IL_012a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_012f: brfalse IL_0145
+
+		IL_0134: ldloc.s 5
+		IL_0136: ldstr "value"
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0140: br IL_015b
+
+		IL_0145: ldloc.s 5
+		IL_0147: ldstr "value"
+		IL_014c: ldstr "Classes_ClassStaticBlock_DeclarationOrder:Modules.Classes_ClassStaticBlock_DeclarationOrder:__js_module_init__:31"
+		IL_0151: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_015b: stloc.s 6
+		IL_015d: ldloc.s 6
+		IL_015f: ldc.r8 3
+		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_016d: stloc.s 7
+		IL_016f: ldloc.s 7
+		IL_0171: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
+		IL_0176: ldloc.s 5
+		IL_0178: ldstr "after"
+		IL_017d: ldloc.s 7
+		IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
+		IL_0184: pop
+		IL_0185: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_018a: stloc.s 8
+		IL_018c: volatile.
+		IL_018e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0193: brfalse IL_01a8
+
+		IL_0198: ldloc.1
+		IL_0199: ldstr "value"
+		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a3: br IL_01bd
+
+		IL_01a8: ldloc.1
+		IL_01a9: ldstr "value"
+		IL_01ae: ldstr "Classes_ClassStaticBlock_DeclarationOrder:Modules.Classes_ClassStaticBlock_DeclarationOrder:__js_module_init__:40"
+		IL_01b3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_01b8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_01bd: stloc.s 5
+		IL_01bf: ldloc.s 8
+		IL_01c1: ldloc.s 5
+		IL_01c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c8: pop
+		IL_01c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01ce: stloc.s 8
+		IL_01d0: volatile.
+		IL_01d2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_01d7: brfalse IL_01ec
+
+		IL_01dc: ldloc.1
+		IL_01dd: ldstr "after"
+		IL_01e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01e7: br IL_0201
+
+		IL_01ec: ldloc.1
+		IL_01ed: ldstr "after"
+		IL_01f2: ldstr "Classes_ClassStaticBlock_DeclarationOrder:Modules.Classes_ClassStaticBlock_DeclarationOrder:__js_module_init__:45"
+		IL_01f7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0201: stloc.s 5
+		IL_0203: ldloc.s 8
+		IL_0205: ldloc.s 5
+		IL_0207: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_020c: pop
+		IL_020d: ret
 	} // end of method Classes_ClassStaticBlock_DeclarationOrder::__js_module_init__
 
 } // end of class Modules.Classes_ClassStaticBlock_DeclarationOrder
@@ -364,4 +449,16 @@
 	} // end of method Program::Main
 
 } // end of class Program
+
+.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field assembly static int32 __jroc_dynamicLookup_5
+	.field assembly static int32 __jroc_dynamicLookup_6
+	.field assembly static int32 __jroc_dynamicLookup_7
+	.field assembly static int32 __jroc_dynamicLookup_8
+	.field assembly static int32 __jroc_dynamicLookup_9
+
+} // end of class Jroc.Generated.DynamicLookupSites
 

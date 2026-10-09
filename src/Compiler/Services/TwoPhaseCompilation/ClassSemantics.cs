@@ -12,7 +12,8 @@ public sealed record ClassSemantics(
     IReadOnlyList<ClassMethodSemantics> Methods,
     string? BaseClassRegistryName = null,
     string? BaseIntrinsicName = null,
-    bool RequiresParentScopes = false);
+    bool RequiresParentScopes = false,
+    bool HasClassDecorators = false);
 
 /// <summary>
 /// AST-independent facts required to target a generated class method.

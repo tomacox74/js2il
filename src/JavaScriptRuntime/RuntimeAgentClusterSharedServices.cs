@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace JavaScriptRuntime;
 
 internal sealed class RuntimeAgentClusterSharedServices : IDisposable
@@ -696,23 +698,37 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
                     locationWaiters.Add(waiter);
                     if (timeoutMilliseconds > 0)
                     {
-                        // Match synchronous waits: do not report a timeout before its full duration.
-                        _ = Task.Delay(timeoutMilliseconds + (timeoutMilliseconds < int.MaxValue ? 1 : 0),
-                            waiter.TimeoutToken).ContinueWith(
-                            task =>
-                            {
-                                if (!task.IsCanceled)
-                                {
-                                    CompleteTimedOut(location, waiter);
-                                }
-                            },
-                            CancellationToken.None,
-                            TaskContinuationOptions.ExecuteSynchronously,
-                            TaskScheduler.Default);
+                        _ = CompleteAfterTimeoutAsync(location, waiter, timeoutMilliseconds);
                     }
                     return (RuntimeAtomicsWaitResult?)null;
                 }
             });
+    }
+
+    private async Task CompleteAfterTimeoutAsync(WaitLocation location, Waiter waiter, int timeoutMilliseconds)
+    {
+        var token = waiter.TimeoutToken;
+        var started = Stopwatch.GetTimestamp();
+        try
+        {
+            while (true)
+            {
+                var remaining = timeoutMilliseconds - Stopwatch.GetElapsedTime(started).TotalMilliseconds;
+                if (remaining <= 0)
+                {
+                    break;
+                }
+
+                // Timer granularity can wake us early; only the monotonic deadline permits completion.
+                await Task.Delay((int)System.Math.Ceiling(remaining), token).ConfigureAwait(false);
+            }
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            return;
+        }
+
+        CompleteTimedOut(location, waiter);
     }
 
     private void CompleteTimedOut(WaitLocation location, Waiter waiter)

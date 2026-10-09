@@ -271,9 +271,9 @@
 						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 					) cil managed 
 				{
-					// Header size: 1
+					// Header size: 12
 					// Code size: 56 (0x38)
-					.maxstack 8
+					.maxstack 9
 
 					IL_0000: ldarg.1
 					IL_0001: ldtoken Modules.Classes_DefaultParameterValue_Method/Calculator
@@ -489,9 +489,9 @@
 						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 					) cil managed 
 				{
-					// Header size: 1
+					// Header size: 12
 					// Code size: 56 (0x38)
-					.maxstack 8
+					.maxstack 9
 
 					IL_0000: ldarg.1
 					IL_0001: ldtoken Modules.Classes_DefaultParameterValue_Method/Calculator
@@ -824,14 +824,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 491 (0x1eb)
+		// Code size: 518 (0x206)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_DefaultParameterValue_Method/Scope,
 			[1] class Modules.Classes_DefaultParameterValue_Method/Calculator,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] class Modules.Classes_DefaultParameterValue_Method/Calculator
+			[4] class Modules.Classes_DefaultParameterValue_Method/Calculator/FunctionObject,
+			[5] class Modules.Classes_DefaultParameterValue_Method/Calculator
 		)
 
 		IL_0000: newobj instance void Modules.Classes_DefaultParameterValue_Method/Scope::.ctor()
@@ -850,127 +851,139 @@
 		IL_001d: ldtoken Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0027: stloc.3
-		IL_0028: ldc.i4.0
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0033: newobj instance void Modules.Classes_DefaultParameterValue_Method/Calculator::.ctor()
-		IL_0038: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_003d: stloc.1
-		IL_003e: ldloc.1
-		IL_003f: ldtoken Modules.Classes_DefaultParameterValue_Method/Calculator
-		IL_0044: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0049: ldstr "prototype"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0053: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0058: ldloc.1
-		IL_0059: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.s 4
-		IL_0062: ldnull
-		IL_0063: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::greet(object)
-		IL_0068: pop
-		IL_0069: ldloc.1
-		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_006f: stloc.s 4
-		IL_0071: ldloc.s 4
-		IL_0073: ldstr "Alice"
-		IL_0078: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::greet(object)
-		IL_007d: pop
-		IL_007e: ldloc.1
-		IL_007f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_0084: stloc.s 4
-		IL_0086: ldloc.s 4
-		IL_0088: ldc.r8 5
-		IL_0091: box [System.Runtime]System.Double
-		IL_0096: ldnull
-		IL_0097: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::'add'(object, object)
-		IL_009c: pop
-		IL_009d: ldloc.1
-		IL_009e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_00a3: stloc.s 4
-		IL_00a5: ldloc.s 4
-		IL_00a7: ldc.r8 5
-		IL_00b0: box [System.Runtime]System.Double
-		IL_00b5: ldc.r8 15
-		IL_00be: box [System.Runtime]System.Double
-		IL_00c3: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::'add'(object, object)
-		IL_00c8: pop
-		IL_00c9: ldloc.1
-		IL_00ca: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_00cf: stloc.s 4
-		IL_00d1: ldloc.s 4
-		IL_00d3: ldnull
-		IL_00d4: ldnull
-		IL_00d5: ldnull
-		IL_00d6: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
-		IL_00db: pop
-		IL_00dc: ldloc.1
-		IL_00dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_00e2: stloc.s 4
-		IL_00e4: ldloc.s 4
-		IL_00e6: ldc.r8 2
-		IL_00ef: box [System.Runtime]System.Double
-		IL_00f4: ldnull
-		IL_00f5: ldnull
-		IL_00f6: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
-		IL_00fb: pop
-		IL_00fc: ldloc.1
-		IL_00fd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_0102: stloc.s 4
-		IL_0104: ldloc.s 4
-		IL_0106: ldc.r8 2
-		IL_010f: box [System.Runtime]System.Double
-		IL_0114: ldc.r8 4
-		IL_011d: box [System.Runtime]System.Double
-		IL_0122: ldnull
-		IL_0123: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
-		IL_0128: pop
-		IL_0129: ldloc.1
-		IL_012a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_012f: stloc.s 4
-		IL_0131: ldloc.s 4
-		IL_0133: ldc.r8 2
-		IL_013c: box [System.Runtime]System.Double
-		IL_0141: ldc.r8 4
-		IL_014a: box [System.Runtime]System.Double
-		IL_014f: ldc.r8 3
-		IL_0158: box [System.Runtime]System.Double
-		IL_015d: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
-		IL_0162: pop
-		IL_0163: ldloc.1
-		IL_0164: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_0169: stloc.s 4
-		IL_016b: ldloc.s 4
-		IL_016d: ldc.r8 5
-		IL_0176: box [System.Runtime]System.Double
-		IL_017b: ldnull
-		IL_017c: ldnull
-		IL_017d: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
-		IL_0182: pop
-		IL_0183: ldloc.1
-		IL_0184: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_0189: stloc.s 4
-		IL_018b: ldloc.s 4
-		IL_018d: ldc.r8 5
-		IL_0196: box [System.Runtime]System.Double
-		IL_019b: ldc.r8 8
-		IL_01a4: box [System.Runtime]System.Double
-		IL_01a9: ldnull
-		IL_01aa: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
-		IL_01af: pop
-		IL_01b0: ldloc.1
-		IL_01b1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
-		IL_01b6: stloc.s 4
-		IL_01b8: ldloc.s 4
-		IL_01ba: ldc.r8 5
-		IL_01c3: box [System.Runtime]System.Double
-		IL_01c8: ldc.r8 8
-		IL_01d1: box [System.Runtime]System.Double
-		IL_01d6: ldc.r8 20
-		IL_01df: box [System.Runtime]System.Double
-		IL_01e4: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
-		IL_01e9: pop
-		IL_01ea: ret
+		IL_0028: ldloc.2
+		IL_0029: newobj instance void Modules.Classes_DefaultParameterValue_Method/Calculator/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.3
+		IL_002f: ldloc.2
+		IL_0030: ldc.i4.0
+		IL_0031: conv.r8
+		IL_0032: ldc.i4.0
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0038: castclass Modules.Classes_DefaultParameterValue_Method/Calculator/FunctionObject
+		IL_003d: stloc.s 4
+		IL_003f: ldc.i4.0
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_004a: ldloc.s 4
+		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0051: newobj instance void Modules.Classes_DefaultParameterValue_Method/Calculator::.ctor()
+		IL_0056: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_005b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0060: stloc.1
+		IL_0061: ldloc.1
+		IL_0062: ldloc.s 4
+		IL_0064: ldstr "prototype"
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_006e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0073: ldloc.1
+		IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_0079: stloc.s 5
+		IL_007b: ldloc.s 5
+		IL_007d: ldnull
+		IL_007e: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::greet(object)
+		IL_0083: pop
+		IL_0084: ldloc.1
+		IL_0085: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_008a: stloc.s 5
+		IL_008c: ldloc.s 5
+		IL_008e: ldstr "Alice"
+		IL_0093: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::greet(object)
+		IL_0098: pop
+		IL_0099: ldloc.1
+		IL_009a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_009f: stloc.s 5
+		IL_00a1: ldloc.s 5
+		IL_00a3: ldc.r8 5
+		IL_00ac: box [System.Runtime]System.Double
+		IL_00b1: ldnull
+		IL_00b2: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::'add'(object, object)
+		IL_00b7: pop
+		IL_00b8: ldloc.1
+		IL_00b9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_00be: stloc.s 5
+		IL_00c0: ldloc.s 5
+		IL_00c2: ldc.r8 5
+		IL_00cb: box [System.Runtime]System.Double
+		IL_00d0: ldc.r8 15
+		IL_00d9: box [System.Runtime]System.Double
+		IL_00de: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::'add'(object, object)
+		IL_00e3: pop
+		IL_00e4: ldloc.1
+		IL_00e5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_00ea: stloc.s 5
+		IL_00ec: ldloc.s 5
+		IL_00ee: ldnull
+		IL_00ef: ldnull
+		IL_00f0: ldnull
+		IL_00f1: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
+		IL_00f6: pop
+		IL_00f7: ldloc.1
+		IL_00f8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_00fd: stloc.s 5
+		IL_00ff: ldloc.s 5
+		IL_0101: ldc.r8 2
+		IL_010a: box [System.Runtime]System.Double
+		IL_010f: ldnull
+		IL_0110: ldnull
+		IL_0111: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
+		IL_0116: pop
+		IL_0117: ldloc.1
+		IL_0118: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_011d: stloc.s 5
+		IL_011f: ldloc.s 5
+		IL_0121: ldc.r8 2
+		IL_012a: box [System.Runtime]System.Double
+		IL_012f: ldc.r8 4
+		IL_0138: box [System.Runtime]System.Double
+		IL_013d: ldnull
+		IL_013e: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
+		IL_0143: pop
+		IL_0144: ldloc.1
+		IL_0145: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_014a: stloc.s 5
+		IL_014c: ldloc.s 5
+		IL_014e: ldc.r8 2
+		IL_0157: box [System.Runtime]System.Double
+		IL_015c: ldc.r8 4
+		IL_0165: box [System.Runtime]System.Double
+		IL_016a: ldc.r8 3
+		IL_0173: box [System.Runtime]System.Double
+		IL_0178: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
+		IL_017d: pop
+		IL_017e: ldloc.1
+		IL_017f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_0184: stloc.s 5
+		IL_0186: ldloc.s 5
+		IL_0188: ldc.r8 5
+		IL_0191: box [System.Runtime]System.Double
+		IL_0196: ldnull
+		IL_0197: ldnull
+		IL_0198: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
+		IL_019d: pop
+		IL_019e: ldloc.1
+		IL_019f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_01a4: stloc.s 5
+		IL_01a6: ldloc.s 5
+		IL_01a8: ldc.r8 5
+		IL_01b1: box [System.Runtime]System.Double
+		IL_01b6: ldc.r8 8
+		IL_01bf: box [System.Runtime]System.Double
+		IL_01c4: ldnull
+		IL_01c5: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
+		IL_01ca: pop
+		IL_01cb: ldloc.1
+		IL_01cc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_DefaultParameterValue_Method/Calculator>(!!0)
+		IL_01d1: stloc.s 5
+		IL_01d3: ldloc.s 5
+		IL_01d5: ldc.r8 5
+		IL_01de: box [System.Runtime]System.Double
+		IL_01e3: ldc.r8 8
+		IL_01ec: box [System.Runtime]System.Double
+		IL_01f1: ldc.r8 20
+		IL_01fa: box [System.Runtime]System.Double
+		IL_01ff: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
+		IL_0204: pop
+		IL_0205: ret
 	} // end of method Classes_DefaultParameterValue_Method::__js_module_init__
 
 } // end of class Modules.Classes_DefaultParameterValue_Method

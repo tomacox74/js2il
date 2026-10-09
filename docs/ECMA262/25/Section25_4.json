@@ -327,7 +327,7 @@
           "test/built-ins/Atomics/waitAsync/descriptor.js",
           "test/built-ins/Atomics/notify/descriptor.js"
         ],
-        "notes": "75 pinned tests verify notification counts, validation and coercion ordering, BigInt64 waits, and waitAsync immediate results. Additional native agent tests cover cross-agent notification and asynchronous waits; the complete ECMA-262 memory model remains unverified."
+        "notes": "75 pinned tests verify notification counts, validation and coercion ordering, BigInt64 waits, and waitAsync immediate results. Additional native agent tests cover cross-agent notification and asynchronous waits. Finite waitAsync timeouts recheck a monotonic deadline so an early timer wakeup cannot resolve the promise before the requested duration; the complete ECMA-262 memory model remains unverified."
       },
       {
         "clause": "25.4",

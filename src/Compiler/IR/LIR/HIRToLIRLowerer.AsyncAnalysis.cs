@@ -95,6 +95,22 @@ public sealed partial class HIRToLIRLowerer
         int count = 0;
         switch (expression)
         {
+            case HIRInitializedUserClassTypeExpression classExpression:
+                foreach (var decorator in classExpression.Decorators)
+                    count += CountAwaitExpressionsInExpression(decorator);
+                if (classExpression.SuperClass != null)
+                    count += CountAwaitExpressionsInExpression(classExpression.SuperClass);
+                foreach (var statement in classExpression.InitializationStatements)
+                {
+                    if (statement is HIRVariableDeclaration
+                        {
+                            Initializer: HIRInitializedUserClassTypeExpression bindingInitializer
+                        }
+                        && ReferenceEquals(bindingInitializer.ClassScope, classExpression.ClassScope))
+                        continue;
+                    count += CountAwaitExpressionsInStatement(statement);
+                }
+                break;
             case HIRYieldExpression yieldExpr:
                 // AsyncGeneratorYield awaits its operand; yield* also awaits each next result.
                 count = yieldExpr.IsDelegate ? 2 : 1;
@@ -112,6 +128,11 @@ public sealed partial class HIRToLIRLowerer
             case HIRUnaryExpression unaryExpr:
                 count += CountAwaitExpressionsInExpression(unaryExpr.Argument);
                 break;
+            case HIRPreparedDynamicFunctionExpression preparedFunction:
+                count += CountAwaitExpressionsInExpression(preparedFunction.Callee);
+                foreach (var argument in preparedFunction.Arguments)
+                    count += CountAwaitExpressionsInExpression(argument);
+                break;
             case HIRCallExpression callExpr:
                 count += CountAwaitExpressionsInExpression(callExpr.Callee);
                 foreach (var arg in callExpr.Arguments)
@@ -124,6 +145,13 @@ public sealed partial class HIRToLIRLowerer
                 count += CountAwaitExpressionsInExpression(defineClassDataProperty.Target);
                 count += CountAwaitExpressionsInExpression(defineClassDataProperty.Key);
                 count += CountAwaitExpressionsInExpression(defineClassDataProperty.Value);
+                break;
+            case HIRCaptureClassComputedFieldKeyExpression captureKey:
+                count += CountAwaitExpressionsInExpression(captureKey.Owner);
+                count += CountAwaitExpressionsInExpression(captureKey.Key);
+                break;
+            case HIRClassComputedFieldKeyExpression fieldKey:
+                count += CountAwaitExpressionsInExpression(fieldKey.Receiver);
                 break;
             case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
                 count += CountAwaitExpressionsInExpression(defineClassAccessorProperty.Target);

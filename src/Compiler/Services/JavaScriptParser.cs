@@ -14,7 +14,11 @@ public class JavaScriptParser : IParser
     {
         _scriptParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: false));
         _topLevelAwaitParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: true));
-        _moduleParser = new Parser(new ParserOptions { EcmaVersion = EcmaVersion.Latest });
+        _moduleParser = new Parser(new ParserOptions
+        {
+            EcmaVersion = EcmaVersion.Latest,
+            ExperimentalESFeatures = ExperimentalESFeatures.Decorators
+        });
     }
 
     private static ParserOptions CreateParserOptions(bool allowAwaitOutsideFunction)
@@ -22,6 +26,7 @@ public class JavaScriptParser : IParser
         return new ParserOptions
         {
             EcmaVersion = EcmaVersion.Latest,
+            ExperimentalESFeatures = ExperimentalESFeatures.Decorators,
             AllowReturnOutsideFunction = true,
             AllowImportExportEverywhere = true,
             AllowAwaitOutsideFunction = allowAwaitOutsideFunction
@@ -32,13 +37,13 @@ public class JavaScriptParser : IParser
     {
         try
         {
-            return _scriptParser.ParseScript(source, sourceFile);
+            return ClassAutoAccessorNormalizer.Normalize(_scriptParser.ParseScript(source, sourceFile));
         }
         catch (ParseErrorException ex)
         {
             try
             {
-                return _topLevelAwaitParser.ParseScript(source, sourceFile);
+                return ClassAutoAccessorNormalizer.Normalize(_topLevelAwaitParser.ParseScript(source, sourceFile));
             }
             catch (ParseErrorException)
             {
@@ -51,7 +56,7 @@ public class JavaScriptParser : IParser
     {
         try
         {
-            return _moduleParser.ParseModule(source, sourceFile);
+            return ClassAutoAccessorNormalizer.Normalize(_moduleParser.ParseModule(source, sourceFile));
         }
         catch (ParseErrorException ex)
         {

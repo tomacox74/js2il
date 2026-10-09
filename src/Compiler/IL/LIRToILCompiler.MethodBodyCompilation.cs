@@ -243,6 +243,7 @@ internal sealed partial class LIRToILCompiler
                     var ctorDef = (MethodDefinitionHandle)token;
 
                     int argc = newUserClass.Arguments.Count;
+                    EmitPushUserClassConstructionContext(newUserClass, ilEncoder, allocation, methodDescriptor);
 
                     if (newUserClass.NeedsScopes)
                     {
@@ -275,6 +276,25 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorDef);
+                    ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.PopCurrentNewTarget),
+                        parameterTypes: Type.EmptyTypes));
+                    ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.PopCurrentArguments),
+                        parameterTypes: Type.EmptyTypes));
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    EmitLoadTempAsObject(newUserClass.NewTarget, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
+                    ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+                        parameterTypes: new[] { typeof(object), typeof(string) }));
+                    ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PrototypeChain),
+                        nameof(JavaScriptRuntime.PrototypeChain.SetPrototype),
+                        parameterTypes: new[] { typeof(object), typeof(object) }));
 
                     // If the field is declared as a specific user-class type and it matches the constructed type,
                     // omit the cast. Otherwise, preserve the cast to keep IL verification correct.

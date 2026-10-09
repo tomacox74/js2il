@@ -190,6 +190,8 @@ internal sealed class RuntimeIntrinsics
     /// </summary>
     internal long Id { get; }
 
+    internal RuntimeExecutionContext? ExecutionContext { get; set; }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal long ReadPrototypeMutationEpoch(
         IntrinsicPrototypeFamily family)

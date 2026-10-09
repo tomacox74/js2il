@@ -262,6 +262,24 @@ public sealed class LIRInstructionInfoTests
     }
 
     [Fact]
+    public void BaseClassConstructionKeepsNewTargetLive()
+    {
+        var instruction = new LIRNewUserClass(
+            "C", "Classes.C", new Jroc.Services.TwoPhaseCompilation.CallableId
+            {
+                Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.ClassConstructor,
+                DeclaringScopeName = "Classes",
+                Name = "C"
+            }, new TempVariable(1),
+            false, null, 0, 0, false, [], [], new TempVariable(2));
+        var visitor = new CollectingVisitor();
+
+        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+
+        Assert.Equal(new[] { 1 }, visitor.Indices);
+    }
+
+    [Fact]
     public void VisitUsedTemps_VisitsVariableOperandsInOrder()
     {
         var instruction = new LIRNewJsArray(

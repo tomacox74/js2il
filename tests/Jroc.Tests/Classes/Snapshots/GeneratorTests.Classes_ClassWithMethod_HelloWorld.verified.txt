@@ -302,14 +302,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 132 (0x84)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassWithMethod_HelloWorld/Scope,
 			[1] class Modules.Classes_ClassWithMethod_HelloWorld/Greeter,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] class Modules.Classes_ClassWithMethod_HelloWorld/Greeter
+			[4] class Modules.Classes_ClassWithMethod_HelloWorld/Greeter/FunctionObject,
+			[5] class Modules.Classes_ClassWithMethod_HelloWorld/Greeter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Scope::.ctor()
@@ -328,25 +329,37 @@
 		IL_001d: ldtoken Modules.Classes_ClassWithMethod_HelloWorld/Greeter
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0027: stloc.3
-		IL_0028: ldc.i4.0
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0033: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Greeter::.ctor()
-		IL_0038: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_003d: stloc.1
-		IL_003e: ldloc.1
-		IL_003f: ldtoken Modules.Classes_ClassWithMethod_HelloWorld/Greeter
-		IL_0044: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0049: ldstr "prototype"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0053: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0058: ldloc.1
-		IL_0059: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassWithMethod_HelloWorld/Greeter>(!!0)
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.s 4
-		IL_0062: callvirt instance object Modules.Classes_ClassWithMethod_HelloWorld/Greeter::helloWorld()
-		IL_0067: pop
-		IL_0068: ret
+		IL_0028: ldloc.2
+		IL_0029: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Greeter/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.3
+		IL_002f: ldloc.2
+		IL_0030: ldc.i4.0
+		IL_0031: conv.r8
+		IL_0032: ldc.i4.0
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0038: castclass Modules.Classes_ClassWithMethod_HelloWorld/Greeter/FunctionObject
+		IL_003d: stloc.s 4
+		IL_003f: ldc.i4.0
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_004a: ldloc.s 4
+		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0051: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Greeter::.ctor()
+		IL_0056: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_005b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0060: stloc.1
+		IL_0061: ldloc.1
+		IL_0062: ldloc.s 4
+		IL_0064: ldstr "prototype"
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_006e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0073: ldloc.1
+		IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassWithMethod_HelloWorld/Greeter>(!!0)
+		IL_0079: stloc.s 5
+		IL_007b: ldloc.s 5
+		IL_007d: callvirt instance object Modules.Classes_ClassWithMethod_HelloWorld/Greeter::helloWorld()
+		IL_0082: pop
+		IL_0083: ret
 	} // end of method Classes_ClassWithMethod_HelloWorld::__js_module_init__
 
 } // end of class Modules.Classes_ClassWithMethod_HelloWorld

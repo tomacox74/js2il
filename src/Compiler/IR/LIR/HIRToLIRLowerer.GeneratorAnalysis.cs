@@ -101,6 +101,22 @@ public sealed partial class HIRToLIRLowerer
         int count = 0;
         switch (expression)
         {
+            case HIRInitializedUserClassTypeExpression classExpression:
+                foreach (var decorator in classExpression.Decorators)
+                    count += CountYieldExpressionsInExpression(decorator);
+                if (classExpression.SuperClass != null)
+                    count += CountYieldExpressionsInExpression(classExpression.SuperClass);
+                foreach (var statement in classExpression.InitializationStatements)
+                {
+                    if (statement is HIRVariableDeclaration
+                        {
+                            Initializer: HIRInitializedUserClassTypeExpression bindingInitializer
+                        }
+                        && ReferenceEquals(bindingInitializer.ClassScope, classExpression.ClassScope))
+                        continue;
+                    count += CountYieldExpressionsInStatement(statement);
+                }
+                break;
             case HIRYieldExpression yieldExpr:
                 count = 1;
                 if (yieldExpr.Argument != null)
@@ -118,6 +134,11 @@ public sealed partial class HIRToLIRLowerer
                 break;
             case HIRUpdateExpression updateExpr:
                 count += CountYieldExpressionsInExpression(updateExpr.Argument);
+                break;
+            case HIRPreparedDynamicFunctionExpression preparedFunction:
+                count += CountYieldExpressionsInExpression(preparedFunction.Callee);
+                foreach (var argument in preparedFunction.Arguments)
+                    count += CountYieldExpressionsInExpression(argument);
                 break;
             case HIRCallExpression callExpr:
                 count += CountYieldExpressionsInExpression(callExpr.Callee);
@@ -141,6 +162,13 @@ public sealed partial class HIRToLIRLowerer
                 count += CountYieldExpressionsInExpression(defineClassDataProperty.Target);
                 count += CountYieldExpressionsInExpression(defineClassDataProperty.Key);
                 count += CountYieldExpressionsInExpression(defineClassDataProperty.Value);
+                break;
+            case HIRCaptureClassComputedFieldKeyExpression captureKey:
+                count += CountYieldExpressionsInExpression(captureKey.Owner);
+                count += CountYieldExpressionsInExpression(captureKey.Key);
+                break;
+            case HIRClassComputedFieldKeyExpression fieldKey:
+                count += CountYieldExpressionsInExpression(fieldKey.Receiver);
                 break;
             case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
                 count += CountYieldExpressionsInExpression(defineClassAccessorProperty.Target);

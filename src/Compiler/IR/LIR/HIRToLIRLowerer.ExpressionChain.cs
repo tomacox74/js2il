@@ -102,6 +102,17 @@ public sealed partial class HIRToLIRLowerer
 
             switch (segment)
             {
+                case HIRChainPrivateSegment privateMember:
+                {
+                    callReceiver = currentValue;
+                    if (!TryLowerPrivateReceiverField(privateMember.Access, currentValue, out var privateValue))
+                    {
+                        return false;
+                    }
+                    currentValue = EnsureObject(privateValue);
+                    break;
+                }
+
                 case HIRChainPropertySegment property:
                 {
                     callReceiver = currentValue;
