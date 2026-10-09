@@ -597,14 +597,16 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 107 (0x6b)
+			// Code size: 113 (0x71)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] object,
-				[3] float64,
-				[4] float64
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+				[4] float64,
+				[5] float64,
+				[6] float64
 			)
 
 			IL_0000: ldarg.1
@@ -625,29 +627,32 @@
 			IL_0037: stloc.1
 			IL_0038: ldarg.0
 			IL_0039: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
-			IL_003e: ldloc.0
-			IL_003f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_0044: ldc.i4.1
-			IL_0045: ldloc.1
-			IL_0046: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_004b: shl
-			IL_004c: conv.r8
-			IL_004d: stloc.3
-			IL_004e: stloc.s 4
-			IL_0050: ldloc.s 4
-			IL_0052: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_0057: ldloc.3
-			IL_0058: conv.i4
-			IL_0059: or
-			IL_005a: conv.r8
-			IL_005b: stloc.3
-			IL_005c: ldarg.0
-			IL_005d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
-			IL_0062: ldloc.0
-			IL_0063: ldloc.3
-			IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-			IL_0069: ldnull
-			IL_006a: ret
+			IL_003e: stloc.3
+			IL_003f: ldloc.0
+			IL_0040: stloc.s 4
+			IL_0042: ldloc.3
+			IL_0043: ldloc.s 4
+			IL_0045: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_004a: ldc.i4.1
+			IL_004b: ldloc.1
+			IL_004c: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_0051: shl
+			IL_0052: conv.r8
+			IL_0053: stloc.s 5
+			IL_0055: stloc.s 6
+			IL_0057: ldloc.s 6
+			IL_0059: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_005e: ldloc.s 5
+			IL_0060: conv.i4
+			IL_0061: or
+			IL_0062: conv.r8
+			IL_0063: stloc.s 5
+			IL_0065: ldloc.3
+			IL_0066: ldloc.s 4
+			IL_0068: ldloc.s 5
+			IL_006a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+			IL_006f: ldnull
+			IL_0070: ret
 		} // end of method BitArray::setBitTrue
 
 		.method public hidebysig 

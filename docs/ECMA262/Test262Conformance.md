@@ -46,8 +46,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
-| Language syntax and semantics | 17,606 | 158 | 5,883 | 23,647 | **74.45%** |
-| **Total** | 34,763 | 171 | 13,311 | 48,245 | **72.06%** |
+| Language syntax and semantics | 17,661 | 178 | 5,808 | 23,647 | **74.69%** |
+| **Total** | 34,818 | 191 | 13,236 | 48,245 | **72.17%** |
 
 ## Language Areas
 
@@ -62,7 +62,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 8,852 | 114 | 2,072 | 11,038 | **80.20%** |
+| `expressions` | 8,907 | 134 | 1,997 | 11,038 | **80.69%** |
 | `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -103,7 +103,7 @@ bounded worker cleanup.
 | `class` | 3,955 | 104 | 0 | 4,059 | **97.44%** |
 | `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 5 | 0 | 1 | 6 | **83.33%** |
-| `compound-assignment` | 379 | 0 | 75 | 454 | **83.48%** |
+| `compound-assignment` | 434 | 20 | 0 | 454 | **95.59%** |
 | `concatenation` | 0 | 0 | 5 | 5 | **0.00%** |
 | `conditional` | 14 | 0 | 8 | 22 | **63.64%** |
 | `delete` | 7 | 0 | 62 | 69 | **10.14%** |

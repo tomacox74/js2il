@@ -773,7 +773,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 153 (0x99)
+			// Code size: 158 (0x9e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -781,8 +781,10 @@
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[3] object,
 				[4] object,
-				[5] float64,
-				[6] float64
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+				[6] float64,
+				[7] float64,
+				[8] float64
 			)
 
 			IL_0000: ldarg.1
@@ -835,29 +837,32 @@
 
 			IL_0062: ldarg.0
 			IL_0063: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::wordArray
-			IL_0068: ldloc.0
-			IL_0069: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_006e: ldc.i4.1
-			IL_006f: ldloc.1
-			IL_0070: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_0075: shl
-			IL_0076: conv.r8
-			IL_0077: stloc.s 5
-			IL_0079: stloc.s 6
-			IL_007b: ldloc.s 6
-			IL_007d: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_0082: ldloc.s 5
-			IL_0084: conv.i4
-			IL_0085: or
-			IL_0086: conv.r8
-			IL_0087: stloc.s 5
-			IL_0089: ldarg.0
-			IL_008a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::wordArray
-			IL_008f: ldloc.0
-			IL_0090: ldloc.s 5
-			IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-			IL_0097: ldnull
-			IL_0098: ret
+			IL_0068: stloc.s 5
+			IL_006a: ldloc.0
+			IL_006b: stloc.s 6
+			IL_006d: ldloc.s 5
+			IL_006f: ldloc.s 6
+			IL_0071: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_0076: ldc.i4.1
+			IL_0077: ldloc.1
+			IL_0078: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_007d: shl
+			IL_007e: conv.r8
+			IL_007f: stloc.s 7
+			IL_0081: stloc.s 8
+			IL_0083: ldloc.s 8
+			IL_0085: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_008a: ldloc.s 7
+			IL_008c: conv.i4
+			IL_008d: or
+			IL_008e: conv.r8
+			IL_008f: stloc.s 7
+			IL_0091: ldloc.s 5
+			IL_0093: ldloc.s 6
+			IL_0095: ldloc.s 7
+			IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+			IL_009c: ldnull
+			IL_009d: ret
 		} // end of method BitArray::setBitTrue
 
 		.method public hidebysig 
@@ -871,7 +876,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 373 (0x175)
+			// Code size: 377 (0x179)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -884,7 +889,9 @@
 				[7] float64,
 				[8] bool,
 				[9] float64,
-				[10] object
+				[10] object,
+				[11] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+				[12] float64
 			)
 
 			IL_0000: ldarg.2
@@ -892,7 +899,7 @@
 			IL_000a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
 			IL_000f: stloc.s 8
 			IL_0011: ldloc.s 8
-			IL_0013: brfalse IL_013a
+			IL_0013: brfalse IL_013e
 
 			IL_0018: ldarg.2
 			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -960,7 +967,7 @@
 				IL_00a9: ldloc.s 9
 				IL_00ab: ldloc.0
 				IL_00ac: clt
-				IL_00ae: brfalse IL_0138
+				IL_00ae: brfalse IL_013c
 
 				IL_00b3: ldloc.3
 				IL_00b4: stloc.s 9
@@ -985,78 +992,81 @@
 					IL_00d7: nop
 					IL_00d8: ldarg.0
 					IL_00d9: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::wordArray
-					IL_00de: ldloc.s 4
-					IL_00e0: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-					IL_00e5: stloc.s 9
-					IL_00e7: ldloc.s 9
-					IL_00e9: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-					IL_00ee: ldloc.s 6
-					IL_00f0: or
-					IL_00f1: conv.r8
-					IL_00f2: stloc.s 9
-					IL_00f4: ldarg.0
-					IL_00f5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::wordArray
-					IL_00fa: ldloc.s 4
-					IL_00fc: ldloc.s 9
-					IL_00fe: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-					IL_0103: ldloc.s 4
-					IL_0105: ldarg.2
-					IL_0106: call float64 [JavaScriptRuntime]JavaScriptRuntime.Operators::AddAndToNumber(float64, object)
-					IL_010b: stloc.s 9
-					IL_010d: ldloc.s 9
-					IL_010f: stloc.s 4
-					IL_0111: ldloc.s 4
-					IL_0113: stloc.s 9
-					IL_0115: ldloc.s 9
-					IL_0117: ldloc.2
-					IL_0118: cgt
-					IL_011a: ldc.i4.0
-					IL_011b: ceq
-					IL_011d: brfalse IL_0127
+					IL_00de: stloc.s 11
+					IL_00e0: ldloc.s 4
+					IL_00e2: stloc.s 9
+					IL_00e4: ldloc.s 11
+					IL_00e6: ldloc.s 9
+					IL_00e8: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+					IL_00ed: stloc.s 12
+					IL_00ef: ldloc.s 12
+					IL_00f1: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+					IL_00f6: ldloc.s 6
+					IL_00f8: or
+					IL_00f9: conv.r8
+					IL_00fa: stloc.s 12
+					IL_00fc: ldloc.s 11
+					IL_00fe: ldloc.s 9
+					IL_0100: ldloc.s 12
+					IL_0102: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+					IL_0107: ldloc.s 4
+					IL_0109: ldarg.2
+					IL_010a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Operators::AddAndToNumber(float64, object)
+					IL_010f: stloc.s 12
+					IL_0111: ldloc.s 12
+					IL_0113: stloc.s 4
+					IL_0115: ldloc.s 4
+					IL_0117: stloc.s 12
+					IL_0119: ldloc.s 12
+					IL_011b: ldloc.2
+					IL_011c: cgt
+					IL_011e: ldc.i4.0
+					IL_011f: ceq
+					IL_0121: brfalse IL_012b
 
-					IL_0122: br IL_00d7
+					IL_0126: br IL_00d7
 				// end loop
 
-				IL_0127: ldloc.3
-				IL_0128: ldarg.2
-				IL_0129: call float64 [JavaScriptRuntime]JavaScriptRuntime.Operators::AddAndToNumber(float64, object)
-				IL_012e: stloc.s 9
-				IL_0130: ldloc.s 9
-				IL_0132: stloc.3
-				IL_0133: br IL_00a6
+				IL_012b: ldloc.3
+				IL_012c: ldarg.2
+				IL_012d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Operators::AddAndToNumber(float64, object)
+				IL_0132: stloc.s 12
+				IL_0134: ldloc.s 12
+				IL_0136: stloc.3
+				IL_0137: br IL_00a6
 			// end loop
 
-			IL_0138: ldnull
-			IL_0139: ret
+			IL_013c: ldnull
+			IL_013d: ret
 
-			IL_013a: ldarg.1
-			IL_013b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0140: stloc.s 7
-			// loop start (head: IL_0142)
-				IL_0142: ldloc.s 7
-				IL_0144: stloc.s 9
-				IL_0146: ldloc.s 9
-				IL_0148: ldarg.3
-				IL_0149: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
-				IL_014e: stloc.s 8
-				IL_0150: ldloc.s 8
-				IL_0152: brfalse IL_0173
+			IL_013e: ldarg.1
+			IL_013f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0144: stloc.s 7
+			// loop start (head: IL_0146)
+				IL_0146: ldloc.s 7
+				IL_0148: stloc.s 12
+				IL_014a: ldloc.s 12
+				IL_014c: ldarg.3
+				IL_014d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
+				IL_0152: stloc.s 8
+				IL_0154: ldloc.s 8
+				IL_0156: brfalse IL_0177
 
-				IL_0157: ldarg.0
-				IL_0158: ldloc.s 7
-				IL_015a: callvirt instance object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::setBitTrue(float64)
-				IL_015f: pop
-				IL_0160: ldloc.s 7
-				IL_0162: ldarg.2
-				IL_0163: call float64 [JavaScriptRuntime]JavaScriptRuntime.Operators::AddAndToNumber(float64, object)
-				IL_0168: stloc.s 9
-				IL_016a: ldloc.s 9
-				IL_016c: stloc.s 7
-				IL_016e: br IL_0142
+				IL_015b: ldarg.0
+				IL_015c: ldloc.s 7
+				IL_015e: callvirt instance object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::setBitTrue(float64)
+				IL_0163: pop
+				IL_0164: ldloc.s 7
+				IL_0166: ldarg.2
+				IL_0167: call float64 [JavaScriptRuntime]JavaScriptRuntime.Operators::AddAndToNumber(float64, object)
+				IL_016c: stloc.s 12
+				IL_016e: ldloc.s 12
+				IL_0170: stloc.s 7
+				IL_0172: br IL_0146
 			// end loop
 
-			IL_0173: ldnull
-			IL_0174: ret
+			IL_0177: ldnull
+			IL_0178: ret
 		} // end of method BitArray::setBitsTrue
 
 		.method public hidebysig 
