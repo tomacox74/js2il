@@ -45,9 +45,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,094 | 13 | 6,405 | 23,512 | **72.70%** |
-| Language syntax and semantics | 17,500 | 97 | 6,050 | 23,647 | **74.01%** |
-| **Total** | 34,654 | 110 | 13,481 | 48,245 | **71.83%** |
+| Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
+| Language syntax and semantics | 17,520 | 97 | 6,030 | 23,647 | **74.09%** |
+| **Total** | 34,677 | 110 | 13,458 | 48,245 | **71.88%** |
 
 ## Language Areas
 
@@ -62,7 +62,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 8,746 | 53 | 2,239 | 11,038 | **79.24%** |
+| `expressions` | 8,766 | 53 | 2,219 | 11,038 | **79.42%** |
 | `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
@@ -93,7 +93,7 @@ bounded worker cleanup.
 | `assignmenttargettype` | 318 | 0 | 6 | 324 | **98.15%** |
 | `async-arrow-function` | 46 | 0 | 14 | 60 | **76.67%** |
 | `async-function` | 56 | 0 | 37 | 93 | **60.22%** |
-| `async-generator` | 212 | 0 | 411 | 623 | **34.03%** |
+| `async-generator` | 232 | 0 | 391 | 623 | **37.24%** |
 | `await` | 9 | 0 | 13 | 22 | **40.91%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |
@@ -239,7 +239,7 @@ bounded worker cleanup.
 | `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,171 | 0 | 708 | 1,879 | **62.32%** |
+| `RegExp` | 1,174 | 0 | 705 | 1,879 | **62.48%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
