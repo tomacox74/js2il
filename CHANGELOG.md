@@ -6,6 +6,18 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining 148 pinned class-expression fixtures: 87
+  verified passing and 61 explicitly skipped because eval is unsupported.
+  Fix repeated class identities/private brands, computed field evaluation,
+  static initialization, optional private chains, lexical arrow receivers,
+  async method failures and restricted method properties. Support guarded
+  statically discoverable Function sources and their constructor realms.
+- fix(compiler): lower public auto-accessors to private-backed getter/setter
+  pairs, preserve source locations and initializer order, and reject
+  unimplemented computed, private and decorated auto-accessor forms explicitly.
+- feat(compiler): execute class decorators in source evaluation/reverse application
+  order, with class contexts, validated replacements and added initializers.
+  Preserve original class lexical bindings and reject unimplemented element decorators.
 - fix(runtime): honor legacy Object accessor/prototype proxy traps, initialize
   Object prototype method metadata, and apply ordered toString brand and
   Symbol.toStringTag lookup without synthetic primitive/Date tags. String

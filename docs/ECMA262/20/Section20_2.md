@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-24T05:46:46Z
+> Last generated (UTC): 2026-10-09T07:05:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -46,7 +46,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Function/new Function with compile-time string literal parameter/body source | Supported with Limitations | [`Function_Constructor_New_ConstantString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js)<br>[`Function_Constructor_GlobalScope_NoClosure.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_GlobalScope_NoClosure.js)<br>[`Function_Constructor_NonLiteral_RuntimeError.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_NonLiteral_RuntimeError.js)<br>[`Function_Constructor_SyntaxError.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_SyntaxError.js) |  | Stage 1 support only: direct `Function(...)` and `new Function(...)` sites are compiled ahead-of-time when every parameter/body argument is a string literal. JROC parses the generated source during compilation, emits a synthetic callable with global-scope semantics (so module locals and enclosing locals are not captured), derives `.length` from the parsed parameter list, reports `.name` as `anonymous`, throws `SyntaxError` for invalid literal source, and throws `Error` for non-literal runtime forms. |
+| Function/new Function with statically discoverable parameter/body source | Supported with Limitations | [`Function_Constructor_New_ConstantString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js)<br>[`Function_Constructor_GlobalScope_NoClosure.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_GlobalScope_NoClosure.js)<br>[`Function_Constructor_NonLiteral_RuntimeError.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_NonLiteral_RuntimeError.js)<br>[`Function_Constructor_SyntaxError.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Constructor_SyntaxError.js) |  | Function call/construct sites are compiled ahead-of-time when parameter/body strings are literals, interpolation-free templates, or identifiers with statically discoverable string initializers. Direct and member Function references, including foreign-realm Function constructors, use runtime guards so replaced constructors receive the original arguments and changed source strings do not execute a stale prepared body. The intrinsic coerces sources in order, reports name as anonymous, derives length from the parsed parameters, and throws SyntaxError for invalid prepared source. Prepared functions use their constructor's realm for globals, prototypes and strict/non-strict this binding rather than capturing module/enclosing locals. General runtime-generated source remains unsupported and throws a documented Error. |
 
 ### 20.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.apply))
 
@@ -70,7 +70,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Function.prototype.constructor references the Function constructor | Supported with Limitations | [`Function_Prototype_Constructor_ReferencesFunction.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js) |  | Function.prototype exposes a data property named constructor that references the runtime Function constructor value. Direct compile-time-literal `Function(...)` / `new Function(...)` forms are supported; non-literal runtime forms throw a documented `Error`. |
+| Function.prototype.constructor references the Function constructor | Supported with Limitations | [`Function_Prototype_Constructor_ReferencesFunction.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js) |  | Function.prototype exposes a data property named constructor that references the runtime Function constructor value. Function call/construct sites with statically discoverable string sources are supported with source/constructor guards; general runtime-generated source throws a documented Error. |
 
 ### 20.2.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring))
 
