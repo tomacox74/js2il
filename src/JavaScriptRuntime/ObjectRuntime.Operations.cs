@@ -1069,8 +1069,14 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectPrototypeValue, "propertyIsEnumerable", _objectPrototypePropertyIsEnumerableValue, enumerable: false, configurable: true, writable: true);
             InitializeBuiltinStaticFunction(_objectPrototypePropertyIsEnumerableValue, "propertyIsEnumerable", 1);
             DefineBuiltinDataProperty(objectPrototypeValue, "toLocaleString", _objectPrototypeToLocaleStringValue, enumerable: false, configurable: true, writable: true);
+            Function.InitializeFunctionInstance(
+                _objectPrototypeToLocaleStringValue, 0d, "toLocaleString", requiresInvocationContext: false);
             DefineBuiltinDataProperty(objectPrototypeValue, "toString", _objectPrototypeToStringValue, enumerable: false, configurable: true, writable: true);
+            Function.InitializeFunctionInstance(
+                _objectPrototypeToStringValue, 0d, "toString", requiresInvocationContext: false);
             DefineBuiltinDataProperty(objectPrototypeValue, "valueOf", _objectPrototypeValueOfValue, enumerable: false, configurable: true, writable: true);
+            Function.InitializeFunctionInstance(
+                _objectPrototypeValueOfValue, 0d, "valueOf", requiresInvocationContext: false);
             DefineBuiltinDataProperty(objectPrototypeValue, "__defineGetter__", _objectPrototypeDefineGetterValue, enumerable: false, configurable: true, writable: true);
             InitializeBuiltinStaticFunction(_objectPrototypeDefineGetterValue, "__defineGetter__", 2);
             DefineBuiltinDataProperty(objectPrototypeValue, "__defineSetter__", _objectPrototypeDefineSetterValue, enumerable: false, configurable: true, writable: true);
@@ -2286,32 +2292,25 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeToString(object? thisArgument)
         {
-            var thisVal = thisArgument;
+            if (thisArgument is null) return "[object Undefined]";
+            if (thisArgument is JsNull) return "[object Null]";
 
-            if (thisVal == null) return "[object Undefined]";
-            if (thisVal is JsNull) return "[object Null]";
-
-            // Try @@toStringTag (Symbol.toStringTag) first.
-            var toStringTagSym = Symbol.toStringTag;
-            var tag = ObjectRuntime.GetItem(thisVal, toStringTagSym);
-            if (tag is string tagStr)
-            {
-                return $"[object {tagStr}]";
-            }
-
-            // Built-in type tags.
-            if (thisVal is JavaScriptRuntime.Array) return "[object Array]";
-            if (thisVal is JavaScriptRuntime.ArgumentsObject) return "[object Arguments]";
-            if (thisVal is string) return "[object String]";
-            if (thisVal is bool) return "[object Boolean]";
-            if (thisVal is double or float or int or long) return "[object Number]";
-            if (CallableOperations.IsCallable(thisVal)) return "[object Function]";
-            if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
-            if (thisVal is GeneratorObject) return "[object Generator]";
-            if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
-            if (thisVal is JavaScriptRuntime.Error) return "[object Error]";
-
-            return "[object Object]";
+            var target = Construct(thisArgument);
+            // IsArray must run before Get(@@toStringTag), which may revoke a proxy.
+            var builtinTag = JavaScriptRuntime.Array.isArray(target) ? "Array"
+                : target is ArgumentsObject ? "Arguments"
+                : CallableOperations.IsCallable(target) ? "Function"
+                : target is JavaScriptRuntime.Error ? "Error"
+                : target is JavaScriptRuntime.Boolean
+                    || PropertyDescriptorStore.TryGetOwn(target, PrimitiveValuePropertyName, out var primitiveDescriptor)
+                        && primitiveDescriptor.Value is bool ? "Boolean"
+                : PropertyDescriptorStore.TryGetOwn(target, Number.NumberDataPropertyName, out _) ? "Number"
+                : TryGetStringObjectValue(target, out _) ? "String"
+                : target is JavaScriptRuntime.Date ? "Date"
+                : target is JavaScriptRuntime.RegExp ? "RegExp"
+                : "Object";
+            var tag = GetProperty(target, Symbol.toStringTag.DebugId);
+            return $"[object {(tag is string tagString ? tagString : builtinTag)}]";
         }
 
         private static object? PrototypeValueOf(object? thisArgument)
@@ -2374,41 +2373,9 @@ namespace JavaScriptRuntime
         /// </summary>
         private static void DefinePropertyOrThrowForLegacyAccessor(object target, string key, RequestedPropertyDescriptor requested)
         {
-            var hasOwnProperty = HasOwnProperty(target, key);
-            if (!IsExtensibleInternal(target) && !hasOwnProperty)
+            if (!TryDefineProperty(target, key, requested, CreatePropertyDescriptorObject(requested)))
             {
                 throw new TypeError($"Cannot define property: {key}");
-            }
-
-            JsPropertyDescriptor appliedDescriptor;
-            if (TryGetOwnPropertyDescriptor(target, key, out var existingDescriptor))
-            {
-                if (!TryApplyRequestedDescriptorToExisting(existingDescriptor, requested, out appliedDescriptor))
-                {
-                    throw new TypeError($"Cannot define property: {key}");
-                }
-            }
-            else
-            {
-                appliedDescriptor = CreateDescriptorForNewProperty(requested);
-            }
-
-            if (target is JsObject jsObject)
-            {
-                if (!jsObject.DefineOwnProperty(key, appliedDescriptor))
-                {
-                    throw new TypeError($"Cannot define property: {key}");
-                }
-            }
-            else
-            {
-                PropertyDescriptorStore.DefineOrUpdate(target, key, appliedDescriptor);
-                if (target is IDictionary<string, object?> dict
-                    && !PropertyDescriptorStore.HasIntrinsicProperties(target)
-                    && !dict.ContainsKey(key))
-                {
-                    dict[key] = null;
-                }
             }
         }
 
@@ -2494,7 +2461,7 @@ namespace JavaScriptRuntime
 
             PrototypeChain.Enable();
 
-            if (!OrdinarySetPrototypeOfInternal(target, proto))
+            if (!SetPrototypeOfInternal(target, proto))
             {
                 throw new TypeError("#<Object> is not extensible");
             }

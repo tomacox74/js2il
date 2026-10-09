@@ -122,15 +122,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = 0d
             });
-            PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "String"
-            });
-
         }
 
         private static void InitializeStringIteratorPrototype(JsObject prototype)
@@ -210,7 +201,7 @@ namespace JavaScriptRuntime
                 stringConstructorValue);
 
             PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
-            PrototypeChain.SetPrototype(StringIteratorPrototype, GlobalThis.ObjectPrototypeValue);
+            PrototypeChain.SetPrototype(StringIteratorPrototype, Iterator.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(stringConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

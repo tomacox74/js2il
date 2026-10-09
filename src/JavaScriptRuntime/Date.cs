@@ -187,14 +187,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = 7d
             });
-            PropertyDescriptorStore.DefineOrUpdate(Prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "Date"
-            });
 
             // Static; the receiver is ignored (issue #1895).
             DefineConstructorMethod("now", (BuiltinFunction0)(static _ => now()), 0d);

@@ -378,12 +378,13 @@
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.Batch.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.FollowupBatch.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.PropertyModelBatch.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/FailingBatch100ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/defineProperty/ObjectCompletionExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.defineProperty"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, primitive-target TypeError behavior, and non-extensible/sealed/frozen interactions. FailingBatch100ExecutionTests adds mapped and unmapped Arguments-object accessor/data transitions and invariant failures. Symbol-keyed redefinition, resizable typed arrays, host objects, and broader Proxy invariants remain partial."
+        "notes": "Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, primitive-target TypeError behavior, and non-extensible/sealed/frozen interactions. Pinned coverage includes Arguments-object accessor replacement, symbol data-property defaults and deletion, and typed-array bounds after property-key coercion grows or shrinks a resizable buffer. Broader symbol-keyed redefinition, resizable typed-array, host-object, and Proxy invariants remain partial."
       },
       {
         "clause": "20.1.2.5",
@@ -468,12 +469,13 @@
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.Batch.cs",
           "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ExecutionTests.IntegrityDescriptorBatch.cs",
-          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/FailingBatch100ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/FailingBatch100ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptor/ObjectCompletionExecutionTests.cs"
         ],
         "test262Suites": [
           "built_ins.Object.getOwnPropertyDescriptor"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary jroc objects. FailingBatch100ExecutionTests adds descriptor fidelity for Function.prototype and Array.prototype constructor properties. Specialized descriptor-reflection edges and full host-object fidelity remain limited.",
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary jroc objects. Pinned coverage includes descriptor fidelity for Function.prototype, Array.prototype constructor properties, and Array.prototype.toLocaleString. The global eval descriptor case is explicitly unsupported because eval is not implemented. Specialized descriptor-reflection edges and full host-object fidelity remain limited.",
         "test262Paths": [
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-0-1.js",
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-1-1.js",
@@ -901,9 +903,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.tolocalestring",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/toLocaleString/ObjectCompletionExecutionTests.cs"
         ],
-        "notes": "Requires an object-coercible receiver, looks up its toString method, and calls that method with the original receiver and no arguments. Custom methods, primitive receivers, non-callable properties, and abrupt completions are preserved."
+        "notes": "Requires an object-coercible receiver, looks up its toString method, and calls that method with the original receiver and no arguments. Custom methods, primitive receivers, non-callable properties, and abrupt completions are preserved. The function exposes standard name and length metadata."
       },
       {
         "clause": "20.1.3.6",
@@ -913,9 +916,10 @@
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_ToString_Basic.js",
           "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js",
-          "tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js"
+          "tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ObjectCompletionExecutionTests.cs"
         ],
-        "notes": "Supports built-in tags plus Symbol.toStringTag lookup for ordinary objects, arrays, and key runtime types; full brand checks and all exotic cases are not exhaustive."
+        "notes": "Boxes primitive receivers, determines the built-in brand (including nested array proxies) before observable Symbol.toStringTag lookup, and uses the built-in brand when the tag is not a string. Proxy revocation during lookup preserves the previously computed brand. Generator and String Iterator tags follow ordinary prototype lookup; deleting the String Iterator tag reveals the inherited Iterator tag. String, Number, Boolean, and Date prototypes no longer expose synthetic Symbol.toStringTag properties, so custom own tags and primitive prototype overrides work. Standard name and length metadata is exposed; full brand checks and all exotic cases are not exhaustive."
       },
       {
         "clause": "20.1.3.7",
@@ -924,13 +928,14 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.valueof",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js",
-          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/valueOf/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/valueOf/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/valueOf/ObjectCompletionExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/Object/prototype/valueOf/15.2.4.4-1.js",
           "test/built-ins/Object/prototype/valueOf/15.2.4.4-2.js"
         ],
-        "notes": "Applies ToObject to the receiver: rejects null/undefined, boxes primitives using the runtime's standard Object conversion, and returns object receivers unchanged. Pinned Test262 coverage verifies Boolean primitive boxing."
+        "notes": "Applies ToObject to the receiver: rejects null/undefined, boxes primitives using the runtime's standard Object conversion, and returns object receivers unchanged. Pinned Test262 coverage verifies Boolean primitive boxing and standard function name metadata."
       },
       {
         "clause": "20.1.3.8",
@@ -939,9 +944,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.__proto__",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js",
-          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__proto__/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__proto__/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__proto__/ObjectCompletionExecutionTests.cs"
         ],
-        "notes": "Object.prototype exposes a real __proto__ accessor with standard metadata, receiver coercion, invalid-prototype no-op behavior, and ordinary cycle, extensibility, and immutable-prototype enforcement for the covered test262 cases."
+        "notes": "Object.prototype exposes a real __proto__ accessor with standard metadata, receiver coercion, invalid-prototype no-op behavior, and ordinary cycle, extensibility, and immutable-prototype enforcement for the covered test262 cases. The setter invokes the proxy-aware [[SetPrototypeOf]] operation and propagates abrupt trap completions without changing the target prototype."
       },
       {
         "clause": "20.1.3.9",
@@ -963,9 +969,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.__defineGetter__",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__defineGetter__/ObjectCompletionExecutionTests.cs"
         ],
-        "notes": "Defines accessor getter descriptors in the runtime descriptor store."
+        "notes": "Defines accessor getter descriptors through the shared [[DefineOwnProperty]] path, including proxy defineProperty traps and abrupt completions."
       },
       {
         "clause": "20.1.3.9.2",
@@ -973,9 +980,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.__defineSetter__",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__defineSetter__/ObjectCompletionExecutionTests.cs"
         ],
-        "notes": "Defines accessor setter descriptors in the runtime descriptor store."
+        "notes": "Defines accessor setter descriptors through the shared [[DefineOwnProperty]] path, including proxy defineProperty traps and abrupt completions."
       },
       {
         "clause": "20.1.3.9.3",

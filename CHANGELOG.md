@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): honor legacy Object accessor/prototype proxy traps, initialize
+  Object prototype method metadata, and apply ordered toString brand and
+  Symbol.toStringTag lookup without synthetic primitive/Date tags. String
+  iterators inherit from Iterator.prototype. Port 20 pinned Object Test262
+  cases: 19 verified passing and one explicitly skipped because eval is unsupported.
 - fix(runtime): honor proxy prototype traps in Object.prototype.isPrototypeOf
   and legacy accessor lookup, check non-object arguments before coercing the
   isPrototypeOf receiver, expose its standard function metadata, and box
