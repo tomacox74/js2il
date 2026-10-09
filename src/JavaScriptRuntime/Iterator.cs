@@ -65,6 +65,7 @@ public static partial class Iterator
         Function.InitializeFunctionInstance(iteratorConstructorValue, 0d, "Iterator");
         Function.MarkConstructible(iteratorConstructorValue);
         DefineDataProperty(iteratorConstructorValue, "prototype", iteratorPrototype);
+        PrototypeChain.SetPrototype(iteratorPrototype, GlobalThis.ObjectPrototypeValue);
         DefineFunctionProperty(iteratorConstructorValue, "concat", (BuiltinFunctionVariadic)ConstructorConcat, 0d);
         DefineFunctionProperty(
             iteratorConstructorValue,

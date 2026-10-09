@@ -217,11 +217,13 @@ public class AstWalker
                 break;
 
             case ClassDeclaration classDecl:
+                VisitNodes(classDecl.Decorators, visitor);
                 Visit(classDecl.SuperClass, visitor);
                 Visit(classDecl.Body, visitor);
                 break;
 
             case ClassExpression classExpr:
+                VisitNodes(classExpr.Decorators, visitor);
                 Visit(classExpr.SuperClass, visitor);
                 Visit(classExpr.Body, visitor);
                 break;
@@ -231,13 +233,25 @@ public class AstWalker
                 break;
 
             case MethodDefinition methodDef:
+                VisitNodes(methodDef.Decorators, visitor);
                 Visit(methodDef.Key, visitor);
                 Visit(methodDef.Value, visitor);
                 break;
 
             case PropertyDefinition propDef:
+                VisitNodes(propDef.Decorators, visitor);
                 Visit(propDef.Key, visitor);
                 Visit(propDef.Value, visitor);
+                break;
+
+            case AccessorProperty accessor:
+                VisitNodes(accessor.Decorators, visitor);
+                Visit(accessor.Key, visitor);
+                Visit(accessor.Value, visitor);
+                break;
+
+            case Decorator decorator:
+                Visit(decorator.Expression, visitor);
                 break;
 
             case DoWhileStatement doWhileStmt:
@@ -494,11 +508,13 @@ public class AstWalker
                 break;
 
             case ClassDeclaration classDecl:
+                VisitNodesWithContext(classDecl.Decorators, enterNode, exitNode);
                 VisitWithContext(classDecl.SuperClass, enterNode, exitNode);
                 VisitWithContext(classDecl.Body, enterNode, exitNode);
                 break;
 
             case ClassExpression classExpr:
+                VisitNodesWithContext(classExpr.Decorators, enterNode, exitNode);
                 VisitWithContext(classExpr.SuperClass, enterNode, exitNode);
                 VisitWithContext(classExpr.Body, enterNode, exitNode);
                 break;
@@ -508,13 +524,25 @@ public class AstWalker
                 break;
 
             case MethodDefinition methodDef:
+                VisitNodesWithContext(methodDef.Decorators, enterNode, exitNode);
                 VisitWithContext(methodDef.Key, enterNode, exitNode);
                 VisitWithContext(methodDef.Value, enterNode, exitNode);
                 break;
 
             case PropertyDefinition propDef:
+                VisitNodesWithContext(propDef.Decorators, enterNode, exitNode);
                 VisitWithContext(propDef.Key, enterNode, exitNode);
                 VisitWithContext(propDef.Value, enterNode, exitNode);
+                break;
+
+            case AccessorProperty accessor:
+                VisitNodesWithContext(accessor.Decorators, enterNode, exitNode);
+                VisitWithContext(accessor.Key, enterNode, exitNode);
+                VisitWithContext(accessor.Value, enterNode, exitNode);
+                break;
+
+            case Decorator decorator:
+                VisitWithContext(decorator.Expression, enterNode, exitNode);
                 break;
 
             case DoWhileStatement doWhileStmt:

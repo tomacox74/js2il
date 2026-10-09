@@ -255,6 +255,7 @@ public partial class SymbolTableBuilder
                 return;
             }
 
+            var enclosingScope = currentScope;
             if (scopeByAstNode.TryGetValue(node, out var nodeScope))
             {
                 currentScope = nodeScope;
@@ -270,7 +271,11 @@ public partial class SymbolTableBuilder
 
             foreach (var child in node.ChildNodes)
             {
-                Visit(child, currentScope, node, parent);
+                Visit(child,
+                    child is Decorator && (node is ClassDeclaration or ClassExpression)
+                        ? enclosingScope
+                        : currentScope,
+                    node, parent);
             }
         }
 

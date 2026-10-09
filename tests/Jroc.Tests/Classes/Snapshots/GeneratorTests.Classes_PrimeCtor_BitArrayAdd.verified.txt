@@ -315,13 +315,14 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 75 (0x4b)
+			// Code size: 137 (0x89)
 			.maxstack 8
 			.locals init (
 				[0] object[],
 				[1] float64,
 				[2] object,
-				[3] class Modules.Classes_PrimeCtor_BitArrayAdd/BitArray
+				[3] object,
+				[4] class Modules.Classes_PrimeCtor_BitArrayAdd/BitArray
 			)
 
 			IL_0000: ldarg.0
@@ -342,19 +343,41 @@
 			IL_001f: ldarg.0
 			IL_0020: ldloc.1
 			IL_0021: stfld float64 Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::sieveSizeInBits
-			IL_0026: ldc.r8 1
-			IL_002f: ldarg.0
-			IL_0030: ldfld float64 Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::sieveSizeInBits
-			IL_0035: add
-			IL_0036: stloc.1
-			IL_0037: ldloc.1
-			IL_0038: box [System.Runtime]System.Double
-			IL_003d: stloc.2
-			IL_003e: ldarg.0
-			IL_003f: ldloc.1
-			IL_0040: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/BitArray::.ctor(float64)
-			IL_0045: stfld class Modules.Classes_PrimeCtor_BitArrayAdd/BitArray Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::bitArray
-			IL_004a: ret
+			IL_0026: ldarg.1
+			IL_0027: ldc.i4.0
+			IL_0028: ldelem.ref
+			IL_0029: castclass Modules.Classes_PrimeCtor_BitArrayAdd/Scope
+			IL_002e: ldfld object Modules.Classes_PrimeCtor_BitArrayAdd/Scope::BitArray
+			IL_0033: stloc.2
+			IL_0034: ldc.r8 1
+			IL_003d: ldarg.0
+			IL_003e: ldfld float64 Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::sieveSizeInBits
+			IL_0043: add
+			IL_0044: stloc.1
+			IL_0045: ldloc.1
+			IL_0046: box [System.Runtime]System.Double
+			IL_004b: stloc.3
+			IL_004c: ldarg.0
+			IL_004d: ldc.i4.1
+			IL_004e: newarr [System.Runtime]System.Object
+			IL_0053: dup
+			IL_0054: ldc.i4.0
+			IL_0055: ldloc.3
+			IL_0056: stelem.ref
+			IL_0057: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_005c: ldloc.2
+			IL_005d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_0062: ldloc.1
+			IL_0063: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/BitArray::.ctor(float64)
+			IL_0068: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_006d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0072: dup
+			IL_0073: ldloc.2
+			IL_0074: ldstr "prototype"
+			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_007e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0083: stfld class Modules.Classes_PrimeCtor_BitArrayAdd/BitArray Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::bitArray
+			IL_0088: ret
 		} // end of method PrimeSieve::.ctor
 
 	} // end of class PrimeSieve
@@ -397,14 +420,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 206 (0xce)
+		// Code size: 241 (0xf1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_PrimeCtor_BitArrayAdd/Scope,
 			[1] object[],
 			[2] class [System.Runtime]System.Type,
 			[3] class Modules.Classes_PrimeCtor_BitArrayAdd/BitArray/Scope_ctor/FunctionObject,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[4] class Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve/Scope_ctor/FunctionObject,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/Scope::.ctor()
@@ -448,37 +472,53 @@
 		IL_005a: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve
 		IL_005f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0064: stloc.2
-		IL_0065: ldc.i4.1
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldloc.0
-		IL_006e: stelem.ref
-		IL_006f: stloc.1
-		IL_0070: ldloc.1
-		IL_0071: ldc.i4.1
-		IL_0072: newarr [System.Runtime]System.Object
-		IL_0077: dup
-		IL_0078: ldc.i4.0
-		IL_0079: ldc.r8 100
-		IL_0082: box [System.Runtime]System.Double
-		IL_0087: stelem.ref
-		IL_0088: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_008d: ldc.r8 100
-		IL_0096: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::.ctor(object[], float64)
-		IL_009b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00a0: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve
-		IL_00a5: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00aa: ldstr "prototype"
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00b4: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00be: stloc.s 4
-		IL_00c0: ldloc.s 4
-		IL_00c2: ldstr "Classes_PrimeCtor_BitArrayAdd"
-		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cc: pop
-		IL_00cd: ret
+		IL_0065: ldloc.1
+		IL_0066: ldc.i4.0
+		IL_0067: ldelem.ref
+		IL_0068: castclass Modules.Classes_PrimeCtor_BitArrayAdd/Scope
+		IL_006d: ldloc.1
+		IL_006e: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve/Scope_ctor/FunctionObject::.ctor(class Modules.Classes_PrimeCtor_BitArrayAdd/Scope, object[])
+		IL_0073: ldloc.2
+		IL_0074: ldloc.1
+		IL_0075: ldc.i4.1
+		IL_0076: conv.r8
+		IL_0077: ldc.i4.0
+		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_007d: castclass Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve/Scope_ctor/FunctionObject
+		IL_0082: stloc.s 4
+		IL_0084: ldc.i4.1
+		IL_0085: newarr [System.Runtime]System.Object
+		IL_008a: dup
+		IL_008b: ldc.i4.0
+		IL_008c: ldloc.0
+		IL_008d: stelem.ref
+		IL_008e: stloc.1
+		IL_008f: ldloc.1
+		IL_0090: ldc.i4.1
+		IL_0091: newarr [System.Runtime]System.Object
+		IL_0096: dup
+		IL_0097: ldc.i4.0
+		IL_0098: ldc.r8 100
+		IL_00a1: box [System.Runtime]System.Double
+		IL_00a6: stelem.ref
+		IL_00a7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00ac: ldloc.s 4
+		IL_00ae: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_00b3: ldc.r8 100
+		IL_00bc: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::.ctor(object[], float64)
+		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_00c6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00cb: ldloc.s 4
+		IL_00cd: ldstr "prototype"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00d7: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e1: stloc.s 5
+		IL_00e3: ldloc.s 5
+		IL_00e5: ldstr "Classes_PrimeCtor_BitArrayAdd"
+		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ef: pop
+		IL_00f0: ret
 	} // end of method Classes_PrimeCtor_BitArrayAdd::__js_module_init__
 
 } // end of class Modules.Classes_PrimeCtor_BitArrayAdd

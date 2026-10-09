@@ -58,6 +58,7 @@ public sealed partial class HIRToLIRLowerer
         {
             HIRInitializedUserClassTypeExpression initializedClassExpr
                 when initializedClassExpr.IsClassExpression
+                    && initializedClassExpr.Decorators.Count == 0
                     && string.IsNullOrWhiteSpace(initializedClassExpr.ExplicitName)
                 => nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
 

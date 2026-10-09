@@ -15,6 +15,8 @@ public sealed partial class HIRToLIRLowerer
 
         switch (statement)
         {
+            case HIRClassDecorationApplicationStatement decoration:
+                return TryLowerClassDecorationApplication(decoration);
             case HIRSequencePointStatement sequencePoint:
                 {
                     lirInstructions.Add(new LIRSequencePoint(sequencePoint.Span));
@@ -48,12 +50,41 @@ public sealed partial class HIRToLIRLowerer
                     {
                         return false;
                     }
+                    if (!TryApplyInferredNameToValue(
+                            storeStaticField.Value,
+                            storeStaticField.IsPrivateField
+                                ? $"#{storeStaticField.FieldName}"
+                                : storeStaticField.FieldName,
+                            valueTemp,
+                            out valueTemp))
+                    {
+                        return false;
+                    }
                     valueTemp = EnsureObject(valueTemp);
                     lirInstructions.Add(new LIRStoreUserClassStaticField(
                         storeStaticField.RegistryClassName,
                         storeStaticField.FieldName,
                         valueTemp,
                         storeStaticField.IsPrivateField));
+                    if (!storeStaticField.IsPrivateField)
+                    {
+                        if (!_classInitializationOwnerTempsByRegistryName.TryGetValue(
+                                storeStaticField.RegistryClassName,
+                                out var owner))
+                        {
+                            owner = CreateTempVariable();
+                            lirInstructions.Add(new LIRGetUserClassType(storeStaticField.RegistryClassName, owner));
+                            DefineTempStorage(owner, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                        }
+                        var key = EmitConstString(storeStaticField.FieldName);
+                        var defined = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty),
+                            [EnsureObject(owner), key, valueTemp],
+                            defined));
+                        DefineTempStorage(defined, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
                     return true;
                 }
 

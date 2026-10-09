@@ -22,6 +22,7 @@ internal sealed class RuntimeExecutionContext
         string? compiledAssemblyPath)
     {
         Realm = realm;
+        realm.Intrinsics.ExecutionContext = this;
         IsHosted = isHosted;
         CompiledAssemblyPath = compiledAssemblyPath;
         DescriptorStore = realm.Services.Resolve<IPropertyDescriptorStore>();

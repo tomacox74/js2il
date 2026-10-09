@@ -2031,6 +2031,48 @@ public sealed partial class HIRToLIRLowerer
         var binding = assignExpr.Target.BindingInfo;
         var lirInstructions = _methodBodyIR.Instructions;
 
+        if (assignExpr.Operator is Acornima.Operator.LogicalAndAssignment
+            or Acornima.Operator.LogicalOrAssignment)
+        {
+            if (!TryLoadVariable(binding, out var currentValue))
+            {
+                return false;
+            }
+
+            var currentBoxed = EnsureObject(currentValue);
+            var isTruthy = CreateTempVariable();
+            lirInstructions.Add(new LIRCallIsTruthy(currentBoxed, isTruthy));
+            DefineTempStorage(isTruthy, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            resultTempVar = CreateTempVariable();
+            var shortCircuitLabel = CreateLabel();
+            var endLabel = CreateLabel();
+            lirInstructions.Add(assignExpr.Operator == Acornima.Operator.LogicalAndAssignment
+                ? new LIRBranchIfFalse(isTruthy, shortCircuitLabel)
+                : new LIRBranchIfTrue(isTruthy, shortCircuitLabel));
+
+            if (!TryLowerAssignmentExpression(
+                    new HIRAssignmentExpression(assignExpr.Target, Acornima.Operator.Assignment, assignExpr.Value),
+                    out var assignedValue,
+                    resultUsed))
+            {
+                return false;
+            }
+
+            lirInstructions.Add(new LIRCopyTemp(EnsureObject(assignedValue), resultTempVar));
+            lirInstructions.Add(new LIRBranch(endLabel));
+            lirInstructions.Add(new LIRLabel(shortCircuitLabel));
+            ClearNumericRefinementsAtLabel();
+            lirInstructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+            lirInstructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            if (_variableMap.ContainsKey(binding))
+            {
+                _variableMap[binding] = resultTempVar;
+            }
+            return true;
+        }
+
         // Assigning to a const is a runtime TypeError.
         if (binding.Kind == BindingKind.Const)
         {

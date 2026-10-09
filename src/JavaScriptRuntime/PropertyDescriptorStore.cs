@@ -923,7 +923,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
         if (!tryGetOwn(target, "constructor", out var constructorDescriptor)
             || constructorDescriptor.Kind != JsPropertyDescriptorKind.Data
-            || constructorDescriptor.Value is not JsClassConstructorObject classConstructorValue)
+            || constructorDescriptor.Value is not JsClassConstructorObject classConstructorValue
+            || classConstructorValue.HasIndependentClassIdentity)
         {
             return false;
         }

@@ -73,7 +73,7 @@ public sealed record CallableSemantics
         }
         var requirements = InspectBody(callable);
         var nestedArrowRequirements =
-            AnalyzeNestedArrowLexicalContext(callableNode);
+            AnalyzeNestedArrowLexicalContext(callable);
 
         return new CallableSemantics
         {
@@ -97,7 +97,8 @@ public sealed record CallableSemantics
             UsesThis = requirements.UsesThis,
             UsesNewTarget = requirements.UsesNewTarget,
             UsesSuper = requirements.UsesSuper,
-            UsesPrivateNames = requirements.UsesPrivateNames,
+            UsesPrivateNames = requirements.UsesPrivateNames
+                || nestedArrowRequirements.UsesPrivateNames,
             NestedArrowUsesThis = nestedArrowRequirements.UsesThis,
             NestedArrowUsesNewTarget =
                 nestedArrowRequirements.UsesNewTarget,
@@ -226,6 +227,8 @@ public sealed record CallableSemantics
                     requirements with { UsesNewTarget = true },
                 Super =>
                     requirements with { UsesSuper = true },
+                PrivateIdentifier =>
+                    requirements with { UsesPrivateNames = true },
                 _ => requirements
             };
 

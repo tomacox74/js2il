@@ -323,7 +323,7 @@ public sealed class CallableBoundaryInventoryTests
                 ["src/JavaScriptRuntime/GeneratorObject.cs"] = 1,
                 ["src/JavaScriptRuntime/GlobalThis.cs"] = 2,
                 ["src/JavaScriptRuntime/Iterator.cs"] = 1,
-                ["src/JavaScriptRuntime/ObjectRuntime.Operations.cs"] = 3
+                ["src/JavaScriptRuntime/ObjectRuntime.Operations.cs"] = 4
             },
             actual);
     }
@@ -356,8 +356,7 @@ public sealed class CallableBoundaryInventoryTests
             new Dictionary<string, int>(StringComparer.Ordinal)
             {
                 ["src/JavaScriptRuntime/AsyncGeneratorFunction.cs"] = 2,
-                ["src/JavaScriptRuntime/GeneratorObject.cs"] = 2,
-                ["src/JavaScriptRuntime/RuntimeServices.cs"] = 2
+                ["src/JavaScriptRuntime/GeneratorObject.cs"] = 2
             },
             actual);
     }

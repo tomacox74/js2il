@@ -373,9 +373,11 @@ internal sealed class GeneratedFunctionObjectEmitter
             signature,
             AddMethodBody(
                 encoder,
+                // Hidden receiver/scope/context arguments remain on the stack while
+                // each JavaScript argument is fetched.
                 maxStack: System.Math.Max(
                     8,
-                    metadata.Plan.Signature.JsParamCount + 3)),
+                    metadata.Plan.Signature.JsParamCount + 6)),
             ["thisArgument", "arguments"],
             inParameterIndex: 1);
     }

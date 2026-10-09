@@ -675,20 +675,14 @@ namespace Jroc.SymbolTables
                 _ => expression.ToString() ?? string.Empty
             };
 
-        private static bool IsDirectGlobalFunctionConstructor(Scope currentScope, Identifier calleeId)
-        {
-            return string.Equals(calleeId.Name, "Function", StringComparison.Ordinal)
-                && TryResolveBinding(currentScope, calleeId.Name) == null;
-        }
-
         private void TryCreateDynamicFunctionScope(
             Scope globalScope,
             Scope currentScope,
             Node siteNode,
-            Identifier calleeId,
+            Node calleeId,
             IEnumerable<Node> arguments)
         {
-            if (!IsDirectGlobalFunctionConstructor(currentScope, calleeId))
+            if (!DynamicFunctionSupport.IsFunctionConstructorCandidate(calleeId))
             {
                 return;
             }
@@ -698,7 +692,10 @@ namespace Jroc.SymbolTables
                 return;
             }
 
-            if (!DynamicFunctionSupport.TryGetStringLiteralArguments(arguments, out var literalArgs))
+            if (!DynamicFunctionSupport.TryGetStaticStringArguments(
+                    arguments,
+                    name => (TryResolveBinding(currentScope, name)?.DeclarationNode as VariableDeclarator)?.Init,
+                    out var literalArgs))
             {
                 return;
             }
@@ -711,7 +708,8 @@ namespace Jroc.SymbolTables
                     loc.Line,
                     loc.Column,
                     out var parsedFunctionExpr,
-                    out _)
+                    out _,
+                    createFactory: true)
                 || parsedFunctionExpr == null)
             {
                 return;
@@ -772,6 +770,10 @@ namespace Jroc.SymbolTables
                 BuildScopeRecursive(globalScope, parsedFunctionExpr.Body, dynamicScope);
             }
 
+            foreach (var generatedFunction in dynamicScope.Children.Where(child => child.Kind == ScopeKind.Function))
+            {
+                generatedFunction.UsesGlobalScopeSemantics = true;
+            }
             AddImplicitArgumentsBinding(dynamicScope);
         }
 
@@ -1006,6 +1008,11 @@ namespace Jroc.SymbolTables
 
                 // Classes: check method bodies for free variable references
                 case ClassDeclaration classDecl:
+                    if (classDecl.Decorators.Any(decorator =>
+                            ContainsFreeVariable(decorator.Expression, localVariables)))
+                    {
+                        return true;
+                    }
                     foreach (var element in classDecl.Body.Body)
                     {
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
@@ -1054,6 +1061,11 @@ namespace Jroc.SymbolTables
                     return false;
 
                 case ClassExpression classExpr:
+                    if (classExpr.Decorators.Any(decorator =>
+                            ContainsFreeVariable(decorator.Expression, localVariables)))
+                    {
+                        return true;
+                    }
                     foreach (var element in classExpr.Body.Body)
                     {
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
@@ -1376,6 +1388,10 @@ namespace Jroc.SymbolTables
                         break;
                     }
                     _visitedClasses.Add(classDecl);
+                    foreach (var decorator in classDecl.Decorators)
+                    {
+                        BuildScopeRecursive(globalScope, decorator.Expression, currentScope);
+                    }
                     var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
                     var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
                     // Author authoritative .NET naming for classes here
@@ -1383,6 +1399,10 @@ namespace Jroc.SymbolTables
                     classScope.DotNetTypeName = SanitizeForMetadata(className);
                     currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, currentScope, classDecl);
                     classScope.Bindings[className] = new BindingInfo(className, BindingKind.Const, classScope, classDecl);
+                    if (classDecl.Decorators.Count > 0)
+                    {
+                        classScope.Bindings[className].IsCaptured = true;
+                    }
                     if (UnwrapExpression(classDecl.SuperClass) is FunctionExpression classSuperFunction)
                     {
                         BuildScopeRecursive(globalScope, classSuperFunction, classScope);
@@ -1470,6 +1490,10 @@ namespace Jroc.SymbolTables
                                 BuildScopeRecursive(globalScope, propertyDefinition.Value, classScope);
                             }
                         }
+                        else if (element is StaticBlock staticBlock)
+                        {
+                            BuildScopeRecursive(globalScope, staticBlock, classScope);
+                        }
                     }
                     break;
 
@@ -1479,6 +1503,10 @@ namespace Jroc.SymbolTables
                         break;
                     }
                     _visitedClasses.Add(classExpr);
+                    foreach (var decorator in classExpr.Decorators)
+                    {
+                        BuildScopeRecursive(globalScope, decorator.Expression, currentScope);
+                    }
                     // Model class expressions as a class scope so the IR pipeline and class emitters can
                     // treat `module.exports = class Foo { ... }` as exporting the compiled class type.
                     // NOTE: The class name (if present) is a binding within the class body, not the
@@ -1500,6 +1528,10 @@ namespace Jroc.SymbolTables
                     if (!classExprScope.Bindings.ContainsKey(classExprName!))
                     {
                         classExprScope.Bindings[classExprName!] = new BindingInfo(classExprName!, BindingKind.Const, classExprScope, classExpr);
+                    }
+                    if (classExpr.Decorators.Count > 0 && classExpr.Id != null)
+                    {
+                        classExprScope.Bindings[classExprName!].IsCaptured = true;
                     }
 
                     if (UnwrapExpression(classExpr.SuperClass) is FunctionExpression classExprSuperFunction)
@@ -1577,6 +1609,10 @@ namespace Jroc.SymbolTables
                             {
                                 BuildScopeRecursive(globalScope, propertyDefinition.Value, classExprScope);
                             }
+                        }
+                        else if (element is StaticBlock staticBlock)
+                        {
+                            BuildScopeRecursive(globalScope, staticBlock, classExprScope);
                         }
                     }
                     break;
@@ -1862,6 +1898,17 @@ namespace Jroc.SymbolTables
 
                             BuildScopeRecursive(globalScope, decl.Init, currentScope);
                         }
+                    }
+                    break;
+                case StaticBlock staticBlock:
+                    var staticBlockScope = new Scope(
+                        $"StaticBlock_L{staticBlock.Location.Start.Line}C{staticBlock.Location.Start.Column}",
+                        ScopeKind.Block,
+                        currentScope,
+                        staticBlock);
+                    foreach (var statement in staticBlock.Body)
+                    {
+                        BuildScopeRecursive(globalScope, statement, staticBlockScope);
                     }
                     break;
                 case BlockStatement blockStmt:
@@ -2180,10 +2227,7 @@ namespace Jroc.SymbolTables
 
                     MarkStabilityTrackedGlobalObjectsExposedByCall(currentScope, callExpr);
 
-                    if (callExpr.Callee is Identifier callCalleeId)
-                    {
-                        TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callCalleeId, callExpr.Arguments.Cast<Node>());
-                    }
+                    TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callExpr.Callee, callExpr.Arguments.Cast<Node>());
 
                     // Process callee and arguments but don't create scopes for call expressions themselves
                     BuildScopeRecursive(globalScope, callExpr.Callee, currentScope);
@@ -2206,10 +2250,7 @@ namespace Jroc.SymbolTables
                         MarkExposedStabilityTrackedGlobalObjects(currentScope, argument as Node);
                     }
 
-                    if (newExpr.Callee is Identifier newCalleeId)
-                    {
-                        TryCreateDynamicFunctionScope(globalScope, currentScope, newExpr, newCalleeId, newExpr.Arguments.Cast<Node>());
-                    }
+                    TryCreateDynamicFunctionScope(globalScope, currentScope, newExpr, newExpr.Callee, newExpr.Arguments.Cast<Node>());
 
                     BuildScopeRecursive(globalScope, newExpr.Callee, currentScope);
                     foreach (var arg in newExpr.Arguments)
@@ -2931,6 +2972,11 @@ namespace Jroc.SymbolTables
                     break;
 
                 case ClassDeclaration classDecl:
+                    foreach (var decorator in classDecl.Decorators)
+                    {
+                        CollectFreeVariables(
+                            decorator.Expression, localVariables, targetVariables, result);
+                    }
                     CollectFreeVariables(
                         classDecl.SuperClass,
                         localVariables,
@@ -2972,6 +3018,11 @@ namespace Jroc.SymbolTables
                     break;
 
                 case ClassExpression classExpr:
+                    foreach (var decorator in classExpr.Decorators)
+                    {
+                        CollectFreeVariables(
+                            decorator.Expression, localVariables, targetVariables, result);
+                    }
                     CollectFreeVariables(
                         classExpr.SuperClass,
                         localVariables,

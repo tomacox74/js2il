@@ -1163,7 +1163,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1276 (0x4fc)
+		// Code size: 1486 (0x5ce)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_ParameterDestructuring/Scope,
@@ -1176,10 +1176,13 @@
 			[7] class Modules.Classes_ClassConstructor_ParameterDestructuring/Config,
 			[8] object[],
 			[9] class [System.Runtime]System.Type,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[11] class Modules.Classes_ClassConstructor_ParameterDestructuring/Point,
-			[12] class Modules.Classes_ClassConstructor_ParameterDestructuring/Person,
-			[13] class Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+			[10] class Modules.Classes_ClassConstructor_ParameterDestructuring/Point/Scope_ctor/FunctionObject,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[12] class Modules.Classes_ClassConstructor_ParameterDestructuring/Point,
+			[13] class Modules.Classes_ClassConstructor_ParameterDestructuring/Person/Scope_ctor/FunctionObject,
+			[14] class Modules.Classes_ClassConstructor_ParameterDestructuring/Person,
+			[15] class Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject,
+			[16] class Modules.Classes_ClassConstructor_ParameterDestructuring/Config
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Scope::.ctor()
@@ -1200,376 +1203,460 @@
 		IL_0020: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
 		IL_0025: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_002a: stloc.s 9
-		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0031: dup
-		IL_0032: ldstr "x"
-		IL_0037: ldc.r8 10
-		IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0045: dup
-		IL_0046: ldstr "y"
-		IL_004b: ldc.r8 20
-		IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0059: stloc.s 10
-		IL_005b: ldc.i4.1
-		IL_005c: newarr [System.Runtime]System.Object
-		IL_0061: dup
-		IL_0062: ldc.i4.0
-		IL_0063: ldloc.s 10
-		IL_0065: stelem.ref
-		IL_0066: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_006b: ldloc.s 10
-		IL_006d: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Point::.ctor(object)
-		IL_0072: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0077: stloc.1
-		IL_0078: ldloc.1
-		IL_0079: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
-		IL_007e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0083: ldstr "prototype"
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_008d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0092: ldloc.1
-		IL_0093: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Point>(!!0)
-		IL_0098: stloc.s 11
-		IL_009a: volatile.
-		IL_009c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_00a1: brfalse IL_00b7
+		IL_002c: ldloc.s 8
+		IL_002e: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Point/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_0033: ldloc.s 9
+		IL_0035: ldloc.s 8
+		IL_0037: ldc.i4.1
+		IL_0038: conv.r8
+		IL_0039: ldc.i4.0
+		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_003f: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Point/Scope_ctor/FunctionObject
+		IL_0044: stloc.s 10
+		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_004b: dup
+		IL_004c: ldstr "x"
+		IL_0051: ldc.r8 10
+		IL_005a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_005f: dup
+		IL_0060: ldstr "y"
+		IL_0065: ldc.r8 20
+		IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0073: stloc.s 11
+		IL_0075: ldc.i4.1
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldloc.s 11
+		IL_007f: stelem.ref
+		IL_0080: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0085: ldloc.s 10
+		IL_0087: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_008c: ldloc.s 11
+		IL_008e: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Point::.ctor(object)
+		IL_0093: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0098: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_009d: stloc.1
+		IL_009e: ldloc.1
+		IL_009f: ldloc.s 10
+		IL_00a1: ldstr "prototype"
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00ab: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00b0: ldloc.1
+		IL_00b1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Point>(!!0)
+		IL_00b6: stloc.s 12
+		IL_00b8: volatile.
+		IL_00ba: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_00bf: brfalse IL_00d5
 
-		IL_00a6: ldloc.s 11
-		IL_00a8: ldstr "display"
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00b2: br IL_00cd
+		IL_00c4: ldloc.s 12
+		IL_00c6: ldstr "display"
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00d0: br IL_00eb
 
-		IL_00b7: ldloc.s 11
-		IL_00b9: ldstr "display"
-		IL_00be: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:17"
-		IL_00c3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_00d5: ldloc.s 12
+		IL_00d7: ldstr "display"
+		IL_00dc: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:17"
+		IL_00e1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_00cd: pop
-		IL_00ce: ldc.i4.1
-		IL_00cf: newarr [System.Runtime]System.Object
-		IL_00d4: dup
-		IL_00d5: ldc.i4.0
-		IL_00d6: ldloc.0
-		IL_00d7: stelem.ref
-		IL_00d8: stloc.s 8
-		IL_00da: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
-		IL_00df: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00e4: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
-		IL_00e9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00ee: stloc.s 9
-		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00f5: dup
-		IL_00f6: ldstr "x"
-		IL_00fb: ldc.r8 5
-		IL_0104: neg
-		IL_0105: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_010a: dup
-		IL_010b: ldstr "y"
-		IL_0110: ldc.r8 15
-		IL_0119: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_011e: stloc.s 10
-		IL_0120: ldc.i4.1
-		IL_0121: newarr [System.Runtime]System.Object
-		IL_0126: dup
-		IL_0127: ldc.i4.0
-		IL_0128: ldloc.s 10
-		IL_012a: stelem.ref
-		IL_012b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0130: ldloc.s 10
-		IL_0132: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Point::.ctor(object)
-		IL_0137: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_013c: stloc.2
-		IL_013d: ldloc.2
-		IL_013e: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
-		IL_0143: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0148: ldstr "prototype"
-		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0152: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0157: ldloc.2
-		IL_0158: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Point>(!!0)
-		IL_015d: stloc.s 11
-		IL_015f: volatile.
-		IL_0161: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_0166: brfalse IL_017c
+		IL_00eb: pop
+		IL_00ec: ldc.i4.1
+		IL_00ed: newarr [System.Runtime]System.Object
+		IL_00f2: dup
+		IL_00f3: ldc.i4.0
+		IL_00f4: ldloc.0
+		IL_00f5: stelem.ref
+		IL_00f6: stloc.s 8
+		IL_00f8: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
+		IL_00fd: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0102: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Point
+		IL_0107: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_010c: stloc.s 9
+		IL_010e: ldloc.s 8
+		IL_0110: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Point/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_0115: ldloc.s 9
+		IL_0117: ldloc.s 8
+		IL_0119: ldc.i4.1
+		IL_011a: conv.r8
+		IL_011b: ldc.i4.0
+		IL_011c: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0121: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Point/Scope_ctor/FunctionObject
+		IL_0126: stloc.s 10
+		IL_0128: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_012d: dup
+		IL_012e: ldstr "x"
+		IL_0133: ldc.r8 5
+		IL_013c: neg
+		IL_013d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0142: dup
+		IL_0143: ldstr "y"
+		IL_0148: ldc.r8 15
+		IL_0151: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0156: stloc.s 11
+		IL_0158: ldc.i4.1
+		IL_0159: newarr [System.Runtime]System.Object
+		IL_015e: dup
+		IL_015f: ldc.i4.0
+		IL_0160: ldloc.s 11
+		IL_0162: stelem.ref
+		IL_0163: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0168: ldloc.s 10
+		IL_016a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_016f: ldloc.s 11
+		IL_0171: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Point::.ctor(object)
+		IL_0176: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_017b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0180: stloc.2
+		IL_0181: ldloc.2
+		IL_0182: ldloc.s 10
+		IL_0184: ldstr "prototype"
+		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_018e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0193: ldloc.2
+		IL_0194: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Point>(!!0)
+		IL_0199: stloc.s 12
+		IL_019b: volatile.
+		IL_019d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_01a2: brfalse IL_01b8
 
-		IL_016b: ldloc.s 11
-		IL_016d: ldstr "display"
-		IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0177: br IL_0192
+		IL_01a7: ldloc.s 12
+		IL_01a9: ldstr "display"
+		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01b3: br IL_01ce
 
-		IL_017c: ldloc.s 11
-		IL_017e: ldstr "display"
-		IL_0183: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:30"
-		IL_0188: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_01b8: ldloc.s 12
+		IL_01ba: ldstr "display"
+		IL_01bf: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:30"
+		IL_01c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0192: pop
-		IL_0193: ldc.i4.1
-		IL_0194: newarr [System.Runtime]System.Object
-		IL_0199: dup
-		IL_019a: ldc.i4.0
-		IL_019b: ldloc.0
-		IL_019c: stelem.ref
-		IL_019d: stloc.s 8
-		IL_019f: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
-		IL_01a4: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_01a9: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
-		IL_01ae: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_01b3: stloc.s 9
-		IL_01b5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01ba: dup
-		IL_01bb: ldstr "name"
-		IL_01c0: ldstr "Alice"
-		IL_01c5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_01ca: dup
-		IL_01cb: ldstr "age"
-		IL_01d0: ldc.r8 30
-		IL_01d9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_01de: dup
-		IL_01df: ldstr "city"
-		IL_01e4: ldstr "Seattle"
-		IL_01e9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_01ee: stloc.s 10
-		IL_01f0: ldc.i4.1
-		IL_01f1: newarr [System.Runtime]System.Object
-		IL_01f6: dup
-		IL_01f7: ldc.i4.0
-		IL_01f8: ldloc.s 10
-		IL_01fa: stelem.ref
-		IL_01fb: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0200: ldloc.s 10
-		IL_0202: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Person::.ctor(object)
-		IL_0207: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_020c: stloc.3
-		IL_020d: ldloc.3
-		IL_020e: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
-		IL_0213: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0218: ldstr "prototype"
-		IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0222: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0227: ldloc.3
-		IL_0228: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Person>(!!0)
-		IL_022d: stloc.s 12
-		IL_022f: ldloc.s 12
-		IL_0231: callvirt instance object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::greet()
-		IL_0236: pop
-		IL_0237: ldc.i4.1
-		IL_0238: newarr [System.Runtime]System.Object
-		IL_023d: dup
-		IL_023e: ldc.i4.0
-		IL_023f: ldloc.0
-		IL_0240: stelem.ref
-		IL_0241: stloc.s 8
-		IL_0243: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
-		IL_0248: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_024d: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
-		IL_0252: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0257: stloc.s 9
-		IL_0259: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_025e: dup
-		IL_025f: ldstr "name"
-		IL_0264: ldstr "Bob"
-		IL_0269: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_026e: dup
-		IL_026f: ldstr "age"
-		IL_0274: ldc.r8 25
-		IL_027d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0282: dup
-		IL_0283: ldstr "city"
-		IL_0288: ldstr "Portland"
-		IL_028d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0292: stloc.s 10
-		IL_0294: ldc.i4.1
-		IL_0295: newarr [System.Runtime]System.Object
-		IL_029a: dup
-		IL_029b: ldc.i4.0
-		IL_029c: ldloc.s 10
-		IL_029e: stelem.ref
-		IL_029f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_02a4: ldloc.s 10
-		IL_02a6: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Person::.ctor(object)
-		IL_02ab: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_02b0: stloc.s 4
-		IL_02b2: ldloc.s 4
-		IL_02b4: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
-		IL_02b9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_02be: ldstr "prototype"
-		IL_02c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_02c8: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_02cd: ldloc.s 4
-		IL_02cf: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Person>(!!0)
-		IL_02d4: stloc.s 12
-		IL_02d6: ldloc.s 12
-		IL_02d8: callvirt instance object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::greet()
-		IL_02dd: pop
-		IL_02de: ldc.i4.1
-		IL_02df: newarr [System.Runtime]System.Object
-		IL_02e4: dup
-		IL_02e5: ldc.i4.0
-		IL_02e6: ldloc.0
-		IL_02e7: stelem.ref
-		IL_02e8: stloc.s 8
-		IL_02ea: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_02ef: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_02f4: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_02f9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_02fe: stloc.s 9
-		IL_0300: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0305: dup
-		IL_0306: ldstr "host"
-		IL_030b: ldstr "example.com"
-		IL_0310: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0315: stloc.s 10
-		IL_0317: ldc.i4.1
-		IL_0318: newarr [System.Runtime]System.Object
-		IL_031d: dup
-		IL_031e: ldc.i4.0
-		IL_031f: ldloc.s 10
-		IL_0321: stelem.ref
-		IL_0322: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0327: ldloc.s 10
-		IL_0329: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config::.ctor(object)
-		IL_032e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0333: stloc.s 5
-		IL_0335: ldloc.s 5
-		IL_0337: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_033c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0341: ldstr "prototype"
-		IL_0346: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_034b: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0350: ldloc.s 5
-		IL_0352: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Config>(!!0)
-		IL_0357: stloc.s 13
-		IL_0359: volatile.
-		IL_035b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_0360: brfalse IL_0376
+		IL_01ce: pop
+		IL_01cf: ldc.i4.1
+		IL_01d0: newarr [System.Runtime]System.Object
+		IL_01d5: dup
+		IL_01d6: ldc.i4.0
+		IL_01d7: ldloc.0
+		IL_01d8: stelem.ref
+		IL_01d9: stloc.s 8
+		IL_01db: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
+		IL_01e0: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_01e5: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
+		IL_01ea: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_01ef: stloc.s 9
+		IL_01f1: ldloc.s 8
+		IL_01f3: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Person/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_01f8: ldloc.s 9
+		IL_01fa: ldloc.s 8
+		IL_01fc: ldc.i4.1
+		IL_01fd: conv.r8
+		IL_01fe: ldc.i4.0
+		IL_01ff: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0204: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Person/Scope_ctor/FunctionObject
+		IL_0209: stloc.s 13
+		IL_020b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0210: dup
+		IL_0211: ldstr "name"
+		IL_0216: ldstr "Alice"
+		IL_021b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0220: dup
+		IL_0221: ldstr "age"
+		IL_0226: ldc.r8 30
+		IL_022f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0234: dup
+		IL_0235: ldstr "city"
+		IL_023a: ldstr "Seattle"
+		IL_023f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0244: stloc.s 11
+		IL_0246: ldc.i4.1
+		IL_0247: newarr [System.Runtime]System.Object
+		IL_024c: dup
+		IL_024d: ldc.i4.0
+		IL_024e: ldloc.s 11
+		IL_0250: stelem.ref
+		IL_0251: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0256: ldloc.s 13
+		IL_0258: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_025d: ldloc.s 11
+		IL_025f: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Person::.ctor(object)
+		IL_0264: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0269: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_026e: stloc.3
+		IL_026f: ldloc.3
+		IL_0270: ldloc.s 13
+		IL_0272: ldstr "prototype"
+		IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_027c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0281: ldloc.3
+		IL_0282: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Person>(!!0)
+		IL_0287: stloc.s 14
+		IL_0289: ldloc.s 14
+		IL_028b: callvirt instance object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::greet()
+		IL_0290: pop
+		IL_0291: ldc.i4.1
+		IL_0292: newarr [System.Runtime]System.Object
+		IL_0297: dup
+		IL_0298: ldc.i4.0
+		IL_0299: ldloc.0
+		IL_029a: stelem.ref
+		IL_029b: stloc.s 8
+		IL_029d: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
+		IL_02a2: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_02a7: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Person
+		IL_02ac: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_02b1: stloc.s 9
+		IL_02b3: ldloc.s 8
+		IL_02b5: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Person/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_02ba: ldloc.s 9
+		IL_02bc: ldloc.s 8
+		IL_02be: ldc.i4.1
+		IL_02bf: conv.r8
+		IL_02c0: ldc.i4.0
+		IL_02c1: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_02c6: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Person/Scope_ctor/FunctionObject
+		IL_02cb: stloc.s 13
+		IL_02cd: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_02d2: dup
+		IL_02d3: ldstr "name"
+		IL_02d8: ldstr "Bob"
+		IL_02dd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_02e2: dup
+		IL_02e3: ldstr "age"
+		IL_02e8: ldc.r8 25
+		IL_02f1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_02f6: dup
+		IL_02f7: ldstr "city"
+		IL_02fc: ldstr "Portland"
+		IL_0301: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0306: stloc.s 11
+		IL_0308: ldc.i4.1
+		IL_0309: newarr [System.Runtime]System.Object
+		IL_030e: dup
+		IL_030f: ldc.i4.0
+		IL_0310: ldloc.s 11
+		IL_0312: stelem.ref
+		IL_0313: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0318: ldloc.s 13
+		IL_031a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_031f: ldloc.s 11
+		IL_0321: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Person::.ctor(object)
+		IL_0326: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_032b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0330: stloc.s 4
+		IL_0332: ldloc.s 4
+		IL_0334: ldloc.s 13
+		IL_0336: ldstr "prototype"
+		IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0340: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0345: ldloc.s 4
+		IL_0347: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Person>(!!0)
+		IL_034c: stloc.s 14
+		IL_034e: ldloc.s 14
+		IL_0350: callvirt instance object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::greet()
+		IL_0355: pop
+		IL_0356: ldc.i4.1
+		IL_0357: newarr [System.Runtime]System.Object
+		IL_035c: dup
+		IL_035d: ldc.i4.0
+		IL_035e: ldloc.0
+		IL_035f: stelem.ref
+		IL_0360: stloc.s 8
+		IL_0362: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+		IL_0367: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_036c: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+		IL_0371: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0376: stloc.s 9
+		IL_0378: ldloc.s 8
+		IL_037a: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_037f: ldloc.s 9
+		IL_0381: ldloc.s 8
+		IL_0383: ldc.i4.1
+		IL_0384: conv.r8
+		IL_0385: ldc.i4.0
+		IL_0386: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_038b: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject
+		IL_0390: stloc.s 15
+		IL_0392: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0397: dup
+		IL_0398: ldstr "host"
+		IL_039d: ldstr "example.com"
+		IL_03a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_03a7: stloc.s 11
+		IL_03a9: ldc.i4.1
+		IL_03aa: newarr [System.Runtime]System.Object
+		IL_03af: dup
+		IL_03b0: ldc.i4.0
+		IL_03b1: ldloc.s 11
+		IL_03b3: stelem.ref
+		IL_03b4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_03b9: ldloc.s 15
+		IL_03bb: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_03c0: ldloc.s 11
+		IL_03c2: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config::.ctor(object)
+		IL_03c7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_03cc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_03d1: stloc.s 5
+		IL_03d3: ldloc.s 5
+		IL_03d5: ldloc.s 15
+		IL_03d7: ldstr "prototype"
+		IL_03dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_03e1: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_03e6: ldloc.s 5
+		IL_03e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Config>(!!0)
+		IL_03ed: stloc.s 16
+		IL_03ef: volatile.
+		IL_03f1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_03f6: brfalse IL_040c
 
-		IL_0365: ldloc.s 13
-		IL_0367: ldstr "display"
-		IL_036c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0371: br IL_038c
+		IL_03fb: ldloc.s 16
+		IL_03fd: ldstr "display"
+		IL_0402: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0407: br IL_0422
 
-		IL_0376: ldloc.s 13
-		IL_0378: ldstr "display"
-		IL_037d: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:67"
-		IL_0382: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_040c: ldloc.s 16
+		IL_040e: ldstr "display"
+		IL_0413: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:67"
+		IL_0418: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_041d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_038c: pop
-		IL_038d: ldc.i4.1
-		IL_038e: newarr [System.Runtime]System.Object
-		IL_0393: dup
-		IL_0394: ldc.i4.0
-		IL_0395: ldloc.0
-		IL_0396: stelem.ref
-		IL_0397: stloc.s 8
-		IL_0399: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_039e: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_03a3: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_03a8: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_03ad: stloc.s 9
-		IL_03af: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_03b4: dup
-		IL_03b5: ldstr "host"
-		IL_03ba: ldstr "api.test.com"
-		IL_03bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_03c4: dup
-		IL_03c5: ldstr "port"
-		IL_03ca: ldc.r8 3000
-		IL_03d3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_03d8: dup
-		IL_03d9: ldstr "secure"
-		IL_03de: ldc.i4.1
-		IL_03df: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_03e4: stloc.s 10
-		IL_03e6: ldc.i4.1
-		IL_03e7: newarr [System.Runtime]System.Object
-		IL_03ec: dup
-		IL_03ed: ldc.i4.0
-		IL_03ee: ldloc.s 10
-		IL_03f0: stelem.ref
-		IL_03f1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_03f6: ldloc.s 10
-		IL_03f8: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config::.ctor(object)
-		IL_03fd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0402: stloc.s 6
-		IL_0404: ldloc.s 6
-		IL_0406: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_040b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0410: ldstr "prototype"
-		IL_0415: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_041a: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_041f: ldloc.s 6
-		IL_0421: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Config>(!!0)
-		IL_0426: stloc.s 13
-		IL_0428: volatile.
-		IL_042a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_042f: brfalse IL_0445
+		IL_0422: pop
+		IL_0423: ldc.i4.1
+		IL_0424: newarr [System.Runtime]System.Object
+		IL_0429: dup
+		IL_042a: ldc.i4.0
+		IL_042b: ldloc.0
+		IL_042c: stelem.ref
+		IL_042d: stloc.s 8
+		IL_042f: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+		IL_0434: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0439: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+		IL_043e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0443: stloc.s 9
+		IL_0445: ldloc.s 8
+		IL_0447: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_044c: ldloc.s 9
+		IL_044e: ldloc.s 8
+		IL_0450: ldc.i4.1
+		IL_0451: conv.r8
+		IL_0452: ldc.i4.0
+		IL_0453: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0458: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject
+		IL_045d: stloc.s 15
+		IL_045f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0464: dup
+		IL_0465: ldstr "host"
+		IL_046a: ldstr "api.test.com"
+		IL_046f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0474: dup
+		IL_0475: ldstr "port"
+		IL_047a: ldc.r8 3000
+		IL_0483: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0488: dup
+		IL_0489: ldstr "secure"
+		IL_048e: ldc.i4.1
+		IL_048f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0494: stloc.s 11
+		IL_0496: ldc.i4.1
+		IL_0497: newarr [System.Runtime]System.Object
+		IL_049c: dup
+		IL_049d: ldc.i4.0
+		IL_049e: ldloc.s 11
+		IL_04a0: stelem.ref
+		IL_04a1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_04a6: ldloc.s 15
+		IL_04a8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_04ad: ldloc.s 11
+		IL_04af: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config::.ctor(object)
+		IL_04b4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_04b9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_04be: stloc.s 6
+		IL_04c0: ldloc.s 6
+		IL_04c2: ldloc.s 15
+		IL_04c4: ldstr "prototype"
+		IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_04ce: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_04d3: ldloc.s 6
+		IL_04d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Config>(!!0)
+		IL_04da: stloc.s 16
+		IL_04dc: volatile.
+		IL_04de: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+		IL_04e3: brfalse IL_04f9
 
-		IL_0434: ldloc.s 13
-		IL_0436: ldstr "display"
-		IL_043b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0440: br IL_045b
+		IL_04e8: ldloc.s 16
+		IL_04ea: ldstr "display"
+		IL_04ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_04f4: br IL_050f
 
-		IL_0445: ldloc.s 13
-		IL_0447: ldstr "display"
-		IL_044c: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:80"
-		IL_0451: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_0456: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_04f9: ldloc.s 16
+		IL_04fb: ldstr "display"
+		IL_0500: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:80"
+		IL_0505: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+		IL_050a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_045b: pop
-		IL_045c: ldc.i4.1
-		IL_045d: newarr [System.Runtime]System.Object
-		IL_0462: dup
-		IL_0463: ldc.i4.0
-		IL_0464: ldloc.0
-		IL_0465: stelem.ref
-		IL_0466: stloc.s 8
-		IL_0468: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_046d: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0472: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_0477: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_047c: stloc.s 9
-		IL_047e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0483: stloc.s 10
-		IL_0485: ldc.i4.1
-		IL_0486: newarr [System.Runtime]System.Object
-		IL_048b: dup
-		IL_048c: ldc.i4.0
-		IL_048d: ldloc.s 10
-		IL_048f: stelem.ref
-		IL_0490: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0495: ldloc.s 10
-		IL_0497: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config::.ctor(object)
-		IL_049c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_04a1: stloc.s 7
-		IL_04a3: ldloc.s 7
-		IL_04a5: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
-		IL_04aa: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_04af: ldstr "prototype"
-		IL_04b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_04b9: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_04be: ldloc.s 7
-		IL_04c0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Config>(!!0)
-		IL_04c5: stloc.s 13
-		IL_04c7: volatile.
-		IL_04c9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_04ce: brfalse IL_04e4
+		IL_050f: pop
+		IL_0510: ldc.i4.1
+		IL_0511: newarr [System.Runtime]System.Object
+		IL_0516: dup
+		IL_0517: ldc.i4.0
+		IL_0518: ldloc.0
+		IL_0519: stelem.ref
+		IL_051a: stloc.s 8
+		IL_051c: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+		IL_0521: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0526: ldtoken Modules.Classes_ClassConstructor_ParameterDestructuring/Config
+		IL_052b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0530: stloc.s 9
+		IL_0532: ldloc.s 8
+		IL_0534: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_0539: ldloc.s 9
+		IL_053b: ldloc.s 8
+		IL_053d: ldc.i4.1
+		IL_053e: conv.r8
+		IL_053f: ldc.i4.0
+		IL_0540: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0545: castclass Modules.Classes_ClassConstructor_ParameterDestructuring/Config/Scope_ctor/FunctionObject
+		IL_054a: stloc.s 15
+		IL_054c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0551: stloc.s 11
+		IL_0553: ldc.i4.1
+		IL_0554: newarr [System.Runtime]System.Object
+		IL_0559: dup
+		IL_055a: ldc.i4.0
+		IL_055b: ldloc.s 11
+		IL_055d: stelem.ref
+		IL_055e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0563: ldloc.s 15
+		IL_0565: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_056a: ldloc.s 11
+		IL_056c: newobj instance void Modules.Classes_ClassConstructor_ParameterDestructuring/Config::.ctor(object)
+		IL_0571: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0576: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_057b: stloc.s 7
+		IL_057d: ldloc.s 7
+		IL_057f: ldloc.s 15
+		IL_0581: ldstr "prototype"
+		IL_0586: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_058b: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0590: ldloc.s 7
+		IL_0592: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassConstructor_ParameterDestructuring/Config>(!!0)
+		IL_0597: stloc.s 16
+		IL_0599: volatile.
+		IL_059b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_05a0: brfalse IL_05b6
 
-		IL_04d3: ldloc.s 13
-		IL_04d5: ldstr "display"
-		IL_04da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_04df: br IL_04fa
+		IL_05a5: ldloc.s 16
+		IL_05a7: ldstr "display"
+		IL_05ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_05b1: br IL_05cc
 
-		IL_04e4: ldloc.s 13
-		IL_04e6: ldstr "display"
-		IL_04eb: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:90"
-		IL_04f0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_04f5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_05b6: ldloc.s 16
+		IL_05b8: ldstr "display"
+		IL_05bd: ldstr "Classes_ClassConstructor_ParameterDestructuring:Modules.Classes_ClassConstructor_ParameterDestructuring:__js_module_init__:90"
+		IL_05c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_05c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_04fa: pop
-		IL_04fb: ret
+		IL_05cc: pop
+		IL_05cd: ret
 	} // end of method Classes_ClassConstructor_ParameterDestructuring::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_ParameterDestructuring

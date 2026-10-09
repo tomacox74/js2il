@@ -174,32 +174,38 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 76 (0x4c)
+			// Code size: 85 (0x55)
 			.maxstack 8
 			.locals init (
-				[0] class Modules.Classes_ClassConstructor_New_In_ArrowFunction/PrimeSieve
+				[0] object,
+				[1] class Modules.Classes_ClassConstructor_New_In_ArrowFunction/PrimeSieve
 			)
 
-			IL_0000: ldc.i4.1
-			IL_0001: newarr [System.Runtime]System.Object
-			IL_0006: dup
-			IL_0007: ldc.i4.0
-			IL_0008: ldc.r8 10
-			IL_0011: box [System.Runtime]System.Double
-			IL_0016: stelem.ref
-			IL_0017: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_001c: ldc.r8 10
-			IL_0025: newobj instance void Modules.Classes_ClassConstructor_New_In_ArrowFunction/PrimeSieve::.ctor(float64)
-			IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_002f: stloc.0
-			IL_0030: ldloc.0
-			IL_0031: ldtoken Modules.Classes_ClassConstructor_New_In_ArrowFunction/PrimeSieve
-			IL_0036: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_003b: ldstr "prototype"
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_0045: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_004a: ldloc.0
-			IL_004b: ret
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_ClassConstructor_New_In_ArrowFunction/Scope::PrimeSieve
+			IL_0006: stloc.0
+			IL_0007: ldc.i4.1
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: dup
+			IL_000e: ldc.i4.0
+			IL_000f: ldc.r8 10
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stelem.ref
+			IL_001e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0023: ldloc.0
+			IL_0024: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_0029: ldc.r8 10
+			IL_0032: newobj instance void Modules.Classes_ClassConstructor_New_In_ArrowFunction/PrimeSieve::.ctor(float64)
+			IL_0037: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_003c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0041: stloc.1
+			IL_0042: ldloc.1
+			IL_0043: ldloc.0
+			IL_0044: ldstr "prototype"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_004e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0053: ldloc.1
+			IL_0054: ret
 		} // end of method ArrowFunction_L9C14::__js_call__
 
 	} // end of class ArrowFunction_L9C14

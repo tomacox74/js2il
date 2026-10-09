@@ -452,8 +452,21 @@ namespace Jroc.Services.ILGenerators
                 return classScope.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var t) ? t : null;
             }
 
+            var emittedFieldNames = new HashSet<(string Name, bool Static, bool Private)>();
             foreach (var pdef in classBody.Body.OfType<Acornima.Ast.PropertyDefinition>())
             {
+                var fieldName = pdef.Key switch
+                {
+                    Identifier identifier => identifier.Name,
+                    PrivateIdentifier identifier => identifier.Name,
+                    _ => null
+                };
+                if (!pdef.Computed
+                    && fieldName != null
+                    && !emittedFieldNames.Add((fieldName, pdef.Static, pdef.Key is PrivateIdentifier)))
+                {
+                    continue;
+                }
                 if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
                 {
                     var pname = priv.Name;
@@ -714,7 +727,7 @@ namespace Jroc.Services.ILGenerators
                 {
                     var baseBody = baseScope.AstNode is ClassDeclaration bcd ? bcd.Body : ((ClassExpression)baseScope.AstNode).Body;
                     var baseCtor = baseBody.Body.OfType<Acornima.Ast.MethodDefinition>()
-                        .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                        .FirstOrDefault(ClassElementNames.IsConstructor);
                     if (baseCtor?.Value is FunctionExpression baseCtorFunc
                         && !baseCtorFunc.Params.Any(p => p is RestElement))
                     {

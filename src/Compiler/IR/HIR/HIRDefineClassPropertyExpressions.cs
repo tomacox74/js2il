@@ -4,6 +4,26 @@ using System.Collections.Generic;
 
 namespace Jroc.HIR;
 
+public sealed class HIRClassComputedFieldKeyExpression(
+    string registryClassName,
+    string fieldId,
+    HIRExpression? receiver = null) : HIRExpression
+{
+    public string RegistryClassName { get; } = registryClassName;
+    public string FieldId { get; } = fieldId;
+    public HIRExpression Receiver { get; } = receiver ?? new HIRThisExpression();
+}
+
+public sealed class HIRCaptureClassComputedFieldKeyExpression(
+    HIRExpression owner,
+    string fieldId,
+    HIRExpression key) : HIRExpression
+{
+    public HIRExpression Owner { get; } = owner;
+    public string FieldId { get; } = fieldId;
+    public HIRExpression Key { get; } = key;
+}
+
 public sealed class HIRDefineClassDataPropertyExpression : HIRExpression
 {
     public HIRDefineClassDataPropertyExpression(HIRExpression target, HIRExpression key, HIRExpression value, bool isField = false)

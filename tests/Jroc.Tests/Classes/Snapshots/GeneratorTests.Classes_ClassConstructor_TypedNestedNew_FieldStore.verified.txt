@@ -313,11 +313,12 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 42 (0x2a)
+			// Code size: 117 (0x75)
 			.maxstack 8
 			.locals init (
 				[0] object[],
-				[1] class Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar
+				[1] object,
+				[2] class Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar
 			)
 
 			IL_0000: ldarg.0
@@ -329,11 +330,34 @@
 			IL_000e: ldarg.0
 			IL_000f: ldloc.0
 			IL_0010: stfld object[] Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Foo::_scopes
-			IL_0015: ldarg.0
-			IL_0016: ldc.r8 5
-			IL_001f: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar::.ctor(float64)
-			IL_0024: stfld class Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Foo::bar
-			IL_0029: ret
+			IL_0015: ldarg.1
+			IL_0016: ldc.i4.0
+			IL_0017: ldelem.ref
+			IL_0018: castclass Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Scope
+			IL_001d: ldfld object Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Scope::Bar
+			IL_0022: stloc.1
+			IL_0023: ldarg.0
+			IL_0024: ldc.i4.1
+			IL_0025: newarr [System.Runtime]System.Object
+			IL_002a: dup
+			IL_002b: ldc.i4.0
+			IL_002c: ldc.r8 5
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stelem.ref
+			IL_003b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0040: ldloc.1
+			IL_0041: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_0046: ldc.r8 5
+			IL_004f: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar::.ctor(float64)
+			IL_0054: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_0059: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_005e: dup
+			IL_005f: ldloc.1
+			IL_0060: ldstr "prototype"
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_006a: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_006f: stfld class Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Foo::bar
+			IL_0074: ret
 		} // end of method Foo::.ctor
 
 	} // end of class Foo
@@ -376,7 +400,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 465 (0x1d1)
+		// Code size: 475 (0x1db)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Scope,
@@ -453,89 +477,95 @@
 		IL_009c: box [System.Runtime]System.Double
 		IL_00a1: stelem.ref
 		IL_00a2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00a7: ldc.r8 1
-		IL_00b0: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar::.ctor(float64)
-		IL_00b5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00ba: ldtoken Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar
-		IL_00bf: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00c4: ldstr "prototype"
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00ce: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00d3: ldc.i4.1
-		IL_00d4: newarr [System.Runtime]System.Object
-		IL_00d9: dup
-		IL_00da: ldc.i4.0
-		IL_00db: ldc.r8 2
-		IL_00e4: box [System.Runtime]System.Double
-		IL_00e9: stelem.ref
-		IL_00ea: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00ef: ldc.r8 2
-		IL_00f8: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar::.ctor(float64)
-		IL_00fd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0102: ldtoken Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar
-		IL_0107: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_010c: ldstr "prototype"
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0116: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_011b: ldc.i4.1
-		IL_011c: newarr [System.Runtime]System.Object
-		IL_0121: dup
-		IL_0122: ldc.i4.0
-		IL_0123: ldloc.0
-		IL_0124: stelem.ref
-		IL_0125: stloc.3
-		IL_0126: ldloc.3
-		IL_0127: ldc.i4.0
-		IL_0128: newarr [System.Runtime]System.Object
-		IL_012d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0132: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Foo::.ctor(object[])
-		IL_0137: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_013c: stloc.2
-		IL_013d: ldloc.2
-		IL_013e: ldtoken Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Foo
-		IL_0143: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0148: ldstr "prototype"
-		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0152: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0157: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_015c: stloc.s 7
-		IL_015e: volatile.
-		IL_0160: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_0165: brfalse IL_017a
+		IL_00a7: ldloc.s 5
+		IL_00a9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_00ae: ldc.r8 1
+		IL_00b7: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar::.ctor(float64)
+		IL_00bc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00c6: ldloc.s 5
+		IL_00c8: ldstr "prototype"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00d2: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00d7: ldc.i4.1
+		IL_00d8: newarr [System.Runtime]System.Object
+		IL_00dd: dup
+		IL_00de: ldc.i4.0
+		IL_00df: ldc.r8 2
+		IL_00e8: box [System.Runtime]System.Double
+		IL_00ed: stelem.ref
+		IL_00ee: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00f3: ldloc.s 5
+		IL_00f5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_00fa: ldc.r8 2
+		IL_0103: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Bar::.ctor(float64)
+		IL_0108: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_010d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0112: ldloc.s 5
+		IL_0114: ldstr "prototype"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_011e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0123: ldc.i4.1
+		IL_0124: newarr [System.Runtime]System.Object
+		IL_0129: dup
+		IL_012a: ldc.i4.0
+		IL_012b: ldloc.0
+		IL_012c: stelem.ref
+		IL_012d: stloc.3
+		IL_012e: ldloc.3
+		IL_012f: ldc.i4.0
+		IL_0130: newarr [System.Runtime]System.Object
+		IL_0135: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_013a: ldloc.1
+		IL_013b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0140: newobj instance void Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore/Foo::.ctor(object[])
+		IL_0145: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_014a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_014f: stloc.2
+		IL_0150: ldloc.2
+		IL_0151: ldloc.1
+		IL_0152: ldstr "prototype"
+		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_015c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0161: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0166: stloc.s 7
+		IL_0168: volatile.
+		IL_016a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_016f: brfalse IL_0184
 
-		IL_016a: ldloc.2
-		IL_016b: ldstr "bar"
-		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0175: br IL_018f
+		IL_0174: ldloc.2
+		IL_0175: ldstr "bar"
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_017f: br IL_0199
 
-		IL_017a: ldloc.2
-		IL_017b: ldstr "bar"
-		IL_0180: ldstr "Classes_ClassConstructor_TypedNestedNew_FieldStore:Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore:__js_module_init__:27"
-		IL_0185: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0184: ldloc.2
+		IL_0185: ldstr "bar"
+		IL_018a: ldstr "Classes_ClassConstructor_TypedNestedNew_FieldStore:Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore:__js_module_init__:27"
+		IL_018f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_018f: stloc.s 8
-		IL_0191: volatile.
-		IL_0193: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_0198: brfalse IL_01ae
+		IL_0199: stloc.s 8
+		IL_019b: volatile.
+		IL_019d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_01a2: brfalse IL_01b8
 
-		IL_019d: ldloc.s 8
-		IL_019f: ldstr "n"
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01a9: br IL_01c4
+		IL_01a7: ldloc.s 8
+		IL_01a9: ldstr "n"
+		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01b3: br IL_01ce
 
-		IL_01ae: ldloc.s 8
-		IL_01b0: ldstr "n"
-		IL_01b5: ldstr "Classes_ClassConstructor_TypedNestedNew_FieldStore:Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore:__js_module_init__:29"
-		IL_01ba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01b8: ldloc.s 8
+		IL_01ba: ldstr "n"
+		IL_01bf: ldstr "Classes_ClassConstructor_TypedNestedNew_FieldStore:Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore:__js_module_init__:29"
+		IL_01c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_01c4: stloc.s 8
-		IL_01c6: ldloc.s 7
-		IL_01c8: ldloc.s 8
-		IL_01ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01cf: pop
-		IL_01d0: ret
+		IL_01ce: stloc.s 8
+		IL_01d0: ldloc.s 7
+		IL_01d2: ldloc.s 8
+		IL_01d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01d9: pop
+		IL_01da: ret
 	} // end of method Classes_ClassConstructor_TypedNestedNew_FieldStore::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_TypedNestedNew_FieldStore

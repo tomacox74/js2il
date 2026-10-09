@@ -80,6 +80,187 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
+			.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_f
+				extends [System.Runtime]System.Object
+			{
+				// Nested Types
+				.class nested public auto ansi beforefieldinit Scope
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Scope::.ctor
+
+				} // end of class Scope
+
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.1
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object ResolveThisArgumentCore (
+							object thisArgument
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldarg.1
+						IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+						IL_0006: ret
+					} // end of method FunctionObject::ResolveThisArgumentCore
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldnull
+						IL_0001: call object Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionExpression_f::__js_call__(object)
+						IL_0006: ret
+					} // end of method FunctionObject::CallCore
+
+					.method family hidebysig virtual 
+						instance object ConstructBodyCore (
+							object receiver,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+							object newTarget
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldarg.3
+						IL_0001: call object Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionExpression_f::__js_call__(object)
+						IL_0006: ret
+					} // end of method FunctionObject::ConstructBodyCore
+
+					.method family hidebysig virtual 
+						instance object ConstructCore (
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+							object newTarget
+						) cil managed 
+					{
+						// Header size: 1
+						// Code size: 14 (0xe)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: ldarg.1
+						IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+						IL_0007: ldarg.2
+						IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+						IL_000d: ret
+					} // end of method FunctionObject::ConstructCore
+
+				} // end of class FunctionObject
+
+
+				// Methods
+				.method public hidebysig static 
+					object __js_call__ (
+						object newTarget
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+						01 00 00 00 00 00 00 00
+					)
+					// Header size: 12
+					// Code size: 114 (0x72)
+					.maxstack 8
+					.locals init (
+						[0] string,
+						[1] object,
+						[2] object
+					)
+
+					IL_0000: ldstr "moduleValue"
+					IL_0005: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::TypeOfGlobalBinding(string)
+					IL_000a: ldstr ","
+					IL_000f: call string [System.Runtime]System.String::Concat(string, string)
+					IL_0014: ldstr "localValue"
+					IL_0019: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::TypeOfGlobalBinding(string)
+					IL_001e: call string [System.Runtime]System.String::Concat(string, string)
+					IL_0023: ldstr ","
+					IL_0028: call string [System.Runtime]System.String::Concat(string, string)
+					IL_002d: stloc.0
+					IL_002e: ldstr "globalThis"
+					IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+					IL_0038: volatile.
+					IL_003a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+					IL_003f: brfalse IL_0053
+
+					IL_0044: ldstr "dynamicFnVisible"
+					IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_004e: br IL_0067
+
+					IL_0053: ldstr "dynamicFnVisible"
+					IL_0058: ldstr "Function_Constructor_GlobalScope_NoClosure:<TwoPhaseDummy_M6>:__js_call__:13"
+					IL_005d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+					IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+					IL_0067: stloc.1
+					IL_0068: ldloc.0
+					IL_0069: ldloc.1
+					IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_006f: stloc.2
+					IL_0070: ldloc.2
+					IL_0071: ret
+				} // end of method FunctionExpression_f::__js_call__
+
+			} // end of class FunctionExpression_f
+
 			.class nested public auto ansi beforefieldinit Scope
 				extends [System.Runtime]System.Object
 			{
@@ -213,46 +394,29 @@
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 114 (0x72)
+				// Code size: 39 (0x27)
 				.maxstack 8
 				.locals init (
-					[0] string,
-					[1] object,
-					[2] object
+					[0] class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/Scope,
+					[1] object[],
+					[2] class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionExpression_f/FunctionObject
 				)
 
-				IL_0000: ldstr "moduleValue"
-				IL_0005: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::TypeOfGlobalBinding(string)
-				IL_000a: ldstr ","
-				IL_000f: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0014: ldstr "localValue"
-				IL_0019: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::TypeOfGlobalBinding(string)
-				IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0023: ldstr ","
-				IL_0028: call string [System.Runtime]System.String::Concat(string, string)
-				IL_002d: stloc.0
-				IL_002e: ldstr "globalThis"
-				IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0038: volatile.
-				IL_003a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-				IL_003f: brfalse IL_0053
-
-				IL_0044: ldstr "dynamicFnVisible"
-				IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_004e: br IL_0067
-
-				IL_0053: ldstr "dynamicFnVisible"
-				IL_0058: ldstr "Function_Constructor_GlobalScope_NoClosure:<TwoPhaseDummy_M5>:__js_call__:13"
-				IL_005d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-				IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-				IL_0067: stloc.1
-				IL_0068: ldloc.0
-				IL_0069: ldloc.1
-				IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_006f: stloc.2
-				IL_0070: ldloc.2
-				IL_0071: ret
+				IL_0000: newobj instance void Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/Scope::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_000b: stloc.1
+				IL_000c: newobj instance void Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionExpression_f/FunctionObject::.ctor()
+				IL_0011: ldc.i4.0
+				IL_0012: conv.r8
+				IL_0013: ldstr ""
+				IL_0018: ldc.i4.0
+				IL_0019: ldc.i4.0
+				IL_001a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionExpression_f/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionExpression_f/FunctionObject>(!!0)
+				IL_0024: stloc.2
+				IL_0025: ldloc.2
+				IL_0026: ret
 			} // end of method '<>DynamicFunction_L9C15'::__js_call__
 
 		} // end of class <>DynamicFunction_L9C15
@@ -376,15 +540,17 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 110 (0x6e)
+			// Code size: 168 (0xa8)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Constructor_GlobalScope_NoClosure/outer/Scope,
 				[1] float64,
-				[2] class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject,
-				[3] object[],
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[5] object
+				[2] object,
+				[3] object,
+				[4] object[],
+				[5] object[],
+				[6] class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject,
+				[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: newobj instance void Modules.Function_Constructor_GlobalScope_NoClosure/outer/Scope::.ctor()
@@ -398,29 +564,54 @@
 			IL_0028: ldc.i4.1
 			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
 			IL_002e: pop
-			IL_002f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0034: stloc.3
-			IL_0035: newobj instance void Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject::.ctor()
-			IL_003a: ldc.i4.0
-			IL_003b: conv.r8
-			IL_003c: ldstr ""
+			IL_002f: ldstr "Function"
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0039: stloc.3
+			IL_003a: ldc.i4.1
+			IL_003b: newarr [System.Runtime]System.Object
+			IL_0040: dup
 			IL_0041: ldc.i4.0
-			IL_0042: ldc.i4.0
-			IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject>(!!0)
-			IL_004d: stloc.2
-			IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0053: stloc.s 4
-			IL_0055: ldloc.2
-			IL_0056: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0060: stloc.s 5
-			IL_0062: ldloc.s 4
-			IL_0064: ldloc.s 5
-			IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_006b: pop
-			IL_006c: ldnull
-			IL_006d: ret
+			IL_0042: ldstr "return typeof moduleValue + ',' + typeof localValue + ',' + globalThis.dynamicFnVisible;"
+			IL_0047: stelem.ref
+			IL_0048: stloc.s 4
+			IL_004a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_004f: stloc.s 5
+			IL_0051: newobj instance void Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject::.ctor()
+			IL_0056: ldc.i4.0
+			IL_0057: conv.r8
+			IL_0058: ldstr ""
+			IL_005d: ldc.i4.0
+			IL_005e: ldc.i4.0
+			IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Function_Constructor_GlobalScope_NoClosure/outer/'<>DynamicFunction_L9C15'/FunctionObject>(!!0)
+			IL_0069: stloc.s 6
+			IL_006b: ldc.i4.1
+			IL_006c: newarr [System.Runtime]System.Object
+			IL_0071: dup
+			IL_0072: ldc.i4.0
+			IL_0073: ldstr "return typeof moduleValue + ',' + typeof localValue + ',' + globalThis.dynamicFnVisible;"
+			IL_0078: stelem.ref
+			IL_0079: stloc.s 5
+			IL_007b: ldloc.3
+			IL_007c: ldnull
+			IL_007d: ldloc.s 4
+			IL_007f: ldloc.s 6
+			IL_0081: ldloc.s 5
+			IL_0083: ldnull
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructPreparedDynamicFunction(object, object, object[], object, object[], object)
+			IL_0089: stloc.2
+			IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008f: stloc.s 7
+			IL_0091: ldloc.2
+			IL_0092: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_009c: stloc.3
+			IL_009d: ldloc.s 7
+			IL_009f: ldloc.3
+			IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a5: pop
+			IL_00a6: ldnull
+			IL_00a7: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer

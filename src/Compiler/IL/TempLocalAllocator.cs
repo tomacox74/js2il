@@ -628,10 +628,7 @@ internal static partial class LIRInstructionInfo
             case LIRNewIntrinsicObject value:
                 VisitList(value.Arguments, ref visitor); break;
             case LIRNewUserClass value:
-                if (value.IsDerivedConstructor)
-                {
-                    visitor.Visit(value.NewTarget);
-                }
+                visitor.Visit(value.NewTarget);
                 if (value.NeedsScopes && value.ScopesArray.HasValue)
                 {
                     visitor.Visit(value.ScopesArray.Value);
@@ -646,6 +643,10 @@ internal static partial class LIRInstructionInfo
                 // the scheduler materializes it once instead of rebuilding the array.
                 visitor.Visit(value.ScopesArray);
                 visitor.Visit(value.ScopesArray);
+                if (value.LexicalThis.HasValue)
+                {
+                    visitor.Visit(value.LexicalThis.Value);
+                }
                 break;
             case LIRCreateBoundFunctionExpression value:
                 visitor.Visit(value.ScopesArray);

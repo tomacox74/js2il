@@ -116,6 +116,9 @@ public sealed partial class HIRToLIRLowerer
 
         switch (expression)
         {
+            case HIRPreparedDynamicFunctionExpression preparedFunction:
+                return TryLowerPreparedDynamicFunction(preparedFunction, out resultTempVar);
+
             case HIRSequenceExpression seqExpr:
                 {
                     if (seqExpr.Expressions.Count == 0)
@@ -168,6 +171,12 @@ public sealed partial class HIRToLIRLowerer
                 // PL3.5: ThisExpression.
                 if (thisExpr.StaticClassRegistryName != null)
                 {
+                    if (_classInitializationOwnerTempsByRegistryName.TryGetValue(
+                            thisExpr.StaticClassRegistryName,
+                            out resultTempVar))
+                    {
+                        return true;
+                    }
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRGetUserClassType(thisExpr.StaticClassRegistryName, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
@@ -469,85 +478,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     return false;
                 }
-
-                if (privateReceiverLoad.GetterMethodName != null
-                    || privateReceiverLoad.MethodName != null
-                    || privateReceiverLoad.HasAccessor)
-                {
-                    var ownerType = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(
-                        privateReceiverLoad.RegistryClassName, ownerType));
-                    DefineTempStorage(ownerType, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-                    var activeCallee = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                        nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee),
-                        Array.Empty<TempVariable>(), activeCallee));
-                    DefineTempStorage(activeCallee, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    if (!TryLowerExpression(new HIRThisExpression(), out var lexicalThis))
-                    {
-                        return false;
-                    }
-                    var receiver = EnsureObject(privateLoadReceiver);
-                    var methodName = privateReceiverLoad.GetterMethodName ?? privateReceiverLoad.MethodName;
-                    if (methodName != null)
-                    {
-                        var methodNameTemp = CreateStringConstant(methodName);
-                        resultTempVar = CreateTempVariable();
-                        if (privateReceiverLoad.GetterMethodName != null)
-                        {
-                            var arguments = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRBuildArray(
-                                Array.Empty<TempVariable>(), arguments));
-                            DefineTempStorage(arguments, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-                            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                                nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
-                                [receiver, ownerType, methodNameTemp, arguments, activeCallee, EnsureObject(lexicalThis)],
-                                resultTempVar,
-                                [typeof(object), typeof(Type), typeof(string), typeof(object[]), typeof(object), typeof(object)]));
-                        }
-                        else
-                        {
-                            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                                nameof(JavaScriptRuntime.RuntimeServices.GetDirectClassPrivateMethodValue),
-                                [receiver, ownerType, methodNameTemp, activeCallee, EnsureObject(lexicalThis)],
-                                resultTempVar,
-                                [typeof(object), typeof(Type), typeof(string), typeof(object), typeof(object)]));
-                        }
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    }
-                    else
-                    {
-                        var validatedReceiver = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                            nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
-                            [receiver, ownerType, activeCallee, EnsureObject(lexicalThis)],
-                            validatedReceiver,
-                            [typeof(object), typeof(Type), typeof(object), typeof(object)]));
-                        DefineTempStorage(validatedReceiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        resultTempVar = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError(
-                            $"Private member '#{privateReceiverLoad.FieldName}' was defined without a getter"));
-                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    }
-                    return true;
-                }
-
-                resultTempVar = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRLoadPrivateReceiverField(
-                    privateReceiverLoad.RegistryClassName,
-                    privateReceiverLoad.FieldName,
-                    EnsureObject(privateLoadReceiver),
-                    resultTempVar));
-                DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(
-                    _classRegistry != null
-                    && _classRegistry.TryGetPrivateFieldClrType(
-                        privateReceiverLoad.RegistryClassName,
-                        privateReceiverLoad.FieldName,
-                        out var privateLoadFieldType)
-                        ? privateLoadFieldType
-                        : typeof(object)));
-                return true;
+                return TryLowerPrivateReceiverField(privateReceiverLoad, privateLoadReceiver, out resultTempVar);
 
             case HIRStorePrivateReceiverFieldExpression privateReceiverStore:
                 if (!TryLowerExpression(privateReceiverStore.Receiver, out var privateStoreReceiver)
@@ -972,9 +903,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
-                // Always lower a class identifier to a runtime System.Type so it can cross module boundaries
-                // (e.g., `module.exports = { Counter }`).
+                // Preserve initialized constructor objects before considering lazy class metadata.
                 if (TryGetClassSemantics(
                         binding,
                         out var classScope,
@@ -1417,6 +1346,11 @@ public sealed partial class HIRToLIRLowerer
             case HIRFunctionExpression funcExpr:
                 return TryLowerFunctionExpression(funcExpr, out resultTempVar);
             case HIRInitializedUserClassTypeExpression initializedUserClassType:
+                if (initializedUserClassType.Decorators.Count > 0)
+                {
+                    return TryLowerDecoratedClass(initializedUserClassType, out resultTempVar);
+                }
+
                 if (TryLowerNamedClassExpressionInitialization(initializedUserClassType, out resultTempVar))
                 {
                     return true;
@@ -1443,11 +1377,11 @@ public sealed partial class HIRToLIRLowerer
                         CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
                 }
 
-                // Derived classes must evaluate and link their constructor before static
-                // initialization. For ordinary classes, preserve the established ordering:
-                // computed class keys can suspend, so construct the final class value after
-                // their initialization has completed.
-                if (initializedUserClassType.SuperClass != null)
+                var className = _pendingAnonymousClassExpressionInferredName
+                    ?? initializedUserClassType.ExplicitName
+                    ?? (initializedUserClassType.IsClassExpression ? string.Empty : null);
+                var hasInitialization = initializedUserClassType.InitializationStatements.Count > 0;
+                if (initializedUserClassType.SuperClass != null || hasInitialization)
                 {
                     if (!TryLowerClassConstructorObject(
                             initializedUserClassType.RegistryClassName,
@@ -1468,14 +1402,34 @@ public sealed partial class HIRToLIRLowerer
                         resultTempVar = default;
                         return false;
                     }
+                    if (className != null)
+                    {
+                        resultTempVar = EmitInitializedClassName(resultTempVar, className);
+                    }
+                    if (hasInitialization)
+                    {
+                        _classInitializationOwnerTempsByRegistryName[
+                            initializedUserClassType.RegistryClassName] = resultTempVar;
+                    }
                 }
 
-                foreach (var initStatement in initializedUserClassType.InitializationStatements)
+                try
                 {
-                    if (!TryLowerStatement(initStatement))
+                    foreach (var initStatement in initializedUserClassType.InitializationStatements)
                     {
-                        resultTempVar = default;
-                        return false;
+                        if (!TryLowerStatement(initStatement))
+                        {
+                            resultTempVar = default;
+                            return false;
+                        }
+                    }
+                }
+                finally
+                {
+                    if (hasInitialization)
+                    {
+                        _classInitializationOwnerTempsByRegistryName.Remove(
+                            initializedUserClassType.RegistryClassName);
                     }
                 }
 
@@ -1492,6 +1446,7 @@ public sealed partial class HIRToLIRLowerer
                 }
 
                 if (initializedUserClassType.SuperClass == null
+                    && !hasInitialization
                     && !TryLowerClassConstructorObject(
                         initializedUserClassType.RegistryClassName,
                         initializedUserClassType.ClassScope,
@@ -1506,12 +1461,11 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 }
 
-                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+                if (className != null
+                    && initializedUserClassType.SuperClass == null
+                    && !hasInitialization)
                 {
-                    var inferredNameTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
-                    DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
+                    var inferredNameTemp = CreateStringConstant(className);
                     var namedClassConstructorTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
                         MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
@@ -1522,10 +1476,20 @@ public sealed partial class HIRToLIRLowerer
                 }
                 return true;
             case Jroc.HIR.HIRUserClassTypeExpression userClassType:
+                if (_classInitializationOwnerTempsByRegistryName.TryGetValue(
+                        userClassType.RegistryClassName,
+                        out resultTempVar))
+                {
+                    return true;
+                }
                 resultTempVar = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRGetUserClassType(userClassType.RegistryClassName, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 return true;
+            case HIRCaptureClassComputedFieldKeyExpression captureFieldKey:
+                return TryLowerCaptureClassComputedFieldKey(captureFieldKey, out resultTempVar);
+            case HIRClassComputedFieldKeyExpression fieldKey:
+                return TryLowerClassComputedFieldKey(fieldKey, out resultTempVar);
             case HIRClassHeritageValidationExpression validateClassHeritage:
                 return TryLowerClassHeritageValidationExpression(validateClassHeritage, out resultTempVar);
             case HIRDefineClassDataPropertyExpression defineClassDataProperty:
@@ -1542,6 +1506,93 @@ public sealed partial class HIRToLIRLowerer
                 IRPipelineMetrics.RecordFailure($"HIR->LIR: unsupported expression type {expression.GetType().Name}");
                 return false;
         }
+    }
+
+    private TempVariable EmitInitializedClassName(TempVariable constructor, string name)
+    {
+        var nameTemp = CreateStringConstant(name);
+        var result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+            [EnsureObject(constructor), EnsureObject(nameTemp)],
+            result));
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return result;
+    }
+
+    private bool TryLowerPrivateReceiverField(
+        HIRLoadPrivateReceiverFieldExpression access,
+        TempVariable receiver,
+        out TempVariable resultTempVar)
+    {
+        receiver = EnsureObject(receiver);
+        if (access.GetterMethodName != null || access.MethodName != null || access.HasAccessor)
+        {
+            var ownerType = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(access.RegistryClassName, ownerType));
+            DefineTempStorage(ownerType, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+            var activeCallee = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee), [], activeCallee));
+            DefineTempStorage(activeCallee, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            if (!TryLowerExpression(new HIRThisExpression(), out var lexicalThis))
+            {
+                resultTempVar = default;
+                return false;
+            }
+
+            var methodName = access.GetterMethodName ?? access.MethodName;
+            if (methodName != null)
+            {
+                var methodNameTemp = CreateStringConstant(methodName);
+                resultTempVar = CreateTempVariable();
+                if (access.GetterMethodName != null)
+                {
+                    var arguments = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRBuildArray([], arguments));
+                    DefineTempStorage(arguments, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
+                        [receiver, ownerType, methodNameTemp, arguments, activeCallee, EnsureObject(lexicalThis)],
+                        resultTempVar,
+                        [typeof(object), typeof(Type), typeof(string), typeof(object[]), typeof(object), typeof(object)]));
+                }
+                else
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        nameof(JavaScriptRuntime.RuntimeServices.GetDirectClassPrivateMethodValue),
+                        [receiver, ownerType, methodNameTemp, activeCallee, EnsureObject(lexicalThis)],
+                        resultTempVar,
+                        [typeof(object), typeof(Type), typeof(string), typeof(object), typeof(object)]));
+                }
+            }
+            else
+            {
+                var validatedReceiver = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
+                    [receiver, ownerType, activeCallee, EnsureObject(lexicalThis)],
+                    validatedReceiver,
+                    [typeof(object), typeof(Type), typeof(object), typeof(object)]));
+                DefineTempStorage(validatedReceiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError(
+                    $"Private member '#{access.FieldName}' was defined without a getter"));
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+            }
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRLoadPrivateReceiverField(
+            access.RegistryClassName, access.FieldName, receiver, resultTempVar));
+        DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(
+            _classRegistry != null
+            && _classRegistry.TryGetPrivateFieldClrType(access.RegistryClassName, access.FieldName, out var fieldType)
+                ? fieldType
+                : typeof(object)));
+        return true;
     }
 
     private bool TryLowerNamedClassExpressionInitialization(HIRInitializedUserClassTypeExpression initializedUserClassType, out TempVariable resultTempVar)
@@ -1616,6 +1667,8 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
+            _classInitializationOwnerTempsByRegistryName[
+                initializedUserClassType.RegistryClassName] = classConstructorValue;
 
             if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
             {
@@ -1663,6 +1716,8 @@ public sealed partial class HIRToLIRLowerer
         }
         finally
         {
+            _classInitializationOwnerTempsByRegistryName.Remove(
+                initializedUserClassType.RegistryClassName);
             if (hadPreviousScope)
             {
                 _activeScopeTempsByScopeName[classScopeName] = previousScopeTemp;
@@ -1676,6 +1731,10 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerClassConstructorObject(string registryClassName, Scope classScope, out TempVariable resultTempVar)
     {
+        if (_classInitializationOwnerTempsByRegistryName.TryGetValue(registryClassName, out resultTempVar))
+        {
+            return true;
+        }
         // Build scopes array first — if this fails, nothing has been emitted yet so the caller
         // can fall back to a simple LIRGetUserClassType without leaving orphaned IR instructions.
         // This happens in static CLR methods (property getters/setters) that have ScopesSource.None.
@@ -1696,12 +1755,9 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
         }
 
-        if (!_classInitializationOwnerTempsByRegistryName.Remove(registryClassName, out var typeTemp))
-        {
-            typeTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
-            DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-        }
+        var typeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
+        DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
 
         if (!TryGetClassConstructorCallableId(classScope, out var callableId))
         {
@@ -1937,13 +1993,24 @@ public sealed partial class HIRToLIRLowerer
         }
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
+        TempVariable? lexicalThis = null;
+        if (arrowExpr.CapturedThis != null)
+        {
+            if (!TryLowerExpression(arrowExpr.CapturedThis, out var capturedThis))
+            {
+                return false;
+            }
+            lexicalThis = EnsureObject(capturedThis);
+        }
+
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCreateBoundArrowFunction(
             CallableId: arrowExpr.CallableId,
             ScopesArray: scopesTemp,
             IsAsync: arrowScope.IsAsync,
             RequiresLexicalSuperConstructorContext: arrowExpr.RequiresLexicalSuperConstructorContext,
-            Result: resultTempVar));
+            Result: resultTempVar,
+            LexicalThis: lexicalThis));
         DefineTempStorage(resultTempVar, GetMaterializedCallableStorage(arrowExpr.CallableId));
 
         resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);

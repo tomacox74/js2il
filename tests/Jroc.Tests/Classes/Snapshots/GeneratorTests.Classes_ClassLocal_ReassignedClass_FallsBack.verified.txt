@@ -264,97 +264,102 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 186 (0xba)
+			// Code size: 198 (0xc6)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class [System.Runtime]System.Exception,
 				[2] object,
 				[3] object,
-				[4] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box,
-				[5] object,
+				[4] object,
+				[5] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box,
 				[6] object,
 				[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
-			IL_0000: ldc.i4.0
-			IL_0001: newarr [System.Runtime]System.Object
-			IL_0006: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_000b: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::.ctor()
-			IL_0010: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0015: stloc.s 4
-			IL_0017: ldloc.s 4
-			IL_0019: ldtoken Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
-			IL_001e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0023: ldstr "prototype"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_002d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0032: ldloc.s 4
-			IL_0034: stloc.0
-			IL_0035: ldc.i4.0
-			IL_0036: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_003b: stloc.s 5
-			IL_003d: ldloc.s 5
-			IL_003f: stloc.0
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope::Box
+			IL_0006: stloc.s 4
+			IL_0008: ldc.i4.0
+			IL_0009: newarr [System.Runtime]System.Object
+			IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0013: ldloc.s 4
+			IL_0015: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_001a: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::.ctor()
+			IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_0024: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0029: stloc.s 5
+			IL_002b: ldloc.s 5
+			IL_002d: ldloc.s 4
+			IL_002f: ldstr "prototype"
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_003e: ldloc.s 5
+			IL_0040: stloc.0
+			IL_0041: ldc.i4.0
+			IL_0042: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0047: stloc.s 6
+			IL_0049: ldloc.s 6
+			IL_004b: stloc.0
 			.try
 			{
-				IL_0040: nop
-				IL_0041: ldloc.0
-				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0047: stloc.s 6
-				IL_0049: ldloc.s 6
-				IL_004b: isinst Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
-				IL_0050: dup
-				IL_0051: brfalse IL_0061
+				IL_004c: nop
+				IL_004d: ldloc.0
+				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0053: stloc.s 4
+				IL_0055: ldloc.s 4
+				IL_0057: isinst Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
+				IL_005c: dup
+				IL_005d: brfalse IL_006d
 
-				IL_0056: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
-				IL_005b: pop
-				IL_005c: br IL_006f
+				IL_0062: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
+				IL_0067: pop
+				IL_0068: br IL_007b
 
-				IL_0061: pop
-				IL_0062: ldloc.s 6
-				IL_0064: ldstr "read"
-				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_006e: pop
+				IL_006d: pop
+				IL_006e: ldloc.s 4
+				IL_0070: ldstr "read"
+				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_007a: pop
 
-				IL_006f: leave IL_00b6
+				IL_007b: leave IL_00c2
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0074: stloc.1
-				IL_0075: ldloc.1
-				IL_0076: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_007b: dup
-				IL_007c: brtrue IL_0091
+				IL_0080: stloc.1
+				IL_0081: ldloc.1
+				IL_0082: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0087: dup
+				IL_0088: brtrue IL_009d
 
-				IL_0081: pop
-				IL_0082: ldloc.1
-				IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0088: dup
-				IL_0089: brtrue IL_009c
+				IL_008d: pop
+				IL_008e: ldloc.1
+				IL_008f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0094: dup
+				IL_0095: brtrue IL_00a8
 
-				IL_008e: pop
-				IL_008f: rethrow
+				IL_009a: pop
+				IL_009b: rethrow
 
-				IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0096: stloc.2
-				IL_0097: br IL_009d
+				IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_00a2: stloc.2
+				IL_00a3: br IL_00a9
 
-				IL_009c: stloc.2
+				IL_00a8: stloc.2
 
-				IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00a2: stloc.s 7
-				IL_00a4: ldloc.s 7
-				IL_00a6: ldstr "caught"
-				IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00b0: pop
-				IL_00b1: leave IL_00b6
+				IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00ae: stloc.s 7
+				IL_00b0: ldloc.s 7
+				IL_00b2: ldstr "caught"
+				IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00bc: pop
+				IL_00bd: leave IL_00c2
 			} // end handler
 
-			IL_00b6: ldnull
-			IL_00b7: stloc.3
-			IL_00b8: ldloc.3
-			IL_00b9: ret
+			IL_00c2: ldnull
+			IL_00c3: stloc.3
+			IL_00c4: ldloc.3
+			IL_00c5: ret
 		} // end of method test::__js_call__
 
 	} // end of class test
@@ -589,15 +594,16 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 222 (0xde)
+		// Code size: 238 (0xee)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope,
 			[1] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/test/FunctionObject,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] object,
-			[5] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject
+			[4] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject,
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope::.ctor()
@@ -622,68 +628,72 @@
 		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/test/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_002c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/test/FunctionObject>(!!0)
 		IL_0031: stloc.1
-		IL_0032: ldtoken Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
-		IL_0037: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_003c: ldtoken Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
-		IL_0041: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0046: stloc.3
-		IL_0047: volatile.
-		IL_0049: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_004e: brfalse IL_0063
+		IL_0032: ldc.i4.1
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: stelem.ref
+		IL_003c: stloc.2
+		IL_003d: ldtoken Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
+		IL_0042: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0047: ldtoken Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
+		IL_004c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0051: stloc.3
+		IL_0052: ldloc.2
+		IL_0053: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject::.ctor(object[])
+		IL_0058: ldloc.3
+		IL_0059: ldloc.2
+		IL_005a: ldc.i4.0
+		IL_005b: conv.r8
+		IL_005c: ldc.i4.0
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0062: castclass Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject
+		IL_0067: stloc.s 4
+		IL_0069: ldloc.s 4
+		IL_006b: ldstr "Box"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
+		IL_0075: stloc.s 5
+		IL_0077: volatile.
+		IL_0079: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_007e: brfalse IL_0094
 
-		IL_0053: ldloc.3
-		IL_0054: ldstr "prototype"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005e: br IL_0078
+		IL_0083: ldloc.s 5
+		IL_0085: ldstr "prototype"
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_008f: br IL_00aa
 
-		IL_0063: ldloc.3
-		IL_0064: ldstr "prototype"
-		IL_0069: ldstr "Classes_ClassLocal_ReassignedClass_FallsBack:Modules.Classes_ClassLocal_ReassignedClass_FallsBack:__js_module_init__:7"
-		IL_006e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0094: ldloc.s 5
+		IL_0096: ldstr "prototype"
+		IL_009b: ldstr "Classes_ClassLocal_ReassignedClass_FallsBack:Modules.Classes_ClassLocal_ReassignedClass_FallsBack:__js_module_init__:11"
+		IL_00a0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0078: stloc.s 4
-		IL_007a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007f: stloc.2
-		IL_0080: ldloc.s 4
-		IL_0082: ldstr "read"
-		IL_0087: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/Scope_read/FunctionObject::.ctor()
-		IL_008c: ldc.i4.0
-		IL_008d: conv.r8
-		IL_008e: ldstr "read"
-		IL_0093: ldc.i4.0
-		IL_0094: ldc.i4.0
-		IL_0095: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_009a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/Scope_read/FunctionObject>(!!0)
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_00a4: pop
-		IL_00a5: ldc.i4.1
-		IL_00a6: newarr [System.Runtime]System.Object
-		IL_00ab: dup
-		IL_00ac: ldc.i4.0
-		IL_00ad: ldloc.0
-		IL_00ae: stelem.ref
-		IL_00af: stloc.2
-		IL_00b0: ldloc.2
-		IL_00b1: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject::.ctor(object[])
-		IL_00b6: ldloc.3
-		IL_00b7: ldloc.2
-		IL_00b8: ldc.i4.0
-		IL_00b9: conv.r8
-		IL_00ba: ldc.i4.0
-		IL_00bb: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
-		IL_00c0: castclass Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject
-		IL_00c5: stloc.s 5
-		IL_00c7: ldloc.0
-		IL_00c8: ldloc.s 5
-		IL_00ca: stfld object Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope::Box
-		IL_00cf: nop
-		IL_00d0: ldloc.0
-		IL_00d1: castclass Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope
-		IL_00d6: ldnull
-		IL_00d7: call object Modules.Classes_ClassLocal_ReassignedClass_FallsBack/test::__js_call__(class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope, object)
-		IL_00dc: pop
-		IL_00dd: ret
+		IL_00aa: stloc.s 6
+		IL_00ac: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00b1: stloc.2
+		IL_00b2: ldloc.s 6
+		IL_00b4: ldstr "read"
+		IL_00b9: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/Scope_read/FunctionObject::.ctor()
+		IL_00be: ldc.i4.0
+		IL_00bf: conv.r8
+		IL_00c0: ldstr "read"
+		IL_00c5: ldc.i4.0
+		IL_00c6: ldc.i4.0
+		IL_00c7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/Scope_read/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00cc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/Scope_read/FunctionObject>(!!0)
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00d6: pop
+		IL_00d7: ldloc.0
+		IL_00d8: ldloc.s 5
+		IL_00da: stfld object Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope::Box
+		IL_00df: nop
+		IL_00e0: ldloc.0
+		IL_00e1: castclass Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope
+		IL_00e6: ldnull
+		IL_00e7: call object Modules.Classes_ClassLocal_ReassignedClass_FallsBack/test::__js_call__(class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope, object)
+		IL_00ec: pop
+		IL_00ed: ret
 	} // end of method Classes_ClassLocal_ReassignedClass_FallsBack::__js_module_init__
 
 } // end of class Modules.Classes_ClassLocal_ReassignedClass_FallsBack

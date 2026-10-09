@@ -5,6 +5,9 @@ namespace Jroc.Services;
 
 internal static class ClassElementNames
 {
+    public static string GetFieldIdentity(PropertyDefinition field)
+        => field.Start.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
     public static bool IsConstructor(MethodDefinition method)
     {
         return method.Kind == PropertyKind.Constructor;

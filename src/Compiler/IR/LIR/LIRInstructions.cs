@@ -450,7 +450,8 @@ public record LIRCreateBoundArrowFunction(
     TempVariable ScopesArray,
     bool IsAsync,
     bool RequiresLexicalSuperConstructorContext,
-    TempVariable Result) : LIRInstruction;
+    TempVariable Result,
+    TempVariable? LexicalThis = null) : LIRInstruction;
 
 /// <summary>
 /// Creates a JS callable value for a FunctionExpression.

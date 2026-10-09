@@ -24,6 +24,10 @@ public sealed record HIRChainIndexSegment(
     HIRExpression Index,
     bool Optional) : HIRChainSegment(Optional);
 
+public sealed record HIRChainPrivateSegment(
+    HIRLoadPrivateReceiverFieldExpression Access,
+    bool Optional) : HIRChainSegment(Optional);
+
 public sealed record HIRChainCallSegment(
     IReadOnlyList<HIRExpression> Arguments,
     bool Optional) : HIRChainSegment(Optional);

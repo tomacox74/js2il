@@ -243,13 +243,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 114 (0x72)
+		// Code size: 141 (0x8d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/Scope,
 			[1] class Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass,
 			[2] object[],
-			[3] class [System.Runtime]System.Type
+			[3] class [System.Runtime]System.Type,
+			[4] class Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass/Scope_ctor/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/Scope::.ctor()
@@ -268,32 +269,44 @@
 		IL_001d: ldtoken Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0027: stloc.3
-		IL_0028: ldc.i4.1
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldloc.0
-		IL_0031: stelem.ref
-		IL_0032: stloc.2
-		IL_0033: ldloc.2
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldstr "Hello from parameter"
-		IL_0041: stelem.ref
-		IL_0042: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0047: ldstr "Hello from parameter"
-		IL_004c: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass::.ctor(object[], string)
-		IL_0051: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0056: stloc.1
-		IL_0057: ldloc.1
-		IL_0058: ldtoken Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass
-		IL_005d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0062: ldstr "prototype"
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_006c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0071: ret
+		IL_0028: ldloc.2
+		IL_0029: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.3
+		IL_002f: ldloc.2
+		IL_0030: ldc.i4.1
+		IL_0031: conv.r8
+		IL_0032: ldc.i4.0
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0038: castclass Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass/Scope_ctor/FunctionObject
+		IL_003d: stloc.s 4
+		IL_003f: ldc.i4.1
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldloc.0
+		IL_0048: stelem.ref
+		IL_0049: stloc.2
+		IL_004a: ldloc.2
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldstr "Hello from parameter"
+		IL_0058: stelem.ref
+		IL_0059: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_005e: ldloc.s 4
+		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0065: ldstr "Hello from parameter"
+		IL_006a: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log/MyClass::.ctor(object[], string)
+		IL_006f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0074: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0079: stloc.1
+		IL_007a: ldloc.1
+		IL_007b: ldloc.s 4
+		IL_007d: ldstr "prototype"
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0087: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_008c: ret
 	} // end of method Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log

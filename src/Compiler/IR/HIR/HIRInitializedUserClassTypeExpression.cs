@@ -8,7 +8,8 @@ public sealed class HIRInitializedUserClassTypeExpression : HIRExpression
         IReadOnlyList<HIRStatement> initializationStatements,
         HIRExpression? superClass = null,
         bool isClassExpression = false,
-        string? explicitName = null)
+        string? explicitName = null,
+        IReadOnlyList<HIRExpression>? decorators = null)
     {
         RegistryClassName = registryClassName;
         ClassScope = classScope;
@@ -16,6 +17,7 @@ public sealed class HIRInitializedUserClassTypeExpression : HIRExpression
         SuperClass = superClass;
         IsClassExpression = isClassExpression;
         ExplicitName = explicitName;
+        Decorators = decorators ?? [];
     }
 
     public string RegistryClassName { get; }
@@ -29,4 +31,6 @@ public sealed class HIRInitializedUserClassTypeExpression : HIRExpression
     public bool IsClassExpression { get; }
 
     public string? ExplicitName { get; }
+
+    public IReadOnlyList<HIRExpression> Decorators { get; }
 }

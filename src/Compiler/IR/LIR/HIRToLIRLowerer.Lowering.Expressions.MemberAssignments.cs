@@ -134,9 +134,50 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryLowerSuperPropertyAssignment(HIRPropertyAssignmentExpression assignment, out TempVariable result)
+    {
+        result = default;
+        if (assignment.Operator != Acornima.Operator.Assignment)
+        {
+            return false;
+        }
+        var prototype = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetSuperPropertyBase),
+            [],
+            prototype));
+        DefineTempStorage(prototype, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var receiver = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
+            [],
+            receiver));
+        DefineTempStorage(receiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var key = EmitConstString(assignment.PropertyName);
+        if (!TryLowerExpression(assignment.Value, out var value))
+        {
+            return false;
+        }
+        var stored = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.SetSuperProperty),
+            [prototype, receiver, key, EnsureObject(value)],
+            stored));
+        DefineTempStorage(stored, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        result = stored;
+        return true;
+    }
+
     private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
+
+        if (assignExpr.Object is HIRSuperExpression)
+        {
+            return TryLowerSuperPropertyAssignment(assignExpr, out resultTempVar);
+        }
 
         if (assignExpr.Object is HIRThisExpression
             && _scope?.ConstructorShape is

@@ -675,14 +675,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 173 (0xad)
+		// Code size: 200 (0xc8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope,
 			[1] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
+			[4] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator/Scope_ctor/FunctionObject,
+			[5] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope::.ctor()
@@ -701,47 +702,59 @@
 		IL_001d: ldtoken Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0027: stloc.3
-		IL_0028: ldc.i4.1
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldloc.0
-		IL_0031: stelem.ref
-		IL_0032: stloc.2
-		IL_0033: ldloc.2
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldc.r8 0.0
-		IL_0045: box [System.Runtime]System.Double
-		IL_004a: stelem.ref
-		IL_004b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0050: ldc.r8 0.0
-		IL_0059: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::.ctor(object[], float64)
-		IL_005e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0063: stloc.1
-		IL_0064: ldloc.1
-		IL_0065: ldtoken Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
-		IL_006a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_006f: ldstr "prototype"
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0079: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_007e: ldloc.1
-		IL_007f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator>(!!0)
-		IL_0084: stloc.s 4
-		IL_0086: ldloc.s 4
-		IL_0088: ldc.r8 5
-		IL_0091: box [System.Runtime]System.Double
-		IL_0096: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::addRange(object)
-		IL_009b: pop
-		IL_009c: ldloc.1
-		IL_009d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator>(!!0)
-		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.s 4
-		IL_00a6: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
-		IL_00ab: pop
-		IL_00ac: ret
+		IL_0028: ldloc.2
+		IL_0029: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator/Scope_ctor/FunctionObject::.ctor(object[])
+		IL_002e: ldloc.3
+		IL_002f: ldloc.2
+		IL_0030: ldc.i4.1
+		IL_0031: conv.r8
+		IL_0032: ldc.i4.0
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0038: castclass Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator/Scope_ctor/FunctionObject
+		IL_003d: stloc.s 4
+		IL_003f: ldc.i4.1
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldloc.0
+		IL_0048: stelem.ref
+		IL_0049: stloc.2
+		IL_004a: ldloc.2
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldc.r8 0.0
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: stelem.ref
+		IL_0062: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0067: ldloc.s 4
+		IL_0069: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_006e: ldc.r8 0.0
+		IL_0077: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::.ctor(object[], float64)
+		IL_007c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0081: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0086: stloc.1
+		IL_0087: ldloc.1
+		IL_0088: ldloc.s 4
+		IL_008a: ldstr "prototype"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0094: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0099: ldloc.1
+		IL_009a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator>(!!0)
+		IL_009f: stloc.s 5
+		IL_00a1: ldloc.s 5
+		IL_00a3: ldc.r8 5
+		IL_00ac: box [System.Runtime]System.Double
+		IL_00b1: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::addRange(object)
+		IL_00b6: pop
+		IL_00b7: ldloc.1
+		IL_00b8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator>(!!0)
+		IL_00bd: stloc.s 5
+		IL_00bf: ldloc.s 5
+		IL_00c1: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
+		IL_00c6: pop
+		IL_00c7: ret
 	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod

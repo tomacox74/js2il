@@ -32,7 +32,9 @@ internal sealed partial class LIRToILCompiler
             privateBrand: null,
             ilEncoder,
             allocation,
-            methodDescriptor);
+            methodDescriptor,
+            lexicalThis: createArrow.LexicalThis,
+            requiresSuperConstructorContext: createArrow.RequiresLexicalSuperConstructorContext);
 
         ilEncoder.OpCode(ILOpCode.Newobj);
         ilEncoder.Token(metadata.ConstructorHandle);
@@ -154,7 +156,9 @@ internal sealed partial class LIRToILCompiler
         TempVariable? privateBrand,
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
-        MethodDescriptor methodDescriptor)
+        MethodDescriptor methodDescriptor,
+        TempVariable? lexicalThis = null,
+        bool requiresSuperConstructorContext = false)
     {
         foreach (var capture in metadata.Plan.Captures)
         {
@@ -171,6 +175,20 @@ internal sealed partial class LIRToILCompiler
 
         foreach (var state in metadata.Plan.StateFields)
         {
+            if (requiresSuperConstructorContext
+                && methodDescriptor.IsConstructor
+                && state.Kind == GeneratedFunctionStateKind.HomeObject)
+            {
+                ilEncoder.LoadArgument(0);
+                continue;
+            }
+            if (lexicalThis.HasValue
+                && state.Kind is GeneratedFunctionStateKind.LexicalThis
+                    or GeneratedFunctionStateKind.HomeObject)
+            {
+                EmitLoadTemp(lexicalThis.Value, ilEncoder, allocation, methodDescriptor);
+                continue;
+            }
             EmitGeneratedFunctionStateArgument(
                 state.Kind,
                 isArrow,
@@ -293,15 +311,26 @@ internal sealed partial class LIRToILCompiler
         }
 
         ilEncoder.LoadArgument(0);
+        if (!methodDescriptor.IsConstructor)
+        {
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedClassMethodThis),
+                [typeof(object)]));
+        }
     }
 
     private void EmitLoadArrowLexicalSuperReceiver(
         InstructionEncoder ilEncoder,
         MethodDescriptor methodDescriptor)
     {
-        if (methodDescriptor.IsDerivedConstructor || !methodDescriptor.IsStatic)
+        if (methodDescriptor.IsConstructor)
         {
             ilEncoder.LoadArgument(0);
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.GetClassFieldHomeObject),
+                [typeof(object)]));
             return;
         }
 

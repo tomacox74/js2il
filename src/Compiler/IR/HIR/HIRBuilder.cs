@@ -474,11 +474,9 @@ public static class HIRBuilder
 
                                 if (propertyDefinition.Computed && !hasResolvedInstanceFieldName)
                                 {
-                                    if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
-                                    {
-                                        method = null!;
-                                        return false;
-                                    }
+                                    var computedKeyExpr = new HIRClassComputedFieldKeyExpression(
+                                        registryClassName,
+                                        ClassElementNames.GetFieldIdentity(propertyDefinition));
 
                                     ctorStatements.Add(new HIRExpressionStatement(
                                         new HIRDefineClassDataPropertyExpression(
@@ -652,13 +650,9 @@ public static class HIRBuilder
 
                                 if (propertyDefinition.Computed && !hasResolvedInstanceFieldName)
                                 {
-                                    if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
-                                    {
-                                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
-                                            $"HIR parse failed for constructor computed instance field key {propertyDefinition.Key.Type}");
-                                        method = null!;
-                                        return false;
-                                    }
+                                    var computedKeyExpr = new HIRClassComputedFieldKeyExpression(
+                                        registryClassName,
+                                        ClassElementNames.GetFieldIdentity(propertyDefinition));
 
                                     initStatements.Add(new HIRExpressionStatement(
                                         new HIRDefineClassDataPropertyExpression(
@@ -901,13 +895,9 @@ public static class HIRBuilder
 
                                 if (propertyDefinition.Computed && !hasResolvedInstanceFieldName)
                                 {
-                                    if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
-                                    {
-                                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
-                                            $"HIR parse failed for function-expression constructor computed instance field key {propertyDefinition.Key.Type}");
-                                        method = null!;
-                                        return false;
-                                    }
+                                    var computedKeyExpr = new HIRClassComputedFieldKeyExpression(
+                                        registryClassName,
+                                        ClassElementNames.GetFieldIdentity(propertyDefinition));
 
                                     initStatements.Add(new HIRExpressionStatement(
                                         new HIRDefineClassDataPropertyExpression(
@@ -1340,19 +1330,73 @@ partial class HIRMethodBuilder
     {
         hirExpr = null;
 
+        var callee = siteNode is CallExpression call ? call.Callee : ((NewExpression)siteNode).Callee;
+        var arguments = siteNode is CallExpression callSite
+            ? callSite.Arguments.Cast<Node>()
+            : ((NewExpression)siteNode).Arguments.Cast<Node>();
+        if (!DynamicFunctionSupport.IsFunctionConstructorCandidate(callee)
+            || !DynamicFunctionSupport.TryGetStaticStringArguments(
+                arguments,
+                ResolveInitializer,
+                out var sources)
+            || !TryParseExpression(callee, out var calleeExpression)
+            || calleeExpression == null)
+        {
+            return false;
+        }
+
         var dynamicScope = FindDynamicFunctionScopeForSite(siteNode);
-        if (dynamicScope?.AstNode is not FunctionExpression dynamicFuncExpr)
+        HIRFunctionExpression? factory = null;
+        string? syntaxError = null;
+        if (dynamicScope?.AstNode is FunctionExpression dynamicFuncExpr)
+        {
+            if (!HIRBuilder.ParamsSupportedForIR(dynamicFuncExpr.Params))
+            {
+                return false;
+            }
+            factory = CreateFunctionExpressionValue(dynamicScope, dynamicFuncExpr);
+        }
+        else if (DynamicFunctionSupport.TryParseFunctionExpression(
+                    _parser,
+                    GetCurrentDocumentId(),
+                    sources,
+                    out _,
+                    out syntaxError)
+                || string.IsNullOrEmpty(syntaxError))
         {
             return false;
         }
 
-        if (!HIRBuilder.ParamsSupportedForIR(dynamicFuncExpr.Params))
+        var argumentExpressions = new List<HIRExpression>();
+        foreach (var argument in arguments)
         {
-            return false;
+            if (!TryParseExpression((Expression)argument, out var expression) || expression == null)
+            {
+                return false;
+            }
+            argumentExpressions.Add(expression);
         }
 
-        hirExpr = CreateFunctionExpressionValue(dynamicScope, dynamicFuncExpr);
+        hirExpr = new HIRPreparedDynamicFunctionExpression(
+            calleeExpression,
+            argumentExpressions,
+            factory,
+            sources,
+            siteNode is NewExpression,
+            syntaxError);
         return true;
+
+        Node? ResolveInitializer(string name)
+        {
+            for (var scope = _currentScope; scope != null; scope = scope.UsesGlobalScopeSemantics ? null : scope.Parent)
+            {
+                if (scope.Bindings.TryGetValue(name, out var binding))
+                {
+                    return (binding.DeclarationNode as VariableDeclarator)?.Init;
+                }
+            }
+            return null;
+        }
     }
 
     private bool TryParseDirectEvalLiteral(CallExpression callExpr, out HIRExpression? hirExpr)
@@ -1914,8 +1958,10 @@ partial class HIRMethodBuilder
         var registryClassName = GetRegistryClassName(classScope);
         var classTypeExpr = new HIRUserClassTypeExpression(registryClassName);
         var prototypeTypeExpr = new HIRPropertyAccessExpression(classTypeExpr, "prototype");
+        var staticInitializers = new List<HIRStatement>();
         var omitEagerMetadata = classNode is ClassDeclaration classDeclaration
-            && CanOmitEagerClassMetadata(classDeclaration);
+            && CanOmitEagerClassMetadata(classDeclaration)
+            && !classBody.Body.OfType<MethodDefinition>().Any(method => method.Key is PrivateIdentifier);
         var previousScope = _currentScope;
         var previousStaticThisRegistryClassName = _staticThisRegistryClassName;
         _currentScope = classScope;
@@ -1927,13 +1973,26 @@ partial class HIRMethodBuilder
             {
                 switch (element)
                 {
+                    case PropertyDefinition instanceField when !instanceField.Static
+                        && instanceField.Computed
+                        && !ClassElementNames.TryGetPropertyName(instanceField.Key, computed: true, out _):
+                    {
+                        var evaluationBuilder = CreateClassElementEvaluationBuilder(classScope);
+                        if (!evaluationBuilder.TryParseExpressionForPrologue(instanceField.Key, out var key)
+                            || key == null)
+                        {
+                            Jroc.IR.IRPipelineMetrics.RecordFailure("Could not evaluate computed instance field name.");
+                            return false;
+                        }
+                        statements.Add(new HIRExpressionStatement(
+                            new HIRCaptureClassComputedFieldKeyExpression(
+                                classTypeExpr,
+                                ClassElementNames.GetFieldIdentity(instanceField),
+                                key)));
+                        break;
+                    }
                     case PropertyDefinition propertyDefinition when propertyDefinition.Static:
                     {
-                        if (classNameBindingInsertIndex < 0)
-                        {
-                            classNameBindingInsertIndex = statements.Count;
-                        }
-
                         var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
                             ? propertyInit
                             : null;
@@ -1962,17 +2021,25 @@ partial class HIRMethodBuilder
                             }
                             else
                             {
-                                var evaluationBuilder = CreateClassElementEvaluationBuilder(classScope, registryClassName);
+                                var evaluationBuilder = CreateClassElementEvaluationBuilder(classScope);
                                 if (!evaluationBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var parsedKey) || parsedKey == null)
                                 {
                                     Jroc.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed static property key expression {propertyDefinition.Key.Type}");
                                     return false;
                                 }
 
-                                hirKey = parsedKey;
+                                statements.Add(new HIRExpressionStatement(
+                                    new HIRCaptureClassComputedFieldKeyExpression(
+                                        classTypeExpr,
+                                        ClassElementNames.GetFieldIdentity(propertyDefinition),
+                                        parsedKey)));
+                                hirKey = new HIRClassComputedFieldKeyExpression(
+                                    registryClassName,
+                                    ClassElementNames.GetFieldIdentity(propertyDefinition),
+                                    classTypeExpr);
                             }
 
-                            statements.Add(new HIRExpressionStatement(
+                            staticInitializers.Add(new HIRExpressionStatement(
                                 new HIRDefineClassDataPropertyExpression(
                                     classTypeExpr,
                                     hirKey,
@@ -1984,7 +2051,7 @@ partial class HIRMethodBuilder
                         if (propertyDefinition.Key is not Identifier and not PrivateIdentifier
                             && ClassElementNames.TryGetPropertyName(propertyDefinition.Key, computed: false, out var literalStaticFieldName))
                         {
-                            statements.Add(new HIRExpressionStatement(
+                            staticInitializers.Add(new HIRExpressionStatement(
                                 new HIRDefineClassDataPropertyExpression(
                                     classTypeExpr,
                                     new HIRLiteralExpression(JavascriptType.String, literalStaticFieldName),
@@ -1995,7 +2062,7 @@ partial class HIRMethodBuilder
 
                         if (propertyDefinition.Key is PrivateIdentifier priv)
                         {
-                            statements.Add(new HIRStoreUserClassStaticFieldStatement
+                            staticInitializers.Add(new HIRStoreUserClassStaticFieldStatement
                             {
                                 RegistryClassName = registryClassName,
                                 FieldName = priv.Name,
@@ -2006,7 +2073,7 @@ partial class HIRMethodBuilder
                         }
                         else if (propertyDefinition.Key is Identifier pid)
                         {
-                            statements.Add(new HIRStoreUserClassStaticFieldStatement
+                            staticInitializers.Add(new HIRStoreUserClassStaticFieldStatement
                             {
                                 RegistryClassName = registryClassName,
                                 FieldName = pid.Name,
@@ -2134,22 +2201,34 @@ partial class HIRMethodBuilder
 
                     case StaticBlock staticBlock:
                     {
-                        if (classNameBindingInsertIndex < 0)
+                        var staticBlockScope = FindChildScopeForAstNode(staticBlock);
+                        if (staticBlockScope == null)
                         {
-                            classNameBindingInsertIndex = statements.Count;
-                        }
-
-                        if (!TryParseStatementsToList(staticBlock.Body, out var staticBlockStatements))
-                        {
+                            Jroc.IR.IRPipelineMetrics.RecordFailure("Class static block scope was not discovered.");
                             return false;
                         }
-
-                        statements.AddRange(staticBlockStatements);
+                        _currentScope = staticBlockScope;
+                        try
+                        {
+                            if (!TryParseStatementsToList(staticBlock.Body, out var staticBlockStatements))
+                            {
+                                return false;
+                            }
+                            staticInitializers.Add(new HIRBlock(
+                                staticBlockStatements,
+                                GetMaterializedBlockScopeName(staticBlockScope)));
+                        }
+                        finally
+                        {
+                            _currentScope = classScope;
+                        }
                         break;
                     }
                 }
             }
 
+            classNameBindingInsertIndex = statements.Count;
+            statements.AddRange(staticInitializers);
             return true;
         }
         finally
@@ -2757,10 +2836,25 @@ partial class HIRMethodBuilder
                         return true;
                     }
 
+                    if (classDecl.Decorators.Count > 0)
+                    {
+                        if (!TryBuildDecoratedClass(classDecl, classScope, out var decoratedClass)
+                            || decoratedClass == null)
+                        {
+                            return false;
+                        }
+                        var name = classDecl.Id?.Name ?? classScope.Name;
+                        var binding = _currentScope.Bindings[name];
+                        hirStatement = new HIRExpressionStatement(new HIRAssignmentExpression(
+                            new Symbol(binding), Acornima.Operator.Assignment, decoratedClass));
+                        return true;
+                    }
+
                     if (!TryBuildClassStaticInitializationStatements(classDecl, classScope, out var staticInitStatements, out var classNameBindingInsertIndex))
                     {
                         return false;
                     }
+                    var hasInitialization = staticInitStatements.Count > 0;
 
                     // Store the generated class constructor object before static field initializers
                     // or static blocks run. Computed class element names are evaluated earlier, while the outer
@@ -2795,16 +2889,19 @@ partial class HIRMethodBuilder
                     // Exported class bindings must be materialized eagerly so their export cell is written
                     // (the lazy-metadata optimization would otherwise never assign the binding).
                     if (_currentScope?.Bindings.TryGetValue(cdBindingName, out var cdClassBinding) == true
-                        && (!CanOmitEagerClassMetadata(classDecl)
+                        && (hasInitialization
+                            || !CanOmitEagerClassMetadata(classDecl)
                             || classDecl.SuperClass != null
                             || cdClassBinding.EsModuleExports != null))
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
-                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(
-                            cdRegistryClassName,
-                            classScope,
-                            [],
-                            cdSuperClass);
+                        HIRExpression classConstructorValueExpr = hasInitialization
+                            ? new HIRUserClassTypeExpression(cdRegistryClassName)
+                            : new HIRInitializedUserClassTypeExpression(
+                                cdRegistryClassName,
+                                classScope,
+                                [],
+                                cdSuperClass);
                         var bindingInsertionIndex = classNameBindingInsertIndex >= 0
                             ? classNameBindingInsertIndex
                             : staticInitStatements.Count;
@@ -2821,7 +2918,14 @@ partial class HIRMethodBuilder
                         }
                     }
 
-                    hirStatement = new HIRBlock(staticInitStatements);
+                    hirStatement = hasInitialization
+                        ? new HIRExpressionStatement(new HIRInitializedUserClassTypeExpression(
+                            GetRegistryClassName(classScope),
+                            classScope,
+                            staticInitStatements,
+                            cdSuperClass,
+                            explicitName: cdClassName ?? "default"))
+                        : new HIRBlock(staticInitStatements);
                     return true;
                 }
 
@@ -4025,9 +4129,7 @@ partial class HIRMethodBuilder
                     return true;
                 }
 
-                if (callExpr.Callee is Identifier directFunctionId
-                    && string.Equals(directFunctionId.Name, "Function", StringComparison.Ordinal)
-                    && TryCreateDynamicFunctionExpression(callExpr, out var dynamicFunctionExpr))
+                if (TryCreateDynamicFunctionExpression(callExpr, out var dynamicFunctionExpr))
                 {
                     hirExpr = dynamicFunctionExpr;
                     return true;
@@ -4126,9 +4228,7 @@ partial class HIRMethodBuilder
                 return true;
 
             case NewExpression newExpr:
-                if (newExpr.Callee is Identifier directNewFunctionId
-                    && string.Equals(directNewFunctionId.Name, "Function", StringComparison.Ordinal)
-                    && TryCreateDynamicFunctionExpression(newExpr, out var dynamicCtorExpr))
+                if (TryCreateDynamicFunctionExpression(newExpr, out var dynamicCtorExpr))
                 {
                     hirExpr = dynamicCtorExpr;
                     return true;
@@ -4568,6 +4668,11 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
+                    if (classExpr.Decorators.Count > 0)
+                    {
+                        return TryBuildDecoratedClass(classExpr, classExprScope, out hirExpr);
+                    }
+
                     var registryClassName = $"{(classExprScope.DotNetNamespace ?? "Classes")}.{(classExprScope.DotNetTypeName ?? classExprScope.Name)}";
                     if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements, out var classNameBindingInsertIndex))
                     {
@@ -4649,7 +4754,12 @@ partial class HIRMethodBuilder
                     CreateArrowFunctionCallableId(arrowScope, arrowExpr),
                     arrowScope,
                     superConstructorUsage.RequiresContext,
-                    superConstructorUsage.ContainsCallInBody);
+                    superConstructorUsage.ContainsCallInBody)
+                {
+                    CapturedThis = _staticThisRegistryClassName == null
+                        ? null
+                        : new HIRUserClassTypeExpression(_staticThisRegistryClassName)
+                };
                 return true;
 
             case FunctionExpression funcExpr:
@@ -4984,15 +5094,6 @@ partial class HIRMethodBuilder
         switch (expression)
         {
             case MemberExpression memberExpression:
-                if (!memberExpression.Optional
-                    && !memberExpression.Computed
-                    && memberExpression.Property is PrivateIdentifier)
-                {
-                    return TryParseExpression(
-                        memberExpression,
-                        out baseExpression);
-                }
-
                 if (!TryParseChainElement(
                         memberExpression.Object,
                         segments,
@@ -5014,6 +5115,17 @@ partial class HIRMethodBuilder
                     segments.Add(new HIRChainIndexSegment(
                         indexExpression,
                         memberExpression.Optional));
+                    return true;
+                }
+
+                if (memberExpression.Property is PrivateIdentifier)
+                {
+                    if (!TryParseExpression(memberExpression, out var access)
+                        || access is not HIRLoadPrivateReceiverFieldExpression privateAccess)
+                    {
+                        return false;
+                    }
+                    segments.Add(new HIRChainPrivateSegment(privateAccess, memberExpression.Optional));
                     return true;
                 }
 
