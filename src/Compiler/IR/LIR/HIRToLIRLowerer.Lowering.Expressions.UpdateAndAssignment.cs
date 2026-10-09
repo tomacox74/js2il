@@ -2024,12 +2024,119 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryLowerWithCompoundAssignment(
+        HIRAssignmentExpression assignment,
+        bool boundWith,
+        out TempVariable result,
+        bool resultUsed)
+    {
+        var binding = assignment.Target.BindingInfo;
+        ActiveWithBindingProbe probe;
+        if (boundWith)
+        {
+            var name = EmitConstString(binding.Name);
+            var withObject = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.GetBoundWithBindingObject),
+                new[] { EnsureObject(name) },
+                withObject));
+            DefineTempStorage(withObject, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            probe = new ActiveWithBindingProbe(withObject, name, withObject);
+        }
+        else
+        {
+            probe = EmitWithBindingProbe(binding.Name)
+                ?? throw new InvalidOperationException("With compound assignment requires a binding probe.");
+        }
+
+        var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(probe.HasBinding, lexicalLabel));
+
+        var current = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetItem(probe.WithObject, probe.Name, current));
+        DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        if (!TryLowerExpression(assignment.Value, out var rhs)
+            || !TryLowerCompoundOperation(assignment.Operator, current, rhs, out var value))
+        {
+            return false;
+        }
+
+        var strict = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(UsesStrictAssignmentSemantics(), strict));
+        DefineTempStorage(strict, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        var stored = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetWithBindingValue),
+            new[] { probe.WithObject, EnsureObject(probe.Name), EnsureObject(value), strict },
+            stored,
+            new[] { typeof(object), typeof(object), typeof(object), typeof(bool) }));
+        DefineTempStorage(stored, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(stored, result));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+        var previousSuppression = _suppressBoundWithReferenceLowering;
+        var activeObject = boundWith ? (TempVariable?)null : _activeWithObjects.Pop();
+        try
+        {
+            if (boundWith)
+            {
+                _suppressBoundWithReferenceLowering = true;
+            }
+            if (!TryLowerAssignmentExpression(assignment, out var lexicalResult, resultUsed))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(lexicalResult), result));
+        }
+        finally
+        {
+            _suppressBoundWithReferenceLowering = previousSuppression;
+            if (activeObject.HasValue)
+            {
+                _activeWithObjects.Push(activeObject.Value);
+            }
+        }
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        if (hadPreviousValue)
+        {
+            _variableMap[binding] = previousValue;
+        }
+        else
+        {
+            _variableMap.Remove(binding);
+        }
+        _numericRefinements.Remove(binding);
+        return true;
+    }
+
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
 
         var binding = assignExpr.Target.BindingInfo;
         var lirInstructions = _methodBodyIR.Instructions;
+
+        if (assignExpr.Operator is not (Acornima.Operator.Assignment
+            or Acornima.Operator.LogicalAndAssignment
+            or Acornima.Operator.LogicalOrAssignment
+            or Acornima.Operator.NullishCoalescingAssignment))
+        {
+            if (_activeWithObjects.Count > 0)
+            {
+                return TryLowerWithCompoundAssignment(assignExpr, boundWith: false, out resultTempVar, resultUsed);
+            }
+            if (!_suppressBoundWithReferenceLowering && MayUseBoundWithEnvironmentForIdentifier(binding))
+            {
+                return TryLowerWithCompoundAssignment(assignExpr, boundWith: true, out resultTempVar, resultUsed);
+            }
+        }
 
         if (assignExpr.Operator is Acornima.Operator.LogicalAndAssignment
             or Acornima.Operator.LogicalOrAssignment)

@@ -438,21 +438,10 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            TempVariable? boxedIndex = null;
-            var indexStorageForGet = GetTempStorage(indexTemp);
-            TempVariable indexForGet;
-            if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
-            {
-                indexForGet = indexTemp;
-            }
-            else
-            {
-                boxedIndex = EnsureObject(indexTemp);
-                indexForGet = boxedIndex.Value;
-            }
+            indexTemp = PrepareAssignmentPropertyKey(ref objTemp, indexTemp);
 
             var current = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
+            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexTemp, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             resultTempVar = CreateTempVariable();
@@ -480,13 +469,8 @@ public sealed partial class HIRToLIRLowerer
 
             rhsValue = EnsureObject(rhsValue);
 
-            var indexStorageForSet = GetTempStorage(indexTemp);
-            var indexForSet = indexStorageForSet.Kind == ValueStorageKind.UnboxedValue && indexStorageForSet.ClrType == typeof(double)
-                ? indexTemp
-                : boxedIndex ?? EnsureObject(indexTemp);
-
             var setResult = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, rhsValue, setResult, UsesStrictAssignmentSemantics()));
+            _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexTemp, rhsValue, setResult, UsesStrictAssignmentSemantics()));
             DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
 
@@ -548,21 +532,10 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            TempVariable? boxedIndex = null;
-            var indexStorageForGet = GetTempStorage(indexTemp);
-            TempVariable indexForGet;
-            if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
-            {
-                indexForGet = indexTemp;
-            }
-            else
-            {
-                boxedIndex = EnsureObject(indexTemp);
-                indexForGet = boxedIndex.Value;
-            }
+            indexTemp = PrepareAssignmentPropertyKey(ref objTemp, indexTemp);
 
             var current = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
+            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexTemp, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             if (!TryLowerExpression(assignExpr.Value, out var rhs))
@@ -574,9 +547,44 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
-        }
 
-        return TryLowerIndexAssignmentTarget(assignExpr.Object, assignExpr.Index, valueToStore, out resultTempVar);
+            return TryLowerIndexAssignmentTarget(objTemp, indexTemp, valueToStore, out resultTempVar);
+        }
+    }
+
+    private TempVariable PrepareAssignmentPropertyKey(ref TempVariable objectTemp, TempVariable indexTemp)
+    {
+        var objectSnapshot = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(objectTemp, objectSnapshot));
+        DefineTempStorage(objectSnapshot, GetTempStorage(objectTemp));
+        objectTemp = objectSnapshot;
+
+        var storage = GetTempStorage(indexTemp);
+        var key = CreateTempVariable();
+        if (storage.ClrType == typeof(string)
+            || storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(indexTemp, key));
+            DefineTempStorage(key, storage);
+        }
+        else
+        {
+            var checkedObject = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible),
+                new[] { objectTemp },
+                checkedObject));
+            DefineTempStorage(checkedObject, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            objectTemp = checkedObject;
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.ToPropertyKeyString),
+                new[] { EnsureObject(indexTemp) },
+                key));
+            DefineTempStorage(key, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        }
+        return key;
     }
 
     private bool TryLowerDestructuringAssignmentExpression(HIRDestructuringAssignmentExpression assignExpr, out TempVariable resultTempVar)
