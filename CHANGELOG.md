@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): honor proxy prototype traps in Object.prototype.isPrototypeOf
+  and legacy accessor lookup, check non-object arguments before coercing the
+  isPrototypeOf receiver, expose its standard function metadata, and box
+  primitive valueOf receivers; verify 10 previously failing pinned Test262 cases.
 - fix(runtime): reject hashbang prefixes in dynamic Function-family parameter
   and body source after ordered, single argument coercion. Parse `.mjs` sources
   and Test262 module fixtures using the Module goal, including hashbang-only

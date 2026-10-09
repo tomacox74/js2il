@@ -1064,6 +1064,8 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectPrototypeValue, "hasOwnProperty", _objectPrototypeHasOwnPropertyValue, enumerable: false, configurable: true, writable: true);
             InitializeBuiltinStaticFunction(_objectPrototypeHasOwnPropertyValue, "hasOwnProperty", 1);
             DefineBuiltinDataProperty(objectPrototypeValue, "isPrototypeOf", _objectPrototypeIsPrototypeOfValue, enumerable: false, configurable: true, writable: true);
+            Function.InitializeFunctionInstance(
+                _objectPrototypeIsPrototypeOfValue, 1d, "isPrototypeOf", requiresInvocationContext: false);
             DefineBuiltinDataProperty(objectPrototypeValue, "propertyIsEnumerable", _objectPrototypePropertyIsEnumerableValue, enumerable: false, configurable: true, writable: true);
             InitializeBuiltinStaticFunction(_objectPrototypePropertyIsEnumerableValue, "propertyIsEnumerable", 1);
             DefineBuiltinDataProperty(objectPrototypeValue, "toLocaleString", _objectPrototypeToLocaleStringValue, enumerable: false, configurable: true, writable: true);
@@ -2201,23 +2203,16 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeIsPrototypeOf(object? thisArgument, object? value)
         {
-            var prototypeCandidate = RequireObjectCoercibleReceiver(thisArgument);
-
-            PrototypeChain.Enable();
-
             if (value is null || value is JsNull || !IsObjectLikeForPrototype(value))
             {
                 return false;
             }
 
-            if (!PrototypeChain.Enabled)
-            {
-                return false;
-            }
+            var prototypeCandidate = Construct(RequireObjectCoercibleReceiver(thisArgument));
 
             var current = value;
             var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
-            while (PrototypeChain.TryGetPrototype(current, out var proto) && proto is not null && proto is not JsNull)
+            while (getPrototypeOf(current) is { } proto && proto is not JsNull)
             {
                 if (!visited.Add(proto))
                 {
@@ -2321,7 +2316,7 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeValueOf(object? thisArgument)
         {
-            return RequireObjectCoercibleReceiver(thisArgument);
+            return Construct(RequireObjectCoercibleReceiver(thisArgument));
         }
 
         private static object? PrototypeDefineGetter(object? thisArgument, object? prop, object? getter)
@@ -2419,14 +2414,14 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeLookupGetter(object? thisArgument, object? prop)
         {
-            var target = RequireObjectCoercibleReceiver(thisArgument);
+            var target = Construct(RequireObjectCoercibleReceiver(thisArgument));
             var key = ToPropertyKeyString(prop);
             return LookupAccessorInPrototypeChain(target, key, isGetter: true);
         }
 
         private static object? PrototypeLookupSetter(object? thisArgument, object? prop)
         {
-            var target = RequireObjectCoercibleReceiver(thisArgument);
+            var target = Construct(RequireObjectCoercibleReceiver(thisArgument));
             var key = ToPropertyKeyString(prop);
             return LookupAccessorInPrototypeChain(target, key, isGetter: false);
         }
@@ -2456,7 +2451,8 @@ namespace JavaScriptRuntime
                         : null;
                 }
 
-                if (!PrototypeChain.TryGetPrototype(current, out var proto) || proto is null || proto is JsNull)
+                var proto = getPrototypeOf(current);
+                if (proto is null || proto is JsNull)
                 {
                     return null;
                 }

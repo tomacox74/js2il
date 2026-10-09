@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-24T05:11:16Z
+> Last generated (UTC): 2026-10-08T22:32:58Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -243,7 +243,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype.isPrototypeOf | Supported with Limitations | [`Object_Prototype_Constructor_IsPrototypeOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js)<br>[`S15.2.3_A2.js`](../../../tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.3_A2.js) | `test/built-ins/Object/S15.2.3_A2.js` | Implemented by walking the PrototypeChain side-table and enabling prototype-chain lookup before the walk. Current coverage includes Function.prototype as the Object constructor's [[Prototype]]. |
+| Object.prototype.isPrototypeOf | Supported with Limitations | [`Object_Prototype_Constructor_IsPrototypeOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js)<br>[`S15.2.3_A2.js`](../../../tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.3_A2.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/isPrototypeOf/ExecutionTests.cs` | `test/built-ins/Object/S15.2.3_A2.js`<br>`test/built-ins/Object/prototype/isPrototypeOf/arg-is-proxy.js`<br>`test/built-ins/Object/prototype/isPrototypeOf/name.js`<br>`test/built-ins/Object/prototype/isPrototypeOf/null-this-and-primitive-arg-returns-false.js`<br>`test/built-ins/Object/prototype/isPrototypeOf/undefined-this-and-primitive-arg-returns-false.js` | Returns false for non-object arguments before coercing the receiver, boxes primitive receivers, and walks the observable [[GetPrototypeOf]] operation, including proxy traps and abrupt completions. The builtin has standard name/length metadata without an own prototype property. Current coverage includes Function.prototype as the Object constructor's [[Prototype]], proxy arguments, and null/undefined receivers with primitive arguments. |
 
 ### 20.1.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable))
 
@@ -267,7 +267,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype.valueOf | Supported with Limitations | [`Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js) |  | Returns the current this value after null/undefined checks in the runtime call path. |
+| Object.prototype.valueOf | Supported with Limitations | [`Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/valueOf/ExecutionTests.cs` | `test/built-ins/Object/prototype/valueOf/15.2.4.4-1.js`<br>`test/built-ins/Object/prototype/valueOf/15.2.4.4-2.js` | Applies ToObject to the receiver: rejects null/undefined, boxes primitives using the runtime's standard Object conversion, and returns object receivers unchanged. Pinned Test262 coverage verifies Boolean primitive boxing. |
 
 ### 20.1.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.__proto__))
 
@@ -297,13 +297,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype.__lookupGetter__ | Supported with Limitations | [`Object_Prototype_LegacyAccessors.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js) |  | Looks up getter accessors on own/prototype descriptor chain when available. |
+| Object.prototype.__lookupGetter__ | Supported with Limitations | [`Object_Prototype_LegacyAccessors.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupGetter__/PrototypeFailuresExecutionTests.cs` | `test/built-ins/Object/prototype/__lookupGetter__/lookup-own-proto-err.js`<br>`test/built-ins/Object/prototype/__lookupGetter__/lookup-proto-proto-err.js` | Boxes the receiver and searches own descriptors before invoking the observable [[GetPrototypeOf]] operation at each level. Proxy prototype-trap failures propagate for both the receiver and inherited prototypes; own data properties stop the lookup. |
 
 ### 20.1.3.9.4 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.__lookupSetter__))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype.__lookupSetter__ | Supported with Limitations | [`Object_Prototype_LegacyAccessors.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js) |  | Looks up setter accessors on own/prototype descriptor chain when available. |
+| Object.prototype.__lookupSetter__ | Supported with Limitations | [`Object_Prototype_LegacyAccessors.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_LegacyAccessors.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/__lookupSetter__/PrototypeFailuresExecutionTests.cs` | `test/built-ins/Object/prototype/__lookupSetter__/lookup-own-proto-err.js`<br>`test/built-ins/Object/prototype/__lookupSetter__/lookup-proto-proto-err.js` | Boxes the receiver and searches own descriptors before invoking the observable [[GetPrototypeOf]] operation at each level. Proxy prototype-trap failures propagate for both the receiver and inherited prototypes; own data properties stop the lookup. |
 
 ### 20.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-object-instances))
 
