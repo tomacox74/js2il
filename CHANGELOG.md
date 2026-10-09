@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: reconcile 38 previously registered array-expression cases missing
+  from the published conformance report. All 52 cases now have verified passing
+  results; the reconciled fixtures pass all 76 default/strict variants and
+  require no eval exclusions or compiler/runtime fixes.
+
 - test262: complete the remaining 75 pinned compound-assignment cases: 55
   verified passing and 20 explicitly skipped because eval is unsupported.
   Preserve the resolved with-environment binding through getter/RHS side effects,
