@@ -2309,7 +2309,7 @@ namespace JavaScriptRuntime
                 : target is JavaScriptRuntime.Date ? "Date"
                 : target is JavaScriptRuntime.RegExp ? "RegExp"
                 : "Object";
-            var tag = GetProperty(target, Symbol.toStringTag.DebugId);
+            var tag = GetItem(target, Symbol.toStringTag);
             return $"[object {(tag is string tagString ? tagString : builtinTag)}]";
         }
 
