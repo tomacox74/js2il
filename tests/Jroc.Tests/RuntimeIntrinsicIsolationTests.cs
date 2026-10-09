@@ -423,6 +423,40 @@ public sealed class RuntimeIntrinsicIsolationTests
     }
 
     [Fact]
+    public void ForeignFunctionDescriptorOverrides_RemainInTheOwningRealm()
+    {
+        var firstServices = RuntimeServices.BuildServiceProvider();
+        var secondServices = RuntimeServices.BuildServiceProvider();
+        var foreignFunction = WithRealm(firstServices, () =>
+        {
+            _ = GlobalThis.globalThis;
+            var function = BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Boolean);
+            ObjectRuntime.SetProperty(function, "realmMarker", "first");
+            return function;
+        });
+
+        WithRealm(secondServices, () =>
+        {
+            _ = GlobalThis.globalThis;
+            Assert.Equal("first", ObjectRuntime.GetProperty(foreignFunction, "realmMarker"));
+            Assert.Null(ObjectRuntime.GetProperty(
+                BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.Boolean), "realmMarker"));
+            ObjectRuntime.SetProperty(foreignFunction, "realmMarker", "second");
+            Assert.Contains("realmMarker", PropertyDescriptorStore.GetOwnKeys(foreignFunction));
+            Assert.True(PropertyDescriptorStore.Delete(foreignFunction, "name"));
+            Assert.False(PropertyDescriptorStore.TryGetOwn(foreignFunction, "name", out _));
+            return true;
+        });
+
+        WithRealm(firstServices, () =>
+        {
+            Assert.Equal("second", ObjectRuntime.GetProperty(foreignFunction, "realmMarker"));
+            Assert.False(PropertyDescriptorStore.TryGetOwn(foreignFunction, "name", out _));
+            return true;
+        });
+    }
+
+    [Fact]
     public void RedefiningAnIntrinsicDescriptor_IsInvisibleInAnotherRealm()
     {
         var firstServices = RuntimeServices.BuildServiceProvider();

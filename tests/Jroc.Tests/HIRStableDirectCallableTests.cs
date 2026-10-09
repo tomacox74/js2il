@@ -355,8 +355,10 @@ public class HIRStableDirectCallableTests
             hasScopesParameter: false,
             out var method));
 
-        var call = Assert.IsType<HIRCallExpression>(
-            Assert.Single(method!.Body.Statements.OfType<HIRExpressionStatement>()).Expression);
+        var call = Assert.Single(method!.Body.Statements
+            .OfType<HIRExpressionStatement>()
+            .Select(statement => statement.Expression)
+            .OfType<HIRCallExpression>());
 
         Assert.Null(call.StaticClassMethodTarget);
     }

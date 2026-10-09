@@ -1905,7 +1905,7 @@ public sealed partial class HIRToLIRLowerer
             ?? throw new InvalidOperationException("Active with assignment requires a binding probe.");
         var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
 
-        if (!TryLowerExpression(assignmentExpression.Value, out var valueToStore)
+        if (!TryLowerExpressionWithInferredName(assignmentExpression.Value, binding.Name, out var valueToStore)
             || !TryApplyInferredNameToValue(
                 assignmentExpression.Value,
                 binding.Name,
@@ -1970,7 +1970,7 @@ public sealed partial class HIRToLIRLowerer
             hasBinding));
         DefineTempStorage(hasBinding, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
-        if (!TryLowerExpression(assignmentExpression.Value, out var valueToStore)
+        if (!TryLowerExpressionWithInferredName(assignmentExpression.Value, binding.Name, out var valueToStore)
             || !TryApplyInferredNameToValue(
                 assignmentExpression.Value,
                 binding.Name,
@@ -2171,7 +2171,7 @@ public sealed partial class HIRToLIRLowerer
         if (assignExpr.Operator == Acornima.Operator.Assignment)
         {
             // Simple assignment: x = expr
-            if (!TryLowerExpression(assignExpr.Value, out valueToStore))
+            if (!TryLowerExpressionWithInferredName(assignExpr.Value, binding.Name, out valueToStore))
             {
                 return false;
             }

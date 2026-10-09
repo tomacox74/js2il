@@ -157,6 +157,9 @@ not reapply defaults over later user mutations.
 Every JavaScript object that a realm can observe as a global, constructor,
 prototype, or built-in function is created for that realm alone:
 
+- Function descriptor overrides belong to the function's owning realm.
+  Cross-realm reads, writes, deletions, and own-key enumeration use that same
+  descriptor store, including when constructor invocation enters another realm.
 - Built-in prototypes are lazily created realm intrinsic slots. The thread that
   wins a slot runs its initializer and resolves the slot reentrantly to the
   object under construction, so the mutually recursive intrinsic bootstrap

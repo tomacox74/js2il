@@ -593,6 +593,7 @@ public sealed class CallableDiscovery
     private static bool HasImplicitArgumentsBinding(Scope functionScope)
     {
         return functionScope.Bindings.TryGetValue("arguments", out var binding)
+            && binding.Kind == BindingKind.Var
             && ReferenceEquals(binding.DeclarationNode, functionScope.AstNode);
     }
 

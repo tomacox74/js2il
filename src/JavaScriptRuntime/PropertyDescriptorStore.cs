@@ -475,7 +475,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
             else if (jsObject.HasSharedIntrinsicBaseline)
             {
-                ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                ((IPropertyDescriptorStore)GetSharedIntrinsicRuntimeStore(target))
                     .DefineOrUpdate(target, key, descriptor);
                 jsObject.BumpLookupVersion();
             }
@@ -544,7 +544,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
             else if (jsObject.HasSharedIntrinsicBaseline)
             {
-                inlineDeleted = ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                inlineDeleted = ((IPropertyDescriptorStore)GetSharedIntrinsicRuntimeStore(target))
                     .Delete(target, key);
                 if (inlineDeleted)
                 {
@@ -582,7 +582,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         {
             if (jsObject.HasSharedIntrinsicBaseline)
             {
-                ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore).Clear(target);
+                ((IPropertyDescriptorStore)GetSharedIntrinsicRuntimeStore(target)).Clear(target);
                 jsObject.BumpLookupVersion();
             }
             else
@@ -608,7 +608,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             return true;
         }
 
-        if (CurrentRuntimeStore is PropertyDescriptorStore runtimeStore
+        if (GetRuntimeStore(target) is PropertyDescriptorStore runtimeStore
             && runtimeStore._overrideSlots.TryGetValue(target, out _))
         {
             return true;
@@ -646,7 +646,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
             else if (jsObject.HasSharedIntrinsicBaseline)
             {
-                ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                ((IPropertyDescriptorStore)GetSharedIntrinsicRuntimeStore(target))
                     .DefineOrUpdate(target, key, descriptor);
             }
             else
@@ -695,7 +695,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             else
             {
                 _ = mirroredTarget is JsObject { HasSharedIntrinsicBaseline: true }
-                    ? ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                    ? ((IPropertyDescriptorStore)GetSharedIntrinsicRuntimeStore(mirroredTarget))
                         .Delete(mirroredTarget, key)
                     : CurrentStore.Delete(mirroredTarget, key);
             }
@@ -877,17 +877,22 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             ? _intrinsicStore
             : CurrentRuntimeStore ?? _intrinsicStore;
 
-    private static PropertyDescriptorStore SharedIntrinsicRuntimeStore
-        => CurrentRuntimeStore as PropertyDescriptorStore
+    private static PropertyDescriptorStore GetSharedIntrinsicRuntimeStore(object target)
+        => GetRuntimeStore(target) as PropertyDescriptorStore
             ?? (_defaultRuntimeStore.Value ??= new PropertyDescriptorStore());
 
     private static IPropertyDescriptorStore? CurrentRuntimeStore
         => RuntimeExecutionContext.Current?.DescriptorStore;
 
+    private static IPropertyDescriptorStore? GetRuntimeStore(object target)
+        => target is JsFunctionObject { OwningIntrinsics.ExecutionContext: { } context }
+            ? context.DescriptorStore
+            : CurrentRuntimeStore;
+
     private static IPropertyDescriptorStore GetLookupStore(object target)
         => !IsIntrinsicInitialization
             && target is JsObject { HasSharedIntrinsicBaseline: true }
-                ? CurrentRuntimeStore
+                ? GetRuntimeStore(target)
                     ?? (IPropertyDescriptorStore?)_defaultRuntimeStore.Value
                     ?? _intrinsicStore
                 : CurrentStore;

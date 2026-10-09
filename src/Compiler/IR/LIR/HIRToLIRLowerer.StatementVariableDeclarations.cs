@@ -41,6 +41,27 @@ public sealed partial class HIRToLIRLowerer
             value,
             out namedValue);
 
+    private bool TryLowerExpressionWithInferredName(HIRExpression expression, string inferredName, out TempVariable value)
+    {
+        var previousName = _pendingAnonymousClassExpressionInferredName;
+        if (expression is HIRInitializedUserClassTypeExpression
+            {
+                IsClassExpression: true
+            } initializedClass && string.IsNullOrWhiteSpace(initializedClass.ExplicitName))
+        {
+            _pendingAnonymousClassExpressionInferredName = inferredName;
+        }
+
+        try
+        {
+            return TryLowerExpression(expression, out value);
+        }
+        finally
+        {
+            _pendingAnonymousClassExpressionInferredName = previousName;
+        }
+    }
+
     private bool TryApplyInferredNameToValue(
         HIRExpression? initializer,
         string inferredName,
@@ -155,28 +176,10 @@ public sealed partial class HIRToLIRLowerer
 
         if (exprStmt.Initializer != null)
         {
-            var shouldSetPendingAnonymousClassName =
-                exprStmt.Initializer is HIRInitializedUserClassTypeExpression initializedClassExpr
-                && initializedClassExpr.IsClassExpression
-                && string.IsNullOrWhiteSpace(initializedClassExpr.ExplicitName);
-
-            var previousPendingAnonymousClassName = _pendingAnonymousClassExpressionInferredName;
-            if (shouldSetPendingAnonymousClassName)
+            if (!TryLowerExpressionWithInferredName(exprStmt.Initializer, exprStmt.Name.Name, out value))
             {
-                _pendingAnonymousClassExpressionInferredName = exprStmt.Name.Name;
-            }
-
-            try
-            {
-                if (!TryLowerExpression(exprStmt.Initializer, out value))
-                {
-                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
-                    return false;
-                }
-            }
-            finally
-            {
-                _pendingAnonymousClassExpressionInferredName = previousPendingAnonymousClassName;
+                IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
+                return false;
             }
 
             if (!TryApplyInferredNameToDeclarationValue(exprStmt, value, out value))

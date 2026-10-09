@@ -12,6 +12,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   static initialization, optional private chains, lexical arrow receivers,
   async method failures and restricted method properties. Support guarded
   statically discoverable Function sources and their constructor realms.
+  Preserve assignment-inferred class names before static initialization,
+  distinguish global references from implicit arguments bindings in prepared
+  Function factories, and keep function descriptor overrides in their owning realm.
 - fix(compiler): lower public auto-accessors to private-backed getter/setter
   pairs, preserve source locations and initializer order, and reject
   unimplemented computed, private and decorated auto-accessor forms explicitly.
