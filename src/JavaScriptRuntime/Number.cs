@@ -80,7 +80,6 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = 0d
             });
-            GlobalThis.DefineIntrinsicDataProperty(prototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Number");
         }
 
         internal const string NumberDataPropertyName = "[[NumberData]]";

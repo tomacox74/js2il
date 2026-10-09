@@ -45,7 +45,6 @@ namespace JavaScriptRuntime
             });
             GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "toString", _booleanPrototypeToStringValue, 0d);
             GlobalThis.DefineBuiltinFunctionProperty(prototypeValue, "valueOf", _booleanPrototypeValueOfValue, 0d);
-            GlobalThis.DefineIntrinsicDataProperty(prototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Boolean");
 
             GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
         }

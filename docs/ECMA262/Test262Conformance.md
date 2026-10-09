@@ -45,9 +45,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,075 | 12 | 6,425 | 23,512 | **72.62%** |
+| Built-in objects and APIs | 17,094 | 13 | 6,405 | 23,512 | **72.70%** |
 | Language syntax and semantics | 17,500 | 97 | 6,050 | 23,647 | **74.01%** |
-| **Total** | 34,635 | 109 | 13,501 | 48,245 | **71.79%** |
+| **Total** | 34,654 | 110 | 13,481 | 48,245 | **71.83%** |
 
 ## Language Areas
 
@@ -233,7 +233,7 @@ bounded worker cleanup.
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
 | `NativeErrors` | 94 | 0 | 0 | 94 | **100.00%** |
 | `Number` | 338 | 0 | 0 | 338 | **100.00%** |
-| `Object` | 3,350 | 0 | 61 | 3,411 | **98.21%** |
+| `Object` | 3,369 | 1 | 41 | 3,411 | **98.77%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
 | `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
