@@ -63,13 +63,23 @@ ingester requires the service role key because it upserts rows; the publishable
 key is appropriate only when the database's row-level security policy permits
 the desired reads.
 
+Reuse `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for Test262 catalogue Data API
+reads once its read-only API exposure/role permissions are enabled. See
+[Local agent read access](../../../docs/ECMA262/Test262SupabaseCatalog.md#local-agent-read-access)
+for reporting-schema headers, repository/provenance filters, concurrent-reader
+rules and the connector fallback. Performance access alone does not grant catalogue
+access; the deployed `anon` role currently lacks catalogue reporting rights.
+
+Send a publishable key in `apikey` only, not `Authorization: Bearer`; modern
+`sb_publishable_...` keys are not JWTs. A signed-in user's JWT, when required, is a
+separate credential. See [Supabase API key guidance](https://supabase.com/docs/guides/getting-started/api-keys).
+
 Example query for recent rows:
 
 ```bash
 curl --fail-with-body --silent --show-error \
   "$SUPABASE_URL/rest/v1/perf_results?select=run_at,source,scenario,runtime,metric,value,unit,branch,sha&order=run_at.desc&limit=100" \
-  -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
-  -H "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" |
+  -H "apikey: $SUPABASE_PUBLISHABLE_KEY" |
   jq .
 ```
 
@@ -79,8 +89,7 @@ Filter at the database whenever possible. For example, compare the latest
 ```bash
 curl --fail-with-body --silent --show-error \
   "$SUPABASE_URL/rest/v1/perf_results?source=eq.benchmarkdotnet&scenario=eq.primejavascript-onepass&metric=eq.mean_ns&benchmark_profile=eq.dotnet-runtime-comparison&dotnet_runtime=in.(net10.0,net11.0)&select=run_id,run_attempt,source,scenario,runtime,runtime_version,dotnet_runtime,dotnet_runtime_version,benchmark_profile,metric,value,unit,run_at&order=run_at.desc&limit=100" \
-  -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
-  -H "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" |
+  -H "apikey: $SUPABASE_PUBLISHABLE_KEY" |
   jq .
 ```
 
@@ -313,3 +322,4 @@ node scripts/runCubePhasedGuardrails.js --dry --il-smells
 - Do not write to Supabase from a development desktop unless the task
   explicitly requires ingestion and the correct credentials and policy are
   available.
+

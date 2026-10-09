@@ -38,6 +38,101 @@ An agent without central access must disclose offline scope, not fall back to
 SQLite authority. The central workflow checks out master; after merging a manual
 port/fix, verify exact-SHA master CI and a subsequent central registration refresh.
 
+## Local agent read access
+
+Use the existing JROC performance-analysis environment variables in each local
+checkout for Supabase Data API reads:
+
+```bash
+export SUPABASE_URL="https://<project>.supabase.co"
+export SUPABASE_PUBLISHABLE_KEY="<publishable-key>"
+```
+
+These are the same project URL and publishable key used to read `public.perf_results`;
+do not introduce a second catalogue key or use a PostgreSQL connection string as
+`SUPABASE_URL`. Neither Bash nor Copilot automatically loads an ignored `.env` file:
+load it explicitly in a trusted shell before starting the agent. Check that the
+variables are set without printing their values. Never commit them, enable shell
+tracing around requests, or put them in PRs, logs or generated reports.
+
+### Permissions are a prerequisite
+
+A publishable key identifies the application; it does not grant database access.
+With no signed-in user JWT, Data API requests use the `anon` role. Catalogue REST
+reads work only when an operator has configured a reviewed read-only API surface:
+the schema must be exposed to PostgREST and the request role must have the required
+schema/view permissions. A client-side repository filter is not an authorization
+boundary. Review which repositories and columns a public key would expose before
+enabling that surface; never grant catalogue table writes or coordinator API access.
+
+**Verified on 2026-10-09 UTC (2026-10-08 PDT):** the deployed `anon` role has neither
+`USAGE` on `test262_reporting` nor `SELECT` on its reporting views. The checked-in
+foundation and summary migrations also revoke those rights from `anon` and
+`authenticated`. Consequently, performance reads succeeding with these variables
+does **not yet** prove catalogue REST access. This documentation change does not
+alter database grants or API schema exposure. Use the authorized read-only JROC
+Supabase connector, a dedicated reporter connection, or an approved coherent export
+until an operator enables and verifies the read-only Data API surface. Do not ask
+for a service-role key, supervisor DSN or publication credential to bypass a denial.
+
+### Bounded REST lookup after access is enabled
+
+For the existing reporting-view surface, select the custom schema with
+`Accept-Profile: test262_reporting`; the endpoint uses the unqualified view name.
+Send the publishable key in `apikey` only. A modern `sb_publishable_...` key is not
+a JWT and must not be sent as `Authorization: Bearer`. See
+[Supabase API key guidance](https://supabase.com/docs/guides/getting-started/api-keys).
+If an approved surface requires a signed-in user, its separate user JWT and role
+permissions are required; the two environment variables alone do not supply them.
+
+This Bash example reads at most 100 current native fixture rows for this repository
+and one area; it is a selection sample, not a complete export:
+
+```bash
+(
+  set -euo pipefail
+  : "${SUPABASE_URL:?Set SUPABASE_URL in the trusted shell}"
+  : "${SUPABASE_PUBLISHABLE_KEY:?Set SUPABASE_PUBLISHABLE_KEY in the trusted shell}"
+  curl --fail --silent --show-error --get \
+    "${SUPABASE_URL%/}/rest/v1/v_current_fixture_status" \
+    -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+    -H "Accept-Profile: test262_reporting" \
+    --data-urlencode 'repository_id=eq.faf01df8-aa65-4375-a708-6c1e555f957b' \
+    --data-urlencode 'channel=eq.master' \
+    --data-urlencode 'evidence_kind=eq.native' \
+    --data-urlencode 'upstream_path=like.test/built-ins/Math/abs/*' \
+    --data-urlencode 'select=upstream_path,status,source_registered,required_variant_count,recorded_variant_count,pass_variant_count,conflict_flag,provenance_id,corpus_id,registration_snapshot_id,validation_id,target_updated_at,as_of' \
+    --data-urlencode 'order=upstream_path.asc,fixture_id.asc' \
+    --data-urlencode 'limit=100' |
+    jq .
+)
+```
+
+Inspect actual view columns before changing the query. Use the same schema header
+for `v_historical_candidates`, `v_native_acceptance` and `v_failure_clusters`, with
+repository/provenance/area filters appropriate to each view. Keep pins, evidence
+kinds and selected target identities separate; historical or MVP passes are leads,
+not fresh native acceptance. An empty result is not proof of full coverage or absent
+registrations. A 401/403, unavailable schema/view or failed query is an access
+limitation, not a catalogue outcome; use the connector/export or explicit offline
+diagnosis rules and report the limitation. Do not change grants from an agent task.
+
+### Concurrent readers and local validation
+
+Independent agents may read the catalogue concurrently from separate checkouts;
+GET/reporting SELECT requests do not claim work, spend screening budgets, change
+authority or reserve publications. Keep requests bounded. Each REST request is a
+separate snapshot: record `as_of` and target/provenance/registration identities,
+recheck before opening a PR, and use an approved coherent export for multi-page
+completeness claims. Reconcile selected master evidence with the checkout's pinned
+corpus, compiler revision, local registrations and pending PRs. Local branch tests
+remain PR validation and do not upload trusted central evidence.
+
+Keep database access in the agent's query process. Execute upstream fixtures in a
+separate process/container with Supabase and other credential variables removed.
+Reading during other agents' work is supported; publication has a separate freshness
+guard and can reject a sealed batch if `master` advances during its run.
+
 ## Restricted identities and process boundary
 
 Provision dedicated PostgreSQL LOGINs through the database/secret-management operator.
@@ -582,5 +677,6 @@ drill demonstrates the tool path and restored data/security behavior. It does no
 verify production backup-role permissions, KMS encryption, independent object retention,
 Object Lock, original historical archive preservation, or a restore of an off-project
 production backup. Those remain separate operational acceptance before cutover.
+
 
 
