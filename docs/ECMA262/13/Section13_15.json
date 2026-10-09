@@ -90,7 +90,7 @@
           "test/language/expressions/compound-assignment/left-hand-side-private-reference-data-property-add.js",
           "test/language/expressions/compound-assignment/left-hand-side-private-reference-accessor-property-div.js"
         ],
-        "notes": "Private compound assignments read the initial private value, evaluate the right-hand side once, apply the operator, and write the result through the private field or setter. Object environment records created by with statements still have separate reference-preservation limitations."
+        "notes": "Private compound assignments read the initial private value, evaluate the right-hand side once, apply the operator, and write the result through the private field or setter. Arithmetic, bitwise, and shift compound assignments through with-environment records preserve the originally resolved reference even when getters or right-hand-side evaluation delete the binding."
       },
       {
         "clause": "13.15.1",
@@ -241,6 +241,22 @@
           "tests/Jroc.Test262.Tests/language/expressions/compound-assignment/ExpressionSyntaxConformanceBatchParseTests.cs"
         ],
         "notes": "355 pinned Test262 compound-assignment fixtures are natively verified: 321 positive execution cases and 34 parse-negative cases. The batch covers arithmetic, bitwise, and shift compound assignments, primitive coercion, strict-mode early errors, and private-field targets."
+      },
+      {
+        "clause": "13.15.2",
+        "feature": "Compound-assignment reference preservation",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/compound-assignment/CompoundAssignmentCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/compound-assignment/S11.13.2_A5.1_T1.js",
+          "test/language/expressions/compound-assignment/S11.13.2_A5.1_T3.js",
+          "test/language/expressions/compound-assignment/S11.13.2_A7.1_T4.js",
+          "test/language/expressions/compound-assignment/compound-assignment-operator-calls-putvalue-lref--v-.js"
+        ],
+        "notes": "Computed compound assignments evaluate the base and key once, coerce the property key before reading, and reuse that reference for the write. Numeric index fast paths remain unboxed. With-environment assignments retain the selected object through getter and RHS side effects, recreate a deleted property in sloppy code, and throw ReferenceError for a deleted binding in strict nested functions. All 454 pinned compound-assignment cases are accounted for: 434 verified passing and 20 known unsupported eval cases."
       },
       {
         "clause": "13.15.1",

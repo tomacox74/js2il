@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining 75 pinned compound-assignment cases: 55
+  verified passing and 20 explicitly skipped because eval is unsupported.
+  Preserve the resolved with-environment binding through getter/RHS side effects,
+  enforce strict deleted-binding ReferenceError behavior, and evaluate computed
+  compound-assignment bases and property keys only once.
+
 - fix(runtime): enforce monotonic Atomics.waitAsync timeout deadlines instead
   of relying on fixed timer padding, preserving notification and cancellation.
 - test262: complete the remaining 148 pinned class-expression fixtures: 87
