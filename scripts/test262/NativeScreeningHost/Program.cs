@@ -42,6 +42,7 @@ if (args.Length == 1 && args[0] == "--capabilities")
             "testTypedArray.js", "tcoHelper.js", "wellKnownIntrinsicObjects.js"
         },
         dependencies = new { sibling_files = true, harness_files = true },
+        negative = new { parse = "SyntaxError", runtime = true },
         isolation = new { worker_process = true, timeout = true, agent_cleanup = true }
     }, recordOptions));
     return 0;

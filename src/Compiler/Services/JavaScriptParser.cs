@@ -78,7 +78,7 @@ public class JavaScriptParser : IParser
         }
         catch (ParseErrorException ex)
         {
-            throw new Exception($"SyntaxError: {ex.Message}", ex);
+            throw new Exception($"Failed to parse JavaScript: SyntaxError: {ex.Message}", ex);
         }
     }
 
