@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete 21 function-code, 17 global-code, and one destructuring
+  fixture: 25 verified passing and 14 explicitly skipped for direct or indirect
+  eval. Add an explicit Script compilation goal and realm-owned global
+  declaration/lexical binding semantics, native host-compiled `$262.evalScript`,
+  and parse-negative SyntaxError screening. Fix duplicate parameter resolution
+  and hoisted functions shadowing parameters or surviving var redeclarations.
+  Verify resizable-buffer TypedArray destructuring without additional product changes.
+
 - test262: reconcile 38 previously registered array-expression cases missing
   from the published conformance report. All 52 cases now have verified passing
   results; the reconciled fixtures pass all 76 default/strict variants and

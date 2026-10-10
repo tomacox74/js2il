@@ -115,7 +115,8 @@ public static class JrocInMemoryCompiler
         => new(
             [new JrocInMemoryEntrySource(request.EntryFilePath, request.SourceText, request.RootModuleIdOverride)
             {
-                ParseAsModule = request.ParseAsModule
+                ParseAsModule = request.ParseAsModule,
+                ParseAsScript = request.ParseAsScript
             }])
         {
             AssemblyName = request.AssemblyName,
@@ -185,7 +186,8 @@ public static class JrocInMemoryCompiler
         var artifact = compiler.CompileToArtifact(
             request.Entries.Select(entry => new JrocCompileEntry(entry.EntryFilePath, entry.RootModuleIdOverride)
             {
-                ParseAsModule = entry.ParseAsModule
+                ParseAsModule = entry.ParseAsModule,
+                ParseAsScript = entry.ParseAsScript
             }).ToArray(),
             request.DefaultEntryFilePath);
         if (artifact is not null)

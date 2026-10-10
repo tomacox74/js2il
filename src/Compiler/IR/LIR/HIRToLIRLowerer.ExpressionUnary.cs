@@ -116,6 +116,19 @@ public sealed partial class HIRToLIRLowerer
                 {
                     var bindingKind = variableExpression.Name.BindingInfo.Kind;
 
+                    if (variableExpression.Name.BindingInfo.IsScriptGlobalBinding
+                        || (bindingKind == BindingKind.Global
+                            && variableExpression.Name.BindingInfo.DeclaringScope.UsesScriptSemantics))
+                    {
+                        var name = EmitConstString(variableExpression.Name.Name);
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.DeleteGlobalBinding),
+                            new[] { name }, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        return true;
+                    }
+
                     if (bindingKind is BindingKind.Var or BindingKind.Let or BindingKind.Const or BindingKind.Function)
                     {
                         _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, resultTempVar));

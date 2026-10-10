@@ -196,6 +196,7 @@ public class Scope
     /// must not close over outer lexical/module scopes.
     /// </summary>
     public bool UsesGlobalScopeSemantics { get; set; }
+    public bool UsesScriptSemantics { get; set; }
 
     /// <summary>
     /// Authoritative .NET namespace for this scope's generated type (if any).

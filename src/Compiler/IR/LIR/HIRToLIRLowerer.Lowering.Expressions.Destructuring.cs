@@ -463,6 +463,10 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryEnsureLexicalBindingInitializedForDestructuringAssignment(BindingInfo binding)
     {
+        if (binding.IsScriptGlobalBinding)
+        {
+            return TryLoadVariable(binding, out _);
+        }
         if (binding.Kind != BindingKind.Let)
         {
             return true;

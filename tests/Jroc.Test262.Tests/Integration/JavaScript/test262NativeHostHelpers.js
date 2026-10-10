@@ -11,6 +11,45 @@ assert.notStrictEqual('abc', 'def', 'notStrictEqual should alias notSameValue');
 assert.compareArray([1, 2, 3], [1, 2, 3], 'compareArray should compare indexed elements');
 assert.deepEqual([[1, 2], [3, undefined]], [[1, 2], [3, undefined]], 'deepEqual should compare nested arrays');
 
+$262.evalScript('var nativeScriptVar = 1; function nativeScriptFunction() { return nativeScriptVar; }');
+assert.sameValue(nativeScriptFunction(), 1);
+$262.evalScript('nativeScriptVar = 2; let nativeScriptLet = 3; const nativeScriptConst = 4;');
+assert.sameValue(nativeScriptFunction(), 2);
+assert.sameValue(nativeScriptLet, 3);
+assert.sameValue(nativeScriptConst, 4);
+assert.sameValue(globalThis.hasOwnProperty('nativeScriptLet'), false);
+assert.throws(TypeError, function() { nativeScriptConst = 5; });
+assert.throws(SyntaxError, function() { $262.evalScript('return;'); });
+assert.sameValue(typeof require, 'undefined');
+assert.sameValue(typeof module, 'undefined');
+assert.sameValue(typeof exports, 'undefined');
+$262.evalScript('let {nativeScriptProperty} = {nativeScriptProperty: 6};');
+assert.sameValue(nativeScriptProperty, 6);
+assert.sameValue(globalThis.hasOwnProperty('__obj'), false);
+Object.defineProperty(globalThis, 'nativeScriptExistingVar', {value: 1, writable: true, configurable: true});
+$262.evalScript('var nativeScriptExistingVar;');
+assert.throws(SyntaxError, function() { $262.evalScript('let nativeScriptExistingVar;'); });
+$262.evalScript('delete nativeScriptExistingVar; let nativeScriptAfterDeletion = 1;');
+$262.evalScript('let nativeScriptExistingVar = 7;');
+assert.sameValue(nativeScriptExistingVar, 7);
+$262.evalScript('var nativeScriptWith = 1; with ({nativeScriptWith: 2}) { var nativeScriptWith = 3; }');
+assert.sameValue(nativeScriptWith, 1);
+Object.defineProperty(globalThis, 'nativeScriptHoisted', {get: function() { throw new Test262Error('getter must be replaced'); }, configurable: true});
+$262.evalScript('function nativeScriptHoisted() { return 8; } var nativeScriptHoisted;');
+assert.sameValue(nativeScriptHoisted(), 8);
+verifyProperty(globalThis, 'nativeScriptHoisted', {writable: true, enumerable: true, configurable: false});
+class NativeScriptKnownClass {
+    constructor() { this.value = 1; }
+    static read() { return 1; }
+}
+$262.evalScript('NativeScriptKnownClass = class { constructor() { this.value = 2; } static read() { return 2; } };');
+assert.sameValue(new NativeScriptKnownClass().value, 2);
+assert.sameValue(NativeScriptKnownClass.read(), 2);
+var nativeOriginalNumber = Number;
+$262.evalScript('let Number = function(value) { return 19; };');
+assert.sameValue(Number(1), 19);
+Number = nativeOriginalNumber;
+
 var expectedMatch = ['a'];
 expectedMatch.index = 0;
 expectedMatch.input = 'a';

@@ -2845,8 +2845,10 @@ partial class HIRMethodBuilder
                         }
                         var name = classDecl.Id?.Name ?? classScope.Name;
                         var binding = _currentScope.Bindings[name];
-                        hirStatement = new HIRExpressionStatement(new HIRAssignmentExpression(
-                            new Symbol(binding), Acornima.Operator.Assignment, decoratedClass));
+                        hirStatement = binding.IsScriptGlobalBinding
+                            ? new HIRVariableDeclaration(new Symbol(binding), decoratedClass)
+                            : new HIRExpressionStatement(new HIRAssignmentExpression(
+                                new Symbol(binding), Acornima.Operator.Assignment, decoratedClass));
                         return true;
                     }
 
@@ -2892,7 +2894,8 @@ partial class HIRMethodBuilder
                         && (hasInitialization
                             || !CanOmitEagerClassMetadata(classDecl)
                             || classDecl.SuperClass != null
-                            || cdClassBinding.EsModuleExports != null))
+                            || cdClassBinding.EsModuleExports != null
+                            || cdClassBinding.IsScriptGlobalBinding))
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
                         HIRExpression classConstructorValueExpr = hasInitialization
@@ -2906,8 +2909,11 @@ partial class HIRMethodBuilder
                             ? classNameBindingInsertIndex
                             : staticInitStatements.Count;
                         var classSymbol = new Symbol(cdClassBinding);
-                        staticInitStatements.Insert(bindingInsertionIndex, new HIRExpressionStatement(
-                            new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
+                        staticInitStatements.Insert(bindingInsertionIndex,
+                            cdClassBinding.IsScriptGlobalBinding
+                                ? new HIRVariableDeclaration(classSymbol, classConstructorValueExpr)
+                                : new HIRExpressionStatement(
+                                    new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
 
                         if (classDecl.Body.Body.OfType<PropertyDefinition>()
                             .Any(field => field.Static && field.Key is PrivateIdentifier))

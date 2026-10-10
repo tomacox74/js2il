@@ -118,6 +118,13 @@ agent, realm, and service container. Each realm owns its intrinsic graph,
 module state, and realm-created value caches; its agent owns one scheduling
 graph.
 
+Script-mode global lexical bindings and declared var/function names belong to the realm's
+`RuntimeExecutionContext`, not a process-wide table or a compiled module scope.
+They persist across host-compiled scripts in that realm, remain separate from
+global-object properties, and are cleared when the realm is disposed. The
+native Test262 script host retains collectible assemblies only for the fixture
+lifetime so globally declared functions remain callable until fixture cleanup.
+
 ## Intrinsic ownership
 
 ### Surface configuration

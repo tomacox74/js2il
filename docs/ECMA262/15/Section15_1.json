@@ -44,6 +44,18 @@
     "entries": [
       {
         "clause": "15.1",
+        "feature": "duplicate simple parameters and function declaration instantiation",
+        "status": "Supported with Limitations",
+        "test262Paths": [
+          "test/language/function-code/S10.2.1_A2.js",
+          "test/language/function-code/S10.2.1_A3.js",
+          "test/language/function-code/S10.2.1_A4_T1.js",
+          "test/language/function-code/S10.2.1_A4_T2.js"
+        ],
+        "notes": "Permitted duplicate simple parameter names resolve to the final argument position, including an omitted final argument. Hoisted function declarations replace like-named parameters and are not cleared by var declarations without initializers. Duplicate parameter lists avoid unsafe per-position primitive signature inference. Function-code conformance is 204 passing cases and 13 explicit eval exclusions."
+      },
+      {
+        "clause": "15.1",
         "feature": "simple parameter lists (<= 32 params)",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-parameter-lists",
