@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-07T23:44:52Z
+> Last generated (UTC): 2026-10-09T23:24:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -97,6 +97,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Array literal basic construction | Supported | [`ArrayLiteral.js`](../../../tests/Jroc.Tests/Literals/JavaScript/ArrayLiteral.js) |  | Covers creation, element access, and length property. See also verified output in Literals/GeneratorTests.ArrayLiteral.verified.txt. |
 | Array literal spread (copy elements) | Supported | [`Array_Spread_Copy.js`](../../../tests/Jroc.Tests/Literals/JavaScript/Array_Spread_Copy.js)<br>[`Array_LiteralSpread_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_LiteralSpread_Basic.js)<br>[`Array_LiteralSpread_Multiple.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_LiteralSpread_Multiple.js)<br>[`Array_LiteralSpread_Mixed.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_LiteralSpread_Mixed.js)<br>[`Array_LiteralSpread_Empty.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_LiteralSpread_Empty.js)<br>[`Array_LiteralSpread_Nested.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_LiteralSpread_Nested.js) |  | Spread elements in array literals are lowered by seeding any leading non-spread elements, then appending subsequent elements via Add or JavaScriptRuntime.Array.PushRange. PushRange consumes the iterator protocol (arrays, strings, typed arrays, user-defined iterables via Symbol.iterator; .NET IEnumerable fallback), enabling multiple spreads and mixed literal/spread patterns. |
+| Test262 array-expression conformance | Supported | `tests/Jroc.Test262.Tests/language/expressions/array/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/array/Test262BatchPort20260920Round5ExecutionTests.cs` | `test/language/expressions/array/S11.1.4_A1.4.js`<br>`test/language/expressions/array/S11.1.4_A2.js`<br>`test/language/expressions/array/spread-err-mult-err-itr-get-call.js`<br>`test/language/expressions/array/spread-obj-spread-order.js`<br>`test/language/expressions/array/spread-obj-symbol-property.js` | All 52 unique pinned array-expression cases have verified passing results, with no known-unsupported cases or unpublished results. Coverage includes elisions, nested arrays, iterator acquisition/step/value failures, unresolvable spread operands, and object spread inside array elements. The 38-case conformance expansion also passes all 76 default/strict variants. |
 
 ### 13.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-object-initializer))
 

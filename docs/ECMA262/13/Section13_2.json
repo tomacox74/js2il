@@ -388,6 +388,24 @@
         "notes": "Spread elements in array literals are lowered by seeding any leading non-spread elements, then appending subsequent elements via Add or JavaScriptRuntime.Array.PushRange. PushRange consumes the iterator protocol (arrays, strings, typed arrays, user-defined iterables via Symbol.iterator; .NET IEnumerable fallback), enabling multiple spreads and mixed literal/spread patterns."
       },
       {
+        "clause": "13.2.4.1",
+        "feature": "Test262 array-expression conformance",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-arrayaccumulation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/array/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/array/Test262BatchPort20260920Round5ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/array/S11.1.4_A1.4.js",
+          "test/language/expressions/array/S11.1.4_A2.js",
+          "test/language/expressions/array/spread-err-mult-err-itr-get-call.js",
+          "test/language/expressions/array/spread-obj-spread-order.js",
+          "test/language/expressions/array/spread-obj-symbol-property.js"
+        ],
+        "notes": "All 52 unique pinned array-expression cases have verified passing results, with no known-unsupported cases or unpublished results. Coverage includes elisions, nested arrays, iterator acquisition/step/value failures, unresolvable spread operands, and object spread inside array elements. The 38-case conformance expansion also passes all 76 default/strict variants."
+      },
+      {
         "clause": "13.2.5",
         "feature": "Spread syntax (argument lists)",
         "status": "Supported",
