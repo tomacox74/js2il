@@ -569,7 +569,9 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (parameterNames.Count == 0)
+        if (parameterNames.Count == 0
+            || parameterNames.Distinct(StringComparer.Ordinal).Count() != parameterNames.Count
+            || scope.Parent?.UsesScriptSemantics == true)
         {
             return false;
         }

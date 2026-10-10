@@ -828,6 +828,7 @@ public sealed partial class HIRToLIRLowerer
             // undefined `this` binding is observable.
             // Non-function bindings also use runtime dispatch (e.g., locals/consts holding closures).
             if (symbol.Kind != BindingKind.Function
+                || symbol.BindingInfo.IsScriptGlobalBinding
                 || (callableId?.HasRestrictedFunctionProperties == true
                     && (callableId.Semantics.UsesThis
                         || callableId.Semantics.NestedArrowUsesThis))

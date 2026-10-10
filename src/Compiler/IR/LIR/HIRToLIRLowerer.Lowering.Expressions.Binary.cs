@@ -794,6 +794,23 @@ public sealed partial class HIRToLIRLowerer
         var lirInstructions = _methodBodyIR.Instructions;
 
         var binding = symbol.BindingInfo;
+        if (binding.IsScriptGlobalBinding)
+        {
+            if (binding.Kind == BindingKind.Var)
+            {
+                return TryStoreToBinding(binding, value, out _);
+            }
+            var name = CreateTempVariable();
+            lirInstructions.Add(new LIRConstString(binding.Name, name));
+            DefineTempStorage(name, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            var initialized = CreateTempVariable();
+            lirInstructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.InitializeGlobalLexicalBinding),
+                new[] { name, EnsureObject(value) }, initialized));
+            DefineTempStorage(initialized, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
         ForgetNumericRefinement(binding);
         var isDestructuredParameter = binding.DeclaringScope.DestructuredParameters.Contains(binding.Name);
         if (isDestructuredParameter && binding.IsStableType && binding.ClrType == typeof(double))

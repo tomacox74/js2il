@@ -83,6 +83,7 @@ public class ModuleLoader
         var entryPaths = new List<string>(entries.Count);
         var entryOverrides = new Dictionary<string, string?>(PathComparer);
         var moduleGoalEntries = new HashSet<string>(PathComparer);
+        var scriptGoalEntries = new HashSet<string>(PathComparer);
         var originalPaths = new Dictionary<string, string>(PathComparer);
         foreach (var entry in entries)
         {
@@ -101,6 +102,15 @@ public class ModuleLoader
             }
 
             originalPaths.Add(path, entry.EntryFilePath);
+            if (entry.ParseAsScript && entry.ParseAsModule)
+            {
+                _ux.WriteLineError("Error: An entry cannot use both the Script and Module parse goals.");
+                return null;
+            }
+            if (entry.ParseAsScript)
+            {
+                scriptGoalEntries.Add(path);
+            }
             if (entry.ParseAsModule)
             {
                 moduleGoalEntries.Add(path);
@@ -180,6 +190,7 @@ public class ModuleLoader
                 entryOverride,
                 requestedAliasModuleId,
                 moduleGoalEntries.Contains(currentPath),
+                scriptGoalEntries.Contains(currentPath),
                 unsupportedSiteRecorder,
                 out var module);
             if (module is null)
@@ -365,8 +376,10 @@ public class ModuleLoader
         return true;
     }
 
-    private Acornima.Ast.Program ParseModuleSource(string source, string sourceFile, bool parseAsModule)
-        => parseAsModule
+    private Acornima.Ast.Program ParseModuleSource(string source, string sourceFile, bool parseAsModule, bool parseAsScript)
+        => parseAsScript
+            ? _parser.ParseJavaScriptScript(source, sourceFile)
+            : parseAsModule
             ? _parser.ParseJavaScriptModule(source, sourceFile)
             : _parser.ParseJavaScript(source, sourceFile);
 
@@ -377,10 +390,11 @@ public class ModuleLoader
         string? rootModuleIdOverride,
         string? requestedAliasModuleId,
         bool parseAsModule,
+        bool parseAsScript,
         Action<SourceSpan, string>? unsupportedSiteRecorder,
         out ModuleDefinition? module)
     {
-        parseAsModule |= string.Equals(Path.GetExtension(modulePath), ".mjs", StringComparison.OrdinalIgnoreCase);
+        parseAsModule |= !parseAsScript && string.Equals(Path.GetExtension(modulePath), ".mjs", StringComparison.OrdinalIgnoreCase);
         string jsSource;
         try
         {
@@ -414,7 +428,7 @@ public class ModuleLoader
 
         try
         {
-            ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule);
+            ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule, parseAsScript);
         }
         catch (Exception ex)
         {
@@ -428,6 +442,7 @@ public class ModuleLoader
             ast,
             modulePath,
             rootModulePath,
+            resolveCommonJsRequests: !parseAsScript,
             out var moduleDependencies,
             out var requestRewrittenSource,
             out var requestRewriteErrors,
@@ -445,7 +460,7 @@ public class ModuleLoader
             jsSource = requestRewrittenSource;
             try
             {
-                ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule);
+                ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule, parseAsScript);
             }
             catch (Exception ex)
             {
@@ -493,7 +508,7 @@ public class ModuleLoader
             jsSource = rewrittenSource;
             try
             {
-                ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule);
+                ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule, parseAsScript);
             }
             catch (Exception ex)
             {
@@ -572,7 +587,8 @@ public class ModuleLoader
             IsPackageModule = isPackageModule,
             Ast = ast,
             ModuleRecord = moduleRecord,
-            UsesNativeStaticEsm = usesNativeStaticEsm
+            UsesNativeStaticEsm = usesNativeStaticEsm,
+            UsesScriptSemantics = parseAsScript
         };
 
         if (isPackageModule
@@ -792,6 +808,7 @@ function __jroc_esm_export(name, getter) {
         Acornima.Ast.Program ast,
         string modulePath,
         string rootModulePath,
+        bool resolveCommonJsRequests,
         out List<ModuleDependency> dependencies,
         out string rewrittenSource,
         out List<string> errors,
@@ -873,7 +890,8 @@ function __jroc_esm_export(name, getter) {
                     break;
 
                 case CallExpression callExpression
-                    when callExpression.Callee is Identifier { Name: "require" }
+                    when resolveCommonJsRequests
+                         && callExpression.Callee is Identifier { Name: "require" }
                          && callExpression.Arguments.Count == 1
                          && callExpression.Arguments[0] is StringLiteral sourceLiteral:
                     HandleRequest(sourceLiteral, ModuleResolutionMode.Require, $"require('{sourceLiteral.Value}')");

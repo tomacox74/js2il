@@ -213,6 +213,28 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
 
     var source = Encoding.UTF8.GetString(bytes);
     var metadata = Metadata.Parse(source);
+    if (metadata.NegativePhase == "parse" && metadata.NegativeType == "SyntaxError")
+    {
+        var prepared = Test262SharedAssertHarness.PrepareEntryScript(
+            variant == "strict" ? "\"use strict\";\n" + source : source);
+        var parser = new Jroc.Services.JavaScriptParser();
+        try
+        {
+            if (metadata.Flags.Contains("module", StringComparer.Ordinal))
+            {
+                parser.ParseJavaScriptModule(prepared, sourcePath);
+            }
+            else
+            {
+                parser.ParseJavaScriptScript(prepared, sourcePath);
+            }
+            return Result("fail", "product-failure", "parse", "Expected a SyntaxError, but parsing succeeded.");
+        }
+        catch (Exception error) when (error.InnerException is Acornima.ParseErrorException)
+        {
+            return Result("pass", null, "parse", "", "SyntaxError");
+        }
+    }
     if (metadata.NegativePhase is "parse" or "early" or "resolution")
     {
         return Result("unsupported", "harness-gap", metadata.NegativePhase,

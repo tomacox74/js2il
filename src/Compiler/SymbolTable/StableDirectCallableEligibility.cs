@@ -38,7 +38,7 @@ internal static class StableDirectCallableEligibility
         }
 
         initializer = candidateInitializer;
-        if (binding.HasNonInitializationWrite)
+        if (binding.HasNonInitializationWrite || binding.IsScriptGlobalBinding)
         {
             failureReason = CallableMaterializationReason.Reassigned;
             return false;

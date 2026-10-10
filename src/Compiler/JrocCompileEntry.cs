@@ -4,4 +4,5 @@ namespace Jroc;
 public sealed record JrocCompileEntry(string EntryFilePath, string? RootModuleIdOverride = null)
 {
     public bool ParseAsModule { get; init; }
+    public bool ParseAsScript { get; init; }
 }

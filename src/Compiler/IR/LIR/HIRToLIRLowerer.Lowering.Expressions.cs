@@ -894,6 +894,34 @@ public sealed partial class HIRToLIRLowerer
                 }
                 var activeWithBindingProbe = EmitWithBindingProbe(binding.Name);
 
+                if (binding.IsScriptGlobalBinding)
+                {
+                    if (activeWithBindingProbe is { } probe)
+                    {
+                        resultTempVar = EmitResolveActiveWithGlobalBinding(probe);
+                        return true;
+                    }
+                    var name = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, name));
+                    DefineTempStorage(name, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    resultTempVar = CreateTempVariable();
+                    if (MayUseBoundWithEnvironmentForIdentifier(binding))
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                            nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
+                            new[] { name }, resultTempVar));
+                    }
+                    else
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue),
+                            new[] { name }, resultTempVar));
+                    }
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
                 if (TryEmitCompileTimeConstant(binding, out resultTempVar))
                 {
                     resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);

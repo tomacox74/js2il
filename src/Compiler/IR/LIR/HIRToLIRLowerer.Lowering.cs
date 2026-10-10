@@ -99,7 +99,13 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    _activeWithObjects.Push(EnsureObject(withObject));
+                    var withObjectValue = EnsureObject(withObject);
+                    if (GetTempVariableSlot(withObjectValue) < 0)
+                    {
+                        SetTempVariableSlot(withObjectValue, CreateAnonymousVariableSlot(
+                            "$with_object", GetTempStorage(withObjectValue)));
+                    }
+                    _activeWithObjects.Push(withObjectValue);
                     try
                     {
                         return TryLowerStatement(withStmt.Body);

@@ -100,12 +100,12 @@ public sealed partial class HIRToLIRLowerer
         TempVariable activeScopeTemp = default;
         ScopeId activeScopeId = default;
         FieldId activeFieldId = default;
-        var isActiveScopeStored = updateBinding.Kind != BindingKind.Global
+        var isActiveScopeStored = updateBinding.Kind != BindingKind.Global && !updateBinding.IsScriptGlobalBinding
             && TryGetActiveScopeFieldStorage(updateBinding, out activeScopeTemp, out activeScopeId, out activeFieldId);
-        var updateStorage = isActiveScopeStored || updateBinding.Kind == BindingKind.Global
+        var updateStorage = isActiveScopeStored || updateBinding.Kind == BindingKind.Global || updateBinding.IsScriptGlobalBinding
             ? null
             : _environmentLayout?.GetStorage(updateBinding);
-        var isEnvironmentStored = updateBinding.Kind != BindingKind.Global
+        var isEnvironmentStored = updateBinding.Kind != BindingKind.Global && !updateBinding.IsScriptGlobalBinding
             && (isActiveScopeStored || (updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal));
 
         // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
@@ -1589,7 +1589,7 @@ public sealed partial class HIRToLIRLowerer
 
         var lirInstructions = _methodBodyIR.Instructions;
 
-        if (binding.Kind == BindingKind.Global)
+        if (binding.Kind == BindingKind.Global || binding.IsScriptGlobalBinding)
         {
             var nameTemp = CreateTempVariable();
             lirInstructions.Add(new LIRConstString(binding.Name, nameTemp));
@@ -2316,7 +2316,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Store the value to the appropriate location
-        if (binding.Kind == BindingKind.Global)
+        if (binding.Kind == BindingKind.Global || binding.IsScriptGlobalBinding)
         {
             return TryStoreToBinding(binding, valueToStore, out resultTempVar);
         }

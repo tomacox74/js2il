@@ -11,6 +11,12 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
     {
+        if (newExpr.Callee is HIRVariableExpression scriptConstructor
+            && scriptConstructor.Name.BindingInfo.IsScriptGlobalBinding)
+        {
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+        }
+
         if (!newExpr.IsRegExpLiteral
             && newExpr.Callee is HIRVariableExpression
             {

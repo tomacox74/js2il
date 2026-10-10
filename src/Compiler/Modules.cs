@@ -73,6 +73,7 @@ public sealed class ModuleDefinition
     /// (<c>export *</c>) export entries.
     /// </summary>
     public bool UsesNativeStaticEsm { get; set; }
+    public bool UsesScriptSemantics { get; set; }
 
     public SymbolTable? SymbolTable { get; set; }
 
