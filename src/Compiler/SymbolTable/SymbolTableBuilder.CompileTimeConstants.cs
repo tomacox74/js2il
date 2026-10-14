@@ -14,7 +14,8 @@ public partial class SymbolTableBuilder
     {
         foreach (var binding in scope.Bindings.Values)
         {
-            if (binding.Kind != BindingKind.Const
+            if (binding.IsScriptGlobalBinding
+                || binding.Kind != BindingKind.Const
                 || !binding.IsCaptured
                 || binding.HasNonInitializationWrite
                 || HasNonInitializationWrite(scope, binding, nodeScopes)

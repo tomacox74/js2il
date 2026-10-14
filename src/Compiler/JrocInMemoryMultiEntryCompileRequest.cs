@@ -7,6 +7,7 @@ public sealed record JrocInMemoryEntrySource(
     string? RootModuleIdOverride = null)
 {
     public bool ParseAsModule { get; init; }
+    public bool ParseAsScript { get; init; }
 }
 
 /// <summary>Compiles several independent entry sources into one in-memory assembly.</summary>

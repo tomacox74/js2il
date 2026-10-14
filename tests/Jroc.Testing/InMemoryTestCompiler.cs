@@ -22,7 +22,8 @@ public static class InMemoryTestCompiler
         HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
         int timeoutMs = 30000,
         Action<CompilationCoverageReport>? onCompilationCoverage = null,
-        bool parseAsModule = false)
+        bool parseAsModule = false,
+        bool parseAsScript = false)
     {
         if (parseAsModule && executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 })
         {
@@ -125,7 +126,8 @@ public static class InMemoryTestCompiler
                 EmitPdb = true,
                 AssumeUnmodifiedHostGlobals = true,
                 HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty,
-                ParseAsModule = parseAsModule
+                ParseAsModule = parseAsModule,
+                ParseAsScript = parseAsScript
             };
             if (onCompilationCoverage is null)
             {

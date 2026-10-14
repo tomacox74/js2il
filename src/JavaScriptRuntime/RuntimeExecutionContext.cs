@@ -44,6 +44,10 @@ internal sealed class RuntimeExecutionContext
     }
 
     internal RuntimeRealm Realm { get; }
+    internal Dictionary<string, ScriptLexicalBinding> GlobalLexicalBindings { get; } =
+        new(StringComparer.Ordinal);
+    internal HashSet<string> GlobalVarDeclaredNames { get; } =
+        new(StringComparer.Ordinal);
 
     internal RuntimeAgent Agent => Realm.Agent;
 

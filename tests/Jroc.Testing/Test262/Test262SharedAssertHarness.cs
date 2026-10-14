@@ -36,7 +36,8 @@ public static class Test262SharedAssertHarness
                     hostRuntimeIntrinsics: hostRuntimeIntrinsics,
                     timeoutMs: timeoutMs,
                     onCompilationCoverage: onCompilationCoverage,
-                    parseAsModule: metadata.Module));
+                    parseAsModule: metadata.Module,
+                    parseAsScript: !metadata.Module));
     }
 
     public static InMemoryTestExecutionResult ExecuteCompiledEntry(
@@ -73,7 +74,8 @@ public static class Test262SharedAssertHarness
     {
         var completion = new Test262AsyncCompletion(metadata.Async);
         using var agents = new Test262AgentHelpers();
-        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes, completion, agents);
+        using var scripts = new Test262ScriptHelpers();
+        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes, completion, agents, scripts);
         var expectsRuntimeException = allowUnhandledException
             && string.Equals(metadata.NegativePhase, "runtime", StringComparison.OrdinalIgnoreCase);
         var result = execute(hostRuntimeIntrinsics);

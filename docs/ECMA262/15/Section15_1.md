@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-10-10T03:30:16Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,25 +22,26 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 15.1 ([tc39.es](https://tc39.es/ecma262/#sec-parameter-lists))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| object destructuring in parameters | Supported | [`Function_ParameterDestructuring_Object.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_ParameterDestructuring_Object.js)<br>[`ArrowFunction_ParameterDestructuring_Object.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js) |  |
-| rest parameters (...args) | Supported | [`Function_RestParameters_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_Basic.js)<br>[`Function_RestParameters_Empty.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_Empty.js)<br>[`Function_RestParameters_WithNamedParams.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_WithNamedParams.js)<br>[`Function_RestParameters_MultipleNamed.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_MultipleNamed.js)<br>[`ArrowFunction_RestParameters_Basic.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_Basic.js)<br>[`ArrowFunction_RestParameters_WithNamedParams.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_WithNamedParams.js)<br>[`array-pattern.js`](../../../tests/Jroc.Test262.Tests/language/rest-parameters/JavaScript/array-pattern.js)<br>[`object-pattern.js`](../../../tests/Jroc.Test262.Tests/language/rest-parameters/JavaScript/object-pattern.js) | Rest parameters (...args) are fully supported in function declarations, function expressions, and arrow functions. Remaining arguments are collected into a JavaScript Array and are available for normal array operations and iteration, including the checked test262 array/object binding-pattern forms. |
-| simple parameter lists (<= 32 params) | Supported with Limitations | [`Function_GlobalFunctionWithParameter.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionWithParameter.js)<br>[`Function_GlobalFunctionWithMultipleParameters.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionWithMultipleParameters.js)<br>[`ArrowFunction_GlobalFunctionWithMultipleParameters.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js)<br>[`Function_MaxParameters_16.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_MaxParameters_16.js)<br>[`Function_MaxParameters_32_CallViaVariable.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_MaxParameters_32_CallViaVariable.js)<br>[`ArrowFunction_MaxParameters_32.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_MaxParameters_32.js)<br>[`Classes_ClassMethod_MaxParameters_32.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassMethod_MaxParameters_32.js) | JROC supports simple parameter lists but enforces a current limit of 32 parameters (validator). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| duplicate simple parameters and function declaration instantiation | Supported with Limitations |  | `test/language/function-code/S10.2.1_A2.js`<br>`test/language/function-code/S10.2.1_A3.js`<br>`test/language/function-code/S10.2.1_A4_T1.js`<br>`test/language/function-code/S10.2.1_A4_T2.js` | Permitted duplicate simple parameter names resolve to the final argument position, including an omitted final argument. Hoisted function declarations replace like-named parameters and are not cleared by var declarations without initializers. Duplicate parameter lists avoid unsafe per-position primitive signature inference. Function-code conformance is 204 passing cases and 13 explicit eval exclusions. |
+| object destructuring in parameters | Supported | [`Function_ParameterDestructuring_Object.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_ParameterDestructuring_Object.js)<br>[`ArrowFunction_ParameterDestructuring_Object.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js) |  |  |
+| rest parameters (...args) | Supported | [`Function_RestParameters_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_Basic.js)<br>[`Function_RestParameters_Empty.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_Empty.js)<br>[`Function_RestParameters_WithNamedParams.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_WithNamedParams.js)<br>[`Function_RestParameters_MultipleNamed.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_MultipleNamed.js)<br>[`ArrowFunction_RestParameters_Basic.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_Basic.js)<br>[`ArrowFunction_RestParameters_WithNamedParams.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_WithNamedParams.js) |  | Rest parameters (...args) are fully supported in function declarations, function expressions, and arrow functions. Remaining arguments are collected into a JavaScript Array and are available for normal array operations and iteration. |
+| simple parameter lists (<= 32 params) | Supported with Limitations | [`Function_GlobalFunctionWithParameter.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionWithParameter.js)<br>[`Function_GlobalFunctionWithMultipleParameters.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionWithMultipleParameters.js)<br>[`ArrowFunction_GlobalFunctionWithMultipleParameters.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js)<br>[`Function_MaxParameters_16.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_MaxParameters_16.js)<br>[`Function_MaxParameters_32_CallViaVariable.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_MaxParameters_32_CallViaVariable.js)<br>[`ArrowFunction_MaxParameters_32.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_MaxParameters_32.js)<br>[`Classes_ClassMethod_MaxParameters_32.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassMethod_MaxParameters_32.js) |  | JROC supports simple parameter lists but enforces a current limit of 32 parameters (validator). |
 
 ### 15.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-containsexpression))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| default parameter expressions (can reference earlier params) | Supported | [`Function_DefaultParameterExpression.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_DefaultParameterExpression.js)<br>[`ArrowFunction_DefaultParameterExpression.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js)<br>[`dflt-params-trailing-comma.js`](../../../tests/Jroc.Test262.Tests/language/expressions/arrow-function/JavaScript/dflt-params-trailing-comma.js) | The checked test262 slice also covers trailing-comma handling around defaulted parameters and the resulting `length` metadata. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| default parameter expressions (can reference earlier params) | Supported | [`Function_DefaultParameterExpression.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_DefaultParameterExpression.js)<br>[`ArrowFunction_DefaultParameterExpression.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js) |  |  |
 
 ### 15.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-hasinitializer))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| default parameter values | Supported | [`Function_DefaultParameterValue.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_DefaultParameterValue.js)<br>[`ArrowFunction_DefaultParameterValue.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| default parameter values | Supported | [`Function_DefaultParameterValue.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_DefaultParameterValue.js)<br>[`ArrowFunction_DefaultParameterValue.js`](../../../tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js) |  |  |
 

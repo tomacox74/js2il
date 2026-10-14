@@ -32,7 +32,8 @@ Common request options:
 | `FileSystem` | Supply a file-system abstraction for source/dependency resolution. |
 | `AssemblyName` | Assembly identity and artifact basename; defaults to the entry filename without its extension. |
 | `RootModuleIdOverride` | Override the root module's logical ID. |
-| `ParseAsModule` | Parse the entry with the Module goal, including sources without import/export syntax. Defaults to `false`; `.mjs` files always use the Module goal. |
+| `ParseAsModule` | Parse the entry with the Module goal, including sources without import/export syntax. Defaults to `false`; `.mjs` files use the Module goal unless `ParseAsScript` is selected. |
+| `ParseAsScript` | Opt into the standard Script goal and realm-wide global declaration semantics. Rejects top-level return and import/export syntax. Defaults to `false`; cannot be combined with `ParseAsModule`. Also available per multi-entry source. |
 | `EmitPdb` | Include Portable PDB bytes with original source locations. |
 | `Verbose` / `DiagnosticFilePath` | Enable verbose compiler diagnostics or capture diagnostics to a file. |
 | `AnalyzeUnused` | Enable unused analysis diagnostics. |
@@ -43,6 +44,15 @@ When `SourceText` is present, it overlays the entry file at `EntryFilePath`;
 other dependencies are resolved from the supplied file system or the default
 file system. In-memory output does not mean all source dependencies are
 automatically available in memory.
+
+The default entry mode retains Node/CommonJS wrapper behavior. With
+`ParseAsScript`, top-level `var` and function declarations use global-object
+bindings, while `let`, `const`, and class declarations use realm-owned lexical
+bindings that are not object properties. Declaration collisions and
+non-extensible/non-configurable global properties are checked before the body
+executes. Lexical bindings retain their temporal dead zone and const mutability
+rules across host-compiled scripts in the same realm. This option does not enable
+JavaScript `eval` or expose Script Record completion values.
 
 Global function and constructor calls normally check the realm's current
 binding before taking an intrinsic fast path. `AssumeUnmodifiedHostGlobals`

@@ -9,12 +9,18 @@ public class JavaScriptParser : IParser
     private readonly Parser _scriptParser;
     private readonly Parser _topLevelAwaitParser;
     private readonly Parser _moduleParser;
+    private readonly Parser _standardScriptParser;
 
     public JavaScriptParser()
     {
         _scriptParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: false));
         _topLevelAwaitParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: true));
         _moduleParser = new Parser(new ParserOptions
+        {
+            EcmaVersion = EcmaVersion.Latest,
+            ExperimentalESFeatures = ExperimentalESFeatures.Decorators
+        });
+        _standardScriptParser = new Parser(new ParserOptions
         {
             EcmaVersion = EcmaVersion.Latest,
             ExperimentalESFeatures = ExperimentalESFeatures.Decorators
@@ -61,6 +67,18 @@ public class JavaScriptParser : IParser
         catch (ParseErrorException ex)
         {
             throw new Exception($"Failed to parse JavaScript module: {ex.Message}", ex);
+        }
+    }
+
+    public Acornima.Ast.Program ParseJavaScriptScript(string source, string sourceFile)
+    {
+        try
+        {
+            return ClassAutoAccessorNormalizer.Normalize(_standardScriptParser.ParseScript(source, sourceFile));
+        }
+        catch (ParseErrorException ex)
+        {
+            throw new Exception($"Failed to parse JavaScript: SyntaxError: {ex.Message}", ex);
         }
     }
 

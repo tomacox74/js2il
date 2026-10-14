@@ -23,6 +23,12 @@ public class BindingInfo
     public BindingKind Kind { get; }
     public Scope DeclaringScope { get; }
     public Node DeclarationNode { get; }
+    public bool IsSynthetic { get; init; }
+    public bool HasHoistedFunctionDeclaration { get; set; }
+    public bool IsScriptGlobalBinding
+        => DeclaringScope.UsesScriptSemantics
+           && !IsSynthetic
+           && !ReferenceEquals(DeclarationNode, DeclaringScope.AstNode);
     // Optional: CLR runtime type known via static analysis (e.g., const fs = require('fs'))
     public Type? ClrType
     {

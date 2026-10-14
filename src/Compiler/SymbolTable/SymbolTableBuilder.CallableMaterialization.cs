@@ -75,6 +75,10 @@ public partial class SymbolTableBuilder
 
                 var state = new CallableAnalysisState(binding, initializer);
                 states.Add(binding, state);
+                if (binding.IsScriptGlobalBinding)
+                {
+                    state.Reasons |= CallableMaterializationReason.Reassigned;
+                }
 
                 if (IsWithinExportDeclaration(initializer, parentMap))
                 {

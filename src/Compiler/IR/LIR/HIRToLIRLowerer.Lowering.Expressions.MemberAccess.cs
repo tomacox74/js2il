@@ -626,7 +626,7 @@ public sealed partial class HIRToLIRLowerer
     {
         result = default;
 
-        if (binding.Kind == BindingKind.Global)
+        if (binding.Kind == BindingKind.Global || binding.IsScriptGlobalBinding)
         {
             var nameTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, nameTemp));

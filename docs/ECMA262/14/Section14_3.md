@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-15T07:25:41Z
+> Last generated (UTC): 2026-10-10T03:30:16Z
 
 JROC supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
 
@@ -57,6 +57,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | declaration destructuring conformance expansion | Supported | `tests/Jroc.Test262.Tests/language/statements/const/ConstDestructuringConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/let/LetDestructuringConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/variable/VariableDestructuringConformanceBatchExecutionTests.cs` | `test/language/statements/const/dstr/ary-ptrn-elem-id-iter-val.js`<br>`test/language/statements/let/dstr/obj-ptrn-prop-id-init.js`<br>`test/language/statements/variable/dstr/ary-ptrn-rest-id.js` | The native Test262 harness verifies 179 additional positive declaration-binding fixtures: 75 `const`, 87 `let`, and 17 `var` cases. The coverage exercises iterator acquisition, stepping, closing, nested array and object patterns, elisions, rest elements, defaults, inferred function names, object rest, and abrupt completion. All 358 strict/non-strict catalog variants pass under one current compiler provenance. |
+| TypedArray destructuring with resizable backing buffers | Supported |  | `test/language/destructuring/binding/typedarray-backed-by-resizable-buffer.js` | Pinned native coverage verifies fixed-length and length-tracking TypedArray destructuring before and after buffer shrink/growth, including TypeError for out-of-bounds views and zero-initialized regrown memory. All 19 language/destructuring cases have verified passing results. |
 
 ### 14.3.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-destructuring-binding-patterns-runtime-semantics-propertybindinginitialization))
 

@@ -261,7 +261,7 @@ public class EnvironmentLayoutBuilder
         // Parameters are stored as a HashSet on Scope; do NOT enumerate that for indices.
         // Use the AST parameter list ordering.
         var parameters = GetOrderedParameterNames(scope);
-        for (int i = 0; i < parameters.Count; i++)
+        for (int i = parameters.Count - 1; i >= 0; i--)
         {
             if (parameters[i] == name)
             {

@@ -27,6 +27,12 @@ has a separate assembly. Logical entry names avoid CLR identifier collisions,
 while the original fixture paths remain the source paths for debugging.
 Fixtures marked `flags: [module]` explicitly select the Module parse goal
 without changing their paths, even when their source has no import or export declarations.
+Other fixtures select the standard Script goal, rejecting top-level return and
+import/export declarations and instantiating realm-wide global declarations.
+The native `$262.evalScript` helper compiles additional global scripts into
+collectible assemblies in the current realm; it does not implement JavaScript
+direct or indirect `eval`. Script completion values are not currently exposed
+by this host helper.
 The assembly is loaded once per folder and unloaded when the xUnit execution
 run ends; each case executes only its own entry with fresh runtime services,
 test262 helpers, async completion, and output capture.
@@ -46,8 +52,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
-| Language syntax and semantics | 17,699 | 178 | 5,770 | 23,647 | **74.85%** |
-| **Total** | 34,856 | 191 | 13,198 | 48,245 | **72.25%** |
+| Language syntax and semantics | 17,724 | 192 | 5,731 | 23,647 | **74.95%** |
+| **Total** | 34,881 | 205 | 13,159 | 48,245 | **72.30%** |
 
 ## Language Areas
 
@@ -58,14 +64,14 @@ bounded worker cleanup.
 | `block-scope` | 144 | 1 | 0 | 145 | **99.31%** |
 | `comments` | 46 | 6 | 0 | 52 | **88.46%** |
 | `computed-property-names` | 48 | 0 | 0 | 48 | **100.00%** |
-| `destructuring` | 18 | 0 | 1 | 19 | **94.74%** |
+| `destructuring` | 19 | 0 | 0 | 19 | **100.00%** |
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
 | `expressions` | 8,945 | 134 | 1,959 | 11,038 | **81.04%** |
-| `function-code` | 196 | 0 | 21 | 217 | **90.32%** |
+| `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
-| `global-code` | 25 | 0 | 17 | 42 | **59.52%** |
+| `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
 | `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
 | `identifiers` | 152 | 0 | 116 | 268 | **56.72%** |
 | `import` | 10 | 0 | 117 | 127 | **7.87%** |

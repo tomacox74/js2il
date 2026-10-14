@@ -73,6 +73,14 @@ namespace JavaScriptRuntime
 
         public static object? GetGlobalBindingValue(string name)
         {
+            if (TryGetGlobalLexicalBinding(name, out var lexical) && lexical is not null)
+            {
+                if (!lexical.Initialized)
+                {
+                    throw new ReferenceError($"Cannot access '{name}' before initialization");
+                }
+                return lexical.Value;
+            }
             if (!HasGlobalBinding(name))
             {
                 throw new ReferenceError($"{name} is not defined");
@@ -83,6 +91,19 @@ namespace JavaScriptRuntime
 
         public static object? SetGlobalBindingValue(string name, object? value, bool strict)
         {
+            if (TryGetGlobalLexicalBinding(name, out var lexical) && lexical is not null)
+            {
+                if (!lexical.Initialized)
+                {
+                    throw new ReferenceError($"Cannot access '{name}' before initialization");
+                }
+                if (lexical.Immutable)
+                {
+                    throw new TypeError("Assignment to constant variable.");
+                }
+                lexical.Value = value;
+                return value;
+            }
             if (strict && !HasGlobalBinding(name))
             {
                 throw new ReferenceError($"{name} is not defined");
@@ -94,7 +115,7 @@ namespace JavaScriptRuntime
         public static void EnsureGlobalVarBinding(string name)
         {
             var global = GlobalThis.globalThis;
-            if (PropertyDescriptorStore.TryGetOwn(global, name, out _))
+            if (TryGetOwnPropertyDescriptor(global, name, out _))
             {
                 return;
             }
@@ -109,16 +130,29 @@ namespace JavaScriptRuntime
 
         public static bool DeleteGlobalBinding(string name)
         {
+            if (TryGetGlobalLexicalBinding(name, out _))
+            {
+                return false;
+            }
             if (!HasGlobalBinding(name))
             {
                 return true;
             }
 
-            return DeleteProperty(GlobalThis.globalThis, name);
+            var deleted = DeletePropertyNonStrict(GlobalThis.globalThis, name);
+            if (deleted)
+            {
+                RuntimeExecutionContext.CurrentOrOverride?.GlobalVarDeclaredNames.Remove(name);
+            }
+            return deleted;
         }
 
         public static string TypeOfGlobalBinding(string name)
         {
+            if (TryGetGlobalLexicalBinding(name, out _))
+            {
+                return TypeUtilities.Typeof(GetGlobalBindingValue(name));
+            }
             if (!HasGlobalBinding(name))
             {
                 return "undefined";

@@ -49,6 +49,7 @@ test('screening host publishes its capability matrix', () => {
   assert.ok(capabilities.includes.includes('atomicsHelper.js'));
   assert.ok(capabilities.includes.includes('asyncHelpers.js'));
   assert.equal(capabilities.flags.module, 'static-syntax-only');
+  assert.equal(capabilities.negative.parse, 'SyntaxError');
 });
 
 function run(args, cwd) {
@@ -233,7 +234,11 @@ test('screening host streams one importable JSON result per stdout line', async 
     assert.deepEqual(outcomeFor('module-fixture.js'), ['pass']);
     assert.deepEqual(outcomeFor('module-goal-only.js'), ['unsupported']);
     assert.deepEqual(outcomeFor('module-missing-dependency.js'), ['unsupported']);
-    assert.deepEqual(outcomeFor('parse-negative.js'), ['unsupported', 'unsupported']);
+    assert.deepEqual(outcomeFor('parse-negative.js'), ['pass', 'pass']);
+    for (const result of outcomes.filter((value) => value.path.endsWith('parse-negative.js'))) {
+      assert.equal(result.phase, 'parse');
+      assert.equal(result.observed_error_type, 'SyntaxError');
+    }
 
     const report = run(['report', '--run-id', runId], cwd);
     assert.equal(report.counts.attempts, 13);
@@ -244,6 +249,7 @@ test('screening host streams one importable JSON result per stdout line', async 
       `test/${area}/agent-fixture.js`,
       `test/${area}/async-fixture.js`,
       `test/${area}/module-fixture.js`,
+      `test/${area}/parse-negative.js`,
     ]);
     assert.ok(report.failure_clusters['harness-gap'].length >= 2);
     assert.ok(report.failure_clusters['infrastructure-error'].length >= 2);

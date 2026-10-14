@@ -11,6 +11,29 @@ public sealed partial class HIRToLIRLowerer
 {
     private void EmitGlobalVarBindingInitializationIfNeeded()
     {
+        if (_scope?.UsesScriptSemantics == true)
+        {
+            var bindings = _scope.Bindings.Values.Where(binding => binding.IsScriptGlobalBinding).ToArray();
+            var arguments = new List<TempVariable>();
+            foreach (var names in new[]
+            {
+                bindings.Where(binding => binding.Kind is BindingKind.Let or BindingKind.Const),
+                bindings.Where(binding => binding.Kind == BindingKind.Const),
+                bindings.Where(binding => binding.Kind == BindingKind.Function || binding.HasHoistedFunctionDeclaration),
+                bindings.Where(binding => binding.Kind == BindingKind.Var)
+            })
+            {
+                var argument = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(string.Join('\0', names.Select(binding => binding.Name)), argument));
+                DefineTempStorage(argument, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                arguments.Add(argument);
+            }
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.InstantiateGlobalDeclarations),
+                arguments));
+            return;
+        }
         if (_scope == null || _scope.Kind != ScopeKind.Global || !_scope.UsesGlobalThisValue)
         {
             return;
@@ -118,6 +141,46 @@ public sealed partial class HIRToLIRLowerer
         // Use BindingInfo as key for correct shadowing behavior.
         var binding = exprStmt.Name.BindingInfo;
 
+        if (binding.IsScriptGlobalBinding
+            && (binding.Kind != BindingKind.Var || exprStmt.Initializer is null))
+        {
+            if (exprStmt.Initializer is null && binding.Kind is BindingKind.Var or BindingKind.Function)
+            {
+                return true;
+            }
+            var name = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, name));
+            DefineTempStorage(name, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            TempVariable initialValue;
+            if (exprStmt.Initializer is not null)
+            {
+                if (!TryLowerExpressionWithInferredName(exprStmt.Initializer, binding.Name, out initialValue)
+                    || !TryApplyInferredNameToDeclarationValue(exprStmt, initialValue, out initialValue))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                initialValue = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(initialValue));
+                DefineTempStorage(initialValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+            if (binding.Kind == BindingKind.Var)
+            {
+                return TryStoreToBinding(binding, initialValue, out _);
+            }
+            var result = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                binding.Kind == BindingKind.Function
+                    ? nameof(JavaScriptRuntime.ObjectRuntime.InitializeGlobalFunctionBinding)
+                    : nameof(JavaScriptRuntime.ObjectRuntime.InitializeGlobalLexicalBinding),
+                new[] { name, EnsureObject(initialValue) }, result));
+            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         var callableMaterialization = exprStmt.Initializer switch
         {
             HIRFunctionExpression function => function.MaterializationDecision,
@@ -138,8 +201,9 @@ public sealed partial class HIRToLIRLowerer
         // `var` declarations without an initializer are runtime no-ops on redeclaration.
         // Avoid clobbering an existing head-assigned loop value (e.g., for-of `var x` + body `var x;`).
         if (exprStmt.Initializer == null
-            && binding.Kind == BindingKind.Var
-            && _variableMap.ContainsKey(binding))
+            && (binding.Kind == BindingKind.Function
+                || (binding.Kind == BindingKind.Var
+                    && (_variableMap.ContainsKey(binding) || _parameterIndexMap.ContainsKey(binding)))))
         {
             return true;
         }
@@ -224,6 +288,26 @@ public sealed partial class HIRToLIRLowerer
 
         // A declaration writes the binding, so any earlier numeric refinement is stale.
         ForgetNumericRefinement(binding);
+
+        if (binding.IsScriptGlobalBinding)
+        {
+            var endLabel = CreateLabel();
+            if (withResolvedVarShadowedTemp is TempVariable shadowed)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(shadowed, endLabel));
+            }
+            if (!TryStoreToBindingCore(binding, value, out _))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            return true;
+        }
+
+        if (_parameterIndexMap.ContainsKey(binding))
+        {
+            return TryStoreToBinding(binding, value, out _);
+        }
 
         bool initializerProvesUnboxedDouble = exprStmt.Initializer != null
             && GetTempStorage(value).Kind == ValueStorageKind.UnboxedValue

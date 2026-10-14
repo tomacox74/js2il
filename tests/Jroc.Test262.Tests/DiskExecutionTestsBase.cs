@@ -59,7 +59,8 @@ public abstract class DiskExecutionTestsBase
                 SourceText = preparedScript,
                 FileSystem = fileSystem,
                 EmitPdb = true,
-                ParseAsModule = Test262SharedAssertHarness.IsModule(script)
+                ParseAsModule = Test262SharedAssertHarness.IsModule(script),
+                ParseAsScript = !Test262SharedAssertHarness.IsModule(script)
             });
         }
         catch (Exception ex)

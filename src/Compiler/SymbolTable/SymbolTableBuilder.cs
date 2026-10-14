@@ -344,7 +344,8 @@ namespace Jroc.SymbolTables
             _currentModulePath = module.Path;
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
             {
-                ModuleId = module.ModuleId
+                ModuleId = module.ModuleId,
+                UsesScriptSemantics = module.UsesScriptSemantics
             };
 
             foreach (var (node, span) in module.DebugSequencePointOverrides)
@@ -352,7 +353,10 @@ namespace Jroc.SymbolTables
                 globalScope.DebugSequencePointOverrides[node] = span;
             }
 
-            AddModuleBuiltInParameters(globalScope, module.Ast);
+            if (!module.UsesScriptSemantics)
+            {
+                AddModuleBuiltInParameters(globalScope, module.Ast);
+            }
 
             var topLevelAwaitCount = CountAwaitExpressions(module.Ast);
             if (topLevelAwaitCount > 0)
@@ -377,6 +381,14 @@ namespace Jroc.SymbolTables
             AnalyzeCompileTimeConstants(globalScope);
 
             InferTypesToFixedPoint(globalScope);
+
+            foreach (var binding in globalScope.Bindings.Values.Where(binding => binding.IsScriptGlobalBinding))
+            {
+                binding.IsStableType = false;
+                binding.ClrType = null;
+                binding.CanUseUnboxedLocal = false;
+                binding.IsCompileTimeConstant = false;
+            }
 
             module.SymbolTable = new SymbolTable(globalScope);
         }
@@ -1766,6 +1778,10 @@ namespace Jroc.SymbolTables
                                 else
                                 {
                                     var binding = new BindingInfo(id.Name, kind, targetScope, decl);
+                                    binding.HasHoistedFunctionDeclaration =
+                                        targetScope.Bindings.TryGetValue(id.Name, out var previousBinding)
+                                        && (previousBinding.Kind == BindingKind.Function
+                                            || previousBinding.HasHoistedFunctionDeclaration);
                                     // Attempt early CLR type resolution for: const x = require('<module>')
                                     TryAssignClrTypeForRequireInit(decl, binding);
                                     if (decl.Init != null)
@@ -1815,7 +1831,10 @@ namespace Jroc.SymbolTables
                             }
                             if (!targetScope.Bindings.ContainsKey(tempName))
                             {
-                                var tempBinding = new BindingInfo(tempName, kind, targetScope, decl);
+                                var tempBinding = new BindingInfo(tempName, kind, targetScope, decl)
+                                {
+                                    IsSynthetic = true
+                                };
                                 TryAssignClrTypeForRequireInit(decl, tempBinding);
                                 targetScope.Bindings[tempName] = tempBinding;
                             }

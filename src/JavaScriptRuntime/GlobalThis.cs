@@ -508,6 +508,10 @@ namespace JavaScriptRuntime
 
         public static bool IsOriginalGlobalBinding(string name)
         {
+            if (RuntimeExecutionContext.CurrentOrOverride?.GlobalLexicalBindings.ContainsKey(name) == true)
+            {
+                return false;
+            }
             var global = GetOrCreateGlobalObject();
             return global._originalGlobalBindings is { } originals
                 && originals.TryGetValue(name, out var original)

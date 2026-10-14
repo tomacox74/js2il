@@ -308,6 +308,8 @@ internal sealed class RuntimeRealm : IDisposable
             _state = RuntimeOwnershipState.Disposing;
             ModuleState.Dispose();
             ValueCaches.Dispose();
+            Intrinsics.ExecutionContext?.GlobalLexicalBindings.Clear();
+            Intrinsics.ExecutionContext?.GlobalVarDeclaredNames.Clear();
             Intrinsics.Dispose();
             DisposalOrder = Agent.Cluster.NextDisposalOrder();
             _state = RuntimeOwnershipState.Disposed;
