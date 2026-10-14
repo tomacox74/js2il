@@ -2096,7 +2096,7 @@ public partial class RuntimeServices
             && withObject is not null)
         {
             var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
-            if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn(name, withObject))
+            if (JavaScriptRuntime.ObjectRuntime.HasWithBinding(name, withObject))
             {
                 return JavaScriptRuntime.ObjectRuntime.GetProperty(withObject, name);
             }
@@ -2115,7 +2115,7 @@ public partial class RuntimeServices
                 callee,
                 out var withObject)
             && withObject is not null
-            && JavaScriptRuntime.ObjectRuntime.HasPropertyIn(
+            && JavaScriptRuntime.ObjectRuntime.HasWithBinding(
                 name,
                 withObject))
         {
@@ -2136,7 +2136,7 @@ public partial class RuntimeServices
         return callee is not null
             && JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
             && withObject is not null
-            && JavaScriptRuntime.ObjectRuntime.HasPropertyIn(
+            && JavaScriptRuntime.ObjectRuntime.HasWithBinding(
                 nameValue as string ?? DotNet2JSConversions.ToString(nameValue),
                 withObject)
                     ? withObject

@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining three addition, eight arrow-function, and six
+  assignment-target cases: 14 verified passing and three explicitly skipped for
+  unsupported eval. Fix addition's abrupt Symbol.toPrimitive conversions,
+  recursively bind arrow destructuring targets without binding property keys,
+  and honor Symbol.unscopables in active and captured with environments.
+
 - test262: complete 21 function-code, 17 global-code, and one destructuring
   fixture: 25 verified passing and 14 explicitly skipped for direct or indirect
   eval. Add an explicit Script compilation goal and realm-owned global

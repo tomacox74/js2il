@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "14.11",
   "title": "The with Statement",
-  "status": "Not Yet Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-with-statement",
   "parent": {
     "clause": "14"
@@ -12,13 +12,13 @@
     {
       "clause": "14.11.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-with-statement-static-semantics-early-errors"
     },
     {
       "clause": "14.11.2",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-with-statement-runtime-semantics-evaluation"
     }
   ],
@@ -27,9 +27,13 @@
       {
         "clause": "14.11",
         "feature": "with statement",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-with-statement",
-        "notes": "Rejected by Jroc.Validation.JavaScriptAstValidator as unsupported (deprecated and problematic)."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/arrow-function/ArrowFunctionCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/compound-assignment/ExecutionTests.cs"
+        ],
+        "notes": "Non-strict with environments perform dynamic property lookup and honor Symbol.unscopables in active and captured environments. A blocked name falls through to the enclosing lexical or global binding; resolved assignment references are preserved through getter and right-hand-side side effects. Strict-mode with statements are parse errors. Direct eval remains unsupported."
       }
     ]
   }

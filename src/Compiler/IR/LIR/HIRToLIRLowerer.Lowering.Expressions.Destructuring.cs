@@ -30,7 +30,7 @@ public sealed partial class HIRToLIRLowerer
         var probeResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.HasPropertyIn),
+            nameof(JavaScriptRuntime.ObjectRuntime.HasWithBinding),
             new[] { EnsureObject(nameTemp), withObject },
             probeResult));
         DefineTempStorage(probeResult, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
