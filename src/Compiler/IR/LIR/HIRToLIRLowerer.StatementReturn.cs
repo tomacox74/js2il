@@ -121,6 +121,12 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
+        if (_isAsync && _isGenerator && returnStmt.Expression != null
+            && !TryLowerAwaitValue(EnsureObject(returnTempVar), out returnTempVar))
+        {
+            return false;
+        }
+
         // Async try/finally lowering: a return inside a protected region must flow through finally.
         if (_isAsync
             && _methodBodyIR.AsyncInfo?.HasAwaits == true

@@ -275,7 +275,7 @@ public sealed partial class HIRToLIRLowerer
             lowerer._methodBodyIR.AsyncInfo = new AsyncStateMachineInfo();
             
             // Pre-scan for await points to set up the state machine.
-            int awaitCount = CountAwaitExpressions(hirMethod.Body);
+            int awaitCount = lowerer.CountAwaitExpressions(hirMethod.Body);
             
             // If there are await points, enable full state machine infrastructure
             if (awaitCount > 0)

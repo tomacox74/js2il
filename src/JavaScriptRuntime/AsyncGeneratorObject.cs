@@ -237,11 +237,42 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
                 return;
             }
 
-            scope.HasResumeException = request.Kind == RequestKind.Throw;
-            scope.ResumeException = scope.HasResumeException ? request.Value : null;
-            scope.HasReturn = request.Kind == RequestKind.Return;
-            scope.ReturnValue = scope.HasReturn ? request.Value : null;
-            scope.ResumeValue = request.Kind == RequestKind.Next && scope.Started ? request.Value : null;
+            if (request.Kind == RequestKind.Return && scope.Started)
+            {
+                ((Promise)Promise.resolve(request.Value)!).then(
+                    (BuiltinFunction1)((_, value) =>
+                    {
+                        ResumeRequest(request, RequestKind.Return, value);
+                        return null;
+                    }),
+                    (BuiltinFunction1)((_, reason) =>
+                    {
+                        ResumeRequest(request, RequestKind.Throw, reason);
+                        return null;
+                    }));
+                return;
+            }
+
+            ResumeRequest(request, request.Kind, request.Value);
+        }
+        catch (Exception exception)
+        {
+            CompleteRequest(request,
+                exception is JsThrownValueException thrown ? thrown.Value : exception,
+                rejected: true);
+        }
+    }
+
+    private void ResumeRequest(Request request, RequestKind kind, object? value)
+    {
+        var scope = GetLeafScope();
+        try
+        {
+            scope.HasResumeException = kind == RequestKind.Throw;
+            scope.ResumeException = scope.HasResumeException ? value : null;
+            scope.HasReturn = kind == RequestKind.Return;
+            scope.ReturnValue = scope.HasReturn ? value : null;
+            scope.ResumeValue = kind == RequestKind.Next && scope.Started ? value : null;
             scope.Started = true;
             scope.AsyncState = 0;
 

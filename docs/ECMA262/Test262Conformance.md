@@ -52,8 +52,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
-| Language syntax and semantics | 17,737 | 195 | 5,715 | 23,647 | **75.01%** |
-| **Total** | 34,894 | 208 | 13,143 | 48,245 | **72.33%** |
+| Language syntax and semantics | 17,948 | 196 | 5,503 | 23,647 | **75.90%** |
+| **Total** | 35,105 | 209 | 12,931 | 48,245 | **72.76%** |
 
 ## Language Areas
 
@@ -84,7 +84,7 @@ bounded worker cleanup.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,676 | 35 | 2,626 | 9,337 | **71.50%** |
+| `statements` | 6,887 | 36 | 2,414 | 9,337 | **73.76%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -167,7 +167,7 @@ bounded worker cleanup.
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | `async-function` | 45 | 0 | 29 | 74 | **60.81%** |
-| `async-generator` | 89 | 0 | 212 | 301 | **29.57%** |
+| `async-generator` | 300 | 1 | 0 | 301 | **99.67%** |
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
