@@ -2063,23 +2063,9 @@ namespace Jroc.SymbolTables
                         }
                         else if (param is ObjectPattern op)
                         {
-                            // Destructured parameter: bind each property identifier as a local binding in arrow function scope
-                            foreach (var prop in op.Properties.OfType<Property>())
+                            foreach (var bindId in EnumerateBindingIdentifiers(op))
                             {
-                                // Handle default values: {a = 10} where Value is AssignmentPattern
-                                // Extract the binding identifier
-                                Identifier? bindId = null;
-                                if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                                {
-                                    bindId = apLeftId;
-                                }
-                                else
-                                {
-                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
-                                    bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                }
-
-                                if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
+                                if (!arrowScope.Bindings.ContainsKey(bindId.Name))
                                 {
                                     arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, arrowScope, bindId);
                                     // Mark as parameter so TypeGenerator creates fields for them
@@ -2087,7 +2073,7 @@ namespace Jroc.SymbolTables
                                 }
 
                                 // Track that this is a destructured parameter (needs field/local storage; not an IL argument)
-                                if (bindId != null && !arrowScope.DestructuredParameters.Contains(bindId.Name))
+                                if (!arrowScope.DestructuredParameters.Contains(bindId.Name))
                                 {
                                     arrowScope.DestructuredParameters.Add(bindId.Name);
                                 }

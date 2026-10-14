@@ -18,9 +18,10 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/language/expressions/addition/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/addition/PortExpressionsBatchExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/language/expressions/addition/OperatorExpressionsConformanceBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/addition/OperatorExpressionsConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/addition/AdditionCompletionExecutionTests.cs"
         ],
-        "notes": "The checked-in addition ports now cover mixed BigInt/string cases plus GetValue, abrupt-completion ordering, numeric addition, and string-concatenation coercion paths from test262. The native Test262 harness additionally verifies 35 current all-variant addition fixtures."
+        "notes": "Native Test262 coverage verifies 47 addition cases, including mixed BigInt/string operands, GetValue, abrupt-completion ordering, numeric addition, and string concatenation. Symbol.toPrimitive must be callable when present and must return a primitive; violations throw TypeError without falling back to valueOf/toString. One eval-dependent case remains explicitly unsupported."
       },
       {
         "clause": "13.8.2",

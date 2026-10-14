@@ -387,64 +387,12 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (TryInvokeToPrimitiveMethod(value!, "default", out var primitive))
-            {
-                return primitive;
-            }
-
-            if (TryInvokeOrdinaryToPrimitive(value!, out primitive))
+            if (TypeUtilities.TryCoerceObjectToPrimitive(value!, "default", out var primitive))
             {
                 return primitive;
             }
 
             throw new TypeError("Cannot convert object to primitive value");
-        }
-
-        private static bool TryInvokeToPrimitiveMethod(object receiver, string hint, out object? result)
-        {
-            var toPrimitive = ObjectRuntime.GetProperty(receiver, Symbol.toPrimitive.DebugId);
-            if (!IsCallable(toPrimitive))
-            {
-                result = null;
-                return false;
-            }
-
-            result = InvokeWithThis(receiver, toPrimitive!, hint);
-            return IsPrimitive(result);
-        }
-
-        private static bool TryInvokeOrdinaryToPrimitive(object receiver, out object? result)
-        {
-            foreach (var methodName in new[] { "valueOf", "toString" })
-            {
-                var member = ObjectRuntime.GetProperty(receiver, methodName);
-                if (!IsCallable(member))
-                {
-                    continue;
-                }
-
-                result = InvokeWithThis(receiver, member!);
-                if (IsPrimitive(result))
-                {
-                    return true;
-                }
-            }
-
-            result = null;
-            return false;
-        }
-
-        private static object? InvokeWithThis(object receiver, object callable, params object?[] args)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
         }
 
         private static bool IsPrimitive(object? value)
@@ -457,9 +405,6 @@ namespace JavaScriptRuntime
             var valueType = TypeUtilities.Typeof(value);
             return valueType != "object" && valueType != "function";
         }
-
-        private static bool IsCallable(object? value)
-            => CallableOperations.IsCallable(value);
 
         /// <summary>
         /// Performs JavaScript '+' and immediately applies ToNumber to the result.

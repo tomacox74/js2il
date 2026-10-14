@@ -232,7 +232,7 @@ public sealed partial class HIRToLIRLowerer
             withResolvedVarShadowedTemp = preResolvedShadowedTemp;
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
                 nameof(JavaScriptRuntime.ObjectRuntime),
-                nameof(JavaScriptRuntime.ObjectRuntime.HasPropertyIn),
+                nameof(JavaScriptRuntime.ObjectRuntime.HasWithBinding),
                 new[] { EnsureObject(preResolvedWithNameTemp), _activeWithObjects.Peek() },
                 preResolvedShadowedTemp));
             DefineTempStorage(preResolvedShadowedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));

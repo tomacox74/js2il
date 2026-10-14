@@ -7506,6 +7506,19 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static bool HasWithBinding(object? key, object? obj)
+        {
+            var name = ToPropertyKeyString(key);
+            if (!HasPropertyIn(name, obj))
+            {
+                return false;
+            }
+
+            var unscopables = GetProperty(obj!, Symbol.unscopables.DebugId);
+            return TypeUtilities.IsPrimitive(unscopables)
+                || !TypeUtilities.ToBoolean(GetProperty(unscopables!, name));
+        }
+
         public static bool HasPropertyIn(object? key, object? obj)
         {
             if (!Proxy.IsObjectLikeValue(obj))

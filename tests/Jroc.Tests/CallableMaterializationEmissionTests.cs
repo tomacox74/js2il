@@ -69,7 +69,7 @@ public sealed class CallableMaterializationEmissionTests
             $"/{owner}/FunctionObject::.ctor",
             moduleInit,
             StringComparison.Ordinal);
-        Assert.Contains("ObjectRuntime::HasPropertyIn", moduleInit, StringComparison.Ordinal);
+        Assert.Contains("ObjectRuntime::HasWithBinding", moduleInit, StringComparison.Ordinal);
         Assert.Contains("InvokeFunctionCallWithArgs", moduleInit, StringComparison.Ordinal);
     }
 
