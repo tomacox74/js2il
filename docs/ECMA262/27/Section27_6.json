@@ -97,7 +97,7 @@
     {
       "clause": "27.6.3.7",
       "title": "AsyncGeneratorUnwrapYieldResumption ( resumptionValue )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorunwrapyieldresumption"
     },
     {
@@ -109,7 +109,7 @@
     {
       "clause": "27.6.3.9",
       "title": "AsyncGeneratorAwaitReturn ( generator )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorawaitreturn"
     },
     {
@@ -130,9 +130,25 @@
           "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-promise-reject-next.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-star-async-next.js",
-          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
+          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js",
+          "tests/Jroc.Test262.Tests/language/statements/async-generator/AsyncGeneratorDeclarationCompletionTests.cs"
         ],
-        "notes": "Concurrent next/return/throw requests are serialized without overwriting pending promise capabilities. Yield operands are awaited, rejected yields complete the generator, and yield* selects the async iterator protocol with a sync fallback. Resumed exceptions reject the original request; captured destructuring bindings retain TDZ checks across suspension. Full cross-realm and generator-brand conformance is not claimed."
+        "notes": "Concurrent next/return/throw requests are serialized without overwriting pending promise capabilities. Ordinary yield operands are awaited; yield* selects the async iterator protocol with a sync fallback and preserves raw values from manual async iterators. Return-resumption values are awaited before execution resumes; rejection resumes as a throw so surrounding handlers can run. If a delegate has no return method, its received return value is also awaited as required. Synchronous protocol/value-getter exceptions and await rejections route into compiled catch/finally states. Captured destructuring bindings retain TDZ checks across suspension. Full cross-realm and generator-brand conformance is not claimed."
+      },
+      {
+        "clause": "27.6.3.7",
+        "feature": "Return-resumption awaiting and observable promise-job order",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorunwrapyieldresumption",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/async-generator/AsyncGeneratorDeclarationCompletionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/async-generator/yield-return-then-getter-ticks.js",
+          "test/language/statements/async-generator/yield-star-return-then-getter-ticks.js",
+          "test/language/statements/async-generator/yield-star-return-missing-value-is-awaited.js"
+        ],
+        "notes": "Queued return requests await their value at suspended yield before forwarding the completion. The pinned tests verify then-getter access and promise-job order for ordinary yield and delegation, including a missing delegate return method."
       },
       {
         "clause": "27.6.1.2",

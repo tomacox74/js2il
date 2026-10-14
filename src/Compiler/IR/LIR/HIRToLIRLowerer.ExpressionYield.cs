@@ -58,7 +58,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Delegate via the ECMAScript iterator protocol.
             var iteratorTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(_isAsync
+            EmitYieldStarProtocolCall(_isAsync
                 ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Create), new[] { yieldedStarArg }, iteratorTemp)
                 : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
             DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, _isAsync ? typeof(object) : typeof(JavaScriptRuntime.IJavaScriptIterator)));
@@ -252,7 +252,7 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(returnArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(_isAsync
+                EmitYieldStarProtocolCall(_isAsync
                     ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Return), new[] { EnsureObject(iterObj), EnsureObject(returnArg) }, iterResult)
                     : new LIRCallMember(iterObj, "return", argsArr, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
@@ -273,7 +273,7 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(throwArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(_isAsync
+                EmitYieldStarProtocolCall(_isAsync
                     ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Throw), new[] { EnsureObject(iterObj), EnsureObject(throwArg) }, iterResult)
                     : new LIRCallMember(iterObj, "throw", argsArr, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
@@ -291,7 +291,7 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(nextArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(_isAsync
+                EmitYieldStarProtocolCall(_isAsync
                     ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Next), new[] { EnsureObject(iterObj), EnsureObject(nextArg) }, iterResult)
                     : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
@@ -301,9 +301,12 @@ public sealed partial class HIRToLIRLowerer
 
             if (_isAsync)
             {
-                TryLowerAwaitValue(EnsureObject(iterResult), out iterResult);
+                if (!TryLowerAwaitValue(EnsureObject(iterResult), out iterResult))
+                {
+                    return false;
+                }
                 var validated = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                EmitYieldStarProtocolCall(new LIRCallIntrinsicStatic(
                     nameof(JavaScriptRuntime.AsyncGeneratorDelegation),
                     nameof(JavaScriptRuntime.AsyncGeneratorDelegation.ValidateResult),
                     new[] { iterResult }, validated));
@@ -312,7 +315,7 @@ public sealed partial class HIRToLIRLowerer
             }
 
             var doneBool = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+            EmitYieldStarProtocolCall(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(doneBool, iterDone));
 
@@ -320,12 +323,11 @@ public sealed partial class HIRToLIRLowerer
             if (_isAsync)
             {
                 iterYieldValue = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                EmitYieldStarProtocolCall(new LIRCallIntrinsicStatic(
                     nameof(JavaScriptRuntime.ObjectRuntime),
                     nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue),
                     new[] { iterResult }, iterYieldValue));
                 DefineTempStorage(iterYieldValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                TryLowerAwaitValue(iterYieldValue, out iterYieldValue);
             }
 
             _methodBodyIR.Instructions.Add(new LIRYield(
@@ -341,7 +343,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRLabel(iterDone));
 
             var finalVal = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, finalVal));
+            EmitYieldStarProtocolCall(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, finalVal));
             DefineTempStorage(finalVal, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             // Clear delegation state.
@@ -533,5 +535,46 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return true;
+    }
+
+    private void EmitYieldStarProtocolCall(LIRInstruction call)
+    {
+        if (!_isAsync || _asyncTryCatchStack.Count == 0)
+        {
+            _methodBodyIR.Instructions.Add(call);
+            return;
+        }
+
+        // Protect only the synchronous protocol call, never an await/yield suspension.
+        var context = _asyncTryCatchStack.Peek();
+        var tryStart = CreateLabel();
+        var tryEnd = CreateLabel();
+        var catchStart = CreateLabel();
+        var catchEnd = CreateLabel();
+        var afterCall = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRLabel(tryStart));
+        _methodBodyIR.Instructions.Add(call);
+        _methodBodyIR.Instructions.Add(new LIRLeave(afterCall));
+        _methodBodyIR.Instructions.Add(new LIRLabel(tryEnd));
+        _methodBodyIR.Instructions.Add(new LIRLabel(catchStart));
+
+        var exception = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRStoreException(exception));
+        DefineTempStorage(exception, new ValueStorage(ValueStorageKind.Reference, typeof(Exception)));
+        var value = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRUnwrapCatchException(exception, value));
+        DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(
+            _methodBodyIR.LeafScopeId.Name, context.PendingExceptionFieldName, value));
+        _methodBodyIR.Instructions.Add(new LIRLeave(context.CatchLabelId));
+        _methodBodyIR.Instructions.Add(new LIRLabel(catchEnd));
+        _methodBodyIR.Instructions.Add(new LIRLabel(afterCall));
+        _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+            ExceptionRegionKind.Catch,
+            TryStartLabelId: tryStart,
+            TryEndLabelId: tryEnd,
+            HandlerStartLabelId: catchStart,
+            HandlerEndLabelId: catchEnd,
+            CatchType: typeof(Exception)));
     }
 }

@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-05T19:01:16Z
+> Last generated (UTC): 2026-10-14T20:53:23Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -30,9 +30,9 @@ _Lists clause numbers/titles/links only (no spec text)._
 | 27.6.3.4 | AsyncGeneratorEnqueue ( generator , completion , promiseCapability ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorenqueue) |
 | 27.6.3.5 | AsyncGeneratorCompleteStep ( generator , completion , done [ , realm ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorcompletestep) |
 | 27.6.3.6 | AsyncGeneratorResume ( generator , completion ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorresume) |
-| 27.6.3.7 | AsyncGeneratorUnwrapYieldResumption ( resumptionValue ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorunwrapyieldresumption) |
+| 27.6.3.7 | AsyncGeneratorUnwrapYieldResumption ( resumptionValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorunwrapyieldresumption) |
 | 27.6.3.8 | AsyncGeneratorYield ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratoryield) |
-| 27.6.3.9 | AsyncGeneratorAwaitReturn ( generator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorawaitreturn) |
+| 27.6.3.9 | AsyncGeneratorAwaitReturn ( generator ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorawaitreturn) |
 | 27.6.3.10 | AsyncGeneratorDrainQueue ( generator ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratordrainqueue) |
 
 ## Support
@@ -49,5 +49,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Queued async-generator requests and awaited yield values | Supported with Limitations | [`expression-await-thenable-as-yield-operand.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js)<br>[`yield-promise-reject-next.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-promise-reject-next.js)<br>[`yield-star-async-next.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-star-async-next.js)<br>[`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js) |  | Concurrent next/return/throw requests are serialized without overwriting pending promise capabilities. Yield operands are awaited, rejected yields complete the generator, and yield* selects the async iterator protocol with a sync fallback. Resumed exceptions reject the original request; captured destructuring bindings retain TDZ checks across suspension. Full cross-realm and generator-brand conformance is not claimed. |
+| Queued async-generator requests and awaited yield values | Supported with Limitations | [`expression-await-thenable-as-yield-operand.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js)<br>[`yield-promise-reject-next.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-promise-reject-next.js)<br>[`yield-star-async-next.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/yield-star-async-next.js)<br>[`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js)<br>`tests/Jroc.Test262.Tests/language/statements/async-generator/AsyncGeneratorDeclarationCompletionTests.cs` |  | Concurrent next/return/throw requests are serialized without overwriting pending promise capabilities. Ordinary yield operands are awaited; yield* selects the async iterator protocol with a sync fallback and preserves raw values from manual async iterators. Return-resumption values are awaited before execution resumes; rejection resumes as a throw so surrounding handlers can run. If a delegate has no return method, its received return value is also awaited as required. Synchronous protocol/value-getter exceptions and await rejections route into compiled catch/finally states. Captured destructuring bindings retain TDZ checks across suspension. Full cross-realm and generator-brand conformance is not claimed. |
+
+### 27.6.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorunwrapyieldresumption))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Return-resumption awaiting and observable promise-job order | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/async-generator/AsyncGeneratorDeclarationCompletionTests.cs` | `test/language/statements/async-generator/yield-return-then-getter-ticks.js`<br>`test/language/statements/async-generator/yield-star-return-then-getter-ticks.js`<br>`test/language/statements/async-generator/yield-star-return-missing-value-is-awaited.js` | Queued return requests await their value at suspended yield before forwarding the completion. The pinned tests verify then-getter access and promise-job order for ordinary yield and delegation, including a missing delegate return method. |
 

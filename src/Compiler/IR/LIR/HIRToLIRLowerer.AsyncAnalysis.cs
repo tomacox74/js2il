@@ -14,7 +14,7 @@ public sealed partial class HIRToLIRLowerer
     /// Counts the number of await expressions in an HIR block.
     /// Used to determine if an async function needs full state machine support.
     /// </summary>
-    private static int CountAwaitExpressions(HIRBlock block)
+    private int CountAwaitExpressions(HIRBlock block)
     {
         int count = 0;
         foreach (var statement in block.Statements)
@@ -24,7 +24,7 @@ public sealed partial class HIRToLIRLowerer
         return count;
     }
 
-    private static int CountAwaitExpressionsInStatement(HIRStatement statement)
+    private int CountAwaitExpressionsInStatement(HIRStatement statement)
     {
         int count = 0;
         switch (statement)
@@ -38,7 +38,11 @@ public sealed partial class HIRToLIRLowerer
                 break;
             case HIRReturnStatement returnStmt:
                 if (returnStmt.Expression != null)
+                {
+                    if (_isAsync && _isGenerator)
+                        count++;
                     count += CountAwaitExpressionsInExpression(returnStmt.Expression);
+                }
                 break;
             case HIRIfStatement ifStmt:
                 count += CountAwaitExpressionsInExpression(ifStmt.Test);
@@ -90,7 +94,7 @@ public sealed partial class HIRToLIRLowerer
         return count;
     }
 
-    private static int CountAwaitExpressionsInExpression(HIRExpression expression)
+    private int CountAwaitExpressionsInExpression(HIRExpression expression)
     {
         int count = 0;
         switch (expression)
@@ -112,8 +116,8 @@ public sealed partial class HIRToLIRLowerer
                 }
                 break;
             case HIRYieldExpression yieldExpr:
-                // AsyncGeneratorYield awaits its operand; yield* also awaits each next result.
-                count = yieldExpr.IsDelegate ? 2 : 1;
+                // Ordinary async yield awaits its operand; yield* awaits the iterator result.
+                count = 1;
                 if (yieldExpr.Argument != null)
                     count += CountAwaitExpressionsInExpression(yieldExpr.Argument);
                 break;

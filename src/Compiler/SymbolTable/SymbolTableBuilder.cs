@@ -747,7 +747,7 @@ namespace Jroc.SymbolTables
 
             if (dynamicScope.IsAsync)
             {
-                dynamicScope.AwaitPointCount = CountAwaitExpressions(parsedFunctionExpr.Body);
+                dynamicScope.AwaitPointCount = CountAwaitExpressions(parsedFunctionExpr.Body, parsedFunctionExpr.Generator);
             }
 
             if (dynamicScope.IsGenerator)
@@ -1446,7 +1446,7 @@ namespace Jroc.SymbolTables
                             methodScope.IsAsync = mfunc.Async;
                             if (mfunc.Async)
                             {
-                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body);
+                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body, mfunc.Generator);
                             }
                             methodScope.IsGenerator = mfunc.Generator;
                             if (mfunc.Generator)
@@ -1572,7 +1572,7 @@ namespace Jroc.SymbolTables
                             methodScope.IsAsync = mfunc.Async;
                             if (mfunc.Async)
                             {
-                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body);
+                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body, mfunc.Generator);
                             }
                             methodScope.IsGenerator = mfunc.Generator;
                             if (mfunc.Generator)
@@ -1634,7 +1634,7 @@ namespace Jroc.SymbolTables
                     funcScope.IsAsync = funcDecl.Async;
                     if (funcDecl.Async)
                     {
-                        funcScope.AwaitPointCount = CountAwaitExpressions(funcDecl.Body);
+                        funcScope.AwaitPointCount = CountAwaitExpressions(funcDecl.Body, funcDecl.Generator);
                     }
                     funcScope.IsGenerator = funcDecl.Generator;
                     if (funcDecl.Generator)
@@ -1705,7 +1705,7 @@ namespace Jroc.SymbolTables
                     funcExprScope.IsAsync = funcExpr.Async;
                     if (funcExpr.Async)
                     {
-                        funcExprScope.AwaitPointCount = CountAwaitExpressions(funcExpr.Body);
+                        funcExprScope.AwaitPointCount = CountAwaitExpressions(funcExpr.Body, funcExpr.Generator);
                     }
                     funcExprScope.IsGenerator = funcExpr.Generator;
                     if (funcExpr.Generator)
@@ -3565,20 +3565,20 @@ namespace Jroc.SymbolTables
         /// Counts the number of await expressions in a function body.
         /// Does not descend into nested functions (each gets its own count).
         /// </summary>
-        private static int CountAwaitExpressions(Node? node)
+        private static int CountAwaitExpressions(Node? node, bool isAsyncGenerator = false)
         {
             if (node == null) return 0;
 
             int count = 0;
 
-            // Async generator yields implicitly await their values.
-            if (node is AwaitExpression or YieldExpression { Delegate: false })
+            // Ordinary async yield awaits its value; delegation awaits the iterator result.
+            if (node is AwaitExpression or YieldExpression)
             {
                 count = 1;
             }
-            else if (node is YieldExpression { Delegate: true })
+            if (isAsyncGenerator && node is ReturnStatement { Argument: not null })
             {
-                count = 2;
+                count++;
             }
 
             // for-await-of introduces implicit awaits:
@@ -3597,7 +3597,7 @@ namespace Jroc.SymbolTables
 
             foreach (var child in node.ChildNodes)
             {
-                count += CountAwaitExpressions(child);
+                count += CountAwaitExpressions(child, isAsyncGenerator);
             }
 
             return count;

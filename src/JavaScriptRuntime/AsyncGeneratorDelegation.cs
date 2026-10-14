@@ -40,7 +40,8 @@ public static class AsyncGeneratorDelegation
         var record = (IteratorRecord)iterator;
         var method = ObjectRuntime.GetProperty(record.Iterator, "return");
         return method is null or JsNull
-            ? IteratorResult.Create(value, done: true)
+            ? ((Promise)Promise.resolve(value)!).then(
+                (BuiltinFunction1)((_, resolved) => IteratorResult.Create(resolved, done: true)))
             : Invoke(record, method, value);
     }
 

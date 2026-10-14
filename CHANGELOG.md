@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining 212 async-generator statement/declaration
+  cases: 211 verified passing and one explicitly skipped for unsupported eval.
+  Await explicit return expressions and return-resumption values with the
+  required promise-job ordering, preserve raw yielded values from manual async
+  iterators, and route synchronous delegated-protocol exceptions into the
+  generator's catch/finally handlers. Align await-field planning across callable
+  forms with these implicit suspension points.
+
 - test262: complete the remaining three addition, eight arrow-function, and six
   assignment-target cases: 14 verified passing and three explicitly skipped for
   unsupported eval. Fix addition's abrupt Symbol.toPrimitive conversions,
