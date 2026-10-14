@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining 391 async-generator expression cases:
+  386 verified passing and five explicitly skipped for unsupported eval.
+  Preserve named generator-expression self-bindings across deferred body
+  execution and resumption by initializing them once at call time, before
+  parameter defaults, instead of overwriting them on subsequent steps.
+
 - test262: complete the remaining 212 async-generator statement/declaration
   cases: 211 verified passing and one explicitly skipped for unsupported eval.
   Await explicit return expressions and return-resumption values with the

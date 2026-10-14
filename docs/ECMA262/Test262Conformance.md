@@ -52,8 +52,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
-| Language syntax and semantics | 17,948 | 196 | 5,503 | 23,647 | **75.90%** |
-| **Total** | 35,105 | 209 | 12,931 | 48,245 | **72.76%** |
+| Language syntax and semantics | 18,334 | 201 | 5,112 | 23,647 | **77.53%** |
+| **Total** | 35,491 | 214 | 12,540 | 48,245 | **73.56%** |
 
 ## Language Areas
 
@@ -68,7 +68,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 8,958 | 137 | 1,943 | 11,038 | **81.16%** |
+| `expressions` | 9,344 | 142 | 1,552 | 11,038 | **84.65%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -99,7 +99,7 @@ bounded worker cleanup.
 | `assignmenttargettype` | 324 | 0 | 0 | 324 | **100.00%** |
 | `async-arrow-function` | 46 | 0 | 14 | 60 | **76.67%** |
 | `async-function` | 56 | 0 | 37 | 93 | **60.22%** |
-| `async-generator` | 232 | 0 | 391 | 623 | **37.24%** |
+| `async-generator` | 618 | 5 | 0 | 623 | **99.20%** |
 | `await` | 9 | 0 | 13 | 22 | **40.91%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |

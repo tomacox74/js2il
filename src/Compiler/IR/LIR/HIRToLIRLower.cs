@@ -302,7 +302,7 @@ public sealed partial class HIRToLIRLowerer
         lowerer.EmitScopeInstanceCreationIfNeeded();
         lowerer.EmitGlobalVarBindingInitializationIfNeeded();
 
-        if (!lowerer.EmitNamedFunctionExpressionBindingInitialization())
+        if (!isGenerator && !lowerer.EmitNamedFunctionExpressionBindingInitialization())
         {
             return false;
         }
