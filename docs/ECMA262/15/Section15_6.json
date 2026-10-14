@@ -58,7 +58,11 @@
           "tests/Jroc.Test262.Tests/language/statements/async-generator/AsyncGeneratorDeclarationCompletionTests.cs",
           "tests/Jroc.Test262.Tests/language/statements/async-generator/dstr/AsyncGeneratorDestructuringCompletionTests.cs",
           "tests/Jroc.Test262.Tests/language/statements/async-generator/forbidden-ext/b1/AsyncGeneratorForbiddenExtensionB1CompletionTests.cs",
-          "tests/Jroc.Test262.Tests/language/statements/async-generator/forbidden-ext/b2/AsyncGeneratorForbiddenExtensionB2CompletionTests.cs"
+          "tests/Jroc.Test262.Tests/language/statements/async-generator/forbidden-ext/b2/AsyncGeneratorForbiddenExtensionB2CompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/AsyncGeneratorExpressionCompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/dstr/AsyncGeneratorExpressionDestructuringCompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/forbidden-ext/b1/AsyncGeneratorExpressionForbiddenExtensionB1CompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/forbidden-ext/b2/AsyncGeneratorExpressionForbiddenExtensionB2CompletionTests.cs"
         ],
         "test262Suites": [
           "language.expressions.async_generator",
@@ -69,7 +73,24 @@
           "test/language/statements/async-generator/dstr/ary-init-iter-get-err.js",
           "test/language/statements/async-generator/dstr/dflt-obj-ptrn-prop-id-init-throws.js"
         ],
-        "notes": "Async generator declarations, expressions, object methods, and class methods materialize as generated non-constructable JsFunctionObject instances. Every call creates an independent AsyncGeneratorScope and AsyncGeneratorObject while retaining shared lexical captures and the call-time receiver. Parameter binding runs synchronously when called. Native Test262 coverage verifies 300 statement/declaration cases, including parameter destructuring, defaults, grammar, iterator delegation, restricted properties, with/unscopables, and return/throw completion behavior. One eval-dependent declaration case remains unsupported. Expression coverage and full cross-realm/brand conformance remain incomplete."
+        "notes": "Async generator declarations, expressions, object methods, and class methods materialize as generated non-constructable JsFunctionObject instances. Every call creates an independent AsyncGeneratorScope and AsyncGeneratorObject while retaining shared lexical captures and the call-time receiver. Parameter binding runs synchronously when called. Native Test262 coverage verifies 618 expression cases and 300 statement/declaration cases, including parameter destructuring, defaults, grammar, iterator delegation, restricted properties, with/unscopables, function identity, and return/throw completion behavior. Five expression cases and one declaration case remain unsupported because they require eval. Full cross-realm/brand conformance is not claimed."
+      },
+      {
+        "clause": "15.6.4",
+        "feature": "Named async-generator expression self-binding lifetime",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncgeneratorfunctionexpression",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/AsyncGeneratorExpressionCompletionTests.cs",
+          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_GeneratedFunctionObject_Semantics.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/async-generator/named-no-strict-reassign-fn-name-in-body.js",
+          "test/language/expressions/async-generator/named-no-strict-reassign-fn-name-in-body-in-arrow.js",
+          "test/language/expressions/async-generator/named-strict-error-reassign-fn-name-in-body.js",
+          "test/language/expressions/async-generator/named-strict-error-reassign-fn-name-in-body-in-arrow.js"
+        ],
+        "notes": "The private self-name is initialized to the created function once during the original call, before parameter defaults, and is retained by the suspended frame and nested closures rather than overwritten by a later resumption's callee. Existing assignment semantics ignore writes in non-strict code and throw TypeError in strict code. Eval-dependent variants remain unsupported."
       },
       {
         "clause": "15.6",

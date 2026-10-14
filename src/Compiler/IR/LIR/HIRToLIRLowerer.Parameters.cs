@@ -179,6 +179,12 @@ public sealed partial class HIRToLIRLowerer
         SetTempVariableSlot(startedTemp, CreateAnonymousVariableSlot("$gen_started", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(startedTemp, afterInitLabel));
 
+        // Capture the self-name during the original call, not a later generator resumption.
+        if (!EmitNamedFunctionExpressionBindingInitialization())
+        {
+            return false;
+        }
+
         // Default parameter initialization
         _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters.Take(regularParameterCount).ToList());
         if (!_parameterInitSucceeded)
