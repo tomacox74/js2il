@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T23:26:17Z
+> Last generated (UTC): 2026-10-15T03:14:38Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -35,6 +35,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | directive prologue / strict mode ("use strict") semantics | Supported with Limitations |  |  | JROC parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists. |
+
+### 15.9.3 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateasyncconcisebody))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Complete pinned async-arrow expression evidence | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/ExpressionCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/forbidden-ext/b1/ExpressionCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/forbidden-ext/b2/ExpressionCompletionExecutionTests.cs` | `test/language/expressions/async-arrow-function/try-throw-finally-throw.js`<br>`test/language/expressions/async-arrow-function/dflt-params-abrupt.js`<br>`test/language/expressions/async-arrow-function/prototype.js`<br>`test/language/expressions/async-arrow-function/unscopables-with-in-nested-fn.js` | All 60 applicable pinned async-arrow cases have results: 59 verified passing and one unsupported eval dependency. Fourteen final cases verify parameter errors/TDZ, caller/arguments restrictions, prototype metadata, unscopables, and finally throws that override earlier throws. Protected no-await throws use exception dispatch before final Promise rejection, preserving finally completion semantics. |
 
 ### 15.9.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncarrowfunctionexpression))
 

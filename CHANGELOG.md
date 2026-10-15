@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete async-arrow-function, async-function, await, and delete
+  expression coverage with 73 exact pinned fixtures: 67 runnable cases and
+  six explicit eval skips. Reconcile 53 already-registered delete cases omitted
+  from the prior report. Preserve identifier references when deleting global
+  constants, honor active and captured with-environments, and reject super
+  deletion after this/key evaluation without property-key coercion or base
+  access. Protected async throws now reach catch/finally before rejection,
+  allowing finally throws to override the original completion.
+
 - test262: complete Array, Date, and String registration with 76 exact pinned
   fixtures: 65 verified passing and eleven explicitly skipped for unsupported
   eval. Reconcile an existing three-case Array report overcount. Fix Array

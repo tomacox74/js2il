@@ -97,6 +97,24 @@
   "support": {
     "entries": [
       {
+        "clause": "27.7.5.3",
+        "feature": "Complete pinned await-expression evidence",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#await",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/await/ExpressionCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/await/async-await-interleaved.js",
+          "test/language/expressions/await/async-generator-interleaved.js",
+          "test/language/expressions/await/for-await-of-interleaved.js",
+          "test/language/expressions/await/await-monkey-patched-promise.js",
+          "test/language/expressions/await/await-awaits-thenables-that-throw.js",
+          "test/language/expressions/await/await-awaits-thenable-not-callable.js"
+        ],
+        "notes": "All 22 applicable pinned await-expression cases have verified native results. Thirteen final cases cover primitive values, callable and non-callable thenables, throwing then accessors/calls, rejection propagation, monkey-patched Promises, async-function/async-generator/for-await interleaving, and unary/conditional-expression grammar. All metadata-selected execution variants of the added cases pass."
+      },
+      {
         "clause": "27.7.2.1",
         "feature": "async function instances expose a dedicated AsyncFunction constructor/prototype surface",
         "status": "Supported with Limitations",

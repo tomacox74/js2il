@@ -4387,6 +4387,12 @@ partial class HIRMethodBuilder
                 return true;
 
             case UnaryExpression unaryExpr:
+                if (unaryExpr.Operator == Acornima.Operator.Delete && unaryExpr.Argument is Identifier deleteIdentifier)
+                {
+                    hirExpr = new HIRUnaryExpression(unaryExpr.Operator,
+                        new HIRVariableExpression(_currentScope.FindSymbol(deleteIdentifier.Name)));
+                    return true;
+                }
                 if (!TryParseExpression(unaryExpr.Argument, out var unaryArgExpr))
                 {
                     return false;

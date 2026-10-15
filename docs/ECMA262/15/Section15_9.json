@@ -43,6 +43,24 @@
   "support": {
     "entries": [
       {
+        "clause": "15.9.3",
+        "feature": "Complete pinned async-arrow expression evidence",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateasyncconcisebody",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/ExpressionCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/forbidden-ext/b1/ExpressionCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/forbidden-ext/b2/ExpressionCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/async-arrow-function/try-throw-finally-throw.js",
+          "test/language/expressions/async-arrow-function/dflt-params-abrupt.js",
+          "test/language/expressions/async-arrow-function/prototype.js",
+          "test/language/expressions/async-arrow-function/unscopables-with-in-nested-fn.js"
+        ],
+        "notes": "All 60 applicable pinned async-arrow cases have results: 59 verified passing and one unsupported eval dependency. Fourteen final cases verify parameter errors/TDZ, caller/arguments restrictions, prototype metadata, unscopables, and finally throws that override earlier throws. Protected no-await throws use exception dispatch before final Promise rejection, preserving finally completion semantics."
+      },
+      {
         "clause": "15.9",
         "feature": "async arrow functions (async () => ...) with await",
         "status": "Supported",

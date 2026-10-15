@@ -22,6 +22,12 @@ All newly verified cases passed every required native execution variant on the
 development branch. This is branch-local evidence; central reporting was
 unavailable, and these results are not presented as central trusted acceptance.
 
+Async-arrow-function, async-function, await, and delete expression features now
+have results for every applicable pinned case. Six cases require unsupported
+eval; all other cases have verified native results, including all required
+variants of the newly verified cases. This completion uses the same explicitly
+branch-local evidence scope.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -58,8 +64,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,170 | 24 | 6,318 | 23,512 | **73.03%** |
-| Language syntax and semantics | 18,674 | 217 | 4,756 | 23,647 | **78.97%** |
-| **Total** | 35,904 | 241 | 12,100 | 48,245 | **74.42%** |
+| Language syntax and semantics | 18,794 | 223 | 4,630 | 23,647 | **79.48%** |
+| **Total** | 36,024 | 247 | 11,974 | 48,245 | **74.67%** |
 
 ## Language Areas
 
@@ -74,7 +80,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 9,684 | 158 | 1,196 | 11,038 | **87.73%** |
+| `expressions` | 9,804 | 164 | 1,070 | 11,038 | **88.82%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -103,10 +109,10 @@ bounded worker cleanup.
 | `arrow-function` | 341 | 2 | 0 | 343 | **99.42%** |
 | `assignment` | 489 | 0 | 0 | 489 | **100.00%** |
 | `assignmenttargettype` | 324 | 0 | 0 | 324 | **100.00%** |
-| `async-arrow-function` | 46 | 0 | 14 | 60 | **76.67%** |
-| `async-function` | 56 | 0 | 37 | 93 | **60.22%** |
+| `async-arrow-function` | 59 | 1 | 0 | 60 | **98.33%** |
+| `async-function` | 89 | 4 | 0 | 93 | **95.70%** |
 | `async-generator` | 618 | 5 | 0 | 623 | **99.20%** |
-| `await` | 9 | 0 | 13 | 22 | **40.91%** |
+| `await` | 22 | 0 | 0 | 22 | **100.00%** |
 | `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
 | `bitwise-not` | 8 | 0 | 8 | 16 | **50.00%** |
 | `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
@@ -118,7 +124,7 @@ bounded worker cleanup.
 | `compound-assignment` | 434 | 20 | 0 | 454 | **95.59%** |
 | `concatenation` | 0 | 0 | 5 | 5 | **0.00%** |
 | `conditional` | 14 | 0 | 8 | 22 | **63.64%** |
-| `delete` | 7 | 0 | 62 | 69 | **10.14%** |
+| `delete` | 68 | 1 | 0 | 69 | **98.55%** |
 | `division` | 43 | 0 | 2 | 45 | **95.56%** |
 | `does-not-equals` | 36 | 0 | 2 | 38 | **94.74%** |
 | `dynamic-import` | 301 | 0 | 640 | 941 | **31.99%** |

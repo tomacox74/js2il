@@ -11,8 +11,6 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerThrowStatement(HIRThrowStatement throwStmt)
     {
-        var lirInstructions = _methodBodyIR.Instructions;
-
         if (!TryLowerExpression(throwStmt.Argument, out var argTemp))
         {
             return false;
@@ -27,18 +25,26 @@ public sealed partial class HIRToLIRLowerer
             CreateAnonymousVariableSlot("$throw_value", throwSlotStorage),
             argTemp);
 
+        return EmitThrowCompletion(argTemp);
+    }
+
+    private bool EmitThrowCompletion(TempVariable argTemp)
+    {
         // In async MoveNext with awaits, do not emit CLR throws (they won't be caught by the runtime).
         // Instead reject the deferred promise unless we are inside an async try/catch/finally routing context.
         if (_isAsync
             && _methodBodyIR.AsyncInfo?.HasAwaits == true
             && _asyncTryCatchStack.Count == 0
+            && !HasActiveSynchronousExceptionHandler
             && !_methodBodyIR.LeafScopeId.IsNil)
         {
             _methodBodyIR.Instructions.Add(new LIRAsyncReject(argTemp));
             return true;
         }
 
-        if (_asyncTryCatchStack.Count > 0 && !_methodBodyIR.LeafScopeId.IsNil)
+        if (_asyncTryCatchStack.Count > 0
+            && !HasActiveSynchronousExceptionHandler
+            && !_methodBodyIR.LeafScopeId.IsNil)
         {
             var ctx = _asyncTryCatchStack.Peek();
             var scopeName = _methodBodyIR.LeafScopeId.Name;
@@ -100,7 +106,15 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        lirInstructions.Add(new LIRThrow(argTemp));
+        _methodBodyIR.Instructions.Add(CreateThrowInstruction(argTemp));
         return true;
     }
+
+    // Protected throws must reach handlers before the no-await async rejection fast path.
+    private LIRThrow CreateThrowInstruction(TempVariable value)
+        => new(value, IsExceptionPropagation: HasActiveSynchronousExceptionHandler);
+
+    private bool HasActiveSynchronousExceptionHandler
+        => _protectedControlFlowDepthStack.Count > 0
+            || _syncTryFinallyStack.Any(context => !context.IsInFinally);
 }

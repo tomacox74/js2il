@@ -40,6 +40,50 @@ port/fix, verify exact-SHA master CI and a subsequent central registration refre
 
 ## Local agent read access
 
+### Registered MCP access
+
+A user-scoped Copilot CLI MCP server named `test262-catalog` is registered in the
+configured agent environment. It connects to the catalogue project
+`nluxctxxzchguuzaalxn` through the official Supabase hosted MCP endpoint:
+
+```text
+https://mcp.supabase.com/mcp?project_ref=nluxctxxzchguuzaalxn&read_only=true&features=database
+```
+
+The enabled tools are `execute_sql` and `list_tables`. Keep the project scope,
+read-only mode and tool allowlist; restrict catalogue queries to approved
+`test262_reporting` views and their schema metadata, not raw tables or
+coordinator/publication APIs.
+
+**Verified on 2026-10-15 UTC (2026-10-14 PDT):** authenticated MCP SQL access
+successfully inspected the columns of `test262_reporting.v_current_fixture_status`
+and read a bounded row filtered to this repository, `master`, native evidence and
+the await expression area. This verifies reporting access, not complete coverage,
+fresh native acceptance, registration refresh or publication.
+
+When the server's tools are available, use this authenticated read-only connection
+before falling back to the Data API or declaring central reporting unavailable.
+Inspect actual view columns first. Scope evidence queries to repository
+`faf01df8-aa65-4375-a708-6c1e555f957b`, the corpus matching the pinned revision,
+channel, evidence kind and requested area; record the returned as-of,
+provenance, registration and validation identities. Apply the same reconciliation
+and evidence-freshness rules as other central reporting reads.
+
+MCP SQL access is independent of PostgREST schema exposure and `anon` grants:
+a REST `Invalid schema: test262_reporting` error does not mean MCP reporting is
+unavailable. This connection does not change those Data API permissions.
+
+Server registration is user-scoped (`~/.copilot/mcp-config.json`), and
+authentication is local to that profile as well; neither is automatically shared
+with other machines. Other environments must register and authenticate the server
+separately. Use `/mcp` to check connection/authentication, and restart the CLI if
+the tools are not visible to an existing session. Keep OAuth credentials or a
+scoped Supabase personal access token outside Git, prompts and logs. Never
+substitute a publishable key, service-role key or supervisor credential for MCP
+authentication, or expose query credentials to upstream fixture processes.
+
+### Data API alternative
+
 Use the existing JROC performance-analysis environment variables in each local
 checkout for Supabase Data API reads:
 
@@ -677,6 +721,4 @@ drill demonstrates the tool path and restored data/security behavior. It does no
 verify production backup-role permissions, KMS encryption, independent object retention,
 Object Lock, original historical archive preservation, or a restore of an off-project
 production backup. Those remain separate operational acceptance before cutover.
-
-
 

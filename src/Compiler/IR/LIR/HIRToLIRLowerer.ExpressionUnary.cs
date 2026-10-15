@@ -50,6 +50,14 @@ public sealed partial class HIRToLIRLowerer
         // delete operator requires lvalue semantics (delete obj[prop] / delete obj.prop)
         if (unaryExpr.Operator == Acornima.Operator.Delete)
         {
+            if (unaryExpr.Argument is HIRPropertyAccessExpression { Object: HIRSuperExpression })
+            {
+                return TryLowerDeleteSuperProperty(null, out resultTempVar);
+            }
+            if (unaryExpr.Argument is HIRIndexAccessExpression { Object: HIRSuperExpression } superIndex)
+            {
+                return TryLowerDeleteSuperProperty(superIndex.Index, out resultTempVar);
+            }
             if (unaryExpr.Argument is HIRChainExpression chainExpression)
             {
                 return TryLowerDeleteChainExpression(
@@ -114,11 +122,21 @@ public sealed partial class HIRToLIRLowerer
                 }
                 case HIRVariableExpression variableExpression:
                 {
+                    if (_activeWithObjects.Count > 0)
+                    {
+                        return TryLowerWithDeleteExpression(unaryExpr, variableExpression.Name.BindingInfo,
+                            boundWith: false, out resultTempVar);
+                    }
+                    if (!_suppressBoundWithReferenceLowering
+                        && MayUseBoundWithEnvironmentForIdentifier(variableExpression.Name.BindingInfo))
+                    {
+                        return TryLowerWithDeleteExpression(unaryExpr, variableExpression.Name.BindingInfo,
+                            boundWith: true, out resultTempVar);
+                    }
                     var bindingKind = variableExpression.Name.BindingInfo.Kind;
 
                     if (variableExpression.Name.BindingInfo.IsScriptGlobalBinding
-                        || (bindingKind == BindingKind.Global
-                            && variableExpression.Name.BindingInfo.DeclaringScope.UsesScriptSemantics))
+                        || bindingKind == BindingKind.Global)
                     {
                         var name = EmitConstString(variableExpression.Name.Name);
                         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
@@ -218,6 +236,79 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    private bool TryLowerWithDeleteExpression(
+        HIRUnaryExpression expression, BindingInfo binding, bool boundWith, out TempVariable result)
+    {
+        ActiveWithBindingProbe probe;
+        if (boundWith)
+        {
+            var name = EmitConstString(binding.Name);
+            var withObject = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.GetBoundWithBindingObject),
+                new[] { EnsureObject(name) }, withObject));
+            DefineTempStorage(withObject, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            probe = new ActiveWithBindingProbe(withObject, name, withObject);
+        }
+        else
+        {
+            probe = EmitWithBindingProbe(binding.Name)
+                ?? throw new InvalidOperationException("With delete requires a binding probe.");
+        }
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(probe.HasBinding, lexicalLabel));
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.DeletePropertyNonStrict),
+            new[] { probe.WithObject, probe.Name }, result));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+        var previousSuppression = _suppressBoundWithReferenceLowering;
+        var activeObject = boundWith ? (TempVariable?)null : _activeWithObjects.Pop();
+        try
+        {
+            if (boundWith) _suppressBoundWithReferenceLowering = true;
+            if (!TryLowerUnaryExpression(expression, out var lexicalResult))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(lexicalResult, result));
+        }
+        finally
+        {
+            _suppressBoundWithReferenceLowering = previousSuppression;
+            if (activeObject.HasValue) _activeWithObjects.Push(activeObject.Value);
+        }
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return true;
+    }
+
+    private bool TryLowerDeleteSuperProperty(HIRExpression? key, out TempVariable result)
+    {
+        result = default;
+        var receiver = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
+            Array.Empty<TempVariable>(), receiver, Array.Empty<Type>()));
+        DefineTempStorage(receiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        if (key is not null && !TryLowerExpressionDiscardResult(key))
+        {
+            return false;
+        }
+        result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.DeleteSuperProperty),
+            Array.Empty<TempVariable>(), result));
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return true;
     }
 
     private bool TryLowerDeleteChainExpression(
