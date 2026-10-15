@@ -43,6 +43,22 @@
   "support": {
     "entries": [
       {
+        "clause": "15.8.4",
+        "feature": "Complete pinned async-function expression evidence and finally overrides",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateasyncfunctionbody",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/async-function/ExpressionCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/async-function/try-throw-finally-throw.js",
+          "test/language/expressions/async-function/nameless-dflt-params-abrupt.js",
+          "test/language/expressions/async-function/named-reassign-fn-name-in-body.js",
+          "test/language/expressions/async-function/named-returns-async-arrow-returns-arguments-from-parent-function.js"
+        ],
+        "notes": "All 93 applicable pinned async-function-expression cases have results: 89 verified passing and four eval dependencies explicitly unsupported. Thirty-seven final cases cover parameter abrupt completion and TDZ, named bindings, lexical arguments/new.target, unscopables, and finally completion overrides. Explicit throws inside protected regions reach their handlers before no-await Promise rejection; a finally throw replaces the original pending exception, including enclosing synchronous-finally routing."
+      },
+      {
         "clause": "15.8.2",
         "feature": "async function (no await)",
         "status": "Supported",

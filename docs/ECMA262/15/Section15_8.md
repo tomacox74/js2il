@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T23:04:11Z
+> Last generated (UTC): 2026-10-15T03:14:38Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -41,4 +41,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | await expression | Supported | [`Async_SimpleAwait.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_SimpleAwait.js)<br>[`Async_TryCatch_AwaitReject.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_TryCatch_AwaitReject.js)<br>[`Async_TryFinally_AwaitInFinally_Normal.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_TryFinally_AwaitInFinally_Normal.js)<br>[`Async_TryCatchFinally_AwaitInFinally_OnReject.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_TryCatchFinally_AwaitInFinally_OnReject.js)<br>[`Async_TryFinally_PreservesExceptionThroughAwait.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_TryFinally_PreservesExceptionThroughAwait.js)<br>[`Async_TryFinally_FinallyThrowOverridesOriginal.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_TryFinally_FinallyThrowOverridesOriginal.js)<br>[`Async_TryFinally_ReturnPreservedThroughAwait.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_TryFinally_ReturnPreservedThroughAwait.js)<br>[`Async_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js) |  | Full state machine implementation with suspension/resumption. Generated async function objects share immutable captures while each invocation creates independent Promise/state-machine state, so overlapping calls remain isolated. Each await point stores _asyncState, schedules a continuation, and resumes through the state switch. Await rejection and finally completion semantics are preserved. |
+| Complete pinned async-function expression evidence and finally overrides | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/async-function/ExpressionCompletionExecutionTests.cs` | `test/language/expressions/async-function/try-throw-finally-throw.js`<br>`test/language/expressions/async-function/nameless-dflt-params-abrupt.js`<br>`test/language/expressions/async-function/named-reassign-fn-name-in-body.js`<br>`test/language/expressions/async-function/named-returns-async-arrow-returns-arguments-from-parent-function.js` | All 93 applicable pinned async-function-expression cases have results: 89 verified passing and four eval dependencies explicitly unsupported. Thirty-seven final cases cover parameter abrupt completion and TDZ, named bindings, lexical arguments/new.target, unscopables, and finally completion overrides. Explicit throws inside protected regions reach their handlers before no-await Promise rejection; a finally throw replaces the original pending exception, including enclosing synchronous-finally routing. |
 
