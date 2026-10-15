@@ -91,6 +91,14 @@ namespace JavaScriptRuntime
                     }
                     return double.NaN;
                 default:
+                    if (value is not null && !TypeUtilities.IsPrimitive(value))
+                    {
+                        if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "default", out var primitive))
+                        {
+                            throw new TypeError("Cannot convert object to primitive value");
+                        }
+                        return CoerceToMs(primitive);
+                    }
                     return TimeClipLike(TypeUtilities.ToNumber(value));
             }
         }
@@ -235,6 +243,7 @@ namespace JavaScriptRuntime
 
             DefinePrototypeMethod("toDateString", static date => date.toDateString(), 0d);
             DefinePrototypeMethod("toISOString", static date => date.toISOString(), 0d);
+            DefinePrototypeMethod("toTemporalInstant", static date => date.toTemporalInstant(), 0d);
             DefineGenericPrototypeMethod("toJSON", static value => ToJson(value), 1d);
             DefinePrototypeMethod("toLocaleDateString", static date => date.toLocaleDateString(), 0d);
             DefinePrototypeMethod("toLocaleString", static date => date.toLocaleString(), 0d);
@@ -413,9 +422,9 @@ namespace JavaScriptRuntime
             else
             {
                 // The date-time form without an offset is local time.
-                if (result >= -62_135_596_800_000d && result <= 253_402_300_799_999d)
+                if (System.Math.Abs(result) <= TimeClipLimit + MillisecondsPerDay)
                 {
-                    var local = DateTimeOffset.FromUnixTimeMilliseconds((long)result).DateTime;
+                    var local = GetTimeZoneDateTime(result, DateTimeKind.Unspecified);
                     result -= TimeZoneInfo.Local.GetUtcOffset(local).TotalMilliseconds;
                 }
             }
@@ -653,9 +662,9 @@ namespace JavaScriptRuntime
                 return TimeClipLike(result);
             }
 
-            if (result >= -62_135_596_800_000d && result <= 253_402_300_799_999d)
+            if (System.Math.Abs(result) <= TimeClipLimit + MillisecondsPerDay)
             {
-                var local = DateTimeOffset.FromUnixTimeMilliseconds((long)result).DateTime;
+                var local = GetTimeZoneDateTime(result, DateTimeKind.Unspecified);
                 result -= TimeZoneInfo.Local.GetUtcOffset(local).TotalMilliseconds;
             }
 
@@ -702,12 +711,8 @@ namespace JavaScriptRuntime
                 return double.NaN;
             }
 
-            if (_msSinceEpoch < -62_135_596_800_000d || _msSinceEpoch > 253_402_300_799_999d)
-            {
-                return 0d;
-            }
-
-            var offsetMinutes = -GetLocalDateTime().Offset.TotalMinutes;
+            _ = GetLocalParts(out var localOffset);
+            var offsetMinutes = -(double)localOffset;
             return offsetMinutes == 0d ? 0d : offsetMinutes;
         }
 
@@ -815,6 +820,15 @@ namespace JavaScriptRuntime
 
             var parts = GetDateParts(_msSinceEpoch);
             return $"{FormatIsoYear(parts.Year)}-{parts.Month:D2}-{parts.Day:D2}T{parts.Hour:D2}:{parts.Minute:D2}:{parts.Second:D2}.{parts.Millisecond:D3}Z";
+        }
+
+        public object toTemporalInstant()
+        {
+            if (double.IsNaN(_msSinceEpoch))
+            {
+                throw new RangeError("Invalid time value");
+            }
+            return new TemporalInstant(new System.Numerics.BigInteger(_msSinceEpoch) * 1_000_000);
         }
 
         public string toString()
@@ -935,13 +949,21 @@ namespace JavaScriptRuntime
 
         private DateParts GetLocalParts(out int offsetMinutes)
         {
-            offsetMinutes = 0;
-            if (_msSinceEpoch >= -62_135_596_800_000d && _msSinceEpoch <= 253_402_300_799_999d)
-            {
-                offsetMinutes = (int)GetLocalDateTime().Offset.TotalMinutes;
-            }
+            offsetMinutes = (int)TimeZoneInfo.Local.GetUtcOffset(
+                GetTimeZoneDateTime(_msSinceEpoch, DateTimeKind.Utc)).TotalMinutes;
 
             return GetDateParts(_msSinceEpoch + offsetMinutes * MillisecondsPerMinute);
+        }
+
+        private static DateTime GetTimeZoneDateTime(double milliseconds, DateTimeKind kind)
+        {
+            var parts = GetDateParts(milliseconds);
+            // Gregorian weekdays and leap years repeat every 400 years.
+            var year = parts.Year is >= 1 and <= 9999
+                ? (int)parts.Year
+                : 2000 + (int)PositiveModulo(parts.Year, 400);
+            return new DateTime(year, parts.Month, parts.Day, parts.Hour, parts.Minute,
+                parts.Second, parts.Millisecond, kind);
         }
 
         private static DateParts GetDateParts(double milliseconds)
@@ -1061,16 +1083,6 @@ namespace JavaScriptRuntime
             return remainder < 0 ? remainder + divisor : remainder;
         }
 
-        private DateTimeOffset GetUtcDateTime()
-        {
-            return DateTimeOffset.FromUnixTimeMilliseconds((long)_msSinceEpoch);
-        }
-
-        private DateTimeOffset GetLocalDateTime()
-        {
-            return GetUtcDateTime().ToLocalTime();
-        }
-
         private object GetLocalPart(Func<DateParts, double> selector)
         {
             if (double.IsNaN(_msSinceEpoch))
@@ -1166,9 +1178,9 @@ namespace JavaScriptRuntime
                 MakeDay(resolvedYear, resolvedMonth, resolvedDay),
                 MakeTime(resolvedHour, resolvedMinute, resolvedSecond, resolvedMillisecond));
             if (!utc && double.IsFinite(localTime)
-                && localTime >= -62_135_596_800_000d && localTime <= 253_402_300_799_999d)
+                && System.Math.Abs(localTime) <= TimeClipLimit + MillisecondsPerDay)
             {
-                var localDateTime = DateTime.SpecifyKind(DateTime.UnixEpoch.AddMilliseconds(localTime), DateTimeKind.Unspecified);
+                var localDateTime = GetTimeZoneDateTime(localTime, DateTimeKind.Unspecified);
                 localTime -= TimeZoneInfo.Local.GetUtcOffset(localDateTime).TotalMilliseconds;
             }
 

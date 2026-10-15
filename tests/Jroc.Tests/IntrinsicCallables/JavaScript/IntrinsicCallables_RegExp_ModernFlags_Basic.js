@@ -14,13 +14,10 @@ console.log(/^.$/.test("\r"));
 console.log(/^.$/.test("\u2028"));
 console.log(/^.$/.test("\u2029"));
 
-try {
-    new RegExp("a", "v");
-    console.log("no-error");
-} catch (e) {
-    console.log(e.name);
-    console.log(String(e.message).indexOf("v") >= 0);
-}
+var sets = new RegExp("a", "v");
+console.log(sets.unicodeSets);
+console.log(sets.unicode);
+console.log(sets.flags);
 
 try {
     new RegExp("a", "gg");

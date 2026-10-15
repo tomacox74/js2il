@@ -16,7 +16,7 @@ console.log(third.lastIndex);
 
 // A literal that fails at runtime must throw a fresh SyntaxError on every evaluation.
 function unsupported() {
-    return /a/v;
+    return /[a&&b]/v;
 }
 let firstError;
 try { unsupported(); } catch (e) { firstError = e; firstError.tag = "first"; }

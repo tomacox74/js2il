@@ -1926,7 +1926,7 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerFunctionExpression(HIRFunctionExpression funcExpr, out TempVariable resultTempVar)
+    private bool TryLowerFunctionExpression(HIRFunctionExpression funcExpr, out TempVariable resultTempVar, TempVariable? homeObject = null)
     {
         TempVariable? privateBrand = null;
         if (funcExpr.PrivateOwnerRegistryClassName is { } ownerName)
@@ -1958,7 +1958,7 @@ public sealed partial class HIRToLIRLowerer
 
         return TryLowerFunctionExpression(
             funcExpr,
-            homeObject: null,
+            homeObject,
             privateBrand,
             functionName: null,
             out resultTempVar);

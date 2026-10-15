@@ -39,6 +39,14 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Array"
             });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
             GlobalThis.DefineSpeciesAccessorProperty(constructorValue, _arraySpeciesGetterValue);
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
             {
@@ -589,7 +597,7 @@ namespace JavaScriptRuntime
             var func = ObjectRuntime.GetProperty(obj, "join");
             if (!CallableOperations.IsCallable(func))
             {
-                func = ObjectRuntime.GetProperty(GlobalThis.ObjectPrototypeValue, "toString");
+                return ObjectRuntime.PrototypeToString(obj)!;
             }
 
             return CallableOperations.Call0(func, obj)!;
@@ -795,9 +803,9 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var spreadable = ObjectRuntime.GetProperty(
+            var spreadable = ObjectRuntime.GetItem(
                 value!,
-                Symbol.isConcatSpreadable.DebugId);
+                Symbol.isConcatSpreadable);
             return spreadable is not null
                 ? TypeUtilities.ToBoolean(spreadable)
                 : IsArrayForConcat(value);
@@ -968,9 +976,9 @@ namespace JavaScriptRuntime
 
             var iterationReceiver = GetArrayMethodIterationReceiver(thisArgument);
             var callbackReceiver = GetArrayMethodCallbackReceiver(thisArgument);
-            int length = ToArrayLikeLength(iterationReceiver);
+            double length = ToArrayLikeLengthAsDouble(iterationReceiver);
             var callback = RequireCallback(arguments.GetArgument(0), "reduceRight");
-            int k;
+            double k;
             object? accumulator;
             if (arguments.Count >= 2)
             {
@@ -983,7 +991,7 @@ namespace JavaScriptRuntime
                 bool found = false;
                 accumulator = null;
                 k = length - 1;
-                for (int i = length - 1; i >= 0; i--)
+                for (double i = length - 1; i >= 0; i--)
                 {
                     if (JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                     {
@@ -1000,7 +1008,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            for (int i = k; i >= 0; i--)
+            for (double i = k; i >= 0; i--)
             {
                 if (!JavaScriptRuntime.ObjectRuntime.HasPropertyForArrayLike((double)i, iterationReceiver))
                 {
