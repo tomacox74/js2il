@@ -57,9 +57,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,159 | 24 | 6,329 | 23,512 | **72.98%** |
+| Built-in objects and APIs | 17,170 | 24 | 6,318 | 23,512 | **73.03%** |
 | Language syntax and semantics | 18,674 | 217 | 4,756 | 23,647 | **78.97%** |
-| **Total** | 35,893 | 241 | 12,111 | 48,245 | **74.40%** |
+| **Total** | 35,904 | 241 | 12,100 | 48,245 | **74.42%** |
 
 ## Language Areas
 
@@ -230,7 +230,7 @@ bounded worker cleanup.
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 411 | 1 | 97 | 509 | **80.75%** |
+| `Function` | 422 | 1 | 86 | 509 | **82.91%** |
 | `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
