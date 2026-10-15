@@ -349,6 +349,21 @@
   "support": {
     "entries": [
       {
+        "clause": "22.1",
+        "feature": "Complete pinned String Test262 registration",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string-objects",
+        "test262Paths": [
+          "test/built-ins/String/symbol-wrapping.js",
+          "test/built-ins/String/prototype/toString/non-generic.js",
+          "test/built-ins/String/prototype/toString/non-generic-realm.js",
+          "test/built-ins/String/prototype/valueOf/non-generic.js",
+          "test/built-ins/String/prototype/valueOf/non-generic-realm.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call.js"
+        ],
+        "notes": "Twenty-seven final fixtures complete all 1,223 unique applicable pinned String registrations: sixteen new runnable cases pass and eleven actual eval dependencies are explicitly skipped. Overall String evidence is 1,211 passing and twelve known-unsupported cases. toString and valueOf require a string primitive or boxed String data rather than coercing incompatible receivers. new String(Symbol) rejects Symbol conversion, while String(Symbol) retains descriptive-string behavior. Computed RegExp subclass methods retain their home object and support computed super calls with spread. Preserved match, matchAll, replace, search, and replaceAll cases additionally verify duplicate named capture properties and the documented Unicode RegExp subset."
+      },
+      {
         "clause": "22.1.3",
         "feature": "Annex B String HTML wrappers (eight methods)",
         "status": "Supported",
@@ -397,7 +412,7 @@
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js"
         ],
-        "notes": "new String(x) and String(x) are treated as sugar for DotNet2JSConversions.ToString without creating wrapper String objects; primitive string is returned and no [[StringData]]/boxed behaviors are exposed."
+        "notes": "String(x) returns a primitive string and permits direct Symbol descriptive-string conversion. new String(x) creates a boxed String value with String data, length, indexed characters, and the selected new-target prototype, and rejects Symbol-to-string conversion."
       },
       {
         "clause": "22.1.1.1",
@@ -1220,7 +1235,7 @@
         "feature": "String.prototype.toString",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.tostring",
-        "notes": "String.prototype.toString is now exposed on the public String.prototype object and validates that the receiver is string-compatible. Because jroc does not create boxed String objects, wrapper-object edge cases stay limited.",
+        "notes": "String.prototype.toString returns a primitive string only for primitive-string or boxed-String receivers. Incompatible receivers, including other primitive wrappers and arbitrary objects, are rejected even by borrowed functions from another realm. Preserved non-generic fixtures cover this behavior; broader boxed-object fidelity remains limited.",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js"
         ]
@@ -1309,7 +1324,7 @@
         "feature": "String.prototype.valueOf",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.valueof",
-        "notes": "String.prototype.valueOf is now exposed on the public String.prototype object and returns the primitive string value for compatible receivers. Wrapper-object and [[StringData]] fidelity remain limited because jroc does not allocate boxed String objects.",
+        "notes": "String.prototype.valueOf requires primitive-string or boxed-String data and rejects incompatible receivers without invoking their conversion hooks. Native non-generic and cross-realm fixtures cover this brand-sensitive behavior; broader boxed-object fidelity remains limited.",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js"
         ]
@@ -1319,7 +1334,7 @@
         "feature": "ThisStringValue",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-thisstringvalue",
-        "notes": "JavaScriptRuntime.String.ThisStringValue now validates and unwraps string-compatible receivers for the public String.prototype surface. It supports primitive strings plus jroc's direct string helpers, but there is still no distinct boxed String object model.",
+        "notes": "Brand-sensitive toString and valueOf use ThisStringPrimitiveValue to return primitive-string or boxed-String data without generic receiver conversion. Other generic String methods retain their existing object-coercion paths. Broader internal-slot fidelity remains limited.",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js"
         ]

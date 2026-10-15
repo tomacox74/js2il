@@ -57,8 +57,14 @@ public sealed partial class HIRToLIRLowerer
         resultTempVar = default;
 
         if (!TryLowerExpression(expression.Key, out var keyTemp)
-            || !TryLowerExpression(expression.Target, out var targetTemp)
-            || !TryLowerExpression(expression.Value, out var valueTemp))
+            || !TryLowerExpression(expression.Target, out var targetTemp))
+        {
+            return false;
+        }
+        TempVariable valueTemp;
+        if (!(expression.IsField
+            ? TryLowerExpression(expression.Value, out valueTemp)
+            : TryLowerClassPropertyValue(expression.Value, targetTemp, out valueTemp)))
         {
             return false;
         }
@@ -111,7 +117,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(getterTemp));
             DefineTempStorage(getterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
-        else if (!TryLowerExpression(expression.Getter, out getterTemp))
+        else if (!TryLowerClassPropertyValue(expression.Getter, targetTemp, out getterTemp))
         {
             return false;
         }
@@ -123,7 +129,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(setterTemp));
             DefineTempStorage(setterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
-        else if (!TryLowerExpression(expression.Setter, out setterTemp))
+        else if (!TryLowerClassPropertyValue(expression.Setter, targetTemp, out setterTemp))
         {
             return false;
         }
@@ -143,6 +149,11 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }
+
+    private bool TryLowerClassPropertyValue(HIRExpression value, TempVariable homeObject, out TempVariable result)
+        => value is HIRFunctionExpression function
+            ? TryLowerFunctionExpression(function, out result, homeObject)
+            : TryLowerExpression(value, out result);
 
     private bool TryLowerDefineClassAccessorMethodPropertyExpression(HIRDefineClassAccessorMethodPropertyExpression expression, out TempVariable resultTempVar)
     {

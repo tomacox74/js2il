@@ -784,6 +784,8 @@ namespace JavaScriptRuntime
 
             dict.TryAdd(nameof(GlobalThis.Intl), _intlValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Intl), dict[nameof(GlobalThis.Intl)]);
+            dict.TryAdd(nameof(GlobalThis.Temporal), Temporal);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Temporal), dict[nameof(GlobalThis.Temporal)]);
 
             dict.TryAdd(nameof(GlobalThis.RegExp), RegExp);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.RegExp), dict[nameof(GlobalThis.RegExp)]);
@@ -1188,6 +1190,7 @@ namespace JavaScriptRuntime
         public static object JSON => BootstrappedIntrinsics().Json;
 
         public static object Intl => BootstrappedIntrinsics().Intl;
+        public static object Temporal => JavaScriptRuntime.Temporal.GetNamespace(BootstrappedIntrinsics());
 
         public Delegate Symbol => _symbolFunctionValue;
 

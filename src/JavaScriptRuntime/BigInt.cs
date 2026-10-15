@@ -236,7 +236,7 @@ public static class BigInt
     /// primitive (including one unboxed from a Number wrapper object) throws a
     /// TypeError instead of being converted.
     /// </summary>
-    private static BigInteger ToBigInt(object? value)
+    internal static BigInteger ToBigInt(object? value)
     {
         var primitive = ToPrimitiveForBigInt(value);
         if (TryGetNumberValue(primitive, out _))

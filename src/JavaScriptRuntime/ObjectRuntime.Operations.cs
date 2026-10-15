@@ -2290,7 +2290,7 @@ namespace JavaScriptRuntime
             return CallableOperations.Call0(GetProperty(thisArgument!, "toString"), thisArgument);
         }
 
-        private static object? PrototypeToString(object? thisArgument)
+        internal static object? PrototypeToString(object? thisArgument)
         {
             if (thisArgument is null) return "[object Undefined]";
             if (thisArgument is JsNull) return "[object Null]";

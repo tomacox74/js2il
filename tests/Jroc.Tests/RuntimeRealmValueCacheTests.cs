@@ -9,6 +9,49 @@ namespace Jroc.Tests;
 public sealed class RuntimeRealmValueCacheTests
 {
     [Fact]
+    public void TemporalInstantNamespaceConstructorAndPrototypeAreRealmOwned()
+    {
+        var first = CreateContext();
+        var second = CreateContext();
+        object firstNamespace;
+        object firstConstructor;
+        object firstPrototype;
+        try
+        {
+            using (first.EnterAsRoot())
+            {
+                firstNamespace = GlobalThis.Temporal;
+                firstConstructor = ObjectRuntime.GetItem(firstNamespace, "Instant")!;
+                firstPrototype = ObjectRuntime.GetItem(firstConstructor, "prototype")!;
+                Assert.Same(firstNamespace, GlobalThis.Temporal);
+                var instant = CallableOperations.Construct(firstConstructor, [new System.Numerics.BigInteger(42)]);
+                Assert.IsType<TemporalInstant>(instant);
+                Assert.Same(firstPrototype, PrototypeChain.GetPrototypeOrNull(instant!));
+                Assert.Equal(new System.Numerics.BigInteger(42), ObjectRuntime.GetItem(instant!, "epochNanoseconds"));
+                Assert.Throws<JavaScriptRuntime.TypeError>(() => CallableOperations.Call0(firstConstructor, null));
+                Assert.Throws<JavaScriptRuntime.TypeError>(() => CallableOperations.Construct(firstConstructor, [42d]));
+                Assert.Throws<JavaScriptRuntime.RangeError>(() => CallableOperations.Construct(firstConstructor,
+                    [new System.Numerics.BigInteger(8_640_000_000_000_000L) * 1_000_000 + 1]));
+                Assert.True(PropertyDescriptorStore.TryGetOwn(firstPrototype, "epochNanoseconds", out var descriptor));
+                Assert.Throws<JavaScriptRuntime.TypeError>(() => CallableOperations.Call0(descriptor.Get, new JsObject()));
+            }
+            using (second.EnterAsRoot())
+            {
+                var secondNamespace = GlobalThis.Temporal;
+                var secondConstructor = ObjectRuntime.GetItem(secondNamespace, "Instant")!;
+                Assert.NotSame(firstNamespace, secondNamespace);
+                Assert.NotSame(firstConstructor, secondConstructor);
+                Assert.NotSame(firstPrototype, ObjectRuntime.GetItem(secondConstructor, "prototype"));
+            }
+        }
+        finally
+        {
+            first.Realm.Agent.Cluster.Dispose();
+            second.Realm.Agent.Cluster.Dispose();
+        }
+    }
+
+    [Fact]
     public void TemplateObjectsPreserveIdentityWithinARealmButNotAcrossRealms()
     {
         var first = CreateContext();

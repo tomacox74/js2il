@@ -6,6 +6,19 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete Array, Date, and String registration with 76 exact pinned
+  fixtures: 65 verified passing and eleven explicitly skipped for unsupported
+  eval. Reconcile an existing three-case Array report overcount. Fix Array
+  constructor length, Proxy spreadability keys, generic reduceRight safe-integer
+  bounds, intrinsic toString fallback, String receiver brands and Symbol
+  construction, Date default-hint coercion and full-range local timezone
+  conversion, computed class-method home objects and super calls with spread,
+  and duplicate named RegExp captures/backreferences. Add limited v-flag
+  code-point matching and ASCII/Any/Han property escapes; advanced Unicode set
+  operations remain unsupported. Date.toTemporalInstant returns exact branded,
+  realm-owned Temporal.Instant values; other Temporal types and Instant
+  arithmetic/parsing/formatting remain unimplemented.
+
 - test262: verify 11 additional pinned fixtures from native batch `1dd3f7c7-0cc1-5787-a3c6-a181ccae9c87`.
 - test262: complete pinned object-expression coverage with 341 new fixtures:
   325 verified passing and 16 explicitly skipped for unsupported eval.

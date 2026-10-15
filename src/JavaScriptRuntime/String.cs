@@ -456,7 +456,7 @@ namespace JavaScriptRuntime
         internal static object Construct(object?[]? args, object? newTarget)
         {
             var value = args != null && args.Length > 0
-                ? DotNet2JSConversions.ToString(args[0])
+                ? ToSearchString(args[0])
                 : string.Empty;
 
             var wrapper = ObjectRuntime.CreateOrdinaryObject();
@@ -745,7 +745,7 @@ namespace JavaScriptRuntime
             => ToLocaleUpperCase(ThisStringValue(thisArgument));
 
         private static object? PrototypeToString(object? thisArgument)
-            => ThisStringValue(thisArgument);
+            => ThisStringPrimitiveValue(thisArgument);
 
         private static object? PrototypeToUpperCase(object? thisArgument)
             => ToUpperCase(ThisStringValue(thisArgument));
@@ -776,7 +776,23 @@ namespace JavaScriptRuntime
         }
 
         private static object? PrototypeValueOf(object? thisArgument)
-            => ThisStringValue(thisArgument);
+            => ThisStringPrimitiveValue(thisArgument);
+
+        private static string ThisStringPrimitiveValue(object? value)
+        {
+            if (value is string text)
+            {
+                return text;
+            }
+            if (value is not null
+                && PropertyDescriptorStore.TryGetOwn(value, StringDataPropertyName, out var descriptor)
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && descriptor.Value is string wrapped)
+            {
+                return wrapped;
+            }
+            throw new TypeError("String.prototype method called on incompatible receiver");
+        }
 
         private static object? ConstructorFromCharCode(object? thisArgument, in JsCallArguments arguments)
             => FromCharCode(arguments.ToArray());

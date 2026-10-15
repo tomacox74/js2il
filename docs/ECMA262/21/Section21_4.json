@@ -583,6 +583,51 @@
   "support": {
     "entries": [
       {
+        "clause": "21.4.2",
+        "feature": "Date constructor default-hint primitive coercion",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-date-constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Date/BuiltinCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/value-to-primitive-call.js",
+          "test/built-ins/Date/value-symbol-to-prim-invocation.js",
+          "test/built-ins/Date/value-symbol-to-prim-return-prim.js",
+          "test/built-ins/Date/value-to-primitive-result-string.js"
+        ],
+        "notes": "Single-argument construction copies a branded Date value directly; other objects undergo ToPrimitive with the default hint before string parsing or numeric TimeClip. Coercion arguments, receiver, ordering, and abrupt completions are preserved."
+      },
+      {
+        "clause": "21.4.4",
+        "feature": "Date.prototype.toTemporalInstant and limited Temporal.Instant interop",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-temporal/#sec-date.prototype.totemporalinstant",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Date/prototype/toTemporalInstant/BuiltinCompletionExecutionTests.cs",
+          "tests/Jroc.Tests/RuntimeRealmValueCacheTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/prototype/toTemporalInstant/this-value-valid-date.js",
+          "test/built-ins/Date/prototype/toTemporalInstant/this-value-invalid-date.js",
+          "test/built-ins/Date/prototype/toTemporalInstant/this-value-non-date.js",
+          "test/built-ins/Date/prototype/toTemporalInstant/not-a-constructor.js",
+          "test/built-ins/Date/prototype/toTemporalInstant/prop-desc.js"
+        ],
+        "notes": "All eight pinned Date-to-Temporal fixtures pass. The non-constructible length-zero method requires the Date internal slot, rejects invalid dates with RangeError, and returns a branded Temporal.Instant containing exact BigInt nanoseconds across the complete Date range. Temporal, Instant's constructor, and its prototype are realm-owned. new Temporal.Instant accepts ToBigInt inputs with nanosecond range checks; epochNanoseconds is a branded prototype getter. This is only an interop foundation: Instant arithmetic, parsing, formatting, other methods, and the remaining Temporal types are not implemented, and no complete Temporal conformance is claimed."
+      },
+      {
+        "clause": "21.4.1",
+        "feature": "Local timezone conversion across the Date range",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-localtime",
+        "test262Paths": [
+          "test/built-ins/Date/prototype/toISOString/15.9.5.43-0-9.js",
+          "test/built-ins/Date/prototype/toISOString/15.9.5.43-0-10.js"
+        ],
+        "notes": "Constructors, offsetless date-time parsing, local getters, timezone offsets, and local setters use consistent timezone conversion before TimeClip. Outside CLR years 1 through 9999, an equivalent Gregorian year preserves leap years and weekdays for host timezone-rule lookup rather than silently using UTC. Full historical IANA timezone fidelity outside the CLR range remains limited. Nineteen final fixtures complete all 594 unique applicable pinned Date registrations."
+      },
+      {
         "clause": "21.4.4",
         "feature": "Annex B Date.prototype.getYear, setYear, and toGMTString",
         "status": "Supported with Limitations",
@@ -597,7 +642,7 @@
           "test/annexB/built-ins/Date/prototype/setYear/year-number-absolute.js",
           "test/annexB/built-ins/Date/prototype/toGMTString/value.js"
         ],
-        "notes": "getYear returns the local year minus 1900. setYear snapshots the stored date before year coercion, recovers invalid dates from local epoch components, maps integer years 0 through 99 to 1900 through 1999, and applies TimeClip. toGMTString is the same function object as toUTCString. Local getters use calendar arithmetic beyond the CLR date range; the existing zero-offset fallback outside that range remains."
+        "notes": "getYear returns the local year minus 1900. setYear snapshots the stored date before year coercion, recovers invalid dates from local epoch components, maps integer years 0 through 99 to 1900 through 1999, and applies TimeClip. toGMTString is the same function object as toUTCString. Local getters and setters use calendar arithmetic with equivalent-Gregorian-year timezone lookup beyond the CLR date range."
       },
       {
         "clause": "21.4.2",

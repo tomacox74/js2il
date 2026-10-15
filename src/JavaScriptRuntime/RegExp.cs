@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("RegExp", IntrinsicCallKind.ConstructorLike)]
-    public sealed class RegExp : JsObject, IExoticJsObject
+    public sealed partial class RegExp : JsObject, IExoticJsObject
     {
         private static readonly Func<object[], object?[], object?> _regExpEscapeValue = static (_, args) =>
             JavaScriptRuntime.RegExp.Escape(args != null && args.Length > 0 ? args[0] : null);
@@ -37,8 +37,8 @@ namespace JavaScriptRuntime
         }
 
         private const string DotPattern = "(?:[^\n\r\u2028\u2029])";
-        private const string UnicodeDotPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\n\r\u2028\u2029])";
-        private const string UnicodeDotAllPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[\\s\\S])";
+        private const string UnicodeDotPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\uD800-\uDFFF\n\r\u2028\u2029]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF])";
+        private const string UnicodeDotAllPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\uD800-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF])";
         private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
         private static readonly string MatchAllSymbolPropertyKey = Symbol.matchAll.DebugId;
         private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
@@ -69,6 +69,8 @@ namespace JavaScriptRuntime
         private readonly bool _sticky;
         private readonly bool _dotAll;
         private readonly bool _unicode;
+        private readonly bool _unicodeSets;
+        private bool FullUnicode => _unicode || _unicodeSets;
         private readonly bool _hasIndices;
         private readonly string _source;
         private readonly string? _simpleLiteralPattern;
@@ -105,10 +107,11 @@ namespace JavaScriptRuntime
             _sticky = parsedFlags.Sticky;
             _dotAll = parsedFlags.DotAll;
             _unicode = parsedFlags.Unicode;
+            _unicodeSets = parsedFlags.UnicodeSets;
             _hasIndices = parsedFlags.HasIndices;
             _simpleLiteralPattern = null;
 
-            var compiled = GetOrCreateCompiledPattern(_source, _unicode, _dotAll, parsedFlags.ToRegexOptions());
+            var compiled = GetOrCreateCompiledPattern(_source, FullUnicode, _dotAll, parsedFlags.ToRegexOptions(), _unicodeSets);
             _regex = compiled.Regex!;
             _namedGroups = compiled.NamedGroups!;
             _captureResetAncestors = compiled.CaptureResetAncestors!;
@@ -129,6 +132,7 @@ namespace JavaScriptRuntime
             _sticky = flags.Sticky;
             _dotAll = flags.DotAll;
             _unicode = flags.Unicode;
+            _unicodeSets = flags.UnicodeSets;
             _hasIndices = flags.HasIndices;
             _regex = compiled.Regex!;
             _namedGroups = compiled.NamedGroups!;
@@ -325,7 +329,7 @@ namespace JavaScriptRuntime
         public bool dotAll => _dotAll;
         public bool sticky => _sticky;
         public bool unicode => _unicode;
-        public bool unicodeSets => false;
+        public bool unicodeSets => _unicodeSets;
         public bool hasIndices => _hasIndices;
 
         public string flags
@@ -783,7 +787,7 @@ namespace JavaScriptRuntime
                 && (_prototypeWellKnownSymbolFastPathFlags & flag) != 0;
         }
 
-        internal bool CanUseEnumerateMatchesFastPath => !_sticky && !_unicode;
+        internal bool CanUseEnumerateMatchesFastPath => !_sticky && !FullUnicode;
 
         internal bool CanUseBuiltinExecFastPath()
         {
@@ -972,7 +976,8 @@ namespace JavaScriptRuntime
             var lastIndex = ToLength(ObjectRuntime.GetItem(regExp, nameof(RegExp.lastIndex)));
             ObjectRuntime.SetItem(matcher, nameof(RegExp.lastIndex), lastIndex);
 
-            return new RegExpStringIterator(matcher, input, flags.IndexOf('g') >= 0, flags.IndexOf('u') >= 0);
+            return new RegExpStringIterator(matcher, input, flags.IndexOf('g') >= 0,
+                flags.IndexOf('u') >= 0 || flags.IndexOf('v') >= 0);
         }
 
         private static double ToLength(object? value)
@@ -1114,7 +1119,7 @@ namespace JavaScriptRuntime
             return compiled.SourceHasNoSpecialCharacters
                 && !parsedFlags.IgnoreCase
                 && !parsedFlags.Sticky
-                && !parsedFlags.Unicode
+                && !parsedFlags.FullUnicode
                 && !parsedFlags.HasIndices;
         }
 
@@ -1203,23 +1208,31 @@ namespace JavaScriptRuntime
                         parsed.Unicode = true;
                         break;
                     case 'v':
-                        throw new SyntaxError("RegExp flag 'v' is not supported yet");
+                        parsed.UnicodeSets = true;
+                        break;
                     case 'y':
                         parsed.Sticky = true;
                         break;
                 }
             }
 
+            if (parsed.Unicode && parsed.UnicodeSets)
+            {
+                throw new SyntaxError("RegExp flags 'u' and 'v' are mutually exclusive");
+            }
             return parsed;
         }
 
-        private static string PreparePatternForDotNetRegex(string source, bool unicode, bool dotAll)
+        private static string PreparePatternForDotNetRegex(string source, bool unicode, bool dotAll, bool unicodeSets)
         {
-            var prepared = unicode
-                ? RewriteUnicodeCodePointEscapes(source)
-                : source;
+            var prepared = source;
 
             prepared = RewriteEmptyCharacterClasses(prepared);
+            if (unicode)
+            {
+                prepared = RewriteUnicodeCodePointEscapes(
+                    RewriteUnicodeClassesAndProperties(prepared, unicodeSets));
+            }
 
             if (!unicode)
             {
@@ -1386,54 +1399,94 @@ namespace JavaScriptRuntime
             return names;
         }
 
-        private static string RewriteNamedCaptureIdentifiers(string pattern, out Dictionary<string, string> aliases)
+        private static string RewriteCaptureGroups(string pattern, out (string Name, int Number)[] namedGroups)
         {
-            var names = CollectNamedGroupDefinitions(pattern);
-            aliases = new Dictionary<string, string>(StringComparer.Ordinal);
-            var nextAlias = 0;
-            foreach (var name in names.OrderBy(static name => name, StringComparer.Ordinal))
+            var captures = new Dictionary<int, (int Number, int HeaderLength)>();
+            var names = new Dictionary<string, List<int>>(StringComparer.Ordinal);
+            var groups = new List<(string Name, int Number)>();
+            var inCharacterClass = false;
+            for (var index = 0; index < pattern.Length; index++)
             {
-                if (!IsValidNamedCaptureIdentifier(name))
+                if (pattern[index] == '\\')
+                {
+                    index++;
+                    continue;
+                }
+                if (pattern[index] == '[') inCharacterClass = true;
+                else if (pattern[index] == ']') inCharacterClass = false;
+                if (inCharacterClass || pattern[index] != '(')
                 {
                     continue;
                 }
-
-                if (name.Length > 0 && (char.IsAsciiLetter(name[0]) || name[0] == '_')
-                    && name.All(static ch => char.IsAsciiLetterOrDigit(ch) || ch == '_'))
+                if (index + 1 >= pattern.Length || pattern[index + 1] != '?')
                 {
+                    captures.Add(index, (captures.Count + 1, 1));
                     continue;
                 }
-
-                string alias;
-                do
+                if (index + 3 < pattern.Length && pattern[index + 2] == '<'
+                    && pattern[index + 3] is not '=' and not '!')
                 {
-                    alias = $"__jroc_capture_{nextAlias++}";
+                    var end = pattern.IndexOf('>', index + 3);
+                    if (end < 0) throw new SyntaxError("Invalid named capture group");
+                    var name = pattern[(index + 3)..end];
+                    if (!IsValidNamedCaptureIdentifier(name))
+                    {
+                        throw new SyntaxError("Invalid named capture identifier");
+                    }
+                    var number = captures.Count + 1;
+                    captures.Add(index, (number, end - index + 1));
+                    if (!names.TryGetValue(name, out var numbers))
+                    {
+                        numbers = new List<int>();
+                        names.Add(name, numbers);
+                    }
+                    numbers.Add(number);
+                    groups.Add((name, number));
+                    index = end;
                 }
-                while (names.Contains(alias));
-                aliases.Add(name, alias);
             }
-
-            if (aliases.Count == 0)
-            {
-                return pattern;
-            }
+            namedGroups = groups.ToArray();
+            if (captures.Count == 0) return pattern;
 
             var builder = new StringBuilder(pattern.Length);
-            var inCharacterClass = false;
+            var stack = new Stack<(int BodyStart, List<int> Captures)>();
+            var resets = new List<(int Offset, string Pattern)>();
+            var hasBackReferences = false;
+            inCharacterClass = false;
             for (var index = 0; index < pattern.Length; index++)
             {
                 if (pattern[index] == '\\' && index + 1 < pattern.Length)
                 {
+                    List<int>? referencedGroups = null;
+                    var end = index + 1;
                     if (!inCharacterClass && pattern[index + 1] == 'k'
                         && index + 2 < pattern.Length && pattern[index + 2] == '<')
                     {
-                        var end = pattern.IndexOf('>', index + 3);
-                        if (end >= 0 && aliases.TryGetValue(pattern[(index + 3)..end], out var alias))
+                        end = pattern.IndexOf('>', index + 3);
+                        if (end >= 0)
                         {
-                            builder.Append(@"\k<").Append(alias).Append('>');
-                            index = end;
-                            continue;
+                            names.TryGetValue(pattern[(index + 3)..end], out referencedGroups);
                         }
+                    }
+                    else if (!inCharacterClass && pattern[index + 1] is >= '1' and <= '9')
+                    {
+                        while (end + 1 < pattern.Length && char.IsAsciiDigit(pattern[end + 1])) end++;
+                        if (int.TryParse(pattern[(index + 1)..(end + 1)], out var number)
+                            && number <= captures.Count)
+                        {
+                            referencedGroups = [number];
+                        }
+                    }
+                    if (referencedGroups != null)
+                    {
+                        foreach (var number in referencedGroups)
+                        {
+                            builder.Append("(?(").Append(number).Append(@")\k<").Append(number).Append(">|");
+                        }
+                        builder.Append(')', referencedGroups.Count);
+                        index = end;
+                        hasBackReferences = true;
+                        continue;
                     }
 
                     builder.Append(pattern[index]).Append(pattern[++index]);
@@ -1443,23 +1496,49 @@ namespace JavaScriptRuntime
                 if (pattern[index] == '[') inCharacterClass = true;
                 else if (pattern[index] == ']') inCharacterClass = false;
 
-                if (!inCharacterClass && pattern[index] == '('
-                    && index + 3 < pattern.Length
-                    && pattern[index + 1] == '?' && pattern[index + 2] == '<'
-                    && pattern[index + 3] is not '=' and not '!')
+                if (!inCharacterClass && pattern[index] == '(')
                 {
-                    var end = pattern.IndexOf('>', index + 3);
-                    if (end >= 0 && aliases.TryGetValue(pattern[(index + 3)..end], out var alias))
+                    var nested = new List<int>();
+                    if (captures.TryGetValue(index, out var capture))
                     {
-                        builder.Append("(?<").Append(alias).Append('>');
-                        index = end;
+                        // Explicit numbers retain JS capture order and keep duplicate names distinct.
+                        foreach (var frame in stack) frame.Captures.Add(capture.Number);
+                        nested.Add(capture.Number);
+                        builder.Append("(?<").Append(capture.Number).Append('>');
+                        stack.Push((builder.Length, nested));
+                        index += capture.HeaderLength - 1;
                         continue;
                     }
+                    var headerLength = index + 1 < pattern.Length && pattern[index + 1] == '?'
+                        ? index + 2 < pattern.Length && pattern[index + 2] == '<' ? 4 : 3
+                        : 1;
+                    stack.Push((builder.Length + headerLength, nested));
                 }
-
+                else if (!inCharacterClass && pattern[index] == ')' && stack.Count > 0)
+                {
+                    var frame = stack.Pop();
+                    if (index + 1 < pattern.Length
+                        && pattern[index + 1] is '*' or '+' or '?' or '{'
+                        && frame.Captures.Count > 0)
+                    {
+                        var reset = new StringBuilder();
+                        foreach (var number in frame.Captures)
+                        {
+                            reset.Append("(?<-").Append(number).Append(">)*");
+                        }
+                        resets.Add((frame.BodyStart, reset.ToString()));
+                    }
+                }
                 builder.Append(pattern[index]);
             }
-
+            if (hasBackReferences)
+            {
+                // Balancing groups clear earlier iterations before testing an unset backreference.
+                foreach (var reset in resets.OrderByDescending(static item => item.Offset))
+                {
+                    builder.Insert(reset.Offset, reset.Pattern);
+                }
+            }
             return builder.ToString();
         }
 
@@ -1766,7 +1845,8 @@ namespace JavaScriptRuntime
             string Source,
             bool Unicode,
             bool DotAll,
-            RegexOptions Options);
+            RegexOptions Options,
+            bool UnicodeSets);
 
         private const int CompiledPatternCacheCapacity = 1024;
         private const int CompiledPatternCacheSourceCharacterBudget = 4 * 1024 * 1024;
@@ -1790,9 +1870,10 @@ namespace JavaScriptRuntime
             string source,
             bool unicode,
             bool dotAll,
-            RegexOptions options)
+            RegexOptions options,
+            bool unicodeSets)
         {
-            var compiled = GetOrCreateCompiledPatternCore(source, unicode, dotAll, options);
+            var compiled = GetOrCreateCompiledPatternCore(source, unicode, dotAll, options, unicodeSets);
             if (compiled.SyntaxErrorMessage is not null)
             {
                 throw new SyntaxError(compiled.SyntaxErrorMessage);
@@ -1809,11 +1890,12 @@ namespace JavaScriptRuntime
             string source,
             bool unicode,
             bool dotAll,
-            RegexOptions options)
+            RegexOptions options,
+            bool unicodeSets)
         {
-            var key = new CompiledPatternKey(source, unicode, dotAll, options);
+            var key = new CompiledPatternKey(source, unicode, dotAll, options, unicodeSets);
             var candidate = new Lazy<CompiledPattern>(
-                () => CreateCompiledPattern(source, unicode, dotAll, options),
+                () => CreateCompiledPattern(source, unicode, dotAll, options, unicodeSets),
                 LazyThreadSafetyMode.ExecutionAndPublication);
             var cached = CompiledPatternCache.GetOrAdd(key, candidate);
             if (ReferenceEquals(candidate, cached))
@@ -1850,19 +1932,20 @@ namespace JavaScriptRuntime
             string source,
             bool unicode,
             bool dotAll,
-            RegexOptions options)
+            RegexOptions options,
+            bool unicodeSets)
         {
             try
             {
-                var preparedPattern = RewriteNamedCaptureIdentifiers(
-                    PreparePatternForDotNetRegex(source, unicode, dotAll), out var aliases);
+                var preparedPattern = RewriteCaptureGroups(
+                    PreparePatternForDotNetRegex(source, unicode, dotAll, unicodeSets), out var namedGroups);
                 var regex = new Regex(preparedPattern, options);
-                var (ancestors, boundaryKinds) = GetCaptureResetAncestors(source, regex, aliases);
+                var (ancestors, boundaryKinds) = GetCaptureResetAncestors(source, regex);
 
                 return new CompiledPattern
                 {
                     Regex = regex,
-                    NamedGroups = GetNamedGroups(regex, aliases),
+                    NamedGroups = namedGroups,
                     CaptureResetAncestors = ancestors,
                     CaptureBoundaryKinds = boundaryKinds,
                     SourceHasNoSpecialCharacters = HasNoSpecialRegexCharacters(source)
@@ -1893,9 +1976,10 @@ namespace JavaScriptRuntime
                 var parsedFlags = ParseFlags(flags);
                 var compiled = GetOrCreateCompiledPatternCore(
                     source,
-                    parsedFlags.Unicode,
+                    parsedFlags.FullUnicode,
                     parsedFlags.DotAll,
-                    parsedFlags.ToRegexOptions());
+                    parsedFlags.ToRegexOptions(),
+                    parsedFlags.UnicodeSets);
                 if (compiled.SyntaxErrorMessage is not null)
                 {
                     return new LiteralTemplate
@@ -1916,23 +2000,6 @@ namespace JavaScriptRuntime
             {
                 return new LiteralTemplate { Source = source, SyntaxErrorMessage = ex.Message };
             }
-        }
-
-        private static (string Name, int Number)[] GetNamedGroups(Regex regex, Dictionary<string, string> aliases)
-        {
-            var groups = new List<(string Name, int Number)>();
-            foreach (var name in regex.GetGroupNames())
-            {
-                if (int.TryParse(name, NumberStyles.None, CultureInfo.InvariantCulture, out _))
-                {
-                    continue;
-                }
-
-                var originalName = aliases.FirstOrDefault(alias => alias.Value == name).Key ?? name;
-                groups.Add((originalName, regex.GroupNumberFromName(name)));
-            }
-
-            return groups.ToArray();
         }
 
         private object? CreateNamedGroupsObject(Match match, bool indices)
@@ -1958,6 +2025,10 @@ namespace JavaScriptRuntime
                             (double)(group.Index + group.Length)
                         }
                         : group.Value;
+                }
+                else if (groups.HasOwnPropertyValue(name))
+                {
+                    continue;
                 }
 
                 groups.SetBoxedValue(name, value);
@@ -2097,7 +2168,7 @@ namespace JavaScriptRuntime
             }
 
             startAt = (int)numericLastIndex;
-            if (_unicode
+            if (FullUnicode
                 && startAt > 0
                 && startAt < input.Length
                 && char.IsHighSurrogate(input[startAt - 1])
@@ -2131,7 +2202,7 @@ namespace JavaScriptRuntime
             => ObjectRuntime.SetItem(this, nameof(lastIndex), value);
 
         private bool IsInvalidUnicodeMatchStart(string input, int index)
-            => _unicode
+            => FullUnicode
                 && index > 0
                 && index < input.Length
                 && char.IsHighSurrogate(input[index - 1])
@@ -2169,8 +2240,7 @@ namespace JavaScriptRuntime
 
         private static (int[] Ancestors, CaptureBoundaryKind[] BoundaryKinds) GetCaptureResetAncestors(
             string source,
-            Regex regex,
-            Dictionary<string, string> aliases)
+            Regex regex)
         {
             var groupNumbers = regex.GetGroupNumbers();
             var maxGroupNumber = 0;
@@ -2250,9 +2320,7 @@ namespace JavaScriptRuntime
                         var nameEnd = source.IndexOf('>', index + 3);
                         if (nameEnd >= 0)
                         {
-                            var name = source.Substring(index + 3, nameEnd - index - 3);
-                            captureNumber = regex.GroupNumberFromName(
-                                aliases.TryGetValue(name, out var alias) ? alias : name);
+                            captureNumber = nextUnnamedCapture++;
                         }
                     }
 
@@ -2298,7 +2366,7 @@ namespace JavaScriptRuntime
 
         private int AdvanceStringIndex(string input, int index)
         {
-            if (!_unicode || index < 0 || index >= input.Length)
+            if (!FullUnicode || index < 0 || index >= input.Length)
             {
                 return index + 1;
             }
@@ -2320,6 +2388,8 @@ namespace JavaScriptRuntime
             public bool Multiline { get; set; }
             public bool DotAll { get; set; }
             public bool Unicode { get; set; }
+            public bool UnicodeSets { get; set; }
+            public bool FullUnicode => Unicode || UnicodeSets;
             public bool Sticky { get; set; }
             public bool HasIndices { get; set; }
 
@@ -2336,7 +2406,7 @@ namespace JavaScriptRuntime
                     options |= RegexOptions.Multiline;
                 }
 
-                if (DotAll && !Unicode)
+                if (DotAll && !FullUnicode)
                 {
                     options |= RegexOptions.Singleline;
                 }

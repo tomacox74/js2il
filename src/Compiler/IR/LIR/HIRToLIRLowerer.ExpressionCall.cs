@@ -1054,6 +1054,51 @@ public sealed partial class HIRToLIRLowerer
 
         if (callExpr.Callee is HIRIndexAccessExpression calleeIndexAccess)
         {
+            if (calleeIndexAccess.Object is HIRSuperExpression)
+            {
+                var receiver = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
+                    Array.Empty<TempVariable>(), receiver, Array.Empty<Type>()));
+                DefineTempStorage(receiver,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (!TryLowerExpression(calleeIndexAccess.Index, out var key))
+                {
+                    return false;
+                }
+                var propertyName = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                    nameof(JavaScriptRuntime.ObjectRuntime),
+                    nameof(JavaScriptRuntime.ObjectRuntime.ToPropertyKeyString),
+                    [EnsureObject(key)],
+                    propertyName));
+                DefineTempStorage(propertyName,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var callee = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                    nameof(JavaScriptRuntime.ObjectRuntime),
+                    nameof(JavaScriptRuntime.ObjectRuntime.GetSuperProperty),
+                    [propertyName],
+                    callee));
+                DefineTempStorage(callee,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var arguments))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.CallWithThis),
+                    [callee, receiver, arguments],
+                    resultTempVar,
+                    [typeof(object), typeof(object), typeof(object[])]));
+                DefineTempStorage(resultTempVar,
+                    new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
+
             if (!TryLowerExpression(calleeIndexAccess.Object, out var computedReceiverTemp))
             {
                 return false;
