@@ -46,6 +46,31 @@ dotnet run -c Release
 
 See [Benchmarks/README.md](Benchmarks/README.md) for comprehensive documentation.
 
+### Profiling the exact oscillator workload
+
+From the repository root:
+
+```sh
+node scripts/profileBenchmarkScenario.js audio-oscillator --no-open --iterations 2 --output-dir /tmp/jroc-oscillator-profile
+```
+
+The helper uses the benchmark's `audio-dft-data.js`, unmodified oscillator
+fixture, workload registration, and `AssumeUnmodifiedHostGlobals = true`.
+It retains the composed source, Release runner, compiled assembly/PDB, and
+EventPipe trace in the output directory. `--no-open` supports Linux/macOS;
+opening PerfView requires Windows. `JrocBenchmarkProfile` Begin/End events
+delimit execution after compilation and module setup, and printed allocation
+totals use process-wide accounting because hosted exports run on a worker
+thread. These totals and tracing timings are diagnostics, not substitutes for
+BenchmarkDotNet statistics and MemoryDiagnoser results. Leave `--no-inline`
+off for representative runtime behavior.
+
+For a paired JROC/Jint measurement of the complete original workload:
+
+```sh
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- --kracken --scenario audio-oscillator --filter '*'
+```
+
 ---
 
 ## Quick Comparison Harness Details

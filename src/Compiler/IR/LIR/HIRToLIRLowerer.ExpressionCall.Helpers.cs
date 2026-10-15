@@ -83,6 +83,56 @@ public sealed partial class HIRToLIRLowerer
         => expression is HIRLiteralExpression
             or HIRVariableExpression;
 
+    private bool TryLowerResolvedMemberCall(
+        HIRCallExpression call,
+        HIRPropertyAccessExpression callee,
+        TempVariable result)
+    {
+        if (!TryLowerExpression(callee.Object, out var receiver))
+        {
+            return false;
+        }
+        receiver = RequireObjectCoercible(receiver);
+        var name = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(callee.PropertyName, name));
+        DefineTempStorage(name, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var function = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+            [receiver, name], function));
+        DefineTempStorage(function, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (!HasSpreadArguments(call.Arguments)
+            && call.Arguments.Length <= JavaScriptRuntime.JsCallArguments.InlineCapacity)
+        {
+            var arguments = new List<TempVariable> { function, receiver };
+            foreach (var argument in call.Arguments)
+            {
+                if (!TryLowerExpression(argument, out var lowered))
+                {
+                    return false;
+                }
+                arguments.Add(EnsureObject(lowered));
+            }
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.CallableOperations),
+                $"Call{call.Arguments.Length}", arguments, result));
+        }
+        else
+        {
+            if (!TryLowerCallArgumentsToArgsArray(call.Arguments, out var arguments))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.CallWithThis),
+                [function, receiver, arguments], result,
+                [typeof(object), typeof(object), typeof(object[])]));
+        }
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private TempVariable RequireObjectCoercible(TempVariable receiverTemp)
     {
         var objectReceiver = EnsureObject(receiverTemp);

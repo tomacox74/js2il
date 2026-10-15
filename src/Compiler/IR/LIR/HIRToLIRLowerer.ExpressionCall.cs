@@ -1369,6 +1369,10 @@ public sealed partial class HIRToLIRLowerer
             var intrinsicType = _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
                 ? intrinsic.Type
                 : null;
+            if (intrinsicType == typeof(JavaScriptRuntime.Math) && !canUseIntrinsicStatic)
+            {
+                return TryLowerResolvedMemberCall(callExpr, calleePropAccess, resultTempVar);
+            }
             if (intrinsicType != null && canUseIntrinsicStatic)
             {
                 // Check if there's a matching static method

@@ -391,9 +391,11 @@
         "tests/Jroc.Test262.Tests/built-ins/Math/acos/ExecutionTests.cs",
         "tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs",
         "tests/Jroc.Test262.Tests/built-ins/Math/floor/ExecutionTests.cs",
-        "tests/Jroc.Test262.Tests/built-ins/Math/max/ExecutionTests.cs"
+        "tests/Jroc.Test262.Tests/built-ins/Math/max/ExecutionTests.cs",
+        "tests/Jroc.Tests/Math/BuiltinAdapterRuntimeTests.cs",
+        "tests/Jroc.Tests/Math/DynamicDispatchTests.cs"
       ],
-      "notes": "Math intrinsic methods now expose the expected callable metadata for the covered test262 cases, including function `name`, `length`, and property-descriptor characteristics on the static Math surface."
+      "notes": "Math intrinsic methods expose the expected callable metadata for the covered test262 cases, including function name, length, and property-descriptor characteristics. Realm bootstrap publishes explicit-receiver built-ins with fixed arity (variadic for min, max, and hypot), avoiding reflective overload selection and ambient receiver updates. Dynamic global Math calls select the member before evaluating arguments and preserve replacements, deletion, accessors, coercion order, and JavaScript rounding semantics."
     },
     {
       "clause": "21.3.2.16",
