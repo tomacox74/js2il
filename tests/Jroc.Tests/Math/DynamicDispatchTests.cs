@@ -83,6 +83,9 @@ public sealed class DynamicDispatchTests
             globalThis.Math = originalMath;
             originalMath.round = originalRound;
             console.log(Number.isNaN(Math.round()), Math.round(1.5, "ignored"));
+            console.log("spread", Number.isNaN(Math.round(...[])), Math.round(...[1.5, 1, 2, 3, 4, 5]));
+            console.log(Math.round(1.5, 1, 2), Math.round(1.5, 1, 2, 3),
+                Math.round(1.5, 1, 2, 3, 4), Math.round(1.5, 1, 2, 3, 4, 5));
             console.log(Math.round(Infinity), Math.round(-Infinity), Number.isNaN(Math.round(NaN)));
             console.log(1 / Math.round(-0), Math.round(-1.5), Math.round(0.49999999999999994));
             var order = "";
@@ -100,6 +103,8 @@ public sealed class DynamicDispatchTests
         Assert.Contains("-Infinity 42", output);
         Assert.Contains("77", output);
         Assert.Contains("true 2", output);
+        Assert.Contains("spread true 2", output);
+        Assert.Contains("2 2 2 2", output);
         Assert.Contains("Infinity -Infinity true", output);
         Assert.Contains("-Infinity -1 0", output);
         Assert.Contains("2 ec", output);
@@ -128,8 +133,10 @@ public sealed class DynamicDispatchTests
         Assert.Contains("2\n99\nget\narg\n2", output);
     }
 
-    [Fact]
-    public void CrossModuleMutationDisablesDirectCallsAndRemainsObservable()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void CrossModuleMutationOrExposureDisablesDirectCalls(bool mutatesMath)
     {
         var directory = Path.Combine(Path.GetTempPath(), "DynamicMathModules");
         var main = Path.Combine(directory, "main.js");
@@ -137,7 +144,9 @@ public sealed class DynamicDispatchTests
         var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryMultiEntryCompileRequest(
             [
                 new(main, "require('./mutation'); console.log(Math.round(1.5));"),
-                new(mutation, "var alias = Math; alias['round'] = function() { return 17; };")
+                new(mutation, mutatesMath
+                    ? "var alias = Math; alias['round'] = function() { return 17; };"
+                    : "function Sampler() { var self = this; }")
             ])
         {
             AssemblyName = "DynamicMathModules",
@@ -147,7 +156,7 @@ public sealed class DynamicDispatchTests
         Assert.Contains("CallableOperations::Call1", il);
         Assert.DoesNotContain("Math::round(float64)", il);
         var result = InMemoryTestCompiler.ExecuteArtifact(artifact, main, "DynamicMathModules");
-        Assert.Contains("17", result.Output);
+        Assert.Contains(mutatesMath ? "17" : "2", result.Output);
     }
 
     [Theory]
