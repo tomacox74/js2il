@@ -77,6 +77,9 @@ namespace Jroc.Tests.Async
         public Task Async_TryFinally_FinallyThrowOverridesOriginal() { var testName = nameof(Async_TryFinally_FinallyThrowOverridesOriginal); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Async_ProtectedThrowRouting() { var testName = nameof(Async_ProtectedThrowRouting); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Async_TryFinally_ReturnPreservedThroughAwait() { var testName = nameof(Async_TryFinally_ReturnPreservedThroughAwait); return ExecutionTest(testName); }
 
         [Fact]

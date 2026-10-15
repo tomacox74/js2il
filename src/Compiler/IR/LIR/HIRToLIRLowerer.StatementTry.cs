@@ -347,7 +347,20 @@ public sealed partial class HIRToLIRLowerer
 
                 lirInstructions.Add(new LIRLabel(afterFinally));
                 lirInstructions.Add(new LIRBranchIfFalse(hasPendingException, noPendingException));
-                lirInstructions.Add(new LIRThrow(pendingException));
+                if (_isAsync)
+                {
+                    var thrownValue = CreateTempVariable();
+                    lirInstructions.Add(new LIRUnwrapCatchException(pendingException, thrownValue));
+                    DefineTempStorage(thrownValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    if (!EmitThrowCompletion(thrownValue))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    lirInstructions.Add(CreateThrowInstruction(pendingException));
+                }
                 lirInstructions.Add(new LIRLabel(noPendingException));
                 lirInstructions.Add(new LIRBranchIfTrue(hasPendingReturn, pendingReturnLabel));
                 foreach (var (targetLabelId, target) in abruptTargets)

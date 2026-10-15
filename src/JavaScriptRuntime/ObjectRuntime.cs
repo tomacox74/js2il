@@ -226,6 +226,9 @@ namespace JavaScriptRuntime
         public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType)
             => RuntimeServices.ValidateDirectClassPrivateMethodReceiver(receiver, ownerType);
 
+        public static bool DeleteSuperProperty()
+            => throw new ReferenceError("Cannot delete a super property");
+
         public static object? GetSuperProperty(string propertyName)
         {
             var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
