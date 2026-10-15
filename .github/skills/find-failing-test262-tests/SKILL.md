@@ -22,7 +22,10 @@ Identify failing test262 test cases that:
    - Follow **Catalog-First Candidate Selection** in `test262-porting`:
      query authorized scoped Supabase reporting or use an approved coherent
      central export. Read **Local agent read access** in
-     `docs/ECMA262/Test262SupabaseCatalog.md`. Reuse `SUPABASE_URL` and
+     `docs/ECMA262/Test262SupabaseCatalog.md`. Use the configured
+     `test262-catalog` MCP server for authenticated read-only reporting when
+     available, following **Registered MCP access** in that runbook. A Data API
+     denial does not imply MCP access is unavailable. Reuse `SUPABASE_URL` and
      `SUPABASE_PUBLISHABLE_KEY` from performance analysis for bounded REST reads
      when catalogue API exposure and read permissions are enabled. The deployed
      `anon` role currently lacks those rights; use the read-only connector/export
@@ -103,4 +106,3 @@ node scripts/test262/runMvp.js --filter "built-ins/Array/prototype" --limit 60
   shared authority or proof of trusted central native acceptance.
 - Running test262 MVP: `node scripts/test262/runMvp.js` for targeted reproduction.
 - Spec support docs: `docs/ECMA262/` (use clause status and support notes to spot missing functionality)
-

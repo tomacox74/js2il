@@ -39,7 +39,10 @@ Read scoped Supabase reporting or an approved coherent central export and
 record the selected target, source revision, provenance and as-of time.
 Reconcile central registration snapshots with unmerged working-tree and
 pending-PR registrations. Follow `docs/ECMA262/Test262SupabaseCatalog.md`;
-do not restore a legacy SQLite artifact as shared authority. For local read-only
+do not restore a legacy SQLite artifact as shared authority. Use the configured
+`test262-catalog` MCP server for authenticated read-only reporting when available;
+follow **Registered MCP access** in that runbook. A Data API denial does not imply
+MCP access is unavailable. For local read-only
 Data API queries, reuse `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` from JROC
 performance analysis. Follow **Local agent read access** in that runbook for
 schema selection, scoped/bounded reads and the required API permissions. The
@@ -222,4 +225,3 @@ causes fixed, and focused validation result.
   batch.
 - Never claim the intake count as completed coverage; only accepted,
   registered, passing fixtures count as ported.
-
