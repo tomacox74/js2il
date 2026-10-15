@@ -102,8 +102,7 @@ public static class Function
     }
 
     private static object PrototypeHasInstance(object? thisArgument, object? value)
-        => CallableOperations.IsCallable(thisArgument)
-            && Operators.InstanceOf(value, thisArgument);
+        => Operators.OrdinaryHasInstance(value, thisArgument);
 
     private static void DefinePrototypeMethod(JsObject prototype, string name, Delegate method, double length)
     {

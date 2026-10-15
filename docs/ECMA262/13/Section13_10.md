@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-08T01:52:08Z
+> Last generated (UTC): 2026-10-15T07:30:47Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -32,5 +32,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| instanceof | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js)<br>[`S11.8.6_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.1_T1.js)<br>[`S11.8.6_A2.4_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.4_T1.js)<br>[`S11.8.6_A3.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A3.js) |  | Implemented through the compiler's `LIRInstanceOfOperator` lowering, centralized `CallableOperations` constructor classification, and `JavaScriptRuntime.Operators.InstanceOf`, with coverage for generated function objects, prototype-chain matches, left-to-right evaluation order, and TypeError on primitive/non-callable right-hand sides. Full `@@hasInstance` and exotic callable behavior remain limited. |
+| instanceof | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js)<br>[`S11.8.6_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.1_T1.js)<br>[`S11.8.6_A2.4_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.4_T1.js)<br>[`S11.8.6_A3.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A3.js)<br>`tests/Jroc.Test262.Tests/language/expressions/instanceof/OperatorCompletionExecutionTests.cs` |  | InstanceofOperator reads @@hasInstance before requiring a callable target, propagates getter errors, invokes custom hooks with the original target as this and the left operand as the sole argument, and boolean-coerces the result. Function.prototype[@@hasInstance] uses separate OrdinaryHasInstance semantics to avoid recursive hook dispatch; bound targets delegate through InstanceofOperator. All 43 applicable pinned instanceof cases are accounted for: 42 verified passing and one unsupported eval case. |
 
