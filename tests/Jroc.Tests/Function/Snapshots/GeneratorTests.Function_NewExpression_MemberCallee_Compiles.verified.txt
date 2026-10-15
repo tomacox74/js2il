@@ -507,17 +507,17 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 175 (0xaf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewExpression_MemberCallee_Compiles/Scope,
 			[1] object,
 			[2] object[],
 			[3] class Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_impl/FunctionObject,
-			[4] class Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl,
-			[5] class Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow/FunctionObject,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[7] object
+			[4] object,
+			[5] class Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl,
+			[6] class Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow/FunctionObject,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Function_NewExpression_MemberCallee_Compiles/Scope::.ctor()
@@ -538,52 +538,56 @@
 		IL_001f: ldc.i4.0
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_impl/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.3
-		IL_0026: newobj instance void Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl::.ctor()
-		IL_002b: stloc.s 4
-		IL_002d: ldloc.s 4
-		IL_002f: ldloc.3
-		IL_0030: callvirt instance void Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl::set_Window(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-		IL_0035: ldloc.0
-		IL_0036: ldloc.s 4
-		IL_0038: stfld class Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl Modules.Function_NewExpression_MemberCallee_Compiles/Scope::impl
-		IL_003d: ldc.i4.1
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldloc.0
-		IL_0046: stelem.ref
-		IL_0047: stloc.2
-		IL_0048: ldloc.2
-		IL_0049: ldc.i4.0
-		IL_004a: ldelem.ref
-		IL_004b: castclass Modules.Function_NewExpression_MemberCallee_Compiles/Scope
-		IL_0050: newobj instance void Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow/FunctionObject::.ctor(class Modules.Function_NewExpression_MemberCallee_Compiles/Scope)
-		IL_0055: ldc.i4.1
-		IL_0056: conv.r8
-		IL_0057: ldstr ""
-		IL_005c: ldc.i4.0
-		IL_005d: ldc.i4.0
-		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0063: stloc.s 5
-		IL_0065: ldloc.s 5
-		IL_0067: ldstr "createWindow"
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0071: stloc.1
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0077: stloc.s 6
-		IL_0079: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007e: stloc.2
-		IL_007f: ldloc.1
-		IL_0080: ldloc.2
-		IL_0081: ldc.r8 123
-		IL_008a: box [System.Runtime]System.Double
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0094: stloc.s 7
-		IL_0096: ldloc.s 6
-		IL_0098: ldloc.s 7
-		IL_009a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009f: pop
-		IL_00a0: ret
+		IL_0026: ldloc.3
+		IL_0027: ldstr "Window"
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0031: stloc.s 4
+		IL_0033: newobj instance void Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl::.ctor()
+		IL_0038: stloc.s 5
+		IL_003a: ldloc.s 5
+		IL_003c: ldloc.s 4
+		IL_003e: callvirt instance void Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl::set_Window(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_0043: ldloc.0
+		IL_0044: ldloc.s 5
+		IL_0046: stfld class Modules.Function_NewExpression_MemberCallee_Compiles/ObjectLiterals/L3C12_impl Modules.Function_NewExpression_MemberCallee_Compiles/Scope::impl
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldloc.0
+		IL_0054: stelem.ref
+		IL_0055: stloc.2
+		IL_0056: ldloc.2
+		IL_0057: ldc.i4.0
+		IL_0058: ldelem.ref
+		IL_0059: castclass Modules.Function_NewExpression_MemberCallee_Compiles/Scope
+		IL_005e: newobj instance void Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow/FunctionObject::.ctor(class Modules.Function_NewExpression_MemberCallee_Compiles/Scope)
+		IL_0063: ldc.i4.1
+		IL_0064: conv.r8
+		IL_0065: ldstr ""
+		IL_006a: ldc.i4.0
+		IL_006b: ldc.i4.0
+		IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0071: stloc.s 6
+		IL_0073: ldloc.s 6
+		IL_0075: ldstr "createWindow"
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_007f: stloc.1
+		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0085: stloc.s 7
+		IL_0087: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_008c: stloc.2
+		IL_008d: ldloc.1
+		IL_008e: ldloc.2
+		IL_008f: ldc.r8 123
+		IL_0098: box [System.Runtime]System.Double
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00a2: stloc.s 4
+		IL_00a4: ldloc.s 7
+		IL_00a6: ldloc.s 4
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ad: pop
+		IL_00ae: ret
 	} // end of method Function_NewExpression_MemberCallee_Compiles::__js_module_init__
 
 } // end of class Modules.Function_NewExpression_MemberCallee_Compiles

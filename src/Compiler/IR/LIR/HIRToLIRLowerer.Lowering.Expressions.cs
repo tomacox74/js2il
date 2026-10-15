@@ -193,6 +193,14 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                if (IsNativeEsModuleMain)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
                 // Only supported for instance callables where IL arg0 is the receiver.
                 if (_callableKind is not CallableKind.ClassMethod
                     and not CallableKind.ClassStaticMethod

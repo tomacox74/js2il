@@ -52,8 +52,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
-| Language syntax and semantics | 18,334 | 201 | 5,112 | 23,647 | **77.53%** |
-| **Total** | 35,491 | 214 | 12,540 | 48,245 | **73.56%** |
+| Language syntax and semantics | 18,674 | 217 | 4,756 | 23,647 | **78.97%** |
+| **Total** | 35,831 | 230 | 12,184 | 48,245 | **74.27%** |
 
 ## Language Areas
 
@@ -68,7 +68,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 9,344 | 142 | 1,552 | 11,038 | **84.65%** |
+| `expressions` | 9,684 | 158 | 1,196 | 11,038 | **87.73%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -138,7 +138,7 @@ bounded worker cleanup.
 | `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
 | `new.target` | 11 | 0 | 3 | 14 | **78.57%** |
 | `new` | 32 | 0 | 27 | 59 | **54.24%** |
-| `object` | 808 | 6 | 356 | 1,170 | **69.06%** |
+| `object` | 1,148 | 22 | 0 | 1,170 | **98.12%** |
 | `optional-chaining` | 6 | 0 | 32 | 38 | **15.79%** |
 | `postfix-decrement` | 2 | 0 | 35 | 37 | **5.41%** |
 | `postfix-increment` | 2 | 0 | 36 | 38 | **5.26%** |

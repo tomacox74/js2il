@@ -45,6 +45,9 @@ namespace Jroc.Tests.Object
         [Fact]
         public Task ObjectLiteral_GeneratedMethodFunctionObjects() { var testName = nameof(ObjectLiteral_GeneratedMethodFunctionObjects); return GenerateTest(testName); }
 
+        [Fact]
+        public Task ObjectLiteral_FastPath_InferredNames() { var testName = nameof(ObjectLiteral_FastPath_InferredNames); return GenerateTest(testName); }
+
         // Regression: object literals emitted inline should not introduce invalid type tokens/casts.
         [Fact]
         public Task ObjectLiteral_InlinePropertyInit() { var testName = nameof(ObjectLiteral_InlinePropertyInit); return GenerateTest(testName); }

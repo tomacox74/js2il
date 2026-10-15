@@ -431,13 +431,18 @@
           "tests/Jroc.Test262.Tests/language/expressions/object/dstr/LanguageExpressionsObjectDstrConformanceBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/object/dstr/LanguageExpressionsObjectDstrConformanceBatchParseTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/object/ExpressionSyntaxConformanceBatchExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/language/expressions/object/ExpressionSyntaxConformanceBatchParseTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/object/ExpressionSyntaxConformanceBatchParseTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/ObjectExpressionCompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/dstr/ObjectDestructuringCompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/method-definition/ObjectMethodCompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/method-definition/forbidden-ext/b1/ObjectMethodForbiddenExtensionB1CompletionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/method-definition/forbidden-ext/b2/ObjectMethodForbiddenExtensionB2CompletionTests.cs"
         ],
         "test262Suites": [
           "language.expressions.object",
           "language.expressions.object.dstr"
         ],
-        "notes": "666 native Test262 fixtures verify object-initializer evaluation, computed and accessor property names, method definitions, property-name normalization, escaped keyword forms, and object-pattern destructuring/default semantics: 547 positive execution cases and 119 parse-negative early-error cases. The status remains limited by unsupported behavior outside this verified slice."
+        "notes": "All 1,170 unique pinned object-expression cases are registered: 1,148 verified passing and 22 explicitly skipped for unsupported eval, with no unpublished cases. The completion batch adds 341 exact fixtures (325 runnable and 16 eval skips), including eight parse negatives and a top-level-await Module-goal case, and reconciles 15 previously registered cases. Coverage includes computed-key coercion before value evaluation, anonymous function/class/accessor names, discarded shorthand ReferenceErrors, Proxy spread trap order and enumerability, method caller/arguments restrictions, parameter destructuring, and early errors."
       },
       {
         "clause": "13.2.5.1",
@@ -468,9 +473,12 @@
           "test/language/computed-property-names/object/accessor/getter-duplicates.js",
           "test/language/computed-property-names/object/method/super.js",
           "test/language/computed-property-names/object/property/number-duplicates.js",
-          "test/language/computed-property-names/to-name-side-effects/object.js"
+          "test/language/computed-property-names/to-name-side-effects/object.js",
+          "test/language/expressions/object/computed-property-name-topropertykey-before-value-evaluation.js",
+          "test/language/expressions/object/fn-name-cover.js",
+          "test/language/expressions/object/fn-name-class.js"
         ],
-        "notes": "Sequential object-literal property definitions preserve string, numeric, and Symbol keys. Key coercion runs once per definition; inferred function names reuse the canonical key without repeating user-visible coercion. The native harness verifies all 17 pinned computed-property-names basics and object cases, including methods, generators, accessors, duplicate definitions, super calls, and coercion side effects."
+        "notes": "Sequential object-literal property definitions preserve string, numeric, and Symbol keys. Key coercion runs once, before evaluating the value or creating a method/accessor. Inferred names reuse the canonical key without repeating user-visible coercion and preserve Symbol descriptions. Naming applies only to anonymous definitions, not sequence-returned, shorthand, reused, or spread function values; optimized literal initialization follows the same rule."
       },
       {
         "clause": "13.2.5.3",
@@ -537,9 +545,11 @@
           "test/language/expressions/object/method-definition/fn-name-gen.js",
           "test/language/expressions/object/method-definition/generator-invoke-ctor.js",
           "test/language/expressions/object/method-definition/generator-invoke-fn-no-strict.js",
-          "test/language/expressions/object/method-definition/generator-invoke-fn-strict.js"
+          "test/language/expressions/object/method-definition/generator-invoke-fn-strict.js",
+          "test/language/expressions/object/method-definition/forbidden-ext/b1/meth-forbidden-ext-direct-access-prop-arguments.js",
+          "test/language/expressions/object/method-definition/forbidden-ext/b1/meth-forbidden-ext-direct-access-prop-caller.js"
         ],
-        "notes": "Synchronous object-literal methods and accessors are generated JsFunctionObject instances installed directly into data/accessor descriptors. They preserve dynamic this, inferred method/accessor names, computed keys, per-evaluation identity, non-constructability, and home-object state for super property reads/calls. Generator method values retain their generator-function surface and transitional representation until the generator callable-family migration."
+        "notes": "Object-literal methods and accessors preserve dynamic this, inferred names, computed keys, per-evaluation identity, non-constructability, and home-object state for super property reads/calls. Non-strict methods do not receive ordinary non-strict functions' legacy own caller/arguments properties; this does not make their bodies strict. Generator and async method parameter destructuring, iterator closing, defaults, and early errors are covered by the native Test262 registrations."
       },
       {
         "clause": "13.2.5.1",
@@ -547,9 +557,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js",
+          "tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/prop-def-id-get-error.js"
         ],
-        "notes": "Shorthand properties are parsed and lowered the same as explicit properties ({ a: a })."
+        "notes": "Shorthand properties are parsed and lowered like explicit properties ({ a: a }). Reads and their exceptions are preserved even when the literal result is discarded; an unresolvable identifier still throws ReferenceError without requiring allocation of the unused object."
       },
       {
         "clause": "13.2.5.1",
@@ -563,9 +574,12 @@
           "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_Empty.js",
           "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_SymbolProperties.js",
           "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_NestedObjects.js",
-          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js",
+          "tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/object-spread-proxy-get-not-called-on-dontenum-keys.js",
+          "tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/object-spread-proxy-ownkeys-returned-keys-order.js",
+          "tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/object-spread-proxy-no-excluded-keys.js"
         ],
-        "notes": "Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored. Copies enumerable own properties (including symbol-keyed properties, modeled via a stable internal key string)."
+        "notes": "Spread members copy enumerable own properties into the new object, including Symbol keys, without inferring new function names. Null/undefined sources are ignored. Proxy sources use ownKeys order, check each own descriptor before Get, skip Get for non-enumerable keys, and do not exclude keys already defined on the target."
       }
     ]
   }

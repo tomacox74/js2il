@@ -44,6 +44,16 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(newJsArray.Result, allocation))
                     {
+                        if (!HasAnyUses(newJsArray.Result))
+                        {
+                            foreach (var element in newJsArray.Elements)
+                            {
+                                EmitLoadTemp(element, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.OpCode(ILOpCode.Pop);
+                            }
+                            return true;
+                        }
+
                         EmitSchedulerOwnedStackValueIfNeeded(
                             newJsArray,
                             newJsArray.Result,
@@ -67,6 +77,16 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(newJsObject.Result, allocation))
                     {
+                        if (!HasAnyUses(newJsObject.Result))
+                        {
+                            foreach (var property in newJsObject.Properties)
+                            {
+                                EmitLoadTemp(property.Value, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.OpCode(ILOpCode.Pop);
+                            }
+                            return true;
+                        }
+
                         EmitSchedulerOwnedStackValueIfNeeded(
                             newJsObject,
                             newJsObject.Result,
@@ -90,6 +110,14 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(newInferredJsObject.Result, allocation))
                     {
+                        if (!HasAnyUses(newInferredJsObject.Result))
+                        {
+                            foreach (var property in newInferredJsObject.Properties)
+                            {
+                                EmitLoadTemp(property.Value, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.OpCode(ILOpCode.Pop);
+                            }
+                        }
                         return true;
                     }
 

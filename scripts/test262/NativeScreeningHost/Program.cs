@@ -28,7 +28,7 @@ if (args.Length == 1 && args[0] == "--capabilities")
             onlyStrict = true,
             noStrict = true,
             raw = false,
-            module = "static-syntax-only"
+            module = "module-goal"
         },
         includes = new[]
         {
@@ -246,14 +246,6 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
     {
         return Result("unsupported", "harness-gap", "capability",
             "Raw fixtures bypass the native harness injection contract.");
-    }
-
-    if ((metadata.Flags.Contains("module", StringComparer.Ordinal)
-            || string.Equals(variant, "module", StringComparison.Ordinal))
-        && !Regex.IsMatch(source, @"(?m)^\s*(?:import|export)\b"))
-    {
-        return Result("unsupported", "harness-gap", "capability",
-            "Module-goal screening currently requires static import/export syntax.");
     }
 
     var missingDependencies = FindMissingRelativeDependencies(sourcePath, source);

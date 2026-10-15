@@ -228,17 +228,17 @@ The screening host exposes a machine-readable capability report with
 `NativeScreeningHost --capabilities`, uploaded as
 `native-capabilities.json` by the workflow. The current native contract
 supports async completion, strict/no-strict variants, agent cleanup, the
-registered Test262 helper set reported by the capability document, ES module
-entries whose static import/export syntax establishes module goal (including
-relative sibling dependencies), sibling fixture files and harness
+registered Test262 helper set reported by the capability document, explicit
+Module-goal entries with or without static import/export syntax (including
+top-level await and relative sibling dependencies), sibling fixture files and harness
 files. MVP-blocked async, agent, CanBlock and module fixtures remain eligible
 for native selection when they have no other unsupported reason. Unsupported
-raw fixtures, module-flag entries without static module syntax, unknown helper
-includes, and parse/early/resolution-negative fixtures remain explicit
+raw fixtures, unknown helper includes, and early/resolution-negative fixtures remain explicit
 `harness-gap` outcomes; they are never accepted as passes. Worker isolation
 and timeouts apply to every variant, and agent state is disposed with the
 worker runtime. Focused host integration tests verify successful async and
-agent completion, module dependency loading, agent failure propagation,
+agent completion, module dependency loading, undefined module-level this,
+module top-level await without import/export syntax, parse-negative SyntaxErrors, agent failure propagation,
 process-tree timeout cleanup and a clean success after those failures.
 
 This matrix is an execution capability declaration, not an assertion that
@@ -321,4 +321,3 @@ failure clusters with path, variant, phase and diagnostic. The generation and
 patch-validation documents add exact output paths, hashes and the binary patch
 digest; `native-manifest.json` binds those files to the originating workflow
 run and target revision.
-

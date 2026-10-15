@@ -840,6 +840,10 @@ public static class Function
             }
 
             var prefix = prefixValue as string ?? string.Empty;
+            if (propertyKey is string key)
+            {
+                propertyKey = ObjectRuntime.ToExternalPropertyKey(key);
+            }
             var propertyName = propertyKey is Symbol symbol
                 ? symbol.Description is null ? string.Empty : $"[{symbol.Description}]"
                 : ObjectRuntime.ToPropertyKeyString(propertyKey);

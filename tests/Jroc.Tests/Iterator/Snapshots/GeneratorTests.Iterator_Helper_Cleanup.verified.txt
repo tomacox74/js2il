@@ -914,14 +914,14 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 210 (0xd2)
-			.maxstack 8
+			// Code size: 215 (0xd7)
+			.maxstack 10
 			.locals init (
 				[0] class Modules.Iterator_Helper_Cleanup/makeIterable/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[2] object[],
 				[3] class Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L6C17/FunctionObject,
-				[4] object,
+				[4] string,
 				[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
@@ -972,48 +972,49 @@
 			IL_006c: pop
 			IL_006d: ldstr "iterator"
 			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-			IL_0077: stloc.s 4
-			IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_007e: stloc.s 5
-			IL_0080: ldc.i4.2
-			IL_0081: newarr [System.Runtime]System.Object
-			IL_0086: dup
-			IL_0087: ldc.i4.0
-			IL_0088: ldarg.0
-			IL_0089: stelem.ref
-			IL_008a: dup
-			IL_008b: ldc.i4.1
-			IL_008c: ldloc.0
-			IL_008d: stelem.ref
-			IL_008e: stloc.2
-			IL_008f: ldloc.s 5
-			IL_0091: ldloc.s 4
-			IL_0093: ldloc.2
-			IL_0094: ldc.i4.0
-			IL_0095: ldelem.ref
-			IL_0096: castclass Modules.Iterator_Helper_Cleanup/Scope
-			IL_009b: ldloc.2
-			IL_009c: ldc.i4.1
-			IL_009d: ldelem.ref
-			IL_009e: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
-			IL_00a3: ldloc.2
-			IL_00a4: newobj instance void Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope, class Modules.Iterator_Helper_Cleanup/makeIterable/Scope, object[])
-			IL_00a9: ldc.i4.0
-			IL_00aa: conv.r8
-			IL_00ab: ldstr ""
-			IL_00b0: ldc.i4.0
-			IL_00b1: ldc.i4.0
-			IL_00b2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_00b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/FunctionObject>(!!0)
-			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-			IL_00c1: pop
-			IL_00c2: ldloc.1
-			IL_00c3: ldstr "iterable"
-			IL_00c8: ldloc.s 5
-			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-			IL_00cf: pop
-			IL_00d0: ldloc.1
-			IL_00d1: ret
+			IL_0077: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToPropertyKeyString(object)
+			IL_007c: stloc.s 4
+			IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0083: stloc.s 5
+			IL_0085: ldc.i4.2
+			IL_0086: newarr [System.Runtime]System.Object
+			IL_008b: dup
+			IL_008c: ldc.i4.0
+			IL_008d: ldarg.0
+			IL_008e: stelem.ref
+			IL_008f: dup
+			IL_0090: ldc.i4.1
+			IL_0091: ldloc.0
+			IL_0092: stelem.ref
+			IL_0093: stloc.2
+			IL_0094: ldloc.s 5
+			IL_0096: ldloc.s 4
+			IL_0098: ldloc.2
+			IL_0099: ldc.i4.0
+			IL_009a: ldelem.ref
+			IL_009b: castclass Modules.Iterator_Helper_Cleanup/Scope
+			IL_00a0: ldloc.2
+			IL_00a1: ldc.i4.1
+			IL_00a2: ldelem.ref
+			IL_00a3: castclass Modules.Iterator_Helper_Cleanup/makeIterable/Scope
+			IL_00a8: ldloc.2
+			IL_00a9: newobj instance void Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope, class Modules.Iterator_Helper_Cleanup/makeIterable/Scope, object[])
+			IL_00ae: ldc.i4.0
+			IL_00af: conv.r8
+			IL_00b0: ldstr ""
+			IL_00b5: ldc.i4.0
+			IL_00b6: ldc.i4.0
+			IL_00b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/makeIterable/FunctionExpression_L10C29/FunctionObject>(!!0)
+			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+			IL_00c6: pop
+			IL_00c7: ldloc.1
+			IL_00c8: ldstr "iterable"
+			IL_00cd: ldloc.s 5
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataPropertyWithoutNameInference(object, object, object)
+			IL_00d4: pop
+			IL_00d5: ldloc.1
+			IL_00d6: ret
 		} // end of method makeIterable::__js_call__
 
 	} // end of class makeIterable
@@ -2069,11 +2070,11 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 96 (0x60)
-			.maxstack 8
+			// Code size: 101 (0x65)
+			.maxstack 10
 			.locals init (
 				[0] class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/Scope,
-				[1] object,
+				[1] string,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[3] object[]
 			)
@@ -2085,43 +2086,44 @@
 			IL_0008: stfld object Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/Scope::'value'
 			IL_000d: ldstr "iterator"
 			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-			IL_0017: stloc.1
-			IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001d: stloc.2
-			IL_001e: ldc.i4.2
-			IL_001f: newarr [System.Runtime]System.Object
-			IL_0024: dup
-			IL_0025: ldc.i4.0
-			IL_0026: ldarg.0
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.1
-			IL_002a: ldloc.0
-			IL_002b: stelem.ref
-			IL_002c: stloc.3
-			IL_002d: ldloc.2
-			IL_002e: ldloc.1
-			IL_002f: ldloc.3
-			IL_0030: ldc.i4.0
-			IL_0031: ldelem.ref
-			IL_0032: castclass Modules.Iterator_Helper_Cleanup/Scope
-			IL_0037: ldloc.3
-			IL_0038: ldc.i4.1
-			IL_0039: ldelem.ref
-			IL_003a: castclass Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/Scope
-			IL_003f: ldloc.3
-			IL_0040: newobj instance void Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionExpression_flatHelper/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope, class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/Scope, object[])
-			IL_0045: ldc.i4.0
-			IL_0046: conv.r8
-			IL_0047: ldstr ""
-			IL_004c: ldc.i4.0
-			IL_004d: ldc.i4.0
-			IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionExpression_flatHelper/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0053: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionExpression_flatHelper/FunctionObject>(!!0)
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-			IL_005d: pop
-			IL_005e: ldloc.2
-			IL_005f: ret
+			IL_0017: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToPropertyKeyString(object)
+			IL_001c: stloc.1
+			IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0022: stloc.2
+			IL_0023: ldc.i4.2
+			IL_0024: newarr [System.Runtime]System.Object
+			IL_0029: dup
+			IL_002a: ldc.i4.0
+			IL_002b: ldarg.0
+			IL_002c: stelem.ref
+			IL_002d: dup
+			IL_002e: ldc.i4.1
+			IL_002f: ldloc.0
+			IL_0030: stelem.ref
+			IL_0031: stloc.3
+			IL_0032: ldloc.2
+			IL_0033: ldloc.1
+			IL_0034: ldloc.3
+			IL_0035: ldc.i4.0
+			IL_0036: ldelem.ref
+			IL_0037: castclass Modules.Iterator_Helper_Cleanup/Scope
+			IL_003c: ldloc.3
+			IL_003d: ldc.i4.1
+			IL_003e: ldelem.ref
+			IL_003f: castclass Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/Scope
+			IL_0044: ldloc.3
+			IL_0045: newobj instance void Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionExpression_flatHelper/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope, class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/Scope, object[])
+			IL_004a: ldc.i4.0
+			IL_004b: conv.r8
+			IL_004c: ldstr ""
+			IL_0051: ldc.i4.0
+			IL_0052: ldc.i4.0
+			IL_0053: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionExpression_flatHelper/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0058: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionExpression_flatHelper/FunctionObject>(!!0)
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+			IL_0062: pop
+			IL_0063: ldloc.2
+			IL_0064: ret
 		} // end of method ArrowFunction_L60C47::__js_call__
 
 	} // end of class ArrowFunction_L60C47
@@ -3332,11 +3334,11 @@
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 81 (0x51)
-			.maxstack 8
+			// Code size: 86 (0x56)
+			.maxstack 10
 			.locals init (
 				[0] class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/Scope,
-				[1] object,
+				[1] string,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[3] object[]
 			)
@@ -3345,39 +3347,40 @@
 			IL_0005: stloc.0
 			IL_0006: ldstr "iterator"
 			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-			IL_0010: stloc.1
-			IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0016: stloc.2
-			IL_0017: ldc.i4.2
-			IL_0018: newarr [System.Runtime]System.Object
-			IL_001d: dup
-			IL_001e: ldc.i4.0
-			IL_001f: ldarg.0
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.1
-			IL_0023: ldloc.0
-			IL_0024: stelem.ref
-			IL_0025: stloc.3
-			IL_0026: ldloc.2
-			IL_0027: ldloc.1
-			IL_0028: ldloc.3
-			IL_0029: ldc.i4.0
-			IL_002a: ldelem.ref
-			IL_002b: castclass Modules.Iterator_Helper_Cleanup/Scope
-			IL_0030: ldloc.3
-			IL_0031: newobj instance void Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionExpression_flatThrowHelper/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope, object[])
-			IL_0036: ldc.i4.0
-			IL_0037: conv.r8
-			IL_0038: ldstr ""
-			IL_003d: ldc.i4.0
-			IL_003e: ldc.i4.0
-			IL_003f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionExpression_flatThrowHelper/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0044: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionExpression_flatThrowHelper/FunctionObject>(!!0)
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-			IL_004e: pop
-			IL_004f: ldloc.2
-			IL_0050: ret
+			IL_0010: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToPropertyKeyString(object)
+			IL_0015: stloc.1
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_001b: stloc.2
+			IL_001c: ldc.i4.2
+			IL_001d: newarr [System.Runtime]System.Object
+			IL_0022: dup
+			IL_0023: ldc.i4.0
+			IL_0024: ldarg.0
+			IL_0025: stelem.ref
+			IL_0026: dup
+			IL_0027: ldc.i4.1
+			IL_0028: ldloc.0
+			IL_0029: stelem.ref
+			IL_002a: stloc.3
+			IL_002b: ldloc.2
+			IL_002c: ldloc.1
+			IL_002d: ldloc.3
+			IL_002e: ldc.i4.0
+			IL_002f: ldelem.ref
+			IL_0030: castclass Modules.Iterator_Helper_Cleanup/Scope
+			IL_0035: ldloc.3
+			IL_0036: newobj instance void Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionExpression_flatThrowHelper/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope, object[])
+			IL_003b: ldc.i4.0
+			IL_003c: conv.r8
+			IL_003d: ldstr ""
+			IL_0042: ldc.i4.0
+			IL_0043: ldc.i4.0
+			IL_0044: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionExpression_flatThrowHelper/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionExpression_flatThrowHelper/FunctionObject>(!!0)
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+			IL_0053: pop
+			IL_0054: ldloc.2
+			IL_0055: ret
 		} // end of method ArrowFunction_L113C12::__js_call__
 
 	} // end of class ArrowFunction_L113C12
@@ -3586,8 +3589,8 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 3347 (0xd13)
-		.maxstack 8
+		// Code size: 3352 (0xd18)
+		.maxstack 10
 		.locals init (
 			[0] class Modules.Iterator_Helper_Cleanup/Scope,
 			[1] class Modules.Iterator_Helper_Cleanup/makeIterable/FunctionObject,
@@ -3626,8 +3629,9 @@
 			[34] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[35] class Modules.Iterator_Helper_Cleanup/ArrowFunction_L60C47/FunctionObject,
 			[36] class Modules.Iterator_Helper_Cleanup/ArrowFunction_L84C74/FunctionObject,
-			[37] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[38] class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject
+			[37] string,
+			[38] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[39] class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Iterator_Helper_Cleanup/Scope::.ctor()
@@ -4558,177 +4562,178 @@
 		IL_0b3c: stloc.s 29
 		IL_0b3e: ldstr "iterator"
 		IL_0b43: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0b48: stloc.s 28
-		IL_0b4a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0b4f: stloc.s 37
-		IL_0b51: ldc.i4.1
-		IL_0b52: newarr [System.Runtime]System.Object
-		IL_0b57: dup
-		IL_0b58: ldc.i4.0
-		IL_0b59: ldloc.0
-		IL_0b5a: stelem.ref
-		IL_0b5b: stloc.s 27
-		IL_0b5d: ldloc.s 37
-		IL_0b5f: ldloc.s 28
-		IL_0b61: ldloc.s 27
-		IL_0b63: ldc.i4.0
-		IL_0b64: ldelem.ref
-		IL_0b65: castclass Modules.Iterator_Helper_Cleanup/Scope
-		IL_0b6a: newobj instance void Modules.Iterator_Helper_Cleanup/FunctionExpression_flatThrowHelper/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope)
-		IL_0b6f: ldc.i4.0
-		IL_0b70: conv.r8
-		IL_0b71: ldstr ""
-		IL_0b76: ldc.i4.0
-		IL_0b77: ldc.i4.0
-		IL_0b78: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/FunctionExpression_flatThrowHelper/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0b7d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/FunctionExpression_flatThrowHelper/FunctionObject>(!!0)
-		IL_0b82: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_0b87: pop
-		IL_0b88: volatile.
-		IL_0b8a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
-		IL_0b8f: brfalse IL_0ba7
+		IL_0b48: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToPropertyKeyString(object)
+		IL_0b4d: stloc.s 37
+		IL_0b4f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0b54: stloc.s 38
+		IL_0b56: ldc.i4.1
+		IL_0b57: newarr [System.Runtime]System.Object
+		IL_0b5c: dup
+		IL_0b5d: ldc.i4.0
+		IL_0b5e: ldloc.0
+		IL_0b5f: stelem.ref
+		IL_0b60: stloc.s 27
+		IL_0b62: ldloc.s 38
+		IL_0b64: ldloc.s 37
+		IL_0b66: ldloc.s 27
+		IL_0b68: ldc.i4.0
+		IL_0b69: ldelem.ref
+		IL_0b6a: castclass Modules.Iterator_Helper_Cleanup/Scope
+		IL_0b6f: newobj instance void Modules.Iterator_Helper_Cleanup/FunctionExpression_flatThrowHelper/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope)
+		IL_0b74: ldc.i4.0
+		IL_0b75: conv.r8
+		IL_0b76: ldstr ""
+		IL_0b7b: ldc.i4.0
+		IL_0b7c: ldc.i4.0
+		IL_0b7d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/FunctionExpression_flatThrowHelper/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0b82: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/FunctionExpression_flatThrowHelper/FunctionObject>(!!0)
+		IL_0b87: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0b8c: pop
+		IL_0b8d: volatile.
+		IL_0b8f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
+		IL_0b94: brfalse IL_0bac
 
-		IL_0b94: ldloc.s 29
-		IL_0b96: ldstr "from"
-		IL_0b9b: ldloc.s 37
-		IL_0b9d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0ba2: br IL_0bbf
+		IL_0b99: ldloc.s 29
+		IL_0b9b: ldstr "from"
+		IL_0ba0: ldloc.s 38
+		IL_0ba2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0ba7: br IL_0bc4
 
-		IL_0ba7: ldloc.s 29
-		IL_0ba9: ldstr "from"
-		IL_0bae: ldloc.s 37
-		IL_0bb0: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:241"
-		IL_0bb5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
-		IL_0bba: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_0bac: ldloc.s 29
+		IL_0bae: ldstr "from"
+		IL_0bb3: ldloc.s 38
+		IL_0bb5: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:242"
+		IL_0bba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_89
+		IL_0bbf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0bbf: stloc.s 29
-		IL_0bc1: ldloc.s 29
-		IL_0bc3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0bc8: stloc.s 29
-		IL_0bca: ldc.i4.1
-		IL_0bcb: newarr [System.Runtime]System.Object
-		IL_0bd0: dup
-		IL_0bd1: ldc.i4.0
-		IL_0bd2: ldloc.0
-		IL_0bd3: stelem.ref
-		IL_0bd4: stloc.s 27
-		IL_0bd6: ldloc.s 27
-		IL_0bd8: ldc.i4.0
-		IL_0bd9: ldelem.ref
-		IL_0bda: castclass Modules.Iterator_Helper_Cleanup/Scope
-		IL_0bdf: newobj instance void Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope)
-		IL_0be4: ldc.i4.1
-		IL_0be5: conv.r8
-		IL_0be6: ldstr ""
-		IL_0beb: ldc.i4.0
-		IL_0bec: ldc.i4.0
-		IL_0bed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0bf2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject>(!!0)
-		IL_0bf7: stloc.s 38
-		IL_0bf9: volatile.
-		IL_0bfb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
-		IL_0c00: brfalse IL_0c18
+		IL_0bc4: stloc.s 29
+		IL_0bc6: ldloc.s 29
+		IL_0bc8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0bcd: stloc.s 29
+		IL_0bcf: ldc.i4.1
+		IL_0bd0: newarr [System.Runtime]System.Object
+		IL_0bd5: dup
+		IL_0bd6: ldc.i4.0
+		IL_0bd7: ldloc.0
+		IL_0bd8: stelem.ref
+		IL_0bd9: stloc.s 27
+		IL_0bdb: ldloc.s 27
+		IL_0bdd: ldc.i4.0
+		IL_0bde: ldelem.ref
+		IL_0bdf: castclass Modules.Iterator_Helper_Cleanup/Scope
+		IL_0be4: newobj instance void Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject::.ctor(class Modules.Iterator_Helper_Cleanup/Scope)
+		IL_0be9: ldc.i4.1
+		IL_0bea: conv.r8
+		IL_0beb: ldstr ""
+		IL_0bf0: ldc.i4.0
+		IL_0bf1: ldc.i4.0
+		IL_0bf2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0bf7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Cleanup/ArrowFunction_L113C12/FunctionObject>(!!0)
+		IL_0bfc: stloc.s 39
+		IL_0bfe: volatile.
+		IL_0c00: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
+		IL_0c05: brfalse IL_0c1d
 
-		IL_0c05: ldloc.s 29
-		IL_0c07: ldstr "flatMap"
-		IL_0c0c: ldloc.s 38
-		IL_0c0e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0c13: br IL_0c30
+		IL_0c0a: ldloc.s 29
+		IL_0c0c: ldstr "flatMap"
+		IL_0c11: ldloc.s 39
+		IL_0c13: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0c18: br IL_0c35
 
-		IL_0c18: ldloc.s 29
-		IL_0c1a: ldstr "flatMap"
-		IL_0c1f: ldloc.s 38
-		IL_0c21: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:245"
-		IL_0c26: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
-		IL_0c2b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_0c1d: ldloc.s 29
+		IL_0c1f: ldstr "flatMap"
+		IL_0c24: ldloc.s 39
+		IL_0c26: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:246"
+		IL_0c2b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_90
+		IL_0c30: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0c30: stloc.s 22
+		IL_0c35: stloc.s 22
 		.try
 		{
-			IL_0c32: nop
-			IL_0c33: ldloc.s 22
-			IL_0c35: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0c3a: volatile.
-			IL_0c3c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
-			IL_0c41: brfalse IL_0c55
+			IL_0c37: nop
+			IL_0c38: ldloc.s 22
+			IL_0c3a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0c3f: volatile.
+			IL_0c41: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
+			IL_0c46: brfalse IL_0c5a
 
-			IL_0c46: ldstr "next"
-			IL_0c4b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0c50: br IL_0c69
+			IL_0c4b: ldstr "next"
+			IL_0c50: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0c55: br IL_0c6e
 
-			IL_0c55: ldstr "next"
-			IL_0c5a: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:252"
-			IL_0c5f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
-			IL_0c64: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_0c5a: ldstr "next"
+			IL_0c5f: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:253"
+			IL_0c64: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_91
+			IL_0c69: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0c69: pop
-			IL_0c6a: ldloc.s 22
-			IL_0c6c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0c71: volatile.
-			IL_0c73: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
-			IL_0c78: brfalse IL_0c8c
+			IL_0c6e: pop
+			IL_0c6f: ldloc.s 22
+			IL_0c71: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0c76: volatile.
+			IL_0c78: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
+			IL_0c7d: brfalse IL_0c91
 
-			IL_0c7d: ldstr "next"
-			IL_0c82: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0c87: br IL_0ca0
+			IL_0c82: ldstr "next"
+			IL_0c87: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0c8c: br IL_0ca5
 
-			IL_0c8c: ldstr "next"
-			IL_0c91: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:255"
-			IL_0c96: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
-			IL_0c9b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_0c91: ldstr "next"
+			IL_0c96: ldstr "Iterator_Helper_Cleanup:Modules.Iterator_Helper_Cleanup:__js_module_init__:256"
+			IL_0c9b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_92
+			IL_0ca0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0ca0: pop
-			IL_0ca1: leave IL_0cdd
+			IL_0ca5: pop
+			IL_0ca6: leave IL_0ce2
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0ca6: stloc.s 23
-			IL_0ca8: ldloc.s 23
-			IL_0caa: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0caf: dup
-			IL_0cb0: brtrue IL_0cc6
+			IL_0cab: stloc.s 23
+			IL_0cad: ldloc.s 23
+			IL_0caf: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0cb4: dup
+			IL_0cb5: brtrue IL_0ccb
 
-			IL_0cb5: pop
-			IL_0cb6: ldloc.s 23
-			IL_0cb8: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0cbd: dup
-			IL_0cbe: brtrue IL_0cd2
+			IL_0cba: pop
+			IL_0cbb: ldloc.s 23
+			IL_0cbd: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0cc2: dup
+			IL_0cc3: brtrue IL_0cd7
 
-			IL_0cc3: pop
-			IL_0cc4: rethrow
+			IL_0cc8: pop
+			IL_0cc9: rethrow
 
-			IL_0cc6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0ccb: stloc.s 24
-			IL_0ccd: br IL_0cd4
+			IL_0ccb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0cd0: stloc.s 24
+			IL_0cd2: br IL_0cd9
 
-			IL_0cd2: stloc.s 24
+			IL_0cd7: stloc.s 24
 
-			IL_0cd4: ldloc.s 24
-			IL_0cd6: stloc.s 25
-			IL_0cd8: leave IL_0cdd
+			IL_0cd9: ldloc.s 24
+			IL_0cdb: stloc.s 25
+			IL_0cdd: leave IL_0ce2
 		} // end handler
 
-		IL_0cdd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0ce2: stloc.s 31
-		IL_0ce4: ldloc.0
-		IL_0ce5: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowOuterClosed
-		IL_0cea: stloc.s 29
-		IL_0cec: ldloc.s 31
-		IL_0cee: ldloc.s 29
-		IL_0cf0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0cf5: pop
-		IL_0cf6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0cfb: stloc.s 31
-		IL_0cfd: ldloc.0
-		IL_0cfe: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowInnerClosed
-		IL_0d03: stloc.s 29
-		IL_0d05: ldloc.s 31
-		IL_0d07: ldloc.s 29
-		IL_0d09: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0d0e: pop
-		IL_0d0f: ldnull
-		IL_0d10: stloc.s 26
-		IL_0d12: ret
+		IL_0ce2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0ce7: stloc.s 31
+		IL_0ce9: ldloc.0
+		IL_0cea: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowOuterClosed
+		IL_0cef: stloc.s 29
+		IL_0cf1: ldloc.s 31
+		IL_0cf3: ldloc.s 29
+		IL_0cf5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0cfa: pop
+		IL_0cfb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0d00: stloc.s 31
+		IL_0d02: ldloc.0
+		IL_0d03: ldfld object Modules.Iterator_Helper_Cleanup/Scope::flatThrowInnerClosed
+		IL_0d08: stloc.s 29
+		IL_0d0a: ldloc.s 31
+		IL_0d0c: ldloc.s 29
+		IL_0d0e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0d13: pop
+		IL_0d14: ldnull
+		IL_0d15: stloc.s 26
+		IL_0d17: ret
 	} // end of method Iterator_Helper_Cleanup::__js_module_init__
 
 } // end of class Modules.Iterator_Helper_Cleanup

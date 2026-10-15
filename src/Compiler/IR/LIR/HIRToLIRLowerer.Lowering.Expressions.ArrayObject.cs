@@ -172,7 +172,10 @@ public sealed partial class HIRToLIRLowerer
                 if (!TryLowerObjectLiteralMemberValue(
                         property.Value,
                         property.IsMethodDefinition ? objectTemp : null,
-                        out var valueTemp))
+                        out var valueTemp,
+                        property.Key)
+                    || (!property.IsMethodDefinition
+                        && !TryApplyInferredNameToValue(property.Value, property.Key, valueTemp, out valueTemp)))
                 {
                     return false;
                 }
@@ -205,7 +208,8 @@ public sealed partial class HIRToLIRLowerer
                 var inferredProperties = new List<InferredObjectProperty>(shape.Members.Count);
                 foreach (HIRObjectProperty prop in objectExpr.Members)
                 {
-                    if (!TryLowerExpression(prop.Value, out var valueTemp))
+                    if (!TryLowerExpressionWithInferredName(prop.Value, prop.Key, out var valueTemp)
+                        || !TryApplyInferredNameToValue(prop.Value, prop.Key, valueTemp, out valueTemp))
                     {
                         return false;
                     }
@@ -223,7 +227,8 @@ public sealed partial class HIRToLIRLowerer
             var properties = new List<ObjectProperty>();
             foreach (HIRObjectProperty prop in objectExpr.Members)
             {
-                if (!TryLowerExpression(prop.Value, out var valueTemp))
+                if (!TryLowerExpressionWithInferredName(prop.Value, prop.Key, out var valueTemp)
+                    || !TryApplyInferredNameToValue(prop.Value, prop.Key, valueTemp, out valueTemp))
                 {
                     return false;
                 }
@@ -265,7 +270,8 @@ public sealed partial class HIRToLIRLowerer
                     if (!TryLowerObjectLiteralMemberValue(
                             prop.Value,
                             prop.IsMethodDefinition ? objectTemp : null,
-                            out var valueTemp))
+                            out var valueTemp,
+                            prop.IsPrototypeMutation ? null : prop.Key))
                     {
                         return false;
                     }
@@ -280,7 +286,9 @@ public sealed partial class HIRToLIRLowerer
                         var keyTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstString(prop.Key, keyTemp));
                         DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-                        EmitDefineObjectLiteralDataProperty(objectTemp, keyTemp, valueTemp);
+                        EmitDefineObjectLiteralDataProperty(
+                            objectTemp, keyTemp, valueTemp,
+                            prop.IsMethodDefinition || IsObjectPropertyAnonymousDefinition(prop.Value));
                     }
                     break;
                 }
@@ -292,6 +300,7 @@ public sealed partial class HIRToLIRLowerer
                     {
                         return false;
                     }
+                    keyExprTemp = EmitObjectLiteralPropertyKey(keyExprTemp);
 
                     if (computed.IsMethodDefinition)
                     {
@@ -307,7 +316,9 @@ public sealed partial class HIRToLIRLowerer
                     }
 
                     EnsureObjectTargetCreated();
-                    EmitDefineObjectLiteralDataProperty(objectTemp, keyExprTemp, valueTemp);
+                    EmitDefineObjectLiteralDataProperty(
+                        objectTemp, keyExprTemp, valueTemp,
+                        computed.IsMethodDefinition || IsObjectPropertyAnonymousDefinition(computed.Value));
                     break;
                 }
 
@@ -327,6 +338,7 @@ public sealed partial class HIRToLIRLowerer
                     {
                         return false;
                     }
+                    accessorKeyTemp = EmitObjectLiteralPropertyKey(accessorKeyTemp);
 
                     EnsureObjectTargetCreated();
                     if (!TryLowerObjectLiteralAccessorProperty(objectTemp, accessorKeyTemp, computedAccessor.Getter, computedAccessor.Setter))
@@ -380,11 +392,44 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        EmitDefineObjectLiteralDataProperty(targetTemp, keyTemp, valueTemp);
+        EmitDefineObjectLiteralDataProperty(
+            targetTemp, keyTemp, valueTemp,
+            IsObjectPropertyAnonymousDefinition(valueExpression));
         return true;
     }
 
-    private void EmitDefineObjectLiteralDataProperty(TempVariable targetTemp, TempVariable keyTemp, TempVariable valueTemp)
+    private static bool IsObjectPropertyAnonymousDefinition(HIRExpression expression)
+        => expression is HIRFunctionExpression
+            {
+                CallableId.Semantics.IsAnonymousFunctionExpression: true
+            }
+            or HIRArrowFunctionExpression
+            or HIRInitializedUserClassTypeExpression
+            {
+                IsClassExpression: true,
+                ExplicitName: null or ""
+            };
+
+    private TempVariable EmitObjectLiteralPropertyKey(TempVariable key)
+    {
+        if (GetTempStorage(key).ClrType == typeof(string))
+        {
+            return key;
+        }
+
+        var propertyKey = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.ToPropertyKeyString),
+            new[] { EnsureObject(key) },
+            propertyKey));
+        DefineTempStorage(propertyKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        return propertyKey;
+    }
+
+    private void EmitDefineObjectLiteralDataProperty(
+        TempVariable targetTemp, TempVariable keyTemp, TempVariable valueTemp,
+        bool inferFunctionName)
     {
         var boxedTarget = EnsureObject(targetTemp);
         var keyStorage = GetTempStorage(keyTemp);
@@ -401,7 +446,9 @@ public sealed partial class HIRToLIRLowerer
         var defineResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-            MethodName: "DefineObjectLiteralDataProperty",
+            MethodName: inferFunctionName || valueStorage.Kind == ValueStorageKind.UnboxedValue
+                ? nameof(JavaScriptRuntime.ObjectRuntime.DefineObjectLiteralDataProperty)
+                : nameof(JavaScriptRuntime.ObjectRuntime.DefineObjectLiteralDataPropertyWithoutNameInference),
             Arguments: new List<TempVariable> { boxedTarget, keyArg, valueArg },
             Result: defineResult));
         DefineTempStorage(defineResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -508,7 +555,8 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerObjectLiteralMemberValue(
         HIRExpression expression,
         TempVariable? homeObject,
-        out TempVariable valueTemp)
+        out TempVariable valueTemp,
+        string? inferredName = null)
     {
         if (homeObject.HasValue && expression is HIRFunctionExpression functionExpression)
         {
@@ -520,6 +568,8 @@ public sealed partial class HIRToLIRLowerer
                 out valueTemp);
         }
 
-        return TryLowerExpression(expression, out valueTemp);
+        return inferredName is null
+            ? TryLowerExpression(expression, out valueTemp)
+            : TryLowerExpressionWithInferredName(expression, inferredName, out valueTemp);
     }
 }
