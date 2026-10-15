@@ -70,6 +70,15 @@ branch-free path when the host contract and other source analysis allow it.
 Passing the object to a callback, storing an alias, or writing its
 properties still prevents that optimization.
 
+Ordinary fixed-name receiver-property access, such as `this.bufferSize`, does
+not by itself expose the receiver. Storing `this` in an alias can expose the
+global object from an ordinary function and disables original-binding
+assumptions across the assembly, even when that function is not executed.
+Dynamic Math calls still resolve the current global/member before evaluating
+arguments, then invoke the selected built-in through fixed-arity,
+receiver-independent adapters rather than reflective CLR overload selection.
+This does not change the option's default or weaken its host contract.
+
 ## Compile and evaluate
 
 ```csharp

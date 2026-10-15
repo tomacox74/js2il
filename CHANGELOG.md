@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): replace reflective dynamic Math dispatch with fixed-arity,
+  receiver-independent built-ins; preserve member selection before argument
+  evaluation, JavaScript coercion and mutable globals. Skip compiled static-field
+  scans for runtime-owned types and correct oscillator profiling inputs (#2301).
 - fix(runtime): initialize the realm's intrinsic RegExp constructor on first
   access so split and matchAll work in fresh hosted realms, including both
   unchanged Dromaeo regexp workloads with unmodified host globals (#2299).
