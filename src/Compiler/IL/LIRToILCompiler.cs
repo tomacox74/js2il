@@ -830,6 +830,10 @@ internal sealed partial class LIRToILCompiler
         {
             return typeof(JavaScriptRuntime.RuntimeServices);
         }
+        if (string.Equals(intrinsicName, nameof(JavaScriptRuntime.CallableOperations), StringComparison.Ordinal))
+        {
+            return typeof(JavaScriptRuntime.CallableOperations);
+        }
 
         return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
             ? intrinsic.Type

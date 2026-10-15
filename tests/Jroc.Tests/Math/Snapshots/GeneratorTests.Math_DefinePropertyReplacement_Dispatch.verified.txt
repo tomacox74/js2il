@@ -251,8 +251,8 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 232 (0xe8)
-		.maxstack 8
+		// Code size: 193 (0xc1)
+		.maxstack 13
 		.locals init (
 			[0] class Modules.Math_DefinePropertyReplacement_Dispatch/Scope,
 			[1] object,
@@ -312,29 +312,22 @@
 		IL_0083: ldstr "Math"
 		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0092: volatile.
-		IL_0094: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_0099: brfalse IL_00bb
-
-		IL_009e: ldstr "sqrt"
+		IL_0092: stloc.1
+		IL_0093: ldloc.1
+		IL_0094: ldstr "sqrt"
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_009e: stloc.s 4
+		IL_00a0: ldloc.s 4
+		IL_00a2: ldloc.1
 		IL_00a3: ldc.r8 9
 		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b6: br IL_00dd
-
-		IL_00bb: ldstr "sqrt"
-		IL_00c0: ldc.r8 9
-		IL_00c9: box [System.Runtime]System.Double
-		IL_00ce: ldstr "Math_DefinePropertyReplacement_Dispatch:Modules.Math_DefinePropertyReplacement_Dispatch:__js_module_init__:20"
-		IL_00d3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_00dd: stloc.1
-		IL_00de: ldloc.s 6
-		IL_00e0: ldloc.1
-		IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e6: pop
-		IL_00e7: ret
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Call1(object, object, object)
+		IL_00b6: stloc.1
+		IL_00b7: ldloc.s 6
+		IL_00b9: ldloc.1
+		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bf: pop
+		IL_00c0: ret
 	} // end of method Math_DefinePropertyReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_DefinePropertyReplacement_Dispatch
@@ -359,12 +352,4 @@
 	} // end of method Program::Main
 
 } // end of class Program
-
-.class private auto ansi abstract sealed beforefieldinit Jroc.Generated.DynamicLookupSites
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field assembly static int32 __jroc_dynamicLookup_1
-
-} // end of class Jroc.Generated.DynamicLookupSites
 

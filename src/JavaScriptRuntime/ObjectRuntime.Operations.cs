@@ -3614,11 +3614,23 @@ namespace JavaScriptRuntime
                 JsFunctionObject { IsConstructor: true } constructor => constructor.GetType().DeclaringType,
                 _ => null
             };
-            field = ownerType?.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
-                .Where(candidate => string.Equals(candidate.Name, name, StringComparison.Ordinal))
-                .MaxBy(candidate => candidate.MetadataToken)!;
+            field = null!;
+            if (ownerType == null
+                || ownerType.Assembly == typeof(ObjectRuntime).Assembly
+                || !ownerType.Assembly.IsDefined(typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false))
+            {
+                return false;
+            }
+
+            foreach (var candidate in ownerType.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
+            {
+                if (string.Equals(candidate.Name, name, StringComparison.Ordinal)
+                    && (field == null || candidate.MetadataToken > field.MetadataToken))
+                {
+                    field = candidate;
+                }
+            }
             return field != null
-                && ownerType!.Assembly.IsDefined(typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false)
                 && field.IsDefined(typeof(Jroc.Runtime.JsCompiledClassFieldAttribute), inherit: false);
         }
 

@@ -251,14 +251,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 252 (0xfc)
-		.maxstack 8
+		// Code size: 213 (0xd5)
+		.maxstack 13
 		.locals init (
 			[0] class Modules.Math_GlobalThisReplacement_Dispatch/Scope,
 			[1] object,
 			[2] object[],
 			[3] class Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24/FunctionObject,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_GlobalThisReplacement_Dispatch/Scope::.ctor()
@@ -312,29 +313,22 @@
 		IL_0097: ldstr "Math"
 		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a6: volatile.
-		IL_00a8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00ad: brfalse IL_00cf
-
-		IL_00b2: ldstr "round"
+		IL_00a6: stloc.1
+		IL_00a7: ldloc.1
+		IL_00a8: ldstr "round"
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00b2: stloc.s 5
+		IL_00b4: ldloc.s 5
+		IL_00b6: ldloc.1
 		IL_00b7: ldc.r8 1.2
 		IL_00c0: box [System.Runtime]System.Double
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ca: br IL_00f1
-
-		IL_00cf: ldstr "round"
-		IL_00d4: ldc.r8 1.2
-		IL_00dd: box [System.Runtime]System.Double
-		IL_00e2: ldstr "Math_GlobalThisReplacement_Dispatch:Modules.Math_GlobalThisReplacement_Dispatch:__js_module_init__:23"
-		IL_00e7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
-
-		IL_00f1: stloc.1
-		IL_00f2: ldloc.s 4
-		IL_00f4: ldloc.1
-		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fa: pop
-		IL_00fb: ret
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Call1(object, object, object)
+		IL_00ca: stloc.1
+		IL_00cb: ldloc.s 4
+		IL_00cd: ldloc.1
+		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d3: pop
+		IL_00d4: ret
 	} // end of method Math_GlobalThisReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_GlobalThisReplacement_Dispatch
@@ -365,7 +359,6 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_1
-	.field assembly static int32 __jroc_dynamicLookup_2
 
 } // end of class Jroc.Generated.DynamicLookupSites
 
